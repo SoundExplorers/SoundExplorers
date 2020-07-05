@@ -1,0 +1,4 @@
+﻿CREATE DATABASE soundexplorers
+  WITH ENCODING='WIN1252'
+       TEMPLATE=template0
+       CONNECTION LIMIT=10;

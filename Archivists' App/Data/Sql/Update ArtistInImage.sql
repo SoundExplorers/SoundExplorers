@@ -1,0 +1,1 @@
+﻿update ArtistInImage set    ImageId = @ImageId,    ArtistName = @Artistwhere ImageId = @OLD_ImageIdand ArtistName = @OLD_Artist
