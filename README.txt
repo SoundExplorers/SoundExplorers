@@ -1,6 +1,6 @@
-Sound Explorers Audio Archive is a project under development whose aim is to facilitate the archiving of audio recordings, together with associated documentation and, where available, videos.
+Sound Explorers Audio Archive is a project under development whose aim is to facilitate the archiving of audio recordings, together with associated documentation, images and videos.
 
-Its intended initial use is to archive the recordings that have been accumulated over several years by New Zealand's Sound and Light Exploration Society ('Sound Explorers') http://www.soundexplorers.co.nz/.  The recordings are mostly of musical performances presented by the society at various locations, mostly its main venue, which is currently the Pyramid Club in Wellington.  
+Its intended initial use is to archive the recordings that have been accumulated over several years by New Zealand's Sound and Light Exploration Society ('Sound Explorers') http://www.soundexplorers.co.nz/.  The recordings are mostly of musical performances presented by Sound Explorers at various locations, mostly its main venue, which is currently the Pyramid Club in Wellington.
 
 However, though development is for Sound Explorers in the first instance, the nature of the data would lend itself to the modification of the software to allow other organisations or individuals to archive similar collections of recordings, probably mostly of music.
 
@@ -12,7 +12,7 @@ The archivists will use a Windows desktop application to document the recordings
 
 A web application, to be developed later, will make the media, metadata and other documents available to the public.
 
-The archivists' application, development of which is well underway, is written in C#, with a Windows Forms graphical user interface.  The provisional storage strategy is for the archivists' application to save the data to a PC-based Postgresql database and provide a facility to export the data to the web application's data store.  However, once we are closer to starting development on the web application, we can consider a switch to having the archivists' application update the web application's data store directly.
+The archivists' application, development of which is well underway, is written in C#, with a Windows Forms graphical user interface.  The provisional storage strategy is for the archivists' application to save the data to a PC-based database and provide a facility to export the data to the web application's data store.  However, once we are closer to starting development on the web application, we can consider a switch to having the archivists' application update the web application's data store directly.
 
 DATA ANALYSIS
 
