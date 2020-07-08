@@ -8,7 +8,7 @@ ARCHITECTURE
 
 Archivists will collate audio and, when available, video recordings of performances and upload them to appropriate web repositories.
 
-The archivists will use a Windows desktop application to document the recordings in a relational database that will contain web links both to the recordings and to related images and archived documents such as newsletters.  So the database may be considered to contain 'metadata'.
+The archivists will use a Windows desktop application to document the recordings in a database that will contain web links both to the recordings and to related images and archived documents such as newsletters.  So the database may be considered to contain 'metadata'.
 
 A web application, to be developed later, will make the media, metadata and other documents available to the public.
 
