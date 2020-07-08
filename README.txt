@@ -16,7 +16,7 @@ The archivists' application, development of which is well underway, is written i
 
 DATA ANALYSIS
 
-The main entities that need to be stored on the relational database are expected to be: Act (usually a music ensemble); Artist (usually a musician); Location (usually a venue); Event (usually a performance but could be a field recording, rehearsal or interview); Newsletter (links to a newsletter that documents one or more events);  Piece (of which a recording is available); Role (usually the instrument a musician played on a piece), Series (such as a festival), Set.
+The main entities that need to be stored on the  database are expected to be: Act (usually a music ensemble); Artist (usually a musician); Location (usually a venue); Event (usually a performance but could be a field recording, rehearsal or interview); Newsletter (links to a newsletter that documents one or more events);  Piece (of which a recording is available); Role (usually the instrument a musician played on a piece), Series (such as a festival), Set.
 
 We will also look at including links to other related documents and images such as fliers, posters and photos.
 
