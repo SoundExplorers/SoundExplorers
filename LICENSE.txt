@@ -1,5 +1,6 @@
 Sound Explorers Audio Archive
 Copyright (c) 2020 Sound and Light Exploration Society
+http://www.soundexplorers.co.nz/
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
