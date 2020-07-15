@@ -81,6 +81,7 @@
     <Compile Include="Data\Newsletter.cs" />
     <Compile Include="Data\Series.cs" />
     <Compile Include="Data\Location.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Data\SchemaVersion.cs" />
     <Compile Include="Tests\Data\DatabaseSchemaTest.cs" />

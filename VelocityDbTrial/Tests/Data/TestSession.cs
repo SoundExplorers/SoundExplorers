@@ -3,7 +3,7 @@ using System.IO;
 using VelocityDb.Session;
 
 namespace SoundExplorersDatabase.Tests.Data {
-  internal class TestSession : SessionNoServer {
+  internal class TestSession : SessionNoServer, IDisposable {
     //private static readonly string _defaultDatabaseFolderPath = "C:\\Simon\\Database";
 
     public string DatabaseFolderPath { get; }
