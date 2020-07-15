@@ -1,23 +1,19 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using VelocityDb.Session;
 
 namespace SoundExplorersDatabase.Data {
-  public class DatabaseSchema : IDisposable {
+  public class DatabaseSchema {
 
-    public DatabaseSchema(int expectedVersionNo, string databaseFolderPath = null) {
+    public DatabaseSchema(int expectedVersionNo, SessionNoServer session) {
       ExpectedVersionNo = expectedVersionNo;
-      if (databaseFolderPath == null) {
-        databaseFolderPath = _defaultDatabaseFolderPath;
-      }
-      Session = new SessionNoServer(databaseFolderPath);
+      Session = session;
     }
 
-    private readonly string _defaultDatabaseFolderPath =
-      "E:\\Simon\\OneDrive\\Documents\\Software\\Sound Explorers Audio Archive\\Database";
+    //private readonly string _defaultDatabaseFolderPath =
+    //  "E:\\Simon\\OneDrive\\Documents\\Software\\Sound Explorers Audio Archive\\Database";
 
     private int ExpectedVersionNo { get; }
-    private bool SchemaExists {
+    private bool Exists {
       get {
         return Session.ContainsDatabase(Session.DatabaseLocations.First(), 1);
       }
@@ -28,7 +24,7 @@ namespace SoundExplorersDatabase.Data {
     public bool IsUpToDate {
       get {
         try {
-          if (SchemaExists) {
+          if (Exists) {
             Version = GetVersionIfExists();
             if (Version == null) {
               return false;
@@ -58,13 +54,9 @@ namespace SoundExplorersDatabase.Data {
       }
     }
 
-    public void Dispose() {
-      Session.Dispose();
-    }
-
     public void Update() {
       try {
-        if (SchemaExists) {
+        if (Exists) {
           Version = GetVersionIfExists();
         }
         Session.BeginUpdate();
@@ -74,6 +66,8 @@ namespace SoundExplorersDatabase.Data {
         }
         Version.Number = ExpectedVersionNo;
         Session.Persist(Version);
+        Session.RegisterClass(typeof(Event));
+        Session.RegisterClass(typeof(Location));
         Session.Commit();
       } catch {
         Session.Abort();
