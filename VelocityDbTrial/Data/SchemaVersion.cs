@@ -1,7 +1,6 @@
 ﻿using System.Linq;
 using VelocityDb;
 using VelocityDb.Session;
-using VelocityDb.TypeInfo;
 
 namespace SoundExplorersDatabase.Data {
   public class SchemaVersion : OptimizedPersistable {
