@@ -4,7 +4,7 @@ using System.IO;
 
 namespace SoundExplorersDatabase.Tests.Data {
   [TestFixture]
-  internal class DatabaseSchemaTest {
+  internal class DatabaseSchemaTests {
 
     [Test]
     public void NewSchema() {
