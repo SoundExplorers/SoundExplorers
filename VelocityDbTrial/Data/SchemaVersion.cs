@@ -8,8 +8,10 @@ namespace SoundExplorersDatabase.Data {
     private int _number;
 
     public int Number {
-      get => _number;
-      private set {
+      get {
+        return _number;
+      }
+      set {
         Update();
         _number = value;
       }
