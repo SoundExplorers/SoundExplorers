@@ -1,6 +1,6 @@
-﻿using NUnit.Framework;
+﻿using System.IO;
+using NUnit.Framework;
 using SoundExplorersDatabase.Data;
-using System.IO;
 
 namespace SoundExplorersDatabase.Tests.Data {
   [TestFixture]
