@@ -20,14 +20,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="87039968-dca6-42d3-85ed-cc2cb8bab507" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/Tests/Data/LocationTests.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.SoundExplorersDatabase/.idea/contentModel.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.SoundExplorersDatabase/.idea/contentModel.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.SoundExplorersDatabase/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.SoundExplorersDatabase/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.vs/SoundExplorersDatabase/v16/TestStore/0/000.testlog" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Data/Location.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Data/Location.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data/SchemaVersion.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Data/SchemaVersion.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Tests/Data/TestSession.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/Data/TestSession.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Tests/SoundExplorersDatabase.Tests.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/SoundExplorersDatabase.Tests.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SoundExplorersDatabase.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/SoundExplorersDatabase.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/Data/LocationTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/Data/LocationTests.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages.config" beforeDir="false" afterPath="$PROJECT_DIR$/packages.config" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -55,8 +52,8 @@
         <option value="$PROJECT_DIR$/Tests/Data/EventTests.cs" />
         <option value="$PROJECT_DIR$/Data/Event.cs" />
         <option value="$PROJECT_DIR$/Data/SchemaVersion.cs" />
-        <option value="$PROJECT_DIR$/Data/Location.cs" />
         <option value="$PROJECT_DIR$/Tests/Data/LocationTests.cs" />
+        <option value="$PROJECT_DIR$/Data/Location.cs" />
       </list>
     </option>
   </component>
@@ -111,6 +108,7 @@
       <workItem from="1594949298976" duration="54000" />
       <workItem from="1594957030009" duration="4318000" />
       <workItem from="1595009927044" duration="3614000" />
+      <workItem from="1595016788338" duration="1369000" />
     </task>
     <servers />
   </component>

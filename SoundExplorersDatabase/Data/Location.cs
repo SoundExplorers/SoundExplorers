@@ -1,11 +1,10 @@
 ﻿using System.Linq;
+using JetBrains.Annotations;
 using VelocityDb;
 using VelocityDb.Collection.BTree;
-using VelocityDb.Collection.BTree.Extensions;
 using VelocityDb.Indexing;
 using VelocityDb.Session;
 using VelocityDb.TypeInfo;
-//using static VelocityDb.Collection.BTree.Extensions.BTreeExtensions;
 
 namespace SoundExplorersDatabase.Data {
   public class Location : ReferenceTracked {
@@ -60,12 +59,12 @@ namespace SoundExplorersDatabase.Data {
       //}
     }
 
-    public static Location Find(string name, SessionBase session) {
-      //return session.Index<Location>("_name").Where().FirstOrDefault();
+    [NotNull] 
+    public static Location Read([NotNull] string name, [NotNull] SessionBase session) {
       return (
         from Location location in session.Index<Location>("_name")
         where location.Name == name
-        select location).FirstOrDefault();
+        select location).First();
     }
   }
 }

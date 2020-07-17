@@ -16,9 +16,8 @@ namespace SoundExplorersDatabase.Tests.Data {
           session.Persist(location);
           session.Commit();
           session.BeginRead();
-          location = Location.Find(name, session);
+          location = Location.Read(name, session);
           session.Commit();
-          Assert.IsNotNull(location, "location found");
           Assert.AreEqual(name, location.Name, "Name");
           Assert.AreEqual(notes, location.Notes, "Notes");
           var duplicate = new Location { Name = name };
