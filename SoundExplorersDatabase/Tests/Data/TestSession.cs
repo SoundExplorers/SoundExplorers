@@ -1,10 +1,14 @@
 ﻿using System;
+using System.Data;
+using System.Diagnostics;
 using System.IO;
+using JetBrains.Annotations;
+using VelocityDb;
 using VelocityDb.Session;
 
 namespace SoundExplorersDatabase.Tests.Data {
   internal class TestSession : SessionNoServer, IDisposable {
-    //private static readonly string _defaultDatabaseFolderPath = "C:\\Simon\\Database";
+    private const string DatabaseParentFolderPath = "C:\\Simon";
 
     public string DatabaseFolderPath { get; }
 
@@ -12,6 +16,7 @@ namespace SoundExplorersDatabase.Tests.Data {
       DatabaseFolderPath = databaseFolderPath;
     }
 
+    [NotNull]
     public static TestSession Create() {
       var databaseFolderPath = GetTempDatabaseFolderPath();
       RemoveFolderIfExists(databaseFolderPath);
@@ -25,18 +30,36 @@ namespace SoundExplorersDatabase.Tests.Data {
       RemoveFolderIfExists(DatabaseFolderPath);
     }
 
+    [NotNull]
+    public OptimizedPersistable ReadUsingIndex(Func<OptimizedPersistable> readFunction) {
+      OptimizedPersistable result;
+      using (var traceWriter = new StringWriter()) {
+        using (var traceListener = new TextWriterTraceListener(traceWriter)) {
+          Trace.Listeners.Add(traceListener);
+          TraceIndexUsage = true;
+          result = readFunction();
+          TraceIndexUsage = false; // Seems not to work
+          Trace.Listeners.Remove(traceListener);
+        }
+        if (!traceWriter.ToString().Contains("Index used")) {
+          throw new DataException("An index was not used.");
+        }
+      }
+      return result;
+    }
+
     private static string GetTempDatabaseFolderPath() {
-      return "C:\\Simon\\Database" + DateTime.Now.Ticks;
+      return DatabaseParentFolderPath + "\\Database" + DateTime.Now.Ticks;
     }
 
     private static void RemoveFolderIfExists(string folderPath) {
-      if (Directory.Exists(folderPath)) {
-        foreach (var filePath in Directory.GetFiles(folderPath)) {
-          File.Delete(filePath);
-        }
-        Directory.Delete(folderPath);
+      if (!Directory.Exists(folderPath)) {
+        return;
       }
+      foreach (var filePath in Directory.GetFiles(folderPath)) {
+        File.Delete(filePath);
+      }
+      Directory.Delete(folderPath);
     }
-
   }
 }

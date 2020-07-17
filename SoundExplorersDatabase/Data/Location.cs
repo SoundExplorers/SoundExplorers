@@ -2,6 +2,7 @@
 using JetBrains.Annotations;
 using VelocityDb;
 using VelocityDb.Collection.BTree;
+using VelocityDb.Collection.BTree.Extensions;
 using VelocityDb.Indexing;
 using VelocityDb.Session;
 using VelocityDb.TypeInfo;
@@ -62,9 +63,14 @@ namespace SoundExplorersDatabase.Data {
     [NotNull] 
     public static Location Read([NotNull] string name, [NotNull] SessionBase session) {
       return (
-        from Location location in session.Index<Location>("_name")
-        where location.Name == name
-        select location).First();
+        session.Index<Location>("_name")
+          .Where(location => location.Name == name)
+        ).First();
+      // Seems not to use the direct index lookup instead of the default Enumerable.Where
+      // return (
+      //   from Location location in session.Index<Location>("_name")
+      //   where location.Name == name
+      //   select location).First();
     }
   }
 }

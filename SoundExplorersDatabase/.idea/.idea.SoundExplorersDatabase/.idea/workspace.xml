@@ -16,15 +16,25 @@
         <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
       </path>
     </expand>
-    <select />
+    <select>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="BRANCH:dev" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </select>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="87039968-dca6-42d3-85ed-cc2cb8bab507" name="Default Changelist" comment="">
+    <list default="true" id="87039968-dca6-42d3-85ed-cc2cb8bab507" name="Default Changelist" comment="Location.Read">
+      <change afterPath="$PROJECT_DIR$/Tests/bin/Debug/JetBrains.Annotations.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/bin/Debug/JetBrains.Annotations.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.SoundExplorersDatabase/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.SoundExplorersDatabase/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Data/Location.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Data/Location.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SoundExplorersDatabase.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/SoundExplorersDatabase.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Program.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Tests/Data/LocationTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/Data/LocationTests.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages.config" beforeDir="false" afterPath="$PROJECT_DIR$/packages.config" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/Data/TestSession.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/Data/TestSession.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/SoundExplorersDatabase.Tests.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/SoundExplorersDatabase.Tests.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/packages.config" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/packages.config" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -38,22 +48,27 @@
     <setting file="file://$PROJECT_DIR$/Data/Location.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/6168E3CE-F6C2-4F8C-A296-0AF06BEA8ABB/c5/ba01176a/SessionNoServer.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Data/Event.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/6168E3CE-F6C2-4F8C-A296-0AF06BEA8ABB/6f/01a225cd/BTreeExtensions.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/4BEC26B5-CBC7-4715-8442-F1499E984732/3f/9f680c12/Int32.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Data/SchemaVersion.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Program.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Tests/Data/SchemaVersionTests.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Tests/Data/TestSession.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/6168E3CE-F6C2-4F8C-A296-0AF06BEA8ABB/3c/8f2b11e3/SessionBase.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Tests/Data/LocationTests.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/862B9365-843C-4BF1-BA93-210C124BB523/c7/bb71d485/ConsoleTraceListener.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/Tests/Data/TestSession.cs" />
         <option value="$PROJECT_DIR$/Tests/Data/SchemaVersionTests.cs" />
         <option value="$PROJECT_DIR$/Tests/Data/EventTests.cs" />
         <option value="$PROJECT_DIR$/Data/Event.cs" />
         <option value="$PROJECT_DIR$/Data/SchemaVersion.cs" />
-        <option value="$PROJECT_DIR$/Tests/Data/LocationTests.cs" />
+        <option value="$PROJECT_DIR$/Program.cs" />
         <option value="$PROJECT_DIR$/Data/Location.cs" />
+        <option value="$PROJECT_DIR$/Tests/Data/TestSession.cs" />
+        <option value="$PROJECT_DIR$/Tests/Data/LocationTests.cs" />
       </list>
     </option>
   </component>
@@ -68,11 +83,13 @@
   <component name="PropertiesComponent">
     <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="ASKED_SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="DebuggerViewTab_PTCS_FirstProportionKey" value="0.35020804" />
+    <property name="DebuggerViewTab_PTCS_LastProportionKey" value="0.30027738" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="settings.editor.selected.configurable" value="SolutionBuilderGeneralOptionsPageId" />
+    <property name="settings.editor.selected.configurable" value="editor.preferences.appearance" />
   </component>
   <component name="RunManager" selected=".NET Project.SoundExplorersDatabase">
     <configuration name="SoundExplorersDatabase" type="DotNetProject" factoryName=".NET Project">
@@ -108,8 +125,16 @@
       <workItem from="1594949298976" duration="54000" />
       <workItem from="1594957030009" duration="4318000" />
       <workItem from="1595009927044" duration="3614000" />
-      <workItem from="1595016788338" duration="1369000" />
+      <workItem from="1595016788338" duration="11683000" />
     </task>
+    <task id="LOCAL-00001" summary="Location.Read">
+      <created>1595018195337</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1595018195337</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="UnitTestsCoverage.Settings">
@@ -132,7 +157,19 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="dev" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
           </value>
         </entry>
       </map>
@@ -142,12 +179,98 @@
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
+    <MESSAGE value="Location.Read" />
+    <option name="LAST_COMMIT_MESSAGE" value="Location.Read" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="160" y="19" key="SettingsEditor" timestamp="1594945198689">
+    <state width="1481" height="317" key="GridCell.Tab.0.bottom" timestamp="1595023078974">
       <screen x="0" y="0" width="1536" height="920" />
     </state>
-    <state x="160" y="19" key="SettingsEditor/0.0.1536.920/1920.0.2194.1234@0.0.1536.920" timestamp="1594945198689" />
+    <state width="1481" height="317" key="GridCell.Tab.0.bottom/0.0.1536.920/1920.0.2194.1234@0.0.1536.920" timestamp="1595023078974" />
+    <state width="1481" height="317" key="GridCell.Tab.0.center" timestamp="1595023078974">
+      <screen x="0" y="0" width="1536" height="920" />
+    </state>
+    <state width="1481" height="317" key="GridCell.Tab.0.center/0.0.1536.920/1920.0.2194.1234@0.0.1536.920" timestamp="1595023078974" />
+    <state width="1481" height="317" key="GridCell.Tab.0.left" timestamp="1595023078974">
+      <screen x="0" y="0" width="1536" height="920" />
+    </state>
+    <state width="1481" height="317" key="GridCell.Tab.0.left/0.0.1536.920/1920.0.2194.1234@0.0.1536.920" timestamp="1595023078974" />
+    <state width="1481" height="317" key="GridCell.Tab.0.right" timestamp="1595023078974">
+      <screen x="0" y="0" width="1536" height="920" />
+    </state>
+    <state width="1481" height="317" key="GridCell.Tab.0.right/0.0.1536.920/1920.0.2194.1234@0.0.1536.920" timestamp="1595023078974" />
+    <state width="1481" height="317" key="GridCell.Tab.1.bottom" timestamp="1595023078974">
+      <screen x="0" y="0" width="1536" height="920" />
+    </state>
+    <state width="1481" height="317" key="GridCell.Tab.1.bottom/0.0.1536.920/1920.0.2194.1234@0.0.1536.920" timestamp="1595023078974" />
+    <state width="1481" height="317" key="GridCell.Tab.1.center" timestamp="1595023078974">
+      <screen x="0" y="0" width="1536" height="920" />
+    </state>
+    <state width="1481" height="317" key="GridCell.Tab.1.center/0.0.1536.920/1920.0.2194.1234@0.0.1536.920" timestamp="1595023078974" />
+    <state width="1481" height="317" key="GridCell.Tab.1.left" timestamp="1595023078974">
+      <screen x="0" y="0" width="1536" height="920" />
+    </state>
+    <state width="1481" height="317" key="GridCell.Tab.1.left/0.0.1536.920/1920.0.2194.1234@0.0.1536.920" timestamp="1595023078974" />
+    <state width="1481" height="317" key="GridCell.Tab.1.right" timestamp="1595023078974">
+      <screen x="0" y="0" width="1536" height="920" />
+    </state>
+    <state width="1481" height="317" key="GridCell.Tab.1.right/0.0.1536.920/1920.0.2194.1234@0.0.1536.920" timestamp="1595023078974" />
+    <state width="1481" height="317" key="GridCell.Tab.2.bottom" timestamp="1595023078975">
+      <screen x="0" y="0" width="1536" height="920" />
+    </state>
+    <state width="1481" height="317" key="GridCell.Tab.2.bottom/0.0.1536.920/1920.0.2194.1234@0.0.1536.920" timestamp="1595023078975" />
+    <state width="1481" height="317" key="GridCell.Tab.2.center" timestamp="1595023078975">
+      <screen x="0" y="0" width="1536" height="920" />
+    </state>
+    <state width="1481" height="317" key="GridCell.Tab.2.center/0.0.1536.920/1920.0.2194.1234@0.0.1536.920" timestamp="1595023078975" />
+    <state width="1481" height="317" key="GridCell.Tab.2.left" timestamp="1595023078975">
+      <screen x="0" y="0" width="1536" height="920" />
+    </state>
+    <state width="1481" height="317" key="GridCell.Tab.2.left/0.0.1536.920/1920.0.2194.1234@0.0.1536.920" timestamp="1595023078975" />
+    <state width="1481" height="317" key="GridCell.Tab.2.right" timestamp="1595023078975">
+      <screen x="0" y="0" width="1536" height="920" />
+    </state>
+    <state width="1481" height="317" key="GridCell.Tab.2.right/0.0.1536.920/1920.0.2194.1234@0.0.1536.920" timestamp="1595023078975" />
+    <state width="1481" height="317" key="GridCell.Tab.3.bottom" timestamp="1595023078975">
+      <screen x="0" y="0" width="1536" height="920" />
+    </state>
+    <state width="1481" height="317" key="GridCell.Tab.3.bottom/0.0.1536.920/1920.0.2194.1234@0.0.1536.920" timestamp="1595023078975" />
+    <state width="1481" height="317" key="GridCell.Tab.3.center" timestamp="1595023078975">
+      <screen x="0" y="0" width="1536" height="920" />
+    </state>
+    <state width="1481" height="317" key="GridCell.Tab.3.center/0.0.1536.920/1920.0.2194.1234@0.0.1536.920" timestamp="1595023078975" />
+    <state width="1481" height="317" key="GridCell.Tab.3.left" timestamp="1595023078975">
+      <screen x="0" y="0" width="1536" height="920" />
+    </state>
+    <state width="1481" height="317" key="GridCell.Tab.3.left/0.0.1536.920/1920.0.2194.1234@0.0.1536.920" timestamp="1595023078975" />
+    <state width="1481" height="317" key="GridCell.Tab.3.right" timestamp="1595023078975">
+      <screen x="0" y="0" width="1536" height="920" />
+    </state>
+    <state width="1481" height="317" key="GridCell.Tab.3.right/0.0.1536.920/1920.0.2194.1234@0.0.1536.920" timestamp="1595023078975" />
+    <state width="1481" height="317" key="GridCell.Tab.4.bottom" timestamp="1595023078976">
+      <screen x="0" y="0" width="1536" height="920" />
+    </state>
+    <state width="1481" height="317" key="GridCell.Tab.4.bottom/0.0.1536.920/1920.0.2194.1234@0.0.1536.920" timestamp="1595023078976" />
+    <state width="1481" height="317" key="GridCell.Tab.4.center" timestamp="1595023078975">
+      <screen x="0" y="0" width="1536" height="920" />
+    </state>
+    <state width="1481" height="317" key="GridCell.Tab.4.center/0.0.1536.920/1920.0.2194.1234@0.0.1536.920" timestamp="1595023078975" />
+    <state width="1481" height="317" key="GridCell.Tab.4.left" timestamp="1595023078975">
+      <screen x="0" y="0" width="1536" height="920" />
+    </state>
+    <state width="1481" height="317" key="GridCell.Tab.4.left/0.0.1536.920/1920.0.2194.1234@0.0.1536.920" timestamp="1595023078975" />
+    <state width="1481" height="317" key="GridCell.Tab.4.right" timestamp="1595023078976">
+      <screen x="0" y="0" width="1536" height="920" />
+    </state>
+    <state width="1481" height="317" key="GridCell.Tab.4.right/0.0.1536.920/1920.0.2194.1234@0.0.1536.920" timestamp="1595023078976" />
+    <state x="160" y="19" key="SettingsEditor" timestamp="1595028480810">
+      <screen x="0" y="0" width="1536" height="920" />
+    </state>
+    <state x="160" y="19" key="SettingsEditor/0.0.1536.920/1920.0.2194.1234@0.0.1536.920" timestamp="1595028480810" />
+    <state x="261" y="128" key="Vcs.Push.Dialog.v2" timestamp="1595018244026">
+      <screen x="0" y="0" width="1536" height="920" />
+    </state>
+    <state x="261" y="128" key="Vcs.Push.Dialog.v2/0.0.1536.920/1920.0.2194.1234@0.0.1536.920" timestamp="1595018244026" />
     <state x="353" y="0" width="829" height="920" key="find.popup" timestamp="1595012844369">
       <screen x="0" y="0" width="1536" height="920" />
     </state>
