@@ -13,7 +13,7 @@ namespace SoundExplorersDatabase.Tests.Data {
     }
 
     public static TestSession Create() {
-      string databaseFolderPath = GetTempDatabaseFolderPath();
+      var databaseFolderPath = GetTempDatabaseFolderPath();
       RemoveFolderIfExists(databaseFolderPath);
       Directory.CreateDirectory(databaseFolderPath);
       var session = new TestSession(databaseFolderPath);
@@ -31,7 +31,7 @@ namespace SoundExplorersDatabase.Tests.Data {
 
     private static void RemoveFolderIfExists(string folderPath) {
       if (Directory.Exists(folderPath)) {
-        foreach (string filePath in Directory.GetFiles(folderPath)) {
+        foreach (var filePath in Directory.GetFiles(folderPath)) {
           File.Delete(filePath);
         }
         Directory.Delete(folderPath);

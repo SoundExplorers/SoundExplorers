@@ -20,116 +20,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="87039968-dca6-42d3-85ed-cc2cb8bab507" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/Tests/SoundExplorersDatabase.Tests.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/App.config" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/Data/Event.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/Data/Location.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/Data/Newsletter.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/Data/SchemaVersion.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/Data/Series.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/Program.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/Properties/AssemblyInfo.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/SoundExplorersDatabase.Tests/Data/SchemaVersionTests.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/SoundExplorersDatabase.Tests/Data/TestSession.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/SoundExplorersDatabase.Tests/Properties/AssemblyInfo.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/SoundExplorersDatabase.Tests/SoundExplorersDatabase.Tests.csproj" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/SoundExplorersDatabase.Tests/bin/Debug/LumenWorks.Framework.IO.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/SoundExplorersDatabase.Tests/bin/Debug/Microsoft.Data.Edm.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/SoundExplorersDatabase.Tests/bin/Debug/Microsoft.Data.OData.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/SoundExplorersDatabase.Tests/bin/Debug/Microsoft.Data.Services.Client.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/SoundExplorersDatabase.Tests/bin/Debug/Newtonsoft.Json.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/SoundExplorersDatabase.Tests/bin/Debug/SoundExplorersDatabase.exe.config" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/SoundExplorersDatabase.Tests/bin/Debug/System.Spatial.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/SoundExplorersDatabase.Tests/bin/Debug/VelocityDb.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/SoundExplorersDatabase.Tests/bin/Debug/nunit.framework.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/SoundExplorersDatabase.Tests/bin/Debug/nunit_random_seed.tmp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/SoundExplorersDatabase.Tests/packages.config" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/SoundExplorersDatabase.TestsX/SoundExplorersDatabase.Tests.csproj" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/SoundExplorersDatabase.csproj" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/SoundExplorersDatabase.sln" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/packages.config" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/packages/LumenWorksCsvReader.4.0.0/.signature.p7s" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/packages/LumenWorksCsvReader.4.0.0/LumenWorksCsvReader.4.0.0.nupkg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/packages/LumenWorksCsvReader.4.0.0/lib/net20/LumenWorks.Framework.IO.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/packages/LumenWorksCsvReader.4.0.0/lib/net35/LumenWorks.Framework.IO.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/packages/LumenWorksCsvReader.4.0.0/lib/net45/LumenWorks.Framework.IO.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/packages/LumenWorksCsvReader.4.0.0/lib/net461/LumenWorks.Framework.IO.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/packages/LumenWorksCsvReader.4.0.0/lib/netstandard1.3/LumenWorks.Framework.IO.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/packages/LumenWorksCsvReader.4.0.0/lib/netstandard2.0/LumenWorks.Framework.IO.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/packages/Microsoft.Data.Edm.5.8.4/.signature.p7s" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/packages/Microsoft.Data.Edm.5.8.4/Microsoft.Data.Edm.5.8.4.nupkg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/packages/Microsoft.Data.Edm.5.8.4/lib/net40/Microsoft.Data.Edm.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/packages/Microsoft.Data.Edm.5.8.4/lib/netstandard1.1/Microsoft.Data.Edm.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/packages/Microsoft.Data.Edm.5.8.4/lib/portable-net40+sl5+wp8+win8+wpa/Microsoft.Data.Edm.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/packages/Microsoft.Data.Edm.5.8.4/lib/portable-net45+wp8+win8+wpa/Microsoft.Data.Edm.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/packages/Microsoft.Data.Edm.5.8.4/lib/sl4/Microsoft.Data.Edm.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/packages/Microsoft.Data.OData.5.8.4/.signature.p7s" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/packages/Microsoft.Data.OData.5.8.4/Microsoft.Data.OData.5.8.4.nupkg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/packages/Microsoft.Data.OData.5.8.4/lib/net40/Microsoft.Data.OData.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/packages/Microsoft.Data.OData.5.8.4/lib/netstandard1.1/Microsoft.Data.OData.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/packages/Microsoft.Data.OData.5.8.4/lib/portable-net40+sl5+wp8+win8+wpa/Microsoft.Data.OData.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/packages/Microsoft.Data.OData.5.8.4/lib/portable-net45+wp8+win8+wpa/Microsoft.Data.OData.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/packages/Microsoft.Data.OData.5.8.4/lib/sl4/Microsoft.Data.OData.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/packages/Microsoft.Data.Services.Client.5.8.4/.signature.p7s" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/packages/Microsoft.Data.Services.Client.5.8.4/Microsoft.Data.Services.Client.5.8.4.nupkg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/packages/Microsoft.Data.Services.Client.5.8.4/lib/net40/Microsoft.Data.Services.Client.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/packages/Microsoft.Data.Services.Client.5.8.4/lib/netstandard1.1/Microsoft.Data.Services.Client.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/packages/Microsoft.Data.Services.Client.5.8.4/lib/portable-net45+wp8+win8+wpa/Microsoft.Data.Services.Client.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/packages/Microsoft.Data.Services.Client.5.8.4/lib/sl4/Microsoft.Data.Services.Client.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/packages/Microsoft.SyncFramework.2.1.0.2/.signature.p7s" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/packages/Microsoft.SyncFramework.2.1.0.2/Microsoft.SyncFramework.2.1.0.2.nupkg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/packages/Microsoft.SyncFramework.2.1.0.2/tools/commands.psm1" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/packages/Microsoft.SyncFramework.2.1.0.2/tools/init.ps1" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/packages/Microsoft.SyncFramework.2.1.0.2/tools/install.ps1" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/packages/Microsoft.SyncFramework.2.1.0.2/tools/uninstall.ps1" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/packages/Microsoft.SyncFramework.2.1.0.2/tools/x64/Synchronization-v2.1-x64-ENU.msi" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/packages/Microsoft.SyncFramework.2.1.0.2/tools/x86/Synchronization-v2.1-x86-ENU.msi" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/packages/NUnit.3.12.0/.signature.p7s" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/packages/NUnit.3.12.0/CHANGES.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/packages/NUnit.3.12.0/LICENSE.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/packages/NUnit.3.12.0/NOTICES.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/packages/NUnit.3.12.0/NUnit.3.12.0.nupkg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/packages/NUnit.3.12.0/build/NUnit.props" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/packages/NUnit.3.12.0/lib/net35/nunit.framework.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/packages/NUnit.3.12.0/lib/net40/nunit.framework.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/packages/NUnit.3.12.0/lib/net45/nunit.framework.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/packages/NUnit.3.12.0/lib/netstandard1.4/nunit.framework.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/packages/NUnit.3.12.0/lib/netstandard2.0/nunit.framework.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/packages/NUnit3TestAdapter.3.17.0/.signature.p7s" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/packages/NUnit3TestAdapter.3.17.0/LICENSE.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/packages/NUnit3TestAdapter.3.17.0/NUnit3TestAdapter.3.17.0.nupkg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/packages/NUnit3TestAdapter.3.17.0/build/net35/NUnit3TestAdapter.props" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/packages/NUnit3TestAdapter.3.17.0/build/netcoreapp2.1/NUnit3TestAdapter.props" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/packages/Newtonsoft.Json.12.0.3/.signature.p7s" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/packages/Newtonsoft.Json.12.0.3/LICENSE.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/packages/Newtonsoft.Json.12.0.3/Newtonsoft.Json.12.0.3.nupkg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/packages/Newtonsoft.Json.12.0.3/lib/net20/Newtonsoft.Json.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/packages/Newtonsoft.Json.12.0.3/lib/net35/Newtonsoft.Json.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/packages/Newtonsoft.Json.12.0.3/lib/net40/Newtonsoft.Json.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/packages/Newtonsoft.Json.12.0.3/lib/net45/Newtonsoft.Json.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/packages/Newtonsoft.Json.12.0.3/lib/netstandard1.0/Newtonsoft.Json.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/packages/Newtonsoft.Json.12.0.3/lib/netstandard1.3/Newtonsoft.Json.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/packages/Newtonsoft.Json.12.0.3/lib/netstandard2.0/Newtonsoft.Json.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/packages/Newtonsoft.Json.12.0.3/lib/portable-net40+sl5+win8+wp8+wpa81/Newtonsoft.Json.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/packages/Newtonsoft.Json.12.0.3/lib/portable-net45+win8+wp8+wpa81/Newtonsoft.Json.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/packages/Newtonsoft.Json.12.0.3/packageIcon.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/packages/System.Spatial.5.8.4/.signature.p7s" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/packages/System.Spatial.5.8.4/System.Spatial.5.8.4.nupkg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/packages/System.Spatial.5.8.4/lib/net40/System.Spatial.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/packages/System.Spatial.5.8.4/lib/netstandard1.1/System.Spatial.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/packages/System.Spatial.5.8.4/lib/portable-net40+sl5+wp8+win8+wpa/System.Spatial.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/packages/System.Spatial.5.8.4/lib/portable-net45+wp8+win8+wpa/System.Spatial.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/packages/System.Spatial.5.8.4/lib/sl4/System.Spatial.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/packages/VelocityDB.9.1.0/.signature.p7s" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/packages/VelocityDB.9.1.0/Eula.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/packages/VelocityDB.9.1.0/VelocityDB.9.1.0.nupkg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/packages/VelocityDB.9.1.0/lib/.NETStandard,Version=v2.0/VelocityDb.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/packages/VelocityDB.9.1.0/lib/Xamarin.iOS,Version=v1.0/VelocityDb.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/packages/VelocityDB.9.1.0/lib/net45/VelocityDb.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/packages/VelocityDB.9.1.0/lib/win10/VelocityDb.XML" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/packages/VelocityDBExtensions.9.1.0/.signature.p7s" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/packages/VelocityDBExtensions.9.1.0/Eula.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../VelocityDbTrial/packages/VelocityDBExtensions.9.1.0/VelocityDBExtensions.9.1.0.nupkg" beforeDir="false" />
+      <change afterPath="$PROJECT_DIR$/Tests/Data/LocationTests.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.SoundExplorersDatabase/.idea/contentModel.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.SoundExplorersDatabase/.idea/contentModel.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.SoundExplorersDatabase/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.SoundExplorersDatabase/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.vs/SoundExplorersDatabase/v16/TestStore/0/000.testlog" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Location.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Data/Location.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/SchemaVersion.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Data/SchemaVersion.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/Data/TestSession.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/Data/TestSession.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/SoundExplorersDatabase.Tests.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/SoundExplorersDatabase.Tests.csproj" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -140,15 +38,25 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
   <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/Data/Location.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/6168E3CE-F6C2-4F8C-A296-0AF06BEA8ABB/c5/ba01176a/SessionNoServer.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Data/Event.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Data/SchemaVersion.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Tests/Data/SchemaVersionTests.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Tests/Data/TestSession.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/6168E3CE-F6C2-4F8C-A296-0AF06BEA8ABB/3c/8f2b11e3/SessionBase.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Tests/Data/LocationTests.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/Tests/Data/TestSession.cs" />
         <option value="$PROJECT_DIR$/Tests/Data/SchemaVersionTests.cs" />
+        <option value="$PROJECT_DIR$/Tests/Data/EventTests.cs" />
+        <option value="$PROJECT_DIR$/Data/Event.cs" />
+        <option value="$PROJECT_DIR$/Data/SchemaVersion.cs" />
+        <option value="$PROJECT_DIR$/Data/Location.cs" />
+        <option value="$PROJECT_DIR$/Tests/Data/LocationTests.cs" />
       </list>
     </option>
   </component>
@@ -201,6 +109,8 @@
       <workItem from="1594948350133" duration="777000" />
       <workItem from="1594949147322" duration="57000" />
       <workItem from="1594949298976" duration="54000" />
+      <workItem from="1594957030009" duration="4318000" />
+      <workItem from="1595009927044" duration="3614000" />
     </task>
     <servers />
   </component>
@@ -208,7 +118,7 @@
     <option name="coveragePercentColumnWidth" value="188" />
     <option name="sortOrder" value="DESCENDING" />
     <option name="sortedColumn" value="1" />
-    <option name="symbolColumnWidth" value="229" />
+    <option name="symbolColumnWidth" value="255" />
     <coverage-tree-state>
       <expand>
         <path>
@@ -240,5 +150,13 @@
       <screen x="0" y="0" width="1536" height="920" />
     </state>
     <state x="160" y="19" key="SettingsEditor/0.0.1536.920/1920.0.2194.1234@0.0.1536.920" timestamp="1594945198689" />
+    <state x="353" y="0" width="829" height="920" key="find.popup" timestamp="1595012844369">
+      <screen x="0" y="0" width="1536" height="920" />
+    </state>
+    <state x="353" y="0" width="829" height="920" key="find.popup/0.0.1536.920/1920.0.2194.1234@0.0.1536.920" timestamp="1595012844369" />
+    <state x="347" y="0" width="840" height="918" key="search.everywhere.popup" timestamp="1595012689326">
+      <screen x="0" y="0" width="1536" height="920" />
+    </state>
+    <state x="347" y="0" width="840" height="918" key="search.everywhere.popup/0.0.1536.920/1920.0.2194.1234@0.0.1536.920" timestamp="1595012689326" />
   </component>
 </project>

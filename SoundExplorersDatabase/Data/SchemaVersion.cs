@@ -23,11 +23,11 @@ namespace SoundExplorersDatabase.Data {
     private SchemaVersion() {
     }
 
-    public static SchemaVersion Read(int expectedNumber, SessionNoServer session) {
+    public static SchemaVersion Read(int expectedNumber, SessionBase session) {
       SchemaVersion version = null;
       try {
         if (SchemaExists(session)) {
-          version = FindVersion(session);
+          version = Find(session);
         }
         if (version == null) {
           version = AddVersion(session);
@@ -53,7 +53,7 @@ namespace SoundExplorersDatabase.Data {
       }
     }
 
-    private static SchemaVersion AddVersion(SessionNoServer session) {
+    private static SchemaVersion AddVersion(SessionBase session) {
       session.BeginUpdate();
       session.RegisterClass(typeof(SchemaVersion));
       var version = new SchemaVersion();
@@ -62,14 +62,14 @@ namespace SoundExplorersDatabase.Data {
       return version;
     }
 
-    private static SchemaVersion FindVersion(SessionNoServer session) {
+    private static SchemaVersion Find(SessionBase session) {
       session.BeginRead();
-      SchemaVersion version = session.AllObjects<SchemaVersion>().FirstOrDefault();
+      var version = session.AllObjects<SchemaVersion>().FirstOrDefault();
       session.Commit();
       return version;
     }
 
-    private static bool SchemaExists(SessionNoServer session) {
+    private static bool SchemaExists(SessionBase session) {
       return session.ContainsDatabase(session.DatabaseLocations.First(), dbNum: 1);
     }
 

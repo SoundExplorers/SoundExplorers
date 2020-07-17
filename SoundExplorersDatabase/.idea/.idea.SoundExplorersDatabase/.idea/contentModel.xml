@@ -25,6 +25,7 @@
       <e p="Tests" t="IncludeRecursive">
         <e p="bin" t="ExcludeRecursive" />
         <e p="Data" t="Include">
+          <e p="LocationTests.cs" t="Include" />
           <e p="SchemaVersionTests.cs" t="Include" />
           <e p="TestSession.cs" t="Include" />
         </e>
