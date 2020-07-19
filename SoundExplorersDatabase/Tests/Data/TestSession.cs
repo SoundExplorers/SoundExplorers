@@ -10,20 +10,11 @@ namespace SoundExplorersDatabase.Tests.Data {
   internal class TestSession : SessionNoServer, IDisposable {
     private const string DatabaseParentFolderPath = "C:\\Simon";
 
-    public string DatabaseFolderPath { get; }
-
     private TestSession(string databaseFolderPath) : base(databaseFolderPath) {
       DatabaseFolderPath = databaseFolderPath;
     }
 
-    [NotNull]
-    public static TestSession Create() {
-      var databaseFolderPath = GetTempDatabaseFolderPath();
-      RemoveFolderIfExists(databaseFolderPath);
-      Directory.CreateDirectory(databaseFolderPath);
-      var session = new TestSession(databaseFolderPath);
-      return session;
-    }
+    public string DatabaseFolderPath { get; }
 
     public new void Dispose() {
       base.Dispose();
@@ -31,7 +22,20 @@ namespace SoundExplorersDatabase.Tests.Data {
     }
 
     [NotNull]
-    public OptimizedPersistable ReadUsingIndex(Func<OptimizedPersistable> readFunction) {
+    public static TestSession Create() {
+      string databaseFolderPath = GetTempDatabaseFolderPath();
+      RemoveFolderIfExists(databaseFolderPath);
+      Directory.CreateDirectory(databaseFolderPath);
+      File.Copy(
+        @"E:\Simon\OneDrive\Documents\My Installers\VelocityDB\License Database\4.odb",
+        databaseFolderPath + @"\" + "4.odb");
+      var session = new TestSession(databaseFolderPath);
+      return session;
+    }
+
+    [NotNull]
+    public OptimizedPersistable ReadUsingIndex(
+      Func<OptimizedPersistable> readFunction) {
       OptimizedPersistable result;
       using (var traceWriter = new StringWriter()) {
         using (var traceListener = new TextWriterTraceListener(traceWriter)) {
@@ -56,9 +60,8 @@ namespace SoundExplorersDatabase.Tests.Data {
       if (!Directory.Exists(folderPath)) {
         return;
       }
-      foreach (var filePath in Directory.GetFiles(folderPath)) {
+      foreach (string filePath in Directory.GetFiles(folderPath))
         File.Delete(filePath);
-      }
       Directory.Delete(folderPath);
     }
   }

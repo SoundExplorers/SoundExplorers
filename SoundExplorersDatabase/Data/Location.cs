@@ -1,7 +1,6 @@
 ﻿using System.Linq;
 using JetBrains.Annotations;
 using VelocityDb;
-using VelocityDb.Collection.BTree;
 using VelocityDb.Collection.BTree.Extensions;
 using VelocityDb.Indexing;
 using VelocityDb.Session;
@@ -9,20 +8,20 @@ using VelocityDb.TypeInfo;
 
 namespace SoundExplorersDatabase.Data {
   public class Location : ReferenceTracked {
+    private LocationEvents _events;
 
-    [Index]
-    [UniqueConstraint]
-    private string _name;
+    [Index] [UniqueConstraint] private string _name;
 
     private string _notes;
 
-    BTreeSet<Event> _events;
+    public Location([NotNull] string name) {
+      Name = name;
+    }
 
     [FieldAccessor("_name")]
+    [PublicAPI]
     public string Name {
-      get {
-        return _name;
-      }
+      get => _name;
       set {
         Update();
         _name = value;
@@ -30,47 +29,40 @@ namespace SoundExplorersDatabase.Data {
     }
 
     public string Notes {
-      get {
-        return _notes;
-      }
+      get => _notes;
       set {
         Update();
         _notes = value;
       }
     }
 
-    public BTreeSet<Event> Events {
+    public LocationEvents Events {
       get {
+        if (_events != null) {
+          return _events;
+        }
+        Update();
+        _events = new LocationEvents(this);
         return _events;
       }
-      set {
-        Update();
-        _events = value;
-      }
     }
 
-    public void AddEvent(Event @event) {
-      if (Events == null) {
-        Events = new BTreeSet<Event>();
-      }
-      Events.Add(@event);
-      //if (Events.Add(@event)) {
-      //  var reference = new Reference(_events, "_events");
-      //  @event.References.AddFast(reference);
-      //}
-    }
-
-    [NotNull] 
-    public static Location Read([NotNull] string name, [NotNull] SessionBase session) {
-      return (
-        session.Index<Location>("_name")
-          .Where(location => location.Name == name)
-        ).First();
+    [NotNull]
+    public static Location Read([NotNull] string name,
+      [NotNull] SessionBase session) {
+      // ReSharper disable once ReplaceWithSingleCallToFirst
+      return session.Index<Location>("_name")
+        .Where(location => location.Name == name).First();
       // Seems not to use the direct index lookup instead of the default Enumerable.Where
+      //
       // return (
       //   from Location location in session.Index<Location>("_name")
       //   where location.Name == name
       //   select location).First();
+      //
+      // return session
+      //   .Index<Location>("_name")
+      //   .First(location => location.Name == name);
     }
   }
 }

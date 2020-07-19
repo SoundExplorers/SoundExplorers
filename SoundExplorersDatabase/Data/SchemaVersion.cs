@@ -1,16 +1,16 @@
 ﻿using System.Linq;
+using JetBrains.Annotations;
 using VelocityDb;
 using VelocityDb.Session;
 
 namespace SoundExplorersDatabase.Data {
   public class SchemaVersion : OptimizedPersistable {
-
     private int _number;
 
+    private SchemaVersion() { }
+
     public int Number {
-      get {
-        return _number;
-      }
+      get => _number;
       set {
         Update();
         _number = value;
@@ -19,9 +19,6 @@ namespace SoundExplorersDatabase.Data {
 
     public int ExpectedNumber { get; private set; }
     public bool IsUpToDate => Number == ExpectedNumber;
-
-    private SchemaVersion() {
-    }
 
     public static SchemaVersion Read(int expectedNumber, SessionBase session) {
       SchemaVersion version = null;
@@ -32,7 +29,8 @@ namespace SoundExplorersDatabase.Data {
         if (version == null) {
           version = AddVersion(session);
         }
-      } catch {
+      }
+      catch {
         session.Abort();
         throw;
       }
@@ -47,7 +45,8 @@ namespace SoundExplorersDatabase.Data {
         Session.RegisterClass(typeof(Location));
         Number = ExpectedNumber;
         Session.Commit();
-      } catch {
+      }
+      catch {
         Session.Abort();
         throw;
       }
@@ -62,16 +61,16 @@ namespace SoundExplorersDatabase.Data {
       return version;
     }
 
-    private static SchemaVersion Find(SessionBase session) {
+    [CanBeNull]
+    private static SchemaVersion Find([NotNull] SessionBase session) {
       session.BeginRead();
       var version = session.AllObjects<SchemaVersion>().FirstOrDefault();
       session.Commit();
       return version;
     }
 
-    private static bool SchemaExists(SessionBase session) {
-      return session.ContainsDatabase(session.DatabaseLocations.First(), dbNum: 1);
+    private static bool SchemaExists([NotNull] SessionBase session) {
+      return session.ContainsDatabase(session.DatabaseLocations.First(), 1);
     }
-
   }
 }

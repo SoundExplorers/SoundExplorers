@@ -77,6 +77,7 @@
   <ItemGroup>
     <Compile Include="Data\Event.cs" />
     <Compile Include="Data\Newsletter.cs" />
+    <Compile Include="Data\LocationEvents.cs" />
     <Compile Include="Data\Series.cs" />
     <Compile Include="Data\Location.cs" />
     <Compile Include="Program.cs" />

@@ -5,20 +5,15 @@ using VelocityDb.TypeInfo;
 
 namespace SoundExplorersDatabase.Data {
   public class Series : ReferenceTracked {
+    private BTreeSet<Event> _events;
 
-    [Index]
-    [UniqueConstraint]
-    private string _name;
+    [Index] [UniqueConstraint] private string _name;
 
     private string _notes;
 
-    BTreeSet<Event> _events;
-
     [FieldAccessor("_name")]
     public string Name {
-      get {
-        return _name;
-      }
+      get => _name;
       set {
         Update();
         _name = value;
@@ -26,9 +21,7 @@ namespace SoundExplorersDatabase.Data {
     }
 
     public string Notes {
-      get {
-        return _notes;
-      }
+      get => _notes;
       set {
         Update();
         _notes = value;
@@ -36,9 +29,7 @@ namespace SoundExplorersDatabase.Data {
     }
 
     public BTreeSet<Event> Events {
-      get {
-        return _events;
-      }
+      get => _events;
       set {
         Update();
         _events = value;
@@ -55,6 +46,5 @@ namespace SoundExplorersDatabase.Data {
       //  @event.References.AddFast(reference);
       //}
     }
-
   }
 }

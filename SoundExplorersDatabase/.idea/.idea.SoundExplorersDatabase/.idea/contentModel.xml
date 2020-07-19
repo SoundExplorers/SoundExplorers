@@ -9,6 +9,7 @@
       <e p="Data" t="Include">
         <e p="Event.cs" t="Include" />
         <e p="Location.cs" t="Include" />
+        <e p="LocationEvents.cs" t="Include" />
         <e p="Newsletter.cs" t="Include" />
         <e p="SchemaVersion.cs" t="Include" />
         <e p="Series.cs" t="Include" />
@@ -25,6 +26,7 @@
       <e p="Tests" t="IncludeRecursive">
         <e p="bin" t="ExcludeRecursive" />
         <e p="Data" t="Include">
+          <e p="EventTests.cs" t="Include" />
           <e p="LocationTests.cs" t="Include" />
           <e p="SchemaVersionTests.cs" t="Include" />
           <e p="TestSession.cs" t="Include" />

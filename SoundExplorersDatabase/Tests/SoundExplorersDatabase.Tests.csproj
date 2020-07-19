@@ -82,6 +82,7 @@
         </Reference>
     </ItemGroup>
     <ItemGroup>
+        <Compile Include="Data\EventTests.cs" />
         <Compile Include="Data\LocationTests.cs" />
         <Compile Include="Data\SchemaVersionTests.cs" />
         <Compile Include="Data\TestSession.cs" />

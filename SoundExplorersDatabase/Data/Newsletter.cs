@@ -6,22 +6,15 @@ using VelocityDb.TypeInfo;
 
 namespace SoundExplorersDatabase.Data {
   public class Newsletter : ReferenceTracked {
+    [Index] [UniqueConstraint] private DateTime _date;
 
-    [Index]
-    [UniqueConstraint]
-    private DateTime _date;
+    private BTreeSet<Event> _events;
 
-    [Index]
-    [UniqueConstraint]
-    private string _path;
-
-    BTreeSet<Event> _events;
+    [Index] [UniqueConstraint] private string _path;
 
     [FieldAccessor("_date")]
     public DateTime Date {
-      get {
-        return _date;
-      }
+      get => _date;
       set {
         Update();
         _date = value;
@@ -30,9 +23,7 @@ namespace SoundExplorersDatabase.Data {
 
     [FieldAccessor("_path")]
     public string Path {
-      get {
-        return _path;
-      }
+      get => _path;
       set {
         Update();
         _path = value;
@@ -40,9 +31,7 @@ namespace SoundExplorersDatabase.Data {
     }
 
     public BTreeSet<Event> Events {
-      get {
-        return _events;
-      }
+      get => _events;
       set {
         Update();
         _events = value;
@@ -59,6 +48,5 @@ namespace SoundExplorersDatabase.Data {
       //  @event.References.AddFast(reference);
       //}
     }
-
   }
 }
