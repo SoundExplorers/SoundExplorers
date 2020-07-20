@@ -29,20 +29,16 @@ namespace SoundExplorersDatabase.Data {
       }
     }
 
-    // private bool HasLocationChanged { get; set; }
-    // private Location OldLocation { get; set; }
-
     public Location Location {
       get => _location;
       set {
-        if (!value.Equals(_location)) {
-          // HasLocationChanged = true;
-          // OldLocation = _location;
-          _location?.RemoveEvent(this);
-          value.AddEvent(this);
-          Update();
-          _location = value;
+        if (value.Equals(_location)) {
+          return;
         }
+        _location?.Events.Remove(this);
+        value?.Events.Add(this);
+        Update();
+        _location = value;
       }
     }
 
@@ -53,25 +49,6 @@ namespace SoundExplorersDatabase.Data {
         _notes = value;
       }
     }
-
-    // public override ulong Persist(Placement place, SessionBase session,
-    //   bool persistRefs = true,
-    //   bool disableFlush = false, Queue<IOptimizedPersistable> toPersist = null) {
-    //   ulong result = base.Persist(place, session, persistRefs, disableFlush, toPersist);
-    //   if (HasLocationChanged) {
-    //     if (OldLocation != null && OldLocation.Events.Contains(this)) {
-    //       OldLocation.Events.Remove(this);
-    //       session.Persist(OldLocation);
-    //     }
-    //     if (!Location.Events.Contains(this)) {
-    //       Location.Events.Add(this);
-    //       session.Persist(Location);
-    //     }
-    //     HasLocationChanged = false;
-    //     OldLocation = null;
-    //   }
-    //   return result;
-    // }
 
     [NotNull]
     public static Event Read(DateTime date, [NotNull] Location location,

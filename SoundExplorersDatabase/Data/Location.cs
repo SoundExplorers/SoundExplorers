@@ -9,14 +9,13 @@ using VelocityDb.TypeInfo;
 
 namespace SoundExplorersDatabase.Data {
   public class Location : ReferenceTracked {
-    private BTreeSet<Event> _events;
-
+    private LocationEvents _events;
     [Index] [UniqueConstraint] private string _name;
-
     private string _notes;
 
     public Location([NotNull] string name) {
       Name = name;
+      //Events = new LocationEvents();
     }
 
     [FieldAccessor("_name")]
@@ -37,24 +36,8 @@ namespace SoundExplorersDatabase.Data {
       }
     }
 
-    public BTreeSet<Event> Events { get; private set; }
-
-    internal void AddEvent(Event @event) {
-      if (Events == null) {
-        Events = new BTreeSet<Event>();
-      }
-      if (Events.Add(@event)) {
-        var reference = new Reference(_events, "_events");
-        @event.References.AddFast(reference);
-      }
-    }
-
-    internal void RemoveEvent(Event @event) {
-      if (Events.Remove(@event)) {
-        @event.References.Remove(
-          @event.References.First(r => r.To.Equals(Events)));
-      }
-    }
+    public LocationEvents Events => 
+      _events ?? (_events =  new LocationEvents(this));
 
     [NotNull]
     public static Location Read([NotNull] string name,
@@ -62,13 +45,13 @@ namespace SoundExplorersDatabase.Data {
       // ReSharper disable once ReplaceWithSingleCallToFirst
       return session.Index<Location>("_name")
         .Where(location => location.Name == name).First();
-      // Seems not to use the direct index lookup instead of the default Enumerable.Where
-      //
+      // Seems not to use the direct index lookup instead of the default Enumerable.Where:
       // return (
       //   from Location location in session.Index<Location>("_name")
       //   where location.Name == name
       //   select location).First();
       //
+      // Same with this.
       // return session
       //   .Index<Location>("_name")
       //   .First(location => location.Name == name);

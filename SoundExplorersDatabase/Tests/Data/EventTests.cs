@@ -42,6 +42,26 @@ namespace SoundExplorersDatabase.Tests.Data {
       Assert.AreSame(Event1, location1Child1, "Event1 same as location1Child1");
     }
 
+    private void DisallowUnpersistLocationWithEvent() {
+      using (var session = new TestSession(DatabaseFolderPath)) {
+        session.BeginUpdate();
+        Location1 = Location.Read(Location1Name, session);
+        Assert.AreEqual(1, Location1.Events.Count, "Location1.Events.Count");
+        Assert.Throws<ReferentialIntegrityException>(() => Location1.Unpersist(session));
+        session.Commit();
+      }
+    }
+
+    private void DisallowDuplicate() {
+      var duplicate = new Event(Date1, Location1);
+      using (var session = new TestSession(DatabaseFolderPath)) {
+        session.BeginUpdate();
+        Assert.Throws<UniqueConstraintException>(
+          () => session.Persist(duplicate), "Duplicate not allowed");
+        session.Commit();
+      }
+    }
+
     private void AddUnpersistedEvent2ToPersistedLocation1() {
       Event location1Child2;
       Event2 = new Event(Date2, Location1);
@@ -58,32 +78,11 @@ namespace SoundExplorersDatabase.Tests.Data {
       Assert.AreSame(Event2, location1Child2, "Event2 same as location1Child2");
     }
 
-    private void DisallowDuplicate() {
-      var duplicate = new Event(Date1, Location1);
-      using (var session = new TestSession(DatabaseFolderPath)) {
-        session.BeginUpdate();
-        Assert.Throws<UniqueConstraintException>(
-          () => session.Persist(duplicate), "Duplicate not allowed");
-        session.Commit();
-      }
-    }
-
     private void DisallowMovePersistedEvent2ToUnpersistedLocation2() {
       Location2 = new Location(Location2Name);
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
         Assert.Throws<UnexpectedException>(() => Location2.Events.Add(Event2));
-        session.Commit();
-      }
-    }
-
-    private void DisallowUnpersistLocationWithEvent() {
-      using (var session = new TestSession(DatabaseFolderPath)) {
-        session.BeginUpdate();
-        Location1 = Location.Read(Location1Name, session);
-        Assert.AreEqual(1, Location1.Events.Count, "Location1.Events.Count");
-        Assert.AreEqual(1, Location1.References.Count, "Location1.References.Count");
-        Assert.Throws<ReferentialIntegrityException>(() => Location1.Unpersist(session));
         session.Commit();
       }
     }
