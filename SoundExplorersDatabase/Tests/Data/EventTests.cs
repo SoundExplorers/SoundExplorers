@@ -7,57 +7,118 @@ using VelocityDb.Exceptions;
 namespace SoundExplorersDatabase.Tests.Data {
   [TestFixture]
   public class EventTests {
-    [Test]
-    public void Persist() {
-      var date1 = DateTime.Today.AddDays(-1);
-      var date2 = DateTime.Today;
-      const string location1Name = "Fred's";
-      const string location2Name = "Pyramid Club";
-      const string event1Notes = "My notes.";
-      using (var session = TestSession.Create()) {
-        var location1 = new Location(location1Name);
-        var event1 = new Event(date1, location1) {Notes = event1Notes};
+    private const string Event1Notes = "My notes.";
+    private const string Location1Name = "Fred's";
+    private const string Location2Name = "Pyramid Club";
+
+    private string DatabaseFolderPath { get; set; }
+    private DateTime Date1 { get; set; }
+    private DateTime Date2 { get; set; }
+    private Event Event1 { get; set; }
+    private Event Event2 { get; set; }
+    private Location Location1 { get; set; }
+    private Location Location2 { get; set; }
+
+    private void AddUnpersistedEvent1ToUnpersistedLocation1() {
+      Event location1Child1;
+      Location1 = new Location(Location1Name);
+      Event1 = new Event(Date1, Location1) {Notes = Event1Notes};
+      using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
-        session.Persist(location1);
-        session.Persist(event1);
+        session.Persist(Location1);
+        session.Persist(Event1);
         session.Commit();
         session.BeginRead();
-        event1 = Event.Read(date1, location1, session);
-        Assert.AreSame(location1, event1.Location, "location1 same as event1.Location");
-        Assert.IsNotNull(event1.Location.Events, "event1.Location.Events exist");
-        Assert.AreEqual(1, event1.Location.Events.Count, "event1.Location.Events.Count");
-        var location1Child1 = event1.Location.Events.First();
+        Event1 = Event.Read(Date1, Location1, session);
+        Assert.AreSame(Location1, Event1.Location, "Location1 same as Event1.Location");
+        Assert.IsNotNull(Event1.Location.Events, "Event1.Location.Events exist");
+        Assert.AreEqual(1, Event1.Location.Events.Count, "Event1.Location.Events.Count");
+        location1Child1 = Event1.Location.Events.First();
         session.Commit();
-        Assert.AreEqual(date1, event1.Date, "event1.Date");
-        Assert.AreEqual(event1Notes, event1.Notes, "event1.Notes");
-        Assert.AreEqual(location1Name, event1.Location.Name, "event1.Location.Name");
-        Assert.AreSame(event1, location1Child1, "event1 same as location1Child1");
-        var event2 = new Event(date2, location1);
+      }
+      Assert.AreEqual(Date1, Event1.Date, "Event1.Date");
+      Assert.AreEqual(Event1Notes, Event1.Notes, "Event1.Notes");
+      Assert.AreEqual(Location1Name, Event1.Location.Name, "Event1.Location.Name");
+      Assert.AreSame(Event1, location1Child1, "Event1 same as location1Child1");
+    }
+
+    private void AddUnpersistedEvent2ToPersistedLocation1() {
+      Event location1Child2;
+      Event2 = new Event(Date2, Location1);
+      using (var session = new TestSession()) {
         session.BeginUpdate();
-        session.Persist(event2);
-        Assert.AreSame(location1, event2.Location, "location1 same as event2.Location");
-        Assert.IsNotNull(event2.Location.Events, "event2.Location.Events exist");
-        Assert.AreEqual(2, event2.Location.Events.Count, "event2.Location.Events.Count");
-        var location1Child2 = event2.Location.Events.ToArray()[1];
+        session.Persist(Event2);
+        Assert.AreSame(Location1, Event2.Location, "Location1 same as Event2.Location");
+        Assert.IsNotNull(Event2.Location.Events, "Event2.Location.Events exist");
+        Assert.AreEqual(2, Event2.Location.Events.Count, "Event2.Location.Events.Count");
+        location1Child2 = Event2.Location.Events.ToArray()[1];
         session.Commit();
-        Assert.AreEqual(date2, event2.Date, "event2.Date");
-        Assert.AreSame(event2, location1Child2, "event2 same as location1Child2");
-        var duplicate = new Event(date1, location1);
+      }
+      Assert.AreEqual(Date2, Event2.Date, "Event2.Date");
+      Assert.AreSame(Event2, location1Child2, "Event2 same as location1Child2");
+    }
+
+    private void DisallowDuplicate() {
+      var duplicate = new Event(Date1, Location1);
+      using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
         Assert.Throws<UniqueConstraintException>(
           () => session.Persist(duplicate), "Duplicate not allowed");
         session.Commit();
-        var location2 = new Location(location2Name);
+      }
+    }
+
+    private void DisallowMovePersistedEvent2ToUnpersistedLocation2() {
+      Location2 = new Location(Location2Name);
+      using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
-        location2.Events.Add(event2);
-        session.Persist(location2);
-        Assert.AreSame(location2, event2.Location, "location2 same as event2.Location");
-        Assert.IsNotNull(location2.Events, "location2.Events exist");
-        Assert.AreEqual(1, location2.Events.Count, "location2.Events.Count");
-        Assert.AreEqual(1, location1.Events.Count, "location1.Events.Count");
-        var location2Child1 = location2.Events.First();
+        Assert.Throws<UnexpectedException>(() => Location2.Events.Add(Event2));
         session.Commit();
-        Assert.AreSame(event2, location2Child1, "event1 same as location2Child1");
+      }
+    }
+
+    private void DisallowUnpersistLocationWithEvent() {
+      using (var session = new TestSession(DatabaseFolderPath)) {
+        session.BeginUpdate();
+        Location1 = Location.Read(Location1Name, session);
+        Assert.AreEqual(1, Location1.Events.Count, "Location1.Events.Count");
+        Assert.AreEqual(1, Location1.References.Count, "Location1.References.Count");
+        Assert.Throws<ReferentialIntegrityException>(() => Location1.Unpersist(session));
+        session.Commit();
+      }
+    }
+
+    private void MovePersistedEvent2ToPersistedLocation2() {
+      Event location2Child1;
+      using (var session = new TestSession(DatabaseFolderPath)) {
+        session.BeginUpdate();
+        session.Persist(Location2);
+        Location2.Events.Add(Event2);
+        Assert.AreSame(Location2, Event2.Location, "Location2 same as Event2.Location");
+        Assert.IsNotNull(Location2.Events, "Location2.Events exist");
+        Assert.AreEqual(1, Location2.Events.Count, "Location2.Events.Count");
+        Assert.AreEqual(1, Location1.Events.Count, "Location1.Events.Count");
+        location2Child1 = Location2.Events.First();
+        session.Commit();
+      }
+      Assert.AreSame(Event2, location2Child1, "Event1 same as location2Child1");
+    }
+
+    [Test]
+    public void Multiple() {
+      Date1 = DateTime.Today.AddDays(-1);
+      Date2 = DateTime.Today;
+      DatabaseFolderPath = TestSession.CreateDatabaseFolder();
+      try {
+        AddUnpersistedEvent1ToUnpersistedLocation1();
+        DisallowUnpersistLocationWithEvent();
+        DisallowDuplicate();
+        AddUnpersistedEvent2ToPersistedLocation1();
+        DisallowMovePersistedEvent2ToUnpersistedLocation2();
+        MovePersistedEvent2ToPersistedLocation2();
+      }
+      finally {
+        TestSession.DeleteFolderIfExists(DatabaseFolderPath);
       }
     }
   }

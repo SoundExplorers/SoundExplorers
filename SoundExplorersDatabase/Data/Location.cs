@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using JetBrains.Annotations;
 using VelocityDb;
+using VelocityDb.Collection.BTree;
 using VelocityDb.Collection.BTree.Extensions;
 using VelocityDb.Indexing;
 using VelocityDb.Session;
@@ -8,7 +9,7 @@ using VelocityDb.TypeInfo;
 
 namespace SoundExplorersDatabase.Data {
   public class Location : ReferenceTracked {
-    private LocationEvents _events;
+    private BTreeSet<Event> _events;
 
     [Index] [UniqueConstraint] private string _name;
 
@@ -36,14 +37,22 @@ namespace SoundExplorersDatabase.Data {
       }
     }
 
-    public LocationEvents Events {
-      get {
-        if (_events != null) {
-          return _events;
-        }
-        Update();
-        _events = new LocationEvents(this);
-        return _events;
+    public BTreeSet<Event> Events { get; private set; }
+
+    internal void AddEvent(Event @event) {
+      if (Events == null) {
+        Events = new BTreeSet<Event>();
+      }
+      if (Events.Add(@event)) {
+        var reference = new Reference(_events, "_events");
+        @event.References.AddFast(reference);
+      }
+    }
+
+    internal void RemoveEvent(Event @event) {
+      if (Events.Remove(@event)) {
+        @event.References.Remove(
+          @event.References.First(r => r.To.Equals(Events)));
       }
     }
 

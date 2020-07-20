@@ -10,27 +10,35 @@ namespace SoundExplorersDatabase.Tests.Data {
   internal class TestSession : SessionNoServer, IDisposable {
     private const string DatabaseParentFolderPath = "C:\\Simon";
 
-    private TestSession(string databaseFolderPath) : base(databaseFolderPath) {
+    public TestSession(string databaseFolderPath) : base(databaseFolderPath) {
       DatabaseFolderPath = databaseFolderPath;
     }
 
+    public TestSession() : this(CreateDatabaseFolder()) { }
+
     public string DatabaseFolderPath { get; }
+    public bool OnDisposeDeleteDatabaseFolder { get; set; }
+
+    [NotNull]
+    public static string CreateDatabaseFolder() {
+      string databaseFolderPath = GenerateDatabaseFolderPath();
+      Directory.CreateDirectory(databaseFolderPath);
+      CopyLicenceToDatabaseFolder(databaseFolderPath);
+      return databaseFolderPath;
+    }
 
     public new void Dispose() {
       base.Dispose();
-      RemoveFolderIfExists(DatabaseFolderPath);
+      if (OnDisposeDeleteDatabaseFolder) {
+        DeleteFolderIfExists(DatabaseFolderPath);
+      }
     }
 
-    [NotNull]
-    public static TestSession Create() {
-      string databaseFolderPath = GetTempDatabaseFolderPath();
-      RemoveFolderIfExists(databaseFolderPath);
-      Directory.CreateDirectory(databaseFolderPath);
-      File.Copy(
-        @"E:\Simon\OneDrive\Documents\My Installers\VelocityDB\License Database\4.odb",
-        databaseFolderPath + @"\" + "4.odb");
-      var session = new TestSession(databaseFolderPath);
-      return session;
+    public static void DeleteFolderIfExists([NotNull] string folderPath) {
+      if (Directory.Exists(folderPath)) {
+        foreach (string filePath in Directory.GetFiles(folderPath)) File.Delete(filePath);
+      }
+      Directory.Delete(folderPath);
     }
 
     [NotNull]
@@ -52,17 +60,14 @@ namespace SoundExplorersDatabase.Tests.Data {
       return result;
     }
 
-    private static string GetTempDatabaseFolderPath() {
-      return DatabaseParentFolderPath + "\\Database" + DateTime.Now.Ticks;
+    private static void CopyLicenceToDatabaseFolder(string databaseFolderPath) {
+      File.Copy(
+        @"E:\Simon\OneDrive\Documents\My Installers\VelocityDB\License Database\4.odb",
+        databaseFolderPath + @"\4.odb");
     }
 
-    private static void RemoveFolderIfExists(string folderPath) {
-      if (!Directory.Exists(folderPath)) {
-        return;
-      }
-      foreach (string filePath in Directory.GetFiles(folderPath))
-        File.Delete(filePath);
-      Directory.Delete(folderPath);
+    private static string GenerateDatabaseFolderPath() {
+      return DatabaseParentFolderPath + "\\Database" + DateTime.Now.Ticks;
     }
   }
 }

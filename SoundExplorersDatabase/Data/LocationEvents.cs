@@ -2,6 +2,7 @@
 using VelocityDb;
 using VelocityDb.Collection.BTree;
 using VelocityDb.Session;
+using VelocityDb.TypeInfo;
 
 namespace SoundExplorersDatabase.Data {
   public class LocationEvents : BTreeSet<Event> {

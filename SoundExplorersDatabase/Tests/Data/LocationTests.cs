@@ -10,15 +10,16 @@ namespace SoundExplorersDatabase.Tests.Data {
       const string name = "Pyramid Club";
       const string notes = "My notes.";
       var location = new Location(name) {Notes = notes};
-      using (var session = TestSession.Create()) {
+      using (var session = new TestSession {OnDisposeDeleteDatabaseFolder = true}) {
         session.BeginUpdate();
         session.Persist(location);
         session.Commit();
         session.BeginRead();
+        var mySession = session;
         Assert.DoesNotThrow(
           () => location =
             (Location)session.ReadUsingIndex(() =>
-              Location.Read(name, session)),
+              Location.Read(name, mySession)),
           "Index used");
         session.Commit();
         Assert.AreEqual(name, location.Name, "Name");
