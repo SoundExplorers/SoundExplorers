@@ -35,8 +35,8 @@ namespace SoundExplorersDatabase.Data {
         if (value.Equals(_location)) {
           return;
         }
-        _location?.Events.Remove(this);
-        value?.Events.Add(this);
+        IsLocationChanging = true;
+        LocationToMoveFrom = _location;
         Update();
         _location = value;
       }
@@ -48,6 +48,21 @@ namespace SoundExplorersDatabase.Data {
         Update();
         _notes = value;
       }
+    }
+
+    private bool IsLocationChanging { get; set; }
+    private Location LocationToMoveFrom { get; set; }
+
+    public override ulong Persist(Placement place, SessionBase session, bool persistRefs = true,
+      bool disableFlush = false, Queue<IOptimizedPersistable> toPersist = null) {
+      ulong result = base.Persist(place, session, persistRefs, disableFlush, toPersist);
+      if (IsLocationChanging) {
+        LocationToMoveFrom?.Events.Remove(this);
+        Location?.Events.Add(this);
+        IsLocationChanging = false;
+        LocationToMoveFrom = null;
+      }
+      return result;
     }
 
     [NotNull]

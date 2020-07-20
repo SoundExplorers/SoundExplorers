@@ -19,6 +19,24 @@ namespace SoundExplorersDatabase.Tests.Data {
     private Location Location1 { get; set; }
     private Location Location2 { get; set; }
 
+    [Test]
+    public void AaTest() {
+      Date1 = DateTime.Today.AddDays(-1);
+      Date2 = DateTime.Today;
+      DatabaseFolderPath = TestSession.CreateDatabaseFolder();
+      try {
+        AddUnpersistedEvent1ToUnpersistedLocation1();
+        DisallowUnpersistLocationWithEvent();
+        DisallowDuplicate();
+        AddUnpersistedEvent2ToPersistedLocation1();
+        DisallowMovePersistedEvent2ToUnpersistedLocation2();
+        MovePersistedEvent2ToPersistedLocation2();
+      }
+      finally {
+        TestSession.DeleteFolderIfExists(DatabaseFolderPath);
+      }
+    }
+
     private void AddUnpersistedEvent1ToUnpersistedLocation1() {
       Event location1Child1;
       Location1 = new Location(Location1Name);
@@ -101,24 +119,6 @@ namespace SoundExplorersDatabase.Tests.Data {
         session.Commit();
       }
       Assert.AreSame(Event2, location2Child1, "Event1 same as location2Child1");
-    }
-
-    [Test]
-    public void Multiple() {
-      Date1 = DateTime.Today.AddDays(-1);
-      Date2 = DateTime.Today;
-      DatabaseFolderPath = TestSession.CreateDatabaseFolder();
-      try {
-        AddUnpersistedEvent1ToUnpersistedLocation1();
-        DisallowUnpersistLocationWithEvent();
-        DisallowDuplicate();
-        AddUnpersistedEvent2ToPersistedLocation1();
-        DisallowMovePersistedEvent2ToUnpersistedLocation2();
-        MovePersistedEvent2ToPersistedLocation2();
-      }
-      finally {
-        TestSession.DeleteFolderIfExists(DatabaseFolderPath);
-      }
     }
   }
 }

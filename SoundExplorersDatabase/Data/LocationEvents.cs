@@ -16,7 +16,7 @@ namespace SoundExplorersDatabase.Data {
     public new bool Add(Event child) {
       bool result = base.Add(child);
       if (result) {
-        var reference = new Reference(this, "_events");
+        var reference = new Reference(Parent, "_events");
         child.References.AddFast(reference);
         child.Location = Parent;
       }
@@ -27,7 +27,7 @@ namespace SoundExplorersDatabase.Data {
       bool result = base.Remove(child);
       if (result) {
         child.References.Remove(
-          child.References.First(r => r.To.Equals(this)));
+          child.References.First(r => r.To.Equals(Parent)));
         child.Location = null;
       }
       return result;
