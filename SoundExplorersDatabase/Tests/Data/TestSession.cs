@@ -19,19 +19,19 @@ namespace SoundExplorersDatabase.Tests.Data {
     public string DatabaseFolderPath { get; }
     public bool OnDisposeDeleteDatabaseFolder { get; set; }
 
+    public new void Dispose() {
+      base.Dispose();
+      if (OnDisposeDeleteDatabaseFolder) {
+        DeleteFolderIfExists(DatabaseFolderPath);
+      }
+    }
+
     [NotNull]
     public static string CreateDatabaseFolder() {
       string databaseFolderPath = GenerateDatabaseFolderPath();
       Directory.CreateDirectory(databaseFolderPath);
       CopyLicenceToDatabaseFolder(databaseFolderPath);
       return databaseFolderPath;
-    }
-
-    public new void Dispose() {
-      base.Dispose();
-      if (OnDisposeDeleteDatabaseFolder) {
-        DeleteFolderIfExists(DatabaseFolderPath);
-      }
     }
 
     public static void DeleteFolderIfExists([NotNull] string folderPath) {

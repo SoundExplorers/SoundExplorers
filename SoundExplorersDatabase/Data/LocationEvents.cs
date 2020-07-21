@@ -1,9 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System.Diagnostics;
 using System.Linq;
-using VelocityDb;
 using VelocityDb.Collection.BTree;
-using VelocityDb.Collection.Comparer;
-using VelocityDb.Session;
 using VelocityDb.TypeInfo;
 
 namespace SoundExplorersDatabase.Data {
@@ -11,6 +8,7 @@ namespace SoundExplorersDatabase.Data {
     public LocationEvents(Location parent) {
       Parent = parent;
     }
+
     private Location Parent { get; }
 
     public new bool Add(Event child) {
@@ -18,17 +16,24 @@ namespace SoundExplorersDatabase.Data {
       if (result) {
         var reference = new Reference(Parent, "_events");
         child.References.AddFast(reference);
-        child.Location = Parent;
+        if (!child.IsChangingLocation) {
+          child.Location = Parent;
+        }
       }
       return result;
     }
 
     public new bool Remove(Event child) {
+      Debug.WriteLine($"LocationEvents.Remove: From {Count} Events");
+      Update();
       bool result = base.Remove(child);
+      Debug.WriteLine($"LocationEvents.Remove: To = {Count} Events");
       if (result) {
         child.References.Remove(
           child.References.First(r => r.To.Equals(Parent)));
-        child.Location = null;
+        if (!child.IsChangingLocation) {
+          child.Location = null;
+        }
       }
       return result;
     }
