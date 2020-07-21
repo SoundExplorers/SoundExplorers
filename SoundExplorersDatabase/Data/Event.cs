@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using JetBrains.Annotations;
 using VelocityDb;
@@ -11,7 +10,7 @@ using VelocityDb.Session;
 namespace SoundExplorersDatabase.Data {
   [Index("_date, _location")]
   [UniqueConstraint]
-  public class Event : ReferenceTracked {
+  public class Event : OptimizedPersistable { // Eventually ReferenceTracked?
     private DateTime _date;
     private Location _location;
     private string _notes;
@@ -71,11 +70,11 @@ namespace SoundExplorersDatabase.Data {
     }
 
     private void UpdateOldAndNewLocations() {
-      Debug.WriteLine(
-        $"Event.UpdateOldAndNewLocations: Old Location =  {LocationToMoveFrom?.Name};");
-      Debug.WriteLine($"    From {LocationToMoveFrom?.Events.Count} Events");
+      // Debug.WriteLine(
+      //   $"Event.UpdateOldAndNewLocations: Old Location =  {LocationToMoveFrom?.Name};");
+      // Debug.WriteLine($"    From {LocationToMoveFrom?.Events.Count} Events");
       LocationToMoveFrom?.Events.Remove(this);
-      Debug.WriteLine($"    To {LocationToMoveFrom?.Events.Count} Events");
+      //Debug.WriteLine($"    To {LocationToMoveFrom?.Events.Count} Events");
       Location?.Events.Add(this);
       LocationToMoveFrom = null;
       IsChangingLocation = false;

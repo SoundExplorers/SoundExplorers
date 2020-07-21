@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.Linq;
+﻿using System.Linq;
 using VelocityDb.Collection.BTree;
 using VelocityDb.TypeInfo;
 
@@ -14,8 +13,8 @@ namespace SoundExplorersDatabase.Data {
     public new bool Add(Event child) {
       bool result = base.Add(child);
       if (result) {
-        var reference = new Reference(Parent, "_events");
-        child.References.AddFast(reference);
+        var reference = new Reference(child, "_events");
+        Parent.References.AddFast(reference);
         if (!child.IsChangingLocation) {
           child.Location = Parent;
         }
@@ -24,13 +23,13 @@ namespace SoundExplorersDatabase.Data {
     }
 
     public new bool Remove(Event child) {
-      Debug.WriteLine($"LocationEvents.Remove: From {Count} Events");
+      //Debug.WriteLine($"LocationEvents.Remove: From {Count} Events");
       Update();
       bool result = base.Remove(child);
-      Debug.WriteLine($"LocationEvents.Remove: To = {Count} Events");
+      //Debug.WriteLine($"LocationEvents.Remove: To = {Count} Events");
       if (result) {
-        child.References.Remove(
-          child.References.First(r => r.To.Equals(Parent)));
+        Parent.References.Remove(
+          Parent.References.First(r => r.To.Equals(child)));
         if (!child.IsChangingLocation) {
           child.Location = null;
         }

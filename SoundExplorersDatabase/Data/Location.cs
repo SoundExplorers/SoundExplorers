@@ -8,7 +8,7 @@ using VelocityDb.Session;
 using VelocityDb.TypeInfo;
 
 namespace SoundExplorersDatabase.Data {
-  public class Location : OptimizedPersistable {
+  public class Location : ReferenceTracked {
     private LocationEvents _events;
 
     [Index] [VelocityDb.Indexing.UniqueConstraint]
@@ -59,19 +59,18 @@ namespace SoundExplorersDatabase.Data {
       //   .First(location => location.Name == name);
     }
 
-    public override void Unpersist(SessionBase session) {
-      // I would expect VelocityDB to throw a ReferentialIntegrityException
-      // if the parent had children.
-      // But it does not, even in their Relations sample,
-      // where Customer.Unpersist still works,
-      // even when commenting out all code in it except for base.Unpersist .
-      if (Events.Count == 0) {
-        base.Unpersist(session);
-      }
-      else {
-        throw new ConstraintException(
-          $"Location '{Name}' cannot be deleted because it has {Events.Count} events.");
-      }
-    }
+    // public override void Unpersist(SessionBase session) {
+    //   // I would expect VelocityDB to throw a ReferentialIntegrityException
+    //   // if the parent had children.
+    //   // But it does not, even in their Relations sample,
+    //   // where Customer.Unpersist still works,
+    //   // even when commenting out all code in it except for base.Unpersist .
+    //   if (Events.Count == 0) {
+    //     base.Unpersist(session);
+    //   } else {
+    //     throw new ConstraintException(
+    //       $"Location '{Name}' cannot be deleted because it has {Events.Count} events.");
+    //   }
+    // }
   }
 }
