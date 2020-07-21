@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Data;
+using System.Data.Linq;
+using System.Diagnostics;
 using System.Linq;
 using NUnit.Framework;
 using SoundExplorersDatabase.Data;
@@ -10,6 +13,7 @@ namespace SoundExplorersDatabase.Tests.Data {
     private const string Event1Notes = "My notes.";
     private const string Location1Name = "Fred's";
     private const string Location2Name = "Pyramid Club";
+    private const string Location3Name = "Michael Fowler Centre";
 
     private string DatabaseFolderPath { get; set; }
     private DateTime Date1 { get; set; }
@@ -18,10 +22,11 @@ namespace SoundExplorersDatabase.Tests.Data {
     private Event Event2 { get; set; }
     private Location Location1 { get; set; }
     private Location Location2 { get; set; }
+    private Location Location3 { get; set; }
 
     [Test]
     public void AaTest() {
-      Date1 = DateTime.Today.AddDays(-1);
+      Date1 = DateTime.Today.AddDays(-2);
       Date2 = DateTime.Today;
       DatabaseFolderPath = TestSession.CreateDatabaseFolder();
       try {
@@ -29,8 +34,8 @@ namespace SoundExplorersDatabase.Tests.Data {
         DisallowUnpersistLocationWithEvent();
         DisallowDuplicate();
         AddUnpersistedEvent2ToPersistedLocation1();
-        DisallowMovePersistedEvent2ToUnpersistedLocation2();
         MovePersistedEvent2ToPersistedLocation2();
+        MovePersistedEvent2ToUnpersistedLocation3();
       }
       finally {
         TestSession.DeleteFolderIfExists(DatabaseFolderPath);
@@ -65,14 +70,17 @@ namespace SoundExplorersDatabase.Tests.Data {
         session.BeginUpdate();
         Location1 = Location.Read(Location1Name, session);
         Assert.AreEqual(1, Location1.Events.Count, "Location1.Events.Count");
-        Assert.Throws<ReferentialIntegrityException>(() => Location1.Unpersist(session));
+        Assert.Throws<ConstraintException>(() => Location1.Unpersist(session));
         session.Commit();
       }
     }
 
     private void DisallowDuplicate() {
-      var duplicate = new Event(Date1, Location1);
       using (var session = new TestSession(DatabaseFolderPath)) {
+        session.BeginRead();
+        Location1 = Location.Read(Location1Name, session);
+        var duplicate = new Event(Date1, Location1);
+        session.Commit();
         session.BeginUpdate();
         Assert.Throws<UniqueConstraintException>(
           () => session.Persist(duplicate), "Duplicate not allowed");
@@ -82,9 +90,12 @@ namespace SoundExplorersDatabase.Tests.Data {
 
     private void AddUnpersistedEvent2ToPersistedLocation1() {
       Event location1Child2;
-      Event2 = new Event(Date2, Location1);
-      using (var session = new TestSession()) {
+      using (var session = new TestSession(DatabaseFolderPath)) {
+        session.BeginRead();
+        Location1 = Location.Read(Location1Name, session);
+        session.Commit();
         session.BeginUpdate();
+        Event2 = new Event(Date2, Location1);
         session.Persist(Event2);
         Assert.AreSame(Location1, Event2.Location, "Location1 same as Event2.Location");
         Assert.IsNotNull(Event2.Location.Events, "Event2.Location.Events exist");
@@ -96,18 +107,14 @@ namespace SoundExplorersDatabase.Tests.Data {
       Assert.AreSame(Event2, location1Child2, "Event2 same as location1Child2");
     }
 
-    private void DisallowMovePersistedEvent2ToUnpersistedLocation2() {
-      Location2 = new Location(Location2Name);
-      using (var session = new TestSession(DatabaseFolderPath)) {
-        session.BeginUpdate();
-        Assert.Throws<UnexpectedException>(() => Location2.Events.Add(Event2));
-        session.Commit();
-      }
-    }
-
     private void MovePersistedEvent2ToPersistedLocation2() {
       Event location2Child1;
+      Location2 = new Location(Location2Name);
       using (var session = new TestSession(DatabaseFolderPath)) {
+        session.BeginRead();
+        Location1 = Location.Read(Location1Name, session);
+        Event2 = Event.Read(Date2, Location1, session);
+        session.Commit();
         session.BeginUpdate();
         session.Persist(Location2);
         Location2.Events.Add(Event2);
@@ -119,6 +126,24 @@ namespace SoundExplorersDatabase.Tests.Data {
         session.Commit();
       }
       Assert.AreSame(Event2, location2Child1, "Event1 same as location2Child1");
+    }
+
+    private void MovePersistedEvent2ToUnpersistedLocation3() {
+      Location3 = new Location(Location3Name);
+      using (var session = new TestSession(DatabaseFolderPath)) {
+        session.BeginRead();
+        Event2 = Event.Read(Date2, Location2, session);
+        session.Commit();
+        session.BeginUpdate();
+        Location3.Events.Add(Event2);
+        Assert.IsFalse(Location3.IsPersistent, "Location3.IsPersistent after adding Event2 to its events");
+        session.Persist(Event2);
+        // I don't know why this happens but I hope it's OK.
+        // Anyway, it's unlikely to happen in the application.
+        Assert.IsTrue(Location3.IsPersistent, "Location3.IsPersistent after persisting Event2");
+        session.Commit();
+        Assert.AreSame(Location3, Event2.Location, "Event2.Location is Location3");
+      }
     }
   }
 }

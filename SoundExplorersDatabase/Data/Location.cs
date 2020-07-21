@@ -1,21 +1,23 @@
-﻿using System.Linq;
+﻿using System.Data;
+using System.Linq;
 using JetBrains.Annotations;
 using VelocityDb;
-using VelocityDb.Collection.BTree;
 using VelocityDb.Collection.BTree.Extensions;
 using VelocityDb.Indexing;
 using VelocityDb.Session;
 using VelocityDb.TypeInfo;
 
 namespace SoundExplorersDatabase.Data {
-  public class Location : ReferenceTracked {
+  public class Location : OptimizedPersistable {
     private LocationEvents _events;
-    [Index] [UniqueConstraint] private string _name;
+
+    [Index] [VelocityDb.Indexing.UniqueConstraint]
+    private string _name;
+
     private string _notes;
 
     public Location([NotNull] string name) {
       Name = name;
-      //Events = new LocationEvents();
     }
 
     [FieldAccessor("_name")]
@@ -36,8 +38,8 @@ namespace SoundExplorersDatabase.Data {
       }
     }
 
-    public LocationEvents Events => 
-      _events ?? (_events =  new LocationEvents(this));
+    public LocationEvents Events =>
+      _events ?? (_events = new LocationEvents(this));
 
     [NotNull]
     public static Location Read([NotNull] string name,
@@ -55,6 +57,21 @@ namespace SoundExplorersDatabase.Data {
       // return session
       //   .Index<Location>("_name")
       //   .First(location => location.Name == name);
+    }
+
+    public override void Unpersist(SessionBase session) {
+      // I would expect VelocityDB to throw a ReferentialIntegrityException
+      // if the parent had children.
+      // But it does not, even in their Relations sample,
+      // where Customer.Unpersist still works,
+      // even when commenting out all code in it except for base.Unpersist .
+      if (Events.Count == 0) {
+        base.Unpersist(session);
+      }
+      else {
+        throw new ConstraintException(
+          $"Location '{Name}' cannot be deleted because it has {Events.Count} events.");
+      }
     }
   }
 }
