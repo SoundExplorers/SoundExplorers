@@ -69,6 +69,11 @@ namespace SoundExplorersDatabase.Data {
       return result;
     }
 
+    public override void Unpersist(SessionBase session) {
+      base.Unpersist(session);
+      Location.Events.Remove(this);
+    }
+
     private void UpdateOldAndNewLocations() {
       // Debug.WriteLine(
       //   $"Event.UpdateOldAndNewLocations: Old Location =  {LocationToMoveFrom?.Name};");

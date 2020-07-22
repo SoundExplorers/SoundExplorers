@@ -1,5 +1,4 @@
-﻿using System.Data;
-using System.Linq;
+﻿using System.Linq;
 using JetBrains.Annotations;
 using VelocityDb;
 using VelocityDb.Collection.BTree.Extensions;
@@ -11,8 +10,7 @@ namespace SoundExplorersDatabase.Data {
   public class Location : ReferenceTracked {
     private LocationEvents _events;
 
-    [Index] [VelocityDb.Indexing.UniqueConstraint]
-    private string _name;
+    [Index] [UniqueConstraint] private string _name;
 
     private string _notes;
 
@@ -38,8 +36,15 @@ namespace SoundExplorersDatabase.Data {
       }
     }
 
-    public LocationEvents Events =>
-      _events ?? (_events = new LocationEvents(this));
+    public LocationEvents Events {
+      get {
+        if (_events == null) {
+          Update();
+          _events = new LocationEvents(this);
+        }
+        return _events;
+      }
+    }
 
     [NotNull]
     public static Location Read([NotNull] string name,

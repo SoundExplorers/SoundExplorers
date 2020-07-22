@@ -3,6 +3,7 @@ using System.Linq;
 using NUnit.Framework;
 using SoundExplorersDatabase.Data;
 using VelocityDb.Exceptions;
+using VelocityDb.TypeInfo;
 
 namespace SoundExplorersDatabase.Tests.Data {
   [TestFixture]
@@ -77,16 +78,25 @@ namespace SoundExplorersDatabase.Tests.Data {
 
     [Test]
     public void DeleteLocation1Event2() {
+      Reference reference;
+      Event referencedEvent2;
       AddEvent2ToLocation1();
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
         Location1 = Location.Read(Location1Name, session);
         Event2 = Location1.Events.ToArray()[1];
-        Location1.Events.Remove(Event2);
+        Assert.AreEqual(2, Location1.References.Count, "Location1.References.Count #1");
+        reference = Location1.References.First(r => r.To.Equals(Event2));
+        referencedEvent2 = (Event)reference.To;
         session.Unpersist(Event2);
+        Location1.References.Remove(reference);
+        Location1.Events.Remove(Event2);
         session.Commit();
       }
+      Assert.AreSame(Event2, referencedEvent2, "Event2 and referencedEvent2 are same");
+      Assert.AreEqual(1, Location1.References.Count, "Location1.References.Count");
       Assert.AreEqual(1, Location1.Events.Count, "Location1.Events.Count");
+      Assert.IsFalse(Event2.IsPersistent, "Event2.IsPersistent");
     }
 
     [Test]
