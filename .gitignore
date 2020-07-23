@@ -1,2 +1,6 @@
-
+/packages/
+riderModule.iml
+/_ReSharper.Caches/
 SoundExplorersDatabase/.idea/
+SoundExplorersDatabase/packages/
+SoundExplorersDatabase/_ReSharper.Caches/
