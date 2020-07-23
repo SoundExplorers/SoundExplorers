@@ -8,7 +8,7 @@ using VelocityDb.Session;
 
 namespace SoundExplorersDatabase.Tests.Data {
   internal class TestSession : SessionNoServer, IDisposable {
-    private const string DatabaseParentFolderPath = "C:\\Simon";
+    private const string DatabaseParentFolderPath = "C:\\Simon\\Databases";
 
     public TestSession(string databaseFolderPath) : base(databaseFolderPath) {
       DatabaseFolderPath = databaseFolderPath;

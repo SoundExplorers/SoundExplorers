@@ -76,9 +76,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Data\Child.cs" />
     <Compile Include="Data\Event.cs" />
     <Compile Include="Data\Newsletter.cs" />
     <Compile Include="Data\LocationEvents.cs" />
+    <Compile Include="Data\Parent.cs" />
+    <Compile Include="Data\ParentChildren.cs" />
     <Compile Include="Data\Series.cs" />
     <Compile Include="Data\Location.cs" />
     <Compile Include="Program.cs" />
