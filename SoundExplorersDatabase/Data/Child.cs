@@ -63,5 +63,6 @@ namespace SoundExplorersDatabase.Data {
       Parent?.Children.Add(this);
       ParentToMoveFrom = null;
       IsChangingParent = false;
-    }  }
+    }
+  }
 }

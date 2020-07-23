@@ -51,7 +51,7 @@ namespace SoundExplorersDatabase.Data {
       if (result) {
         References.AddFast(new Reference(child, "_children"));
         if (!child.IsChangingParent) {
-          child.Parent = this;
+          //child.Parent = this;
         }
       }
       IsChangingChildren = false;
@@ -71,7 +71,7 @@ namespace SoundExplorersDatabase.Data {
     private bool RemoveChild(Child child) {
       IsChangingChildren = true;
       if (!child.IsChangingParent) {
-        child.Parent = null;
+        //child.Parent = null;
       }
       bool result = ((BTreeSet<Child>)Children).Remove(child);
       if (result) {
