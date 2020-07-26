@@ -1,24 +1,41 @@
-﻿using System.Reflection;
-using VelocityDb.Collection.BTree;
+﻿using System;
+using System.Collections.Generic;
+using JetBrains.Annotations;
 
 namespace SoundExplorersDatabase.Data {
-  public class ParentChildren : BTreeSet<Child> {
-    public ParentChildren(Parent parent, MethodInfo addChild, MethodInfo removeChild) {
+  public class ParentChildren : SortedList<string, Child> {
+    internal ParentChildren(Parent parent) {
       Parent = parent;
-      AddChild = addChild;
-      RemoveChild = removeChild;
     }
 
-    private MethodInfo AddChild { get; }
     private Parent Parent { get; }
-    private MethodInfo RemoveChild { get; }
 
-    public new bool Add(Child child) {
-      return (bool)AddChild.Invoke(Parent, new object[] {child});
+    public Child this[int index] => Values[index];
+
+    public bool Add(Child child) {
+      return Parent.AddChild(child);
     }
 
-    public new bool Remove(Child child) {
-      return (bool)RemoveChild.Invoke(Parent, new object[] {child});
+    [PublicAPI]
+    public new void Add(string notSupported, Child doNotUse) {
+      throw new NotSupportedException(
+        "ParentChildren.Add(string, Child) is not supported. Use ParentChildren.Add(Child) instead.");
+    }
+
+    public bool Remove(Child child) {
+      return Parent.RemoveChild(child);
+    }
+
+    [PublicAPI]
+    public new bool Remove(string notSupported) {
+      throw new NotSupportedException(
+        "ParentChildren.Remove(string) is not supported. Use ParentChildren.Remove(Child) instead.");
+    }
+
+    [PublicAPI]
+    public new bool RemoveAt(int notSupported) {
+      throw new NotSupportedException(
+        "ParentChildren.RemoveAt(int) is not supported. Use ParentChildren.Remove(Child) instead.");
     }
   }
 }
