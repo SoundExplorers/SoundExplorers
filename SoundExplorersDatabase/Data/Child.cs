@@ -8,12 +8,11 @@ namespace SoundExplorersDatabase.Data {
     private Parent _parent;
 
     internal bool IsChangingParent { get; private set; }
-    //private Parent ParentToMoveFrom { get; set; }
 
     public string Name {
       get => _name;
       set {
-        Update();
+        UpdateNonIndexField();
         _name = value;
       }
     }
@@ -31,7 +30,7 @@ namespace SoundExplorersDatabase.Data {
         if (value != null && !value.IsChangingChildren) {
           value.Children.Add(this);
         }
-        Update();
+        UpdateNonIndexField();
         _parent = value;
         IsChangingParent = false;
       }

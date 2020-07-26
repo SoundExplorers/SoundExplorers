@@ -75,7 +75,35 @@ namespace SoundExplorersDatabase.Tests.Data {
     }
 
     [Test]
-    public void T20_AddRemoveChildren() {
+    public void T20_ParentChildrenUnsupportedMethods() {
+      using (var session = new TestSession(DatabaseFolderPath)) {
+        session.BeginUpdate();
+        Parent1 = Parent.Read(Parent1Name, session);
+        Child2 = Child.Read(Child2Name, session);
+        Assert.Throws<NotSupportedException>(
+          () => Parent1.Children.Add(Child2Name, Child2),
+          "Unsupported Parent.Children.Add");
+        Assert.Throws<NotSupportedException>(
+          () => Parent1.Children.Remove(Child1Name),
+          "Unsupported Parent.Children.Remove");
+        Assert.Throws<NotSupportedException>(
+          () => Parent1.Children.RemoveAt(0),
+          "Unsupported Parent.Children.RemoveAt");
+        session.Commit();
+      }
+    }
+
+    [Test]
+    public void T30_CannotDeleteParentWithChildren() {
+      using (var session = new TestSession(DatabaseFolderPath)) {
+        session.BeginUpdate();
+        Assert.Throws<ReferentialIntegrityException>(() => Parent1.Unpersist(session));
+        session.Commit();
+      }
+    }
+
+    [Test]
+    public void T40_AddRemoveChildren() {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
         Parent1 = Parent.Read(Parent1Name, session);
@@ -118,7 +146,7 @@ namespace SoundExplorersDatabase.Tests.Data {
     }
 
     [Test]
-    public void T30_ChangeParent() {
+    public void T50_ChangeParent() {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
         Parent1 = Parent.Read(Parent1Name, session);
@@ -141,7 +169,7 @@ namespace SoundExplorersDatabase.Tests.Data {
     }
 
     [Test]
-    public void T40_ChangeParentFromNull() {
+    public void T60_ChangeParentFromNull() {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
         Parent2 = Parent.Read(Parent2Name, session);
@@ -157,16 +185,15 @@ namespace SoundExplorersDatabase.Tests.Data {
           "Parent2 1st child after change parent");
       }
     }
-
     [Test]
-    public void T50_ChangeParentToNull() {
+    public void T70_ChangeParentToNull() {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
         Parent1 = Parent.Read(Parent1Name, session);
         Child1 = Child.Read(Child1Name, session);
         Child1.Parent = null;
         session.Commit();
-        Assert.IsNull(Child1.Parent, "Child2.Parent");
+        Assert.IsNull(Child1.Parent, "Child1.Parent");
         Assert.AreEqual(0, Parent1.Children.Count,
           "Parent1.Children.Count");
         Assert.AreEqual(0, Parent1.References.Count,
@@ -175,30 +202,17 @@ namespace SoundExplorersDatabase.Tests.Data {
     }
 
     [Test]
-    public void T60_CannotDeleteParentWithChildren() {
-      using (var session = new TestSession(DatabaseFolderPath)) {
-        session.BeginUpdate();
-        Assert.Throws<ReferentialIntegrityException>(() => Parent1.Unpersist(session));
-        session.Commit();
-      }
-    }
-
-    [Test]
-    public void T70_ParentChildrenUnsupportedMethods() {
+    public void T80_DeleteReferencingChild() {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
         Parent1 = Parent.Read(Parent1Name, session);
-        Child2 = Child.Read(Child2Name, session);
-        Assert.Throws<NotSupportedException>(
-          () => Parent1.Children.Add(Child2Name, Child2),
-          "Unsupported Parent.Children.Add");
-        Assert.Throws<NotSupportedException>(
-          () => Parent1.Children.Remove(Child1Name),
-          "Unsupported Parent.Children.Remove");
-        Assert.Throws<NotSupportedException>(
-          () => Parent1.Children.RemoveAt(0),
-          "Unsupported Parent.Children.RemoveAt");
+        Child1 = Child.Read(Child1Name, session);
+        Child1.Unpersist(session);
         session.Commit();
+        Assert.AreEqual(0, Parent1.Children.Count,
+          "Parent1.Children.Count");
+        Assert.AreEqual(0, Parent1.References.Count,
+          "Parent2.References.Count");
       }
     }
   }

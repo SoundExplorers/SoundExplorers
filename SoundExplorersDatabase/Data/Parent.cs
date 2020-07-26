@@ -20,7 +20,7 @@ namespace SoundExplorersDatabase.Data {
     public string Name {
       get => _name;
       set {
-        Update();
+        UpdateNonIndexField();
         _name = value;
       }
     }
