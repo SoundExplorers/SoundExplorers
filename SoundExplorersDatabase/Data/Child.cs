@@ -20,10 +20,8 @@ namespace SoundExplorersDatabase.Data {
     public Parent Parent {
       get => _parent;
       set {
-        if (_parent != null && !_parent.IsChangingChildren
-            || value != null && !value.IsChangingChildren) {
-          IsChangingParent = true;
-        }
+        IsChangingParent = _parent != null && !_parent.IsChangingChildren ||
+                           value != null && !value.IsChangingChildren;
         if (_parent != null && !_parent.IsChangingChildren) {
           _parent.Children.Remove(this);
         }
