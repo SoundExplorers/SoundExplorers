@@ -5,14 +5,14 @@ using SoundExplorersDatabase.Data;
 using VelocityDb.Session;
 
 namespace SoundExplorersDatabase.Tests.Data {
-  public class Parent : RelativeBase {
+  public class Mother : RelativeBase {
     private string _name;
 
-    public Parent() : base(typeof(Parent)) {
-      Children = new SortedChildList<string, Child>(this);
+    public Mother() : base(typeof(Mother)) {
+      Daughters = new SortedChildList<string, Daughter>(this);
     }
 
-    public SortedChildList<string, Child> Children { get; }
+    public SortedChildList<string, Daughter> Daughters { get; }
 
     public string Name {
       get => _name;
@@ -24,7 +24,7 @@ namespace SoundExplorersDatabase.Tests.Data {
     }
 
     protected override IEnumerable<ChildrenType> GetChildrenTypes() {
-      return new[] {new ChildrenType(typeof(Child), Children)};
+      return new[] {new ChildrenType(typeof(Daughter), Daughters)};
     }
 
     protected override IEnumerable<Type> GetParentTypes() {
@@ -35,8 +35,8 @@ namespace SoundExplorersDatabase.Tests.Data {
       throw new NotSupportedException();
     }
 
-    public static Parent Read(string name, SessionBase session) {
-      return session.AllObjects<Parent>().First(parent => parent.Name == name);
+    public static Mother Read(string name, SessionBase session) {
+      return session.AllObjects<Mother>().First(parent => parent.Name == name);
     }
   }
 }

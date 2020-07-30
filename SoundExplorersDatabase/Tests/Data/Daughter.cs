@@ -5,11 +5,11 @@ using SoundExplorersDatabase.Data;
 using VelocityDb.Session;
 
 namespace SoundExplorersDatabase.Tests.Data {
-  public class Child : RelativeBase {
+  public class Daughter : RelativeBase {
     private string _name;
-    private Parent _parent;
+    private Mother _mother;
 
-    public Child() : base(typeof(Child)) { }
+    public Daughter() : base(typeof(Daughter)) { }
 
     public string Name {
       get => _name;
@@ -20,12 +20,12 @@ namespace SoundExplorersDatabase.Tests.Data {
       }
     }
 
-    public Parent Parent {
-      get => _parent;
+    public Mother Mother {
+      get => _mother;
       set {
         UpdateNonIndexField();
         ChangeParent(value);
-        _parent = value;
+        _mother = value;
       }
     }
 
@@ -34,15 +34,15 @@ namespace SoundExplorersDatabase.Tests.Data {
     }
 
     protected override IEnumerable<Type> GetParentTypes() {
-      return new[] {typeof(Parent)};
+      return new[] {typeof(Mother)};
     }
 
     protected override void OnParentFieldToBeUpdated(RelativeBase newParent) {
-      _parent = (Parent)newParent;
+      _mother = (Mother)newParent;
     }
 
-    public static Child Read(string name, SessionBase session) {
-      return session.AllObjects<Child>().First(child => child.Name == name);
+    public static Daughter Read(string name, SessionBase session) {
+      return session.AllObjects<Daughter>().First(child => child.Name == name);
     }
   }
 }
