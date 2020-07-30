@@ -26,19 +26,16 @@ namespace SoundExplorersDatabase.Data {
       return Parent.RemoveChild(child);
     }
 
-    [PublicAPI]
     public void Add(string notSupported, TChild doNotUse) {
       throw new NotSupportedException(
         "ParentChildren.Add(string, TChild) is not supported. Use ParentChildren.Add(TChild) instead.");
     }
 
-    [PublicAPI]
     public bool Remove(string notSupported) {
       throw new NotSupportedException(
         "ParentChildren.Remove(string) is not supported. Use ParentChildren.Remove(TChild) instead.");
     }
 
-    [PublicAPI]
     public new bool RemoveAt(int notSupported) {
       throw new NotSupportedException(
         "ParentChildren.RemoveAt(int) is not supported. Use ParentChildren.Remove(TChild) instead.");
