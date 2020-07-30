@@ -78,7 +78,6 @@
   <ItemGroup>
     <Compile Include="Data\Child.cs" />
     <Compile Include="Data\IChildrenType.cs" />
-    <Compile Include="Data\IRelativeBase.cs" />
     <Compile Include="Data\SortedChildList.cs" />
     <Compile Include="Data\ChildrenType.cs" />
     <Compile Include="Data\RelativeBase.cs" />

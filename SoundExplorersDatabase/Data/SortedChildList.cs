@@ -4,12 +4,12 @@ using JetBrains.Annotations;
 
 namespace SoundExplorersDatabase.Data {
   public class SortedChildList<TKey, TChild> : SortedList<TKey, TChild>
-    where TChild : IRelativeBase {
-    internal SortedChildList([NotNull] IRelativeBase parent) {
+    where TChild : RelativeBase {
+    internal SortedChildList([NotNull] RelativeBase parent) {
       Parent = parent;
     }
 
-    private IRelativeBase Parent { get; }
+    private RelativeBase Parent { get; }
 
     public TChild this[int index] => Values[index];
 

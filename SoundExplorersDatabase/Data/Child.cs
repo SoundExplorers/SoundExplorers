@@ -6,9 +6,11 @@ using VelocityDb;
 using VelocityDb.Session;
 
 namespace SoundExplorersDatabase.Data {
-  public class Child : RelativeBase<Child> {
+  public class Child : RelativeBase {
     private string _name;
     private Parent _parent;
+
+    public Child() : base(typeof(Child)) { }
 
     public string Name {
       get => _name;
@@ -32,7 +34,7 @@ namespace SoundExplorersDatabase.Data {
       return session.AllObjects<Child>().First(child => child.Name == name);
     }
 
-    public override void OnParentToBeUpdated(Type parentType, IRelativeBase newParent) {
+    protected override void OnParentToBeUpdated(Type parentType, RelativeBase newParent) {
       if (parentType != typeof(Parent)) {
         throw new ArgumentException($"Parent type {parentType} is invalid.", nameof(parentType));
       }

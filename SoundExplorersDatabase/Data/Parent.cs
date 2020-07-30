@@ -4,8 +4,8 @@ using System.Linq;
 using VelocityDb.Session;
 
 namespace SoundExplorersDatabase.Data {
-  public class Parent : RelativeBase<Parent> {
-    public Parent() {
+  public class Parent : RelativeBase {
+    public Parent() : base(typeof(Parent)) {
       _children = new SortedChildList<string, Child>(this);
     }
     private readonly SortedChildList<string, Child> _children;
@@ -27,7 +27,7 @@ namespace SoundExplorersDatabase.Data {
       return session.AllObjects<Parent>().First(parent => parent.Name == name);
     }
 
-    public override void OnParentToBeUpdated(Type parentType, IRelativeBase newParent) {
+    protected override void OnParentToBeUpdated(Type parentType, RelativeBase newParent) {
       throw new NotSupportedException();
     }
 
