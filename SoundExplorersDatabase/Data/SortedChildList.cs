@@ -14,11 +14,6 @@ namespace SoundExplorersDatabase.Data {
     public TChild this[int index] => Values[index];
 
     public bool Add(TChild child) {
-      var childType = child.GetType();
-      if (Parent.IsChangingChildrenOfType[childType]) {
-        base.Add((TKey)child.Key, child);
-        return true;
-      }
       return Parent.AddChild(child);
     }
 

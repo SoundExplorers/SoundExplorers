@@ -31,14 +31,14 @@ namespace SoundExplorersDatabase.Data {
       }
     }
 
-    internal IDictionary<Type, bool> IsChangingChildrenOfType {
+    private IDictionary<Type, bool> IsChangingChildrenOfType {
       get {
         if (_isChangingChildrenOfType == null) {
           Initialise();
         }
         return _isChangingChildrenOfType;
       }
-      private set {
+      set {
         UpdateNonIndexField();
         _isChangingChildrenOfType = value;
       }
@@ -57,7 +57,7 @@ namespace SoundExplorersDatabase.Data {
       }
     }
 
-    internal object Key { get; set; }
+    protected object Key { get; set; }
 
     private IDictionary<Type, RelativeBase> ParentOfType {
       get {
