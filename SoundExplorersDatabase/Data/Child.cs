@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using JetBrains.Annotations;
-using VelocityDb;
 using VelocityDb.Session;
 
 namespace SoundExplorersDatabase.Data {
@@ -25,20 +23,9 @@ namespace SoundExplorersDatabase.Data {
       get => _parent;
       set {
         UpdateNonIndexField();
-        SetParent<Parent>(value);
+        SetParent(value);
         _parent = value;
       }
-    }
-
-    public static Child Read(string name, SessionBase session) {
-      return session.AllObjects<Child>().First(child => child.Name == name);
-    }
-
-    protected override void OnParentToBeUpdated(Type parentType, RelativeBase newParent) {
-      if (parentType != typeof(Parent)) {
-        throw new ArgumentException($"Parent type {parentType} is invalid.", nameof(parentType));
-      }
-      Parent = (Parent)newParent;
     }
 
     protected override IEnumerable<IChildrenType> GetChildrenTypes() {
@@ -47,6 +34,19 @@ namespace SoundExplorersDatabase.Data {
 
     protected override IEnumerable<Type> GetParentTypes() {
       return new[] {typeof(Parent)};
+    }
+
+    protected override void OnParentToBeUpdated(Type parentType,
+      RelativeBase newParent) {
+      if (parentType != typeof(Parent)) {
+        throw new ArgumentException($"Parent type {parentType} is invalid.",
+          nameof(parentType));
+      }
+      Parent = (Parent)newParent;
+    }
+
+    public static Child Read(string name, SessionBase session) {
+      return session.AllObjects<Child>().First(child => child.Name == name);
     }
   }
 }

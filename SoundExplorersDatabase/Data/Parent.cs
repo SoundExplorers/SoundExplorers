@@ -5,14 +5,13 @@ using VelocityDb.Session;
 
 namespace SoundExplorersDatabase.Data {
   public class Parent : RelativeBase {
-    public Parent() : base(typeof(Parent)) {
-      _children = new SortedChildList<string, Child>(this);
-    }
-    private readonly SortedChildList<string, Child> _children;
     private string _name;
-    
-    // ReSharper disable once ConvertToAutoProperty
-    public SortedChildList<string, Child> Children => _children;
+
+    public Parent() : base(typeof(Parent)) {
+      Children = new SortedChildList<string, Child>(this);
+    }
+
+    public SortedChildList<string, Child> Children { get; }
 
     public string Name {
       get => _name;
@@ -23,20 +22,21 @@ namespace SoundExplorersDatabase.Data {
       }
     }
 
-    public static Parent Read(string name, SessionBase session) {
-      return session.AllObjects<Parent>().First(parent => parent.Name == name);
-    }
-
-    protected override void OnParentToBeUpdated(Type parentType, RelativeBase newParent) {
-      throw new NotSupportedException();
-    }
-
     protected override IEnumerable<IChildrenType> GetChildrenTypes() {
       return new[] {new ChildrenType<Child>(Children)};
     }
 
     protected override IEnumerable<Type> GetParentTypes() {
       return null;
+    }
+
+    protected override void OnParentToBeUpdated(Type parentType,
+      RelativeBase newParent) {
+      throw new NotSupportedException();
+    }
+
+    public static Parent Read(string name, SessionBase session) {
+      return session.AllObjects<Parent>().First(parent => parent.Name == name);
     }
   }
 }
