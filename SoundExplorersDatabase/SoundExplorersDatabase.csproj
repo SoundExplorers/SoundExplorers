@@ -77,6 +77,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Data\Child.cs" />
+    <Compile Include="Data\IChildrenType.cs" />
+    <Compile Include="Data\IRelativeBase.cs" />
+    <Compile Include="Data\SortedChildList.cs" />
+    <Compile Include="Data\ChildrenType.cs" />
+    <Compile Include="Data\RelativeBase.cs" />
     <Compile Include="Data\Event.cs" />
     <Compile Include="Data\Newsletter.cs" />
     <Compile Include="Data\LocationEvents.cs" />

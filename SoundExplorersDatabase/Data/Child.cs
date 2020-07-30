@@ -1,36 +1,30 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using JetBrains.Annotations;
 using VelocityDb;
 using VelocityDb.Session;
 
 namespace SoundExplorersDatabase.Data {
-  public class Child : OptimizedPersistable {
+  public class Child : RelativeBase<Child> {
     private string _name;
     private Parent _parent;
-
-    internal bool IsChangingParent { get; private set; }
 
     public string Name {
       get => _name;
       set {
         UpdateNonIndexField();
         _name = value;
+        Key = value;
       }
     }
 
     public Parent Parent {
       get => _parent;
       set {
-        IsChangingParent = _parent != null && !_parent.IsChangingChildren ||
-                           value != null && !value.IsChangingChildren;
-        if (_parent != null && !_parent.IsChangingChildren) {
-          _parent.Children.Remove(this);
-        }
-        if (value != null && !value.IsChangingChildren) {
-          value.Children.Add(this);
-        }
         UpdateNonIndexField();
+        SetParent<Parent>(value);
         _parent = value;
-        IsChangingParent = false;
       }
     }
 
@@ -38,9 +32,19 @@ namespace SoundExplorersDatabase.Data {
       return session.AllObjects<Child>().First(child => child.Name == name);
     }
 
-    public override void Unpersist(SessionBase session) {
-      Parent?.Children.Remove(this);
-      base.Unpersist(session);
+    public override void OnParentToBeUpdated(Type parentType, IRelativeBase newParent) {
+      if (parentType != typeof(Parent)) {
+        throw new ArgumentException($"Parent type {parentType} is invalid.", nameof(parentType));
+      }
+      Parent = (Parent)newParent;
+    }
+
+    protected override IEnumerable<IChildrenType> GetChildrenTypes() {
+      return null;
+    }
+
+    protected override IEnumerable<Type> GetParentTypes() {
+      return new[] {typeof(Parent)};
     }
   }
 }

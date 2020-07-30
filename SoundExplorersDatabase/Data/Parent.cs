@@ -1,27 +1,25 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
-using VelocityDb;
 using VelocityDb.Session;
-using VelocityDb.TypeInfo;
 
 namespace SoundExplorersDatabase.Data {
-  public class Parent : ReferenceTracked {
-    private readonly ParentChildren _children;
-    private string _name;
-
+  public class Parent : RelativeBase<Parent> {
     public Parent() {
-      _children = new ParentChildren(this);
+      _children = new SortedChildList<string, Child>(this);
     }
-
+    private readonly SortedChildList<string, Child> _children;
+    private string _name;
+    
     // ReSharper disable once ConvertToAutoProperty
-    public ParentChildren Children => _children;
-    internal bool IsChangingChildren { get; private set; }
+    public SortedChildList<string, Child> Children => _children;
 
     public string Name {
       get => _name;
       set {
         UpdateNonIndexField();
         _name = value;
+        Key = value;
       }
     }
 
@@ -29,38 +27,16 @@ namespace SoundExplorersDatabase.Data {
       return session.AllObjects<Parent>().First(parent => parent.Name == name);
     }
 
-    internal bool AddChild(Child child) {
-      IsChangingChildren = true;
-      var result = false;
-      if (!Children.ContainsKey(child.Name)) {
-        ((SortedList<string, Child>)Children).Add(child.Name, child);
-        result = true;
-      }
-      if (result) {
-        References.AddFast(new Reference(child, "_children"));
-        if (!child.IsChangingParent) {
-          child.Parent = this;
-        }
-      }
-      IsChangingChildren = false;
-      return result;
+    public override void OnParentToBeUpdated(Type parentType, IRelativeBase newParent) {
+      throw new NotSupportedException();
     }
 
-    internal bool RemoveChild(Child child) {
-      IsChangingChildren = true;
-      if (!child.IsChangingParent) {
-        child.Parent = null;
-      }
-      var result = false;
-      if (Children.ContainsKey(child.Name)) {
-        ((SortedList<string, Child>)Children).Remove(child.Name);
-        result = true;
-      }
-      if (result) {
-        References.Remove(References.First(r => r.To.Equals(child)));
-      }
-      IsChangingChildren = false;
-      return result;
+    protected override IEnumerable<IChildrenType> GetChildrenTypes() {
+      return new[] {new ChildrenType<Child>(Children)};
+    }
+
+    protected override IEnumerable<Type> GetParentTypes() {
+      return null;
     }
   }
 }
