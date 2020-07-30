@@ -5,12 +5,12 @@ using SoundExplorersDatabase.Data;
 using VelocityDb.Session;
 
 namespace SoundExplorersDatabase.Tests.Data {
-  public class Daughter : RelativeBase {
+  public class Son : RelativeBase {
     private Father _father;
     private Mother _mother;
     private string _name;
 
-    public Daughter() : base(typeof(Daughter)) { }
+    public Son() : base(typeof(Son)) { }
 
     public Father Father {
       get => _father;
@@ -60,8 +60,8 @@ namespace SoundExplorersDatabase.Tests.Data {
       }
     }
 
-    public static Daughter Read(string name, SessionBase session) {
-      return session.AllObjects<Daughter>().First(daughter => daughter.Name == name);
+    public static Son Read(string name, SessionBase session) {
+      return session.AllObjects<Son>().First(son => son.Name == name);
     }
   }
 }

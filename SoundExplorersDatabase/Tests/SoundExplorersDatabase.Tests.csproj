@@ -85,10 +85,12 @@
     <ItemGroup>
         <Compile Include="Data\Daughter.cs" />
         <Compile Include="Data\EventTests.cs" />
+        <Compile Include="Data\Father.cs" />
         <Compile Include="Data\LocationTests.cs" />
         <Compile Include="Data\Mother.cs" />
         <Compile Include="Data\ReferencingTests.cs" />
         <Compile Include="Data\SchemaVersionTests.cs" />
+        <Compile Include="Data\Son.cs" />
         <Compile Include="Data\TestSession.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
     </ItemGroup>
