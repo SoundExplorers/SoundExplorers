@@ -13,6 +13,7 @@ namespace SoundExplorersDatabase.Data {
     IDictionary<Type, IRelativeBase> ParentOfType { get; }
     Type PersistableType { get; }
     bool AddChild([NotNull] IRelativeBase child);
+    void OnParentToBeUpdated([NotNull] Type parentType, [CanBeNull] IRelativeBase newParent);
     bool RemoveChild([NotNull] IRelativeBase child);
   }
 }

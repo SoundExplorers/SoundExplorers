@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using JetBrains.Annotations;
 using VelocityDb;
+using VelocityDb.Session;
 using VelocityDb.TypeInfo;
 
 namespace SoundExplorersDatabase.Data {
-  public abstract class RelativeBase<TPersistable> : ReferenceTracked, IRelativeBase
+  public abstract class RelativeBase<TPersistable> : ReferenceTracked,
+    IRelativeBase
     where TPersistable : IRelativeBase {
     private IDictionary<Type, IDictionary> _childrenOfType;
     private IDictionary<Type, bool> _isChangingChildrenOfType;
@@ -74,23 +75,18 @@ namespace SoundExplorersDatabase.Data {
     public object Key { get; set; }
     public Type PersistableType { get; }
 
-    protected void SetParent<TParent>(TParent value) where TParent : IRelativeBase {
-      var parentType = typeof(TParent);
-      IsChangingParentOfType[parentType] =
-        ParentOfType[parentType] != null && 
-          !ParentOfType[parentType].IsChangingChildrenOfType[PersistableType] ||
-        value != null && !value.IsChangingChildrenOfType[PersistableType];
-      if (ParentOfType[parentType] != null && 
-          !ParentOfType[parentType].IsChangingChildrenOfType[PersistableType]) {
-        ParentOfType[parentType].ChildrenOfType[PersistableType].Remove(Key);
+    public override void Unpersist(SessionBase session) {
+      var parents =
+        ParentOfType.Values.Where(parent => parent != null).ToList();
+      for (int i = parents.Count - 1; i >= 0; i--) {
+        parents[i].ChildrenOfType[PersistableType].Remove(this);
+        parents[i].RemoveChild(this);
       }
-      if (value != null && !value.IsChangingChildrenOfType[PersistableType]) {
-        value.ChildrenOfType[PersistableType].Add(Key, this);
-      }
-      UpdateNonIndexField();
-      ParentOfType[parentType] = value;
-      IsChangingParentOfType[parentType] = false;
+      base.Unpersist(session);
     }
+
+    public abstract void OnParentToBeUpdated(Type parentType,
+      IRelativeBase newParent);
 
     public bool AddChild(IRelativeBase child) {
       ValidateChild(child);
@@ -104,6 +100,7 @@ namespace SoundExplorersDatabase.Data {
         References.AddFast(new Reference(child, "_children"));
         if (!child.IsChangingParentOfType[PersistableType]) {
           child.ParentOfType[PersistableType] = this;
+          child.OnParentToBeUpdated(PersistableType, this);
         }
       }
       IsChangingChildrenOfType[child.PersistableType] = false;
@@ -115,6 +112,7 @@ namespace SoundExplorersDatabase.Data {
       IsChangingChildrenOfType[child.PersistableType] = true;
       if (!child.IsChangingParentOfType[PersistableType]) {
         child.ParentOfType[PersistableType] = null;
+        child.OnParentToBeUpdated(PersistableType, null);
       }
       var result = false;
       if (ChildrenOfType[child.PersistableType].Contains(child.Key)) {
@@ -128,12 +126,32 @@ namespace SoundExplorersDatabase.Data {
       return result;
     }
 
+    protected void SetParent<TParent>([CanBeNull] TParent value)
+      where TParent : IRelativeBase {
+      var parentType = typeof(TParent);
+      IsChangingParentOfType[parentType] =
+        ParentOfType[parentType] != null &&
+        !ParentOfType[parentType].IsChangingChildrenOfType[PersistableType] ||
+        value != null && !value.IsChangingChildrenOfType[PersistableType];
+      if (ParentOfType[parentType] != null &&
+          !ParentOfType[parentType].IsChangingChildrenOfType[PersistableType]) {
+        ParentOfType[parentType].ChildrenOfType[PersistableType].Remove(Key);
+        ParentOfType[parentType].RemoveChild(this);
+      }
+      if (value != null && !value.IsChangingChildrenOfType[PersistableType]) {
+        value.ChildrenOfType[PersistableType].Add(Key, this);
+      }
+      UpdateNonIndexField();
+      ParentOfType[parentType] = value;
+      IsChangingParentOfType[parentType] = false;
+    }
+
     [CanBeNull]
     protected abstract IEnumerable<IChildrenType> GetChildrenTypes();
 
     [CanBeNull]
     protected abstract IEnumerable<Type> GetParentTypes();
-    
+
 
     private void Initialise() {
       var parentTypes = GetParentTypes();

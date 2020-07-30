@@ -32,9 +32,11 @@ namespace SoundExplorersDatabase.Data {
       return session.AllObjects<Child>().First(child => child.Name == name);
     }
 
-    public override void Unpersist(SessionBase session) {
-      Parent?.Children.Remove(this);
-      base.Unpersist(session);
+    public override void OnParentToBeUpdated(Type parentType, IRelativeBase newParent) {
+      if (parentType != typeof(Parent)) {
+        throw new ArgumentException($"Parent type {parentType} is invalid.", nameof(parentType));
+      }
+      Parent = (Parent)newParent;
     }
 
     protected override IEnumerable<IChildrenType> GetChildrenTypes() {
