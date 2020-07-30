@@ -23,8 +23,8 @@ namespace SoundExplorersDatabase.Tests.Data {
       }
     }
 
-    protected override IEnumerable<IChildrenType> GetChildrenTypes() {
-      return new[] {new ChildrenType<Child>(Children)};
+    protected override IEnumerable<ChildrenType> GetChildrenTypes() {
+      return new[] {new ChildrenType(typeof(Child), Children)};
     }
 
     protected override IEnumerable<Type> GetParentTypes() {

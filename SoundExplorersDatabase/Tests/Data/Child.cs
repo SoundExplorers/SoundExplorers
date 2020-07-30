@@ -29,7 +29,7 @@ namespace SoundExplorersDatabase.Tests.Data {
       }
     }
 
-    protected override IEnumerable<IChildrenType> GetChildrenTypes() {
+    protected override IEnumerable<ChildrenType> GetChildrenTypes() {
       return null;
     }
 

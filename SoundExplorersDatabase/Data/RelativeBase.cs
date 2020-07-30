@@ -62,7 +62,7 @@ namespace SoundExplorersDatabase.Data {
     }
 
     [CanBeNull]
-    protected abstract IEnumerable<IChildrenType> GetChildrenTypes();
+    protected abstract IEnumerable<ChildrenType> GetChildrenTypes();
 
     [CanBeNull]
     protected abstract IEnumerable<Type> GetParentTypes();
