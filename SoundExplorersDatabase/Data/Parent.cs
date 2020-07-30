@@ -30,8 +30,7 @@ namespace SoundExplorersDatabase.Data {
       return null;
     }
 
-    protected override void OnParentToBeUpdated(Type parentType,
-      RelativeBase newParent) {
+    protected override void OnParentFieldToBeUpdated(RelativeBase newParent) {
       throw new NotSupportedException();
     }
 

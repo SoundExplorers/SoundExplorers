@@ -10,8 +10,6 @@ using VelocityDb.TypeInfo;
 namespace SoundExplorersDatabase.Data {
   public abstract class RelativeBase : ReferenceTracked {
     private IDictionary<Type, IDictionary> _childrenOfType;
-    private IDictionary<Type, bool> _isChangingChildrenOfType;
-    private IDictionary<Type, bool> _isChangingParentOfType;
     private IDictionary<Type, RelativeBase> _parentOfType;
 
     protected RelativeBase(Type persistableType) {
@@ -28,32 +26,6 @@ namespace SoundExplorersDatabase.Data {
       set {
         UpdateNonIndexField();
         _childrenOfType = value;
-      }
-    }
-
-    private IDictionary<Type, bool> IsChangingChildrenOfType {
-      get {
-        if (_isChangingChildrenOfType == null) {
-          Initialise();
-        }
-        return _isChangingChildrenOfType;
-      }
-      set {
-        UpdateNonIndexField();
-        _isChangingChildrenOfType = value;
-      }
-    }
-
-    private IDictionary<Type, bool> IsChangingParentOfType {
-      get {
-        if (_isChangingParentOfType == null) {
-          Initialise();
-        }
-        return _isChangingParentOfType;
-      }
-      set {
-        UpdateNonIndexField();
-        _isChangingParentOfType = value;
       }
     }
 
@@ -76,7 +48,6 @@ namespace SoundExplorersDatabase.Data {
 
     internal bool AddChild(RelativeBase child) {
       ValidateChild(child);
-      IsChangingChildrenOfType[child.PersistableType] = true;
       var result = false;
       if (!ChildrenOfType[child.PersistableType].Contains(child.Key)) {
         ChildrenOfType[child.PersistableType].Add(child.Key, child);
@@ -84,12 +55,9 @@ namespace SoundExplorersDatabase.Data {
       }
       if (result) {
         References.AddFast(new Reference(child, "_children"));
-        if (!child.IsChangingParentOfType[PersistableType]) {
-          child.ParentOfType[PersistableType] = this;
-          child.OnParentToBeUpdated(PersistableType, this);
-        }
+        child.ParentOfType[PersistableType] = this;
+        child.OnParentFieldToBeUpdated(this);
       }
-      IsChangingChildrenOfType[child.PersistableType] = false;
       return result;
     }
 
@@ -99,37 +67,37 @@ namespace SoundExplorersDatabase.Data {
     [CanBeNull]
     protected abstract IEnumerable<Type> GetParentTypes();
 
+    protected void ChangeParent<TParent>([CanBeNull] TParent value)
+      where TParent : RelativeBase {
+      var parentType = typeof(TParent);
+      ParentOfType[parentType]?.RemoveChild(this);
+      value?.AddChild(this);
+      ParentOfType[parentType] = value;
+    }
+
     private void Initialise() {
       var parentTypes = GetParentTypes();
       var childrenTypes = GetChildrenTypes();
       ParentOfType = new Dictionary<Type, RelativeBase>();
-      IsChangingParentOfType = new Dictionary<Type, bool>();
       if (parentTypes != null) {
         foreach (var parentType in parentTypes) {
           ParentOfType.Add(parentType, null);
-          IsChangingParentOfType.Add(parentType, false);
         }
       }
       ChildrenOfType = new Dictionary<Type, IDictionary>();
-      IsChangingChildrenOfType = new Dictionary<Type, bool>();
       if (childrenTypes != null) {
         foreach (var childrenType in childrenTypes) {
           ChildrenOfType.Add(childrenType.ChildType, childrenType.Children);
-          IsChangingChildrenOfType.Add(childrenType.ChildType, false);
         }
       }
     }
 
-    protected abstract void OnParentToBeUpdated(Type parentType,
-      RelativeBase newParent);
+    protected abstract void OnParentFieldToBeUpdated(RelativeBase newParent);
 
-    internal bool RemoveChild(RelativeBase child) {
+    internal bool RemoveChild([NotNull] RelativeBase child) {
       ValidateChild(child);
-      IsChangingChildrenOfType[child.PersistableType] = true;
-      if (!child.IsChangingParentOfType[PersistableType]) {
-        child.ParentOfType[PersistableType] = null;
-        child.OnParentToBeUpdated(PersistableType, null);
-      }
+      child.ParentOfType[PersistableType] = null;
+      child.OnParentFieldToBeUpdated(null);
       var result = false;
       if (ChildrenOfType[child.PersistableType].Contains(child.Key)) {
         ChildrenOfType[child.PersistableType].Remove(child.Key);
@@ -138,28 +106,7 @@ namespace SoundExplorersDatabase.Data {
       if (result) {
         References.Remove(References.First(r => r.To.Equals(child)));
       }
-      IsChangingChildrenOfType[child.PersistableType] = false;
       return result;
-    }
-
-    protected void SetParent<TParent>([CanBeNull] TParent value)
-      where TParent : RelativeBase {
-      var parentType = typeof(TParent);
-      IsChangingParentOfType[parentType] =
-        ParentOfType[parentType] != null &&
-        !ParentOfType[parentType].IsChangingChildrenOfType[PersistableType] ||
-        value != null && !value.IsChangingChildrenOfType[PersistableType];
-      if (ParentOfType[parentType] != null &&
-          !ParentOfType[parentType].IsChangingChildrenOfType[PersistableType]) {
-        ParentOfType[parentType].ChildrenOfType[PersistableType].Remove(Key);
-        ParentOfType[parentType].RemoveChild(this);
-      }
-      if (value != null && !value.IsChangingChildrenOfType[PersistableType]) {
-        value.ChildrenOfType[PersistableType].Add(Key, this);
-      }
-      UpdateNonIndexField();
-      ParentOfType[parentType] = value;
-      IsChangingParentOfType[parentType] = false;
     }
 
     private void ValidateChild(RelativeBase child) {

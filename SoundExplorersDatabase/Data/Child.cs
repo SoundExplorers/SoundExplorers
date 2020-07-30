@@ -23,7 +23,7 @@ namespace SoundExplorersDatabase.Data {
       get => _parent;
       set {
         UpdateNonIndexField();
-        SetParent(value);
+        ChangeParent(value);
         _parent = value;
       }
     }
@@ -36,13 +36,8 @@ namespace SoundExplorersDatabase.Data {
       return new[] {typeof(Parent)};
     }
 
-    protected override void OnParentToBeUpdated(Type parentType,
-      RelativeBase newParent) {
-      if (parentType != typeof(Parent)) {
-        throw new ArgumentException($"Parent type {parentType} is invalid.",
-          nameof(parentType));
-      }
-      Parent = (Parent)newParent;
+    protected override void OnParentFieldToBeUpdated(RelativeBase newParent) {
+      _parent = (Parent)newParent;
     }
 
     public static Child Read(string name, SessionBase session) {
