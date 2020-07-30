@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using SoundExplorersDatabase.Data;
 using VelocityDb.Session;
 
-namespace SoundExplorersDatabase.Data {
+namespace SoundExplorersDatabase.Tests.Data {
   public class Child : RelativeBase {
     private string _name;
     private Parent _parent;
