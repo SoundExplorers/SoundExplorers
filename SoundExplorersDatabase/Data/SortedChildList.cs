@@ -13,12 +13,12 @@ namespace SoundExplorersDatabase.Data {
 
     public TChild this[int index] => Values[index];
 
-    public bool Add(TChild child) {
-      return Parent.AddChild(child);
+    public void Add(TChild child) {
+      Parent.AddChild(child);
     }
 
-    public bool Remove(TChild child) {
-      return Parent.RemoveChild(child);
+    public void Remove(TChild child) {
+      Parent.RemoveChild(child);
     }
 
     public void Add(string notSupported, TChild doNotUse) {

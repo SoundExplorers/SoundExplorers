@@ -34,18 +34,12 @@ namespace SoundExplorersDatabase.Tests.Data {
         Son1.Name = Son1Name;
         session.Persist(Son2);
         Son2.Name = Son2Name;
-        Assert.IsTrue(Mother1.Daughters.Add(Daughter1),
-          "Added Daughter1 to Mother1");
-        Assert.IsTrue(Mother1.Sons.Add(Son1),
-          "Added Son1 to Mother1");
-        Assert.IsTrue(Mother1.Sons.Add(Son2),
-          "Added Son2 to Mother1");
-        Assert.IsTrue(Father1.Sons.Add(Son1),
-          "Added Son1 to Father1");
-        Assert.IsTrue(Father1.Daughters.Add(Daughter1),
-          "Added Daughter1 to Father1");
-        Assert.IsTrue(Father1.Daughters.Add(Daughter2),
-          "Added Daughter2 to Father1");
+        Mother1.Daughters.Add(Daughter1);
+        Mother1.Sons.Add(Son1);
+        Mother1.Sons.Add(Son2);
+        Father1.Sons.Add(Son1);
+        Father1.Daughters.Add(Daughter1);
+        Father1.Daughters.Add(Daughter2);
         session.Commit();
       }
     }
@@ -243,10 +237,8 @@ namespace SoundExplorersDatabase.Tests.Data {
         Daughter2 = Daughter.Read(Daughter2Name, session);
         Son1 = Son.Read(Son1Name, session);
         Son2 = Son.Read(Son2Name, session);
-        Assert.IsTrue(Mother1.Daughters.Add(Daughter2),
-          "Added Daughter2 to Mother1");
-        Assert.IsTrue(Father1.Sons.Add(Son2),
-          "Added Son2 to Father1");
+        Mother1.Daughters.Add(Daughter2);
+        Father1.Sons.Add(Son2);
         session.Commit();
         
         Assert.AreSame(Mother1, Daughter2.Mother,
@@ -258,8 +250,7 @@ namespace SoundExplorersDatabase.Tests.Data {
         Assert.AreEqual(4, Mother1.References.Count,
           "Mother1.References.Count after Add #2");
         session.BeginUpdate();
-        Assert.IsTrue(Mother1.Daughters.Remove(Daughter1),
-          "Removed Daughter1 from Mother1");
+        Mother1.Daughters.Remove(Daughter1);
         session.Commit();
         Assert.IsNull(Daughter1.Mother, "Daughter1.Mother after Remove #1");
         Assert.AreSame(Mother1, Daughter2.Mother,
@@ -271,8 +262,7 @@ namespace SoundExplorersDatabase.Tests.Data {
         Assert.AreEqual(3, Mother1.References.Count,
           "Mother1.References.Count after Remove #1");
         session.BeginUpdate();
-        Assert.IsTrue(Mother1.Daughters.Remove(Daughter2),
-          "Removed Daughter2 from Mother1");
+        Mother1.Daughters.Remove(Daughter2);
         session.Commit();
         Assert.IsNull(Daughter2.Mother, "Daughter2.Mother after Remove #2");
         Assert.AreEqual(0, Mother1.Daughters.Count,
@@ -289,8 +279,7 @@ namespace SoundExplorersDatabase.Tests.Data {
         Assert.AreEqual(4, Father1.References.Count,
           "Father1.References.Count after Add #2");
         session.BeginUpdate();
-        Assert.IsTrue(Father1.Sons.Remove(Son1),
-          "Removed Son1 from Father1");
+        Father1.Sons.Remove(Son1);
         session.Commit();
         Assert.IsNull(Son1.Father, "Son1.Father after Remove #1");
         Assert.AreSame(Father1, Son2.Father,
@@ -302,8 +291,7 @@ namespace SoundExplorersDatabase.Tests.Data {
         Assert.AreEqual(3, Father1.References.Count,
           "Father1.References.Count after Remove #1");
         session.BeginUpdate();
-        Assert.IsTrue(Father1.Sons.Remove(Son2),
-          "Removed Son2 from Father1");
+        Father1.Sons.Remove(Son2);
         session.Commit();
         Assert.IsNull(Son2.Father, "Son2.Father after Remove #2");
         Assert.AreEqual(0, Father1.Sons.Count,

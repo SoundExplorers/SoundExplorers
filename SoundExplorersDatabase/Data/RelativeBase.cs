@@ -47,7 +47,7 @@ namespace SoundExplorersDatabase.Data {
 
     private Type PersistableType { get; }
 
-    internal bool AddChild([NotNull] RelativeBase child) {
+    internal void AddChild([NotNull] RelativeBase child) {
       CheckCanAddChild(child);
       var result = false;
       if (!ChildrenOfType[child.PersistableType].Contains(child.Key)) {
@@ -58,7 +58,6 @@ namespace SoundExplorersDatabase.Data {
         References.AddFast(new Reference(child, "_children"));
         UpdateChild(child, this);
       }
-      return result;
     }
 
     [CanBeNull]
@@ -115,13 +114,11 @@ namespace SoundExplorersDatabase.Data {
     protected abstract void OnParentFieldToBeUpdated(
       [NotNull] Type parentPersistableType, [CanBeNull] RelativeBase newParent);
 
-    internal bool RemoveChild([NotNull] RelativeBase child) {
+    internal void RemoveChild([NotNull] RelativeBase child) {
       CheckCanRemoveChild(child);
-      const bool result = true;
       UpdateChild(child, null);
       ChildrenOfType[child.PersistableType].Remove(child.Key);
       References.Remove(References.First(r => r.To.Equals(child)));
-      return result;
     }
 
     public override void Unpersist(SessionBase session) {
