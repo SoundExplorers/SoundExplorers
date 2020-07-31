@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using JetBrains.Annotations;
 using VelocityDb;
@@ -44,10 +45,10 @@ namespace SoundExplorersDatabase.Data {
       }
     }
 
-    internal Type PersistableType { get; }
+    private Type PersistableType { get; }
 
     internal bool AddChild([NotNull] RelativeBase child) {
-      ValidateChild(child);
+      CheckCanAddChild(child);
       var result = false;
       if (!ChildrenOfType[child.PersistableType].Contains(child.Key)) {
         ChildrenOfType[child.PersistableType].Add(child.Key, child);
@@ -74,6 +75,26 @@ namespace SoundExplorersDatabase.Data {
       ParentOfType[parentPersistableType] = newParent;
     }
 
+    private void CheckCanAddChild([NotNull] RelativeBase child) {
+      if (child.ParentOfType[PersistableType] != null) {
+        throw new ConstraintException(
+          $"{child.PersistableType.Name} '{child.Key}' " +
+          $"cannot be added to {PersistableType.Name} '{Key}', " +
+          $"because it already belongs to {PersistableType.Name} " +
+          $"'{child.ParentOfType[PersistableType].Key}'.");
+      }
+    }
+
+    private void CheckCanRemoveChild([NotNull] RelativeBase child) {
+      if (!ChildrenOfType[child.PersistableType].Contains(child.Key)) {
+        throw new KeyNotFoundException(
+          $"{child.PersistableType.Name} '{child.Key}' " +
+          $"cannot be removed from {PersistableType.Name} '{Key}', " +
+          $"because it does not belong to {PersistableType.Name} " +
+          $"'{Key}'.");
+      }
+    }
+
     private void Initialise() {
       var parentTypes = GetParentTypes();
       var childrenTypes = GetChildrenTypes();
@@ -95,25 +116,12 @@ namespace SoundExplorersDatabase.Data {
       [NotNull] Type parentPersistableType, [CanBeNull] RelativeBase newParent);
 
     internal bool RemoveChild([NotNull] RelativeBase child) {
-      ValidateChild(child);
+      CheckCanRemoveChild(child);
+      const bool result = true;
       UpdateChild(child, null);
-      var result = false;
-      if (ChildrenOfType[child.PersistableType].Contains(child.Key)) {
-        ChildrenOfType[child.PersistableType].Remove(child.Key);
-        result = true;
-      }
-      if (result) {
-        References.Remove(References.First(r => r.To.Equals(child)));
-      }
+      ChildrenOfType[child.PersistableType].Remove(child.Key);
+      References.Remove(References.First(r => r.To.Equals(child)));
       return result;
-    }
-
-    private void ValidateChild([NotNull] RelativeBase child) {
-      if (!ChildrenOfType.ContainsKey(child.PersistableType)) {
-        throw new ArgumentException(
-          $"Children of type {child.PersistableType} are not supported.",
-          nameof(child));
-      }
     }
 
     public override void Unpersist(SessionBase session) {

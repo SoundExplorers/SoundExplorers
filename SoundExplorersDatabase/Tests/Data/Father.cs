@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using SoundExplorersDatabase.Data;
 using VelocityDb.Session;
@@ -37,6 +38,7 @@ namespace SoundExplorersDatabase.Tests.Data {
       return null;
     }
 
+    [ExcludeFromCodeCoverage]
     protected override void OnParentFieldToBeUpdated(
       Type parentPersistableType,
       RelativeBase newParent) {
