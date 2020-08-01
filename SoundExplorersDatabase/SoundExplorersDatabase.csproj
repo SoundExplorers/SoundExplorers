@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{EB9DD1AE-4445-45C2-BD75-B27CF5A87642}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>Library</OutputType>
     <RootNamespace>SoundExplorersDatabase</RootNamespace>
     <AssemblyName>SoundExplorersDatabase</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
@@ -84,7 +84,6 @@
     <Compile Include="Data\LocationEvents.cs" />
     <Compile Include="Data\Series.cs" />
     <Compile Include="Data\Location.cs" />
-    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Data\SchemaVersion.cs" />
   </ItemGroup>
