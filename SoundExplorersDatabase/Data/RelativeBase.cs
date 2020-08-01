@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Linq;
 using System.Linq;
 using JetBrains.Annotations;
 using VelocityDb;
@@ -49,15 +50,9 @@ namespace SoundExplorersDatabase.Data {
 
     internal void AddChild([NotNull] RelativeBase child) {
       CheckCanAddChild(child);
-      var result = false;
-      if (!ChildrenOfType[child.PersistableType].Contains(child.Key)) {
-        ChildrenOfType[child.PersistableType].Add(child.Key, child);
-        result = true;
-      }
-      if (result) {
-        References.AddFast(new Reference(child, "_children"));
-        UpdateChild(child, this);
-      }
+      ChildrenOfType[child.PersistableType].Add(child.Key, child);
+      References.AddFast(new Reference(child, "_children"));
+      UpdateChild(child, this);
     }
 
     [CanBeNull]
@@ -81,6 +76,13 @@ namespace SoundExplorersDatabase.Data {
           $"cannot be added to {PersistableType.Name} '{Key}', " +
           $"because it already belongs to {PersistableType.Name} " +
           $"'{child.ParentOfType[PersistableType].Key}'.");
+      }
+      if (ChildrenOfType[child.PersistableType].Contains(child.Key)) {
+        throw new DuplicateKeyException(
+          child,
+          $"{child.PersistableType.Name} '{child.Key}' " +
+          $"cannot be added to {PersistableType.Name} '{Key}', " +
+          $"because it already belongs to it.");
       }
     }
 

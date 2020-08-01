@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Linq;
 using NUnit.Framework;
 using VelocityDb.Exceptions;
 
@@ -193,7 +194,7 @@ namespace SoundExplorersDatabase.Tests.Data {
     }
 
     [Test]
-    public void T030_CannotDeleteParentWithChildren() {
+    public void T030_DisallowDeleteParentWithChildren() {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
         Assert.Throws<ReferentialIntegrityException>(() =>
@@ -203,7 +204,19 @@ namespace SoundExplorersDatabase.Tests.Data {
     }
 
     [Test]
-    public void T035_CannotAddChildWithParentToAnotherParentOfSameType() {
+    public void T033_DisallowAddDuplicateChildToParent() {
+      using (var session = new TestSession(DatabaseFolderPath)) {
+        session.BeginUpdate();
+        Father1 = Father.Read(Father1Name, session);
+        var duplicateDaughter2 = new Daughter {Name = Daughter2Name};
+        Assert.Throws<DuplicateKeyException>(() =>
+          Father1.Daughters.Add(duplicateDaughter2));
+        session.Commit();
+      }
+    }
+
+    [Test]
+    public void T035_DisallowAddChildWithParentToAnotherParentOfSameType() {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
         Father2 = Father.Read(Father2Name, session);
@@ -215,7 +228,7 @@ namespace SoundExplorersDatabase.Tests.Data {
     }
 
     [Test]
-    public void T037_CannotRemoveChildThatDoesNotBelongToParent() {
+    public void T037_DisallowRemoveChildThatDoesNotBelongToParent() {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
         Father1 = Father.Read(Father1Name, session);
