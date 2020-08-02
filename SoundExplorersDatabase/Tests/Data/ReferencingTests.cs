@@ -85,11 +85,13 @@ namespace SoundExplorersDatabase.Tests.Data {
         Assert.IsTrue(Daughter1.IsPersistent,
           "Daughter1.IsPersistent initially");
         Assert.AreEqual(Daughter1Name, Daughter1.Name, "Daughter1.Name");
+        Assert.AreEqual(Daughter1Name, Daughter1.Key, "Daughter1.Key");
         Assert.IsTrue(Daughter2.IsPersistent,
           "Daughter2.IsPersistent initially");
         Assert.AreEqual(Daughter2Name, Daughter2.Name, "Daughter2.Name");
         Assert.IsTrue(Mother1.IsPersistent, "Mother1.IsPersistent initially");
         Assert.AreEqual(Mother1Name, Mother1.Name, "Mother1.Name initially");
+        Assert.AreEqual(Mother1Name, Mother1.Key, "Mother1.Key initially");
         Assert.IsTrue(Mother2.IsPersistent, "Mother2.IsPersistent initially");
         Assert.AreEqual(Mother2Name, Mother2.Name, "Mother2.Name initially");
         Assert.AreEqual(1, Mother1.Daughters.Count,
