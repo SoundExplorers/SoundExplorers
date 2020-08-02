@@ -31,7 +31,8 @@ namespace SoundExplorersDatabase.Data {
       }
     }
 
-    protected object Key { get; set; }
+    private bool IsTopLevel => ParentOfType.Count == 0;
+    public object Key { get; private set; }
 
     private IDictionary<Type, RelativeBase> ParentOfType {
       get {
@@ -70,6 +71,11 @@ namespace SoundExplorersDatabase.Data {
     }
 
     private void CheckCanAddChild([NotNull] RelativeBase child) {
+      if (child == null) {
+        throw new NoNullAllowedException(
+          $"A null reference has been specified. " +
+          $"So addition to {PersistableType.Name} '{Key}' is not supported.");
+      }
       if (child.ParentOfType[PersistableType] != null) {
         throw new ConstraintException(
           $"{child.PersistableType.Name} '{child.Key}' " +
@@ -86,7 +92,23 @@ namespace SoundExplorersDatabase.Data {
       }
     }
 
+    private void CheckCanPersist(SessionBase session) {
+      if (Key == null) {
+        throw new NoNullAllowedException(
+          "A Key has not yet been specified. " + 
+          $"So the {PersistableType.Name} cannot be persisted.");
+      }
+      if (IsTopLevel) {
+        //FindWithSameKey(session);
+      }
+    }
+
     private void CheckCanRemoveChild([NotNull] RelativeBase child) {
+      if (child == null) {
+        throw new NoNullAllowedException(
+          $"A null reference has been specified. " +
+          $"So removal from {PersistableType.Name} '{Key}' is not supported.");
+      }
       if (!ChildrenOfType[child.PersistableType].Contains(child.Key)) {
         throw new KeyNotFoundException(
           $"{child.PersistableType.Name} '{child.Key}' " +
@@ -95,6 +117,9 @@ namespace SoundExplorersDatabase.Data {
           $"'{Key}'.");
       }
     }
+
+    [CanBeNull]
+    protected abstract RelativeBase FindWithSameKey([NotNull] SessionBase session);
 
     private void Initialise() {
       var parentTypes = GetParentTypes();
@@ -116,11 +141,24 @@ namespace SoundExplorersDatabase.Data {
     protected abstract void OnParentFieldToBeUpdated(
       [NotNull] Type parentPersistableType, [CanBeNull] RelativeBase newParent);
 
+    public override ulong Persist(Placement place, SessionBase session, bool persistRefs = true,
+      bool disableFlush = false, Queue<IOptimizedPersistable> toPersist = null) {
+      CheckCanPersist(session);
+      return base.Persist(place, session, persistRefs, disableFlush, toPersist);
+    }
+
     internal void RemoveChild([NotNull] RelativeBase child) {
       CheckCanRemoveChild(child);
       UpdateChild(child, null);
       ChildrenOfType[child.PersistableType].Remove(child.Key);
       References.Remove(References.First(r => r.To.Equals(child)));
+    }
+
+    protected virtual void SetKey([NotNull] object value) {
+      Key = value ?? throw new NoNullAllowedException(
+              $"A null reference has been specified as the Key " + 
+              $"for {PersistableType.Name} '{Key}'. " +
+              "Null Keys are not supported.");
     }
 
     public override void Unpersist(SessionBase session) {

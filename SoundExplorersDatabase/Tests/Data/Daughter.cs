@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using JetBrains.Annotations;
 using SoundExplorersDatabase.Data;
 using VelocityDb.Session;
 
@@ -30,13 +32,19 @@ namespace SoundExplorersDatabase.Tests.Data {
       }
     }
 
+    [NotNull]
     public string Name {
       get => _name;
       set {
         UpdateNonIndexField();
         _name = value;
-        Key = value;
+        SetKey(value);
       }
+    }
+
+    [ExcludeFromCodeCoverage]
+    protected override RelativeBase FindWithSameKey(SessionBase session) {
+      throw new NotSupportedException();
     }
 
     protected override IEnumerable<ChildrenType> GetChildrenTypes() {
@@ -60,7 +68,7 @@ namespace SoundExplorersDatabase.Tests.Data {
       }
     }
 
-    public static Daughter Read(string name, SessionBase session) {
+    public static Daughter Read([NotNull] string name, [NotNull] SessionBase session) {
       return session.AllObjects<Daughter>().First(daughter => daughter.Name == name);
     }
   }

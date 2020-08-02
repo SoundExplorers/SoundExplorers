@@ -21,20 +21,20 @@ namespace SoundExplorersDatabase.Tests.Data {
       DatabaseFolderPath = TestSession.CreateDatabaseFolder();
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
-        session.Persist(Mother1);
         Mother1.Name = Mother1Name;
+        session.Persist(Mother1);
         session.Persist(Mother2);
-        session.Persist(Daughter1);
         Daughter1.Name = Daughter1Name;
-        session.Persist(Daughter2);
+        session.Persist(Daughter1);
         Daughter2.Name = Daughter2Name;
-        session.Persist(Father1);
+        session.Persist(Daughter2);
         Father1.Name = Father1Name;
+        session.Persist(Father1);
         session.Persist(Father2);
-        session.Persist(Son1);
         Son1.Name = Son1Name;
-        session.Persist(Son2);
+        session.Persist(Son1);
         Son2.Name = Son2Name;
+        session.Persist(Son2);
         Mother1.Daughters.Add(Daughter1);
         Mother1.Sons.Add(Son1);
         Mother1.Sons.Add(Son2);
@@ -189,53 +189,6 @@ namespace SoundExplorersDatabase.Tests.Data {
         Assert.Throws<NotSupportedException>(
           () => Mother1.Daughters.RemoveAt(0),
           "Unsupported Mother.Daughters.RemoveAt");
-        session.Commit();
-      }
-    }
-
-    [Test]
-    public void T030_DisallowDeleteParentWithChildren() {
-      using (var session = new TestSession(DatabaseFolderPath)) {
-        session.BeginUpdate();
-        Assert.Throws<ReferentialIntegrityException>(() =>
-          Mother1.Unpersist(session));
-        session.Commit();
-      }
-    }
-
-    [Test]
-    public void T033_DisallowAddDuplicateChildToParent() {
-      using (var session = new TestSession(DatabaseFolderPath)) {
-        session.BeginUpdate();
-        Father1 = Father.Read(Father1Name, session);
-        var duplicateDaughter2 = new Daughter {Name = Daughter2Name};
-        Assert.Throws<DuplicateKeyException>(() =>
-          Father1.Daughters.Add(duplicateDaughter2));
-        session.Commit();
-      }
-    }
-
-    [Test]
-    public void T035_DisallowAddChildWithParentToAnotherParentOfSameType() {
-      using (var session = new TestSession(DatabaseFolderPath)) {
-        session.BeginUpdate();
-        Father2 = Father.Read(Father2Name, session);
-        Daughter2 = Daughter.Read(Daughter2Name, session);
-        Assert.Throws<ConstraintException>(() =>
-          Father2.Daughters.Add(Daughter2));
-        session.Commit();
-      }
-    }
-
-    [Test]
-    public void T037_DisallowRemoveChildThatDoesNotBelongToParent() {
-      using (var session = new TestSession(DatabaseFolderPath)) {
-        session.BeginUpdate();
-        Father1 = Father.Read(Father1Name, session);
-        Son1 = Son.Read(Son1Name, session);
-        Father1.Sons.Remove(Son1);
-        Assert.Throws<KeyNotFoundException>(() =>
-          Father1.Sons.Remove(Son1));
         session.Commit();
       }
     }
@@ -476,5 +429,120 @@ namespace SoundExplorersDatabase.Tests.Data {
           "Father2.References.Count");
       }
     }
-  }
+ 
+    [Test]
+    public void T090_DisallowDeleteParentWithChildren() {
+      using (var session = new TestSession(DatabaseFolderPath)) {
+        session.BeginUpdate();
+        Assert.Throws<ReferentialIntegrityException>(() =>
+          Mother1.Unpersist(session));
+        session.Commit();
+      }
+    }
+
+    [Test]
+    public void T100_DisallowNullKey() {
+      using (var session = new TestSession(DatabaseFolderPath)) {
+        session.BeginUpdate();
+        Daughter1 = Daughter.Read(Daughter1Name, session);
+        Assert.Throws<NoNullAllowedException>(() =>
+          // ReSharper disable once AssignNullToNotNullAttribute
+          Daughter1.Name = null, "Disallow set Key to null");
+        var namelessSon = new Son();
+        Assert.Throws<NoNullAllowedException>(() =>
+          // ReSharper disable once AssignNullToNotNullAttribute
+          namelessSon.Name = null, "Disallow set (initially null) Key to null");
+        Assert.Throws<NoNullAllowedException>(() =>
+          session.Persist(namelessSon), "Disallow persist entity with null Key");
+        session.Commit();
+      }
+    }
+
+    [Test]
+    public void T110_DisallowPersistDuplicateTopLevel() {
+      using (var session = new TestSession(DatabaseFolderPath)) {
+        session.BeginUpdate();
+        var duplicateMother = new Mother {Name = Mother1Name};
+        Assert.Throws<ConstraintException>(() =>
+          session.Persist(duplicateMother));
+        session.Commit();
+      }
+    }
+
+    [Test]
+    public void T120_DisallowPersistParentlessChild() {
+      using (var session = new TestSession(DatabaseFolderPath)) {
+        session.BeginUpdate();
+        var motherlessDaughter = new Daughter {Name = "Carol"};
+        Assert.Throws<ConstraintException>(() =>
+          session.Persist(motherlessDaughter));
+        session.Commit();
+      }
+    }
+
+    [Test]
+    public void T130_DisallowAddDuplicateChildToParent() {
+      using (var session = new TestSession(DatabaseFolderPath)) {
+        session.BeginUpdate();
+        Father1 = Father.Read(Father1Name, session);
+        var duplicateDaughter2 = new Daughter {Name = Daughter2Name};
+        Assert.Throws<DuplicateKeyException>(() =>
+          Father1.Daughters.Add(duplicateDaughter2));
+        session.Commit();
+      }
+    }
+
+    [Test]
+    public void T140_DisallowAddChildWithParentToAnotherParentOfSameType() {
+      using (var session = new TestSession(DatabaseFolderPath)) {
+        session.BeginUpdate();
+        Father2 = Father.Read(Father2Name, session);
+        Daughter2 = Daughter.Read(Daughter2Name, session);
+        Assert.Throws<ConstraintException>(() =>
+          Father2.Daughters.Add(Daughter2));
+        session.Commit();
+      }
+    }
+
+    [Test]
+    public void T150_DisallowRemoveChildThatDoesNotBelongToParent() {
+      using (var session = new TestSession(DatabaseFolderPath)) {
+        session.BeginUpdate();
+        Father1 = Father.Read(Father1Name, session);
+        Son1 = Son.Read(Son1Name, session);
+        Father1.Sons.Remove(Son1);
+        Assert.Throws<KeyNotFoundException>(() =>
+          Father1.Sons.Remove(Son1));
+        session.Commit();
+      }
+    }
+
+    [Test]
+    public void T160_DisallowAddNullChild() {
+      using (var session = new TestSession(DatabaseFolderPath)) {
+        session.BeginUpdate();
+        Father1 = Father.Read(Father1Name, session);
+        Assert.Throws<NoNullAllowedException>(() =>
+          // Cannot use [Children].Add, as it is an ambiguous reference 
+          // when a null parameter is specified.
+          // ReSharper disable once AssignNullToNotNullAttribute
+          Father1.AddChild(null));
+        session.Commit();
+      }
+    }
+
+    [Test]
+    public void T170_DisallowRemoveNullChild() {
+      using (var session = new TestSession(DatabaseFolderPath)) {
+        session.BeginUpdate();
+        Father1 = Father.Read(Father1Name, session);
+        Assert.Throws<NoNullAllowedException>(() =>
+          // Cannot use [Children].Add, as it is an ambiguous reference 
+          // when a null parameter is specified.
+          // ReSharper disable once AssignNullToNotNullAttribute
+          Father1.RemoveChild(null));
+        session.Commit();
+      }
+    }
+ }
 }
