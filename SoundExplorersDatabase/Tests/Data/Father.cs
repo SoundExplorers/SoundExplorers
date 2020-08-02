@@ -11,8 +11,8 @@ namespace SoundExplorersDatabase.Tests.Data {
     private string _name;
 
     public Father() : base(typeof(Father)) {
-      Daughters = new SortedChildList<string, Daughter>(this);
-      Sons = new SortedChildList<string, Son>(this);
+      Daughters = new SortedChildList<string, Daughter>(this, false);
+      Sons = new SortedChildList<string, Son>(this, false);
     }
 
     public SortedChildList<string, Daughter> Daughters { get; }
@@ -26,11 +26,12 @@ namespace SoundExplorersDatabase.Tests.Data {
         SetKey(value);
       }
     }
-    
+
     public SortedChildList<string, Son> Sons { get; }
 
     protected override RelativeBase FindWithSameKey(SessionBase session) {
-      return session.AllObjects<Father>().FirstOrDefault(father => father.Name == Name);
+      return session.AllObjects<Father>()
+        .FirstOrDefault(father => father.Name == Name);
     }
 
     protected override IEnumerable<ChildrenType> GetChildrenTypes() {
@@ -51,7 +52,8 @@ namespace SoundExplorersDatabase.Tests.Data {
       throw new NotSupportedException();
     }
 
-    public static Father Read([NotNull] string name, [NotNull] SessionBase session) {
+    public static Father Read([NotNull] string name,
+      [NotNull] SessionBase session) {
       return session.AllObjects<Father>().First(father => father.Name == name);
     }
   }

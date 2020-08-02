@@ -82,6 +82,14 @@ namespace SoundExplorersDatabase.Tests.Data {
         Son1 = Son.Read(Son1Name, session);
         Son2 = Son.Read(Son2Name, session);
         session.Commit();
+        Assert.IsTrue(Mother1.Daughters.IsMembershipMandatory, 
+          "Mother1.Daughters.IsMembershipMandatory");
+        Assert.IsFalse(Mother1.Sons.IsMembershipMandatory, 
+          "Mother1.Sons.IsMembershipMandatory");
+        Assert.IsFalse(Father1.Daughters.IsMembershipMandatory, 
+          "Father1.Daughters.IsMembershipMandatory");
+        Assert.IsFalse(Mother1.Sons.IsMembershipMandatory, 
+          "Father1.Sons.IsMembershipMandatory");
         Assert.IsTrue(Daughter1.IsPersistent,
           "Daughter1.IsPersistent initially");
         Assert.AreEqual(Daughter1Name, Daughter1.Name, "Daughter1.Name");
@@ -121,6 +129,8 @@ namespace SoundExplorersDatabase.Tests.Data {
         Assert.AreEqual(0, Mother2.References.Count,
           "Mother2.References.Count initially");
         Assert.IsNull(Daughter2.Mother, "Daughter2.Mother initially");
+        // ReSharper problem?
+        // ReSharper disable once HeuristicUnreachableCode
         Assert.AreEqual(0, Mother2.Daughters.Count,
           "Mother2.Daughters.Count initially");
         Assert.AreEqual(0, Mother2.Sons.Count,
@@ -218,25 +228,10 @@ namespace SoundExplorersDatabase.Tests.Data {
         Assert.AreEqual(4, Mother1.References.Count,
           "Mother1.References.Count after Add #2");
         session.BeginUpdate();
-        Mother1.Daughters.Remove(Daughter1);
+        Assert.Throws<ConstraintException>(() =>
+          Mother1.Daughters.Remove(Daughter1), 
+          "Cannot remove Daughter from mandatory link to Mother.");
         session.Commit();
-        Assert.IsNull(Daughter1.Mother, "Daughter1.Mother after Remove #1");
-        Assert.AreSame(Mother1, Daughter2.Mother,
-          "Daughter2.Mother after Remove #1");
-        Assert.AreSame(Daughter2, Mother1.Daughters[0],
-          "Mother1 1st Daughter after Remove #1");
-        Assert.AreEqual(1, Mother1.Daughters.Count,
-          "Mother1.Daughters.Count after Remove #1");
-        Assert.AreEqual(3, Mother1.References.Count,
-          "Mother1.References.Count after Remove #1");
-        session.BeginUpdate();
-        Mother1.Daughters.Remove(Daughter2);
-        session.Commit();
-        Assert.IsNull(Daughter2.Mother, "Daughter2.Mother after Remove #2");
-        Assert.AreEqual(0, Mother1.Daughters.Count,
-          "Mother1.Daughters.Count after Remove #2");
-        Assert.AreEqual(2, Mother1.References.Count,
-          "Mother1.References.Count after Remove #2");
 
         Assert.AreSame(Father1, Son2.Father,
           "Son2.Father after Add #2");
@@ -382,17 +377,15 @@ namespace SoundExplorersDatabase.Tests.Data {
         session.BeginUpdate();
         Mother1 = Mother.Read(Mother1Name, session);
         Daughter1 = Daughter.Read(Daughter1Name, session);
-        Daughter1.Mother = null;
+        Assert.Throws<ConstraintException>(() =>
+            // ReSharper disable once AssignNullToNotNullAttribute
+            Daughter1.Mother = null, 
+          "Cannot remove Daughter from mandatory link to Mother.");
         
         Father1 = Father.Read(Father1Name, session);
         Son1 = Son.Read(Son1Name, session);
         Son1.Father = null;
         session.Commit();
-        Assert.IsNull(Daughter1.Mother, "Daughter1.Mother");
-        Assert.AreEqual(0, Mother1.Daughters.Count,
-          "Mother1.Daughters.Count");
-        Assert.AreEqual(2, Mother1.References.Count,
-          "Mother2.References.Count");
         
         Assert.IsNull(Son1.Father, "Son1.Father");
         Assert.AreEqual(0, Father1.Sons.Count,
@@ -542,7 +535,7 @@ namespace SoundExplorersDatabase.Tests.Data {
           // Cannot use [Children].Add, as it is an ambiguous reference 
           // when a null parameter is specified.
           // ReSharper disable once AssignNullToNotNullAttribute
-          Father1.RemoveChild(null));
+          Father1.RemoveChild(null, false));
         session.Commit();
       }
     }

@@ -23,6 +23,7 @@ namespace SoundExplorersDatabase.Tests.Data {
       }
     }
 
+    [NotNull]
     public Mother Mother {
       get => _mother;
       set {

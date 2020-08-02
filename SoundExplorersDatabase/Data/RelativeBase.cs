@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Linq;
@@ -11,14 +10,14 @@ using VelocityDb.TypeInfo;
 
 namespace SoundExplorersDatabase.Data {
   public abstract class RelativeBase : ReferenceTracked {
-    private IDictionary<Type, IDictionary> _childrenOfType;
+    private IDictionary<Type, ISortedChildList> _childrenOfType;
     private IDictionary<Type, RelativeBase> _parentOfType;
 
     protected RelativeBase(Type persistableType) {
       PersistableType = persistableType;
     }
 
-    private IDictionary<Type, IDictionary> ChildrenOfType {
+    private IDictionary<Type, ISortedChildList> ChildrenOfType {
       get {
         if (_childrenOfType == null) {
           Initialise();
@@ -32,8 +31,7 @@ namespace SoundExplorersDatabase.Data {
     }
 
     private bool IsTopLevel => ParentOfType.Count == 0;
-    
-    [NotNull]
+
     public object Key { get; private set; }
 
     private IDictionary<Type, RelativeBase> ParentOfType {
@@ -67,7 +65,7 @@ namespace SoundExplorersDatabase.Data {
     protected void ChangeParent(
       [NotNull] Type parentPersistableType,
       [CanBeNull] RelativeBase newParent) {
-      ParentOfType[parentPersistableType]?.RemoveChild(this);
+      ParentOfType[parentPersistableType]?.RemoveChild(this, newParent != null);
       newParent?.AddChild(this);
       ParentOfType[parentPersistableType] = newParent;
     }
@@ -75,7 +73,7 @@ namespace SoundExplorersDatabase.Data {
     private void CheckCanAddChild([NotNull] RelativeBase child) {
       if (child == null) {
         throw new NoNullAllowedException(
-          $"A null reference has been specified. " +
+          "A null reference has been specified. " +
           $"So addition to {PersistableType.Name} '{Key}' is not supported.");
       }
       if (child.ParentOfType[PersistableType] != null) {
@@ -90,14 +88,14 @@ namespace SoundExplorersDatabase.Data {
           child,
           $"{child.PersistableType.Name} '{child.Key}' " +
           $"cannot be added to {PersistableType.Name} '{Key}', " +
-          $"because it already belongs to it.");
+          "because it already belongs to it.");
       }
     }
 
     private void CheckCanPersist(SessionBase session) {
       if (Key == null) {
         throw new NoNullAllowedException(
-          "A Key has not yet been specified. " + 
+          "A Key has not yet been specified. " +
           $"So the {PersistableType.Name} cannot be persisted.");
       }
       if (IsTopLevel) {
@@ -105,10 +103,11 @@ namespace SoundExplorersDatabase.Data {
       }
     }
 
-    private void CheckCanRemoveChild([NotNull] RelativeBase child) {
+    private void CheckCanRemoveChild([NotNull] RelativeBase child,
+      bool isReplacingOrUnpersisting) {
       if (child == null) {
         throw new NoNullAllowedException(
-          $"A null reference has been specified. " +
+          "A null reference has been specified. " +
           $"So removal from {PersistableType.Name} '{Key}' is not supported.");
       }
       if (!ChildrenOfType[child.PersistableType].Contains(child.Key)) {
@@ -118,10 +117,18 @@ namespace SoundExplorersDatabase.Data {
           $"because it does not belong to {PersistableType.Name} " +
           $"'{Key}'.");
       }
+      if (ChildrenOfType[child.PersistableType].IsMembershipMandatory &&
+          !isReplacingOrUnpersisting) {
+        throw new ConstraintException(
+          $"{child.PersistableType.Name} '{child.Key}' " +
+          $"cannot be removed from {PersistableType.Name} '{Key}', " +
+          "because membership is mandatory.");
+      }
     }
 
     [CanBeNull]
-    protected abstract RelativeBase FindWithSameKey([NotNull] SessionBase session);
+    protected abstract RelativeBase FindWithSameKey(
+      [NotNull] SessionBase session);
 
     private void Initialise() {
       var parentTypes = GetParentTypes();
@@ -132,7 +139,7 @@ namespace SoundExplorersDatabase.Data {
           ParentOfType.Add(parentType, null);
         }
       }
-      ChildrenOfType = new Dictionary<Type, IDictionary>();
+      ChildrenOfType = new Dictionary<Type, ISortedChildList>();
       if (childrenTypes != null) {
         foreach (var childrenType in childrenTypes) {
           ChildrenOfType.Add(childrenType.ChildType, childrenType.Children);
@@ -143,14 +150,16 @@ namespace SoundExplorersDatabase.Data {
     protected abstract void OnParentFieldToBeUpdated(
       [NotNull] Type parentPersistableType, [CanBeNull] RelativeBase newParent);
 
-    public override ulong Persist(Placement place, SessionBase session, bool persistRefs = true,
-      bool disableFlush = false, Queue<IOptimizedPersistable> toPersist = null) {
+    public override ulong Persist(Placement place, SessionBase session,
+      bool persistRefs = true,
+      bool disableFlush = false,
+      Queue<IOptimizedPersistable> toPersist = null) {
       CheckCanPersist(session);
       return base.Persist(place, session, persistRefs, disableFlush, toPersist);
     }
 
-    internal void RemoveChild([NotNull] RelativeBase child) {
-      CheckCanRemoveChild(child);
+    internal void RemoveChild([NotNull] RelativeBase child, bool isReplacingOrUnpersisting) {
+      CheckCanRemoveChild(child, isReplacingOrUnpersisting);
       UpdateChild(child, null);
       ChildrenOfType[child.PersistableType].Remove(child.Key);
       References.Remove(References.First(r => r.To.Equals(child)));
@@ -158,9 +167,9 @@ namespace SoundExplorersDatabase.Data {
 
     protected virtual void SetKey([NotNull] object value) {
       Key = value ?? throw new NoNullAllowedException(
-              $"A null reference has been specified as the Key " + 
-              $"for {PersistableType.Name} '{Key}'. " +
-              "Null Keys are not supported.");
+        "A null reference has been specified as the Key " +
+        $"for {PersistableType.Name} '{Key}'. " +
+        "Null Keys are not supported.");
     }
 
     public override void Unpersist(SessionBase session) {
@@ -168,7 +177,7 @@ namespace SoundExplorersDatabase.Data {
         ParentOfType.Values.Where(parent => parent != null).ToList();
       for (int i = parents.Count - 1; i >= 0; i--) {
         parents[i].ChildrenOfType[PersistableType].Remove(this);
-        parents[i].RemoveChild(this);
+        parents[i].RemoveChild(this, true);
       }
       base.Unpersist(session);
     }

@@ -11,8 +11,8 @@ namespace SoundExplorersDatabase.Tests.Data {
     private string _name;
 
     public Mother() : base(typeof(Mother)) {
-      Daughters = new SortedChildList<string, Daughter>(this);
-      Sons = new SortedChildList<string, Son>(this);
+      Daughters = new SortedChildList<string, Daughter>(this, true);
+      Sons = new SortedChildList<string, Son>(this, false);
     }
 
     public SortedChildList<string, Daughter> Daughters { get; }
