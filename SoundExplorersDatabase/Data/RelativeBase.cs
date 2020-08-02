@@ -32,6 +32,8 @@ namespace SoundExplorersDatabase.Data {
     }
 
     private bool IsTopLevel => ParentOfType.Count == 0;
+    
+    [NotNull]
     public object Key { get; private set; }
 
     private IDictionary<Type, RelativeBase> ParentOfType {
