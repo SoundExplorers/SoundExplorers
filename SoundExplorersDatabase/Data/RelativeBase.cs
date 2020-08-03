@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Linq;
@@ -22,9 +20,7 @@ namespace SoundExplorersDatabase.Data {
 
     private IDictionary<Type, ISortedChildList> ChildrenOfType {
       get {
-        if (_childrenOfType == null) {
-          Initialise();
-        }
+        InitialiseIfNull(_childrenOfType);
         return _childrenOfType;
       }
       set {
@@ -35,9 +31,7 @@ namespace SoundExplorersDatabase.Data {
 
     public IDictionary<Type, ParentRelation> ParentRelations {
       get {
-        if (_parentRelations == null) {
-          Initialise();
-        }
+        InitialiseIfNull(_parentRelations);
         return _parentRelations;
       }
       private set {
@@ -52,9 +46,7 @@ namespace SoundExplorersDatabase.Data {
 
     private IDictionary<Type, RelativeBase> Parents {
       get {
-        if (_parents == null) {
-          Initialise();
-        }
+        InitialiseIfNull(_parents);
         return _parents;
       }
       set {
@@ -114,6 +106,16 @@ namespace SoundExplorersDatabase.Data {
           "A Key has not yet been specified. " +
           $"So the {PersistableType.Name} cannot be persisted.");
       }
+      foreach (var parentKeyValuePair in Parents) {
+        var parentType = parentKeyValuePair.Key;
+        var parent = parentKeyValuePair.Value;
+        if (parent == null && ParentRelations[parentType].IsMandatory) {
+          throw new ConstraintException(
+            $"{PersistableType.Name} '{Key}' " +
+            $"cannot be persisted because its {parentType.Name} "
+            + "has not been specified.");
+        }
+      }
       if (IsTopLevel) {
         //FindWithSameKey(session);
       }
@@ -160,8 +162,15 @@ namespace SoundExplorersDatabase.Data {
       ChildrenOfType = new Dictionary<Type, ISortedChildList>();
       if (childrenRelations != null) {
         foreach (var childrenRelation in childrenRelations) {
-          ChildrenOfType.Add(childrenRelation.ChildType, childrenRelation.Children);
+          ChildrenOfType.Add(childrenRelation.ChildType,
+            childrenRelation.Children);
         }
+      }
+    }
+
+    private void InitialiseIfNull([CanBeNull] object field) {
+      if (field == null) {
+        Initialise();
       }
     }
 
@@ -176,7 +185,8 @@ namespace SoundExplorersDatabase.Data {
       return base.Persist(place, session, persistRefs, disableFlush, toPersist);
     }
 
-    internal void RemoveChild([NotNull] RelativeBase child, bool isReplacingOrUnpersisting) {
+    internal void RemoveChild([NotNull] RelativeBase child,
+      bool isReplacingOrUnpersisting) {
       CheckCanRemoveChild(child, isReplacingOrUnpersisting);
       UpdateChild(child, null);
       ChildrenOfType[child.PersistableType].Remove(child.Key);

@@ -54,7 +54,7 @@ namespace SoundExplorersDatabase.Tests.Data {
     protected override IEnumerable<ParentRelation> GetParentRelations() {
       return new[] {
         new ParentRelation(typeof(Father), false), 
-        new ParentRelation(typeof(Mother), true)
+        new ParentRelation(typeof(Mother), false)
       };
     }
 

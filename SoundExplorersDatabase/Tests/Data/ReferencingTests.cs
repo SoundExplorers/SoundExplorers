@@ -24,18 +24,19 @@ namespace SoundExplorersDatabase.Tests.Data {
         Mother1.Name = Mother1Name;
         session.Persist(Mother1);
         session.Persist(Mother2);
-        Daughter1.Name = Daughter1Name;
-        session.Persist(Daughter1);
-        Daughter2.Name = Daughter2Name;
-        session.Persist(Daughter2);
         Father1.Name = Father1Name;
         session.Persist(Father1);
         session.Persist(Father2);
+        Daughter1.Name = Daughter1Name;
+        Mother1.Daughters.Add(Daughter1);
+        session.Persist(Daughter1);
+        Daughter2.Name = Daughter2Name;
+        Mother2.Daughters.Add(Daughter2);
+        session.Persist(Daughter2);
         Son1.Name = Son1Name;
         session.Persist(Son1);
         Son2.Name = Son2Name;
         session.Persist(Son2);
-        Mother1.Daughters.Add(Daughter1);
         Mother1.Sons.Add(Son1);
         Mother1.Sons.Add(Son2);
         Father1.Sons.Add(Son1);
@@ -82,14 +83,22 @@ namespace SoundExplorersDatabase.Tests.Data {
         Son1 = Son.Read(Son1Name, session);
         Son2 = Son.Read(Son2Name, session);
         session.Commit();
-        Assert.IsTrue(Mother1.Daughters.IsMembershipMandatory, 
-          "Mother1.Daughters.IsMembershipMandatory");
-        Assert.IsFalse(Mother1.Sons.IsMembershipMandatory, 
-          "Mother1.Sons.IsMembershipMandatory");
-        Assert.IsFalse(Father1.Daughters.IsMembershipMandatory, 
-          "Father1.Daughters.IsMembershipMandatory");
-        Assert.IsFalse(Mother1.Sons.IsMembershipMandatory, 
-          "Father1.Sons.IsMembershipMandatory");
+        Assert.IsFalse(Daughter1.ParentRelations[typeof(Father)].IsMandatory,
+          "Daughter's Father mandatory");
+        Assert.IsTrue(Daughter1.ParentRelations[typeof(Mother)].IsMandatory,
+          "Daughter's Mother mandatory");
+        Assert.IsFalse(Son1.ParentRelations[typeof(Father)].IsMandatory,
+          "Son's Father mandatory");
+        Assert.IsFalse(Son1.ParentRelations[typeof(Mother)].IsMandatory,
+          "Son's Mother mandatory");
+        Assert.IsTrue(Mother1.Daughters.IsMembershipMandatory,
+          "Mother.Daughters.IsMembershipMandatory");
+        Assert.IsFalse(Mother1.Sons.IsMembershipMandatory,
+          "Mother.Sons.IsMembershipMandatory");
+        Assert.IsFalse(Father1.Daughters.IsMembershipMandatory,
+          "Father.Daughters.IsMembershipMandatory");
+        Assert.IsFalse(Mother1.Sons.IsMembershipMandatory,
+          "Father.Sons.IsMembershipMandatory");
         Assert.IsTrue(Daughter1.IsPersistent,
           "Daughter1.IsPersistent initially");
         Assert.AreEqual(Daughter1Name, Daughter1.Name, "Daughter1.Name");
@@ -124,21 +133,14 @@ namespace SoundExplorersDatabase.Tests.Data {
           "Mother1 2nd Son by name initially");
         Assert.AreSame(Mother1, Son2.Mother, "Son2.Mother initially");
         Assert.AreEqual(Mother2Name, Mother2.Name, "Mother2.Name initially");
-        Assert.AreEqual(0, Mother2.Daughters.Count,
+        Assert.AreEqual(1, Mother2.Daughters.Count,
           "Mother2.Daughters.Count initially");
-        Assert.AreEqual(0, Mother2.References.Count,
+        Assert.AreEqual(1, Mother2.References.Count,
           "Mother2.References.Count initially");
-        Assert.IsNull(Daughter2.Mother, "Daughter2.Mother initially");
-        // ReSharper problem?
-        // ReSharper disable once HeuristicUnreachableCode
-        Assert.AreEqual(0, Mother2.Daughters.Count,
-          "Mother2.Daughters.Count initially");
+        Assert.AreSame(Mother2, Daughter2.Mother, "Daughter2.Mother initially");
         Assert.AreEqual(0, Mother2.Sons.Count,
           "Mother2.Sons.Count initially");
-        Assert.AreEqual(0, Mother2.References.Count,
-          "Mother2.References.Count initially");
-        Assert.IsNull(Daughter2.Mother, "Daughter2.Mother initially");
-        
+
         Assert.IsTrue(Son1.IsPersistent,
           "Son1.IsPersistent initially");
         Assert.AreEqual(Son1Name, Son1.Name, "Son1.Name");
@@ -210,27 +212,24 @@ namespace SoundExplorersDatabase.Tests.Data {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
         Mother1 = Mother.Read(Mother1Name, session);
+        Mother2 = Mother.Read(Mother2Name, session);
         Father1 = Father.Read(Father1Name, session);
         Daughter1 = Daughter.Read(Daughter1Name, session);
         Daughter2 = Daughter.Read(Daughter2Name, session);
         Son1 = Son.Read(Son1Name, session);
         Son2 = Son.Read(Son2Name, session);
-        Mother1.Daughters.Add(Daughter2);
+        Assert.Throws<ConstraintException>(() =>
+            Mother1.Daughters.Add(Daughter2),
+          "Cannot add Daughter2 to Mother1.Daughter because she is already " + 
+          "a member of Mother2.Daughters.");
         Father1.Sons.Add(Son2);
         session.Commit();
-        
-        Assert.AreSame(Mother1, Daughter2.Mother,
-          "Daughter2.Mother after Add #2");
-        Assert.AreSame(Daughter2, Mother1.Daughters[1],
-          "2nd child after Add #2");
-        Assert.AreEqual(2, Mother1.Daughters.Count,
-          "Mother1.Daughters.Count after Add #2");
-        Assert.AreEqual(4, Mother1.References.Count,
-          "Mother1.References.Count after Add #2");
+        Assert.AreSame(Mother2, Daughter2.Mother,
+          "Daughter2.Mother after failed Add #2");
         session.BeginUpdate();
         Assert.Throws<ConstraintException>(() =>
-          Mother1.Daughters.Remove(Daughter1), 
-          "Cannot remove Daughter from mandatory link to Mother.");
+            Mother1.Daughters.Remove(Daughter1),
+          "Cannot remove Daughter1 from mandatory link to Mother.");
         session.Commit();
 
         Assert.AreSame(Father1, Son2.Father,
@@ -311,11 +310,11 @@ namespace SoundExplorersDatabase.Tests.Data {
           "Mother1.Sons.Count after Son1 changes Mother");
         Assert.AreEqual(1, Mother1.References.Count,
           "Mother1.References.Count after Daughter1 and Son1 change Mother");
-        Assert.AreEqual(1, Mother2.Daughters.Count,
+        Assert.AreEqual(2, Mother2.Daughters.Count,
           "Mother2.Daughters.Count after Daughter1 changes Mother");
         Assert.AreEqual(1, Mother2.Sons.Count,
           "Mother2.Sons.Count after Son1 changes Mother");
-        Assert.AreEqual(2, Mother2.References.Count,
+        Assert.AreEqual(3, Mother2.References.Count,
           "Mother2.References.Count after Daughter1 and Son1 change Mother");
         Assert.AreSame(Daughter1, Mother2.Daughters[0],
           "Mother2 1st Daughter after Daughter1 changes Mother");
@@ -348,7 +347,7 @@ namespace SoundExplorersDatabase.Tests.Data {
         Mother2 = Mother.Read(Mother2Name, session);
         Daughter2 = Daughter.Read(Daughter2Name, session);
         Daughter2.Mother = Mother2;
-        
+
         Father2 = Father.Read(Father2Name, session);
         Son2 = Son.Read(Son2Name, session);
         Son2.Father = Father2;
@@ -360,7 +359,7 @@ namespace SoundExplorersDatabase.Tests.Data {
           "Mother2.References.Count");
         Assert.AreSame(Daughter2, Mother2.Daughters[0],
           "Mother2 1st child after change Mother");
-        
+
         Assert.AreSame(Father2, Son2.Father, "Son2.Father");
         Assert.AreEqual(1, Father2.Sons.Count,
           "Father2.Sons.Count");
@@ -379,14 +378,14 @@ namespace SoundExplorersDatabase.Tests.Data {
         Daughter1 = Daughter.Read(Daughter1Name, session);
         Assert.Throws<ConstraintException>(() =>
             // ReSharper disable once AssignNullToNotNullAttribute
-            Daughter1.Mother = null, 
+            Daughter1.Mother = null,
           "Cannot remove Daughter from mandatory link to Mother.");
-        
+
         Father1 = Father.Read(Father1Name, session);
         Son1 = Son.Read(Son1Name, session);
         Son1.Father = null;
         session.Commit();
-        
+
         Assert.IsNull(Son1.Father, "Son1.Father");
         Assert.AreEqual(0, Father1.Sons.Count,
           "Father1.Sons.Count");
@@ -404,7 +403,7 @@ namespace SoundExplorersDatabase.Tests.Data {
         Father1 = Father.Read(Father1Name, session);
         Son1 = Son.Read(Son1Name, session);
         Daughter1.Unpersist(session);
-        
+
         Father1 = Father.Read(Father1Name, session);
         Son1 = Son.Read(Son1Name, session);
         Son1.Unpersist(session);
@@ -415,7 +414,7 @@ namespace SoundExplorersDatabase.Tests.Data {
           "Mother1.Sons.Count");
         Assert.AreEqual(1, Mother1.References.Count,
           "Mother1.References.Count");
-        
+
         Assert.AreEqual(0, Father1.Sons.Count,
           "Father1.Sons.Count");
         Assert.AreEqual(1, Father1.Daughters.Count,
@@ -424,7 +423,7 @@ namespace SoundExplorersDatabase.Tests.Data {
           "Father2.References.Count");
       }
     }
- 
+
     [Test]
     public void T090_DisallowDeleteParentWithChildren() {
       using (var session = new TestSession(DatabaseFolderPath)) {
@@ -448,7 +447,8 @@ namespace SoundExplorersDatabase.Tests.Data {
           // ReSharper disable once AssignNullToNotNullAttribute
           namelessSon.Name = null, "Disallow set (initially null) Key to null");
         Assert.Throws<NoNullAllowedException>(() =>
-          session.Persist(namelessSon), "Disallow persist entity with null Key");
+            session.Persist(namelessSon),
+          "Disallow persist entity with null Key");
         session.Commit();
       }
     }
@@ -465,7 +465,7 @@ namespace SoundExplorersDatabase.Tests.Data {
     }
 
     [Test]
-    public void T120_DisallowPersistParentlessChild() {
+    public void T120_DisallowPersistChildWithoutMandatoryParent() {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
         var motherlessDaughter = new Daughter {Name = "Carol"};
@@ -539,5 +539,5 @@ namespace SoundExplorersDatabase.Tests.Data {
         session.Commit();
       }
     }
- }
+  }
 }
