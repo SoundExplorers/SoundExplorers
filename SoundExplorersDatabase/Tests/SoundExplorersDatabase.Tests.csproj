@@ -91,6 +91,7 @@
         <Compile Include="Data\ReferencingTests.cs" />
         <Compile Include="Data\SchemaVersionTests.cs" />
         <Compile Include="Data\Son.cs" />
+        <Compile Include="Data\TestSchema.cs" />
         <Compile Include="Data\TestSession.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
     </ItemGroup>

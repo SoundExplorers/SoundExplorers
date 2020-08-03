@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using JetBrains.Annotations;
@@ -11,13 +11,6 @@ namespace SoundExplorersDatabase.Tests.Data {
     private Father _father;
     private Mother _mother;
     private string _name;
-
-    static Son() {
-      ParentRelations = new Dictionary<Type, ParentRelation> {
-        {typeof(Father), new ParentRelation(typeof(Father), false)},
-        {typeof(Mother), new ParentRelation(typeof(Mother), false)}
-      };
-    }
 
     public Son() : base(typeof(Son)) { }
 
@@ -49,23 +42,14 @@ namespace SoundExplorersDatabase.Tests.Data {
       }
     }
 
-    [NotNull]
-    public static IDictionary<Type, ParentRelation> ParentRelations { get; }
-
     [ExcludeFromCodeCoverage]
     protected override RelativeBase FindWithSameKey(SessionBase session) {
       throw new NotSupportedException();
     }
 
-    protected override IEnumerable<ChildrenType> GetChildrenTypes() {
-      return null;
-    }
-
-    protected override IEnumerable<ParentRelation> GetParentRelations() {
-      return new[] {
-        ParentRelations[typeof(Father)],
-        ParentRelations[typeof(Mother)]
-      };
+    [ExcludeFromCodeCoverage]
+    protected override IDictionary GetChildren(Type childType) {
+      throw new NotSupportedException();
     }
 
     protected override void OnParentFieldToBeUpdated(

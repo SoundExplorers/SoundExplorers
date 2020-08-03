@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Linq;
 using NUnit.Framework;
+using SoundExplorersDatabase.Data;
 using VelocityDb.Exceptions;
 
 namespace SoundExplorersDatabase.Tests.Data {
@@ -10,6 +11,7 @@ namespace SoundExplorersDatabase.Tests.Data {
   public class ReferencingTests {
     [SetUp]
     public void Setup() {
+      Schema.Relations = TestSchema.Relations;
       Mother1 = new Mother();
       Mother2 = new Mother {Name = Mother2Name};
       Daughter1 = new Daughter();
@@ -71,6 +73,24 @@ namespace SoundExplorersDatabase.Tests.Data {
     private Son Son2 { get; set; }
 
     [Test]
+    public void T005_Schema() {
+      var relation = Schema.FindRelation(typeof(Father), typeof(Daughter));
+      Assert.IsNotNull(relation, "Father-Daughters relation");
+      Assert.IsFalse(relation.IsMandatory,
+        "Father-Daughters relation mandatory");
+      relation = Schema.FindRelation(typeof(Father), typeof(Son));
+      Assert.IsNotNull(relation, "Father-Sons relation");
+      Assert.IsFalse(relation.IsMandatory, "Father-Sons relation mandatory");
+      relation = Schema.FindRelation(typeof(Mother), typeof(Daughter));
+      Assert.IsNotNull(relation, "Mother-Daughters relation");
+      Assert.IsTrue(relation.IsMandatory,
+        "Mother-Daughters relation mandatory");
+      relation = Schema.FindRelation(typeof(Mother), typeof(Son));
+      Assert.IsNotNull(relation, "Mother-Sons relation");
+      Assert.IsFalse(relation.IsMandatory, "Mother-Sons relation mandatory");
+    }
+
+    [Test]
     public void T010_Initial() {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginRead();
@@ -83,26 +103,6 @@ namespace SoundExplorersDatabase.Tests.Data {
         Son1 = Son.Read(Son1Name, session);
         Son2 = Son.Read(Son2Name, session);
         session.Commit();
-        Assert.IsFalse(Daughter.ParentRelations[typeof(Father)].IsMandatory,
-          "Daughter's Father mandatory");
-        Assert.IsTrue(Daughter.ParentRelations[typeof(Mother)].IsMandatory,
-          "Daughter's Mother mandatory");
-        Assert.IsFalse(Son.ParentRelations[typeof(Father)].IsMandatory,
-          "Son's Father mandatory");
-        Assert.IsFalse(Son.ParentRelations[typeof(Mother)].IsMandatory,
-          "Son's Mother mandatory");
-        Assert.IsTrue(
-          Mother.ChildrenRelations[typeof(Daughter)].IsMembershipMandatory,
-          "Mother Daughters IsMembershipMandatory");
-        Assert.IsFalse(
-          Mother.ChildrenRelations[typeof(Son)].IsMembershipMandatory,
-          "Mother Sons IsMembershipMandatory");
-        Assert.IsFalse(
-          Father.ChildrenRelations[typeof(Daughter)].IsMembershipMandatory,
-          "Father Daughters IsMembershipMandatory");
-        Assert.IsFalse(
-          Father.ChildrenRelations[typeof(Son)].IsMembershipMandatory,
-          "Father Sons IsMembershipMandatory");
         Assert.IsTrue(Daughter1.IsPersistent,
           "Daughter1.IsPersistent initially");
         Assert.AreEqual(Daughter1Name, Daughter1.Name, "Daughter1.Name");

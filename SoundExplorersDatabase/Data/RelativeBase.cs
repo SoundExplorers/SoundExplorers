@@ -12,8 +12,8 @@ using VelocityDb.TypeInfo;
 namespace SoundExplorersDatabase.Data {
   public abstract class RelativeBase : ReferenceTracked {
     private IDictionary<Type, IDictionary> _childrenOfType;
-    private IDictionary<Type, ChildrenRelation> _childrenRelations;
-    private IDictionary<Type, ParentRelation> _parentRelations;
+    private IDictionary<Type, IRelationInfo> _childrenRelations;
+    private IDictionary<Type, IRelationInfo> _parentRelations;
     private IDictionary<Type, RelativeBase> _parents;
 
     protected RelativeBase(Type persistableType) {
@@ -31,7 +31,7 @@ namespace SoundExplorersDatabase.Data {
       }
     }
 
-    private IDictionary<Type, ChildrenRelation> ChildrenRelations {
+    private IDictionary<Type, IRelationInfo> ChildrenRelations {
       get {
         InitialiseIfNull(_childrenRelations);
         return _childrenRelations;
@@ -42,7 +42,7 @@ namespace SoundExplorersDatabase.Data {
       }
     }
 
-    private IDictionary<Type, ParentRelation> ParentRelations {
+    private IDictionary<Type, IRelationInfo> ParentRelations {
       get {
         InitialiseIfNull(_parentRelations);
         return _parentRelations;
@@ -76,12 +76,6 @@ namespace SoundExplorersDatabase.Data {
       References.AddFast(new Reference(child, "_children"));
       UpdateChild(child, this);
     }
-
-    [CanBeNull]
-    protected abstract IEnumerable<ChildrenType> GetChildrenTypes();
-
-    [CanBeNull]
-    protected abstract IEnumerable<ParentRelation> GetParentRelations();
 
     protected void ChangeParent(
       [NotNull] Type parentPersistableType,
@@ -134,8 +128,8 @@ namespace SoundExplorersDatabase.Data {
       }
     }
 
-    private void CheckCanRemoveChild([NotNull] RelativeBase child,
-      bool isReplacingOrUnpersisting) {
+    private void CheckCanRemoveChild(
+      [NotNull] RelativeBase child, bool isReplacingOrUnpersisting) {
       if (child == null) {
         throw new NoNullAllowedException(
           "A null reference has been specified. " +
@@ -148,7 +142,7 @@ namespace SoundExplorersDatabase.Data {
           $"because it does not belong to {PersistableType.Name} " +
           $"'{Key}'.");
       }
-      if (ChildrenRelations[child.PersistableType].IsMembershipMandatory &&
+      if (ChildrenRelations[child.PersistableType].IsMandatory &&
           !isReplacingOrUnpersisting) {
         throw new ConstraintException(
           $"{child.PersistableType.Name} '{child.Key}' " +
@@ -157,33 +151,48 @@ namespace SoundExplorersDatabase.Data {
       }
     }
 
+    [NotNull]
+    private IDictionary<Type, IRelationInfo> CreateChildrenRelations() {
+      var values =
+        from relation in Schema.Relations
+        where relation.ParentType == PersistableType
+        select relation;
+      return values.ToDictionary<RelationInfo, Type, IRelationInfo>(
+        value => value.ChildType, value => value);
+    }
+
+    [NotNull]
+    private IDictionary<Type, IRelationInfo> CreateParentRelations() {
+      var values =
+        from relation in Schema.Relations
+        where relation.ChildType == PersistableType
+        select relation;
+      return values.ToDictionary<RelationInfo, Type, IRelationInfo>(
+        value => value.ParentType, value => value);
+    }
+
     [CanBeNull]
     protected abstract RelativeBase FindWithSameKey(
       [NotNull] SessionBase session);
 
+    [NotNull]
+    protected abstract IDictionary GetChildren([NotNull] Type childType);
+
     private void Initialise() {
-      var parentRelations = GetParentRelations();
-      var childrenTypes = GetChildrenTypes();
+      ParentRelations = CreateParentRelations();
       Parents = new Dictionary<Type, RelativeBase>();
-      ParentRelations = new Dictionary<Type, ParentRelation>();
-      if (parentRelations != null) {
-        foreach (var parentRelation in parentRelations) {
-          Parents.Add(parentRelation.ParentType, null);
-          ParentRelations.Add(parentRelation.ParentType, parentRelation);
-        }
+      foreach (var relationKvp in ParentRelations) {
+        Parents.Add(relationKvp.Key, null);
       }
+      ChildrenRelations = CreateChildrenRelations();
       ChildrenOfType = new Dictionary<Type, IDictionary>();
-      ChildrenRelations = new Dictionary<Type, ChildrenRelation>();
-      if (childrenTypes != null) {
-        foreach (var childrenType in childrenTypes) {
-          ChildrenOfType.Add(childrenType.ChildType, childrenType.Children);
-          ChildrenRelations.Add(childrenType.ChildType, childrenType);
-        }
+      foreach (var relationKvp in ChildrenRelations) {
+        ChildrenOfType.Add(relationKvp.Key, GetChildren(relationKvp.Key));
       }
     }
 
-    private void InitialiseIfNull([CanBeNull] object field) {
-      if (field == null) {
+    private void InitialiseIfNull([CanBeNull] object backingField) {
+      if (backingField == null) {
         Initialise();
       }
     }

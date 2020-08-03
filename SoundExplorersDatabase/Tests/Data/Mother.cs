@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using JetBrains.Annotations;
@@ -10,20 +10,10 @@ namespace SoundExplorersDatabase.Tests.Data {
   public class Mother : RelativeBase {
     private string _name;
 
-    static Mother() {
-      ChildrenRelations = new Dictionary<Type, ChildrenRelation> {
-        {typeof(Daughter), new ChildrenRelation(typeof(Daughter), true)},
-        {typeof(Son), new ChildrenRelation(typeof(Son), false)}
-      };
-    }
-
     public Mother() : base(typeof(Mother)) {
       Daughters = new SortedChildList<string, Daughter>(this);
       Sons = new SortedChildList<string, Son>(this);
     }
-
-    [NotNull]
-    public static IDictionary<Type, ChildrenRelation> ChildrenRelations { get; }
 
     [NotNull] public SortedChildList<string, Daughter> Daughters { get; }
 
@@ -44,15 +34,11 @@ namespace SoundExplorersDatabase.Tests.Data {
         .FirstOrDefault(mother => mother.Name == Name);
     }
 
-    protected override IEnumerable<ChildrenType> GetChildrenTypes() {
-      return new[] {
-        new ChildrenType(ChildrenRelations[typeof(Daughter)], Daughters),
-        new ChildrenType(ChildrenRelations[typeof(Son)], Sons)
-      };
-    }
-
-    protected override IEnumerable<ParentRelation> GetParentRelations() {
-      return null;
+    protected override IDictionary GetChildren(Type childType) {
+      if (childType == typeof(Daughter)) {
+        return Daughters;
+      }
+      return Sons;
     }
 
     [ExcludeFromCodeCoverage]

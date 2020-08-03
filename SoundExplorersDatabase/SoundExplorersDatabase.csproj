@@ -76,9 +76,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Data\ChildrenType.cs" />
-    <Compile Include="Data\ChildrenRelation.cs" />
-    <Compile Include="Data\ParentRelation.cs" />
+    <Compile Include="Data\IRelationInfo.cs" />
+    <Compile Include="Data\RelationInfo.cs" />
+    <Compile Include="Data\Schema.cs" />
     <Compile Include="Data\SortedChildList.cs" />
     <Compile Include="Data\RelativeBase.cs" />
     <Compile Include="Data\Event.cs" />
