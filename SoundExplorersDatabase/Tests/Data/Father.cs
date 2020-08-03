@@ -34,10 +34,10 @@ namespace SoundExplorersDatabase.Tests.Data {
         .FirstOrDefault(father => father.Name == Name);
     }
 
-    protected override IEnumerable<ChildrenType> GetChildrenTypes() {
+    protected override IEnumerable<ChildrenRelation> GetChildrenRelations() {
       return new[] {
-        new ChildrenType(typeof(Daughter), Daughters),
-        new ChildrenType(typeof(Son), Sons)
+        new ChildrenRelation(typeof(Daughter), Daughters),
+        new ChildrenRelation(typeof(Son), Sons)
       };
     }
 

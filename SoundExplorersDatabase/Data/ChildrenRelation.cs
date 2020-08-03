@@ -2,8 +2,8 @@
 using JetBrains.Annotations;
 
 namespace SoundExplorersDatabase.Data {
-  public class ChildrenType {
-    public ChildrenType(
+  public class ChildrenRelation {
+    public ChildrenRelation(
       [NotNull] Type childType,
       [NotNull] ISortedChildList children) {
       ChildType = childType;

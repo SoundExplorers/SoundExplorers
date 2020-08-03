@@ -47,7 +47,7 @@ namespace SoundExplorersDatabase.Tests.Data {
       throw new NotSupportedException();
     }
 
-    protected override IEnumerable<ChildrenType> GetChildrenTypes() {
+    protected override IEnumerable<ChildrenRelation> GetChildrenRelations() {
       return null;
     }
 

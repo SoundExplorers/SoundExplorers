@@ -57,7 +57,7 @@ namespace SoundExplorersDatabase.Data {
     }
 
     [CanBeNull]
-    protected abstract IEnumerable<ChildrenType> GetChildrenTypes();
+    protected abstract IEnumerable<ChildrenRelation> GetChildrenRelations();
 
     [CanBeNull]
     protected abstract IEnumerable<Type> GetParentTypes();
@@ -132,7 +132,7 @@ namespace SoundExplorersDatabase.Data {
 
     private void Initialise() {
       var parentTypes = GetParentTypes();
-      var childrenTypes = GetChildrenTypes();
+      var childrenRelations = GetChildrenRelations();
       ParentOfType = new Dictionary<Type, RelativeBase>();
       if (parentTypes != null) {
         foreach (var parentType in parentTypes) {
@@ -140,9 +140,9 @@ namespace SoundExplorersDatabase.Data {
         }
       }
       ChildrenOfType = new Dictionary<Type, ISortedChildList>();
-      if (childrenTypes != null) {
-        foreach (var childrenType in childrenTypes) {
-          ChildrenOfType.Add(childrenType.ChildType, childrenType.Children);
+      if (childrenRelations != null) {
+        foreach (var childrenRelation in childrenRelations) {
+          ChildrenOfType.Add(childrenRelation.ChildType, childrenRelation.Children);
         }
       }
     }
