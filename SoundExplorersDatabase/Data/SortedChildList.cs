@@ -3,16 +3,19 @@ using System.Collections.Generic;
 using JetBrains.Annotations;
 
 namespace SoundExplorersDatabase.Data {
-  public class SortedChildList<TKey, TChild> : SortedList<TKey, TChild>, ISortedChildList
+  public class SortedChildList<TKey, TChild> : SortedList<TKey, TChild>,
+    ISortedChildList
     where TChild : RelativeBase {
-    internal SortedChildList([NotNull] RelativeBase parent, bool isMembershipMandatory) {
-      Parent = parent;
+    internal SortedChildList([NotNull] RelativeBase parent,
+      bool isMembershipMandatory) {
+      Parent = parent ??
+               throw new ArgumentNullException(nameof(parent));
       IsMembershipMandatory = isMembershipMandatory;
     }
 
     private RelativeBase Parent { get; }
-    public bool IsMembershipMandatory { get; }
     public TChild this[int index] => Values[index];
+    public bool IsMembershipMandatory { get; }
 
     public void Add([NotNull] TChild child) {
       Parent.AddChild(child);
@@ -25,7 +28,7 @@ namespace SoundExplorersDatabase.Data {
     [UsedImplicitly]
     public void Add(string notSupported, TChild doNotUse) {
       throw new NotSupportedException(
-        "ParentChildren.Add(string, TChild) is not supported. " + 
+        "ParentChildren.Add(string, TChild) is not supported. " +
         "Use ParentChildren.Add(TChild) instead.");
     }
 

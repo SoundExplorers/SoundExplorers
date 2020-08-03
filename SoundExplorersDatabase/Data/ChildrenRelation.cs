@@ -6,8 +6,10 @@ namespace SoundExplorersDatabase.Data {
     public ChildrenRelation(
       [NotNull] Type childType,
       [NotNull] ISortedChildList children) {
-      ChildType = childType;
-      Children = children;
+      ChildType = childType ??
+                  throw new ArgumentNullException(nameof(childType));
+      Children = children ??
+                 throw new ArgumentNullException(nameof(childType));
     }
 
     public Type ChildType { get; }
