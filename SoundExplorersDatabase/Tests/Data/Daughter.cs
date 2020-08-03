@@ -12,6 +12,13 @@ namespace SoundExplorersDatabase.Tests.Data {
     private Mother _mother;
     private string _name;
 
+    static Daughter() {
+      ParentRelations = new Dictionary<Type, ParentRelation> {
+        {typeof(Father), new ParentRelation(typeof(Father), false)},
+        {typeof(Mother), new ParentRelation(typeof(Mother), true)}
+      };
+    }
+
     public Daughter() : base(typeof(Daughter)) { }
 
     public Father Father {
@@ -43,19 +50,22 @@ namespace SoundExplorersDatabase.Tests.Data {
       }
     }
 
+    [NotNull]
+    public static IDictionary<Type, ParentRelation> ParentRelations { get; }
+
     [ExcludeFromCodeCoverage]
     protected override RelativeBase FindWithSameKey(SessionBase session) {
       throw new NotSupportedException();
     }
 
-    protected override IEnumerable<ChildrenRelation> GetChildrenRelations() {
+    protected override IEnumerable<ChildrenType> GetChildrenTypes() {
       return null;
     }
 
     protected override IEnumerable<ParentRelation> GetParentRelations() {
       return new[] {
-        new ParentRelation(typeof(Father), false), 
-        new ParentRelation(typeof(Mother), true)
+        ParentRelations[typeof(Father)], 
+        ParentRelations[typeof(Mother)], 
       };
     }
 

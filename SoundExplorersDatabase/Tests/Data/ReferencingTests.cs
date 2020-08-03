@@ -83,22 +83,26 @@ namespace SoundExplorersDatabase.Tests.Data {
         Son1 = Son.Read(Son1Name, session);
         Son2 = Son.Read(Son2Name, session);
         session.Commit();
-        Assert.IsFalse(Daughter1.ParentRelations[typeof(Father)].IsMandatory,
+        Assert.IsFalse(Daughter.ParentRelations[typeof(Father)].IsMandatory,
           "Daughter's Father mandatory");
-        Assert.IsTrue(Daughter1.ParentRelations[typeof(Mother)].IsMandatory,
+        Assert.IsTrue(Daughter.ParentRelations[typeof(Mother)].IsMandatory,
           "Daughter's Mother mandatory");
-        Assert.IsFalse(Son1.ParentRelations[typeof(Father)].IsMandatory,
+        Assert.IsFalse(Son.ParentRelations[typeof(Father)].IsMandatory,
           "Son's Father mandatory");
-        Assert.IsFalse(Son1.ParentRelations[typeof(Mother)].IsMandatory,
+        Assert.IsFalse(Son.ParentRelations[typeof(Mother)].IsMandatory,
           "Son's Mother mandatory");
-        Assert.IsTrue(Mother1.Daughters.IsMembershipMandatory,
-          "Mother.Daughters.IsMembershipMandatory");
-        Assert.IsFalse(Mother1.Sons.IsMembershipMandatory,
-          "Mother.Sons.IsMembershipMandatory");
-        Assert.IsFalse(Father1.Daughters.IsMembershipMandatory,
-          "Father.Daughters.IsMembershipMandatory");
-        Assert.IsFalse(Mother1.Sons.IsMembershipMandatory,
-          "Father.Sons.IsMembershipMandatory");
+        Assert.IsTrue(
+          Mother.ChildrenRelations[typeof(Daughter)].IsMembershipMandatory,
+          "Mother Daughters IsMembershipMandatory");
+        Assert.IsFalse(
+          Mother.ChildrenRelations[typeof(Son)].IsMembershipMandatory,
+          "Mother Sons IsMembershipMandatory");
+        Assert.IsFalse(
+          Father.ChildrenRelations[typeof(Daughter)].IsMembershipMandatory,
+          "Father Daughters IsMembershipMandatory");
+        Assert.IsFalse(
+          Father.ChildrenRelations[typeof(Son)].IsMembershipMandatory,
+          "Father Sons IsMembershipMandatory");
         Assert.IsTrue(Daughter1.IsPersistent,
           "Daughter1.IsPersistent initially");
         Assert.AreEqual(Daughter1Name, Daughter1.Name, "Daughter1.Name");
@@ -220,7 +224,7 @@ namespace SoundExplorersDatabase.Tests.Data {
         Son2 = Son.Read(Son2Name, session);
         Assert.Throws<ConstraintException>(() =>
             Mother1.Daughters.Add(Daughter2),
-          "Cannot add Daughter2 to Mother1.Daughter because she is already " + 
+          "Cannot add Daughter2 to Mother1.Daughter because she is already " +
           "a member of Mother2.Daughters.");
         Father1.Sons.Add(Son2);
         session.Commit();

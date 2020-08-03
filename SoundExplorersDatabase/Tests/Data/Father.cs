@@ -10,12 +10,22 @@ namespace SoundExplorersDatabase.Tests.Data {
   public class Father : RelativeBase {
     private string _name;
 
-    public Father() : base(typeof(Father)) {
-      Daughters = new SortedChildList<string, Daughter>(this, false);
-      Sons = new SortedChildList<string, Son>(this, false);
+    static Father() {
+      ChildrenRelations = new Dictionary<Type, ChildrenRelation> {
+        {typeof(Daughter), new ChildrenRelation(typeof(Daughter), false)},
+        {typeof(Son), new ChildrenRelation(typeof(Son), false)}
+      };
     }
 
-    public SortedChildList<string, Daughter> Daughters { get; }
+    public Father() : base(typeof(Father)) {
+      Daughters = new SortedChildList<string, Daughter>(this);
+      Sons = new SortedChildList<string, Son>(this);
+    }
+
+    [NotNull]
+    public static IDictionary<Type, ChildrenRelation> ChildrenRelations { get; }
+
+    [NotNull] public SortedChildList<string, Daughter> Daughters { get; }
 
     [NotNull]
     public string Name {
@@ -27,17 +37,17 @@ namespace SoundExplorersDatabase.Tests.Data {
       }
     }
 
-    public SortedChildList<string, Son> Sons { get; }
+    [NotNull] public SortedChildList<string, Son> Sons { get; }
 
     protected override RelativeBase FindWithSameKey(SessionBase session) {
       return session.AllObjects<Father>()
         .FirstOrDefault(father => father.Name == Name);
     }
 
-    protected override IEnumerable<ChildrenRelation> GetChildrenRelations() {
+    protected override IEnumerable<ChildrenType> GetChildrenTypes() {
       return new[] {
-        new ChildrenRelation(typeof(Daughter), Daughters),
-        new ChildrenRelation(typeof(Son), Sons)
+        new ChildrenType(ChildrenRelations[typeof(Daughter)], Daughters),
+        new ChildrenType(ChildrenRelations[typeof(Son)], Sons)
       };
     }
 

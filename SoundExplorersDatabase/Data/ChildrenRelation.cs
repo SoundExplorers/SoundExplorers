@@ -3,16 +3,24 @@ using JetBrains.Annotations;
 
 namespace SoundExplorersDatabase.Data {
   public class ChildrenRelation {
-    public ChildrenRelation(
+    internal ChildrenRelation(
       [NotNull] Type childType,
-      [NotNull] ISortedChildList children) {
+      bool isMembershipMandatory) {
       ChildType = childType ??
                   throw new ArgumentNullException(nameof(childType));
-      Children = children ??
-                 throw new ArgumentNullException(nameof(childType));
+      IsMembershipMandatory = isMembershipMandatory;
     }
 
-    public Type ChildType { get; }
-    public ISortedChildList Children { get; }
+    internal ChildrenRelation(
+      [NotNull] ChildrenRelation sourceChildrenRelation) {
+      var source = sourceChildrenRelation ??
+                   throw new ArgumentNullException(
+                     nameof(sourceChildrenRelation));
+      ChildType = source.ChildType;
+      IsMembershipMandatory = source.IsMembershipMandatory;
+    }
+
+    [NotNull] internal Type ChildType { get; }
+    public bool IsMembershipMandatory { get; }
   }
 }

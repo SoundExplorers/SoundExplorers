@@ -3,19 +3,15 @@ using System.Collections.Generic;
 using JetBrains.Annotations;
 
 namespace SoundExplorersDatabase.Data {
-  public class SortedChildList<TKey, TChild> : SortedList<TKey, TChild>,
-    ISortedChildList
+  public class SortedChildList<TKey, TChild> : SortedList<TKey, TChild>
     where TChild : RelativeBase {
-    internal SortedChildList([NotNull] RelativeBase parent,
-      bool isMembershipMandatory) {
+    internal SortedChildList([NotNull] RelativeBase parent) {
       Parent = parent ??
                throw new ArgumentNullException(nameof(parent));
-      IsMembershipMandatory = isMembershipMandatory;
     }
 
     private RelativeBase Parent { get; }
     public TChild this[int index] => Values[index];
-    public bool IsMembershipMandatory { get; }
 
     public void Add([NotNull] TChild child) {
       Parent.AddChild(child);

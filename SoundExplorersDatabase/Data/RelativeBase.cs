@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Linq;
@@ -10,7 +11,8 @@ using VelocityDb.TypeInfo;
 
 namespace SoundExplorersDatabase.Data {
   public abstract class RelativeBase : ReferenceTracked {
-    private IDictionary<Type, ISortedChildList> _childrenOfType;
+    private IDictionary<Type, IDictionary> _childrenOfType;
+    private IDictionary<Type, ChildrenRelation> _childrenRelations;
     private IDictionary<Type, ParentRelation> _parentRelations;
     private IDictionary<Type, RelativeBase> _parents;
 
@@ -18,7 +20,7 @@ namespace SoundExplorersDatabase.Data {
       PersistableType = persistableType;
     }
 
-    private IDictionary<Type, ISortedChildList> ChildrenOfType {
+    private IDictionary<Type, IDictionary> ChildrenOfType {
       get {
         InitialiseIfNull(_childrenOfType);
         return _childrenOfType;
@@ -29,12 +31,23 @@ namespace SoundExplorersDatabase.Data {
       }
     }
 
-    public IDictionary<Type, ParentRelation> ParentRelations {
+    private IDictionary<Type, ChildrenRelation> ChildrenRelations {
+      get {
+        InitialiseIfNull(_childrenRelations);
+        return _childrenRelations;
+      }
+      set {
+        UpdateNonIndexField();
+        _childrenRelations = value;
+      }
+    }
+
+    private IDictionary<Type, ParentRelation> ParentRelations {
       get {
         InitialiseIfNull(_parentRelations);
         return _parentRelations;
       }
-      private set {
+      set {
         UpdateNonIndexField();
         _parentRelations = value;
       }
@@ -65,7 +78,7 @@ namespace SoundExplorersDatabase.Data {
     }
 
     [CanBeNull]
-    protected abstract IEnumerable<ChildrenRelation> GetChildrenRelations();
+    protected abstract IEnumerable<ChildrenType> GetChildrenTypes();
 
     [CanBeNull]
     protected abstract IEnumerable<ParentRelation> GetParentRelations();
@@ -135,7 +148,7 @@ namespace SoundExplorersDatabase.Data {
           $"because it does not belong to {PersistableType.Name} " +
           $"'{Key}'.");
       }
-      if (ChildrenOfType[child.PersistableType].IsMembershipMandatory &&
+      if (ChildrenRelations[child.PersistableType].IsMembershipMandatory &&
           !isReplacingOrUnpersisting) {
         throw new ConstraintException(
           $"{child.PersistableType.Name} '{child.Key}' " +
@@ -150,7 +163,7 @@ namespace SoundExplorersDatabase.Data {
 
     private void Initialise() {
       var parentRelations = GetParentRelations();
-      var childrenRelations = GetChildrenRelations();
+      var childrenTypes = GetChildrenTypes();
       Parents = new Dictionary<Type, RelativeBase>();
       ParentRelations = new Dictionary<Type, ParentRelation>();
       if (parentRelations != null) {
@@ -159,11 +172,12 @@ namespace SoundExplorersDatabase.Data {
           ParentRelations.Add(parentRelation.ParentType, parentRelation);
         }
       }
-      ChildrenOfType = new Dictionary<Type, ISortedChildList>();
-      if (childrenRelations != null) {
-        foreach (var childrenRelation in childrenRelations) {
-          ChildrenOfType.Add(childrenRelation.ChildType,
-            childrenRelation.Children);
+      ChildrenOfType = new Dictionary<Type, IDictionary>();
+      ChildrenRelations = new Dictionary<Type, ChildrenRelation>();
+      if (childrenTypes != null) {
+        foreach (var childrenType in childrenTypes) {
+          ChildrenOfType.Add(childrenType.ChildType, childrenType.Children);
+          ChildrenRelations.Add(childrenType.ChildType, childrenType);
         }
       }
     }
