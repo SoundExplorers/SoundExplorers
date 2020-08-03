@@ -1,4 +1,6 @@
 using System;
+using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Linq;
@@ -11,7 +13,7 @@ using VelocityDb.TypeInfo;
 namespace SoundExplorersDatabase.Data {
   public abstract class RelativeBase : ReferenceTracked {
     private IDictionary<Type, ISortedChildList> _childrenOfType;
-    private IList<Type> _mandatoryParentTypes;
+    private IDictionary<Type, ParentRelation> _parentRelations;
     private IDictionary<Type, RelativeBase> _parents;
 
     protected RelativeBase(Type persistableType) {
@@ -31,16 +33,16 @@ namespace SoundExplorersDatabase.Data {
       }
     }
 
-    public IList<Type> MandatoryParentTypes {
+    public IDictionary<Type, ParentRelation> ParentRelations {
       get {
-        if (_mandatoryParentTypes == null) {
+        if (_parentRelations == null) {
           Initialise();
         }
-        return _mandatoryParentTypes;
+        return _parentRelations;
       }
       private set {
         UpdateNonIndexField();
-        _mandatoryParentTypes = value;
+        _parentRelations = value;
       }
     }
 
@@ -148,13 +150,11 @@ namespace SoundExplorersDatabase.Data {
       var parentRelations = GetParentRelations();
       var childrenRelations = GetChildrenRelations();
       Parents = new Dictionary<Type, RelativeBase>();
-      MandatoryParentTypes = new List<Type>();
+      ParentRelations = new Dictionary<Type, ParentRelation>();
       if (parentRelations != null) {
         foreach (var parentRelation in parentRelations) {
           Parents.Add(parentRelation.ParentType, null);
-          if (parentRelation.IsMandatory) {
-            MandatoryParentTypes.Add(parentRelation.ParentType);
-          }
+          ParentRelations.Add(parentRelation.ParentType, parentRelation);
         }
       }
       ChildrenOfType = new Dictionary<Type, ISortedChildList>();
