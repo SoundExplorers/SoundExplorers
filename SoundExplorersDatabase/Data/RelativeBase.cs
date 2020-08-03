@@ -11,7 +11,8 @@ using VelocityDb.TypeInfo;
 namespace SoundExplorersDatabase.Data {
   public abstract class RelativeBase : ReferenceTracked {
     private IDictionary<Type, ISortedChildList> _childrenOfType;
-    private IDictionary<Type, RelativeBase> _parentOfType;
+    private IList<Type> _mandatoryParentTypes;
+    private IDictionary<Type, RelativeBase> _parents;
 
     protected RelativeBase(Type persistableType) {
       PersistableType = persistableType;
@@ -30,20 +31,33 @@ namespace SoundExplorersDatabase.Data {
       }
     }
 
-    private bool IsTopLevel => ParentOfType.Count == 0;
+    public IList<Type> MandatoryParentTypes {
+      get {
+        if (_mandatoryParentTypes == null) {
+          Initialise();
+        }
+        return _mandatoryParentTypes;
+      }
+      private set {
+        UpdateNonIndexField();
+        _mandatoryParentTypes = value;
+      }
+    }
+
+    private bool IsTopLevel => Parents.Count == 0;
 
     public object Key { get; private set; }
 
-    private IDictionary<Type, RelativeBase> ParentOfType {
+    private IDictionary<Type, RelativeBase> Parents {
       get {
-        if (_parentOfType == null) {
+        if (_parents == null) {
           Initialise();
         }
-        return _parentOfType;
+        return _parents;
       }
       set {
         UpdateNonIndexField();
-        _parentOfType = value;
+        _parents = value;
       }
     }
 
@@ -60,14 +74,14 @@ namespace SoundExplorersDatabase.Data {
     protected abstract IEnumerable<ChildrenRelation> GetChildrenRelations();
 
     [CanBeNull]
-    protected abstract IEnumerable<Type> GetParentTypes();
+    protected abstract IEnumerable<ParentRelation> GetParentRelations();
 
     protected void ChangeParent(
       [NotNull] Type parentPersistableType,
       [CanBeNull] RelativeBase newParent) {
-      ParentOfType[parentPersistableType]?.RemoveChild(this, newParent != null);
+      Parents[parentPersistableType]?.RemoveChild(this, newParent != null);
       newParent?.AddChild(this);
-      ParentOfType[parentPersistableType] = newParent;
+      Parents[parentPersistableType] = newParent;
     }
 
     private void CheckCanAddChild([NotNull] RelativeBase child) {
@@ -76,12 +90,12 @@ namespace SoundExplorersDatabase.Data {
           "A null reference has been specified. " +
           $"So addition to {PersistableType.Name} '{Key}' is not supported.");
       }
-      if (child.ParentOfType[PersistableType] != null) {
+      if (child.Parents[PersistableType] != null) {
         throw new ConstraintException(
           $"{child.PersistableType.Name} '{child.Key}' " +
           $"cannot be added to {PersistableType.Name} '{Key}', " +
           $"because it already belongs to {PersistableType.Name} " +
-          $"'{child.ParentOfType[PersistableType].Key}'.");
+          $"'{child.Parents[PersistableType].Key}'.");
       }
       if (ChildrenOfType[child.PersistableType].Contains(child.Key)) {
         throw new DuplicateKeyException(
@@ -131,12 +145,16 @@ namespace SoundExplorersDatabase.Data {
       [NotNull] SessionBase session);
 
     private void Initialise() {
-      var parentTypes = GetParentTypes();
+      var parentRelations = GetParentRelations();
       var childrenRelations = GetChildrenRelations();
-      ParentOfType = new Dictionary<Type, RelativeBase>();
-      if (parentTypes != null) {
-        foreach (var parentType in parentTypes) {
-          ParentOfType.Add(parentType, null);
+      Parents = new Dictionary<Type, RelativeBase>();
+      MandatoryParentTypes = new List<Type>();
+      if (parentRelations != null) {
+        foreach (var parentRelation in parentRelations) {
+          Parents.Add(parentRelation.ParentType, null);
+          if (parentRelation.IsMandatory) {
+            MandatoryParentTypes.Add(parentRelation.ParentType);
+          }
         }
       }
       ChildrenOfType = new Dictionary<Type, ISortedChildList>();
@@ -174,7 +192,7 @@ namespace SoundExplorersDatabase.Data {
 
     public override void Unpersist(SessionBase session) {
       var parents =
-        ParentOfType.Values.Where(parent => parent != null).ToList();
+        Parents.Values.Where(parent => parent != null).ToList();
       for (int i = parents.Count - 1; i >= 0; i--) {
         parents[i].ChildrenOfType[PersistableType].Remove(this);
         parents[i].RemoveChild(this, true);
@@ -185,7 +203,7 @@ namespace SoundExplorersDatabase.Data {
     private void UpdateChild([NotNull] RelativeBase child,
       [CanBeNull] RelativeBase newParent) {
       child.UpdateNonIndexField();
-      child.ParentOfType[PersistableType] = newParent;
+      child.Parents[PersistableType] = newParent;
       child.OnParentFieldToBeUpdated(PersistableType, newParent);
     }
   }

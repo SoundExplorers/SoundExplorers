@@ -41,7 +41,7 @@ namespace SoundExplorersDatabase.Tests.Data {
       };
     }
 
-    protected override IEnumerable<Type> GetParentTypes() {
+    protected override IEnumerable<ParentRelation> GetParentRelations() {
       return null;
     }
 
