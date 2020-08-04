@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
+using VelocityDb.Session;
 
 namespace SoundExplorersDatabase.Data {
   public static class Schema {
+    //private static bool _existsOnDatabase;
     private static IList<RelationInfo> _relations;
 
     [NotNull]
@@ -16,6 +18,19 @@ namespace SoundExplorersDatabase.Data {
     [NotNull]
     private static IList<RelationInfo> CreateRelations() {
       return new List<RelationInfo>();
+    }
+
+    public static bool ExistsOnDatabase([NotNull] SessionBase session) {
+      return session.ContainsDatabase(session.DatabaseLocations.First(), 1);
+      // TODO Fails due to multi-threaded tests? 
+      // bool result;
+      // if (_existsOnDatabase) {
+      //   result = true;
+      // } else {
+      //   result = session.ContainsDatabase(session.DatabaseLocations.First(), 1);
+      //   _existsOnDatabase = result;
+      // }
+      // return result;
     }
 
     [CanBeNull]

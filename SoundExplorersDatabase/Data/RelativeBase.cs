@@ -123,8 +123,12 @@ namespace SoundExplorersDatabase.Data {
             + "has not been specified.");
         }
       }
-      if (IsTopLevel) {
-        //FindWithSameKey(session);
+      if (IsTopLevel && IsDuplicateKey(session)) {
+        throw new DuplicateKeyException(
+          this,
+          $"{PersistableType.Name} '{Key}' " +
+          $"cannot be persisted because another {PersistableType.Name} "
+          + "with the same key already persists.");
       }
     }
 
@@ -197,6 +201,14 @@ namespace SoundExplorersDatabase.Data {
       }
     }
 
+    private bool IsDuplicateKey([NotNull] SessionBase session) {
+      RelativeBase existing = null;
+      if (Schema.ExistsOnDatabase(session)) {
+        existing = FindWithSameKey(session); 
+      }
+      return existing != null && !existing.Oid.Equals(Oid);
+    }
+    
     protected abstract void OnParentFieldToBeUpdated(
       [NotNull] Type parentPersistableType, [CanBeNull] RelativeBase newParent);
 

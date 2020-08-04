@@ -462,8 +462,11 @@ namespace SoundExplorersDatabase.Tests.Data {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
         var duplicateMother = new Mother {Name = Mother1Name};
-        Assert.Throws<ConstraintException>(() =>
-          session.Persist(duplicateMother));
+        Assert.Throws<DuplicateKeyException>(() =>
+          session.Persist(duplicateMother), "Duplicate Mother");
+        var duplicateFather = new Father {Name = Father1Name};
+        Assert.Throws<DuplicateKeyException>(() =>
+          session.Persist(duplicateFather), "Duplicate Father");
         session.Commit();
       }
     }

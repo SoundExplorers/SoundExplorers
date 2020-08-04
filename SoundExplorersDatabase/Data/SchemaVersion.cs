@@ -23,7 +23,7 @@ namespace SoundExplorersDatabase.Data {
     public static SchemaVersion Read(int expectedNumber, SessionBase session) {
       SchemaVersion version = null;
       try {
-        if (SchemaExists(session)) {
+        if (Schema.ExistsOnDatabase(session)) {
           version = Find(session);
         }
         if (version == null) {
@@ -68,9 +68,5 @@ namespace SoundExplorersDatabase.Data {
       session.Commit();
       return version;
     }
-
-    private static bool SchemaExists([NotNull] SessionBase session) {
-      return session.ContainsDatabase(session.DatabaseLocations.First(), 1);
-    }
-  }
+ }
 }
