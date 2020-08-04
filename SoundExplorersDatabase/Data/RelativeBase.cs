@@ -158,7 +158,7 @@ namespace SoundExplorersDatabase.Data {
     [NotNull]
     private IDictionary<Type, IRelationInfo> CreateChildrenRelations() {
       var values =
-        from relation in Schema.Relations
+        from relation in Schema.Instance.Relations
         where relation.ParentType == PersistableType
         select relation;
       return values.ToDictionary<RelationInfo, Type, IRelationInfo>(
@@ -168,7 +168,7 @@ namespace SoundExplorersDatabase.Data {
     [NotNull]
     private IDictionary<Type, IRelationInfo> CreateParentRelations() {
       var values =
-        from relation in Schema.Relations
+        from relation in Schema.Instance.Relations
         where relation.ChildType == PersistableType
         select relation;
       return values.ToDictionary<RelationInfo, Type, IRelationInfo>(
@@ -203,7 +203,7 @@ namespace SoundExplorersDatabase.Data {
 
     private bool IsDuplicateKey([NotNull] SessionBase session) {
       RelativeBase existing = null;
-      if (Schema.ExistsOnDatabase(session)) {
+      if (Schema.Instance.ExistsOnDatabase(session)) {
         existing = FindWithSameKey(session); 
       }
       return existing != null && !existing.Oid.Equals(Oid);

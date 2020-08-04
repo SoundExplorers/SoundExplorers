@@ -11,7 +11,7 @@ namespace SoundExplorersDatabase.Tests.Data {
   public class ReferencingTests {
     [SetUp]
     public void Setup() {
-      Schema.Relations = TestSchema.Relations;
+      Schema.Instance = new TestSchema();
       Mother1 = new Mother();
       Mother2 = new Mother {Name = Mother2Name};
       Daughter1 = new Daughter();
@@ -74,18 +74,18 @@ namespace SoundExplorersDatabase.Tests.Data {
 
     [Test]
     public void T005_Schema() {
-      var relation = Schema.FindRelation(typeof(Father), typeof(Daughter));
+      var relation = Schema.Instance.FindRelation(typeof(Father), typeof(Daughter));
       Assert.IsNotNull(relation, "Father-Daughters relation");
       Assert.IsFalse(relation.IsMandatory,
         "Father-Daughters relation mandatory");
-      relation = Schema.FindRelation(typeof(Father), typeof(Son));
+      relation = Schema.Instance.FindRelation(typeof(Father), typeof(Son));
       Assert.IsNotNull(relation, "Father-Sons relation");
       Assert.IsFalse(relation.IsMandatory, "Father-Sons relation mandatory");
-      relation = Schema.FindRelation(typeof(Mother), typeof(Daughter));
+      relation = Schema.Instance.FindRelation(typeof(Mother), typeof(Daughter));
       Assert.IsNotNull(relation, "Mother-Daughters relation");
       Assert.IsTrue(relation.IsMandatory,
         "Mother-Daughters relation mandatory");
-      relation = Schema.FindRelation(typeof(Mother), typeof(Son));
+      relation = Schema.Instance.FindRelation(typeof(Mother), typeof(Son));
       Assert.IsNotNull(relation, "Mother-Sons relation");
       Assert.IsFalse(relation.IsMandatory, "Mother-Sons relation mandatory");
     }
