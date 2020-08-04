@@ -202,10 +202,7 @@ namespace SoundExplorersDatabase.Data {
     }
 
     private bool IsDuplicateKey([NotNull] SessionBase session) {
-      RelativeBase existing = null;
-      if (Schema.Instance.ExistsOnDatabase(session)) {
-        existing = FindWithSameKey(session); 
-      }
+      var existing = FindWithSameKey(session);
       return existing != null && !existing.Oid.Equals(Oid);
     }
     

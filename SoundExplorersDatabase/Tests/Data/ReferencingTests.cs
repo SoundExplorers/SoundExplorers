@@ -74,7 +74,8 @@ namespace SoundExplorersDatabase.Tests.Data {
 
     [Test]
     public void T005_Schema() {
-      var relation = Schema.Instance.FindRelation(typeof(Father), typeof(Daughter));
+      var relation =
+        Schema.Instance.FindRelation(typeof(Father), typeof(Daughter));
       Assert.IsNotNull(relation, "Father-Daughters relation");
       Assert.IsFalse(relation.IsMandatory,
         "Father-Daughters relation mandatory");
@@ -94,14 +95,14 @@ namespace SoundExplorersDatabase.Tests.Data {
     public void T010_Initial() {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginRead();
-        Mother1 = Mother.Read(Mother1Name, session);
-        Mother2 = Mother.Read(Mother2Name, session);
-        Daughter1 = Daughter.Read(Daughter1Name, session);
-        Daughter2 = Daughter.Read(Daughter2Name, session);
-        Father1 = Father.Read(Father1Name, session);
-        Father2 = Father.Read(Father2Name, session);
-        Son1 = Son.Read(Son1Name, session);
-        Son2 = Son.Read(Son2Name, session);
+        Mother1 = QueryHelper.Read<Mother>(Mother1Name, session);
+        Mother2 = QueryHelper.Read<Mother>(Mother2Name, session);
+        Daughter1 = QueryHelper.Read<Daughter>(Daughter1Name, session);
+        Daughter2 = QueryHelper.Read<Daughter>(Daughter2Name, session);
+        Father1 = QueryHelper.Read<Father>(Father1Name, session);
+        Father2 = QueryHelper.Read<Father>(Father2Name, session);
+        Son1 = QueryHelper.Read<Son>(Son1Name, session);
+        Son2 = QueryHelper.Read<Son>(Son2Name, session);
         session.Commit();
         Assert.IsTrue(Daughter1.IsPersistent,
           "Daughter1.IsPersistent initially");
@@ -196,8 +197,8 @@ namespace SoundExplorersDatabase.Tests.Data {
     public void T020_SortedChildListUnsupportedMethods() {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
-        Mother1 = Mother.Read(Mother1Name, session);
-        Daughter2 = Daughter.Read(Daughter2Name, session);
+        Mother1 = QueryHelper.Read<Mother>(Mother1Name, session);
+        Daughter2 = QueryHelper.Read<Daughter>(Daughter2Name, session);
         Assert.Throws<NotSupportedException>(
           () => Mother1.Daughters.Add(Daughter2Name, Daughter2),
           "Unsupported Mother.Daughters.Add");
@@ -215,13 +216,13 @@ namespace SoundExplorersDatabase.Tests.Data {
     public void T040_AddRemoveChildren() {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
-        Mother1 = Mother.Read(Mother1Name, session);
-        Mother2 = Mother.Read(Mother2Name, session);
-        Father1 = Father.Read(Father1Name, session);
-        Daughter1 = Daughter.Read(Daughter1Name, session);
-        Daughter2 = Daughter.Read(Daughter2Name, session);
-        Son1 = Son.Read(Son1Name, session);
-        Son2 = Son.Read(Son2Name, session);
+        Mother1 = QueryHelper.Read<Mother>(Mother1Name, session);
+        Mother2 = QueryHelper.Read<Mother>(Mother2Name, session);
+        Father1 = QueryHelper.Read<Father>(Father1Name, session);
+        Daughter1 = QueryHelper.Read<Daughter>(Daughter1Name, session);
+        Daughter2 = QueryHelper.Read<Daughter>(Daughter2Name, session);
+        Son1 = QueryHelper.Read<Son>(Son1Name, session);
+        Son2 = QueryHelper.Read<Son>(Son2Name, session);
         Assert.Throws<ConstraintException>(() =>
             Mother1.Daughters.Add(Daughter2),
           "Cannot add Daughter2 to Mother1.Daughter because she is already " +
@@ -288,12 +289,12 @@ namespace SoundExplorersDatabase.Tests.Data {
     public void T050_ChangeParent() {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
-        Mother1 = Mother.Read(Mother1Name, session);
-        Mother2 = Mother.Read(Mother2Name, session);
-        Daughter1 = Daughter.Read(Daughter1Name, session);
-        Father1 = Father.Read(Father1Name, session);
-        Father2 = Father.Read(Father2Name, session);
-        Son1 = Son.Read(Son1Name, session);
+        Mother1 = QueryHelper.Read<Mother>(Mother1Name, session);
+        Mother2 = QueryHelper.Read<Mother>(Mother2Name, session);
+        Daughter1 = QueryHelper.Read<Daughter>(Daughter1Name, session);
+        Father1 = QueryHelper.Read<Father>(Father1Name, session);
+        Father2 = QueryHelper.Read<Father>(Father2Name, session);
+        Son1 = QueryHelper.Read<Son>(Son1Name, session);
         Daughter1.Mother = Mother2;
         Daughter1.Father = Father2;
         Son1.Mother = Mother2;
@@ -348,12 +349,12 @@ namespace SoundExplorersDatabase.Tests.Data {
     public void T060_ChangeParentFromNull() {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
-        Mother2 = Mother.Read(Mother2Name, session);
-        Daughter2 = Daughter.Read(Daughter2Name, session);
+        Mother2 = QueryHelper.Read<Mother>(Mother2Name, session);
+        Daughter2 = QueryHelper.Read<Daughter>(Daughter2Name, session);
         Daughter2.Mother = Mother2;
 
-        Father2 = Father.Read(Father2Name, session);
-        Son2 = Son.Read(Son2Name, session);
+        Father2 = QueryHelper.Read<Father>(Father2Name, session);
+        Son2 = QueryHelper.Read<Son>(Son2Name, session);
         Son2.Father = Father2;
         session.Commit();
         Assert.AreSame(Mother2, Daughter2.Mother, "Daughter2.Mother");
@@ -378,15 +379,15 @@ namespace SoundExplorersDatabase.Tests.Data {
     public void T070_ChangeParentToNull() {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
-        Mother1 = Mother.Read(Mother1Name, session);
-        Daughter1 = Daughter.Read(Daughter1Name, session);
+        Mother1 = QueryHelper.Read<Mother>(Mother1Name, session);
+        Daughter1 = QueryHelper.Read<Daughter>(Daughter1Name, session);
         Assert.Throws<ConstraintException>(() =>
             // ReSharper disable once AssignNullToNotNullAttribute
             Daughter1.Mother = null,
           "Cannot remove Daughter from mandatory link to Mother.");
 
-        Father1 = Father.Read(Father1Name, session);
-        Son1 = Son.Read(Son1Name, session);
+        Father1 = QueryHelper.Read<Father>(Father1Name, session);
+        Son1 = QueryHelper.Read<Son>(Son1Name, session);
         Son1.Father = null;
         session.Commit();
 
@@ -402,14 +403,14 @@ namespace SoundExplorersDatabase.Tests.Data {
     public void T080_DeleteReferencingChild() {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
-        Mother1 = Mother.Read(Mother1Name, session);
-        Daughter1 = Daughter.Read(Daughter1Name, session);
-        Father1 = Father.Read(Father1Name, session);
-        Son1 = Son.Read(Son1Name, session);
+        Mother1 = QueryHelper.Read<Mother>(Mother1Name, session);
+        Daughter1 = QueryHelper.Read<Daughter>(Daughter1Name, session);
+        Father1 = QueryHelper.Read<Father>(Father1Name, session);
+        Son1 = QueryHelper.Read<Son>(Son1Name, session);
         Daughter1.Unpersist(session);
 
-        Father1 = Father.Read(Father1Name, session);
-        Son1 = Son.Read(Son1Name, session);
+        Father1 = QueryHelper.Read<Father>(Father1Name, session);
+        Son1 = QueryHelper.Read<Son>(Son1Name, session);
         Son1.Unpersist(session);
         session.Commit();
         Assert.AreEqual(0, Mother1.Daughters.Count,
@@ -442,7 +443,7 @@ namespace SoundExplorersDatabase.Tests.Data {
     public void T100_DisallowNullKey() {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
-        Daughter1 = Daughter.Read(Daughter1Name, session);
+        Daughter1 = QueryHelper.Read<Daughter>(Daughter1Name, session);
         Assert.Throws<NoNullAllowedException>(() =>
           // ReSharper disable once AssignNullToNotNullAttribute
           Daughter1.Name = null, "Disallow set Key to null");
@@ -486,7 +487,7 @@ namespace SoundExplorersDatabase.Tests.Data {
     public void T130_DisallowAddDuplicateChildToParent() {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
-        Father1 = Father.Read(Father1Name, session);
+        Father1 = QueryHelper.Read<Father>(Father1Name, session);
         var duplicateDaughter2 = new Daughter {Name = Daughter2Name};
         Assert.Throws<DuplicateKeyException>(() =>
           Father1.Daughters.Add(duplicateDaughter2));
@@ -498,8 +499,8 @@ namespace SoundExplorersDatabase.Tests.Data {
     public void T140_DisallowAddChildWithParentToAnotherParentOfSameType() {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
-        Father2 = Father.Read(Father2Name, session);
-        Daughter2 = Daughter.Read(Daughter2Name, session);
+        Father2 = QueryHelper.Read<Father>(Father2Name, session);
+        Daughter2 = QueryHelper.Read<Daughter>(Daughter2Name, session);
         Assert.Throws<ConstraintException>(() =>
           Father2.Daughters.Add(Daughter2));
         session.Commit();
@@ -510,8 +511,8 @@ namespace SoundExplorersDatabase.Tests.Data {
     public void T150_DisallowRemoveChildThatDoesNotBelongToParent() {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
-        Father1 = Father.Read(Father1Name, session);
-        Son1 = Son.Read(Son1Name, session);
+        Father1 = QueryHelper.Read<Father>(Father1Name, session);
+        Son1 = QueryHelper.Read<Son>(Son1Name, session);
         Father1.Sons.Remove(Son1);
         Assert.Throws<KeyNotFoundException>(() =>
           Father1.Sons.Remove(Son1));
@@ -523,7 +524,7 @@ namespace SoundExplorersDatabase.Tests.Data {
     public void T160_DisallowAddNullChild() {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
-        Father1 = Father.Read(Father1Name, session);
+        Father1 = QueryHelper.Read<Father>(Father1Name, session);
         Assert.Throws<NoNullAllowedException>(() =>
           // Cannot use [Children].Add, as it is an ambiguous reference 
           // when a null parameter is specified.
@@ -537,7 +538,7 @@ namespace SoundExplorersDatabase.Tests.Data {
     public void T170_DisallowRemoveNullChild() {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
-        Father1 = Father.Read(Father1Name, session);
+        Father1 = QueryHelper.Read<Father>(Father1Name, session);
         Assert.Throws<NoNullAllowedException>(() =>
           // Cannot use [Children].Add, as it is an ambiguous reference 
           // when a null parameter is specified.

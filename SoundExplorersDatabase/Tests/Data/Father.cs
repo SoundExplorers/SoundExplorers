@@ -30,8 +30,7 @@ namespace SoundExplorersDatabase.Tests.Data {
     [NotNull] public SortedChildList<string, Son> Sons { get; }
 
     protected override RelativeBase FindWithSameKey(SessionBase session) {
-      return session.AllObjects<Father>()
-        .FirstOrDefault(father => father.Name == Name);
+      return QueryHelper.Find<Father>(Key, session);
     }
 
     protected override IDictionary GetChildren(Type childType) {
@@ -46,11 +45,6 @@ namespace SoundExplorersDatabase.Tests.Data {
       Type parentPersistableType,
       RelativeBase newParent) {
       throw new NotSupportedException();
-    }
-
-    public static Father Read([NotNull] string name,
-      [NotNull] SessionBase session) {
-      return session.AllObjects<Father>().First(father => father.Name == name);
     }
   }
 }

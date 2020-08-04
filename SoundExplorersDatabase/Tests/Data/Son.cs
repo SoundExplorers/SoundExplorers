@@ -61,10 +61,5 @@ namespace SoundExplorersDatabase.Tests.Data {
         _mother = (Mother)newParent;
       }
     }
-
-    public static Son Read([NotNull] string name,
-      [NotNull] SessionBase session) {
-      return session.AllObjects<Son>().First(son => son.Name == name);
-    }
-  }
+ }
 }
