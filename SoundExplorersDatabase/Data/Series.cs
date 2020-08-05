@@ -1,50 +1,47 @@
-﻿using VelocityDb;
-using VelocityDb.Collection.BTree;
-using VelocityDb.Indexing;
-using VelocityDb.TypeInfo;
+﻿using System;
+using System.Collections;
+using JetBrains.Annotations;
+using VelocityDb.Session;
 
 namespace SoundExplorersDatabase.Data {
-  public class Series : ReferenceTracked {
-    private BTreeSet<Event> _events;
-
-    [Index] [UniqueConstraint] private string _name;
-
+  public class Series : RelativeBase {
+    private string _name;
     private string _notes;
 
-    [FieldAccessor("_name")]
+    public Series() : base(typeof(Series)) {
+      Events = new SortedChildList<string, Event>(this);
+    }
+
+    [NotNull] public SortedChildList<string, Event> Events { get; }
+
     public string Name {
       get => _name;
       set {
-        Update();
+        UpdateNonIndexField();
         _name = value;
+        SetKey(value);
       }
     }
 
     public string Notes {
       get => _notes;
       set {
-        Update();
+        UpdateNonIndexField();
         _notes = value;
       }
     }
 
-    public BTreeSet<Event> Events {
-      get => _events;
-      set {
-        Update();
-        _events = value;
-      }
+    protected override RelativeBase FindWithSameKey(SessionBase session) {
+      return QueryHelper.Find<Series>(Key, session);
     }
 
-    public void AddEvent(Event @event) {
-      if (Events == null) {
-        Events = new BTreeSet<Event>();
-      }
-      Events.Add(@event);
-      //if (Events.Add(@event)) {
-      //  var reference = new Reference(_events, "_events");
-      //  @event.References.AddFast(reference);
-      //}
+    protected override IDictionary GetChildren(Type childType) {
+      return Events;
+    }
+
+    protected override void OnParentFieldToBeUpdated(
+      Type parentPersistableType, RelativeBase newParent) {
+      throw new NotSupportedException();
     }
   }
 }

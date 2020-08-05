@@ -107,7 +107,7 @@ namespace SoundExplorersDatabase.Data {
       }
     }
 
-    private void CheckCanPersist(SessionBase session) {
+    protected virtual void CheckCanPersist([NotNull] SessionBase session) {
       if (Key == null) {
         throw new NoNullAllowedException(
           "A Key has not yet been specified. " +
@@ -176,8 +176,7 @@ namespace SoundExplorersDatabase.Data {
     }
 
     [CanBeNull]
-    protected abstract RelativeBase FindWithSameKey(
-      [NotNull] SessionBase session);
+    protected abstract RelativeBase FindWithSameKey([NotNull] SessionBase session);
 
     [NotNull]
     protected abstract IDictionary GetChildren([NotNull] Type childType);
@@ -225,7 +224,7 @@ namespace SoundExplorersDatabase.Data {
       References.Remove(References.First(r => r.To.Equals(child)));
     }
 
-    protected virtual void SetKey([NotNull] object value) {
+    protected void SetKey([NotNull] object value) {
       Key = value ?? throw new NoNullAllowedException(
         "A null reference has been specified as the Key " +
         $"for {PersistableType.Name} '{Key}'. " +

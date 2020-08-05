@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using JetBrains.Annotations;
 using SoundExplorersDatabase.Data;
 using VelocityDb.Session;
@@ -29,7 +28,7 @@ namespace SoundExplorersDatabase.Tests.Data {
 
     [NotNull] public SortedChildList<string, Son> Sons { get; }
 
-    protected override RelativeBase FindWithSameKey(SessionBase session) {
+    protected override RelativeBase FindWithSameKey([NotNull] SessionBase session) {
       return QueryHelper.Find<Mother>(Key, session);
     }
 

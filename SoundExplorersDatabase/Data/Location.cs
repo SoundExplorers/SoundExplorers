@@ -1,81 +1,47 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections;
 using JetBrains.Annotations;
-using VelocityDb;
-using VelocityDb.Collection.BTree.Extensions;
-using VelocityDb.Indexing;
 using VelocityDb.Session;
-using VelocityDb.TypeInfo;
 
 namespace SoundExplorersDatabase.Data {
-  public class Location : ReferenceTracked {
-    private LocationEvents _events;
-
-    [Index] [UniqueConstraint] private string _name;
-
+  public class Location : RelativeBase {
+    private string _name;
     private string _notes;
 
-    public Location([NotNull] string name) {
-      Name = name;
+    public Location() : base(typeof(Location)) {
+      Events = new SortedChildList<string, Event>(this);
     }
 
-    [FieldAccessor("_name")]
-    [PublicAPI]
+    [NotNull] public SortedChildList<string, Event> Events { get; }
+
     public string Name {
       get => _name;
       set {
-        Update();
+        UpdateNonIndexField();
         _name = value;
+        SetKey(value);
       }
     }
 
     public string Notes {
       get => _notes;
       set {
-        Update();
+        UpdateNonIndexField();
         _notes = value;
       }
     }
 
-    public LocationEvents Events {
-      get {
-        if (_events == null) {
-          Update();
-          _events = new LocationEvents(this);
-        }
-        return _events;
-      }
+    protected override RelativeBase FindWithSameKey(SessionBase session) {
+      return QueryHelper.Find<Location>(Key, session);
     }
 
-    [NotNull]
-    public static Location Read([NotNull] string name,
-      [NotNull] SessionBase session) {
-      // ReSharper disable once ReplaceWithSingleCallToFirst
-      return session.Index<Location>("_name")
-        .Where(location => location.Name == name).First();
-      // Seems not to use the direct index lookup instead of the default Enumerable.Where:
-      // return (
-      //   from Location location in session.Index<Location>("_name")
-      //   where location.Name == name
-      //   select location).First();
-      //
-      // Same with this.
-      // return session
-      //   .Index<Location>("_name")
-      //   .First(location => location.Name == name);
+    protected override IDictionary GetChildren(Type childType) {
+      return Events;
     }
 
-    // public override void Unpersist(SessionBase session) {
-    //   // I would expect VelocityDB to throw a ReferentialIntegrityException
-    //   // if the parent had children.
-    //   // But it does not, even in their Relations sample,
-    //   // where Customer.Unpersist still works,
-    //   // even when commenting out all code in it except for base.Unpersist .
-    //   if (Events.Count == 0) {
-    //     base.Unpersist(session);
-    //   } else {
-    //     throw new ConstraintException(
-    //       $"Location '{Name}' cannot be deleted because it has {Events.Count} events.");
-    //   }
-    // }
+    protected override void OnParentFieldToBeUpdated(
+      Type parentPersistableType, RelativeBase newParent) {
+      throw new NotSupportedException();
+    }
   }
 }

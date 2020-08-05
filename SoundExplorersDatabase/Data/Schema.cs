@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using JetBrains.Annotations;
 using VelocityDb.Session;
 
 namespace SoundExplorersDatabase.Data {
   public class Schema {
-    private bool _existsOnDatabase;
     private static Schema _instance;
-    private IList<RelationInfo> _relations;
+    private bool _existsOnDatabase;
+    private IReadOnlyCollection<RelationInfo> _relations;
 
     internal static Schema Instance {
       get => _instance ?? (_instance = new Schema());
@@ -16,14 +17,19 @@ namespace SoundExplorersDatabase.Data {
     }
 
     [NotNull]
-    public IList<RelationInfo> Relations {
+    public IReadOnlyCollection<RelationInfo> Relations {
       get => _relations ?? (_relations = CreateRelations());
       internal set => _relations = value;
     }
 
     [NotNull]
-    protected virtual IList<RelationInfo> CreateRelations() {
-      return new List<RelationInfo>();
+    protected virtual ReadOnlyCollection<RelationInfo> CreateRelations() {
+      var list = new List<RelationInfo> {
+        new RelationInfo(typeof(Location), typeof(Event), true),
+        new RelationInfo(typeof(Newsletter), typeof(Event), false),
+        new RelationInfo(typeof(Series), typeof(Event), false)
+      };
+      return new ReadOnlyCollection<RelationInfo>(list);
     }
 
     public bool ExistsOnDatabase([NotNull] SessionBase session) {

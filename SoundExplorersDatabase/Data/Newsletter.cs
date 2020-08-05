@@ -1,52 +1,66 @@
 ﻿using System;
-using VelocityDb;
-using VelocityDb.Collection.BTree;
-using VelocityDb.Indexing;
-using VelocityDb.TypeInfo;
+using System.Collections;
+using System.Data.Linq;
+using JetBrains.Annotations;
+using VelocityDb.Session;
 
 namespace SoundExplorersDatabase.Data {
-  public class Newsletter : ReferenceTracked {
-    [Index] [UniqueConstraint] private DateTime _date;
+  public class Newsletter : RelativeBase {
+    private DateTime _date;
+    private string _path;
 
-    private BTreeSet<Event> _events;
+    public Newsletter() : base(typeof(Newsletter)) {
+      Events = new SortedChildList<string, Event>(this);
+    }
 
-    [Index] [UniqueConstraint] private string _path;
-
-    [FieldAccessor("_date")]
     public DateTime Date {
       get => _date;
       set {
-        Update();
+        UpdateNonIndexField();
         _date = value;
+        SetKey(value);
       }
     }
 
-    [FieldAccessor("_path")]
+    [NotNull] public SortedChildList<string, Event> Events { get; }
+
     public string Path {
       get => _path;
       set {
-        Update();
+        UpdateNonIndexField();
         _path = value;
       }
     }
 
-    public BTreeSet<Event> Events {
-      get => _events;
-      set {
-        Update();
-        _events = value;
+    protected override void CheckCanPersist(SessionBase session) {
+      var pathDuplicate = FindPathDuplicate(session);
+      if (pathDuplicate != null) {
+        throw new DuplicateKeyException(
+          this,
+          $"Newsletter '{Date:yyyy/MM/dd}' " +
+          "cannot be persisted because Newsletter " +
+          $"'{pathDuplicate.Date:yyyy/MM/dd}' "
+          + $"already persists with the same path '{Path}'.");
       }
+      base.CheckCanPersist(session);
     }
 
-    public void AddEvent(Event @event) {
-      if (Events == null) {
-        Events = new BTreeSet<Event>();
-      }
-      Events.Add(@event);
-      //if (Events.Add(@event)) {
-      //  var reference = new Reference(_events, "_events");
-      //  @event.References.AddFast(reference);
-      //}
+    private Newsletter FindPathDuplicate([NotNull] SessionBase session) {
+      return QueryHelper.Find<Newsletter>(
+        newsletter => newsletter.Path == Path, session);
+    }
+
+    protected override RelativeBase FindWithSameKey(SessionBase session) {
+      return QueryHelper.Find<Newsletter>(Key, session);
+    }
+
+    protected override IDictionary GetChildren(Type childType) {
+      return Events;
+    }
+
+    protected override void OnParentFieldToBeUpdated(
+      Type parentPersistableType, RelativeBase newParent) {
+      throw new NotSupportedException();
     }
   }
 }

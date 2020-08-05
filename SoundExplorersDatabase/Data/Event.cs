@@ -1,97 +1,61 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Collections;
 using JetBrains.Annotations;
-using VelocityDb;
-using VelocityDb.Collection.BTree.Extensions;
-using VelocityDb.Indexing;
 using VelocityDb.Session;
 
 namespace SoundExplorersDatabase.Data {
-  [Index("_date, _location")]
-  [UniqueConstraint]
-  public class Event : OptimizedPersistable { // Eventually ReferenceTracked?
+  public class Event : RelativeBase {
     private DateTime _date;
     private Location _location;
     private string _notes;
 
-    public Event(DateTime date, [NotNull] Location location) {
-      Date = date;
-      Location = location;
-    }
+    public Event() : base(typeof(Event)) { }
 
-    [PublicAPI]
     public DateTime Date {
       get => _date;
       set {
-        Update();
+        UpdateNonIndexField();
         _date = value;
+        SetKey(value, Location);
       }
     }
 
+    [NotNull]
     public Location Location {
       get => _location;
       set {
-        if (value != null && value.Equals(_location)) {
-          return;
-        }
-        LocationToMoveFrom = _location;
-        IsChangingLocation = true;
-        if (IsPersistent) {
-          UpdateOldAndNewLocations();
-        }
-        Update();
+        UpdateNonIndexField();
+        ChangeParent(typeof(Location), value);
         _location = value;
+        SetKey(Date, value);
       }
     }
 
     public string Notes {
       get => _notes;
       set {
-        Update();
+        UpdateNonIndexField();
         _notes = value;
       }
     }
 
-    internal bool IsChangingLocation { get; private set; }
-    private Location LocationToMoveFrom { get; set; }
+    protected override RelativeBase FindWithSameKey([NotNull] SessionBase session) {
+      throw new NotSupportedException();
+    }
 
-    public override ulong Persist(Placement place, SessionBase session,
-      bool persistRefs = true,
-      bool disableFlush = false, Queue<IOptimizedPersistable> toPersist = null) {
-      //Debug.WriteLine($"Event.Persist before base.Persist: Location.IsPersistent = {Location?.IsPersistent}");
-      ulong result = base.Persist(place, session, persistRefs, disableFlush, toPersist);
-      //Debug.WriteLine($"Event.Persist after base.Persist: Location.IsPersistent = {Location?.IsPersistent}");
-      if (IsChangingLocation) {
-        UpdateOldAndNewLocations();
-        //Debug.WriteLine($"Event.Persist after moving: Location.IsPersistent = {Location?.IsPersistent}");
+    protected override IDictionary GetChildren(Type childType) {
+      throw new NotImplementedException();
+    }
+
+    protected override void OnParentFieldToBeUpdated(Type parentPersistableType,
+      RelativeBase newParent) {
+      if (parentPersistableType == typeof(Location)) {
+        _location = (Location)newParent;
       }
-      return result;
     }
 
-    public override void Unpersist(SessionBase session) {
-      base.Unpersist(session);
-      Location.Events.Remove(this);
-    }
-
-    private void UpdateOldAndNewLocations() {
-      // Debug.WriteLine(
-      //   $"Event.UpdateOldAndNewLocations: Old Location =  {LocationToMoveFrom?.Name};");
-      // Debug.WriteLine($"    From {LocationToMoveFrom?.Events.Count} Events");
-      LocationToMoveFrom?.Events.Remove(this);
-      //Debug.WriteLine($"    To {LocationToMoveFrom?.Events.Count} Events");
-      Location?.Events.Add(this);
-      LocationToMoveFrom = null;
-      IsChangingLocation = false;
-    }
-
-    [NotNull]
-    public static Event Read(DateTime date, [NotNull] Location location,
-      [NotNull] SessionBase session) {
-      // ReSharper disable once ReplaceWithSingleCallToFirst
-      return session.Index<Event>()
-        .Where(@event => @event.Date == date
-                         && @event.Location.Name == location.Name).First();
+    private void SetKey(DateTime date, [NotNull] Location location) {
+      SetKey($"{date:yyyy/MM/dd} {location.Name}");
     }
   }
 }

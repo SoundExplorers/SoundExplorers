@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using JetBrains.Annotations;
 using SoundExplorersDatabase.Data;
 using VelocityDb.Session;
@@ -61,5 +60,5 @@ namespace SoundExplorersDatabase.Tests.Data {
         _mother = (Mother)newParent;
       }
     }
- }
+  }
 }

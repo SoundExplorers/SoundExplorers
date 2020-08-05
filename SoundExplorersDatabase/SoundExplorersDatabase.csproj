@@ -84,7 +84,6 @@
     <Compile Include="Data\RelativeBase.cs" />
     <Compile Include="Data\Event.cs" />
     <Compile Include="Data\Newsletter.cs" />
-    <Compile Include="Data\LocationEvents.cs" />
     <Compile Include="Data\Series.cs" />
     <Compile Include="Data\Location.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
