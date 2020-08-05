@@ -55,7 +55,7 @@ namespace SoundExplorersDatabase.Data {
 
     private bool IsTopLevel => Parents.Count == 0;
 
-    public object Key { get; private set; }
+    public string Key { get; private set; }
 
     private IDictionary<Type, RelativeBase> Parents {
       get {
@@ -224,7 +224,7 @@ namespace SoundExplorersDatabase.Data {
       References.Remove(References.First(r => r.To.Equals(child)));
     }
 
-    protected void SetKey([NotNull] object value) {
+    protected void SetKey([NotNull] string value) {
       Key = value ?? throw new NoNullAllowedException(
         "A null reference has been specified as the Key " +
         $"for {PersistableType.Name} '{Key}'. " +

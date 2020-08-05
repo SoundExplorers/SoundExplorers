@@ -7,15 +7,10 @@ namespace SoundExplorersDatabase.Data {
   public static class QueryHelper {
     [CanBeNull]
     public static TPersistable Find<TPersistable>(
-      [CanBeNull] object key,
+      [CanBeNull] string key,
       [NotNull] SessionBase session) where TPersistable : RelativeBase {
       return Find<TPersistable>(
-        persistable => persistable.Key.Equals(key), session);
-      // if (!Schema.Instance.ExistsOnDatabase(session)) {
-      //   return null;
-      // }
-      // return session.AllObjects<TPersistable>()
-      //   .FirstOrDefault(persistable => persistable.Key.Equals(key));
+        persistable => persistable.Key == key, session);
     }
 
     [CanBeNull]
@@ -31,10 +26,10 @@ namespace SoundExplorersDatabase.Data {
 
     [NotNull]
     public static TPersistable Read<TPersistable>(
-      [CanBeNull] object key,
+      [CanBeNull] string key,
       [NotNull] SessionBase session) where TPersistable : RelativeBase {
       return session.AllObjects<TPersistable>()
-        .First(persistable => persistable.Key.Equals(key));
+        .First(persistable => persistable.Key == key);
     }
   }
 }

@@ -18,7 +18,7 @@ namespace SoundExplorersDatabase.Data {
       set {
         UpdateNonIndexField();
         _date = value;
-        SetKey(value);
+        SetKey($"{value:yyyy/MM/dd}");
       }
     }
 
@@ -38,7 +38,7 @@ namespace SoundExplorersDatabase.Data {
       if (pathDuplicate != null) {
         throw new DuplicateKeyException(
           this,
-          $"Newsletter '{Date:yyyy/MM/dd}' " +
+          $"Newsletter '{Key}' " +
           "cannot be persisted because Newsletter " +
           $"'{pathDuplicate.Date:yyyy/MM/dd}' "
           + $"already persists with the same path '{Path}'.");
