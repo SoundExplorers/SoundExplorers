@@ -40,7 +40,7 @@ namespace SoundExplorersDatabase.Data {
           this,
           $"Newsletter '{Key}' " +
           "cannot be persisted because Newsletter " +
-          $"'{pathDuplicate.Date:yyyy/MM/dd}' "
+          $"'{pathDuplicate.Key}' "
           + $"already persists with the same path '{Path}'.");
       }
     }
