@@ -33,6 +33,7 @@ namespace SoundExplorersDatabase.Data {
     }
 
     protected override void CheckCanPersist(SessionBase session) {
+      base.CheckCanPersist(session);
       var pathDuplicate = FindPathDuplicate(session);
       if (pathDuplicate != null) {
         throw new DuplicateKeyException(
@@ -42,7 +43,6 @@ namespace SoundExplorersDatabase.Data {
           $"'{pathDuplicate.Date:yyyy/MM/dd}' "
           + $"already persists with the same path '{Path}'.");
       }
-      base.CheckCanPersist(session);
     }
 
     private Newsletter FindPathDuplicate([NotNull] SessionBase session) {

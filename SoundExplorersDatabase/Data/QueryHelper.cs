@@ -9,11 +9,13 @@ namespace SoundExplorersDatabase.Data {
     public static TPersistable Find<TPersistable>(
       [CanBeNull] object key,
       [NotNull] SessionBase session) where TPersistable : RelativeBase {
-      if (!Schema.Instance.ExistsOnDatabase(session)) {
-        return null;
-      }
-      return session.AllObjects<TPersistable>()
-        .FirstOrDefault(persistable => persistable.Key.Equals(key));
+      return Find<TPersistable>(
+        persistable => persistable.Key.Equals(key), session);
+      // if (!Schema.Instance.ExistsOnDatabase(session)) {
+      //   return null;
+      // }
+      // return session.AllObjects<TPersistable>()
+      //   .FirstOrDefault(persistable => persistable.Key.Equals(key));
     }
 
     [CanBeNull]
