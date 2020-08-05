@@ -45,6 +45,7 @@ namespace SoundExplorersDatabase.Data {
       }
     }
 
+    [CanBeNull]
     private Newsletter FindPathDuplicate([NotNull] SessionBase session) {
       return QueryHelper.Find<Newsletter>(
         newsletter => newsletter.Path == Path, session);
