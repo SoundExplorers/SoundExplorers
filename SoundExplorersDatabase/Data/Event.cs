@@ -8,7 +8,9 @@ namespace SoundExplorersDatabase.Data {
   public class Event : RelativeBase {
     private DateTime _date;
     private Location _location;
+    private Newsletter _newsletter;
     private string _notes;
+    private Series _series;
 
     public Event() : base(typeof(Event)) { }
 
@@ -32,6 +34,16 @@ namespace SoundExplorersDatabase.Data {
       }
     }
 
+    [CanBeNull]
+    public Newsletter Newsletter {
+      get => _newsletter;
+      set {
+        UpdateNonIndexField();
+        ChangeParent(typeof(Newsletter), value);
+        _newsletter = value;
+      }
+    }
+
     public string Notes {
       get => _notes;
       set {
@@ -40,8 +52,19 @@ namespace SoundExplorersDatabase.Data {
       }
     }
 
+    [CanBeNull]
+    public Series Series {
+      get => _series;
+      set {
+        UpdateNonIndexField();
+        ChangeParent(typeof(Series), value);
+        _series = value;
+      }
+    }
+
     [ExcludeFromCodeCoverage]
-    protected override RelativeBase FindWithSameKey([NotNull] SessionBase session) {
+    protected override RelativeBase FindWithSameKey(
+      [NotNull] SessionBase session) {
       throw new NotSupportedException();
     }
 
@@ -53,6 +76,10 @@ namespace SoundExplorersDatabase.Data {
       RelativeBase newParent) {
       if (parentPersistableType == typeof(Location)) {
         _location = (Location)newParent;
+      } else if (parentPersistableType == typeof(Newsletter)) {
+        _newsletter = (Newsletter)newParent;
+      } else {
+        _series = (Series)newParent;
       }
     }
 

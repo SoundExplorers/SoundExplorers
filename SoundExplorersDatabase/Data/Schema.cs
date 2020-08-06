@@ -13,10 +13,8 @@ namespace SoundExplorersDatabase.Data {
     public static Schema Instance => _instance ?? (_instance = new Schema());
 
     [NotNull]
-    public IReadOnlyCollection<RelationInfo> Relations {
-      get => _relations ?? (_relations = CreateRelations());
-      internal set => _relations = value;
-    }
+    public IEnumerable<RelationInfo> Relations =>
+      _relations ?? (_relations = CreateRelations());
 
     [NotNull]
     protected virtual ReadOnlyCollection<RelationInfo> CreateRelations() {

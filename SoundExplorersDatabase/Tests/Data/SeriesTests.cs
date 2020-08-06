@@ -1,24 +1,27 @@
 ﻿using System;
-using System.Data;
 using System.Data.Linq;
 using NUnit.Framework;
 using SoundExplorersDatabase.Data;
 
 namespace SoundExplorersDatabase.Tests.Data {
   [TestFixture]
-  public class LocationTests {
+  public class SeriesTests {
     [SetUp]
     public void Setup() {
       QueryHelper = new QueryHelper();
       DatabaseFolderPath = TestSession.CreateDatabaseFolder();
       Location1 = new Location {
         QueryHelper = QueryHelper,
-        Name = Location1Name,
-        Notes = Location1Notes
+        Name = Location1Name
       };
-      Location2 = new Location {
+      Series1 = new Series {
         QueryHelper = QueryHelper,
-        Name = Location2Name,
+        Name = Series1Name,
+        Notes = Series1Notes
+      };
+      Series2 = new Series {
+        QueryHelper = QueryHelper,
+        Name = Series2Name
       };
       Event1 = new Event {
         QueryHelper = QueryHelper,
@@ -31,9 +34,11 @@ namespace SoundExplorersDatabase.Tests.Data {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
         session.Persist(Location1);
-        session.Persist(Location2);
+        session.Persist(Series1);
+        session.Persist(Series2);
         Location1.Events.Add(Event1);
         Location1.Events.Add(Event2);
+        Series1.Events.Add(Event1);
         session.Persist(Event1);
         session.Persist(Event2);
         session.Commit();
@@ -45,45 +50,51 @@ namespace SoundExplorersDatabase.Tests.Data {
       TestSession.DeleteFolderIfExists(DatabaseFolderPath);
     }
 
-    private const string Location1Name = "Fred's";
-    private const string Location1Notes = "My notes.";
-    private const string Location2Name = "Pyramid Club";
+    private const string Location1Name = "Pyramid Club";
+    private const string Series1Name = "Jazz Festival 2014";
+    private const string Series1Notes = "My notes.";
+    private const string Series2Name = "Field Recordings";
 
     private string DatabaseFolderPath { get; set; }
     private QueryHelper QueryHelper { get; set; }
     private Event Event1 { get; set; }
-    private DateTime Event1Date => DateTime.Today.AddDays(-1); 
+    private static DateTime Event1Date => DateTime.Today.AddDays(-1);
     private Event Event2 { get; set; }
-    private DateTime Event2Date => DateTime.Today; 
+    private static DateTime Event2Date => DateTime.Today;
     private Location Location1 { get; set; }
-    private Location Location2 { get; set; }
+    private Series Series1 { get; set; }
+    private Series Series2 { get; set; }
 
     [Test]
     public void T010_Initial() {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginRead();
-        Location1 = QueryHelper.Read<Location>(Location1Name, session);
-        Location2 = QueryHelper.Read<Location>(Location2Name, session);
+        Series1 = QueryHelper.Read<Series>(Series1Name, session);
+        Series2 = QueryHelper.Read<Series>(Series2Name, session);
         Event1 = QueryHelper.Read<Event>(Event1.Key, session);
         session.Commit();
-        Assert.AreEqual(Location1Name, Location1.Name, "Location1.Name initially");
-        Assert.AreEqual(Location1Notes, Location1.Notes, "Location1.Notes initially");
-        Assert.AreEqual(Location2Name, Location2.Name, "Location2.Name initially");
-        Assert.AreEqual(2, Location1.Events.Count, "Location1.Events.Count initially");
-        Assert.AreSame(Location1, Event1.Location, "Event1.Location initially");
-        Assert.AreEqual(Location1.Name, Event1.Location.Name, "Event1.Location.Name initially");
+        Assert.AreEqual(Series1Name, Series1.Name, "Series1.Name initially");
+        Assert.AreEqual(Series1Notes, Series1.Notes, "Series1.Notes initially");
+        Assert.AreEqual(Series2Name, Series2.Name, "Series2.Name initially");
+        Assert.AreEqual(1, Series1.Events.Count,
+          "Series1.Events.Count initially");
+        Assert.AreSame(Series1, Event1.Series, "Event1.Series initially");
+        Assert.AreEqual(Series1.Name, Event1.Series?.Name,
+          "Event1.Series.Name initially");
+        Assert.IsNull(Event2.Series, "Event2.Series initially");
       }
     }
 
     [Test]
-    public void T020_DisallowRemoveEvent() {
+    public void T020_RemoveEvent() {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
-        Location1 = QueryHelper.Read<Location>(Location1Name, session);
+        Series1 = QueryHelper.Read<Series>(Series1Name, session);
         Event1 = QueryHelper.Read<Event>(Event1.Key, session);
-        Assert.Throws<ConstraintException>(() =>
-            Location1.Events.Remove(Event1),
-          "Disallow remove Event from mandatory link to Location.");
+        Series1.Events.Remove(Event1);
+        Assert.AreEqual(0, Series1.Events.Count,
+          "Series1.Events.Count after remove");
+        Assert.IsNull(Event1.Series, "Event1.Series after remove");
         session.Commit();
       }
     }
@@ -92,9 +103,9 @@ namespace SoundExplorersDatabase.Tests.Data {
     public void T030_DisallowDuplicate() {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
-        var duplicate = new Location {
+        var duplicate = new Series {
           QueryHelper = QueryHelper,
-          Name = Location1Name
+          Name = Series1Name
         };
         Assert.Throws<DuplicateKeyException>(() =>
           session.Persist(duplicate), "Duplicate");
