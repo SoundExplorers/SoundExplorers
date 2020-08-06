@@ -11,15 +11,16 @@ namespace SoundExplorersDatabase.Tests.Data {
   public class ReferencingTests {
     [SetUp]
     public void Setup() {
-      Schema.Instance = new TestSchema();
-      Mother1 = new Mother();
-      Mother2 = new Mother {Name = Mother2Name};
-      Daughter1 = new Daughter();
-      Daughter2 = new Daughter();
-      Father1 = new Father();
-      Father2 = new Father {Name = Father2Name};
-      Son1 = new Son();
-      Son2 = new Son();
+      TestSchema = new TestSchema();
+      QueryHelper = new QueryHelper(TestSchema);
+      Mother1 = new Mother(TestSchema);
+      Mother2 = new Mother(TestSchema) {Name = Mother2Name};
+      Daughter1 = new Daughter(TestSchema);
+      Daughter2 = new Daughter(TestSchema);
+      Father1 = new Father(TestSchema);
+      Father2 = new Father(TestSchema) {Name = Father2Name};
+      Son1 = new Son(TestSchema);
+      Son2 = new Son(TestSchema);
       DatabaseFolderPath = TestSession.CreateDatabaseFolder();
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
@@ -69,24 +70,26 @@ namespace SoundExplorersDatabase.Tests.Data {
     private Father Father2 { get; set; }
     private Mother Mother1 { get; set; }
     private Mother Mother2 { get; set; }
+    private QueryHelper QueryHelper { get; set; }
     private Son Son1 { get; set; }
     private Son Son2 { get; set; }
+    private TestSchema TestSchema { get; set; }
 
     [Test]
     public void T005_Schema() {
       var relation =
-        Schema.Instance.FindRelation(typeof(Father), typeof(Daughter));
+        TestSchema.FindRelation(typeof(Father), typeof(Daughter));
       Assert.IsNotNull(relation, "Father-Daughters relation");
       Assert.IsFalse(relation.IsMandatory,
         "Father-Daughters relation mandatory");
-      relation = Schema.Instance.FindRelation(typeof(Father), typeof(Son));
+      relation = TestSchema.FindRelation(typeof(Father), typeof(Son));
       Assert.IsNotNull(relation, "Father-Sons relation");
       Assert.IsFalse(relation.IsMandatory, "Father-Sons relation mandatory");
-      relation = Schema.Instance.FindRelation(typeof(Mother), typeof(Daughter));
+      relation = TestSchema.FindRelation(typeof(Mother), typeof(Daughter));
       Assert.IsNotNull(relation, "Mother-Daughters relation");
       Assert.IsTrue(relation.IsMandatory,
         "Mother-Daughters relation mandatory");
-      relation = Schema.Instance.FindRelation(typeof(Mother), typeof(Son));
+      relation = TestSchema.FindRelation(typeof(Mother), typeof(Son));
       Assert.IsNotNull(relation, "Mother-Sons relation");
       Assert.IsFalse(relation.IsMandatory, "Mother-Sons relation mandatory");
     }
@@ -447,7 +450,7 @@ namespace SoundExplorersDatabase.Tests.Data {
         Assert.Throws<NoNullAllowedException>(() =>
           // ReSharper disable once AssignNullToNotNullAttribute
           Daughter1.Name = null, "Disallow set Key to null");
-        var namelessSon = new Son();
+        var namelessSon = new Son(TestSchema);
         Assert.Throws<NoNullAllowedException>(() =>
           // ReSharper disable once AssignNullToNotNullAttribute
           namelessSon.Name = null, "Disallow set (initially null) Key to null");
@@ -462,10 +465,10 @@ namespace SoundExplorersDatabase.Tests.Data {
     public void T110_DisallowPersistDuplicateTopLevel() {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
-        var duplicateMother = new Mother {Name = Mother1Name};
+        var duplicateMother = new Mother(TestSchema) {Name = Mother1Name};
         Assert.Throws<DuplicateKeyException>(() =>
           session.Persist(duplicateMother), "Duplicate Mother");
-        var duplicateFather = new Father {Name = Father1Name};
+        var duplicateFather = new Father(TestSchema) {Name = Father1Name};
         Assert.Throws<DuplicateKeyException>(() =>
           session.Persist(duplicateFather), "Duplicate Father");
         session.Commit();
@@ -476,7 +479,7 @@ namespace SoundExplorersDatabase.Tests.Data {
     public void T120_DisallowPersistChildWithoutMandatoryParent() {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
-        var motherlessDaughter = new Daughter {Name = "Carol"};
+        var motherlessDaughter = new Daughter(TestSchema) {Name = "Carol"};
         Assert.Throws<ConstraintException>(() =>
           session.Persist(motherlessDaughter));
         session.Commit();
@@ -488,7 +491,7 @@ namespace SoundExplorersDatabase.Tests.Data {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
         Father1 = QueryHelper.Read<Father>(Father1Name, session);
-        var duplicateDaughter2 = new Daughter {Name = Daughter2Name};
+        var duplicateDaughter2 = new Daughter(TestSchema) {Name = Daughter2Name};
         Assert.Throws<DuplicateKeyException>(() =>
           Father1.Daughters.Add(duplicateDaughter2));
         session.Commit();

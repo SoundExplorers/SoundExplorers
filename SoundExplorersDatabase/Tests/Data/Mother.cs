@@ -9,7 +9,8 @@ namespace SoundExplorersDatabase.Tests.Data {
   public class Mother : RelativeBase {
     private string _name;
 
-    public Mother() : base(typeof(Mother)) {
+    public Mother([NotNull] TestSchema schema) : base(typeof(Mother)) {
+      Schema = schema ?? throw new ArgumentNullException(nameof(schema));
       Daughters = new SortedChildList<string, Daughter>(this);
       Sons = new SortedChildList<string, Son>(this);
     }
@@ -28,7 +29,8 @@ namespace SoundExplorersDatabase.Tests.Data {
 
     [NotNull] public SortedChildList<string, Son> Sons { get; }
 
-    protected override RelativeBase FindWithSameKey([NotNull] SessionBase session) {
+    protected override RelativeBase FindWithSameKey(
+      SessionBase session) {
       return QueryHelper.Find<Mother>(Key, session);
     }
 

@@ -15,6 +15,8 @@ namespace SoundExplorersDatabase.Data {
     private IDictionary<Type, IRelationInfo> _childrenRelations;
     private IDictionary<Type, IRelationInfo> _parentRelations;
     private IDictionary<Type, RelativeBase> _parents;
+    private QueryHelper _queryHelper;
+    private Schema _schema;
 
     protected RelativeBase(Type persistableType) {
       PersistableType = persistableType;
@@ -69,6 +71,19 @@ namespace SoundExplorersDatabase.Data {
     }
 
     private Type PersistableType { get; }
+
+    protected QueryHelper QueryHelper {
+      get => _queryHelper ?? (_queryHelper = new QueryHelper(Schema.Instance));
+      private set => _queryHelper = value;
+    }
+
+    protected Schema Schema {
+      get => _schema ?? (_schema = Schema.Instance);
+      set {
+        _schema = value;
+        QueryHelper = new QueryHelper(_schema);
+      }
+    }
 
     internal void AddChild([NotNull] RelativeBase child) {
       CheckCanAddChild(child);
@@ -158,7 +173,7 @@ namespace SoundExplorersDatabase.Data {
     [NotNull]
     private IDictionary<Type, IRelationInfo> CreateChildrenRelations() {
       var values =
-        from relation in Schema.Instance.Relations
+        from relation in Schema.Relations
         where relation.ParentType == PersistableType
         select relation;
       return values.ToDictionary<RelationInfo, Type, IRelationInfo>(
@@ -168,7 +183,7 @@ namespace SoundExplorersDatabase.Data {
     [NotNull]
     private IDictionary<Type, IRelationInfo> CreateParentRelations() {
       var values =
-        from relation in Schema.Instance.Relations
+        from relation in Schema.Relations
         where relation.ChildType == PersistableType
         select relation;
       return values.ToDictionary<RelationInfo, Type, IRelationInfo>(
@@ -176,7 +191,8 @@ namespace SoundExplorersDatabase.Data {
     }
 
     [CanBeNull]
-    protected abstract RelativeBase FindWithSameKey([NotNull] SessionBase session);
+    protected abstract RelativeBase FindWithSameKey(
+      [NotNull] SessionBase session);
 
     [NotNull]
     protected abstract IDictionary GetChildren([NotNull] Type childType);
@@ -204,7 +220,7 @@ namespace SoundExplorersDatabase.Data {
       var existing = FindWithSameKey(session);
       return existing != null && !existing.Oid.Equals(Oid);
     }
-    
+
     protected abstract void OnParentFieldToBeUpdated(
       [NotNull] Type parentPersistableType, [CanBeNull] RelativeBase newParent);
 

@@ -4,9 +4,15 @@ using JetBrains.Annotations;
 using VelocityDb.Session;
 
 namespace SoundExplorersDatabase.Data {
-  public static class QueryHelper {
+  public class QueryHelper {
+    public QueryHelper([NotNull] Schema schema) {
+      Schema = schema ?? throw new ArgumentNullException(nameof(schema));
+    }
+
+    private Schema Schema { get; }
+
     [CanBeNull]
-    public static TPersistable Find<TPersistable>(
+    public TPersistable Find<TPersistable>(
       [CanBeNull] string key,
       [NotNull] SessionBase session) where TPersistable : RelativeBase {
       return Find<TPersistable>(
@@ -14,10 +20,10 @@ namespace SoundExplorersDatabase.Data {
     }
 
     [CanBeNull]
-    public static TPersistable Find<TPersistable>(
+    public TPersistable Find<TPersistable>(
       [NotNull] Func<TPersistable, bool> predicate,
       [NotNull] SessionBase session) where TPersistable : RelativeBase {
-      if (!Schema.Instance.ExistsOnDatabase(session)) {
+      if (!Schema.ExistsOnDatabase(session)) {
         return null;
       }
       return session.AllObjects<TPersistable>()
@@ -25,7 +31,7 @@ namespace SoundExplorersDatabase.Data {
     }
 
     [NotNull]
-    public static TPersistable Read<TPersistable>(
+    public TPersistable Read<TPersistable>(
       [CanBeNull] string key,
       [NotNull] SessionBase session) where TPersistable : RelativeBase {
       return session.AllObjects<TPersistable>()

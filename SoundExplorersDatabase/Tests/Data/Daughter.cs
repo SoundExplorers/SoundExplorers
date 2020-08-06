@@ -11,7 +11,9 @@ namespace SoundExplorersDatabase.Tests.Data {
     private Mother _mother;
     private string _name;
 
-    public Daughter() : base(typeof(Daughter)) { }
+    public Daughter([NotNull] TestSchema schema) : base(typeof(Daughter)) {
+      Schema = schema ?? throw new ArgumentNullException(nameof(schema));
+    }
 
     public Father Father {
       get => _father;

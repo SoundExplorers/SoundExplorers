@@ -11,10 +11,7 @@ namespace SoundExplorersDatabase.Data {
     private bool _existsOnDatabase;
     private IReadOnlyCollection<RelationInfo> _relations;
 
-    internal static Schema Instance {
-      get => _instance ?? (_instance = new Schema());
-      set => _instance = value;
-    }
+    internal static Schema Instance => _instance ?? (_instance = new Schema());
 
     [NotNull]
     public IReadOnlyCollection<RelationInfo> Relations {
