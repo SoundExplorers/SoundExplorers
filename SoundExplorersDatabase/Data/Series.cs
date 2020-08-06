@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Diagnostics.CodeAnalysis;
 using JetBrains.Annotations;
 using VelocityDb.Session;
 
@@ -39,6 +40,7 @@ namespace SoundExplorersDatabase.Data {
       return Events;
     }
 
+    [ExcludeFromCodeCoverage]
     protected override void OnParentFieldToBeUpdated(
       Type parentPersistableType, RelativeBase newParent) {
       throw new NotSupportedException();

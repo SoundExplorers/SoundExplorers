@@ -77,7 +77,7 @@ namespace SoundExplorersDatabase.Data {
     [NotNull] private Type PersistableType { get; }
 
     [NotNull]
-    protected QueryHelper QueryHelper {
+    internal QueryHelper QueryHelper {
       get => _queryHelper ?? (_queryHelper = QueryHelper.Instance);
       set => _queryHelper = value;
     }
@@ -121,7 +121,7 @@ namespace SoundExplorersDatabase.Data {
           child,
           $"{child.PersistableType.Name} '{child.Key}' " +
           $"cannot be added to {PersistableType.Name} '{Key}', " +
-          "because it already belongs to it.");
+          $"because a {PersistableType.Name} with that Key already belongs to it.");
       }
     }
 

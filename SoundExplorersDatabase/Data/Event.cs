@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Diagnostics.CodeAnalysis;
 using JetBrains.Annotations;
 using VelocityDb.Session;
 
@@ -39,6 +40,7 @@ namespace SoundExplorersDatabase.Data {
       }
     }
 
+    [ExcludeFromCodeCoverage]
     protected override RelativeBase FindWithSameKey([NotNull] SessionBase session) {
       throw new NotSupportedException();
     }
@@ -54,8 +56,8 @@ namespace SoundExplorersDatabase.Data {
       }
     }
 
-    private void SetKey(DateTime date, [NotNull] Location location) {
-      SetKey($"{date:yyyy/MM/dd} {location.Name}");
+    private void SetKey(DateTime date, [CanBeNull] Location location) {
+      SetKey($"{date:yyyy/MM/dd} {location?.Name}");
     }
   }
 }
