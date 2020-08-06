@@ -11,8 +11,10 @@ namespace SoundExplorersDatabase.Tests.Data {
     private Mother _mother;
     private string _name;
 
-    public Son([NotNull] TestSchema schema) : base(typeof(Son)) {
-      Schema = schema ?? throw new ArgumentNullException(nameof(schema));
+    public Son([NotNull]QueryHelper queryHelper) : base(typeof(Son)) {
+      QueryHelper = queryHelper ??
+                    throw new ArgumentNullException(nameof(queryHelper));
+      Schema = TestSchema.Instance;
     }
 
     public Father Father {

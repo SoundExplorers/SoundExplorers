@@ -22,6 +22,7 @@ namespace SoundExplorersDatabase.Data {
       PersistableType = persistableType;
     }
 
+    [NotNull]
     private IDictionary<Type, IDictionary> ChildrenOfType {
       get {
         InitialiseIfNull(_childrenOfType);
@@ -33,6 +34,7 @@ namespace SoundExplorersDatabase.Data {
       }
     }
 
+    [NotNull]
     private IDictionary<Type, IRelationInfo> ChildrenRelations {
       get {
         InitialiseIfNull(_childrenRelations);
@@ -44,6 +46,7 @@ namespace SoundExplorersDatabase.Data {
       }
     }
 
+    [NotNull]
     private IDictionary<Type, IRelationInfo> ParentRelations {
       get {
         InitialiseIfNull(_parentRelations);
@@ -59,6 +62,7 @@ namespace SoundExplorersDatabase.Data {
 
     public string Key { get; private set; }
 
+    [NotNull]
     private IDictionary<Type, RelativeBase> Parents {
       get {
         InitialiseIfNull(_parents);
@@ -70,19 +74,18 @@ namespace SoundExplorersDatabase.Data {
       }
     }
 
-    private Type PersistableType { get; }
+    [NotNull] private Type PersistableType { get; }
 
+    [NotNull]
     protected QueryHelper QueryHelper {
-      get => _queryHelper ?? (_queryHelper = new QueryHelper(Schema.Instance));
-      private set => _queryHelper = value;
+      get => _queryHelper ?? (_queryHelper = QueryHelper.Instance);
+      set => _queryHelper = value;
     }
 
+    [NotNull]
     protected Schema Schema {
       get => _schema ?? (_schema = Schema.Instance);
-      set {
-        _schema = value;
-        QueryHelper = new QueryHelper(_schema);
-      }
+      set => _schema = value;
     }
 
     internal void AddChild([NotNull] RelativeBase child) {

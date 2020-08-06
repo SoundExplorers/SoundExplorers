@@ -17,13 +17,14 @@ namespace SoundExplorersDatabase.Data {
       }
     }
 
-    public int ExpectedNumber { get; private set; }
+    private int ExpectedNumber { get; set; }
     public bool IsUpToDate => Number == ExpectedNumber;
 
     public static SchemaVersion Read(int expectedNumber, SessionBase session) {
       SchemaVersion version = null;
       try {
-        if (Schema.Instance.ExistsOnDatabase(session)) {
+        // TODO Remove dependence on QueryHelper.Instance for multi-thread testing. 
+        if (QueryHelper.Instance.SchemaExistsOnDatabase(session)) {
           version = Find(session);
         }
         if (version == null) {

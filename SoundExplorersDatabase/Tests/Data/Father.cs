@@ -9,8 +9,10 @@ namespace SoundExplorersDatabase.Tests.Data {
   public class Father : RelativeBase {
     private string _name;
 
-    public Father([NotNull] TestSchema schema) : base(typeof(Father)) {
-      Schema = schema ?? throw new ArgumentNullException(nameof(schema));
+    public Father([NotNull] QueryHelper queryHelper) : base(typeof(Father)) {
+      QueryHelper = queryHelper ??
+                    throw new ArgumentNullException(nameof(queryHelper));
+      Schema = TestSchema.Instance;
       Daughters = new SortedChildList<string, Daughter>(this);
       Sons = new SortedChildList<string, Son>(this);
     }

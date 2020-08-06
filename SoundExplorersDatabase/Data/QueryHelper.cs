@@ -5,11 +5,11 @@ using VelocityDb.Session;
 
 namespace SoundExplorersDatabase.Data {
   public class QueryHelper {
-    public QueryHelper([NotNull] Schema schema) {
-      Schema = schema ?? throw new ArgumentNullException(nameof(schema));
-    }
+    private static QueryHelper _instance;
+    private bool _schemaExistsOnDatabase;
 
-    private Schema Schema { get; }
+    internal static QueryHelper Instance =>
+      _instance ?? (_instance = new QueryHelper());
 
     [CanBeNull]
     public TPersistable Find<TPersistable>(
@@ -23,7 +23,7 @@ namespace SoundExplorersDatabase.Data {
     public TPersistable Find<TPersistable>(
       [NotNull] Func<TPersistable, bool> predicate,
       [NotNull] SessionBase session) where TPersistable : RelativeBase {
-      if (!Schema.ExistsOnDatabase(session)) {
+      if (!SchemaExistsOnDatabase(session)) {
         return null;
       }
       return session.AllObjects<TPersistable>()
@@ -36,6 +36,17 @@ namespace SoundExplorersDatabase.Data {
       [NotNull] SessionBase session) where TPersistable : RelativeBase {
       return session.AllObjects<TPersistable>()
         .First(persistable => persistable.Key == key);
+    }
+
+    public bool SchemaExistsOnDatabase([NotNull] SessionBase session) {
+      bool result;
+      if (_schemaExistsOnDatabase) {
+        result = true;
+      } else {
+        result = session.ContainsDatabase(session.DatabaseLocations.First(), 1);
+        _schemaExistsOnDatabase = result;
+      }
+      return result;
     }
   }
 }
