@@ -24,11 +24,8 @@ A web application, to be developed later, will make the media, metadata and othe
 available to the public.
 
 The archivists' application, development of which is well underway, is written in C#, with a 
-Windows Forms graphical user interface.  The provisional storage strategy is for the archivists' 
-application to save the data to a PC-based database and provide a facility to export the data to 
-the web application's data store.  However, once we are closer to starting development on the web 
-application, we can consider a switch to having the archivists' application update the web 
-application's data store directly.
+Windows Forms graphical user interface.  Data is saved to a PC-based VelocityDB object-oriented 
+database.  A facility will be provided to export the data to the web application's data store.
 
 DATA ANALYSIS
 
