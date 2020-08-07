@@ -52,7 +52,7 @@ namespace SoundExplorersDatabase.Tests.Data {
 
     private const string Location1Name = "Pyramid Club";
     private const string Newsletter1Key = "2013/04/05";
-    private const string Newsletter1Path = "My path";
+    private const string Newsletter1Path = "Path One";
     private const string Newsletter2Key = "2016/07/08";
 
     private string DatabaseFolderPath { get; set; }
@@ -76,26 +76,26 @@ namespace SoundExplorersDatabase.Tests.Data {
     public void T010_Initial() {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginRead();
-        Newsletter1 = QueryHelper.Read<Newsletter>(Newsletter1.Key, session);
-        Newsletter2 = QueryHelper.Read<Newsletter>(Newsletter2.Key, session);
+        Newsletter1 = QueryHelper.Read<Newsletter>(Newsletter1Key, session);
+        Newsletter2 = QueryHelper.Read<Newsletter>(Newsletter2Key, session);
         Event1 = QueryHelper.Read<Event>(Event1.Key, session);
         session.Commit();
-        Assert.AreEqual(Newsletter1Date, Newsletter1.Date,
-          "Newsletter1.Date initially");
-        Assert.AreEqual(Newsletter1Key, Newsletter1.Key,
-          "Newsletter1.Key initially");
-        Assert.AreEqual(Newsletter1Path, Newsletter1.Path,
-          "Newsletter1.Path initially");
-        Assert.AreEqual(Newsletter2Date, Newsletter2.Date,
-          "Newsletter2.Date initially");
-        Assert.AreEqual(1, Newsletter1.Events.Count,
-          "Newsletter1.Events.Count initially");
-        Assert.AreSame(Newsletter1, Event1.Newsletter,
-          "Event1.Newsletter initially");
-        Assert.AreEqual(Newsletter1.Date, Event1.Newsletter?.Date,
-          "Event1.Newsletter.Date initially");
-        Assert.IsNull(Event2.Newsletter, "Event2.Newsletter initially");
       }
+      Assert.AreEqual(Newsletter1Date, Newsletter1.Date,
+        "Newsletter1.Date initially");
+      Assert.AreEqual(Newsletter1Key, Newsletter1.Key,
+        "Newsletter1.Key initially");
+      Assert.AreEqual(Newsletter1Path, Newsletter1.Path,
+        "Newsletter1.Path initially");
+      Assert.AreEqual(Newsletter2Date, Newsletter2.Date,
+        "Newsletter2.Date initially");
+      Assert.AreEqual(1, Newsletter1.Events.Count,
+        "Newsletter1.Events.Count initially");
+      Assert.AreSame(Newsletter1, Event1.Newsletter,
+        "Event1.Newsletter initially");
+      Assert.AreEqual(Newsletter1.Date, Event1.Newsletter?.Date,
+        "Event1.Newsletter.Date initially");
+      Assert.IsNull(Event2.Newsletter, "Event2.Newsletter initially");
     }
 
     [Test]
@@ -105,21 +105,21 @@ namespace SoundExplorersDatabase.Tests.Data {
         Newsletter1 = QueryHelper.Read<Newsletter>(Newsletter1.Key, session);
         Event1 = QueryHelper.Read<Event>(Event1.Key, session);
         Newsletter1.Events.Remove(Event1);
-        Assert.AreEqual(0, Newsletter1.Events.Count,
-          "Newsletter1.Events.Count after remove");
-        Assert.IsNull(Event1.Newsletter, "Event1.Newsletter after remove");
         session.Commit();
       }
+      Assert.AreEqual(0, Newsletter1.Events.Count,
+        "Newsletter1.Events.Count after remove");
+      Assert.IsNull(Event1.Newsletter, "Event1.Newsletter after remove");
     }
 
     [Test]
     public void T030_DisallowDuplicateDate() {
+      var duplicate = new Newsletter {
+        QueryHelper = QueryHelper,
+        Date = Newsletter1Date
+      };
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
-        var duplicate = new Newsletter {
-          QueryHelper = QueryHelper,
-          Date = Newsletter1Date
-        };
         Assert.Throws<DuplicateKeyException>(() =>
           session.Persist(duplicate), "Duplicate Date");
         session.Commit();

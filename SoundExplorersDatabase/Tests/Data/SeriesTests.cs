@@ -73,16 +73,16 @@ namespace SoundExplorersDatabase.Tests.Data {
         Series2 = QueryHelper.Read<Series>(Series2Name, session);
         Event1 = QueryHelper.Read<Event>(Event1.Key, session);
         session.Commit();
-        Assert.AreEqual(Series1Name, Series1.Name, "Series1.Name initially");
-        Assert.AreEqual(Series1Notes, Series1.Notes, "Series1.Notes initially");
-        Assert.AreEqual(Series2Name, Series2.Name, "Series2.Name initially");
-        Assert.AreEqual(1, Series1.Events.Count,
-          "Series1.Events.Count initially");
-        Assert.AreSame(Series1, Event1.Series, "Event1.Series initially");
-        Assert.AreEqual(Series1.Name, Event1.Series?.Name,
-          "Event1.Series.Name initially");
-        Assert.IsNull(Event2.Series, "Event2.Series initially");
       }
+      Assert.AreEqual(Series1Name, Series1.Name, "Series1.Name initially");
+      Assert.AreEqual(Series1Notes, Series1.Notes, "Series1.Notes initially");
+      Assert.AreEqual(Series2Name, Series2.Name, "Series2.Name initially");
+      Assert.AreEqual(1, Series1.Events.Count,
+        "Series1.Events.Count initially");
+      Assert.AreSame(Series1, Event1.Series, "Event1.Series initially");
+      Assert.AreEqual(Series1.Name, Event1.Series?.Name,
+        "Event1.Series.Name initially");
+      Assert.IsNull(Event2.Series, "Event2.Series initially");
     }
 
     [Test]
@@ -92,21 +92,21 @@ namespace SoundExplorersDatabase.Tests.Data {
         Series1 = QueryHelper.Read<Series>(Series1Name, session);
         Event1 = QueryHelper.Read<Event>(Event1.Key, session);
         Series1.Events.Remove(Event1);
-        Assert.AreEqual(0, Series1.Events.Count,
-          "Series1.Events.Count after remove");
-        Assert.IsNull(Event1.Series, "Event1.Series after remove");
         session.Commit();
       }
+      Assert.AreEqual(0, Series1.Events.Count,
+        "Series1.Events.Count after remove");
+      Assert.IsNull(Event1.Series, "Event1.Series after remove");
     }
 
     [Test]
     public void T030_DisallowDuplicate() {
+      var duplicate = new Series {
+        QueryHelper = QueryHelper,
+        Name = Series1Name
+      };
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
-        var duplicate = new Series {
-          QueryHelper = QueryHelper,
-          Name = Series1Name
-        };
         Assert.Throws<DuplicateKeyException>(() =>
           session.Persist(duplicate), "Duplicate");
         session.Commit();
