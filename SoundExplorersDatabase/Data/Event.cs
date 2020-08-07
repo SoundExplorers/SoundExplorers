@@ -19,9 +19,12 @@ namespace SoundExplorersDatabase.Data {
       set {
         UpdateNonIndexField();
         _date = value;
-        SetKey(value, Location);
+        SetKey($"{value:yyyy/MM/dd}");
+        //SetKey(value, Location);
       }
     }
+    
+    public override RelativeBase IdentifyingParent => Location;
 
     [NotNull]
     public Location Location {
@@ -30,7 +33,7 @@ namespace SoundExplorersDatabase.Data {
         UpdateNonIndexField();
         ChangeParent(typeof(Location), value);
         _location = value;
-        SetKey(Date, value);
+        //SetKey(Date, value);
       }
     }
 
@@ -81,10 +84,6 @@ namespace SoundExplorersDatabase.Data {
       } else {
         _series = (Series)newParent;
       }
-    }
-
-    private void SetKey(DateTime date, [CanBeNull] Location location) {
-      SetKey($"{date:yyyy/MM/dd} {location?.Name}");
     }
   }
 }

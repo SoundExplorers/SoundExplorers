@@ -65,7 +65,7 @@ namespace SoundExplorersDatabase.Tests.Data {
         session.BeginRead();
         Location1 = QueryHelper.Read<Location>(Location1Name, session);
         Location2 = QueryHelper.Read<Location>(Location2Name, session);
-        Event1 = QueryHelper.Read<Event>(Event1.Key, session);
+        Event1 = QueryHelper.Read<Event>(Event1.Key, Location1, session);
         session.Commit();
       }
       Assert.AreEqual(Location1Name, Location1.Name,
@@ -110,7 +110,7 @@ namespace SoundExplorersDatabase.Tests.Data {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
         Location1 = QueryHelper.Read<Location>(Location1Name, session);
-        Event1 = QueryHelper.Read<Event>(Event1.Key, session);
+        Event1 = QueryHelper.Read<Event>(Event1.Key, Location1, session);
         Assert.Throws<ConstraintException>(() =>
             Location1.Events.Remove(Event1),
           "Disallow remove Event from mandatory link to Location.");

@@ -78,7 +78,7 @@ namespace SoundExplorersDatabase.Tests.Data {
         session.BeginRead();
         Newsletter1 = QueryHelper.Read<Newsletter>(Newsletter1Key, session);
         Newsletter2 = QueryHelper.Read<Newsletter>(Newsletter2Key, session);
-        Event1 = QueryHelper.Read<Event>(Event1.Key, session);
+        Event1 = QueryHelper.Read<Event>(Event1.Key, Location1, session);
         session.Commit();
       }
       Assert.AreEqual(Newsletter1Date, Newsletter1.Date,
@@ -103,7 +103,7 @@ namespace SoundExplorersDatabase.Tests.Data {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
         Newsletter1 = QueryHelper.Read<Newsletter>(Newsletter1.Key, session);
-        Event1 = QueryHelper.Read<Event>(Event1.Key, session);
+        Event1 = QueryHelper.Read<Event>(Event1.Key, Location1, session);
         Newsletter1.Events.Remove(Event1);
         session.Commit();
       }

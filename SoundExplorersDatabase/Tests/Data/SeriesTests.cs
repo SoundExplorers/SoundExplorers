@@ -71,7 +71,7 @@ namespace SoundExplorersDatabase.Tests.Data {
         session.BeginRead();
         Series1 = QueryHelper.Read<Series>(Series1Name, session);
         Series2 = QueryHelper.Read<Series>(Series2Name, session);
-        Event1 = QueryHelper.Read<Event>(Event1.Key, session);
+        Event1 = QueryHelper.Read<Event>(Event1.Key, Location1, session);
         session.Commit();
       }
       Assert.AreEqual(Series1Name, Series1.Name, "Series1.Name initially");
@@ -90,7 +90,7 @@ namespace SoundExplorersDatabase.Tests.Data {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
         Series1 = QueryHelper.Read<Series>(Series1Name, session);
-        Event1 = QueryHelper.Read<Event>(Event1.Key, session);
+        Event1 = QueryHelper.Read<Event>(Event1.Key, Location1, session);
         Series1.Events.Remove(Event1);
         session.Commit();
       }

@@ -34,8 +34,30 @@ namespace SoundExplorersDatabase.Data {
     public TPersistable Read<TPersistable>(
       [CanBeNull] string key,
       [NotNull] SessionBase session) where TPersistable : RelativeBase {
+      return Read<TPersistable>(
+        persistable => persistable.Key == key, session);
+    }
+
+    [NotNull]
+    public TPersistable Read<TPersistable>(
+      [CanBeNull] string key,
+      [CanBeNull] RelativeBase identifyingParent,
+      [NotNull] SessionBase session) where TPersistable : RelativeBase {
+      return Read<TPersistable>(
+        persistable => persistable.Key == key &&
+                       identifyingParent == null &&
+                       persistable.IdentifyingParent == null ||
+                       persistable.IdentifyingParent != null &&
+                       persistable.IdentifyingParent.Equals(identifyingParent),
+        session);
+    }
+
+    [NotNull]
+    public TPersistable Read<TPersistable>(
+      [NotNull] Func<TPersistable, bool> predicate,
+      [NotNull] SessionBase session) where TPersistable : RelativeBase {
       return session.AllObjects<TPersistable>()
-        .First(persistable => persistable.Key == key);
+        .First(predicate);
     }
 
     public bool SchemaExistsOnDatabase([NotNull] SessionBase session) {

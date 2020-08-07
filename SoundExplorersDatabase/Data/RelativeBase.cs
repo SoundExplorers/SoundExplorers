@@ -46,6 +46,8 @@ namespace SoundExplorersDatabase.Data {
       }
     }
 
+    [CanBeNull] public virtual RelativeBase IdentifyingParent => null;
+
     [NotNull]
     private IDictionary<Type, IRelationInfo> ParentRelations {
       get {
