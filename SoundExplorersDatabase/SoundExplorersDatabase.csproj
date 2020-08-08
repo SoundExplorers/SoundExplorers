@@ -76,6 +76,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Data\Act.cs" />
     <Compile Include="Data\IRelationInfo.cs" />
     <Compile Include="Data\QueryHelper.cs" />
     <Compile Include="Data\RelationInfo.cs" />

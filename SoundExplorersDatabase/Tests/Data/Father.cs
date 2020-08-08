@@ -13,11 +13,11 @@ namespace SoundExplorersDatabase.Tests.Data {
       QueryHelper = queryHelper ??
                     throw new ArgumentNullException(nameof(queryHelper));
       Schema = TestSchema.Instance;
-      Daughters = new SortedChildList<string, Daughter>(this);
-      Sons = new SortedChildList<string, Son>(this);
+      Daughters = new SortedChildList<Daughter>(this);
+      Sons = new SortedChildList<Son>(this);
     }
 
-    [NotNull] public SortedChildList<string, Daughter> Daughters { get; }
+    [NotNull] public SortedChildList<Daughter> Daughters { get; }
 
     [NotNull]
     public string Name {
@@ -29,7 +29,7 @@ namespace SoundExplorersDatabase.Tests.Data {
       }
     }
 
-    [NotNull] public SortedChildList<string, Son> Sons { get; }
+    [NotNull] public SortedChildList<Son> Sons { get; }
 
     protected override RelativeBase FindWithSameKey(SessionBase session) {
       return QueryHelper.Find<Father>(Key, session);

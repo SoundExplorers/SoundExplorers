@@ -11,7 +11,7 @@ namespace SoundExplorersDatabase.Data {
     private string _path;
 
     public Newsletter() : base(typeof(Newsletter)) {
-      Events = new SortedChildList<string, Event>(this);
+      Events = new SortedChildList<Event>(this);
     }
 
     public DateTime Date {
@@ -23,7 +23,7 @@ namespace SoundExplorersDatabase.Data {
       }
     }
 
-    [NotNull] public SortedChildList<string, Event> Events { get; }
+    [NotNull] public SortedChildList<Event> Events { get; }
 
     public string Path {
       get => _path;

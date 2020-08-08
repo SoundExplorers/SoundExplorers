@@ -10,10 +10,10 @@ namespace SoundExplorersDatabase.Data {
     private string _notes;
 
     public Location() : base(typeof(Location)) {
-      Events = new SortedChildList<string, Event>(this);
+      Events = new SortedChildList<Event>(this);
     }
 
-    [NotNull] public SortedChildList<string, Event> Events { get; }
+    [NotNull] public SortedChildList<Event> Events { get; }
 
     public string Name {
       get => _name;

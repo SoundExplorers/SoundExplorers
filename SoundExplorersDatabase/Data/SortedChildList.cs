@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using JetBrains.Annotations;
 
 namespace SoundExplorersDatabase.Data {
-  public class SortedChildList<TKey, TChild> : SortedList<TKey, TChild>
+  public class SortedChildList<TChild> : SortedList<string, TChild>
     where TChild : RelativeBase {
     internal SortedChildList([NotNull] RelativeBase parent) {
       Parent = parent ??
@@ -22,14 +22,14 @@ namespace SoundExplorersDatabase.Data {
     }
 
     [UsedImplicitly]
-    public void Add(string notSupported, TChild doNotUse) {
+    public new void Add(string notSupported, TChild doNotUse) {
       throw new NotSupportedException(
         "ParentChildren.Add(string, TChild) is not supported. " +
         "Use ParentChildren.Add(TChild) instead.");
     }
 
     [UsedImplicitly]
-    public bool Remove(string notSupported) {
+    public new bool Remove(string notSupported) {
       throw new NotSupportedException(
         "ParentChildren.Remove(string) is not supported. Use ParentChildren.Remove(TChild) instead.");
     }
