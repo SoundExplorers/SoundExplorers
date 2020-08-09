@@ -123,7 +123,8 @@ namespace SoundExplorersDatabase.Data {
           child,
           $"{child.PersistableType.Name} '{child.Key}' " +
           $"cannot be added to {PersistableType.Name} '{Key}', " +
-          $"because a {PersistableType.Name} with that Key already belongs to it.");
+          $"because a {child.PersistableType.Name} with that Key " + 
+          $"already belongs to the {PersistableType.Name}.");
       }
     }
 

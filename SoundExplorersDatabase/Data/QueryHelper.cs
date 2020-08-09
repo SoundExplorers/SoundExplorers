@@ -45,10 +45,10 @@ namespace SoundExplorersDatabase.Data {
       [NotNull] SessionBase session) where TPersistable : RelativeBase {
       return Read<TPersistable>(
         persistable => persistable.Key == key &&
-                       identifyingParent == null &&
+                       (identifyingParent == null &&
                        persistable.IdentifyingParent == null ||
                        persistable.IdentifyingParent != null &&
-                       persistable.IdentifyingParent.Equals(identifyingParent),
+                       persistable.IdentifyingParent.Equals(identifyingParent)),
         session);
     }
 

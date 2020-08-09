@@ -81,6 +81,7 @@
     <Compile Include="Data\QueryHelper.cs" />
     <Compile Include="Data\RelationInfo.cs" />
     <Compile Include="Data\Schema.cs" />
+    <Compile Include="Data\Set.cs" />
     <Compile Include="Data\SortedChildList.cs" />
     <Compile Include="Data\RelativeBase.cs" />
     <Compile Include="Data\Event.cs" />

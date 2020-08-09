@@ -19,6 +19,8 @@ namespace SoundExplorersDatabase.Data {
     [NotNull]
     protected virtual ReadOnlyCollection<RelationInfo> CreateRelations() {
       var list = new List<RelationInfo> {
+        new RelationInfo(typeof(Act), typeof(Set), false),
+        new RelationInfo(typeof(Event), typeof(Set), true),
         new RelationInfo(typeof(Location), typeof(Event), true),
         new RelationInfo(typeof(Newsletter), typeof(Event), false),
         new RelationInfo(typeof(Series), typeof(Event), false)

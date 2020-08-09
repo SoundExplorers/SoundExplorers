@@ -96,7 +96,7 @@ namespace SoundExplorersDatabase.Tests.Data {
     }
 
     [Test]
-    public void T030_DisallowUnpersistLocationWithEvent() {
+    public void T030_DisallowUnpersistLocationWithEvents() {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
         Assert.Throws<ReferentialIntegrityException>(() =>

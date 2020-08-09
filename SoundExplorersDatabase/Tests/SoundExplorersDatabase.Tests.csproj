@@ -83,6 +83,7 @@
         </Reference>
     </ItemGroup>
     <ItemGroup>
+        <Compile Include="Data\ActTests.cs" />
         <Compile Include="Data\DataTestsTemplate.cs" />
         <Compile Include="Data\Daughter.cs" />
         <Compile Include="Data\EventTests.cs" />
@@ -93,6 +94,7 @@
         <Compile Include="Data\ReferencingTests.cs" />
         <Compile Include="Data\SchemaVersionTests.cs" />
         <Compile Include="Data\SeriesTests.cs" />
+        <Compile Include="Data\SetTests.cs" />
         <Compile Include="Data\Son.cs" />
         <Compile Include="Data\TestSchema.cs" />
         <Compile Include="Data\TestSession.cs" />

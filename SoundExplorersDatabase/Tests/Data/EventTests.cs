@@ -3,6 +3,7 @@ using System.Data;
 using System.Data.Linq;
 using NUnit.Framework;
 using SoundExplorersDatabase.Data;
+using VelocityDb.Exceptions;
 
 namespace SoundExplorersDatabase.Tests.Data {
   [TestFixture]
@@ -42,9 +43,21 @@ namespace SoundExplorersDatabase.Tests.Data {
         Date = Event1Date,
         Notes = Event1Notes
       };
+      Event1AtLocation2 = new Event {
+        QueryHelper = QueryHelper,
+        Date = Event1Date
+      };
       Event2 = new Event {
         QueryHelper = QueryHelper,
         Date = Event2Date
+      };
+      Set1 = new Set {
+        QueryHelper = QueryHelper,
+        SetNo = Set1SetNo
+      };
+      Set2 = new Set {
+        QueryHelper = QueryHelper,
+        SetNo = Set2SetNo
       };
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
@@ -55,11 +68,19 @@ namespace SoundExplorersDatabase.Tests.Data {
         session.Persist(Series1);
         session.Persist(Series2);
         Event1.Location = Location1;
-        Event2.Location = Location2;
+        Event1AtLocation2.Location = Location2;
+        Event2.Location = Location1;
         session.Persist(Event1);
+        session.Persist(Event1AtLocation2);
         session.Persist(Event2);
         Event1.Newsletter = Newsletter1;
         Event1.Series = Series1;
+        Event1AtLocation2.Newsletter = Newsletter2;
+        Event1AtLocation2.Series = Series2;
+        Event1.Sets.Add(Set1);
+        Event1.Sets.Add(Set2);
+        session.Persist(Set1);
+        session.Persist(Set2);
         session.Commit();
       }
     }
@@ -80,11 +101,14 @@ namespace SoundExplorersDatabase.Tests.Data {
     private const string Newsletter2Path = "Path Two";
     private const string Series1Name = "Jazz Festival 2014";
     private const string Series2Name = "Field Recordings";
+    private const int Set1SetNo = 1;
+    private const int Set2SetNo = 2;
 
     private string DatabaseFolderPath { get; set; }
     private QueryHelper QueryHelper { get; set; }
     private Event Event1 { get; set; }
     private static DateTime Event1Date => DateTime.Parse(Event1Key);
+    private Event Event1AtLocation2 { get; set; }
     private Event Event2 { get; set; }
     private static DateTime Event2Date => DateTime.Parse(Event2Key);
     private Location Location1 { get; set; }
@@ -101,24 +125,30 @@ namespace SoundExplorersDatabase.Tests.Data {
 
     private Series Series1 { get; set; }
     private Series Series2 { get; set; }
+    private Set Set1 { get; set; }
+    private Set Set2 { get; set; }
 
     [Test]
     public void T010_Initial() {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginRead();
         Event1 = QueryHelper.Read<Event>(Event1Key, Location1, session);
-        Event2 = QueryHelper.Read<Event>(Event2Key, Location2, session);
+        Event1AtLocation2 = QueryHelper.Read<Event>(Event1Key, Location2, session);
+        Event2 = QueryHelper.Read<Event>(Event2Key, Location1, session);
         Location1 = QueryHelper.Read<Location>(Location1Name, session);
         Location2 = QueryHelper.Read<Location>(Location2Name, session);
         Newsletter1 = QueryHelper.Read<Newsletter>(Newsletter1Key, session);
         Series1 = QueryHelper.Read<Series>(Series1Name, session);
+        Set1 = QueryHelper.Read<Set>(Set1.Key, Event1, session);
+        Set2 = QueryHelper.Read<Set>(Set2.Key, Event1, session);
         session.Commit();
       }
       Assert.AreEqual(Event1Date, Event1.Date, "Event1.Date");
       Assert.AreEqual(Event1Notes, Event1.Notes, "Event1.Notes");
       Assert.AreSame(Location1, Event1.Location, "Event1.Location");
-      Assert.AreEqual(1, Location1.Events.Count, "Location1.Events.Count");
+      Assert.AreEqual(2, Location1.Events.Count, "Location1.Events.Count");
       Assert.AreSame(Event1, Location1.Events[0], "Location1.Events[0]");
+      Assert.AreSame(Event2, Location1.Events[1], "Location1.Events[1]");
       Assert.AreSame(Newsletter1, Event1.Newsletter, "Event1.Newsletter");
       Assert.AreEqual(1, Newsletter1.Events.Count, "Newsletter1.Events.Count");
       Assert.AreSame(Event1, Newsletter1.Events[0], "Newsletter1.Events[0]");
@@ -126,9 +156,17 @@ namespace SoundExplorersDatabase.Tests.Data {
       Assert.AreEqual(1, Series1.Events.Count, "Series1.Events.Count");
       Assert.AreSame(Event1, Series1.Events[0], "Series1.Events[0]");
       Assert.AreEqual(Event2Date, Event2.Date, "Event1.Date");
-      Assert.AreSame(Location2, Event2.Location, "Event2.Location");
+      Assert.AreSame(Location1, Event2.Location, "Event2.Location");
       Assert.AreEqual(1, Location2.Events.Count, "Location2.Events.Count");
-      Assert.AreSame(Event2, Location2.Events[0], "Location2.Events[0]");
+      Assert.AreSame(Event1AtLocation2, Location2.Events[0], "Location2.Events[1]");
+      Assert.AreEqual(2, Event1.Sets.Count,
+        "Event1.Sets.Count initially");
+      Assert.AreSame(Event1, Set1.Event, "Set1.Event initially");
+      Assert.AreEqual(Event1.Date, Set1.Event.Date,
+        "Set1.Event.Date initially");
+      Assert.AreSame(Event1, Set2.Event, "Set2.Event initially");
+      Assert.AreEqual(Event1.Date, Set2.Event.Date,
+        "Set2.Event.Date initially");
     }
 
     [Test]
@@ -167,22 +205,27 @@ namespace SoundExplorersDatabase.Tests.Data {
         Location1 = QueryHelper.Read<Location>(Location1Name, session);
         Location2 = QueryHelper.Read<Location>(Location2Name, session);
         Event1 = Location1.Events[0];
-        Event2 = Location2.Events[0];
-        Event1.Location = Location2;
+        Event1AtLocation2 = Location2.Events[0];
+        Event2 = Location1.Events[1];
+        Event2.Location = Location2;
         session.Commit();
-        Assert.AreSame(Location2, Event1.Location,
-          "Event1.Location after Event1 changes Location");
-        Assert.AreEqual(0, Location1.Events.Count,
-          "Location1.Events.Count after Event1 changes Location");
+        Assert.AreSame(Location2, Event2.Location,
+          "Event2.Location after Event2 changes Location");
+        Assert.AreEqual(1, Location1.Events.Count,
+          "Location1.Events.Count after Event2 changes Location");
         Assert.AreEqual(2, Location2.Events.Count,
-          "Location2.Events.Count after Event1 changes Location");
-        Assert.AreSame(Event1, Location2.Events[0],
-          "Location2 1st Event after Event1 changes Location");
+          "Location2.Events.Count after Event2 changes Location");
+        Assert.AreSame(Event1AtLocation2, Location2.Events[0],
+          "Location2 1st Event after Event2 changes Location");
         Assert.AreSame(Event2, Location2.Events[1],
           "Location2 2nd Event after Event1 changes Location");
       }
     }
 
+    /// <summary>
+    /// Changes an Event's NewsLetter to one that already covers an Event
+    /// on the same Date at a different Location.
+    /// </summary>
     [Test]
     public void T050_ChangeNewsletter() {
       using (var session = new TestSession(DatabaseFolderPath)) {
@@ -203,6 +246,30 @@ namespace SoundExplorersDatabase.Tests.Data {
       }
     }
 
+    /// <summary>
+    /// Changes an Event's NewsLetter to one that already includes an Event
+    /// on the same Date at a different Location.
+    /// </summary>
+    [Test]
+    public void T055_ChangeSeries() {
+      using (var session = new TestSession(DatabaseFolderPath)) {
+        session.BeginUpdate();
+        Series1 = QueryHelper.Read<Series>(Series1Name, session);
+        Series2 = QueryHelper.Read<Series>(Series2Name, session);
+        Event1 = Series1.Events[0];
+        Event1.Series = Series2;
+        session.Commit();
+        Assert.AreSame(Series2, Event1.Series,
+          "Event1.Series after Event1 changes Series");
+        Assert.AreEqual(0, Series1.Events.Count,
+          "Series1.Events.Count after Event1 changes Series");
+        Assert.AreEqual(1, Series2.Events.Count,
+          "Series2.Events.Count after Event1 changes Series");
+        Assert.AreSame(Event1, Series2.Events[0],
+          "Series2 1st Event after Event1 changes Series");
+      }
+    }
+
     [Test]
     public void T060_SetSeriesToNull() {
       using (var session = new TestSession(DatabaseFolderPath)) {
@@ -213,6 +280,30 @@ namespace SoundExplorersDatabase.Tests.Data {
         session.Commit();
         Assert.IsNull(Event1.Series, "Event1.Series");
         Assert.AreEqual(0, Series1.Events.Count, "Series1.Events.Count");
+      }
+    }
+
+    [Test]
+    public void T070_DisallowUnpersistEventWithSets() {
+      using (var session = new TestSession(DatabaseFolderPath)) {
+        session.BeginUpdate();
+        Event1 = QueryHelper.Read<Event>(Event1Key, Location1, session);
+        Assert.Throws<ReferentialIntegrityException>(() =>
+          Event1.Unpersist(session));
+        session.Commit();
+      }
+    }
+
+    [Test]
+    public void T080_DisallowRemoveSet() {
+      using (var session = new TestSession(DatabaseFolderPath)) {
+        session.BeginUpdate();
+        Event1 = QueryHelper.Read<Event>(Event1Key, Location1, session);
+        Set1 = QueryHelper.Read<Set>(Set1.Key, Event1, session);
+        Assert.Throws<ConstraintException>(() =>
+            Event1.Sets.Remove(Set1),
+          "Disallow remove Set from mandatory link to Event.");
+        session.Commit();
       }
     }
   }
