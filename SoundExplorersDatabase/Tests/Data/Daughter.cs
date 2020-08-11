@@ -11,7 +11,7 @@ namespace SoundExplorersDatabase.Tests.Data {
     private Mother _mother;
     private string _name;
 
-    public Daughter([NotNull] QueryHelper queryHelper) : base(typeof(Daughter)) {
+    public Daughter([NotNull] QueryHelper queryHelper) : base(typeof(Daughter), nameof(Name)) {
       QueryHelper = queryHelper ??
                     throw new ArgumentNullException(nameof(queryHelper));
       Schema = TestSchema.Instance;
@@ -42,7 +42,6 @@ namespace SoundExplorersDatabase.Tests.Data {
       set {
         UpdateNonIndexField();
         _name = value;
-        SetKey(value);
       }
     }
 
@@ -54,6 +53,14 @@ namespace SoundExplorersDatabase.Tests.Data {
     [ExcludeFromCodeCoverage]
     protected override IDictionary GetChildren(Type childType) {
       throw new NotSupportedException();
+    }
+
+    protected override RelativeBase GetIdentifyingParent() {
+      return null;
+    }
+
+    protected override string GetSimpleKey() {
+      return Name;
     }
 
     protected override void OnParentFieldToBeUpdated(

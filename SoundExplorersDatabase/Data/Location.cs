@@ -9,7 +9,7 @@ namespace SoundExplorersDatabase.Data {
     private string _name;
     private string _notes;
 
-    public Location() : base(typeof(Location)) {
+    public Location() : base(typeof(Location), nameof(Name)) {
       Events = new SortedChildList<Event>(this);
     }
 
@@ -20,7 +20,6 @@ namespace SoundExplorersDatabase.Data {
       set {
         UpdateNonIndexField();
         _name = value;
-        SetKey(value);
       }
     }
 
@@ -33,11 +32,19 @@ namespace SoundExplorersDatabase.Data {
     }
 
     protected override RelativeBase FindWithSameKey(SessionBase session) {
-      return QueryHelper.Find<Location>(Key, session);
+      return QueryHelper.Find<Location>(GetSimpleKey(), session);
     }
 
     protected override IDictionary GetChildren(Type childType) {
       return Events;
+    }
+
+    protected override RelativeBase GetIdentifyingParent() {
+      return null;
+    }
+
+    protected override string GetSimpleKey() {
+      return Name;
     }
 
     [ExcludeFromCodeCoverage]

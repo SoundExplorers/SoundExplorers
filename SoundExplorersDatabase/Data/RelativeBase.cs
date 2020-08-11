@@ -13,13 +13,19 @@ namespace SoundExplorersDatabase.Data {
   public abstract class RelativeBase : ReferenceTracked {
     private IDictionary<Type, IDictionary> _childrenOfType;
     private IDictionary<Type, IRelationInfo> _childrenRelations;
+    private Key _key;
     private IDictionary<Type, IRelationInfo> _parentRelations;
     private IDictionary<Type, RelativeBase> _parents;
     private QueryHelper _queryHelper;
     private Schema _schema;
 
-    protected RelativeBase(Type persistableType) {
-      PersistableType = persistableType;
+    protected RelativeBase([NotNull] Type persistableType,
+      [NotNull] string simpleKeyName) {
+      PersistableType = persistableType ??
+                        throw new ArgumentNullException(
+                          nameof(persistableType));
+      SimpleKeyName = simpleKeyName ??
+                      throw new ArgumentNullException(nameof(simpleKeyName));
     }
 
     [NotNull]
@@ -46,7 +52,13 @@ namespace SoundExplorersDatabase.Data {
       }
     }
 
-    [CanBeNull] public virtual RelativeBase IdentifyingParent => null;
+    [CanBeNull] public RelativeBase IdentifyingParent => Key.IdentifyingParent;
+
+    private bool IsTopLevel => Parents.Count == 0;
+
+    [NotNull]
+    public Key Key =>
+      _key ?? (_key = new Key(GetSimpleKey, GetIdentifyingParent));
 
     [NotNull]
     private IDictionary<Type, IRelationInfo> ParentRelations {
@@ -59,10 +71,6 @@ namespace SoundExplorersDatabase.Data {
         _parentRelations = value;
       }
     }
-
-    private bool IsTopLevel => Parents.Count == 0;
-
-    public string Key { get; private set; }
 
     [NotNull]
     private IDictionary<Type, RelativeBase> Parents {
@@ -89,6 +97,9 @@ namespace SoundExplorersDatabase.Data {
       get => _schema ?? (_schema = Schema.Instance);
       set => _schema = value;
     }
+
+    [CanBeNull] public string SimpleKey => Key.SimpleKey;
+    [NotNull] private string SimpleKeyName { get; }
 
     internal void AddChild([NotNull] RelativeBase child) {
       CheckCanAddChild(child);
@@ -123,7 +134,7 @@ namespace SoundExplorersDatabase.Data {
           child,
           $"{child.PersistableType.Name} '{child.Key}' " +
           $"cannot be added to {PersistableType.Name} '{Key}', " +
-          $"because a {child.PersistableType.Name} with that Key " + 
+          $"because a {child.PersistableType.Name} with that Key " +
           $"already belongs to the {PersistableType.Name}.");
       }
     }
@@ -203,6 +214,12 @@ namespace SoundExplorersDatabase.Data {
     [NotNull]
     protected abstract IDictionary GetChildren([NotNull] Type childType);
 
+    [CanBeNull]
+    protected abstract RelativeBase GetIdentifyingParent();
+
+    [CanBeNull]
+    protected abstract string GetSimpleKey();
+
     private void Initialise() {
       ParentRelations = CreateParentRelations();
       Parents = new Dictionary<Type, RelativeBase>();
@@ -246,12 +263,29 @@ namespace SoundExplorersDatabase.Data {
       References.Remove(References.First(r => r.To.Equals(child)));
     }
 
-    protected void SetKey([NotNull] string value) {
-      Key = value ?? throw new NoNullAllowedException(
-        "A null reference has been specified as the Key " +
-        $"for {PersistableType.Name} '{Key}'. " +
-        "Null Keys are not supported.");
-    }
+    // protected void SetKey(
+    //   [NotNull] string simpleKey) {
+    //   if (simpleKey == null) {
+    //     throw new NoNullAllowedException(
+    //       $"A null reference has been specified as the {SimpleKeyName} " +
+    //       $"for {PersistableType.Name} '{Key}'. " +
+    //       $"Null {SimpleKeyName}s are not supported.");
+    //   }
+    //   if (identifyingParent == null) {
+    //     if (IdentifyingParentType != null) {
+    //       throw new NoNullAllowedException(
+    //         "A null reference has been specified as the " +
+    //         $"{IdentifyingParentType.Name} for {PersistableType.Name} '{Key}'.");
+    //     }
+    //   } else if (IdentifyingParentType != null &&
+    //              identifyingParent.PersistableType != IdentifyingParentType) {
+    //     throw new ConstraintException(
+    //       $"A {identifyingParent.PersistableType.Name} has been specified as the " +
+    //       $"{IdentifyingParentType.Name} for {PersistableType.Name} '{Key}'.");
+    //   }
+    //   Key.SimpleKey = simpleKey;
+    //   Key.IdentifyingParent = identifyingParent;
+    // }
 
     public override void Unpersist(SessionBase session) {
       var parents =

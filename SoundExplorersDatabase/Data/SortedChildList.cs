@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using JetBrains.Annotations;
 
 namespace SoundExplorersDatabase.Data {
-  public class SortedChildList<TChild> : SortedList<string, TChild>
+  public class SortedChildList<TChild> : SortedList<IKey, TChild>, IDictionary
     where TChild : RelativeBase {
     internal SortedChildList([NotNull] RelativeBase parent) {
       Parent = parent ??
@@ -12,6 +14,25 @@ namespace SoundExplorersDatabase.Data {
 
     private RelativeBase Parent { get; }
     public TChild this[int index] => Values[index];
+
+    object IDictionary.this[object key] {
+      get => this[ToKey(key)];
+      set => this[ToKey(key)] = ToChild(value);
+    }
+
+    void IDictionary.Add(object key, object value) {
+      Add(ToChild(value));
+      //Parent.AddChild(ToChild(value));
+      //base.Add(ToKey(key), ToChild(value));
+    }
+
+    bool IDictionary.Contains(object key) {
+      var keyToMatch = ToKey(key);
+      return (
+        from Key foundKey in Keys
+        where foundKey.Matches(keyToMatch)
+        select foundKey).Any();
+    }
 
     public void Add([NotNull] TChild child) {
       Parent.AddChild(child);
@@ -22,14 +43,29 @@ namespace SoundExplorersDatabase.Data {
     }
 
     [UsedImplicitly]
-    public new void Add(string notSupported, TChild doNotUse) {
+    public new void Add(IKey notSupported, TChild doNotUse) {
       throw new NotSupportedException(
-        "ParentChildren.Add(string, TChild) is not supported. " +
+        "ParentChildren.Add(IKey, TChild) is not supported. " +
         "Use ParentChildren.Add(TChild) instead.");
     }
 
+    private static TChild ToChild(object value) {
+      var child = value as TChild ??
+                  throw new ArgumentException(
+                    $"The specified value is not of type {typeof(TChild).Name}",
+                    nameof(value));
+      return child;
+    }
+
+    private static Key ToKey(object key) {
+      var keyToMatch = key as Key ??
+                       throw new ArgumentException(
+                         "The specified key is not of type Key", nameof(key));
+      return keyToMatch;
+    }
+
     [UsedImplicitly]
-    public new bool Remove(string notSupported) {
+    public new bool Remove(IKey notSupported) {
       throw new NotSupportedException(
         "ParentChildren.Remove(string) is not supported. Use ParentChildren.Remove(TChild) instead.");
     }

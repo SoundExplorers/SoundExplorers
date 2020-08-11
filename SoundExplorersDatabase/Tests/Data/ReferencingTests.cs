@@ -108,13 +108,13 @@ namespace SoundExplorersDatabase.Tests.Data {
         Assert.IsTrue(Daughter1.IsPersistent,
           "Daughter1.IsPersistent initially");
         Assert.AreEqual(Daughter1Name, Daughter1.Name, "Daughter1.Name");
-        Assert.AreEqual(Daughter1Name, Daughter1.Key, "Daughter1.Key");
+        Assert.AreEqual(Daughter1Name, Daughter1.SimpleKey, "Daughter1.Key");
         Assert.IsTrue(Daughter2.IsPersistent,
           "Daughter2.IsPersistent initially");
         Assert.AreEqual(Daughter2Name, Daughter2.Name, "Daughter2.Name");
         Assert.IsTrue(Mother1.IsPersistent, "Mother1.IsPersistent initially");
         Assert.AreEqual(Mother1Name, Mother1.Name, "Mother1.Name initially");
-        Assert.AreEqual(Mother1Name, Mother1.Key, "Mother1.Key initially");
+        Assert.AreEqual(Mother1Name, Mother1.SimpleKey, "Mother1.Key initially");
         Assert.IsTrue(Mother2.IsPersistent, "Mother2.IsPersistent initially");
         Assert.AreEqual(Mother2Name, Mother2.Name, "Mother2.Name initially");
         Assert.AreEqual(1, Mother1.Daughters.Count,
@@ -125,17 +125,17 @@ namespace SoundExplorersDatabase.Tests.Data {
           "Mother1.References.Count initially");
         Assert.AreSame(Daughter1, Mother1.Daughters[0],
           "Mother1 1st Daughter initially");
-        Assert.AreSame(Daughter1, Mother1.Daughters[Daughter1Name],
+        Assert.AreSame(Daughter1, Mother1.Daughters[Daughter1.Key],
           "Mother1 1st Daughter by name initially");
         Assert.AreSame(Mother1, Daughter1.Mother, "Daughter1.Mother initially");
         Assert.AreSame(Son1, Mother1.Sons[0],
           "Mother1 1st Son initially");
-        Assert.AreSame(Son1, Mother1.Sons[Son1Name],
+        Assert.AreSame(Son1, Mother1.Sons[Son1.Key],
           "Mother1 1st Son by name initially");
         Assert.AreSame(Mother1, Son1.Mother, "Son1.Mother initially");
         Assert.AreSame(Son2, Mother1.Sons[1],
           "Mother1 2nd Son initially");
-        Assert.AreSame(Son2, Mother1.Sons[Son2Name],
+        Assert.AreSame(Son2, Mother1.Sons[Son2.Key],
           "Mother1 2nd Son by name initially");
         Assert.AreSame(Mother1, Son2.Mother, "Son2.Mother initially");
         Assert.AreEqual(Mother2Name, Mother2.Name, "Mother2.Name initially");
@@ -165,17 +165,17 @@ namespace SoundExplorersDatabase.Tests.Data {
           "Father1.References.Count initially");
         Assert.AreSame(Son1, Father1.Sons[0],
           "Father1 1st Son initially");
-        Assert.AreSame(Son1, Father1.Sons[Son1Name],
+        Assert.AreSame(Son1, Father1.Sons[Son1.Key],
           "Father1 1st Son by name initially");
         Assert.AreSame(Father1, Son1.Father, "Son1.Father initially");
         Assert.AreSame(Daughter1, Father1.Daughters[0],
           "Father1 1st Daughter initially");
-        Assert.AreSame(Daughter1, Father1.Daughters[Daughter1Name],
+        Assert.AreSame(Daughter1, Father1.Daughters[Daughter1.Key],
           "Father1 1st Daughter by name initially");
         Assert.AreSame(Father1, Daughter1.Father, "Daughter1.Father initially");
         Assert.AreSame(Daughter2, Father1.Daughters[1],
           "Father1 2nd Daughter initially");
-        Assert.AreSame(Daughter2, Father1.Daughters[Daughter2Name],
+        Assert.AreSame(Daughter2, Father1.Daughters[Daughter2.Key],
           "Father1 2nd Daughter by name initially");
         Assert.AreSame(Father1, Daughter2.Father, "Daughter2.Father initially");
         Assert.AreEqual(Father2Name, Father2.Name, "Father2.Name initially");
@@ -201,10 +201,10 @@ namespace SoundExplorersDatabase.Tests.Data {
         Mother1 = QueryHelper.Read<Mother>(Mother1Name, session);
         Daughter2 = QueryHelper.Read<Daughter>(Daughter2Name, session);
         Assert.Throws<NotSupportedException>(
-          () => Mother1.Daughters.Add(Daughter2Name, Daughter2),
+          () => Mother1.Daughters.Add(Daughter2.Key, Daughter2),
           "Unsupported Mother.Daughters.Add");
         Assert.Throws<NotSupportedException>(
-          () => Mother1.Daughters.Remove(Daughter1Name),
+          () => Mother1.Daughters.Remove(Daughter1.Key),
           "Unsupported Mother.Daughters.Remove");
         Assert.Throws<NotSupportedException>(
           () => Mother1.Daughters.RemoveAt(0),

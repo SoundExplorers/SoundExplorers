@@ -96,8 +96,8 @@ namespace SoundExplorersDatabase.Tests.Data {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginRead();
         Location1 = QueryHelper.Read<Location>(Location1Name, session);
-        Event1 = QueryHelper.Read<Event>(Event1.Key, Location1, session);
-        Event2 = QueryHelper.Read<Event>(Event2.Key, Location1, session);
+        Event1 = QueryHelper.Read<Event>(Event1.SimpleKey, Location1, session);
+        Event2 = QueryHelper.Read<Event>(Event2.SimpleKey, Location1, session);
         Act1 = QueryHelper.Read<Act>(Act1Name, session);
         Act2 = QueryHelper.Read<Act>(Act2Name, session);
         Set1 = QueryHelper.Read<Set>(Set1Key, Event1, session);

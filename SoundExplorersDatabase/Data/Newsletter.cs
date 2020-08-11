@@ -10,7 +10,7 @@ namespace SoundExplorersDatabase.Data {
     private DateTime _date;
     private string _path;
 
-    public Newsletter() : base(typeof(Newsletter)) {
+    public Newsletter() : base(typeof(Newsletter), nameof(Date)) {
       Events = new SortedChildList<Event>(this);
     }
 
@@ -19,7 +19,6 @@ namespace SoundExplorersDatabase.Data {
       set {
         UpdateNonIndexField();
         _date = value;
-        SetKey($"{value:yyyy/MM/dd}");
       }
     }
 
@@ -53,11 +52,19 @@ namespace SoundExplorersDatabase.Data {
     }
 
     protected override RelativeBase FindWithSameKey(SessionBase session) {
-      return QueryHelper.Find<Newsletter>(Key, session);
+      return QueryHelper.Find<Newsletter>(GetSimpleKey(), session);
     }
 
     protected override IDictionary GetChildren(Type childType) {
       return Events;
+    }
+
+    protected override RelativeBase GetIdentifyingParent() {
+      return null;
+    }
+
+    protected override string GetSimpleKey() {
+      return $"{Date:yyyy/MM/dd}";
     }
 
     [ExcludeFromCodeCoverage]

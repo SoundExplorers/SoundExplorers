@@ -13,10 +13,10 @@ namespace SoundExplorersDatabase.Data {
 
     [CanBeNull]
     public TPersistable Find<TPersistable>(
-      [CanBeNull] string key,
+      [CanBeNull] string simpleKey,
       [NotNull] SessionBase session) where TPersistable : RelativeBase {
       return Find<TPersistable>(
-        persistable => persistable.Key == key, session);
+        persistable => persistable.Key == new Key(simpleKey, null), session);
     }
 
     [CanBeNull]
@@ -32,23 +32,19 @@ namespace SoundExplorersDatabase.Data {
 
     [NotNull]
     public TPersistable Read<TPersistable>(
-      [CanBeNull] string key,
+      [CanBeNull] string simpleKey,
       [NotNull] SessionBase session) where TPersistable : RelativeBase {
       return Read<TPersistable>(
-        persistable => persistable.Key == key, session);
+        persistable => persistable.Key == new Key(simpleKey, null), session);
     }
 
     [NotNull]
     public TPersistable Read<TPersistable>(
-      [CanBeNull] string key,
+      [CanBeNull] string simpleKey,
       [CanBeNull] RelativeBase identifyingParent,
       [NotNull] SessionBase session) where TPersistable : RelativeBase {
       return Read<TPersistable>(
-        persistable => persistable.Key == key &&
-                       (identifyingParent == null &&
-                       persistable.IdentifyingParent == null ||
-                       persistable.IdentifyingParent != null &&
-                       persistable.IdentifyingParent.Equals(identifyingParent)),
+        persistable => persistable.Key == new Key(simpleKey, identifyingParent),
         session);
     }
 

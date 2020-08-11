@@ -12,7 +12,7 @@ namespace SoundExplorersDatabase.Data {
     private string _notes;
     private Series _series;
 
-    public Event() : base(typeof(Event)) {
+    public Event() : base(typeof(Event), nameof(Date)) {
       Sets = new SortedChildList<Set>(this);
     }
 
@@ -21,11 +21,8 @@ namespace SoundExplorersDatabase.Data {
       set {
         UpdateNonIndexField();
         _date = value;
-        SetKey($"{value:yyyy/MM/dd}");
       }
     }
-    
-    public override RelativeBase IdentifyingParent => Location;
 
     [NotNull]
     public Location Location {
@@ -34,7 +31,6 @@ namespace SoundExplorersDatabase.Data {
         UpdateNonIndexField();
         ChangeParent(typeof(Location), value);
         _location = value;
-        //SetKey(Date, value);
       }
     }
 
@@ -70,12 +66,20 @@ namespace SoundExplorersDatabase.Data {
 
     [ExcludeFromCodeCoverage]
     protected override RelativeBase FindWithSameKey(
-      [NotNull] SessionBase session) {
+      SessionBase session) {
       throw new NotSupportedException();
     }
 
     protected override IDictionary GetChildren(Type childType) {
       return Sets;
+    }
+
+    protected override RelativeBase GetIdentifyingParent() {
+      return Location;
+    }
+
+    protected override string GetSimpleKey() {
+      return $"{Date:yyyy/MM/dd}";
     }
 
     protected override void OnParentFieldToBeUpdated(Type parentPersistableType,

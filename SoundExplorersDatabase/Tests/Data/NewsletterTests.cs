@@ -78,12 +78,12 @@ namespace SoundExplorersDatabase.Tests.Data {
         session.BeginRead();
         Newsletter1 = QueryHelper.Read<Newsletter>(Newsletter1Key, session);
         Newsletter2 = QueryHelper.Read<Newsletter>(Newsletter2Key, session);
-        Event1 = QueryHelper.Read<Event>(Event1.Key, Location1, session);
+        Event1 = QueryHelper.Read<Event>(Event1.SimpleKey, Location1, session);
         session.Commit();
       }
       Assert.AreEqual(Newsletter1Date, Newsletter1.Date,
         "Newsletter1.Date initially");
-      Assert.AreEqual(Newsletter1Key, Newsletter1.Key,
+      Assert.AreEqual(Newsletter1Key, Newsletter1.SimpleKey,
         "Newsletter1.Key initially");
       Assert.AreEqual(Newsletter1Path, Newsletter1.Path,
         "Newsletter1.Path initially");
@@ -102,8 +102,8 @@ namespace SoundExplorersDatabase.Tests.Data {
     public void T020_RemoveEvent() {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
-        Newsletter1 = QueryHelper.Read<Newsletter>(Newsletter1.Key, session);
-        Event1 = QueryHelper.Read<Event>(Event1.Key, Location1, session);
+        Newsletter1 = QueryHelper.Read<Newsletter>(Newsletter1.SimpleKey, session);
+        Event1 = QueryHelper.Read<Event>(Event1.SimpleKey, Location1, session);
         Newsletter1.Events.Remove(Event1);
         session.Commit();
       }

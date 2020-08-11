@@ -11,7 +11,7 @@ namespace SoundExplorersDatabase.Tests.Data {
     public new static TestSchema Instance =>
       _instance ?? (_instance = new TestSchema());
 
-    protected override ReadOnlyCollection<RelationInfo> CreateRelations() {
+    protected override IEnumerable<RelationInfo> CreateRelations() {
       var list = new List<RelationInfo> {
         new RelationInfo(typeof(Father), typeof(Daughter), false),
         new RelationInfo(typeof(Father), typeof(Son), false),

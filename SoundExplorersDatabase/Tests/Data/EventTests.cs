@@ -138,8 +138,8 @@ namespace SoundExplorersDatabase.Tests.Data {
         Location2 = QueryHelper.Read<Location>(Location2Name, session);
         Newsletter1 = QueryHelper.Read<Newsletter>(Newsletter1Key, session);
         Series1 = QueryHelper.Read<Series>(Series1Name, session);
-        Set1 = QueryHelper.Read<Set>(Set1.Key, Event1, session);
-        Set2 = QueryHelper.Read<Set>(Set2.Key, Event1, session);
+        Set1 = QueryHelper.Read<Set>(Set1.SimpleKey, Event1, session);
+        Set2 = QueryHelper.Read<Set>(Set2.SimpleKey, Event1, session);
         session.Commit();
       }
       Assert.AreEqual(Event1Date, Event1.Date, "Event1.Date");
@@ -269,7 +269,7 @@ namespace SoundExplorersDatabase.Tests.Data {
     public void T070_SetNewsletterToNull() {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
-        Newsletter1 = QueryHelper.Read<Newsletter>(Newsletter1.Key, session);
+        Newsletter1 = QueryHelper.Read<Newsletter>(Newsletter1.SimpleKey, session);
         Event1 = Newsletter1.Events[0];
         Event1.Newsletter = null;
         session.Commit();
@@ -294,7 +294,7 @@ namespace SoundExplorersDatabase.Tests.Data {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
         Event1 = QueryHelper.Read<Event>(Event1Key, Location1, session);
-        Set1 = QueryHelper.Read<Set>(Set1.Key, Event1, session);
+        Set1 = QueryHelper.Read<Set>(Set1.SimpleKey, Event1, session);
         Assert.Throws<ConstraintException>(() =>
             Event1.Sets.Remove(Set1),
           "Disallow remove Set from mandatory link to Event.");

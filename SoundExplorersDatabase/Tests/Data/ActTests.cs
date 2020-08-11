@@ -80,8 +80,8 @@ namespace SoundExplorersDatabase.Tests.Data {
         session.BeginRead();
         Act1 = QueryHelper.Read<Act>(Act1Name, session);
         Act2 = QueryHelper.Read<Act>(Act2Name, session);
-        Set1 = QueryHelper.Read<Set>(Set1.Key, Event1, session);
-        Set2 = QueryHelper.Read<Set>(Set2.Key, Event1, session);
+        Set1 = QueryHelper.Read<Set>(Set1.SimpleKey, Event1, session);
+        Set2 = QueryHelper.Read<Set>(Set2.SimpleKey, Event1, session);
         session.Commit();
       }
       Assert.AreEqual(Act1Name, Act1.Name, "Act1.Name initially");
@@ -100,7 +100,7 @@ namespace SoundExplorersDatabase.Tests.Data {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
         Act1 = QueryHelper.Read<Act>(Act1Name, session);
-        Set1 = QueryHelper.Read<Set>(Set1.Key, Event1, session);
+        Set1 = QueryHelper.Read<Set>(Set1.SimpleKey, Event1, session);
         Act1.Sets.Remove(Set1);
         session.Commit();
       }

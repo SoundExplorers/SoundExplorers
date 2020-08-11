@@ -11,7 +11,7 @@ namespace SoundExplorersDatabase.Data {
     private string _notes;
     private int _setNo;
 
-    public Set() : base(typeof(Set)) { }
+    public Set() : base(typeof(Set), nameof(SetNo)) { }
 
     [CanBeNull]
     public Act Act {
@@ -33,8 +33,6 @@ namespace SoundExplorersDatabase.Data {
       }
     }
 
-    public override RelativeBase IdentifyingParent => Event;
-
     public string Notes {
       get => _notes;
       set {
@@ -48,7 +46,6 @@ namespace SoundExplorersDatabase.Data {
       set {
         UpdateNonIndexField();
         _setNo = value;
-        SetKey(value.ToString().PadLeft(2, '0'));
       }
     }
 
@@ -60,6 +57,14 @@ namespace SoundExplorersDatabase.Data {
 
     protected override IDictionary GetChildren(Type childType) {
       throw new NotImplementedException();
+    }
+
+    protected override RelativeBase GetIdentifyingParent() {
+      return Event;
+    }
+
+    protected override string GetSimpleKey() {
+      return SetNo.ToString().PadLeft(2, '0');
     }
 
     protected override void OnParentFieldToBeUpdated(Type parentPersistableType,

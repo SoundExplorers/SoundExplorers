@@ -77,6 +77,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Data\Act.cs" />
+    <Compile Include="Data\IKey.cs" />
+    <Compile Include="Data\Key.cs" />
     <Compile Include="Data\IRelationInfo.cs" />
     <Compile Include="Data\QueryHelper.cs" />
     <Compile Include="Data\RelationInfo.cs" />

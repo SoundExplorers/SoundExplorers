@@ -9,7 +9,7 @@ namespace SoundExplorersDatabase.Tests.Data {
   public class Father : RelativeBase {
     private string _name;
 
-    public Father([NotNull] QueryHelper queryHelper) : base(typeof(Father)) {
+    public Father([NotNull] QueryHelper queryHelper) : base(typeof(Father), nameof(Name)) {
       QueryHelper = queryHelper ??
                     throw new ArgumentNullException(nameof(queryHelper));
       Schema = TestSchema.Instance;
@@ -25,14 +25,13 @@ namespace SoundExplorersDatabase.Tests.Data {
       set {
         UpdateNonIndexField();
         _name = value;
-        SetKey(value);
       }
     }
 
     [NotNull] public SortedChildList<Son> Sons { get; }
 
     protected override RelativeBase FindWithSameKey(SessionBase session) {
-      return QueryHelper.Find<Father>(Key, session);
+      return QueryHelper.Find<Father>(SimpleKey, session);
     }
 
     protected override IDictionary GetChildren(Type childType) {
@@ -40,6 +39,14 @@ namespace SoundExplorersDatabase.Tests.Data {
         return Daughters;
       }
       return Sons;
+    }
+
+    protected override RelativeBase GetIdentifyingParent() {
+      return null;
+    }
+
+    protected override string GetSimpleKey() {
+      return Name;
     }
 
     [ExcludeFromCodeCoverage]
