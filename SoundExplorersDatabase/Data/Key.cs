@@ -44,7 +44,7 @@ namespace SoundExplorersDatabase.Data {
 
     public static bool operator ==([CanBeNull] Key key1, [CanBeNull] Key key2) {
       if ((object)key1 != null) {
-        return (object)key2 != null && key1.Equals(key2);
+        return key1.Equals(key2);
       }
       return (object)key2 == null;
     }
@@ -83,7 +83,20 @@ namespace SoundExplorersDatabase.Data {
     }
 
     public override bool Equals(object obj) {
-      return GetHashCode() == (obj?.GetHashCode() ?? 0);
+      var keyToMatch = obj as Key;
+      if (keyToMatch == null) {
+        return false;
+      }
+      if (IdentifyingParent != null && keyToMatch.IdentifyingParent != null) {
+        if (IdentifyingParent.Key.Equals(keyToMatch.IdentifyingParent.Key)) {
+          return string.CompareOrdinal(SimpleKey, keyToMatch.SimpleKey) == 0;
+        }
+        return false;
+      }
+      if (IdentifyingParent == null && keyToMatch.IdentifyingParent == null) {
+        return string.CompareOrdinal(SimpleKey, keyToMatch.SimpleKey) == 0;
+      }
+      return false;
     }
 
     public override int GetHashCode() {
