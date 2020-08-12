@@ -77,15 +77,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Data\Act.cs" />
-    <Compile Include="Data\IKey.cs" />
+    <Compile Include="Data\IKeyedRelative.cs" />
     <Compile Include="Data\Key.cs" />
     <Compile Include="Data\IRelationInfo.cs" />
+    <Compile Include="Data\KeyComparer.cs" />
     <Compile Include="Data\QueryHelper.cs" />
     <Compile Include="Data\RelationInfo.cs" />
     <Compile Include="Data\Schema.cs" />
     <Compile Include="Data\Set.cs" />
     <Compile Include="Data\SortedChildList.cs" />
-    <Compile Include="Data\RelativeBase.cs" />
+    <Compile Include="Data\KeyedRelative.cs" />
     <Compile Include="Data\Event.cs" />
     <Compile Include="Data\Newsletter.cs" />
     <Compile Include="Data\Series.cs" />

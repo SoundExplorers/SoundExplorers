@@ -5,7 +5,7 @@ using JetBrains.Annotations;
 using VelocityDb.Session;
 
 namespace SoundExplorersDatabase.Data {
-  public class Set : RelativeBase {
+  public class Set : KeyedRelative {
     private Act _act;
     private Event _event;
     private string _notes;
@@ -50,7 +50,7 @@ namespace SoundExplorersDatabase.Data {
     }
 
     [ExcludeFromCodeCoverage]
-    protected override RelativeBase FindWithSameKey(
+    protected override KeyedRelative FindWithSameKey(
       [NotNull] SessionBase session) {
       throw new NotSupportedException();
     }
@@ -59,7 +59,7 @@ namespace SoundExplorersDatabase.Data {
       throw new NotImplementedException();
     }
 
-    protected override RelativeBase GetIdentifyingParent() {
+    protected override KeyedRelative GetIdentifyingParent() {
       return Event;
     }
 
@@ -68,7 +68,7 @@ namespace SoundExplorersDatabase.Data {
     }
 
     protected override void OnParentFieldToBeUpdated(Type parentPersistableType,
-      RelativeBase newParent) {
+      KeyedRelative newParent) {
       if (parentPersistableType == typeof(Event)) {
         _event = (Event)newParent;
       } else {

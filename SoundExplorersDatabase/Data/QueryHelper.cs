@@ -14,7 +14,7 @@ namespace SoundExplorersDatabase.Data {
     [CanBeNull]
     public TPersistable Find<TPersistable>(
       [CanBeNull] string simpleKey,
-      [NotNull] SessionBase session) where TPersistable : RelativeBase {
+      [NotNull] SessionBase session) where TPersistable : KeyedRelative {
       return Find<TPersistable>(
         persistable => persistable.Key == new Key(simpleKey, null), session);
     }
@@ -22,7 +22,7 @@ namespace SoundExplorersDatabase.Data {
     [CanBeNull]
     public TPersistable Find<TPersistable>(
       [NotNull] Func<TPersistable, bool> predicate,
-      [NotNull] SessionBase session) where TPersistable : RelativeBase {
+      [NotNull] SessionBase session) where TPersistable : KeyedRelative {
       if (!SchemaExistsOnDatabase(session)) {
         return null;
       }
@@ -33,7 +33,7 @@ namespace SoundExplorersDatabase.Data {
     [NotNull]
     public TPersistable Read<TPersistable>(
       [CanBeNull] string simpleKey,
-      [NotNull] SessionBase session) where TPersistable : RelativeBase {
+      [NotNull] SessionBase session) where TPersistable : KeyedRelative {
       return Read<TPersistable>(
         persistable => persistable.Key == new Key(simpleKey, null), session);
     }
@@ -41,8 +41,8 @@ namespace SoundExplorersDatabase.Data {
     [NotNull]
     public TPersistable Read<TPersistable>(
       [CanBeNull] string simpleKey,
-      [CanBeNull] RelativeBase identifyingParent,
-      [NotNull] SessionBase session) where TPersistable : RelativeBase {
+      [CanBeNull] KeyedRelative identifyingParent,
+      [NotNull] SessionBase session) where TPersistable : KeyedRelative {
       return Read<TPersistable>(
         persistable => persistable.Key == new Key(simpleKey, identifyingParent),
         session);
@@ -51,7 +51,7 @@ namespace SoundExplorersDatabase.Data {
     [NotNull]
     public TPersistable Read<TPersistable>(
       [NotNull] Func<TPersistable, bool> predicate,
-      [NotNull] SessionBase session) where TPersistable : RelativeBase {
+      [NotNull] SessionBase session) where TPersistable : KeyedRelative {
       return session.AllObjects<TPersistable>()
         .First(predicate);
     }

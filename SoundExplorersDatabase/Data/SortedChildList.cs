@@ -5,14 +5,15 @@ using System.Linq;
 using JetBrains.Annotations;
 
 namespace SoundExplorersDatabase.Data {
-  public class SortedChildList<TChild> : SortedList<IKey, TChild>, IDictionary
-    where TChild : RelativeBase {
-    internal SortedChildList([NotNull] RelativeBase parent) {
+  public class SortedChildList<TChild> : SortedList<Key, TChild>, IDictionary
+    where TChild : KeyedRelative {
+    internal SortedChildList([NotNull] KeyedRelative parent) : base(
+      new KeyComparer()) {
       Parent = parent ??
                throw new ArgumentNullException(nameof(parent));
     }
 
-    private RelativeBase Parent { get; }
+    private KeyedRelative Parent { get; }
     public TChild this[int index] => Values[index];
 
     object IDictionary.this[object key] {
@@ -21,17 +22,16 @@ namespace SoundExplorersDatabase.Data {
     }
 
     void IDictionary.Add(object key, object value) {
-      Add(ToChild(value));
-      //Parent.AddChild(ToChild(value));
-      //base.Add(ToKey(key), ToChild(value));
+      base.Add(ToKey(key), ToChild(value));
     }
 
     bool IDictionary.Contains(object key) {
-      var keyToMatch = ToKey(key);
-      return (
-        from Key foundKey in Keys
-        where foundKey.Matches(keyToMatch)
-        select foundKey).Any();
+      return ContainsKey(ToKey(key)); // ???
+      // var keyToMatch = ToKey(key);
+      // return (
+      //   from Key foundKey in Keys
+      //   where foundKey == keyToMatch
+      //   select foundKey).Any();
     }
 
     public void Add([NotNull] TChild child) {
@@ -43,9 +43,9 @@ namespace SoundExplorersDatabase.Data {
     }
 
     [UsedImplicitly]
-    public new void Add(IKey notSupported, TChild doNotUse) {
+    public new void Add(Key notSupported, TChild doNotUse) {
       throw new NotSupportedException(
-        "ParentChildren.Add(IKey, TChild) is not supported. " +
+        "ParentChildren.Add(Key, TChild) is not supported. " +
         "Use ParentChildren.Add(TChild) instead.");
     }
 
@@ -65,7 +65,7 @@ namespace SoundExplorersDatabase.Data {
     }
 
     [UsedImplicitly]
-    public new bool Remove(IKey notSupported) {
+    public new bool Remove(Key notSupported) {
       throw new NotSupportedException(
         "ParentChildren.Remove(string) is not supported. Use ParentChildren.Remove(TChild) instead.");
     }
