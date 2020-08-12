@@ -10,16 +10,16 @@ using VelocityDb.Session;
 using VelocityDb.TypeInfo;
 
 namespace SoundExplorersDatabase.Data {
-  public abstract class KeyedRelative : ReferenceTracked, IKeyedRelative {
+  public abstract class RelativeBase : ReferenceTracked, IRelative {
     private IDictionary<Type, IDictionary> _childrenOfType;
     private IDictionary<Type, IRelationInfo> _childrenRelations;
     private Key _key;
     private IDictionary<Type, IRelationInfo> _parentRelations;
-    private IDictionary<Type, KeyedRelative> _parents;
+    private IDictionary<Type, RelativeBase> _parents;
     private QueryHelper _queryHelper;
     private Schema _schema;
 
-    protected KeyedRelative([NotNull] Type persistableType,
+    protected RelativeBase([NotNull] Type persistableType,
       [NotNull] string simpleKeyName) {
       PersistableType = persistableType ??
                         throw new ArgumentNullException(
@@ -67,7 +67,7 @@ namespace SoundExplorersDatabase.Data {
     }
 
     [NotNull]
-    private IDictionary<Type, KeyedRelative> Parents {
+    private IDictionary<Type, RelativeBase> Parents {
       get {
         InitialiseIfNull(_parents);
         return _parents;
@@ -94,7 +94,7 @@ namespace SoundExplorersDatabase.Data {
 
     [NotNull] private string SimpleKeyName { get; }
 
-    [CanBeNull] public IKeyedRelative IdentifyingParent => Key.IdentifyingParent;
+    [CanBeNull] public IRelative IdentifyingParent => Key.IdentifyingParent;
 
     [NotNull]
     public Key Key =>
@@ -102,7 +102,7 @@ namespace SoundExplorersDatabase.Data {
 
     [CanBeNull] public string SimpleKey => Key.SimpleKey;
 
-    internal void AddChild([NotNull] KeyedRelative child) {
+    internal void AddChild([NotNull] RelativeBase child) {
       CheckCanAddChild(child);
       ChildrenOfType[child.PersistableType].Add(child.Key, child);
       References.AddFast(new Reference(child, "_children"));
@@ -111,13 +111,13 @@ namespace SoundExplorersDatabase.Data {
 
     protected void ChangeParent(
       [NotNull] Type parentPersistableType,
-      [CanBeNull] KeyedRelative newParent) {
+      [CanBeNull] RelativeBase newParent) {
       Parents[parentPersistableType]?.RemoveChild(this, newParent != null);
       newParent?.AddChild(this);
       Parents[parentPersistableType] = newParent;
     }
 
-    private void CheckCanAddChild([NotNull] KeyedRelative child) {
+    private void CheckCanAddChild([NotNull] RelativeBase child) {
       if (child == null) {
         throw new NoNullAllowedException(
           "A null reference has been specified. " +
@@ -166,7 +166,7 @@ namespace SoundExplorersDatabase.Data {
     }
 
     private void CheckCanRemoveChild(
-      [NotNull] KeyedRelative child, bool isReplacingOrUnpersisting) {
+      [NotNull] RelativeBase child, bool isReplacingOrUnpersisting) {
       if (child == null) {
         throw new NoNullAllowedException(
           "A null reference has been specified. " +
@@ -209,21 +209,21 @@ namespace SoundExplorersDatabase.Data {
     }
 
     [CanBeNull]
-    protected abstract KeyedRelative FindWithSameKey(
+    protected abstract RelativeBase FindWithSameKey(
       [NotNull] SessionBase session);
 
     [NotNull]
     protected abstract IDictionary GetChildren([NotNull] Type childType);
 
     [CanBeNull]
-    protected abstract KeyedRelative GetIdentifyingParent();
+    protected abstract RelativeBase GetIdentifyingParent();
 
     [CanBeNull]
     protected abstract string GetSimpleKey();
 
     private void Initialise() {
       ParentRelations = CreateParentRelations();
-      Parents = new Dictionary<Type, KeyedRelative>();
+      Parents = new Dictionary<Type, RelativeBase>();
       foreach (var relationKvp in ParentRelations) {
         Parents.Add(relationKvp.Key, null);
       }
@@ -246,7 +246,7 @@ namespace SoundExplorersDatabase.Data {
     }
 
     protected abstract void OnParentFieldToBeUpdated(
-      [NotNull] Type parentPersistableType, [CanBeNull] KeyedRelative newParent);
+      [NotNull] Type parentPersistableType, [CanBeNull] RelativeBase newParent);
 
     public override ulong Persist(Placement place, SessionBase session,
       bool persistRefs = true,
@@ -256,7 +256,7 @@ namespace SoundExplorersDatabase.Data {
       return base.Persist(place, session, persistRefs, disableFlush, toPersist);
     }
 
-    internal void RemoveChild([NotNull] KeyedRelative child,
+    internal void RemoveChild([NotNull] RelativeBase child,
       bool isReplacingOrUnpersisting) {
       CheckCanRemoveChild(child, isReplacingOrUnpersisting);
       UpdateChild(child, null);
@@ -298,8 +298,8 @@ namespace SoundExplorersDatabase.Data {
       base.Unpersist(session);
     }
 
-    private void UpdateChild([NotNull] KeyedRelative child,
-      [CanBeNull] KeyedRelative newParent) {
+    private void UpdateChild([NotNull] RelativeBase child,
+      [CanBeNull] RelativeBase newParent) {
       child.UpdateNonIndexField();
       child.Parents[PersistableType] = newParent;
       child.OnParentFieldToBeUpdated(PersistableType, newParent);

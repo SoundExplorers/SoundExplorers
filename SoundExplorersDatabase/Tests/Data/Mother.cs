@@ -6,7 +6,7 @@ using SoundExplorersDatabase.Data;
 using VelocityDb.Session;
 
 namespace SoundExplorersDatabase.Tests.Data {
-  public class Mother : KeyedRelative {
+  public class Mother : RelativeBase {
     private string _name;
 
     public Mother([NotNull] QueryHelper queryHelper) : base(typeof(Mother), nameof(Name)) {
@@ -30,7 +30,7 @@ namespace SoundExplorersDatabase.Tests.Data {
 
     [NotNull] public SortedChildList<Son> Sons { get; }
 
-    protected override KeyedRelative FindWithSameKey(
+    protected override RelativeBase FindWithSameKey(
       SessionBase session) {
       return QueryHelper.Find<Mother>(SimpleKey, session);
     }
@@ -42,7 +42,7 @@ namespace SoundExplorersDatabase.Tests.Data {
       return Sons;
     }
 
-    protected override KeyedRelative GetIdentifyingParent() {
+    protected override RelativeBase GetIdentifyingParent() {
       return null;
     }
 
@@ -53,7 +53,7 @@ namespace SoundExplorersDatabase.Tests.Data {
     [ExcludeFromCodeCoverage]
     protected override void OnParentFieldToBeUpdated(
       Type parentPersistableType,
-      KeyedRelative newParent) {
+      RelativeBase newParent) {
       throw new NotSupportedException();
     }
   }

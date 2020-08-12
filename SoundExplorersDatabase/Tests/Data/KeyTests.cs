@@ -5,7 +5,7 @@ using SoundExplorersDatabase.Data;
 namespace SoundExplorersDatabase.Tests.Data {
   [TestFixture]
   public class KeyTests {
-    private class MockLocation : MockKeyedRelativeBase {
+    private class MockLocation : MockRelativeBase {
       private string _name;
 
       public string Name {
@@ -17,7 +17,7 @@ namespace SoundExplorersDatabase.Tests.Data {
       }
     }
 
-    private class MockEvent : MockKeyedRelativeBase {
+    private class MockEvent : MockRelativeBase {
       private DateTime _date;
       private MockLocation _location;
 
@@ -38,7 +38,7 @@ namespace SoundExplorersDatabase.Tests.Data {
       }
     }
 
-    private class MockSet : MockKeyedRelativeBase {
+    private class MockSet : MockRelativeBase {
       private MockEvent _event;
       private int _setNo;
 
@@ -62,7 +62,7 @@ namespace SoundExplorersDatabase.Tests.Data {
     [Test]
     public void T010_Equality() {
       var event1 = new Event {Date = DateTime.Parse("2013/01/02")};
-      var event2 = new Event {Date = DateTime.Parse("2013/01/02")};
+      var event2 = new Event {Date = event1.Date};
       var location1 = new Location {Name = "Fred's"};
       var key1 = new Key(event1.SimpleKey, location1);
       var key2 = new Key(event2.SimpleKey, location1);

@@ -1,15 +1,15 @@
 ﻿using SoundExplorersDatabase.Data;
 
 namespace SoundExplorersDatabase.Tests.Data {
-  public abstract class MockKeyedRelativeBase : IKeyedRelative {
-    private IKeyedRelative _identifyingParent;
+  public abstract class MockRelativeBase : IRelative {
+    private IRelative _identifyingParent;
     private string _simpleKey;
 
-    protected MockKeyedRelativeBase() {
+    protected MockRelativeBase() {
       Key = new Key(SimpleKey, IdentifyingParent);
     }
 
-    public IKeyedRelative IdentifyingParent {
+    public IRelative IdentifyingParent {
       get => _identifyingParent;
       protected set {
         _identifyingParent = value;

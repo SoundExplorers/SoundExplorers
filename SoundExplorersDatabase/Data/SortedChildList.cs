@@ -6,14 +6,14 @@ using JetBrains.Annotations;
 
 namespace SoundExplorersDatabase.Data {
   public class SortedChildList<TChild> : SortedList<Key, TChild>, IDictionary
-    where TChild : KeyedRelative {
-    internal SortedChildList([NotNull] KeyedRelative parent) : base(
+    where TChild : RelativeBase {
+    internal SortedChildList([NotNull] RelativeBase parent) : base(
       new KeyComparer()) {
       Parent = parent ??
                throw new ArgumentNullException(nameof(parent));
     }
 
-    private KeyedRelative Parent { get; }
+    private RelativeBase Parent { get; }
     public TChild this[int index] => Values[index];
 
     object IDictionary.this[object key] {
@@ -26,12 +26,12 @@ namespace SoundExplorersDatabase.Data {
     }
 
     bool IDictionary.Contains(object key) {
-      return ContainsKey(ToKey(key)); // ???
-      // var keyToMatch = ToKey(key);
-      // return (
-      //   from Key foundKey in Keys
-      //   where foundKey == keyToMatch
-      //   select foundKey).Any();
+      //return ContainsKey(ToKey(key)); // ???
+      var keyToMatch = ToKey(key);
+      return (
+        from Key foundKey in Keys
+        where foundKey == keyToMatch
+        select foundKey).Any();
     }
 
     public void Add([NotNull] TChild child) {

@@ -3,11 +3,11 @@ using JetBrains.Annotations;
 
 namespace SoundExplorersDatabase.Data {
   public class Key {
-    private readonly IKeyedRelative _identifyingParent;
+    private readonly IRelative _identifyingParent;
     private readonly string _simpleKey;
 
     internal Key([NotNull] Func<string> getSimpleKey,
-      [NotNull] Func<IKeyedRelative> getIdentifyingParent) {
+      [NotNull] Func<IRelative> getIdentifyingParent) {
       GetSimpleKey = getSimpleKey ??
                      throw new ArgumentNullException(nameof(getSimpleKey));
       GetIdentifyingParent = getIdentifyingParent ??
@@ -16,16 +16,16 @@ namespace SoundExplorersDatabase.Data {
     }
 
     internal Key([CanBeNull] string simpleKey,
-      [CanBeNull] IKeyedRelative identifyingParent) {
+      [CanBeNull] IRelative identifyingParent) {
       _simpleKey = simpleKey;
       _identifyingParent = identifyingParent;
     }
 
-    [CanBeNull] private Func<IKeyedRelative> GetIdentifyingParent { get; }
+    [CanBeNull] private Func<IRelative> GetIdentifyingParent { get; }
     [CanBeNull] private Func<string> GetSimpleKey { get; }
 
     [CanBeNull]
-    public IKeyedRelative IdentifyingParent => GetIdentifyingParent != null
+    public IRelative IdentifyingParent => GetIdentifyingParent != null
       ? GetIdentifyingParent.Invoke()
       : _identifyingParent;
 

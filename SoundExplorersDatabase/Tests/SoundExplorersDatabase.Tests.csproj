@@ -90,7 +90,7 @@
         <Compile Include="Data\Father.cs" />
         <Compile Include="Data\KeyTests.cs" />
         <Compile Include="Data\LocationTests.cs" />
-        <Compile Include="Data\MockKeyedRelativeBase.cs" />
+        <Compile Include="Data\MockRelativeBase.cs" />
         <Compile Include="Data\Mother.cs" />
         <Compile Include="Data\NewsletterTests.cs" />
         <Compile Include="Data\ReferencingTests.cs" />

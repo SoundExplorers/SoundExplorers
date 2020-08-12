@@ -6,7 +6,7 @@ using JetBrains.Annotations;
 using VelocityDb.Session;
 
 namespace SoundExplorersDatabase.Data {
-  public class Newsletter : KeyedRelative {
+  public class Newsletter : RelativeBase {
     private DateTime _date;
     private string _path;
 
@@ -51,7 +51,7 @@ namespace SoundExplorersDatabase.Data {
         newsletter => newsletter.Path == Path, session);
     }
 
-    protected override KeyedRelative FindWithSameKey(SessionBase session) {
+    protected override RelativeBase FindWithSameKey(SessionBase session) {
       return QueryHelper.Find<Newsletter>(GetSimpleKey(), session);
     }
 
@@ -59,7 +59,7 @@ namespace SoundExplorersDatabase.Data {
       return Events;
     }
 
-    protected override KeyedRelative GetIdentifyingParent() {
+    protected override RelativeBase GetIdentifyingParent() {
       return null;
     }
 
@@ -69,7 +69,7 @@ namespace SoundExplorersDatabase.Data {
 
     [ExcludeFromCodeCoverage]
     protected override void OnParentFieldToBeUpdated(
-      Type parentPersistableType, KeyedRelative newParent) {
+      Type parentPersistableType, RelativeBase newParent) {
       throw new NotSupportedException();
     }
   }
