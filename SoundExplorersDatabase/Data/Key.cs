@@ -89,12 +89,12 @@ namespace SoundExplorersDatabase.Data {
       }
       if (IdentifyingParent != null && keyToMatch.IdentifyingParent != null) {
         if (IdentifyingParent.Key.Equals(keyToMatch.IdentifyingParent.Key)) {
-          return string.CompareOrdinal(SimpleKey, keyToMatch.SimpleKey) == 0;
+          return SimpleKey == keyToMatch.SimpleKey;
         }
         return false;
       }
       if (IdentifyingParent == null && keyToMatch.IdentifyingParent == null) {
-        return string.CompareOrdinal(SimpleKey, keyToMatch.SimpleKey) == 0;
+        return SimpleKey == keyToMatch.SimpleKey;
       }
       return false;
     }
