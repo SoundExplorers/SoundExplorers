@@ -89,9 +89,9 @@ namespace SoundExplorersDatabase.Tests.Data {
       TestSession.DeleteFolderIfExists(DatabaseFolderPath);
     }
 
-    private const string Event1Key = "2013/04/11";
+    private const string Event1SimpleKey = "2013/04/11";
     private const string Event1Notes = "My notes.";
-    private const string Event2Key = "2016/07/14";
+    private const string Event2SimpleKey = "2016/07/14";
     private const string Location1Name = "Fred's";
     private const string Location2Name = "Pyramid Club";
     private const string Newsletter1Key = "2013/04/05";
@@ -106,10 +106,10 @@ namespace SoundExplorersDatabase.Tests.Data {
     private string DatabaseFolderPath { get; set; }
     private QueryHelper QueryHelper { get; set; }
     private Event Event1 { get; set; }
-    private static DateTime Event1Date => DateTime.Parse(Event1Key);
+    private static DateTime Event1Date => DateTime.Parse(Event1SimpleKey);
     private Event Event1AtLocation2 { get; set; }
     private Event Event2 { get; set; }
-    private static DateTime Event2Date => DateTime.Parse(Event2Key);
+    private static DateTime Event2Date => DateTime.Parse(Event2SimpleKey);
     private Location Location1 { get; set; }
     private Location Location2 { get; set; }
     private Newsletter Newsletter1 { get; set; }
@@ -131,9 +131,9 @@ namespace SoundExplorersDatabase.Tests.Data {
     public void T010_Initial() {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginRead();
-        Event1 = QueryHelper.Read<Event>(Event1Key, Location1, session);
-        Event1AtLocation2 = QueryHelper.Read<Event>(Event1Key, Location2, session);
-        Event2 = QueryHelper.Read<Event>(Event2Key, Location1, session);
+        Event1 = QueryHelper.Read<Event>(Event1SimpleKey, Location1, session);
+        Event1AtLocation2 = QueryHelper.Read<Event>(Event1SimpleKey, Location2, session);
+        Event2 = QueryHelper.Read<Event>(Event2SimpleKey, Location1, session);
         Location1 = QueryHelper.Read<Location>(Location1Name, session);
         Location2 = QueryHelper.Read<Location>(Location2Name, session);
         Newsletter1 = QueryHelper.Read<Newsletter>(Newsletter1Key, session);
@@ -187,7 +187,7 @@ namespace SoundExplorersDatabase.Tests.Data {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
         Location1 = QueryHelper.Read<Location>(Location1Name, session);
-        Event1 = QueryHelper.Read<Event>(Event1Key, Location1, session);
+        Event1 = QueryHelper.Read<Event>(Event1SimpleKey, Location1, session);
         Assert.Throws<ConstraintException>(() =>
             // ReSharper disable once AssignNullToNotNullAttribute
             Event1.Location = null,
@@ -205,7 +205,7 @@ namespace SoundExplorersDatabase.Tests.Data {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
         Series2 = QueryHelper.Read<Series>(Series2Name, session);
-        Event1 = QueryHelper.Read<Event>(Event1Key, Location1, session);
+        Event1 = QueryHelper.Read<Event>(Event1SimpleKey, Location1, session);
         Event1.Series = Series2;
         session.Commit();
         Assert.AreSame(Series2, Event1.Series,
@@ -282,7 +282,7 @@ namespace SoundExplorersDatabase.Tests.Data {
     public void T080_DisallowUnpersistEventWithSets() {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
-        Event1 = QueryHelper.Read<Event>(Event1Key, Location1, session);
+        Event1 = QueryHelper.Read<Event>(Event1SimpleKey, Location1, session);
         Assert.Throws<ReferentialIntegrityException>(() =>
           Event1.Unpersist(session));
         session.Commit();
@@ -293,7 +293,7 @@ namespace SoundExplorersDatabase.Tests.Data {
     public void T090_DisallowRemoveSet() {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
-        Event1 = QueryHelper.Read<Event>(Event1Key, Location1, session);
+        Event1 = QueryHelper.Read<Event>(Event1SimpleKey, Location1, session);
         Set1 = QueryHelper.Read<Set>(Set1.SimpleKey, Event1, session);
         Assert.Throws<ConstraintException>(() =>
             Event1.Sets.Remove(Set1),

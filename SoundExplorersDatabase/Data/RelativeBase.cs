@@ -13,7 +13,6 @@ namespace SoundExplorersDatabase.Data {
   public abstract class RelativeBase : ReferenceTracked, IRelative {
     private IDictionary<Type, IDictionary> _childrenOfType;
     private IDictionary<Type, IRelationInfo> _childrenRelations;
-    private Key _key;
     private IDictionary<Type, IRelationInfo> _parentRelations;
     private IDictionary<Type, RelativeBase> _parents;
     private QueryHelper _queryHelper;
@@ -26,6 +25,7 @@ namespace SoundExplorersDatabase.Data {
                           nameof(persistableType));
       SimpleKeyName = simpleKeyName ??
                       throw new ArgumentNullException(nameof(simpleKeyName));
+      Key = new Key(this);
     }
 
     [NotNull]
@@ -94,13 +94,11 @@ namespace SoundExplorersDatabase.Data {
 
     [NotNull] private string SimpleKeyName { get; }
 
-    [CanBeNull] public IRelative IdentifyingParent => Key.IdentifyingParent;
+    [CanBeNull] public IRelative IdentifyingParent => GetIdentifyingParent();
 
-    [NotNull]
-    public Key Key =>
-      _key ?? (_key = new Key(GetSimpleKey, GetIdentifyingParent));
+    [NotNull] public Key Key { get; }
 
-    [CanBeNull] public string SimpleKey => Key.SimpleKey;
+    [CanBeNull] public string SimpleKey => GetSimpleKey();
 
     internal void AddChild([NotNull] RelativeBase child) {
       CheckCanAddChild(child);

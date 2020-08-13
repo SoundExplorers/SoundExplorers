@@ -21,6 +21,16 @@ namespace SoundExplorersDatabase.Data {
 
     [CanBeNull]
     public TPersistable Find<TPersistable>(
+      [CanBeNull] string simpleKey,
+      [CanBeNull] RelativeBase identifyingParent,
+      [NotNull] SessionBase session) where TPersistable : RelativeBase {
+      return Find<TPersistable>(
+        persistable => persistable.Key == new Key(simpleKey, identifyingParent),
+        session);
+    }
+
+    [CanBeNull]
+    public TPersistable Find<TPersistable>(
       [NotNull] Func<TPersistable, bool> predicate,
       [NotNull] SessionBase session) where TPersistable : RelativeBase {
       if (!SchemaExistsOnDatabase(session)) {
@@ -49,7 +59,6 @@ namespace SoundExplorersDatabase.Data {
     }
 
     [NotNull]
-    [PublicAPI]
     public static TPersistable Read<TPersistable>(
       [NotNull] Func<TPersistable, bool> predicate,
       [NotNull] SessionBase session) where TPersistable : RelativeBase {

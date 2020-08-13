@@ -1,18 +1,12 @@
-﻿using System;
-using JetBrains.Annotations;
+﻿using JetBrains.Annotations;
 
 namespace SoundExplorersDatabase.Data {
   public class Key {
     private readonly IRelative _identifyingParent;
     private readonly string _simpleKey;
 
-    internal Key([NotNull] Func<string> getSimpleKey,
-      [NotNull] Func<IRelative> getIdentifyingParent) {
-      GetSimpleKey = getSimpleKey ??
-                     throw new ArgumentNullException(nameof(getSimpleKey));
-      GetIdentifyingParent = getIdentifyingParent ??
-                             throw new ArgumentNullException(
-                               nameof(getIdentifyingParent));
+    internal Key([NotNull] IRelative owner) {
+      Owner = owner;
     }
 
     internal Key([CanBeNull] string simpleKey,
@@ -21,17 +15,13 @@ namespace SoundExplorersDatabase.Data {
       _identifyingParent = identifyingParent;
     }
 
-    [CanBeNull] private Func<IRelative> GetIdentifyingParent { get; }
-    [CanBeNull] private Func<string> GetSimpleKey { get; }
-
     [CanBeNull]
-    public IRelative IdentifyingParent => GetIdentifyingParent != null
-      ? GetIdentifyingParent.Invoke()
-      : _identifyingParent;
+    public IRelative IdentifyingParent =>
+      Owner?.IdentifyingParent ?? _identifyingParent;
 
-    [CanBeNull]
-    public string SimpleKey =>
-      GetSimpleKey != null ? GetSimpleKey.Invoke() : _simpleKey;
+    [CanBeNull] private IRelative Owner { get; }
+
+    [CanBeNull] public string SimpleKey => Owner?.SimpleKey ?? _simpleKey;
 
     public override string ToString() {
       if (SimpleKey != null) {
