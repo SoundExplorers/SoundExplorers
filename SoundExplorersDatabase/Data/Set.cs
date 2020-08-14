@@ -7,29 +7,27 @@ using VelocityDb.Session;
 namespace SoundExplorersDatabase.Data {
   public class Set : RelativeBase {
     private Act _act;
-    private Event _event;
     private string _notes;
     private int _setNo;
 
-    public Set() : base(typeof(Set), nameof(SetNo)) { }
+    public Set() : base(typeof(Set), nameof(SetNo), typeof(Event)) { }
 
     [CanBeNull]
     public Act Act {
       get => _act;
       set {
         UpdateNonIndexField();
-        ChangeParent(typeof(Act), value);
+        ChangeNonIdentifyingParent(typeof(Act), value);
         _act = value;
       }
     }
 
     [NotNull]
     public Event Event {
-      get => _event;
+      get => (Event)IdentifyingParent;
       set {
         UpdateNonIndexField();
-        ChangeParent(typeof(Event), value);
-        _event = value;
+        IdentifyingParent = value;
       }
     }
 
@@ -46,6 +44,7 @@ namespace SoundExplorersDatabase.Data {
       set {
         UpdateNonIndexField();
         _setNo = value;
+        SimpleKey = value.ToString().PadLeft(2, '0');
       }
     }
 
@@ -59,21 +58,9 @@ namespace SoundExplorersDatabase.Data {
       throw new NotImplementedException();
     }
 
-    protected override RelativeBase GetIdentifyingParent() {
-      return Event;
-    }
-
-    protected override string GetSimpleKey() {
-      return SetNo.ToString().PadLeft(2, '0');
-    }
-
-    protected override void OnParentFieldToBeUpdated(Type parentPersistableType,
-      RelativeBase newParent) {
-      if (parentPersistableType == typeof(Event)) {
-        _event = (Event)newParent;
-      } else {
-        _act = (Act)newParent;
-      }
+    protected override void OnNonIdentifyingParentFieldToBeUpdated(
+      Type parentPersistableType, RelativeBase newParent) {
+      _act = (Act)newParent;
     }
   }
 }

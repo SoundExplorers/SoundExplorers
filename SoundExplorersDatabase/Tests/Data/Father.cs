@@ -7,9 +7,8 @@ using VelocityDb.Session;
 
 namespace SoundExplorersDatabase.Tests.Data {
   public class Father : RelativeBase {
-    private string _name;
 
-    public Father([NotNull] QueryHelper queryHelper) : base(typeof(Father), nameof(Name)) {
+    public Father([NotNull] QueryHelper queryHelper) : base(typeof(Father), nameof(Name), null) {
       QueryHelper = queryHelper ??
                     throw new ArgumentNullException(nameof(queryHelper));
       Schema = TestSchema.Instance;
@@ -19,12 +18,11 @@ namespace SoundExplorersDatabase.Tests.Data {
 
     [NotNull] public SortedChildList<Daughter> Daughters { get; }
 
-    [NotNull]
     public string Name {
-      get => _name;
+      get => SimpleKey;
       set {
         UpdateNonIndexField();
-        _name = value;
+        SimpleKey = value;
       }
     }
 
@@ -41,16 +39,8 @@ namespace SoundExplorersDatabase.Tests.Data {
       return Sons;
     }
 
-    protected override RelativeBase GetIdentifyingParent() {
-      return null;
-    }
-
-    protected override string GetSimpleKey() {
-      return Name;
-    }
-
     [ExcludeFromCodeCoverage]
-    protected override void OnParentFieldToBeUpdated(
+    protected override void OnNonIdentifyingParentFieldToBeUpdated(
       Type parentPersistableType,
       RelativeBase newParent) {
       throw new NotSupportedException();

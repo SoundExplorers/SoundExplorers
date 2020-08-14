@@ -9,9 +9,8 @@ namespace SoundExplorersDatabase.Tests.Data {
   public class Daughter : RelativeBase {
     private Father _father;
     private Mother _mother;
-    private string _name;
 
-    public Daughter([NotNull] QueryHelper queryHelper) : base(typeof(Daughter), nameof(Name)) {
+    public Daughter([NotNull] QueryHelper queryHelper) : base(typeof(Daughter), nameof(Name), null) {
       QueryHelper = queryHelper ??
                     throw new ArgumentNullException(nameof(queryHelper));
       Schema = TestSchema.Instance;
@@ -21,7 +20,7 @@ namespace SoundExplorersDatabase.Tests.Data {
       get => _father;
       set {
         UpdateNonIndexField();
-        ChangeParent(typeof(Father), value);
+        ChangeNonIdentifyingParent(typeof(Father), value);
         _father = value;
       }
     }
@@ -31,17 +30,16 @@ namespace SoundExplorersDatabase.Tests.Data {
       get => _mother;
       set {
         UpdateNonIndexField();
-        ChangeParent(typeof(Mother), value);
+        ChangeNonIdentifyingParent(typeof(Mother), value);
         _mother = value;
       }
     }
 
-    [NotNull]
     public string Name {
-      get => _name;
+      get => SimpleKey;
       set {
         UpdateNonIndexField();
-        _name = value;
+        SimpleKey = value;
       }
     }
 
@@ -55,15 +53,7 @@ namespace SoundExplorersDatabase.Tests.Data {
       throw new NotSupportedException();
     }
 
-    protected override RelativeBase GetIdentifyingParent() {
-      return null;
-    }
-
-    protected override string GetSimpleKey() {
-      return Name;
-    }
-
-    protected override void OnParentFieldToBeUpdated(
+    protected override void OnNonIdentifyingParentFieldToBeUpdated(
       Type parentPersistableType,
       RelativeBase newParent) {
       if (parentPersistableType == typeof(Father)) {

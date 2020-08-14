@@ -6,20 +6,19 @@ using VelocityDb.Session;
 
 namespace SoundExplorersDatabase.Data {
   public class Series : RelativeBase {
-    private string _name;
     private string _notes;
 
-    public Series() : base(typeof(Series), nameof(Name)) {
+    public Series() : base(typeof(Series), nameof(Name), null) {
       Events = new SortedChildList<Event>(this);
     }
 
     [NotNull] public SortedChildList<Event> Events { get; }
 
     public string Name {
-      get => _name;
+      get => SimpleKey;
       set {
         UpdateNonIndexField();
-        _name = value;
+        SimpleKey = value;
       }
     }
 
@@ -32,23 +31,15 @@ namespace SoundExplorersDatabase.Data {
     }
 
     protected override RelativeBase FindWithSameKey(SessionBase session) {
-      return QueryHelper.Find<Series>(GetSimpleKey(), session);
+      return QueryHelper.Find<Series>(SimpleKey, session);
     }
 
     protected override IDictionary GetChildren(Type childType) {
       return Events;
     }
 
-    protected override RelativeBase GetIdentifyingParent() {
-      return null;
-    }
-
-    protected override string GetSimpleKey() {
-      return Name;
-    }
-
     [ExcludeFromCodeCoverage]
-    protected override void OnParentFieldToBeUpdated(
+    protected override void OnNonIdentifyingParentFieldToBeUpdated(
       Type parentPersistableType, RelativeBase newParent) {
       throw new NotSupportedException();
     }

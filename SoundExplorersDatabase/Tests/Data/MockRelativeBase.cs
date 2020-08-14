@@ -2,14 +2,14 @@
 
 namespace SoundExplorersDatabase.Tests.Data {
   public abstract class MockRelativeBase : IRelative {
-    private IRelative _identifyingParent;
+    private RelativeBase _identifyingParent;
     private string _simpleKey;
 
     protected MockRelativeBase() {
       Key = new Key(SimpleKey, IdentifyingParent);
     }
 
-    public IRelative IdentifyingParent {
+    public RelativeBase IdentifyingParent {
       get => _identifyingParent;
       protected set {
         _identifyingParent = value;

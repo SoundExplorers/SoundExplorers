@@ -7,12 +7,11 @@ using VelocityDb.Session;
 namespace SoundExplorersDatabase.Data {
   public class Event : RelativeBase {
     private DateTime _date;
-    private Location _location;
     private Newsletter _newsletter;
     private string _notes;
     private Series _series;
 
-    public Event() : base(typeof(Event), nameof(Date)) {
+    public Event() : base(typeof(Event), nameof(Date), typeof(Location)) {
       Sets = new SortedChildList<Set>(this);
     }
 
@@ -21,16 +20,16 @@ namespace SoundExplorersDatabase.Data {
       set {
         UpdateNonIndexField();
         _date = value;
+        SimpleKey = $"{Date:yyyy/MM/dd}";
       }
     }
 
     [NotNull]
     public Location Location {
-      get => _location;
+      get => (Location)IdentifyingParent;
       set {
         UpdateNonIndexField();
-        ChangeParent(typeof(Location), value);
-        _location = value;
+        IdentifyingParent = value;
       }
     }
 
@@ -39,7 +38,7 @@ namespace SoundExplorersDatabase.Data {
       get => _newsletter;
       set {
         UpdateNonIndexField();
-        ChangeParent(typeof(Newsletter), value);
+        ChangeNonIdentifyingParent(typeof(Newsletter), value);
         _newsletter = value;
       }
     }
@@ -57,11 +56,11 @@ namespace SoundExplorersDatabase.Data {
       get => _series;
       set {
         UpdateNonIndexField();
-        ChangeParent(typeof(Series), value);
+        ChangeNonIdentifyingParent(typeof(Series), value);
         _series = value;
       }
     }
-    
+
     [NotNull] public SortedChildList<Set> Sets { get; }
 
     [ExcludeFromCodeCoverage]
@@ -74,19 +73,10 @@ namespace SoundExplorersDatabase.Data {
       return Sets;
     }
 
-    protected override RelativeBase GetIdentifyingParent() {
-      return Location;
-    }
-
-    protected override string GetSimpleKey() {
-      return $"{Date:yyyy/MM/dd}";
-    }
-
-    protected override void OnParentFieldToBeUpdated(Type parentPersistableType,
+    protected override void OnNonIdentifyingParentFieldToBeUpdated(
+      Type parentPersistableType,
       RelativeBase newParent) {
-      if (parentPersistableType == typeof(Location)) {
-        _location = (Location)newParent;
-      } else if (parentPersistableType == typeof(Newsletter)) {
+      if (parentPersistableType == typeof(Newsletter)) {
         _newsletter = (Newsletter)newParent;
       } else {
         _series = (Series)newParent;
