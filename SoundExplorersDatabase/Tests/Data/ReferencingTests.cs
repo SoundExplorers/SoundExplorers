@@ -108,13 +108,13 @@ namespace SoundExplorersDatabase.Tests.Data {
         Assert.IsTrue(Daughter1.IsPersistent,
           "Daughter1.IsPersistent initially");
         Assert.AreEqual(Daughter1Name, Daughter1.Name, "Daughter1.Name");
-        Assert.AreEqual(Daughter1Name, Daughter1.SimpleKey, "Daughter1.Key");
+        Assert.AreEqual(Daughter1Name, Daughter1.SimpleKey, "Daughter1.SimpleKey");
         Assert.IsTrue(Daughter2.IsPersistent,
           "Daughter2.IsPersistent initially");
         Assert.AreEqual(Daughter2Name, Daughter2.Name, "Daughter2.Name");
         Assert.IsTrue(Mother1.IsPersistent, "Mother1.IsPersistent initially");
         Assert.AreEqual(Mother1Name, Mother1.Name, "Mother1.Name initially");
-        Assert.AreEqual(Mother1Name, Mother1.SimpleKey, "Mother1.Key initially");
+        Assert.AreEqual(Mother1Name, Mother1.SimpleKey, "Mother1.SimpleKey initially");
         Assert.IsTrue(Mother2.IsPersistent, "Mother2.IsPersistent initially");
         Assert.AreEqual(Mother2Name, Mother2.Name, "Mother2.Name initially");
         Assert.AreEqual(1, Mother1.Daughters.Count,
@@ -441,20 +441,21 @@ namespace SoundExplorersDatabase.Tests.Data {
     }
 
     [Test]
-    public void T100_DisallowNullKey() {
+    public void T100_DisallowNullSimpleKey() {
+      
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
         Daughter1 = QueryHelper.Read<Daughter>(Daughter1Name, session);
         Assert.Throws<NoNullAllowedException>(() =>
           // ReSharper disable once AssignNullToNotNullAttribute
-          Daughter1.Name = null, "Disallow set Key to null");
+          Daughter1.Name = null, "Disallow set SimpleKey to null");
         var namelessSon = new Son(QueryHelper);
         Assert.Throws<NoNullAllowedException>(() =>
           // ReSharper disable once AssignNullToNotNullAttribute
-          namelessSon.Name = null, "Disallow set (initially null) Key to null");
+          namelessSon.Name = null, "Disallow set (initially null) SimpleKey to null");
         Assert.Throws<NoNullAllowedException>(() =>
             session.Persist(namelessSon),
-          "Disallow persist entity with null Key");
+          "Disallow persist entity with null SimpleKey");
         session.Commit();
       }
     }

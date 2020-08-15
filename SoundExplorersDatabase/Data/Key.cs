@@ -24,17 +24,17 @@ namespace SoundExplorersDatabase.Data {
     }
 
     [CanBeNull]
-    public IRelative IdentifyingParent =>
+    private IRelative IdentifyingParent =>
       Owner?.IdentifyingParent ?? _identifyingParent;
 
     [CanBeNull] private IRelative Owner { get; }
 
-    [CanBeNull] public string SimpleKey => Owner?.SimpleKey ?? _simpleKey;
+    [CanBeNull] private string SimpleKey => Owner?.SimpleKey ?? _simpleKey;
 
     public override string ToString() {
       if (SimpleKey != null) {
         return IdentifyingParent != null
-          ? $"{SimpleKey} {IdentifyingParent?.Key}"
+          ? $"{SimpleKey} | {IdentifyingParent?.Key}"
           : SimpleKey;
       }
       return string.Empty;
@@ -82,7 +82,7 @@ namespace SoundExplorersDatabase.Data {
 
     public override bool Equals(object obj) {
       var keyToMatch = obj as Key;
-      if (keyToMatch == null) {
+      if ((object)keyToMatch == null) {
         return false;
       }
       if (IdentifyingParent != null && keyToMatch.IdentifyingParent != null) {

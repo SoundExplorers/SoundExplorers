@@ -96,12 +96,18 @@ namespace SoundExplorersDatabase.Data {
 
     [NotNull] private string SimpleKeyName { get; }
 
-    [NotNull] public Type PersistableType { get; }
+    [NotNull] private Type PersistableType { get; }
+
+    private bool IsAddingToOrRemovingFromIdentifyingParent { get; set; }
 
     [CanBeNull]
     public RelativeBase IdentifyingParent {
       get => _identifyingParent;
       protected set {
+        if (IsAddingToOrRemovingFromIdentifyingParent) {
+          _identifyingParent = value;
+          return;
+        }
         if (IdentifyingParentType == null) {
           throw new ConstraintException(
             "An identifying parent type has not been specified  " +
@@ -118,6 +124,7 @@ namespace SoundExplorersDatabase.Data {
             $"IdentifyingParent for {PersistableType.Name} '{Key}'. " +
             $"A {IdentifyingParentType.Name} is expected'.");
         }
+        value.CheckForDuplicateChild(this);
         if (_identifyingParent != null &&
             // Should always be true
             _identifyingParent.ChildrenOfType[PersistableType].Contains(Key)) {
@@ -150,7 +157,8 @@ namespace SoundExplorersDatabase.Data {
 
     internal void AddChild([NotNull] RelativeBase child) {
       CheckCanAddChild(child);
-      ChildrenOfType[child.PersistableType].Add(child.Key, child);
+      var newKey = new Key(this,child. SimpleKey, this);
+      ChildrenOfType[child.PersistableType].Add(newKey, child);
       References.AddFast(new Reference(child, "_children"));
       UpdateChild(child, this);
     }
@@ -176,20 +184,13 @@ namespace SoundExplorersDatabase.Data {
           $"because it already belongs to {PersistableType.Name} " +
           $"'{child.Parents[PersistableType].Key}'.");
       }
-      if (ChildrenOfType[child.PersistableType].Contains(child.Key)) {
-        throw new DuplicateKeyException(
-          child,
-          $"{child.PersistableType.Name} '{child.Key}' " +
-          $"cannot be added to {PersistableType.Name} '{Key}', " +
-          $"because a {child.PersistableType.Name} with that Key " +
-          $"already belongs to the {PersistableType.Name}.");
-      }
+      CheckForDuplicateChild(child);
     }
 
     protected virtual void CheckCanPersist([NotNull] SessionBase session) {
-      if (Key == null) {
+      if (SimpleKey == null) {
         throw new NoNullAllowedException(
-          "A Key has not yet been specified. " +
+          $"A {SimpleKeyName} has not yet been specified. " +
           $"So the {PersistableType.Name} cannot be persisted.");
       }
       foreach (var parentKeyValuePair in Parents) {
@@ -231,6 +232,18 @@ namespace SoundExplorersDatabase.Data {
           $"{child.PersistableType.Name} '{child.Key}' " +
           $"cannot be removed from {PersistableType.Name} '{Key}', " +
           "because membership is mandatory.");
+      }
+    }
+
+    private void CheckForDuplicateChild([NotNull] RelativeBase child) {
+      if (ChildrenOfType[child.PersistableType]
+        .Contains(new Key(child.SimpleKey, this))) {
+        throw new DuplicateKeyException(
+          child,
+          $"{child.PersistableType.Name} '{child.Key}' " +
+          $"cannot be added to {PersistableType.Name} '{Key}', " +
+          $"because a {child.PersistableType.Name} with that Key " +
+          $"already belongs to the {PersistableType.Name}.");
       }
     }
 
@@ -342,7 +355,14 @@ namespace SoundExplorersDatabase.Data {
       [CanBeNull] RelativeBase newParent) {
       child.UpdateNonIndexField();
       child.Parents[PersistableType] = newParent;
-      child.OnNonIdentifyingParentFieldToBeUpdated(PersistableType, newParent);
+      if (PersistableType == child.IdentifyingParentType) {
+        child.IsAddingToOrRemovingFromIdentifyingParent = true;
+        child.IdentifyingParent = newParent;
+        child.IsAddingToOrRemovingFromIdentifyingParent = false;
+      } else {
+        child.OnNonIdentifyingParentFieldToBeUpdated(PersistableType,
+          newParent);
+      }
     }
   }
 }

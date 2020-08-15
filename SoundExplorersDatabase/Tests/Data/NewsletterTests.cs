@@ -51,7 +51,7 @@ namespace SoundExplorersDatabase.Tests.Data {
     }
 
     private const string Location1Name = "Pyramid Club";
-    private const string Newsletter1Key = "2013/04/05";
+    private const string Newsletter1SimpleKey = "2013/04/05";
     private const string Newsletter1Path = "Path One";
     private const string Newsletter2Key = "2016/07/08";
 
@@ -65,7 +65,7 @@ namespace SoundExplorersDatabase.Tests.Data {
     private Newsletter Newsletter1 { get; set; }
 
     private static readonly DateTime Newsletter1Date =
-      DateTime.Parse(Newsletter1Key);
+      DateTime.Parse(Newsletter1SimpleKey);
 
     private Newsletter Newsletter2 { get; set; }
 
@@ -76,15 +76,15 @@ namespace SoundExplorersDatabase.Tests.Data {
     public void T010_Initial() {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginRead();
-        Newsletter1 = QueryHelper.Read<Newsletter>(Newsletter1Key, session);
+        Newsletter1 = QueryHelper.Read<Newsletter>(Newsletter1SimpleKey, session);
         Newsletter2 = QueryHelper.Read<Newsletter>(Newsletter2Key, session);
         Event1 = QueryHelper.Read<Event>(Event1.SimpleKey, Location1, session);
         session.Commit();
       }
       Assert.AreEqual(Newsletter1Date, Newsletter1.Date,
         "Newsletter1.Date initially");
-      Assert.AreEqual(Newsletter1Key, Newsletter1.SimpleKey,
-        "Newsletter1.Key initially");
+      Assert.AreEqual(Newsletter1SimpleKey, Newsletter1.SimpleKey,
+        "Newsletter1.SimpleKey initially");
       Assert.AreEqual(Newsletter1Path, Newsletter1.Path,
         "Newsletter1.Path initially");
       Assert.AreEqual(Newsletter2Date, Newsletter2.Date,

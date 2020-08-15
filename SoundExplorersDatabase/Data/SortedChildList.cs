@@ -26,7 +26,6 @@ namespace SoundExplorersDatabase.Data {
     }
 
     bool IDictionary.Contains(object key) {
-      //return ContainsKey(ToKey(key)); // ???
       var keyToMatch = ToKey(key);
       return (
         from Key foundKey in Keys
