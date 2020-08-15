@@ -15,6 +15,14 @@ namespace SoundExplorersDatabase.Data {
       _identifyingParent = identifyingParent;
     }
 
+    internal Key([NotNull] IRelative owner,
+      [CanBeNull] string simpleKey,
+      [CanBeNull] IRelative identifyingParent) {
+      Owner = owner;
+      _simpleKey = simpleKey;
+      _identifyingParent = identifyingParent;
+    }
+
     [CanBeNull]
     public IRelative IdentifyingParent =>
       Owner?.IdentifyingParent ?? _identifyingParent;

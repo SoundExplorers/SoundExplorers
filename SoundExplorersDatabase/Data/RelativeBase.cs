@@ -115,10 +115,24 @@ namespace SoundExplorersDatabase.Data {
         if (value.PersistableType != IdentifyingParentType) {
           throw new ConstraintException(
             $"A {value.PersistableType.Name} has been specified as the " +
-            $"{IdentifyingParentType.Name} for {PersistableType.Name} '{Key}'.");
+            $"IdentifyingParent for {PersistableType.Name} '{Key}'. " +
+            $"A {IdentifyingParentType.Name} is expected'.");
+        }
+        if (_identifyingParent != null &&
+            // Should always be true
+            _identifyingParent.ChildrenOfType[PersistableType].Contains(Key)) {
+          _identifyingParent.ChildrenOfType[PersistableType].Remove(Key);
+          _identifyingParent.References.Remove(
+            References.First(r => r.To.Equals(this)));
+        }
+        var newKey = new Key(this, SimpleKey, value);
+        // Should always be true
+        if (!value.ChildrenOfType[PersistableType].Contains(newKey)) {
+          value.ChildrenOfType[PersistableType].Add(newKey, this);
+          value.References.AddFast(new Reference(this, "_children"));
+          Parents[IdentifyingParentType] = value;
         }
         _identifyingParent = value;
-        ChangeParent(IdentifyingParentType, value);
       }
     }
 
@@ -142,12 +156,6 @@ namespace SoundExplorersDatabase.Data {
     }
 
     protected void ChangeNonIdentifyingParent(
-      [NotNull] Type parentPersistableType,
-      [CanBeNull] RelativeBase newParent) {
-      ChangeParent(parentPersistableType, newParent);
-    }
-
-    private void ChangeParent(
       [NotNull] Type parentPersistableType,
       [CanBeNull] RelativeBase newParent) {
       Parents[parentPersistableType]?.RemoveChild(this, newParent != null);
@@ -334,7 +342,7 @@ namespace SoundExplorersDatabase.Data {
       [CanBeNull] RelativeBase newParent) {
       child.UpdateNonIndexField();
       child.Parents[PersistableType] = newParent;
-      child.OnParentFieldToBeUpdated(PersistableType, newParent);
+      child.OnNonIdentifyingParentFieldToBeUpdated(PersistableType, newParent);
     }
   }
 }
