@@ -10,17 +10,7 @@ namespace SoundExplorersDatabase.Tests.Data {
     [SetUp]
     public void Setup() {
       QueryHelper = new QueryHelper();
-      // DatabaseFolderPath = TestSession.CreateDatabaseFolder();
-      // using (var session = new TestSession(DatabaseFolderPath)) {
-      //   session.BeginUpdate();
-      //   session.Commit();
-      // }
     }
-
-    // [TearDown]
-    // public void TearDown() {
-    //   TestSession.DeleteFolderIfExists(DatabaseFolderPath);
-    // }
 
     private class DudDaughter : Daughter {
       public DudDaughter([NotNull] QueryHelper queryHelper,
@@ -36,7 +26,6 @@ namespace SoundExplorersDatabase.Tests.Data {
       }
     }
 
-    //private string DatabaseFolderPath { get; set; }
     private QueryHelper QueryHelper { get; set; }
 
     [Test]
