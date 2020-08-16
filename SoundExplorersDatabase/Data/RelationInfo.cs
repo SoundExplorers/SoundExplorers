@@ -12,8 +12,9 @@ namespace SoundExplorersDatabase.Data {
       IsMandatory = isMandatory;
     }
 
-    [NotNull] public Type ParentType { get; }
     [NotNull] public Type ChildType { get; }
+
+    [NotNull] public Type ParentType { get; }
     public bool IsMandatory { get; }
   }
 }

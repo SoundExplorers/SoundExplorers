@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace SoundExplorersDatabase.Data {
+﻿namespace SoundExplorersDatabase.Data {
   public interface IRelative {
     RelativeBase IdentifyingParent { get; }
     Key Key { get; }

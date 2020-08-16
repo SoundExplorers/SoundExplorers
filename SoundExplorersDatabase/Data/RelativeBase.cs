@@ -124,7 +124,8 @@ namespace SoundExplorersDatabase.Data {
             $"IdentifyingParent for {PersistableType.Name} '{Key}'. " +
             $"A {IdentifyingParentType.Name} is expected'.");
         }
-        value.CheckForDuplicateChild(this);
+        var newKey = new Key(SimpleKey, value);
+        value.CheckForDuplicateChild(PersistableType, newKey);
         if (_identifyingParent != null &&
             // Should always be true
             _identifyingParent.ChildrenOfType[PersistableType].Contains(Key)) {
@@ -132,7 +133,7 @@ namespace SoundExplorersDatabase.Data {
           _identifyingParent.References.Remove(
             _identifyingParent.References.First(r => r.To.Equals(this)));
         }
-        value.ChildrenOfType[PersistableType].Add(new Key(this, value), this);
+        value.ChildrenOfType[PersistableType].Add(newKey, this);
         Parents[IdentifyingParentType] = value;
         _identifyingParent = value;
         value.References.AddFast(new Reference(this, "_children"));
@@ -179,7 +180,7 @@ namespace SoundExplorersDatabase.Data {
           $"because it already belongs to {PersistableType.Name} " +
           $"'{child.Parents[PersistableType].Key}'.");
       }
-      CheckForDuplicateChild(child);
+      CheckForDuplicateChild(child.PersistableType, CreateChildKey(child));
     }
 
     protected virtual void CheckCanPersist([NotNull] SessionBase session) {
@@ -230,14 +231,15 @@ namespace SoundExplorersDatabase.Data {
       }
     }
 
-    private void CheckForDuplicateChild([NotNull] RelativeBase child) {
-      if (ChildrenOfType[child.PersistableType]
-        .Contains(CreateChildKey(child))) {
+    private void CheckForDuplicateChild([NotNull] Type childPersistableType,
+      [NotNull] Key keyToCheck) {
+      if (ChildrenOfType[childPersistableType]
+        .Contains(keyToCheck)) {
         throw new DuplicateKeyException(
-          child,
-          $"{child.PersistableType.Name} '{child.Key}' " +
+          keyToCheck,
+          $"{childPersistableType.Name} '{keyToCheck}' " +
           $"cannot be added to {PersistableType.Name} '{Key}', " +
-          $"because a {child.PersistableType.Name} with that Key " +
+          $"because a {childPersistableType.Name} with that Key " +
           $"already belongs to the {PersistableType.Name}.");
       }
     }

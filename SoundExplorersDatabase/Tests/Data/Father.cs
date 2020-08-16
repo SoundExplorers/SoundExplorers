@@ -7,8 +7,8 @@ using VelocityDb.Session;
 
 namespace SoundExplorersDatabase.Tests.Data {
   public class Father : RelativeBase {
-
-    public Father([NotNull] QueryHelper queryHelper) : base(typeof(Father), nameof(Name), null) {
+    public Father([NotNull] QueryHelper queryHelper) : base(typeof(Father),
+      nameof(Name), null) {
       QueryHelper = queryHelper ??
                     throw new ArgumentNullException(nameof(queryHelper));
       Schema = TestSchema.Instance;

@@ -37,7 +37,7 @@ namespace SoundExplorersDatabase.Tests.Data {
       };
       Set1AtEvent2 = new Set {
         QueryHelper = QueryHelper,
-        SetNo = Set1SetNo,
+        SetNo = Set1SetNo
       };
       Set2 = new Set {
         QueryHelper = QueryHelper,
@@ -137,8 +137,8 @@ namespace SoundExplorersDatabase.Tests.Data {
     }
 
     /// <summary>
-    /// Changes a Set's Act to one that already played a Set with the same
-    /// SetNo at a different Event.
+    ///   Changes a Set's Act to one that already played a Set with the same
+    ///   SetNo at a different Event.
     /// </summary>
     [Test]
     public void T040_ChangeAct() {

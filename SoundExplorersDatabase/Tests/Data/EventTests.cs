@@ -67,9 +67,9 @@ namespace SoundExplorersDatabase.Tests.Data {
         session.Persist(Newsletter2);
         session.Persist(Series1);
         session.Persist(Series2);
+        Event2.Location = Location1;
         Event1.Location = Location1;
         Event1AtLocation2.Location = Location2;
-        Event2.Location = Location1;
         session.Persist(Event1);
         session.Persist(Event1AtLocation2);
         session.Persist(Event2);

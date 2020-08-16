@@ -30,8 +30,7 @@ namespace SoundExplorersDatabase.Data {
         if (version == null) {
           version = AddVersion(session);
         }
-      }
-      catch {
+      } catch {
         session.Abort();
         throw;
       }
@@ -46,8 +45,7 @@ namespace SoundExplorersDatabase.Data {
         Session.RegisterClass(typeof(Location));
         Number = ExpectedNumber;
         Session.Commit();
-      }
-      catch {
+      } catch {
         Session.Abort();
         throw;
       }
@@ -69,5 +67,5 @@ namespace SoundExplorersDatabase.Data {
       session.Commit();
       return version;
     }
- }
+  }
 }

@@ -8,7 +8,8 @@ namespace SoundExplorersDatabase.Tests.Data {
     [Test]
     public void Upgrade() {
       string databaseFolderPath;
-      using (var session = new TestSession {OnDisposeDeleteDatabaseFolder = true}) {
+      using (var session = new TestSession
+        {OnDisposeDeleteDatabaseFolder = true}) {
         databaseFolderPath = session.DatabaseFolderPath;
         Assert.IsTrue(
           Directory.Exists(databaseFolderPath),

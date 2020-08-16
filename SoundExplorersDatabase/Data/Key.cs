@@ -4,17 +4,17 @@ namespace SoundExplorersDatabase.Data {
   public class Key {
     private readonly IRelative _identifyingParent;
     private readonly string _simpleKey;
-
-    internal Key([CanBeNull] string simpleKey,
-      [CanBeNull] IRelative identifyingParent) {
-      _simpleKey = simpleKey;
-      _identifyingParent = identifyingParent;
-    }
-
+    
     internal Key([NotNull] IRelative owner,
       IRelative identifyingParent = null) {
       Owner = owner;
       _simpleKey = Owner.SimpleKey;
+      _identifyingParent = identifyingParent;
+    }
+
+    internal Key([CanBeNull] string simpleKey,
+      [CanBeNull] IRelative identifyingParent) {
+      _simpleKey = simpleKey;
       _identifyingParent = identifyingParent;
     }
 

@@ -74,8 +74,10 @@ namespace SoundExplorersDatabase.Tests.Data {
         session.Persist(location2);
         event1 = new Event {Date = DateTime.Today, Location = location1};
         event2 = new Event {Date = event1.Date, Location = location2};
-        event3 = new Event {Date = event1.Date.AddDays(1), Location = location1};
-        event4 = new Event {Date = event1.Date.AddDays(2), Location = location1};
+        event3 = new Event
+          {Date = event1.Date.AddDays(1), Location = location1};
+        event4 = new Event
+          {Date = event1.Date.AddDays(2), Location = location1};
         event5 = new Event {Date = event2.Date.AddDays(1)};
         event6 = new Event {Date = event5.Date, Location = location2};
         set1 = new Set {SetNo = 1, Event = event1};

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace SoundExplorersDatabase.Data {
   public class KeyComparer : Comparer<Key> {
