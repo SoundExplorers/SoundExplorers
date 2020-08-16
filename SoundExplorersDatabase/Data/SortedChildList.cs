@@ -11,15 +11,12 @@ namespace SoundExplorersDatabase.Data {
                throw new ArgumentNullException(nameof(parent));
     }
 
-    private RelativeBase Parent { get; }
     public TChild this[int index] => Values[index];
+
+    private RelativeBase Parent { get; }
 
     public void Add([NotNull] TChild child) {
       Parent.AddChild(child);
-    }
-
-    public void Remove([NotNull] TChild child) {
-      Parent.RemoveChild(child, false);
     }
 
     [UsedImplicitly]
@@ -27,6 +24,10 @@ namespace SoundExplorersDatabase.Data {
       throw new NotSupportedException(
         "ParentChildren.Add(Key, TChild) is not supported. " +
         "Use ParentChildren.Add(TChild) instead.");
+    }
+
+    public void Remove([NotNull] TChild child) {
+      Parent.RemoveChild(child, false);
     }
 
     [UsedImplicitly]

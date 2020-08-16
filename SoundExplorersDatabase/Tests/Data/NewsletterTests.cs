@@ -82,6 +82,7 @@ namespace SoundExplorersDatabase.Tests.Data {
         Event1 = QueryHelper.Read<Event>(Event1.SimpleKey, Location1, session);
         session.Commit();
       }
+
       Assert.AreEqual(Newsletter1Date, Newsletter1.Date,
         "Newsletter1.Date initially");
       Assert.AreEqual(Newsletter1SimpleKey, Newsletter1.SimpleKey,
@@ -109,6 +110,7 @@ namespace SoundExplorersDatabase.Tests.Data {
         Newsletter1.Events.Remove(Event1);
         session.Commit();
       }
+
       Assert.AreEqual(0, Newsletter1.Events.Count,
         "Newsletter1.Events.Count after remove");
       Assert.IsNull(Event1.Newsletter, "Event1.Newsletter after remove");

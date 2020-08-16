@@ -74,6 +74,7 @@ namespace SoundExplorersDatabase.Tests.Data {
         Event1 = QueryHelper.Read<Event>(Event1.SimpleKey, Location1, session);
         session.Commit();
       }
+
       Assert.AreEqual(Series1Name, Series1.Name, "Series1.Name initially");
       Assert.AreEqual(Series1Notes, Series1.Notes, "Series1.Notes initially");
       Assert.AreEqual(Series2Name, Series2.Name, "Series2.Name initially");
@@ -94,6 +95,7 @@ namespace SoundExplorersDatabase.Tests.Data {
         Series1.Events.Remove(Event1);
         session.Commit();
       }
+
       Assert.AreEqual(0, Series1.Events.Count,
         "Series1.Events.Count after remove");
       Assert.IsNull(Event1.Series, "Event1.Series after remove");

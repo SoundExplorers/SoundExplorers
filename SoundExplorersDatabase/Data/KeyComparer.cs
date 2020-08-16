@@ -6,6 +6,7 @@ namespace SoundExplorersDatabase.Data {
       if (x < y) {
         return -1;
       }
+
       return x == y ? 0 : 1;
     }
   }

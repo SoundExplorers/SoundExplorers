@@ -143,6 +143,7 @@ namespace SoundExplorersDatabase.Tests.Data {
         Set2 = QueryHelper.Read<Set>(Set2.SimpleKey, Event1, session);
         session.Commit();
       }
+
       Assert.AreEqual(Event1Date, Event1.Date, "Event1.Date");
       Assert.AreEqual(Event1Notes, Event1.Notes, "Event1.Notes");
       Assert.AreSame(Location1, Event1.Location, "Event1.Location");

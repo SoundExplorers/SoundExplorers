@@ -68,6 +68,7 @@ namespace SoundExplorersDatabase.Tests.Data {
         Event1 = QueryHelper.Read<Event>(Event1.SimpleKey, Location1, session);
         session.Commit();
       }
+
       Assert.AreEqual(Location1Name, Location1.Name,
         "Location1.Name initially");
       Assert.AreEqual(Location1Notes, Location1.Notes,

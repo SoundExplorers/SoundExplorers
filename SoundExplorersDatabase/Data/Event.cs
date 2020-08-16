@@ -25,7 +25,7 @@ namespace SoundExplorersDatabase.Data {
     }
 
     public Location Location {
-      get => (Location)IdentifyingParent;
+      get => (Location) IdentifyingParent;
       set {
         UpdateNonIndexField();
         IdentifyingParent = value;
@@ -76,9 +76,10 @@ namespace SoundExplorersDatabase.Data {
       Type parentPersistableType,
       RelativeBase newParent) {
       if (parentPersistableType == typeof(Newsletter)) {
-        _newsletter = (Newsletter)newParent;
-      } else {
-        _series = (Series)newParent;
+        _newsletter = (Newsletter) newParent;
+      }
+      else {
+        _series = (Series) newParent;
       }
     }
   }

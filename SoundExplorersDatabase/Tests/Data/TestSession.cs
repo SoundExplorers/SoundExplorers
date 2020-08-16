@@ -26,9 +26,15 @@ namespace SoundExplorersDatabase.Tests.Data {
       }
     }
 
+    private static void CopyLicenceToDatabaseFolder(string databaseFolderPath) {
+      File.Copy(
+        @"E:\Simon\OneDrive\Documents\My Installers\VelocityDB\License Database\4.odb",
+        databaseFolderPath + @"\4.odb");
+    }
+
     [NotNull]
     public static string CreateDatabaseFolder() {
-      string databaseFolderPath = GenerateDatabaseFolderPath();
+      var databaseFolderPath = GenerateDatabaseFolderPath();
       Directory.CreateDirectory(databaseFolderPath);
       CopyLicenceToDatabaseFolder(databaseFolderPath);
       return databaseFolderPath;
@@ -36,11 +42,15 @@ namespace SoundExplorersDatabase.Tests.Data {
 
     public static void DeleteFolderIfExists([NotNull] string folderPath) {
       if (Directory.Exists(folderPath)) {
-        foreach (string filePath in Directory.GetFiles(folderPath)) {
+        foreach (var filePath in Directory.GetFiles(folderPath))
           File.Delete(filePath);
-        }
       }
+
       Directory.Delete(folderPath);
+    }
+
+    private static string GenerateDatabaseFolderPath() {
+      return DatabaseParentFolderPath + "\\Database" + DateTime.Now.Ticks;
     }
 
     [NotNull]
@@ -55,21 +65,13 @@ namespace SoundExplorersDatabase.Tests.Data {
           TraceIndexUsage = false; // Seems not to work
           Trace.Listeners.Remove(traceListener);
         }
+
         if (!traceWriter.ToString().Contains("Index used")) {
           throw new DataException("An index was not used.");
         }
       }
+
       return result;
-    }
-
-    private static void CopyLicenceToDatabaseFolder(string databaseFolderPath) {
-      File.Copy(
-        @"E:\Simon\OneDrive\Documents\My Installers\VelocityDB\License Database\4.odb",
-        databaseFolderPath + @"\4.odb");
-    }
-
-    private static string GenerateDatabaseFolderPath() {
-      return DatabaseParentFolderPath + "\\Database" + DateTime.Now.Ticks;
     }
   }
 }

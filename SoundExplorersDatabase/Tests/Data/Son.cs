@@ -57,9 +57,10 @@ namespace SoundExplorersDatabase.Tests.Data {
       Type parentPersistableType,
       RelativeBase newParent) {
       if (parentPersistableType == typeof(Father)) {
-        _father = (Father)newParent;
-      } else {
-        _mother = (Mother)newParent;
+        _father = (Father) newParent;
+      }
+      else {
+        _mother = (Mother) newParent;
       }
     }
   }

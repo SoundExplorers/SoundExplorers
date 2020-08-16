@@ -105,6 +105,7 @@ namespace SoundExplorersDatabase.Tests.Data {
         Set2 = QueryHelper.Read<Set>(Set2Key, Event1, session);
         session.Commit();
       }
+
       Assert.AreEqual(Set1SetNo, Set1.SetNo, "Set1.SetNo");
       Assert.AreEqual(Set1Notes, Set1.Notes, "Set1.Notes");
       Assert.AreEqual(Set1SetNo, Set1AtEvent2.SetNo, "Set1_2.SetNo");

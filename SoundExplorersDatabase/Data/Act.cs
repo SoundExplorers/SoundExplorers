@@ -12,8 +12,6 @@ namespace SoundExplorersDatabase.Data {
       Sets = new SortedChildList<Set>(this);
     }
 
-    [NotNull] public SortedChildList<Set> Sets { get; }
-
     public string Name {
       get => SimpleKey;
       set {
@@ -29,6 +27,8 @@ namespace SoundExplorersDatabase.Data {
         _notes = value;
       }
     }
+
+    [NotNull] public SortedChildList<Set> Sets { get; }
 
     protected override RelativeBase FindWithSameKey(SessionBase session) {
       return QueryHelper.Find<Act>(SimpleKey, session);

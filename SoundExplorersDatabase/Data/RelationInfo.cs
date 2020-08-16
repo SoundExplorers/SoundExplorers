@@ -13,8 +13,8 @@ namespace SoundExplorersDatabase.Data {
     }
 
     [NotNull] public Type ChildType { get; }
+    public bool IsMandatory { get; }
 
     [NotNull] public Type ParentType { get; }
-    public bool IsMandatory { get; }
   }
 }
