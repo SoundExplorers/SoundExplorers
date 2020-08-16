@@ -10,8 +10,9 @@ namespace SoundExplorersDatabase.Tests.Data {
     private Father _father;
     private Mother _mother;
 
-    public Daughter([NotNull] QueryHelper queryHelper) : base(typeof(Daughter),
-      nameof(Name), null) {
+    public Daughter([NotNull] QueryHelper queryHelper,
+      Type identifyingParentType = null) : base(typeof(Daughter),
+      nameof(Name), identifyingParentType) {
       QueryHelper = queryHelper ??
                     throw new ArgumentNullException(nameof(queryHelper));
       Schema = TestSchema.Instance;
@@ -26,8 +27,7 @@ namespace SoundExplorersDatabase.Tests.Data {
       }
     }
 
-    [NotNull]
-    public Mother Mother {
+    public virtual Mother Mother {
       get => _mother;
       set {
         UpdateNonIndexField();
@@ -58,10 +58,9 @@ namespace SoundExplorersDatabase.Tests.Data {
       Type parentPersistableType,
       RelativeBase newParent) {
       if (parentPersistableType == typeof(Father)) {
-        _father = (Father) newParent;
-      }
-      else {
-        _mother = (Mother) newParent;
+        _father = (Father)newParent;
+      } else {
+        _mother = (Mother)newParent;
       }
     }
   }

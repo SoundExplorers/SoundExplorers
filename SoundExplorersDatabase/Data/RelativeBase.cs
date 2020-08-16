@@ -1,10 +1,10 @@
-using JetBrains.Annotations;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Linq;
 using System.Linq;
+using JetBrains.Annotations;
 using VelocityDb;
 using VelocityDb.Session;
 using VelocityDb.TypeInfo;
@@ -111,7 +111,7 @@ namespace SoundExplorersDatabase.Data {
 
         if (IdentifyingParentType == null) {
           throw new ConstraintException(
-            "An identifying parent type has not been specified  " +
+            "An identifying parent type has not been specified " +
             $"for {PersistableType.Name} '{Key}'.");
         }
 
@@ -178,7 +178,6 @@ namespace SoundExplorersDatabase.Data {
           "A null reference has been specified. " +
           $"So addition to {PersistableType.Name} '{Key}' is not supported.");
       }
-
       if (child.Parents[PersistableType] != null) {
         throw new ConstraintException(
           $"{child.PersistableType.Name} '{child.Key}' " +
@@ -186,7 +185,6 @@ namespace SoundExplorersDatabase.Data {
           $"because it already belongs to {PersistableType.Name} " +
           $"'{child.Parents[PersistableType].Key}'.");
       }
-
       CheckForDuplicateChild(child.PersistableType, CreateChildKey(child));
     }
 
@@ -281,24 +279,6 @@ namespace SoundExplorersDatabase.Data {
         value => value.ParentType, value => value);
     }
 
-    // public static bool operator ==([CanBeNull] RelativeBase relative1,
-    //   [CanBeNull] RelativeBase relative2) {
-    //   if ((object)relative1 != null) {
-    //     return relative1.Equals(relative2);
-    //   }
-    //   return (object)relative2 == null;
-    // }
-    //
-    // public static bool operator !=([CanBeNull] RelativeBase relative1,
-    //   [CanBeNull] RelativeBase relative2) {
-    //   return !(relative1 == relative2);
-    // }
-    //
-    // public override bool Equals(object obj) {
-    //   var relativeToMatch = obj as RelativeBase;
-    //   return (object)relativeToMatch != null && relativeToMatch.Key.Equals(Key);
-    // }
-
     [CanBeNull]
     protected abstract RelativeBase FindWithSameKey(
       [NotNull] SessionBase session);
@@ -306,19 +286,17 @@ namespace SoundExplorersDatabase.Data {
     [NotNull]
     protected abstract IDictionary GetChildren([NotNull] Type childType);
 
-    // public override int GetHashCode() {
-    //   return Key.GetHashCode();
-    // }
-
     private void Initialise() {
       ParentRelations = CreateParentRelations();
       Parents = new Dictionary<Type, RelativeBase>();
-      foreach (var relationKvp in ParentRelations)
+      foreach (var relationKvp in ParentRelations) {
         Parents.Add(relationKvp.Key, null);
+      }
       ChildrenRelations = CreateChildrenRelations();
       ChildrenOfType = new Dictionary<Type, IDictionary>();
-      foreach (var relationKvp in ChildrenRelations)
+      foreach (var relationKvp in ChildrenRelations) {
         ChildrenOfType.Add(relationKvp.Key, GetChildren(relationKvp.Key));
+      }
     }
 
     private void InitialiseIfNull([CanBeNull] object backingField) {
@@ -354,7 +332,7 @@ namespace SoundExplorersDatabase.Data {
     public override void Unpersist(SessionBase session) {
       var parents =
         Parents.Values.Where(parent => parent != null).ToList();
-      for (var i = parents.Count - 1; i >= 0; i--) {
+      for (int i = parents.Count - 1; i >= 0; i--) {
         parents[i].ChildrenOfType[PersistableType].Remove(this);
         parents[i].RemoveChild(this, true);
       }

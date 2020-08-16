@@ -23,7 +23,7 @@ namespace SoundExplorersDatabase.Data {
     }
 
     public Event Event {
-      get => (Event) IdentifyingParent;
+      get => (Event)IdentifyingParent;
       set {
         UpdateNonIndexField();
         IdentifyingParent = value;
@@ -59,7 +59,7 @@ namespace SoundExplorersDatabase.Data {
 
     protected override void OnNonIdentifyingParentFieldToBeUpdated(
       Type parentPersistableType, RelativeBase newParent) {
-      _act = (Act) newParent;
+      _act = (Act)newParent;
     }
   }
 }

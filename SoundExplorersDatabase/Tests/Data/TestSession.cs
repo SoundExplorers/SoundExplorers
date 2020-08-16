@@ -34,7 +34,7 @@ namespace SoundExplorersDatabase.Tests.Data {
 
     [NotNull]
     public static string CreateDatabaseFolder() {
-      var databaseFolderPath = GenerateDatabaseFolderPath();
+      string databaseFolderPath = GenerateDatabaseFolderPath();
       Directory.CreateDirectory(databaseFolderPath);
       CopyLicenceToDatabaseFolder(databaseFolderPath);
       return databaseFolderPath;
@@ -42,8 +42,9 @@ namespace SoundExplorersDatabase.Tests.Data {
 
     public static void DeleteFolderIfExists([NotNull] string folderPath) {
       if (Directory.Exists(folderPath)) {
-        foreach (var filePath in Directory.GetFiles(folderPath))
+        foreach (string filePath in Directory.GetFiles(folderPath)) {
           File.Delete(filePath);
+        }
       }
 
       Directory.Delete(folderPath);

@@ -71,8 +71,7 @@ namespace SoundExplorersDatabase.Data {
       bool result;
       if (_schemaExistsOnDatabase) {
         result = true;
-      }
-      else {
+      } else {
         result = session.ContainsDatabase(session.DatabaseLocations.First(), 1);
         _schemaExistsOnDatabase = result;
       }
