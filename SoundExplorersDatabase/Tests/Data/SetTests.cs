@@ -105,19 +105,19 @@ namespace SoundExplorersDatabase.Tests.Data {
         Set2 = QueryHelper.Read<Set>(Set2Key, Event1, session);
         session.Commit();
       }
-      Assert.AreEqual(Set1SetNo, Set1.SetNo, "Set1.SetNo initially");
-      Assert.AreEqual(Set1Notes, Set1.Notes, "Set1.Notes initially");
-      Assert.AreEqual(Set1SetNo, Set1AtEvent2.SetNo, "Set1_2.SetNo initially");
-      Assert.AreEqual(Set2SetNo, Set2.SetNo, "Set2.SetNo initially");
-      Assert.AreEqual(2, Event1.Sets.Count, "Event1.Sets.Count initially");
-      Assert.AreEqual(1, Event2.Sets.Count, "Event1.Sets.Count initially");
-      Assert.AreEqual(2, Act1.Sets.Count, "Act1.Sets.Count initially");
-      Assert.AreEqual(1, Act2.Sets.Count, "Act2.Sets.Count initially");
-      Assert.AreSame(Set1, Event1.Sets[0], "Event1.Sets[0] initially");
-      Assert.AreSame(Set1AtEvent2, Event2.Sets[0], "Event2.Sets[0] initially");
-      Assert.AreSame(Set2, Event1.Sets[1], "Event1.Sets[1] initially");
-      Assert.AreSame(Set1, Act1.Sets[0], "Act1.Sets[0] initially");
-      Assert.AreSame(Set1AtEvent2, Act2.Sets[0], "Act2.Sets[0] initially");
+      Assert.AreEqual(Set1SetNo, Set1.SetNo, "Set1.SetNo");
+      Assert.AreEqual(Set1Notes, Set1.Notes, "Set1.Notes");
+      Assert.AreEqual(Set1SetNo, Set1AtEvent2.SetNo, "Set1_2.SetNo");
+      Assert.AreEqual(Set2SetNo, Set2.SetNo, "Set2.SetNo");
+      Assert.AreEqual(2, Event1.Sets.Count, "Event1.Sets.Count");
+      Assert.AreEqual(1, Event2.Sets.Count, "Event1.Sets.Count");
+      Assert.AreEqual(2, Act1.Sets.Count, "Act1.Sets.Count");
+      Assert.AreEqual(1, Act2.Sets.Count, "Act2.Sets.Count");
+      Assert.AreSame(Set1, Event1.Sets[0], "Event1.Sets[0]");
+      Assert.AreSame(Set1AtEvent2, Event2.Sets[0], "Event2.Sets[0]");
+      Assert.AreSame(Set2, Event1.Sets[1], "Event1.Sets[1]");
+      Assert.AreSame(Set1, Act1.Sets[0], "Act1.Sets[0]");
+      Assert.AreSame(Set1AtEvent2, Act2.Sets[0], "Act2.Sets[0]");
     }
 
     [Test]
@@ -157,7 +157,7 @@ namespace SoundExplorersDatabase.Tests.Data {
         session.Commit();
         Assert.AreSame(Act2, Set1.Act,
           "Set1.Act after Set1 changes Act");
-        Assert.AreEqual(0, Act1.Sets.Count,
+        Assert.AreEqual(1, Act1.Sets.Count,
           "Act1.Sets.Count after Set1 changes Act");
         Assert.AreEqual(2, Act2.Sets.Count,
           "Act2.Sets.Count after Set1 changes Act");

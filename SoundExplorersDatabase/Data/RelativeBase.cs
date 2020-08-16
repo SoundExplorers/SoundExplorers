@@ -132,7 +132,7 @@ namespace SoundExplorersDatabase.Data {
           _identifyingParent.References.Remove(
             References.First(r => r.To.Equals(this)));
         }
-        var newKey = new Key(this, SimpleKey, value);
+        var newKey = new Key(this, value);
         // Should always be true
         if (!value.ChildrenOfType[PersistableType].Contains(newKey)) {
           value.ChildrenOfType[PersistableType].Add(newKey, this);
@@ -157,8 +157,7 @@ namespace SoundExplorersDatabase.Data {
 
     internal void AddChild([NotNull] RelativeBase child) {
       CheckCanAddChild(child);
-      var newKey = new Key(this,child. SimpleKey, this);
-      ChildrenOfType[child.PersistableType].Add(newKey, child);
+      ChildrenOfType[child.PersistableType].Add(CreateChildKey(child), child);
       References.AddFast(new Reference(child, "_children"));
       UpdateChild(child, this);
     }
@@ -237,7 +236,7 @@ namespace SoundExplorersDatabase.Data {
 
     private void CheckForDuplicateChild([NotNull] RelativeBase child) {
       if (ChildrenOfType[child.PersistableType]
-        .Contains(new Key(child.SimpleKey, this))) {
+        .Contains(CreateChildKey(child))) {
         throw new DuplicateKeyException(
           child,
           $"{child.PersistableType.Name} '{child.Key}' " +
@@ -245,6 +244,12 @@ namespace SoundExplorersDatabase.Data {
           $"because a {child.PersistableType.Name} with that Key " +
           $"already belongs to the {PersistableType.Name}.");
       }
+    }
+
+    [NotNull]
+    private Key CreateChildKey([NotNull] RelativeBase child) {
+      return new Key(child,
+        child.IdentifyingParentType == PersistableType ? this : null);
     }
 
     [NotNull]
@@ -316,30 +321,6 @@ namespace SoundExplorersDatabase.Data {
       ChildrenOfType[child.PersistableType].Remove(child.Key);
       References.Remove(References.First(r => r.To.Equals(child)));
     }
-
-    // protected void SetKey(
-    //   [NotNull] string simpleKey) {
-    //   if (simpleKey == null) {
-    //     throw new NoNullAllowedException(
-    //       $"A null reference has been specified as the {SimpleKeyName} " +
-    //       $"for {PersistableType.Name} '{Key}'. " +
-    //       $"Null {SimpleKeyName}s are not supported.");
-    //   }
-    //   if (identifyingParent == null) {
-    //     if (IdentifyingParentType != null) {
-    //       throw new NoNullAllowedException(
-    //         "A null reference has been specified as the " +
-    //         $"{IdentifyingParentType.Name} for {PersistableType.Name} '{Key}'.");
-    //     }
-    //   } else if (IdentifyingParentType != null &&
-    //              identifyingParent.PersistableType != IdentifyingParentType) {
-    //     throw new ConstraintException(
-    //       $"A {identifyingParent.PersistableType.Name} has been specified as the " +
-    //       $"{IdentifyingParentType.Name} for {PersistableType.Name} '{Key}'.");
-    //   }
-    //   Key.SimpleKey = simpleKey;
-    //   Key.IdentifyingParent = identifyingParent;
-    // }
 
     public override void Unpersist(SessionBase session) {
       var parents =

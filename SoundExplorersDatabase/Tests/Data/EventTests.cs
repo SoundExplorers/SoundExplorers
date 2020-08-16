@@ -132,7 +132,8 @@ namespace SoundExplorersDatabase.Tests.Data {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginRead();
         Event1 = QueryHelper.Read<Event>(Event1SimpleKey, Location1, session);
-        Event1AtLocation2 = QueryHelper.Read<Event>(Event1SimpleKey, Location2, session);
+        Event1AtLocation2 =
+          QueryHelper.Read<Event>(Event1SimpleKey, Location2, session);
         Event2 = QueryHelper.Read<Event>(Event2SimpleKey, Location1, session);
         Location1 = QueryHelper.Read<Location>(Location1Name, session);
         Location2 = QueryHelper.Read<Location>(Location2Name, session);
@@ -151,20 +152,21 @@ namespace SoundExplorersDatabase.Tests.Data {
       Assert.AreSame(Newsletter1, Event1.Newsletter, "Event1.Newsletter");
       Assert.AreEqual(1, Newsletter1.Events.Count, "Newsletter1.Events.Count");
       Assert.AreSame(Event1, Newsletter1.Events[0], "Newsletter1.Events[0]");
+      Assert.AreEqual(1, Newsletter2.Events.Count, "Newsletter2.Events.Count");
       Assert.IsNull(Event1.Series, "Event1.Series");
       Assert.AreEqual(0, Series1.Events.Count, "Series1.Events.Count");
+      Assert.AreEqual(1, Series2.Events.Count, "Series2.Events.Count");
       Assert.AreEqual(Event2Date, Event2.Date, "Event1.Date");
       Assert.AreSame(Location1, Event2.Location, "Event2.Location");
       Assert.AreEqual(1, Location2.Events.Count, "Location2.Events.Count");
-      Assert.AreSame(Event1AtLocation2, Location2.Events[0], "Location2.Events[1]");
-      Assert.AreEqual(2, Event1.Sets.Count,
-        "Event1.Sets.Count initially");
-      Assert.AreSame(Event1, Set1.Event, "Set1.Event initially");
+      Assert.AreSame(Event1AtLocation2, Location2.Events[0],
+        "Location2.Events[1]");
+      Assert.AreEqual(2, Event1.Sets.Count, "Event1.Sets.Count");
+      Assert.AreSame(Event1, Set1.Event, "Set1.Event");
       Assert.AreEqual(Event1.Date, Set1.Event.Date,
         "Set1.Event.Date initially");
-      Assert.AreSame(Event1, Set2.Event, "Set2.Event initially");
-      Assert.AreEqual(Event1.Date, Set2.Event.Date,
-        "Set2.Event.Date initially");
+      Assert.AreSame(Event1, Set2.Event, "Set2.Event");
+      Assert.AreEqual(Event1.Date, Set2.Event.Date, "Set2.Event.Date");
     }
 
     [Test]
@@ -188,7 +190,7 @@ namespace SoundExplorersDatabase.Tests.Data {
         session.BeginUpdate();
         Location1 = QueryHelper.Read<Location>(Location1Name, session);
         Event1 = QueryHelper.Read<Event>(Event1SimpleKey, Location1, session);
-        Assert.Throws<ConstraintException>(() =>
+        Assert.Throws<NoNullAllowedException>(() =>
             // ReSharper disable once AssignNullToNotNullAttribute
             Event1.Location = null,
           "Disallow remove Event from mandatory link to Location.");
@@ -197,8 +199,8 @@ namespace SoundExplorersDatabase.Tests.Data {
     }
 
     /// <summary>
-    /// Adds an Event to a Series that already includes an Event
-    /// on the same Date at a different Location.
+    ///   Adds an Event to a Series that already includes an Event
+    ///   on the same Date at a different Location.
     /// </summary>
     [Test]
     public void T040_AddToSeries() {
@@ -210,7 +212,7 @@ namespace SoundExplorersDatabase.Tests.Data {
         session.Commit();
         Assert.AreSame(Series2, Event1.Series,
           "Event1.Series after Event1 added to Series");
-        Assert.AreEqual(1, Series2.Events.Count,
+        Assert.AreEqual(2, Series2.Events.Count,
           "Series2.Events.Count after Event1 added to Series");
         Assert.AreSame(Event1, Series2.Events[0],
           "Series2 1st Event after Event1 added to Series");
@@ -242,8 +244,8 @@ namespace SoundExplorersDatabase.Tests.Data {
     }
 
     /// <summary>
-    /// Changes an Event's NewsLetter to one that already covers an Event
-    /// on the same Date at a different Location.
+    ///   Changes an Event's NewsLetter to one that already covers an Event
+    ///   on the same Date at a different Location.
     /// </summary>
     [Test]
     public void T060_ChangeNewsletter() {
@@ -258,7 +260,7 @@ namespace SoundExplorersDatabase.Tests.Data {
           "Event1.Newsletter after Event1 changes Newsletter");
         Assert.AreEqual(0, Newsletter1.Events.Count,
           "Newsletter1.Events.Count after Event1 changes Newsletter");
-        Assert.AreEqual(1, Newsletter2.Events.Count,
+        Assert.AreEqual(2, Newsletter2.Events.Count,
           "Newsletter2.Events.Count after Event1 changes Newsletter");
         Assert.AreSame(Event1, Newsletter2.Events[0],
           "Newsletter2 1st Event after Event1 changes Newsletter");
@@ -269,12 +271,14 @@ namespace SoundExplorersDatabase.Tests.Data {
     public void T070_SetNewsletterToNull() {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
-        Newsletter1 = QueryHelper.Read<Newsletter>(Newsletter1.SimpleKey, session);
+        Newsletter1 =
+          QueryHelper.Read<Newsletter>(Newsletter1.SimpleKey, session);
         Event1 = Newsletter1.Events[0];
         Event1.Newsletter = null;
         session.Commit();
         Assert.IsNull(Event1.Newsletter, "Event1.Newsletter");
-        Assert.AreEqual(0, Newsletter1.Events.Count, "Newsletter1.Events.Count");
+        Assert.AreEqual(0, Newsletter1.Events.Count,
+          "Newsletter1.Events.Count");
       }
     }
 

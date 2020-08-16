@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using JetBrains.Annotations;
 
 namespace SoundExplorersDatabase.Data {
@@ -26,11 +25,7 @@ namespace SoundExplorersDatabase.Data {
     }
 
     bool IDictionary.Contains(object key) {
-      var keyToMatch = ToKey(key);
-      return (
-        from Key foundKey in Keys
-        where foundKey == keyToMatch
-        select foundKey).Any();
+      return ContainsKey(ToKey(key));
     }
 
     public void Add([NotNull] TChild child) {
