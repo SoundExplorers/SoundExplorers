@@ -56,7 +56,6 @@ namespace SoundExplorersDatabase.Data {
     }
 
     [CanBeNull] private Type IdentifyingParentType { get; }
-
     private bool IsAddingToOrRemovingFromIdentifyingParent { get; set; }
     private bool IsTopLevel => Parents.Count == 0;
 
@@ -108,26 +107,22 @@ namespace SoundExplorersDatabase.Data {
           _identifyingParent = value;
           return;
         }
-
         if (IdentifyingParentType == null) {
           throw new ConstraintException(
             "An identifying parent type has not been specified " +
             $"for {PersistableType.Name} '{Key}'.");
         }
-
         if (value == null) {
           throw new NoNullAllowedException(
             "A null reference has been specified as the " +
             $"{IdentifyingParentType.Name} for {PersistableType.Name} '{Key}'.");
         }
-
         if (value.PersistableType != IdentifyingParentType) {
           throw new ConstraintException(
             $"A {value.PersistableType.Name} has been specified as the " +
             $"IdentifyingParent for {PersistableType.Name} '{Key}'. " +
             $"A {IdentifyingParentType.Name} is expected'.");
         }
-
         var newKey = new Key(SimpleKey, value);
         value.CheckForDuplicateChild(PersistableType, newKey);
         if (_identifyingParent != null &&
@@ -137,11 +132,10 @@ namespace SoundExplorersDatabase.Data {
           _identifyingParent.References.Remove(
             _identifyingParent.References.First(r => r.To.Equals(this)));
         }
-
         value.ChildrenOfType[PersistableType].Add(newKey, this);
         Parents[IdentifyingParentType] = value;
-        _identifyingParent = value;
         value.References.AddFast(new Reference(this, "_children"));
+        _identifyingParent = value;
       }
     }
 
@@ -194,7 +188,6 @@ namespace SoundExplorersDatabase.Data {
           $"A {SimpleKeyName} has not yet been specified. " +
           $"So the {PersistableType.Name} cannot be persisted.");
       }
-
       foreach (var parentKeyValuePair in Parents) {
         var parentType = parentKeyValuePair.Key;
         var parent = parentKeyValuePair.Value;
@@ -205,7 +198,6 @@ namespace SoundExplorersDatabase.Data {
             + "has not been specified.");
         }
       }
-
       if (IsTopLevel && IsDuplicateKey(session)) {
         throw new DuplicateKeyException(
           this,
@@ -222,7 +214,6 @@ namespace SoundExplorersDatabase.Data {
           "A null reference has been specified. " +
           $"So removal from {PersistableType.Name} '{Key}' is not supported.");
       }
-
       if (!ChildrenOfType[child.PersistableType].Contains(child.Key)) {
         throw new KeyNotFoundException(
           $"{child.PersistableType.Name} '{child.Key}' " +
@@ -230,7 +221,6 @@ namespace SoundExplorersDatabase.Data {
           $"because it does not belong to {PersistableType.Name} " +
           $"'{Key}'.");
       }
-
       if (ChildrenRelations[child.PersistableType].IsMandatory &&
           !isReplacingOrUnpersisting) {
         throw new ConstraintException(
@@ -336,7 +326,6 @@ namespace SoundExplorersDatabase.Data {
         parents[i].ChildrenOfType[PersistableType].Remove(this);
         parents[i].RemoveChild(this, true);
       }
-
       base.Unpersist(session);
     }
 
