@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using JetBrains.Annotations;
 
 namespace SoundExplorersDatabase.Data {
-  public class SortedChildList<TChild> : SortedList<Key, TChild>, IDictionary
+  public class SortedChildList<TChild> : SortedList<Key, TChild>
     where TChild : RelativeBase {
     internal SortedChildList([NotNull] RelativeBase parent) : base(
       new KeyComparer()) {
@@ -14,19 +13,6 @@ namespace SoundExplorersDatabase.Data {
 
     private RelativeBase Parent { get; }
     public TChild this[int index] => Values[index];
-
-    object IDictionary.this[object key] {
-      get => this[ToKey(key)];
-      set => this[ToKey(key)] = ToChild(value);
-    }
-
-    void IDictionary.Add(object key, object value) {
-      base.Add(ToKey(key), ToChild(value));
-    }
-
-    bool IDictionary.Contains(object key) {
-      return ContainsKey(ToKey(key));
-    }
 
     public void Add([NotNull] TChild child) {
       Parent.AddChild(child);
@@ -41,21 +27,6 @@ namespace SoundExplorersDatabase.Data {
       throw new NotSupportedException(
         "ParentChildren.Add(Key, TChild) is not supported. " +
         "Use ParentChildren.Add(TChild) instead.");
-    }
-
-    private static TChild ToChild(object value) {
-      var child = value as TChild ??
-                  throw new ArgumentException(
-                    $"The specified value is not of type {typeof(TChild).Name}",
-                    nameof(value));
-      return child;
-    }
-
-    private static Key ToKey(object key) {
-      var keyToMatch = key as Key ??
-                       throw new ArgumentException(
-                         "The specified key is not of type Key", nameof(key));
-      return keyToMatch;
     }
 
     [UsedImplicitly]
