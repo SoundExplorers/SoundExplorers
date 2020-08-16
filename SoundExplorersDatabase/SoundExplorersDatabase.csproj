@@ -81,6 +81,7 @@
     <Compile Include="Data\Key.cs" />
     <Compile Include="Data\IRelationInfo.cs" />
     <Compile Include="Data\KeyComparer.cs" />
+    <Compile Include="Data\Piece.cs" />
     <Compile Include="Data\QueryHelper.cs" />
     <Compile Include="Data\RelationInfo.cs" />
     <Compile Include="Data\Schema.cs" />

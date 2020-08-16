@@ -10,7 +10,9 @@ namespace SoundExplorersDatabase.Data {
     private string _notes;
     private int _setNo;
 
-    public Set() : base(typeof(Set), nameof(SetNo), typeof(Event)) { }
+    public Set() : base(typeof(Set), nameof(SetNo), typeof(Event)) {
+      Pieces = new SortedChildList<Piece>(this);
+    }
 
     [CanBeNull]
     public Act Act {
@@ -30,6 +32,7 @@ namespace SoundExplorersDatabase.Data {
       }
     }
 
+    [CanBeNull]
     public string Notes {
       get => _notes;
       set {
@@ -37,6 +40,8 @@ namespace SoundExplorersDatabase.Data {
         _notes = value;
       }
     }
+
+    [NotNull] public SortedChildList<Piece> Pieces { get; }
 
     public int SetNo {
       get => _setNo;
@@ -54,7 +59,7 @@ namespace SoundExplorersDatabase.Data {
     }
 
     protected override IDictionary GetChildren(Type childType) {
-      throw new NotImplementedException();
+      return Pieces;
     }
 
     protected override void OnNonIdentifyingParentFieldToBeUpdated(

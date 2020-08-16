@@ -22,7 +22,8 @@ namespace SoundExplorersDatabase.Data {
         new RelationInfo(typeof(Event), typeof(Set), true),
         new RelationInfo(typeof(Location), typeof(Event), true),
         new RelationInfo(typeof(Newsletter), typeof(Event), false),
-        new RelationInfo(typeof(Series), typeof(Event), false)
+        new RelationInfo(typeof(Series), typeof(Event), false),
+        new RelationInfo(typeof(Set), typeof(Piece), true)
       };
       return list.ToArray();
     }
