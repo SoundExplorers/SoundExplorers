@@ -130,16 +130,12 @@ namespace SoundExplorersDatabase.Data {
             _identifyingParent.ChildrenOfType[PersistableType].Contains(Key)) {
           _identifyingParent.ChildrenOfType[PersistableType].Remove(Key);
           _identifyingParent.References.Remove(
-            References.First(r => r.To.Equals(this)));
+            _identifyingParent.References.First(r => r.To.Equals(this)));
         }
-        var newKey = new Key(this, value);
-        // Should always be true
-        if (!value.ChildrenOfType[PersistableType].Contains(newKey)) {
-          value.ChildrenOfType[PersistableType].Add(newKey, this);
-          value.References.AddFast(new Reference(this, "_children"));
-          Parents[IdentifyingParentType] = value;
-        }
+        value.ChildrenOfType[PersistableType].Add(new Key(this, value), this);
+        Parents[IdentifyingParentType] = value;
         _identifyingParent = value;
+        value.References.AddFast(new Reference(this, "_children"));
       }
     }
 
@@ -272,12 +268,34 @@ namespace SoundExplorersDatabase.Data {
         value => value.ParentType, value => value);
     }
 
+    // public static bool operator ==([CanBeNull] RelativeBase relative1,
+    //   [CanBeNull] RelativeBase relative2) {
+    //   if ((object)relative1 != null) {
+    //     return relative1.Equals(relative2);
+    //   }
+    //   return (object)relative2 == null;
+    // }
+    //
+    // public static bool operator !=([CanBeNull] RelativeBase relative1,
+    //   [CanBeNull] RelativeBase relative2) {
+    //   return !(relative1 == relative2);
+    // }
+    //
+    // public override bool Equals(object obj) {
+    //   var relativeToMatch = obj as RelativeBase;
+    //   return (object)relativeToMatch != null && relativeToMatch.Key.Equals(Key);
+    // }
+
     [CanBeNull]
     protected abstract RelativeBase FindWithSameKey(
       [NotNull] SessionBase session);
 
     [NotNull]
     protected abstract IDictionary GetChildren([NotNull] Type childType);
+
+    // public override int GetHashCode() {
+    //   return Key.GetHashCode();
+    // }
 
     private void Initialise() {
       ParentRelations = CreateParentRelations();

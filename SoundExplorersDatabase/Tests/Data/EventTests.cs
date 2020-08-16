@@ -147,21 +147,32 @@ namespace SoundExplorersDatabase.Tests.Data {
       Assert.AreEqual(Event1Notes, Event1.Notes, "Event1.Notes");
       Assert.AreSame(Location1, Event1.Location, "Event1.Location");
       Assert.AreEqual(2, Location1.Events.Count, "Location1.Events.Count");
+      Assert.AreEqual(2, Location1.References.Count,
+        "Location1.References.Count");
       Assert.AreSame(Event1, Location1.Events[0], "Location1.Events[0]");
       Assert.AreSame(Event2, Location1.Events[1], "Location1.Events[1]");
       Assert.AreSame(Newsletter1, Event1.Newsletter, "Event1.Newsletter");
       Assert.AreEqual(1, Newsletter1.Events.Count, "Newsletter1.Events.Count");
+      Assert.AreEqual(1, Newsletter1.References.Count,
+        "Newsletter1.References.Count");
       Assert.AreSame(Event1, Newsletter1.Events[0], "Newsletter1.Events[0]");
       Assert.AreEqual(1, Newsletter2.Events.Count, "Newsletter2.Events.Count");
+      Assert.AreEqual(1, Newsletter2.References.Count,
+        "Newsletter2.References.Count");
       Assert.IsNull(Event1.Series, "Event1.Series");
       Assert.AreEqual(0, Series1.Events.Count, "Series1.Events.Count");
+      Assert.AreEqual(0, Series1.References.Count, "Series1.Events.Count");
       Assert.AreEqual(1, Series2.Events.Count, "Series2.Events.Count");
+      Assert.AreEqual(1, Series2.References.Count, "Series2.References.Count");
       Assert.AreEqual(Event2Date, Event2.Date, "Event1.Date");
       Assert.AreSame(Location1, Event2.Location, "Event2.Location");
       Assert.AreEqual(1, Location2.Events.Count, "Location2.Events.Count");
+      Assert.AreEqual(1, Location2.References.Count,
+        "Location2.References.Count");
       Assert.AreSame(Event1AtLocation2, Location2.Events[0],
         "Location2.Events[1]");
       Assert.AreEqual(2, Event1.Sets.Count, "Event1.Sets.Count");
+      Assert.AreEqual(2, Event1.References.Count, "Event1.References.Count");
       Assert.AreSame(Event1, Set1.Event, "Set1.Event");
       Assert.AreEqual(Event1.Date, Set1.Event.Date,
         "Set1.Event.Date initially");
@@ -228,6 +239,13 @@ namespace SoundExplorersDatabase.Tests.Data {
         Event1 = Location1.Events[0];
         Event1AtLocation2 = Location2.Events[0];
         Event2 = Location1.Events[1];
+        // Assert.AreEqual(Event1Date, Event1.Date, "Event1.Date");
+        // Assert.AreEqual(Event1Date, Event1AtLocation2.Date, "Event1AtLocation2.Date");
+        // Assert.AreEqual(Event2Date, Event2.Date, "Event2.Date");
+        // Assert.AreEqual(2, Location1.References.Count, "Location1.References.Count");
+        // var references = Location1.References.ToList();
+        // Assert.AreSame(Event2, references[1].To, "references[1].To");
+        // Assert.AreEqual(1, Location2.References.Count, "Location2.References.Count");
         Event2.Location = Location2;
         session.Commit();
         Assert.AreSame(Location2, Event2.Location,
