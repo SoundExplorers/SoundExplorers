@@ -133,8 +133,8 @@ namespace SoundExplorersDatabase.Data {
             _identifyingParent.References.First(r => r.To.Equals(this)));
         }
         value.ChildrenOfType[PersistableType].Add(newKey, this);
-        Parents[IdentifyingParentType] = value;
         value.References.AddFast(new Reference(this, "_children"));
+        Parents[IdentifyingParentType] = value;
         _identifyingParent = value;
       }
     }
