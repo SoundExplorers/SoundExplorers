@@ -12,7 +12,7 @@ namespace SoundExplorersDatabase.Data {
       _identifyingParent = identifyingParent;
     }
 
-    internal Key([CanBeNull] string simpleKey,
+    public Key([CanBeNull] string simpleKey,
       [CanBeNull] IRelative identifyingParent) {
       _simpleKey = simpleKey;
       _identifyingParent = identifyingParent;
