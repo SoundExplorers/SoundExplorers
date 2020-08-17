@@ -11,12 +11,25 @@ namespace SoundExplorersDatabase.Data {
     internal static QueryHelper Instance =>
       _instance ?? (_instance = new QueryHelper());
 
+    [NotNull]
+    private static Func<TPersistable, bool> CreateKeyPredicate<TPersistable>(
+      [CanBeNull] string simpleKey,
+      [CanBeNull] RelativeBase identifyingParent)
+      where TPersistable : RelativeBase {
+      return
+        persistable => persistable.SimpleKey == simpleKey &&
+                       (persistable.IdentifyingParent == null &&
+                        identifyingParent == null ||
+                        persistable.IdentifyingParent != null &&
+                        persistable.IdentifyingParent
+                          .Equals(identifyingParent));
+    }
+
     [CanBeNull]
     public TPersistable Find<TPersistable>(
       [CanBeNull] string simpleKey,
       [NotNull] SessionBase session) where TPersistable : RelativeBase {
-      return Find<TPersistable>(
-        persistable => persistable.Key == new Key(simpleKey, null), session);
+      return Find<TPersistable>(simpleKey, null, session);
     }
 
     [CanBeNull]
@@ -24,8 +37,8 @@ namespace SoundExplorersDatabase.Data {
       [CanBeNull] string simpleKey,
       [CanBeNull] RelativeBase identifyingParent,
       [NotNull] SessionBase session) where TPersistable : RelativeBase {
-      return Find<TPersistable>(
-        persistable => persistable.Key == new Key(simpleKey, identifyingParent),
+      return Find(
+        CreateKeyPredicate<TPersistable>(simpleKey, identifyingParent),
         session);
     }
 
@@ -44,8 +57,7 @@ namespace SoundExplorersDatabase.Data {
     public static TPersistable Read<TPersistable>(
       [CanBeNull] string simpleKey,
       [NotNull] SessionBase session) where TPersistable : RelativeBase {
-      return Read<TPersistable>(
-        persistable => persistable.Key == new Key(simpleKey, null), session);
+      return Read<TPersistable>(simpleKey, null, session);
     }
 
     [NotNull]
@@ -53,8 +65,8 @@ namespace SoundExplorersDatabase.Data {
       [CanBeNull] string simpleKey,
       [CanBeNull] RelativeBase identifyingParent,
       [NotNull] SessionBase session) where TPersistable : RelativeBase {
-      return Read<TPersistable>(
-        persistable => persistable.Key == new Key(simpleKey, identifyingParent),
+      return Read(
+        CreateKeyPredicate<TPersistable>(simpleKey, identifyingParent),
         session);
     }
 
