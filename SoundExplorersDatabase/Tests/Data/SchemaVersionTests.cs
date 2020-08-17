@@ -31,7 +31,6 @@ namespace SoundExplorersDatabase.Tests.Data {
           Directory.Exists(databaseFolderPath),
           "Database folder exists before disposal.");
       }
-
       Assert.IsFalse(Directory.Exists(databaseFolderPath),
         "Database folder exists after disposal.");
     }

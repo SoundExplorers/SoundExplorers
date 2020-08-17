@@ -36,7 +36,6 @@ namespace SoundExplorersDatabase.Data {
       if (!SchemaExistsOnDatabase(session)) {
         return null;
       }
-
       return session.AllObjects<TPersistable>()
         .FirstOrDefault(predicate);
     }
@@ -75,7 +74,6 @@ namespace SoundExplorersDatabase.Data {
         result = session.ContainsDatabase(session.DatabaseLocations.First(), 1);
         _schemaExistsOnDatabase = result;
       }
-
       return result;
     }
   }

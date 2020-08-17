@@ -12,7 +12,6 @@ namespace SoundExplorersDatabase.Data {
     }
 
     public TChild this[int index] => Values[index];
-
     private RelativeBase Parent { get; }
 
     public void Add([NotNull] TChild child) {

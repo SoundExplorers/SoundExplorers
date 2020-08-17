@@ -49,7 +49,6 @@ namespace SoundExplorersDatabase.Tests.Data {
     private const string Location1Name = "Fred's";
     private const string Location1Notes = "My notes.";
     private const string Location2Name = "Pyramid Club";
-
     private string DatabaseFolderPath { get; set; }
     private QueryHelper QueryHelper { get; set; }
     private Event Event1 { get; set; }
@@ -68,7 +67,6 @@ namespace SoundExplorersDatabase.Tests.Data {
         Event1 = QueryHelper.Read<Event>(Event1.SimpleKey, Location1, session);
         session.Commit();
       }
-
       Assert.AreEqual(Location1Name, Location1.Name,
         "Location1.Name initially");
       Assert.AreEqual(Location1Notes, Location1.Notes,

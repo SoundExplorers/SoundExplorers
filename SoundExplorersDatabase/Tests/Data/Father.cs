@@ -36,7 +36,6 @@ namespace SoundExplorersDatabase.Tests.Data {
       if (childType == typeof(Daughter)) {
         return Daughters;
       }
-
       return Sons;
     }
 

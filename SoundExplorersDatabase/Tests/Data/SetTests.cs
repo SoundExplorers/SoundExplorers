@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Data;
 using System.Data.Linq;
 using NUnit.Framework;
 using SoundExplorersDatabase.Data;
+using VelocityDb.Exceptions;
 
 namespace SoundExplorersDatabase.Tests.Data {
   [TestFixture]
@@ -43,6 +45,14 @@ namespace SoundExplorersDatabase.Tests.Data {
         QueryHelper = QueryHelper,
         SetNo = Set2SetNo
       };
+      Piece1 = new Piece {
+        QueryHelper = QueryHelper,
+        PieceNo = Piece1PieceNo
+      };
+      Piece2 = new Piece {
+        QueryHelper = QueryHelper,
+        PieceNo = Piece2PieceNo
+      };
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
         session.Persist(Location1);
@@ -60,6 +70,10 @@ namespace SoundExplorersDatabase.Tests.Data {
         Set1.Act = Act1;
         Set1AtEvent2.Act = Act2;
         Set2.Act = Act1;
+        Set1.Pieces.Add(Piece1);
+        Set1.Pieces.Add(Piece2);
+        session.Persist(Piece1);
+        session.Persist(Piece2);
         session.Commit();
       }
     }
@@ -72,12 +86,13 @@ namespace SoundExplorersDatabase.Tests.Data {
     private const string Act1Name = "Ewan Husami";
     private const string Act2Name = "Ivanhoe Britches";
     private const string Location1Name = "Pyramid Club";
-    private const string Set1Key = "01";
+    private const int Piece1PieceNo = 1;
+    private const int Piece2PieceNo = 2;
     private const string Set1Notes = "My notes.";
+    private const string Set1SimpleKey = "01";
     private const int Set1SetNo = 1;
-    private const string Set2Key = "02";
     private const int Set2SetNo = 2;
-
+    private const string Set2SimpleKey = "02";
     private string DatabaseFolderPath { get; set; }
     private QueryHelper QueryHelper { get; set; }
     private Act Act1 { get; set; }
@@ -87,6 +102,8 @@ namespace SoundExplorersDatabase.Tests.Data {
     private Event Event2 { get; set; }
     private static DateTime Event2Date => DateTime.Today;
     private Location Location1 { get; set; }
+    private Piece Piece1 { get; set; }
+    private Piece Piece2 { get; set; }
     private Set Set1 { get; set; }
     private Set Set1AtEvent2 { get; set; }
     private Set Set2 { get; set; }
@@ -100,12 +117,13 @@ namespace SoundExplorersDatabase.Tests.Data {
         Event2 = QueryHelper.Read<Event>(Event2.SimpleKey, Location1, session);
         Act1 = QueryHelper.Read<Act>(Act1Name, session);
         Act2 = QueryHelper.Read<Act>(Act2Name, session);
-        Set1 = QueryHelper.Read<Set>(Set1Key, Event1, session);
-        Set1AtEvent2 = QueryHelper.Read<Set>(Set1Key, Event2, session);
-        Set2 = QueryHelper.Read<Set>(Set2Key, Event1, session);
+        Set1 = QueryHelper.Read<Set>(Set1SimpleKey, Event1, session);
+        Set1AtEvent2 = QueryHelper.Read<Set>(Set1SimpleKey, Event2, session);
+        Set2 = QueryHelper.Read<Set>(Set2SimpleKey, Event1, session);
+        Piece1 = QueryHelper.Read<Piece>(Piece1.SimpleKey, Set1, session);
+        Piece2 = QueryHelper.Read<Piece>(Piece2.SimpleKey, Set1, session);
         session.Commit();
       }
-
       Assert.AreEqual(Set1SetNo, Set1.SetNo, "Set1.SetNo");
       Assert.AreEqual(Set1Notes, Set1.Notes, "Set1.Notes");
       Assert.AreEqual(Set1SetNo, Set1AtEvent2.SetNo, "Set1_2.SetNo");
@@ -119,6 +137,14 @@ namespace SoundExplorersDatabase.Tests.Data {
       Assert.AreSame(Set2, Event1.Sets[1], "Event1.Sets[1]");
       Assert.AreSame(Set1, Act1.Sets[0], "Act1.Sets[0]");
       Assert.AreSame(Set1AtEvent2, Act2.Sets[0], "Act2.Sets[0]");
+      Assert.AreEqual(2, Set1.Pieces.Count, "Set1.Pieces.Count");
+      Assert.AreEqual(2, Set1.References.Count, "Set1.References.Count");
+      Assert.AreSame(Set1, Piece1.Set, "Piece1.Set");
+      Assert.AreEqual(Set1.SetNo, Piece1.Set.SetNo, "Piece1.Set.SetNo");
+      Assert.AreSame(Set1, Piece2.Set, "Piece2.Set");
+      Assert.AreEqual(Set1.SetNo, Piece2.Set.SetNo, "Piece2.Set.SetNo");
+      Assert.AreSame(Event1, Piece1.Set.Event, "Piece1.Set.Event");
+      Assert.AreSame(Event1, Piece2.Set.Event, "Piece2.Set.Event");
     }
 
     [Test]
@@ -166,6 +192,30 @@ namespace SoundExplorersDatabase.Tests.Data {
           "Act2 1st Set after Set1 changes Act");
         Assert.AreSame(Set1AtEvent2, Act2.Sets[1],
           "Act2 2nd Set after Set1 changes Act");
+      }
+    }
+
+    [Test]
+    public void T050_DisallowUnpersistSetWithPieces() {
+      using (var session = new TestSession(DatabaseFolderPath)) {
+        session.BeginUpdate();
+        Set1 = QueryHelper.Read<Set>(Set1.SimpleKey, Event1, session);
+        Assert.Throws<ReferentialIntegrityException>(() =>
+          Set1.Unpersist(session));
+        session.Commit();
+      }
+    }
+
+    [Test]
+    public void T060_DisallowRemovePiece() {
+      using (var session = new TestSession(DatabaseFolderPath)) {
+        session.BeginUpdate();
+        Set1 = QueryHelper.Read<Set>(Set1.SimpleKey, Event1, session);
+        Piece1 = QueryHelper.Read<Piece>(Piece1.SimpleKey, Set1, session);
+        Assert.Throws<ConstraintException>(() =>
+            Set1.Pieces.Remove(Piece1),
+          "Disallow remove Piece from mandatory link to Set.");
+        session.Commit();
       }
     }
   }

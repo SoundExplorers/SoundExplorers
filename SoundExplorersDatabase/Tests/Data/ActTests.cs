@@ -63,7 +63,6 @@ namespace SoundExplorersDatabase.Tests.Data {
     private const string Location1Name = "Pyramid Club";
     private const int Set1SetNo = 1;
     private const int Set2SetNo = 2;
-
     private string DatabaseFolderPath { get; set; }
     private QueryHelper QueryHelper { get; set; }
     private Act Act1 { get; set; }
@@ -84,7 +83,6 @@ namespace SoundExplorersDatabase.Tests.Data {
         Set2 = QueryHelper.Read<Set>(Set2.SimpleKey, Event1, session);
         session.Commit();
       }
-
       Assert.AreEqual(Act1Name, Act1.Name, "Act1.Name initially");
       Assert.AreEqual(Act1Notes, Act1.Notes, "Act1.Notes initially");
       Assert.AreEqual(Act2Name, Act2.Name, "Act2.Name initially");
@@ -105,7 +103,6 @@ namespace SoundExplorersDatabase.Tests.Data {
         Act1.Sets.Remove(Set1);
         session.Commit();
       }
-
       Assert.AreEqual(0, Act1.Sets.Count,
         "Act1.Sets.Count after remove");
       Assert.IsNull(Set1.Act, "Set1.Act after remove");

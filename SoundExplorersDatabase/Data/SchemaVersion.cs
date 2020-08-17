@@ -6,9 +6,7 @@ using VelocityDb.Session;
 namespace SoundExplorersDatabase.Data {
   public class SchemaVersion : OptimizedPersistable {
     private int _number;
-
     private SchemaVersion() { }
-
     private int ExpectedNumber { get; set; }
     public bool IsUpToDate => Number == ExpectedNumber;
 
@@ -44,7 +42,6 @@ namespace SoundExplorersDatabase.Data {
         if (QueryHelper.Instance.SchemaExistsOnDatabase(session)) {
           version = Find(session);
         }
-
         if (version == null) {
           version = AddVersion(session);
         }
@@ -52,7 +49,6 @@ namespace SoundExplorersDatabase.Data {
         session.Abort();
         throw;
       }
-
       version.ExpectedNumber = expectedNumber;
       return version;
     }

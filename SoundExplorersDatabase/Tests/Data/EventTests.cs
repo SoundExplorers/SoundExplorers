@@ -102,7 +102,6 @@ namespace SoundExplorersDatabase.Tests.Data {
     private const string Series2Name = "Field Recordings";
     private const int Set1SetNo = 1;
     private const int Set2SetNo = 2;
-
     private string DatabaseFolderPath { get; set; }
     private QueryHelper QueryHelper { get; set; }
     private Event Event1 { get; set; }
@@ -143,7 +142,6 @@ namespace SoundExplorersDatabase.Tests.Data {
         Set2 = QueryHelper.Read<Set>(Set2.SimpleKey, Event1, session);
         session.Commit();
       }
-
       Assert.AreEqual(Event1Date, Event1.Date, "Event1.Date");
       Assert.AreEqual(Event1Notes, Event1.Notes, "Event1.Notes");
       Assert.AreSame(Location1, Event1.Location, "Event1.Location");
@@ -240,13 +238,6 @@ namespace SoundExplorersDatabase.Tests.Data {
         Event1 = Location1.Events[0];
         Event1AtLocation2 = Location2.Events[0];
         Event2 = Location1.Events[1];
-        // Assert.AreEqual(Event1Date, Event1.Date, "Event1.Date");
-        // Assert.AreEqual(Event1Date, Event1AtLocation2.Date, "Event1AtLocation2.Date");
-        // Assert.AreEqual(Event2Date, Event2.Date, "Event2.Date");
-        // Assert.AreEqual(2, Location1.References.Count, "Location1.References.Count");
-        // var references = Location1.References.ToList();
-        // Assert.AreSame(Event2, references[1].To, "references[1].To");
-        // Assert.AreEqual(1, Location2.References.Count, "Location2.References.Count");
         Event2.Location = Location2;
         session.Commit();
         Assert.AreSame(Location2, Event2.Location,

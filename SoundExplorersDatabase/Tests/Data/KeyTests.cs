@@ -84,7 +84,6 @@ namespace SoundExplorersDatabase.Tests.Data {
         set2 = new Set {SetNo = 1, Event = event2};
         session.Commit();
       }
-
       Assert.IsTrue(location1.Key != location2.Key,
         "location1.Key != location2.Key");
       Assert.IsTrue(location1.Key < location2.Key,

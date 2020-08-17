@@ -23,7 +23,6 @@ namespace SoundExplorersDatabase.Data {
       Owner?.IdentifyingParent ?? _identifyingParent;
 
     [CanBeNull] private IRelative Owner { get; }
-
     [CanBeNull] private string SimpleKey => Owner?.SimpleKey ?? _simpleKey;
 
     public override bool Equals(object obj) {
@@ -31,19 +30,15 @@ namespace SoundExplorersDatabase.Data {
       if ((object)keyToMatch == null) {
         return false;
       }
-
       if (IdentifyingParent != null && keyToMatch.IdentifyingParent != null) {
         if (IdentifyingParent.Key.Equals(keyToMatch.IdentifyingParent.Key)) {
           return SimpleKey == keyToMatch.SimpleKey;
         }
-
         return false;
       }
-
       if (IdentifyingParent == null && keyToMatch.IdentifyingParent == null) {
         return SimpleKey == keyToMatch.SimpleKey;
       }
-
       return false;
     }
 
@@ -59,7 +54,6 @@ namespace SoundExplorersDatabase.Data {
       if ((object)key1 != null) {
         return key1.Equals(key2);
       }
-
       return (object)key2 == null;
     }
 
@@ -75,31 +69,24 @@ namespace SoundExplorersDatabase.Data {
       if (key1 == key2) {
         return false;
       }
-
       if (key1 == null) {
         return true;
       }
-
       if (key2 == null) {
         return false;
       }
-
       if (key1.IdentifyingParent != null && key2.IdentifyingParent != null) {
         if (key1.IdentifyingParent.Key < key2.IdentifyingParent.Key) {
           return true;
         }
-
         if (key1.IdentifyingParent.Key > key2.IdentifyingParent.Key) {
           return false;
         }
-
         return string.CompareOrdinal(key1.SimpleKey, key2.SimpleKey) < 0;
       }
-
       if (key1.IdentifyingParent == null && key2.IdentifyingParent == null) {
         return string.CompareOrdinal(key1.SimpleKey, key2.SimpleKey) < 0;
       }
-
       return key1.IdentifyingParent == null && key2.IdentifyingParent != null;
     }
 
@@ -109,7 +96,6 @@ namespace SoundExplorersDatabase.Data {
           ? $"{SimpleKey} | {IdentifyingParent?.Key}"
           : SimpleKey;
       }
-
       return string.Empty;
     }
   }

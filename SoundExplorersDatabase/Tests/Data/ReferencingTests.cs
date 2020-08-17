@@ -61,7 +61,6 @@ namespace SoundExplorersDatabase.Tests.Data {
     private const string Mother2Name = "Barbara";
     private const string Son1Name = "Adrian";
     private const string Son2Name = "Barry";
-
     private Daughter Daughter1 { get; set; }
     private Daughter Daughter2 { get; set; }
     private string DatabaseFolderPath { get; set; }
@@ -149,7 +148,6 @@ namespace SoundExplorersDatabase.Tests.Data {
         Assert.AreSame(Mother2, Daughter2.Mother, "Daughter2.Mother initially");
         Assert.AreEqual(0, Mother2.Sons.Count,
           "Mother2.Sons.Count initially");
-
         Assert.IsTrue(Son1.IsPersistent,
           "Son1.IsPersistent initially");
         Assert.AreEqual(Son1Name, Son1.Name, "Son1.Name");
@@ -240,7 +238,6 @@ namespace SoundExplorersDatabase.Tests.Data {
             Mother1.Daughters.Remove(Daughter1),
           "Cannot remove Daughter1 from mandatory link to Mother.");
         session.Commit();
-
         Assert.AreSame(Father1, Son2.Father,
           "Son2.Father after Add #2");
         Assert.AreSame(Son2, Father1.Sons[1],
@@ -269,7 +266,6 @@ namespace SoundExplorersDatabase.Tests.Data {
           "Father1.Sons.Count after Remove #2");
         Assert.AreEqual(2, Father1.References.Count,
           "Father1.References.Count after Remove #2");
-
         session.BeginUpdate();
         Daughter1.Unpersist(session);
         Daughter2.Unpersist(session);
@@ -312,7 +308,6 @@ namespace SoundExplorersDatabase.Tests.Data {
           "Son1.Father after Son1 changes Father");
         Assert.AreSame(Mother2, Son1.Mother,
           "Son1.Mother after Son1 changes Mother");
-
         Assert.AreEqual(0, Mother1.Daughters.Count,
           "Mother1.Daughters.Count after Daughter1 changes Mother");
         Assert.AreEqual(1, Mother1.Sons.Count,
@@ -329,7 +324,6 @@ namespace SoundExplorersDatabase.Tests.Data {
           "Mother2 1st Daughter after Daughter1 changes Mother");
         Assert.AreSame(Son1, Mother2.Sons[0],
           "Mother2 1st Son after Son1 changes Mother");
-
         Assert.AreEqual(0, Father1.Sons.Count,
           "Father1.Sons.Count after Son1 changes Father");
         Assert.AreEqual(1, Father1.Daughters.Count,
@@ -356,7 +350,6 @@ namespace SoundExplorersDatabase.Tests.Data {
         Mother2 = QueryHelper.Read<Mother>(Mother2Name, session);
         Daughter2 = QueryHelper.Read<Daughter>(Daughter2Name, session);
         Daughter2.Mother = Mother2;
-
         Father2 = QueryHelper.Read<Father>(Father2Name, session);
         Son2 = QueryHelper.Read<Son>(Son2Name, session);
         Son2.Father = Father2;
@@ -368,7 +361,6 @@ namespace SoundExplorersDatabase.Tests.Data {
           "Mother2.References.Count");
         Assert.AreSame(Daughter2, Mother2.Daughters[0],
           "Mother2 1st child after change Mother");
-
         Assert.AreSame(Father2, Son2.Father, "Son2.Father");
         Assert.AreEqual(1, Father2.Sons.Count,
           "Father2.Sons.Count");
@@ -389,12 +381,10 @@ namespace SoundExplorersDatabase.Tests.Data {
             // ReSharper disable once AssignNullToNotNullAttribute
             Daughter1.Mother = null,
           "Cannot remove Daughter from mandatory link to Mother.");
-
         Father1 = QueryHelper.Read<Father>(Father1Name, session);
         Son1 = QueryHelper.Read<Son>(Son1Name, session);
         Son1.Father = null;
         session.Commit();
-
         Assert.IsNull(Son1.Father, "Son1.Father");
         Assert.AreEqual(0, Father1.Sons.Count,
           "Father1.Sons.Count");
@@ -412,7 +402,6 @@ namespace SoundExplorersDatabase.Tests.Data {
         Father1 = QueryHelper.Read<Father>(Father1Name, session);
         Son1 = QueryHelper.Read<Son>(Son1Name, session);
         Daughter1.Unpersist(session);
-
         Father1 = QueryHelper.Read<Father>(Father1Name, session);
         Son1 = QueryHelper.Read<Son>(Son1Name, session);
         Son1.Unpersist(session);
@@ -423,7 +412,6 @@ namespace SoundExplorersDatabase.Tests.Data {
           "Mother1.Sons.Count");
         Assert.AreEqual(1, Mother1.References.Count,
           "Mother1.References.Count");
-
         Assert.AreEqual(0, Father1.Sons.Count,
           "Father1.Sons.Count");
         Assert.AreEqual(1, Father1.Daughters.Count,

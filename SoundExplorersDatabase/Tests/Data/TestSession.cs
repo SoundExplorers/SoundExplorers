@@ -15,7 +15,6 @@ namespace SoundExplorersDatabase.Tests.Data {
     }
 
     public TestSession() : this(CreateDatabaseFolder()) { }
-
     public string DatabaseFolderPath { get; }
     public bool OnDisposeDeleteDatabaseFolder { get; set; }
 
@@ -46,7 +45,6 @@ namespace SoundExplorersDatabase.Tests.Data {
           File.Delete(filePath);
         }
       }
-
       Directory.Delete(folderPath);
     }
 
@@ -66,12 +64,10 @@ namespace SoundExplorersDatabase.Tests.Data {
           TraceIndexUsage = false; // Seems not to work
           Trace.Listeners.Remove(traceListener);
         }
-
         if (!traceWriter.ToString().Contains("Index used")) {
           throw new DataException("An index was not used.");
         }
       }
-
       return result;
     }
   }

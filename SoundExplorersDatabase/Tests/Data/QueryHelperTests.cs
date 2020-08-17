@@ -37,7 +37,6 @@ namespace SoundExplorersDatabase.Tests.Data {
     private const string Event1SimpleKey = "2013/04/11";
     private const string Location1Name = "Fred's";
     private const string Location1Notes = "My location notes.";
-
     private string DatabaseFolderPath { get; set; }
     private QueryHelper QueryHelper { get; set; }
     private Event Event1 { get; set; }
