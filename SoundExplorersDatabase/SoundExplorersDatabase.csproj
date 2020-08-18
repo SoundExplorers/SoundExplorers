@@ -77,6 +77,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Data\Act.cs" />
+    <Compile Include="Data\Artist.cs" />
     <Compile Include="Data\IRelative.cs" />
     <Compile Include="Data\Key.cs" />
     <Compile Include="Data\IRelationInfo.cs" />

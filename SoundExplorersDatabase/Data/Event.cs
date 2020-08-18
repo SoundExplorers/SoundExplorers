@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections;
-using System.Diagnostics.CodeAnalysis;
 using JetBrains.Annotations;
-using VelocityDb.Session;
 
 namespace SoundExplorersDatabase.Data {
   public class Event : RelativeBase {
