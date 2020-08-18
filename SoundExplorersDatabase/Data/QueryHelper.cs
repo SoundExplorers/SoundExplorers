@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections;
 using System.Linq;
+using System.Reflection;
 using JetBrains.Annotations;
 using VelocityDb.Session;
 
@@ -8,6 +10,15 @@ namespace SoundExplorersDatabase.Data {
     private static QueryHelper _instance;
     private bool _schemaExistsOnDatabase;
 
+    static QueryHelper() {
+      AllObjectsGenericMethod =
+        typeof(SessionBase).GetMethod("AllObjects") ??
+        throw new NullReferenceException("Cannot find generic method.");
+    }
+
+    [NotNull] private static MethodInfo AllObjectsGenericMethod { get; }
+
+    [NotNull]
     internal static QueryHelper Instance =>
       _instance ?? (_instance = new QueryHelper());
 
@@ -51,6 +62,21 @@ namespace SoundExplorersDatabase.Data {
       }
       return session.AllObjects<TPersistable>()
         .FirstOrDefault(predicate);
+    }
+
+    [CanBeNull]
+    internal RelativeBase FindWithSameSimpleKey([NotNull] RelativeBase relative,
+      SessionBase session) {
+      if (!SchemaExistsOnDatabase(session)) {
+        return null;
+      }
+      var allObjectsConstructedMethod =
+        AllObjectsGenericMethod.MakeGenericMethod(relative.PersistableType);
+      var relatives = (IEnumerable)allObjectsConstructedMethod.Invoke(session,
+        new object[] {true, true});
+      return (from RelativeBase r in relatives
+        where r.SimpleKey == relative.SimpleKey
+        select r).FirstOrDefault();
     }
 
     [NotNull]

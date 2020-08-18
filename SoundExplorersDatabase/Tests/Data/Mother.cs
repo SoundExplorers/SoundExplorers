@@ -28,11 +28,6 @@ namespace SoundExplorersDatabase.Tests.Data {
 
     [NotNull] public SortedChildList<Son> Sons { get; }
 
-    protected override RelativeBase FindWithSameKey(
-      SessionBase session) {
-      return QueryHelper.Find<Mother>(SimpleKey, session);
-    }
-
     protected override IDictionary GetChildren(Type childType) {
       if (childType == typeof(Daughter)) {
         return Daughters;

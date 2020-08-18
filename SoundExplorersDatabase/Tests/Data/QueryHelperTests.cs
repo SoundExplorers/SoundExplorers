@@ -14,6 +14,10 @@ namespace SoundExplorersDatabase.Tests.Data {
         Name = Location1Name,
         Notes = Location1Notes
       };
+      Location2 = new Location {
+        QueryHelper = QueryHelper,
+        Name = Location2Name
+      };
       Event1 = new Event {
         QueryHelper = QueryHelper,
         Date = Event1Date,
@@ -22,6 +26,7 @@ namespace SoundExplorersDatabase.Tests.Data {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
         session.Persist(Location1);
+        session.Persist(Location2);
         Event1.Location = Location1;
         session.Persist(Event1);
         session.Commit();
@@ -37,11 +42,13 @@ namespace SoundExplorersDatabase.Tests.Data {
     private const string Event1SimpleKey = "2013/04/11";
     private const string Location1Name = "Fred's";
     private const string Location1Notes = "My location notes.";
+    private const string Location2Name = "Pyramid Club";
     private string DatabaseFolderPath { get; set; }
     private QueryHelper QueryHelper { get; set; }
     private Event Event1 { get; set; }
     private static DateTime Event1Date => DateTime.Parse(Event1SimpleKey);
     private Location Location1 { get; set; }
+    private Location Location2 { get; set; }
 
     [Test]
     public void T010_Find() {
@@ -91,6 +98,23 @@ namespace SoundExplorersDatabase.Tests.Data {
         Assert.AreEqual(Event1Notes, event1B.Notes,
           "event1B.Notes after Read by SimpleKey and IdentifyingParent");
       }
+    }
+
+    [Test]
+    public void T030_FindWithSameSimpleKey() {
+      var duplicate = new Location {
+        QueryHelper = QueryHelper,
+        Name = Location2Name
+      };
+      Location found;
+      using (var session = new TestSession(DatabaseFolderPath)) {
+        session.BeginRead();
+        found =
+          QueryHelper.FindWithSameSimpleKey(duplicate, session) as Location;
+        session.Commit();
+      }
+      Assert.IsNotNull(found);
+      Assert.AreEqual(Location2Name, found.Name);
     }
   }
 }

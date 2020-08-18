@@ -66,12 +66,6 @@ namespace SoundExplorersDatabase.Data {
       }
     }
 
-    [ExcludeFromCodeCoverage]
-    protected override RelativeBase FindWithSameKey(
-      [NotNull] SessionBase session) {
-      throw new NotSupportedException();
-    }
-
     protected override IDictionary GetChildren(Type childType) {
       throw new NotImplementedException();
     }

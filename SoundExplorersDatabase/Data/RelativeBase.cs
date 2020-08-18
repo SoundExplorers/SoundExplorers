@@ -83,7 +83,7 @@ namespace SoundExplorersDatabase.Data {
       }
     }
 
-    [NotNull] private Type PersistableType { get; }
+    [NotNull] internal Type PersistableType { get; }
 
     [NotNull]
     internal QueryHelper QueryHelper {
@@ -198,7 +198,7 @@ namespace SoundExplorersDatabase.Data {
             + "has not been specified.");
         }
       }
-      if (IsTopLevel && IsDuplicateKey(session)) {
+      if (IsTopLevel && IsDuplicateSimpleKey(session)) {
         throw new DuplicateKeyException(
           this,
           $"{PersistableType.Name} '{Key}' " +
@@ -269,10 +269,6 @@ namespace SoundExplorersDatabase.Data {
         value => value.ParentType, value => value);
     }
 
-    [CanBeNull]
-    protected abstract RelativeBase FindWithSameKey(
-      [NotNull] SessionBase session);
-
     [NotNull]
     protected abstract IDictionary GetChildren([NotNull] Type childType);
 
@@ -295,8 +291,8 @@ namespace SoundExplorersDatabase.Data {
       }
     }
 
-    private bool IsDuplicateKey([NotNull] SessionBase session) {
-      var existing = FindWithSameKey(session);
+    private bool IsDuplicateSimpleKey([NotNull] SessionBase session) {
+      var existing = QueryHelper.FindWithSameSimpleKey(this, session);
       return existing != null && !existing.Oid.Equals(Oid);
     }
 

@@ -62,12 +62,6 @@ namespace SoundExplorersDatabase.Data {
 
     [NotNull] public SortedChildList<Set> Sets { get; }
 
-    [ExcludeFromCodeCoverage]
-    protected override RelativeBase FindWithSameKey(
-      SessionBase session) {
-      throw new NotSupportedException();
-    }
-
     protected override IDictionary GetChildren(Type childType) {
       return Sets;
     }

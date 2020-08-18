@@ -52,10 +52,6 @@ namespace SoundExplorersDatabase.Data {
         newsletter => newsletter.Path == Path, session);
     }
 
-    protected override RelativeBase FindWithSameKey(SessionBase session) {
-      return QueryHelper.Find<Newsletter>(SimpleKey, session);
-    }
-
     protected override IDictionary GetChildren(Type childType) {
       return Events;
     }

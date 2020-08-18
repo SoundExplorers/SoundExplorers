@@ -44,11 +44,6 @@ namespace SoundExplorersDatabase.Tests.Data {
     }
 
     [ExcludeFromCodeCoverage]
-    protected override RelativeBase FindWithSameKey(SessionBase session) {
-      throw new NotSupportedException();
-    }
-
-    [ExcludeFromCodeCoverage]
     protected override IDictionary GetChildren(Type childType) {
       throw new NotSupportedException();
     }

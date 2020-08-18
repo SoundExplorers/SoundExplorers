@@ -30,10 +30,6 @@ namespace SoundExplorersDatabase.Data {
       }
     }
 
-    protected override RelativeBase FindWithSameKey(SessionBase session) {
-      return QueryHelper.Find<Location>(SimpleKey, session);
-    }
-
     protected override IDictionary GetChildren(Type childType) {
       return Events;
     }
