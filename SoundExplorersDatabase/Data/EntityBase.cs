@@ -56,9 +56,9 @@ namespace SoundExplorersDatabase.Data {
     }
 
     /// <summary>
-    ///   The Type as which the entity will be persisted on the database.
-    ///   Entities of any subtypes will be members of the same
-    ///   child collections, if any.
+    ///   The main Type as which the entity will be persisted on the database.
+    ///   Entities of subtypes may be persisted but will be members of the same
+    ///   child collections, if any, as entities of the main Type.
     /// </summary>
     [NotNull]
     internal Type EntityType { get; }

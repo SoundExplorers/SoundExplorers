@@ -64,6 +64,10 @@ namespace SoundExplorersDatabase.Data {
         .FirstOrDefault(predicate);
     }
 
+    /// <summary>
+    ///   Returns an entity, if found, with the same SimpleKey (case-insensitive)
+    ///   as the specified entity, otherwise a null reference.
+    /// </summary>
     [CanBeNull]
     internal EntityBase FindWithSameSimpleKey([NotNull] EntityBase entity,
       SessionBase session) {
@@ -75,7 +79,8 @@ namespace SoundExplorersDatabase.Data {
       var entities = (IEnumerable)allObjectsConstructedMethod.Invoke(session,
         new object[] {true, true});
       return (from EntityBase e in entities
-        where e.SimpleKey == entity.SimpleKey
+        where string.Compare(e.SimpleKey, entity.SimpleKey,
+          StringComparison.OrdinalIgnoreCase) == 0
         select e).FirstOrDefault();
     }
 
