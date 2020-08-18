@@ -16,6 +16,7 @@ namespace SoundExplorersDatabase.Tests.Data {
       Schema = TestSchema.Instance;
     }
 
+    [CanBeNull]
     public Father Father {
       get => _father;
       set {
@@ -25,6 +26,7 @@ namespace SoundExplorersDatabase.Tests.Data {
       }
     }
 
+    [CanBeNull]
     public Mother Mother {
       get => _mother;
       set {
@@ -34,6 +36,7 @@ namespace SoundExplorersDatabase.Tests.Data {
       }
     }
 
+    [CanBeNull]
     public string Name {
       get => SimpleKey;
       set {

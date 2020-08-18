@@ -22,6 +22,7 @@ namespace SoundExplorersDatabase.Data {
       }
     }
 
+    [CanBeNull]
     public Location Location {
       get => (Location)IdentifyingParent;
       set {
@@ -40,6 +41,7 @@ namespace SoundExplorersDatabase.Data {
       }
     }
 
+    [CanBeNull]
     public string Notes {
       get => _notes;
       set {

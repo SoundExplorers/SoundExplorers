@@ -11,6 +11,7 @@ namespace SoundExplorersDatabase.Data {
       Sets = new SortedChildList<Set>(this);
     }
 
+    [CanBeNull]
     public string Name {
       get => SimpleKey;
       set {
@@ -19,6 +20,7 @@ namespace SoundExplorersDatabase.Data {
       }
     }
 
+    [CanBeNull]
     public string Notes {
       get => _notes;
       set {

@@ -17,6 +17,7 @@ namespace SoundExplorersDatabase.Tests.Data {
 
     [NotNull] public SortedChildList<Daughter> Daughters { get; }
 
+    [CanBeNull]
     public string Name {
       get => SimpleKey;
       set {

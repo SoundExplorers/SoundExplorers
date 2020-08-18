@@ -13,6 +13,7 @@ namespace SoundExplorersDatabase.Data {
       //Credits = new SortedChildList<Credit>(this);
     }
 
+    [CanBeNull]
     public string Forename {
       get => _forename;
       set {
@@ -22,11 +23,13 @@ namespace SoundExplorersDatabase.Data {
       }
     }
 
+    [CanBeNull]
     public string Name {
       get => SimpleKey;
       private set => SimpleKey = value;
     }
 
+    [CanBeNull]
     public string Notes {
       get => _notes;
       set {
@@ -35,6 +38,7 @@ namespace SoundExplorersDatabase.Data {
       }
     }
 
+    [CanBeNull]
     public string Surname {
       get => _surname;
       set {

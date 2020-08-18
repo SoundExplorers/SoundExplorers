@@ -315,5 +315,14 @@ namespace SoundExplorersDatabase.Tests.Data {
         session.Commit();
       }
     }
+
+    [Test]
+    public void T100_GetNullLocation() {
+      var @event = new Event {
+        QueryHelper = QueryHelper,
+        Date = Event2Date
+      };
+      Assert.IsNull(@event.Location);
+    }
   }
 }

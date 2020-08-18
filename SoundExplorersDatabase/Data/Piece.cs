@@ -39,6 +39,7 @@ namespace SoundExplorersDatabase.Data {
       }
     }
 
+    [CanBeNull]
     public Set Set {
       get => (Set)IdentifyingParent;
       set {

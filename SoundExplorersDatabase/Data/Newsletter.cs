@@ -25,6 +25,7 @@ namespace SoundExplorersDatabase.Data {
 
     [NotNull] public SortedChildList<Event> Events { get; }
 
+    [CanBeNull]
     public string Path {
       get => _path;
       set {
