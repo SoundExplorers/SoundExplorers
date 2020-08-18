@@ -5,7 +5,7 @@ using JetBrains.Annotations;
 using SoundExplorersDatabase.Data;
 
 namespace SoundExplorersDatabase.Tests.Data {
-  public class Father : RelativeBase {
+  public class Father : EntityBase {
     public Father([NotNull] QueryHelper queryHelper) : base(typeof(Father),
       nameof(Name), null) {
       QueryHelper = queryHelper ??
@@ -37,8 +37,8 @@ namespace SoundExplorersDatabase.Tests.Data {
 
     [ExcludeFromCodeCoverage]
     protected override void OnNonIdentifyingParentFieldToBeUpdated(
-      Type parentPersistableType,
-      RelativeBase newParent) {
+      Type parentEntityType,
+      EntityBase newParent) {
       throw new NotSupportedException();
     }
   }

@@ -3,7 +3,7 @@ using System.Collections;
 using JetBrains.Annotations;
 
 namespace SoundExplorersDatabase.Data {
-  public class Event : RelativeBase {
+  public class Event : EntityBase {
     private DateTime _date;
     private Newsletter _newsletter;
     private string _notes;
@@ -67,9 +67,9 @@ namespace SoundExplorersDatabase.Data {
     }
 
     protected override void OnNonIdentifyingParentFieldToBeUpdated(
-      Type parentPersistableType,
-      RelativeBase newParent) {
-      if (parentPersistableType == typeof(Newsletter)) {
+      Type parentEntityType,
+      EntityBase newParent) {
+      if (parentEntityType == typeof(Newsletter)) {
         _newsletter = (Newsletter)newParent;
       } else {
         _series = (Series)newParent;

@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using JetBrains.Annotations;
 
 namespace SoundExplorersDatabase.Data {
-  public class Piece : RelativeBase {
+  public class Piece : EntityBase {
     private string _audioPath;
     private string _notes;
     private int _pieceNo;
@@ -72,7 +72,7 @@ namespace SoundExplorersDatabase.Data {
 
     [ExcludeFromCodeCoverage]
     protected override void OnNonIdentifyingParentFieldToBeUpdated(
-      Type parentPersistableType, RelativeBase newParent) {
+      Type parentEntityType, EntityBase newParent) {
       throw new NotSupportedException();
     }
   }

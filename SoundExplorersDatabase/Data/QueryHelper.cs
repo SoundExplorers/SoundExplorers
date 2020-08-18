@@ -23,84 +23,84 @@ namespace SoundExplorersDatabase.Data {
       _instance ?? (_instance = new QueryHelper());
 
     [NotNull]
-    private static Func<TPersistable, bool> CreateKeyPredicate<TPersistable>(
+    private static Func<TEntity, bool> CreateKeyPredicate<TEntity>(
       [CanBeNull] string simpleKey,
-      [CanBeNull] RelativeBase identifyingParent)
-      where TPersistable : RelativeBase {
+      [CanBeNull] EntityBase identifyingParent)
+      where TEntity : EntityBase {
       return
-        persistable => persistable.SimpleKey == simpleKey &&
-                       (persistable.IdentifyingParent == null &&
-                        identifyingParent == null ||
-                        persistable.IdentifyingParent != null &&
-                        persistable.IdentifyingParent
-                          .Equals(identifyingParent));
+        entity => entity.SimpleKey == simpleKey &&
+                  (entity.IdentifyingParent == null &&
+                   identifyingParent == null ||
+                   entity.IdentifyingParent != null &&
+                   entity.IdentifyingParent
+                     .Equals(identifyingParent));
     }
 
     [CanBeNull]
-    public TPersistable Find<TPersistable>(
+    public TEntity Find<TEntity>(
       [CanBeNull] string simpleKey,
-      [NotNull] SessionBase session) where TPersistable : RelativeBase {
-      return Find<TPersistable>(simpleKey, null, session);
+      [NotNull] SessionBase session) where TEntity : EntityBase {
+      return Find<TEntity>(simpleKey, null, session);
     }
 
     [CanBeNull]
-    public TPersistable Find<TPersistable>(
+    public TEntity Find<TEntity>(
       [CanBeNull] string simpleKey,
-      [CanBeNull] RelativeBase identifyingParent,
-      [NotNull] SessionBase session) where TPersistable : RelativeBase {
+      [CanBeNull] EntityBase identifyingParent,
+      [NotNull] SessionBase session) where TEntity : EntityBase {
       return Find(
-        CreateKeyPredicate<TPersistable>(simpleKey, identifyingParent),
+        CreateKeyPredicate<TEntity>(simpleKey, identifyingParent),
         session);
     }
 
     [CanBeNull]
-    public TPersistable Find<TPersistable>(
-      [NotNull] Func<TPersistable, bool> predicate,
-      [NotNull] SessionBase session) where TPersistable : RelativeBase {
+    public TEntity Find<TEntity>(
+      [NotNull] Func<TEntity, bool> predicate,
+      [NotNull] SessionBase session) where TEntity : EntityBase {
       if (!SchemaExistsOnDatabase(session)) {
         return null;
       }
-      return session.AllObjects<TPersistable>()
+      return session.AllObjects<TEntity>()
         .FirstOrDefault(predicate);
     }
 
     [CanBeNull]
-    internal RelativeBase FindWithSameSimpleKey([NotNull] RelativeBase relative,
+    internal EntityBase FindWithSameSimpleKey([NotNull] EntityBase entity,
       SessionBase session) {
       if (!SchemaExistsOnDatabase(session)) {
         return null;
       }
       var allObjectsConstructedMethod =
-        AllObjectsGenericMethod.MakeGenericMethod(relative.PersistableType);
-      var relatives = (IEnumerable)allObjectsConstructedMethod.Invoke(session,
+        AllObjectsGenericMethod.MakeGenericMethod(entity.EntityType);
+      var entities = (IEnumerable)allObjectsConstructedMethod.Invoke(session,
         new object[] {true, true});
-      return (from RelativeBase r in relatives
-        where r.SimpleKey == relative.SimpleKey
-        select r).FirstOrDefault();
+      return (from EntityBase e in entities
+        where e.SimpleKey == entity.SimpleKey
+        select e).FirstOrDefault();
     }
 
     [NotNull]
-    public static TPersistable Read<TPersistable>(
+    public static TEntity Read<TEntity>(
       [CanBeNull] string simpleKey,
-      [NotNull] SessionBase session) where TPersistable : RelativeBase {
-      return Read<TPersistable>(simpleKey, null, session);
+      [NotNull] SessionBase session) where TEntity : EntityBase {
+      return Read<TEntity>(simpleKey, null, session);
     }
 
     [NotNull]
-    public static TPersistable Read<TPersistable>(
+    public static TEntity Read<TEntity>(
       [CanBeNull] string simpleKey,
-      [CanBeNull] RelativeBase identifyingParent,
-      [NotNull] SessionBase session) where TPersistable : RelativeBase {
+      [CanBeNull] EntityBase identifyingParent,
+      [NotNull] SessionBase session) where TEntity : EntityBase {
       return Read(
-        CreateKeyPredicate<TPersistable>(simpleKey, identifyingParent),
+        CreateKeyPredicate<TEntity>(simpleKey, identifyingParent),
         session);
     }
 
     [NotNull]
-    public static TPersistable Read<TPersistable>(
-      [NotNull] Func<TPersistable, bool> predicate,
-      [NotNull] SessionBase session) where TPersistable : RelativeBase {
-      return session.AllObjects<TPersistable>()
+    public static TEntity Read<TEntity>(
+      [NotNull] Func<TEntity, bool> predicate,
+      [NotNull] SessionBase session) where TEntity : EntityBase {
+      return session.AllObjects<TEntity>()
         .First(predicate);
     }
 

@@ -3,7 +3,7 @@ using System.Collections;
 using JetBrains.Annotations;
 
 namespace SoundExplorersDatabase.Data {
-  public class Set : RelativeBase {
+  public class Set : EntityBase {
     private Act _act;
     private string _notes;
     private int _setNo;
@@ -56,7 +56,7 @@ namespace SoundExplorersDatabase.Data {
     }
 
     protected override void OnNonIdentifyingParentFieldToBeUpdated(
-      Type parentPersistableType, RelativeBase newParent) {
+      Type parentEntityType, EntityBase newParent) {
       _act = (Act)newParent;
     }
   }

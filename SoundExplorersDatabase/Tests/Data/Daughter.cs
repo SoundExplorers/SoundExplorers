@@ -5,7 +5,7 @@ using JetBrains.Annotations;
 using SoundExplorersDatabase.Data;
 
 namespace SoundExplorersDatabase.Tests.Data {
-  public class Daughter : RelativeBase {
+  public class Daughter : EntityBase {
     private Father _father;
     private Mother _mother;
 
@@ -52,9 +52,9 @@ namespace SoundExplorersDatabase.Tests.Data {
     }
 
     protected override void OnNonIdentifyingParentFieldToBeUpdated(
-      Type parentPersistableType,
-      RelativeBase newParent) {
-      if (parentPersistableType == typeof(Father)) {
+      Type parentEntityType,
+      EntityBase newParent) {
+      if (parentEntityType == typeof(Father)) {
         _father = (Father)newParent;
       } else {
         _mother = (Mother)newParent;

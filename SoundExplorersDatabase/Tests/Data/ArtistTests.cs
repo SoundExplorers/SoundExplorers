@@ -61,10 +61,13 @@ namespace SoundExplorersDatabase.Tests.Data {
         Baker = QueryHelper.Read<Artist>(BakerName, session);
         session.Commit();
       }
-      Assert.AreEqual(RalphJenkinsForename, RalphJenkins.Forename, "RalphJenkins.Forename");
-      Assert.AreEqual(RalphJenkinsSurname, RalphJenkins.Surname, "RalphJenkins.Surname");
+      Assert.AreEqual(RalphJenkinsForename, RalphJenkins.Forename,
+        "RalphJenkins.Forename");
+      Assert.AreEqual(RalphJenkinsSurname, RalphJenkins.Surname,
+        "RalphJenkins.Surname");
       Assert.AreEqual(RalphJenkinsName, RalphJenkins.Name, "RalphJenkins.Name");
-      Assert.AreEqual(RalphJenkinsNotes, RalphJenkins.Notes, "RalphJenkins.Notes");
+      Assert.AreEqual(RalphJenkinsNotes, RalphJenkins.Notes,
+        "RalphJenkins.Notes");
       Assert.AreEqual(ClarissaForename, Clarissa.Forename, "Clarissa.Forename");
       Assert.IsNull(Clarissa.Surname, "Clarissa.Surname");
       Assert.AreEqual(ClarissaName, Clarissa.Name, "Clarissa.Name");

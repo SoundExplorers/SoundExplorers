@@ -6,7 +6,7 @@ using JetBrains.Annotations;
 using VelocityDb.Session;
 
 namespace SoundExplorersDatabase.Data {
-  public class Newsletter : RelativeBase {
+  public class Newsletter : EntityBase {
     private DateTime _date;
     private string _path;
 
@@ -59,7 +59,7 @@ namespace SoundExplorersDatabase.Data {
 
     [ExcludeFromCodeCoverage]
     protected override void OnNonIdentifyingParentFieldToBeUpdated(
-      Type parentPersistableType, RelativeBase newParent) {
+      Type parentEntityType, EntityBase newParent) {
       throw new NotSupportedException();
     }
   }

@@ -96,7 +96,7 @@
         <Compile Include="Data\PieceTests.cs" />
         <Compile Include="Data\QueryHelperTests.cs" />
         <Compile Include="Data\ReferencingTests.cs" />
-        <Compile Include="Data\RelativeBaseTests.cs" />
+        <Compile Include="Data\EntityBaseTests.cs" />
         <Compile Include="Data\SchemaVersionTests.cs" />
         <Compile Include="Data\SeriesTests.cs" />
         <Compile Include="Data\SetTests.cs" />

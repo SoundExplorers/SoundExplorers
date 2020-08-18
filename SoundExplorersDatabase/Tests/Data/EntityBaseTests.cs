@@ -6,7 +6,7 @@ using SoundExplorersDatabase.Data;
 
 namespace SoundExplorersDatabase.Tests.Data {
   [TestFixture]
-  public class RelativeBaseTests {
+  public class EntityBaseTests {
     [SetUp]
     public void Setup() {
       QueryHelper = new QueryHelper();

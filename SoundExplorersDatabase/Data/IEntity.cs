@@ -1,6 +1,6 @@
 ﻿namespace SoundExplorersDatabase.Data {
-  public interface IRelative {
-    RelativeBase IdentifyingParent { get; }
+  public interface IEntity {
+    EntityBase IdentifyingParent { get; }
     Key Key { get; }
     string SimpleKey { get; }
   }

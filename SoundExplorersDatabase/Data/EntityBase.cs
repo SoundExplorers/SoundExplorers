@@ -10,21 +10,21 @@ using VelocityDb.Session;
 using VelocityDb.TypeInfo;
 
 namespace SoundExplorersDatabase.Data {
-  public abstract class RelativeBase : ReferenceTracked, IRelative {
+  public abstract class EntityBase : ReferenceTracked, IEntity {
     private IDictionary<Type, IDictionary> _childrenOfType;
     private IDictionary<Type, IRelationInfo> _childrenRelations;
-    private RelativeBase _identifyingParent;
+    private EntityBase _identifyingParent;
     private IDictionary<Type, IRelationInfo> _parentRelations;
-    private IDictionary<Type, RelativeBase> _parents;
+    private IDictionary<Type, EntityBase> _parents;
     private QueryHelper _queryHelper;
     private Schema _schema;
     [CanBeNull] private string _simpleKey;
 
-    protected RelativeBase([NotNull] Type persistableType,
+    protected EntityBase([NotNull] Type entityType,
       [NotNull] string simpleKeyName, [CanBeNull] Type identifyingParentType) {
-      PersistableType = persistableType ??
-                        throw new ArgumentNullException(
-                          nameof(persistableType));
+      EntityType = entityType ??
+                   throw new ArgumentNullException(
+                     nameof(entityType));
       SimpleKeyName = simpleKeyName ??
                       throw new ArgumentNullException(nameof(simpleKeyName));
       IdentifyingParentType = identifyingParentType;
@@ -55,6 +55,14 @@ namespace SoundExplorersDatabase.Data {
       }
     }
 
+    /// <summary>
+    ///   The Type as which the entity will be persisted on the database.
+    ///   Entities of any subtypes will be members of the same
+    ///   child collections, if any.
+    /// </summary>
+    [NotNull]
+    internal Type EntityType { get; }
+
     [CanBeNull] private Type IdentifyingParentType { get; }
     private bool IsAddingToOrRemovingFromIdentifyingParent { get; set; }
     private bool IsTopLevel => Parents.Count == 0;
@@ -72,7 +80,7 @@ namespace SoundExplorersDatabase.Data {
     }
 
     [NotNull]
-    private IDictionary<Type, RelativeBase> Parents {
+    private IDictionary<Type, EntityBase> Parents {
       get {
         InitialiseIfNull(_parents);
         return _parents;
@@ -82,8 +90,6 @@ namespace SoundExplorersDatabase.Data {
         _parents = value;
       }
     }
-
-    [NotNull] internal Type PersistableType { get; }
 
     [NotNull]
     internal QueryHelper QueryHelper {
@@ -100,7 +106,7 @@ namespace SoundExplorersDatabase.Data {
     [NotNull] private string SimpleKeyName { get; }
 
     [CanBeNull]
-    public RelativeBase IdentifyingParent {
+    public EntityBase IdentifyingParent {
       get => _identifyingParent;
       protected set {
         if (IsAddingToOrRemovingFromIdentifyingParent) {
@@ -110,29 +116,29 @@ namespace SoundExplorersDatabase.Data {
         if (IdentifyingParentType == null) {
           throw new ConstraintException(
             "An identifying parent type has not been specified " +
-            $"for {PersistableType.Name} '{Key}'.");
+            $"for {EntityType.Name} '{Key}'.");
         }
         if (value == null) {
           throw new NoNullAllowedException(
             "A null reference has been specified as the " +
-            $"{IdentifyingParentType.Name} for {PersistableType.Name} '{Key}'.");
+            $"{IdentifyingParentType.Name} for {EntityType.Name} '{Key}'.");
         }
-        if (value.PersistableType != IdentifyingParentType) {
+        if (value.EntityType != IdentifyingParentType) {
           throw new ConstraintException(
-            $"A {value.PersistableType.Name} has been specified as the " +
-            $"IdentifyingParent for {PersistableType.Name} '{Key}'. " +
+            $"A {value.EntityType.Name} has been specified as the " +
+            $"IdentifyingParent for {EntityType.Name} '{Key}'. " +
             $"A {IdentifyingParentType.Name} is expected'.");
         }
         var newKey = new Key(SimpleKey, value);
-        value.CheckForDuplicateChild(PersistableType, newKey);
+        value.CheckForDuplicateChild(EntityType, newKey);
         if (_identifyingParent != null &&
             // Should always be true
-            _identifyingParent.ChildrenOfType[PersistableType].Contains(Key)) {
-          _identifyingParent.ChildrenOfType[PersistableType].Remove(Key);
+            _identifyingParent.ChildrenOfType[EntityType].Contains(Key)) {
+          _identifyingParent.ChildrenOfType[EntityType].Remove(Key);
           _identifyingParent.References.Remove(
             _identifyingParent.References.First(r => r.To.Equals(this)));
         }
-        value.ChildrenOfType[PersistableType].Add(newKey, this);
+        value.ChildrenOfType[EntityType].Add(newKey, this);
         value.References.AddFast(new Reference(this, "_children"));
         Parents[IdentifyingParentType] = value;
         _identifyingParent = value;
@@ -147,53 +153,53 @@ namespace SoundExplorersDatabase.Data {
       protected set =>
         _simpleKey = value ?? throw new NoNullAllowedException(
           $"A null reference has been specified as the {SimpleKeyName} " +
-          $"for {PersistableType.Name} '{Key}'. " +
+          $"for {EntityType.Name} '{Key}'. " +
           $"Null {SimpleKeyName}s are not supported.");
     }
 
-    internal void AddChild([NotNull] RelativeBase child) {
+    internal void AddChild([NotNull] EntityBase child) {
       CheckCanAddChild(child);
-      ChildrenOfType[child.PersistableType].Add(CreateChildKey(child), child);
+      ChildrenOfType[child.EntityType].Add(CreateChildKey(child), child);
       References.AddFast(new Reference(child, "_children"));
       UpdateChild(child, this);
     }
 
     protected void ChangeNonIdentifyingParent(
-      [NotNull] Type parentPersistableType,
-      [CanBeNull] RelativeBase newParent) {
-      Parents[parentPersistableType]?.RemoveChild(this, newParent != null);
+      [NotNull] Type parentEntityType,
+      [CanBeNull] EntityBase newParent) {
+      Parents[parentEntityType]?.RemoveChild(this, newParent != null);
       newParent?.AddChild(this);
-      Parents[parentPersistableType] = newParent;
+      Parents[parentEntityType] = newParent;
     }
 
-    private void CheckCanAddChild([NotNull] RelativeBase child) {
+    private void CheckCanAddChild([NotNull] EntityBase child) {
       if (child == null) {
         throw new NoNullAllowedException(
           "A null reference has been specified. " +
-          $"So addition to {PersistableType.Name} '{Key}' is not supported.");
+          $"So addition to {EntityType.Name} '{Key}' is not supported.");
       }
-      if (child.Parents[PersistableType] != null) {
+      if (child.Parents[EntityType] != null) {
         throw new ConstraintException(
-          $"{child.PersistableType.Name} '{child.Key}' " +
-          $"cannot be added to {PersistableType.Name} '{Key}', " +
-          $"because it already belongs to {PersistableType.Name} " +
-          $"'{child.Parents[PersistableType].Key}'.");
+          $"{child.EntityType.Name} '{child.Key}' " +
+          $"cannot be added to {EntityType.Name} '{Key}', " +
+          $"because it already belongs to {EntityType.Name} " +
+          $"'{child.Parents[EntityType].Key}'.");
       }
-      CheckForDuplicateChild(child.PersistableType, CreateChildKey(child));
+      CheckForDuplicateChild(child.EntityType, CreateChildKey(child));
     }
 
     protected virtual void CheckCanPersist([NotNull] SessionBase session) {
       if (SimpleKey == null) {
         throw new NoNullAllowedException(
           $"A {SimpleKeyName} has not yet been specified. " +
-          $"So the {PersistableType.Name} cannot be persisted.");
+          $"So the {EntityType.Name} cannot be persisted.");
       }
       foreach (var parentKeyValuePair in Parents) {
         var parentType = parentKeyValuePair.Key;
         var parent = parentKeyValuePair.Value;
         if (parent == null && ParentRelations[parentType].IsMandatory) {
           throw new ConstraintException(
-            $"{PersistableType.Name} '{Key}' " +
+            $"{EntityType.Name} '{Key}' " +
             $"cannot be persisted because its {parentType.Name} "
             + "has not been specified.");
         }
@@ -201,59 +207,59 @@ namespace SoundExplorersDatabase.Data {
       if (IsTopLevel && IsDuplicateSimpleKey(session)) {
         throw new DuplicateKeyException(
           this,
-          $"{PersistableType.Name} '{Key}' " +
-          $"cannot be persisted because another {PersistableType.Name} "
+          $"{EntityType.Name} '{Key}' " +
+          $"cannot be persisted because another {EntityType.Name} "
           + "with the same key already persists.");
       }
     }
 
     private void CheckCanRemoveChild(
-      [NotNull] RelativeBase child, bool isReplacingOrUnpersisting) {
+      [NotNull] EntityBase child, bool isReplacingOrUnpersisting) {
       if (child == null) {
         throw new NoNullAllowedException(
           "A null reference has been specified. " +
-          $"So removal from {PersistableType.Name} '{Key}' is not supported.");
+          $"So removal from {EntityType.Name} '{Key}' is not supported.");
       }
-      if (!ChildrenOfType[child.PersistableType].Contains(child.Key)) {
+      if (!ChildrenOfType[child.EntityType].Contains(child.Key)) {
         throw new KeyNotFoundException(
-          $"{child.PersistableType.Name} '{child.Key}' " +
-          $"cannot be removed from {PersistableType.Name} '{Key}', " +
-          $"because it does not belong to {PersistableType.Name} " +
+          $"{child.EntityType.Name} '{child.Key}' " +
+          $"cannot be removed from {EntityType.Name} '{Key}', " +
+          $"because it does not belong to {EntityType.Name} " +
           $"'{Key}'.");
       }
-      if (ChildrenRelations[child.PersistableType].IsMandatory &&
+      if (ChildrenRelations[child.EntityType].IsMandatory &&
           !isReplacingOrUnpersisting) {
         throw new ConstraintException(
-          $"{child.PersistableType.Name} '{child.Key}' " +
-          $"cannot be removed from {PersistableType.Name} '{Key}', " +
+          $"{child.EntityType.Name} '{child.Key}' " +
+          $"cannot be removed from {EntityType.Name} '{Key}', " +
           "because membership is mandatory.");
       }
     }
 
-    private void CheckForDuplicateChild([NotNull] Type childPersistableType,
+    private void CheckForDuplicateChild([NotNull] Type childEntityType,
       [NotNull] Key keyToCheck) {
-      if (ChildrenOfType[childPersistableType]
+      if (ChildrenOfType[childEntityType]
         .Contains(keyToCheck)) {
         throw new DuplicateKeyException(
           keyToCheck,
-          $"{childPersistableType.Name} '{keyToCheck}' " +
-          $"cannot be added to {PersistableType.Name} '{Key}', " +
-          $"because a {childPersistableType.Name} with that Key " +
-          $"already belongs to the {PersistableType.Name}.");
+          $"{childEntityType.Name} '{keyToCheck}' " +
+          $"cannot be added to {EntityType.Name} '{Key}', " +
+          $"because a {childEntityType.Name} with that Key " +
+          $"already belongs to the {EntityType.Name}.");
       }
     }
 
     [NotNull]
-    private Key CreateChildKey([NotNull] RelativeBase child) {
+    private Key CreateChildKey([NotNull] EntityBase child) {
       return new Key(child,
-        child.IdentifyingParentType == PersistableType ? this : null);
+        child.IdentifyingParentType == EntityType ? this : null);
     }
 
     [NotNull]
     private IDictionary<Type, IRelationInfo> CreateChildrenRelations() {
       var values =
         from relation in Schema.Relations
-        where relation.ParentType == PersistableType
+        where relation.ParentType == EntityType
         select relation;
       return values.ToDictionary<RelationInfo, Type, IRelationInfo>(
         value => value.ChildType, value => value);
@@ -263,7 +269,7 @@ namespace SoundExplorersDatabase.Data {
     private IDictionary<Type, IRelationInfo> CreateParentRelations() {
       var values =
         from relation in Schema.Relations
-        where relation.ChildType == PersistableType
+        where relation.ChildType == EntityType
         select relation;
       return values.ToDictionary<RelationInfo, Type, IRelationInfo>(
         value => value.ParentType, value => value);
@@ -274,7 +280,7 @@ namespace SoundExplorersDatabase.Data {
 
     private void Initialise() {
       ParentRelations = CreateParentRelations();
-      Parents = new Dictionary<Type, RelativeBase>();
+      Parents = new Dictionary<Type, EntityBase>();
       foreach (var relationKvp in ParentRelations) {
         Parents.Add(relationKvp.Key, null);
       }
@@ -297,7 +303,7 @@ namespace SoundExplorersDatabase.Data {
     }
 
     protected abstract void OnNonIdentifyingParentFieldToBeUpdated(
-      [NotNull] Type parentPersistableType, [CanBeNull] RelativeBase newParent);
+      [NotNull] Type parentEntityType, [CanBeNull] EntityBase newParent);
 
     public override ulong Persist(Placement place, SessionBase session,
       bool persistRefs = true,
@@ -307,11 +313,11 @@ namespace SoundExplorersDatabase.Data {
       return base.Persist(place, session, persistRefs, disableFlush, toPersist);
     }
 
-    internal void RemoveChild([NotNull] RelativeBase child,
+    internal void RemoveChild([NotNull] EntityBase child,
       bool isReplacingOrUnpersisting) {
       CheckCanRemoveChild(child, isReplacingOrUnpersisting);
       UpdateChild(child, null);
-      ChildrenOfType[child.PersistableType].Remove(child.Key);
+      ChildrenOfType[child.EntityType].Remove(child.Key);
       References.Remove(References.First(r => r.To.Equals(child)));
     }
 
@@ -319,22 +325,22 @@ namespace SoundExplorersDatabase.Data {
       var parents =
         Parents.Values.Where(parent => parent != null).ToList();
       for (int i = parents.Count - 1; i >= 0; i--) {
-        parents[i].ChildrenOfType[PersistableType].Remove(this);
+        parents[i].ChildrenOfType[EntityType].Remove(this);
         parents[i].RemoveChild(this, true);
       }
       base.Unpersist(session);
     }
 
-    private void UpdateChild([NotNull] RelativeBase child,
-      [CanBeNull] RelativeBase newParent) {
+    private void UpdateChild([NotNull] EntityBase child,
+      [CanBeNull] EntityBase newParent) {
       child.UpdateNonIndexField();
-      child.Parents[PersistableType] = newParent;
-      if (PersistableType == child.IdentifyingParentType) {
+      child.Parents[EntityType] = newParent;
+      if (EntityType == child.IdentifyingParentType) {
         child.IsAddingToOrRemovingFromIdentifyingParent = true;
         child.IdentifyingParent = newParent;
         child.IsAddingToOrRemovingFromIdentifyingParent = false;
       } else {
-        child.OnNonIdentifyingParentFieldToBeUpdated(PersistableType,
+        child.OnNonIdentifyingParentFieldToBeUpdated(EntityType,
           newParent);
       }
     }

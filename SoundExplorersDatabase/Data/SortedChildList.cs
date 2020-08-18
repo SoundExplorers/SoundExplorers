@@ -4,15 +4,15 @@ using JetBrains.Annotations;
 
 namespace SoundExplorersDatabase.Data {
   public class SortedChildList<TChild> : SortedList<Key, TChild>
-    where TChild : RelativeBase {
-    internal SortedChildList([NotNull] RelativeBase parent) : base(
+    where TChild : EntityBase {
+    internal SortedChildList([NotNull] EntityBase parent) : base(
       new KeyComparer()) {
       Parent = parent ??
                throw new ArgumentNullException(nameof(parent));
     }
 
     public TChild this[int index] => Values[index];
-    private RelativeBase Parent { get; }
+    private EntityBase Parent { get; }
 
     public void Add([NotNull] TChild child) {
       Parent.AddChild(child);

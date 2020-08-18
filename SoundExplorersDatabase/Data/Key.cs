@@ -2,27 +2,27 @@
 
 namespace SoundExplorersDatabase.Data {
   public class Key {
-    private readonly IRelative _identifyingParent;
+    private readonly IEntity _identifyingParent;
     private readonly string _simpleKey;
 
-    internal Key([NotNull] IRelative owner,
-      IRelative identifyingParent = null) {
+    internal Key([NotNull] IEntity owner,
+      IEntity identifyingParent = null) {
       Owner = owner;
       _simpleKey = Owner.SimpleKey;
       _identifyingParent = identifyingParent;
     }
 
     public Key([CanBeNull] string simpleKey,
-      [CanBeNull] IRelative identifyingParent) {
+      [CanBeNull] IEntity identifyingParent) {
       _simpleKey = simpleKey;
       _identifyingParent = identifyingParent;
     }
 
     [CanBeNull]
-    private IRelative IdentifyingParent =>
+    private IEntity IdentifyingParent =>
       Owner?.IdentifyingParent ?? _identifyingParent;
 
-    [CanBeNull] private IRelative Owner { get; }
+    [CanBeNull] private IEntity Owner { get; }
     [CanBeNull] private string SimpleKey => Owner?.SimpleKey ?? _simpleKey;
 
     public override bool Equals(object obj) {
