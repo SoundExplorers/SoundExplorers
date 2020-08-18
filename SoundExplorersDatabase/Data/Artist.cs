@@ -13,20 +13,32 @@ namespace SoundExplorersDatabase.Data {
       //Credits = new SortedChildList<Credit>(this);
     }
 
+    /// <summary>
+    ///   The Name of an Artist who goes by a single name
+    ///   may be specified as either Forename or Surname.
+    /// </summary>
     [CanBeNull]
     public string Forename {
       get => _forename;
       set {
         UpdateNonIndexField();
         _forename = value;
-        UpdateName(value, Surname);
+        Name = MakeName(value, Surname);
       }
     }
 
+    /// <summary>
+    ///   Combines Forename and Surname into a single name.
+    ///   So the name of an Artist who goes by a single name
+    ///   may be specified as either Forename or Surname.
+    /// </summary>
     [CanBeNull]
     public string Name {
       get => SimpleKey;
-      private set => SimpleKey = value;
+      private set {
+        UpdateNonIndexField();
+        SimpleKey = value;
+      }
     }
 
     [CanBeNull]
@@ -38,13 +50,17 @@ namespace SoundExplorersDatabase.Data {
       }
     }
 
+    /// <summary>
+    ///   The Name of an Artist who goes by a single name
+    ///   may be specified as either Forename or Surname.
+    /// </summary>
     [CanBeNull]
     public string Surname {
       get => _surname;
       set {
         UpdateNonIndexField();
         _surname = value;
-        UpdateName(Forename, value);
+        Name = MakeName(Forename, value);
       }
     }
 
@@ -55,16 +71,34 @@ namespace SoundExplorersDatabase.Data {
       throw new NotImplementedException();
     }
 
+    /// <summary>
+    ///   Combines forename and surname into a single name,
+    ///   allowing for artists who go by a single name.
+    /// </summary>
+    [CanBeNull]
+    private static string MakeName([CanBeNull] string forename,
+      [CanBeNull] string surname) {
+      string result;
+      if (forename != null) {
+        if (surname != null) {
+          result = forename.Trim() + " " + surname.Trim();
+        } else {
+          result = forename.Trim();
+        }
+      } else if (surname != null) {
+        result = surname.Trim();
+      } else {
+        // A NoNullAllowedException will be thrown when Name is set to null.
+        // But here it is for completeness!
+        result = null;
+      }
+      return result;
+    }
+
     [ExcludeFromCodeCoverage]
     protected override void OnNonIdentifyingParentFieldToBeUpdated(
       Type parentPersistableType, RelativeBase newParent) {
       throw new NotSupportedException();
-    }
-
-    private void UpdateName([CanBeNull] string forename,
-      [CanBeNull] string surname) {
-      Name = ((forename?.Trim() ?? string.Empty) + " " +
-              (surname ?? string.Empty)).Trim();
     }
   }
 }
