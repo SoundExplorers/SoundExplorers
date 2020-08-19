@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 using System.Data.Linq;
 using NUnit.Framework;
 using SoundExplorersDatabase.Data;
@@ -17,11 +18,12 @@ namespace SoundExplorersDatabase.Tests.Data {
       Newsletter1 = new Newsletter {
         QueryHelper = QueryHelper,
         Date = Newsletter1Date,
-        Path = Newsletter1Path
+        Url = Newsletter1Url
       };
       Newsletter2 = new Newsletter {
         QueryHelper = QueryHelper,
-        Date = Newsletter2Date
+        Date = Newsletter2Date,
+        Url = Newsletter2Url
       };
       Event1 = new Event {
         QueryHelper = QueryHelper,
@@ -52,8 +54,7 @@ namespace SoundExplorersDatabase.Tests.Data {
 
     private const string Location1Name = "Pyramid Club";
     private const string Newsletter1SimpleKey = "2013/04/05";
-    private const string Newsletter1Path = "Path One";
-    private const string Newsletter2Key = "2016/07/08";
+    private const string Newsletter2SimpleKey = "2016/07/08";
     private string DatabaseFolderPath { get; set; }
     private QueryHelper QueryHelper { get; set; }
     private Event Event1 { get; set; }
@@ -63,13 +64,20 @@ namespace SoundExplorersDatabase.Tests.Data {
     private Location Location1 { get; set; }
     private Newsletter Newsletter1 { get; set; }
 
-    private static readonly DateTime Newsletter1Date =
+    private static DateTime Newsletter1Date =>
       DateTime.Parse(Newsletter1SimpleKey);
+
+    private static Uri Newsletter1Url => new Uri(
+      "https://archive.org/details/simpsons-lat.375923", UriKind.Absolute);
 
     private Newsletter Newsletter2 { get; set; }
 
-    private static readonly DateTime Newsletter2Date =
-      DateTime.Parse(Newsletter2Key);
+    private static DateTime Newsletter2Date =>
+      DateTime.Parse(Newsletter2SimpleKey);
+
+    private static Uri Newsletter2Url => new Uri(
+      "https://archive.org/details/BDChaurasiasHumanAnatomyVolume1MedicosTimes",
+      UriKind.Absolute);
 
     [Test]
     public void T010_Initial() {
@@ -77,25 +85,22 @@ namespace SoundExplorersDatabase.Tests.Data {
         session.BeginRead();
         Newsletter1 =
           QueryHelper.Read<Newsletter>(Newsletter1SimpleKey, session);
-        Newsletter2 = QueryHelper.Read<Newsletter>(Newsletter2Key, session);
+        Newsletter2 =
+          QueryHelper.Read<Newsletter>(Newsletter2SimpleKey, session);
         Event1 = QueryHelper.Read<Event>(Event1.SimpleKey, Location1, session);
         session.Commit();
       }
-      Assert.AreEqual(Newsletter1Date, Newsletter1.Date,
-        "Newsletter1.Date initially");
+      Assert.AreEqual(Newsletter1Date, Newsletter1.Date, "Newsletter1.Date");
       Assert.AreEqual(Newsletter1SimpleKey, Newsletter1.SimpleKey,
-        "Newsletter1.SimpleKey initially");
-      Assert.AreEqual(Newsletter1Path, Newsletter1.Path,
-        "Newsletter1.Path initially");
-      Assert.AreEqual(Newsletter2Date, Newsletter2.Date,
-        "Newsletter2.Date initially");
-      Assert.AreEqual(1, Newsletter1.Events.Count,
-        "Newsletter1.Events.Count initially");
-      Assert.AreSame(Newsletter1, Event1.Newsletter,
-        "Event1.Newsletter initially");
+        "Newsletter1.SimpleKey");
+      Assert.AreEqual(Newsletter1Url, Newsletter1.Url, "Newsletter1.Url");
+      Assert.AreEqual(Newsletter2Date, Newsletter2.Date, "Newsletter2.Date");
+      Assert.AreEqual(Newsletter2Url, Newsletter2.Url, "Newsletter2.Url");
+      Assert.AreEqual(1, Newsletter1.Events.Count, "Newsletter1.Events.Count");
+      Assert.AreSame(Newsletter1, Event1.Newsletter, "Event1.Newsletter");
       Assert.AreEqual(Newsletter1.Date, Event1.Newsletter?.Date,
-        "Event1.Newsletter.Date initially");
-      Assert.IsNull(Event2.Newsletter, "Event2.Newsletter initially");
+        "Event1.Newsletter.Date");
+      Assert.IsNull(Event2.Newsletter, "Event2.Newsletter");
     }
 
     [Test]
@@ -114,29 +119,134 @@ namespace SoundExplorersDatabase.Tests.Data {
     }
 
     [Test]
-    public void T030_DisallowDuplicateDate() {
-      var duplicate = new Newsletter {
+    public void T030_DisallowPersistUnspecifiedDate() {
+      var url = new Uri("https://archive.org/details/jazzpop",
+        UriKind.Absolute);
+      var noDate = new Newsletter {
         QueryHelper = QueryHelper,
-        Date = Newsletter1Date
+        Url = url
       };
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
-        Assert.Throws<DuplicateKeyException>(() =>
-          session.Persist(duplicate), "Duplicate Date");
+        Assert.Throws<NoNullAllowedException>(() => session.Persist(noDate));
         session.Commit();
       }
     }
 
     [Test]
-    public void T040_DisallowDuplicatePath() {
+    public void T040_DisallowPersistUnspecifiedUrl() {
+      var date = DateTime.Parse("2020/08/19");
+      var noUrl = new Newsletter {
+        QueryHelper = QueryHelper,
+        Date = date
+      };
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
-        var duplicate = new Newsletter {
-          QueryHelper = QueryHelper,
-          Date = DateTime.Today,
-          Path = "path one" // Tests that comparison is case-insensitive.
-        };
+        Assert.Throws<NoNullAllowedException>(() => session.Persist(noUrl));
+        session.Commit();
+      }
+    }
+
+    [Test]
+    public void T050_DisallowPersistDuplicateDate() {
+      var date = DateTime.Parse("2020/08/19");
+      var url1 = new Uri("https://archive.org/details/jazzpop",
+        UriKind.Absolute);
+      var url2 = new Uri("https://archive.org/details/native_201910",
+        UriKind.Absolute);
+      var original = new Newsletter {
+        QueryHelper = QueryHelper,
+        Date = date,
+        Url = url1
+      };
+      var duplicate = new Newsletter {
+        QueryHelper = QueryHelper,
+        Date = date,
+        Url = url2
+      };
+      using (var session = new TestSession(DatabaseFolderPath)) {
+        session.BeginUpdate();
+        session.Persist(original);
         Assert.Throws<DuplicateKeyException>(() => session.Persist(duplicate));
+        session.Commit();
+      }
+    }
+
+    [Test]
+    public void T070_DisallowPersistDuplicateUrl() {
+      var date1 = DateTime.Parse("2020/08/18");
+      var date2 = DateTime.Parse("2020/08/19");
+      var url = new Uri("https://archive.org/details/jazzpop",
+        UriKind.Absolute);
+      var original = new Newsletter {
+        QueryHelper = QueryHelper,
+        Date = date1,
+        Url = url
+      };
+      var duplicate = new Newsletter {
+        QueryHelper = QueryHelper,
+        Date = date2,
+        Url = url
+      };
+      using (var session = new TestSession(DatabaseFolderPath)) {
+        session.BeginUpdate();
+        session.Persist(original);
+        Assert.Throws<DuplicateKeyException>(() => session.Persist(duplicate));
+        session.Commit();
+      }
+    }
+
+    [Test]
+    public void T080_DisallowSetMinimumDate() {
+      Assert.Throws<NoNullAllowedException>(() =>
+        Newsletter2.Date = DateTime.MinValue);
+    }
+
+    [Test]
+    public void T090_DisallowSetNullUrl() {
+      Assert.Throws<NoNullAllowedException>(() => Newsletter2.Url = null);
+    }
+
+    [Test]
+    public void T100_DisallowSetInvalidUrl() {
+      Assert.Throws<UriFormatException>(() =>
+        Newsletter2.Url = new Uri("Invalid URL"));
+    }
+
+    [Test]
+    public void T110_CannotCheckSetDuplicateDateOutsideSession() {
+      Assert.Throws<InvalidOperationException>(() =>
+        Newsletter2.Date = Newsletter1Date);
+    }
+
+    [Test]
+    public void T120_CannotCheckSetDuplicateUrlOutsideSession() {
+      Assert.Throws<InvalidOperationException>(() =>
+        Newsletter2.Url = Newsletter1Url);
+    }
+
+    [Test]
+    public void T130_DisallowSetDuplicateDate() {
+      using (var session = new TestSession(DatabaseFolderPath)) {
+        session.BeginUpdate();
+        Newsletter2 =
+          QueryHelper.Read<Newsletter>(Newsletter2SimpleKey, session);
+        Newsletter2.Date = Newsletter2Date;
+        Assert.Throws<DuplicateKeyException>(() =>
+          Newsletter2.Date = Newsletter1Date);
+        session.Commit();
+      }
+    }
+
+    [Test]
+    public void T140_DisallowSetDuplicateUrl() {
+      using (var session = new TestSession(DatabaseFolderPath)) {
+        session.BeginUpdate();
+        Newsletter2 =
+          QueryHelper.Read<Newsletter>(Newsletter2SimpleKey, session);
+        Newsletter2.Url = Newsletter2Url;
+        Assert.Throws<DuplicateKeyException>(() =>
+          Newsletter2.Url = Newsletter1Url);
         session.Commit();
       }
     }

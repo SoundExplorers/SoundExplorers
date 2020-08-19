@@ -29,10 +29,10 @@ namespace SoundExplorersDatabase.Tests.Data {
       Piece1 = new Piece {
         QueryHelper = QueryHelper,
         PieceNo = Piece1PieceNo,
-        AudioPath = Piece1AudioPath,
+        AudioUrl = Piece1AudioUrl,
         Notes = Piece1Notes,
         Title = Piece1Title,
-        VideoPath = Piece1VideoPath
+        VideoUrl = Piece1VideoUrl
       };
       Piece1AtSet2 = new Piece {
         QueryHelper = QueryHelper,
@@ -67,11 +67,9 @@ namespace SoundExplorersDatabase.Tests.Data {
     }
 
     private const string Location1Name = "Pyramid Club";
-    private const string Piece1AudioPath = "My audio path.";
     private const string Piece1Notes = "My notes.";
     private const string Piece1SimpleKey = "01";
     private const string Piece1Title = "My title.";
-    private const string Piece1VideoPath = "My video path.";
     private const int Piece1PieceNo = 1;
     private const int Piece2PieceNo = 2;
     private const string Piece2SimpleKey = "02";
@@ -83,6 +81,16 @@ namespace SoundExplorersDatabase.Tests.Data {
     private static DateTime Event1Date => DateTime.Today.AddDays(-1);
     private Location Location1 { get; set; }
     private Piece Piece1 { get; set; }
+
+    private static Uri Piece1AudioUrl =>
+      new Uri(
+        "https://archive.org/details/geometry_dash_1.9/Geometry+Dash+OST/BaseAfterBase.mp3",
+        UriKind.Absolute);
+
+    private static Uri Piece1VideoUrl =>
+      new Uri("https://archive.org/details/nikopivx/niko-pivx-xoxo-hd.mp4",
+        UriKind.Absolute);
+
     private Piece Piece1AtSet2 { get; set; }
     private Piece Piece2 { get; set; }
     private Set Set1 { get; set; }
@@ -102,10 +110,10 @@ namespace SoundExplorersDatabase.Tests.Data {
         session.Commit();
       }
       Assert.AreEqual(Piece1PieceNo, Piece1.PieceNo, "Piece1.PieceNo");
-      Assert.AreEqual(Piece1AudioPath, Piece1.AudioPath, "Piece1.AudioPath");
+      Assert.AreEqual(Piece1AudioUrl, Piece1.AudioUrl, "Piece1.AudioUrl");
       Assert.AreEqual(Piece1Notes, Piece1.Notes, "Piece1.Notes");
       Assert.AreEqual(Piece1Title, Piece1.Title, "Piece1.Title");
-      Assert.AreEqual(Piece1VideoPath, Piece1.VideoPath, "Piece1.VideoPath");
+      Assert.AreEqual(Piece1VideoUrl, Piece1.VideoUrl, "Piece1.VideoUrl");
       Assert.AreEqual(Piece1PieceNo, Piece1AtSet2.PieceNo, "Piece1_2.PieceNo");
       Assert.AreEqual(Piece2PieceNo, Piece2.PieceNo, "Piece2.PieceNo");
       Assert.AreEqual(2, Set1.Pieces.Count, "Set1.Pieces.Count");

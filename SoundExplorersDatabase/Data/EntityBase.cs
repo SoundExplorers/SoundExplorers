@@ -344,5 +344,14 @@ namespace SoundExplorersDatabase.Data {
           newParent);
       }
     }
+
+    protected new bool UpdateNonIndexField() {
+      if (IsPersistent && Session == null) {
+        throw new InvalidOperationException(
+          $"{EntityType.Name} '{SimpleKey}' cannot be updated outside a session " +
+          "because it has already been persisted.");
+      }
+      return base.UpdateNonIndexField();
+    }
   }
 }

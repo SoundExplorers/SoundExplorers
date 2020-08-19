@@ -5,19 +5,19 @@ using JetBrains.Annotations;
 
 namespace SoundExplorersDatabase.Data {
   public class Piece : EntityBase {
-    private string _audioPath;
+    private Uri _audioUrl;
     private string _notes;
     private int _pieceNo;
     private string _title;
-    private string _videoPath;
+    private Uri _videoUrl;
     public Piece() : base(typeof(Piece), nameof(PieceNo), typeof(Set)) { }
 
     [CanBeNull]
-    public string AudioPath {
-      get => _audioPath;
+    public Uri AudioUrl {
+      get => _audioUrl;
       set {
         UpdateNonIndexField();
-        _audioPath = value;
+        _audioUrl = value;
       }
     }
 
@@ -57,11 +57,11 @@ namespace SoundExplorersDatabase.Data {
     }
 
     [CanBeNull]
-    public string VideoPath {
-      get => _videoPath;
+    public Uri VideoUrl {
+      get => _videoUrl;
       set {
         UpdateNonIndexField();
-        _videoPath = value;
+        _videoUrl = value;
       }
     }
 

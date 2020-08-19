@@ -23,12 +23,12 @@ namespace SoundExplorersDatabase.Tests.Data {
       Newsletter1 = new Newsletter {
         QueryHelper = QueryHelper,
         Date = Newsletter1Date,
-        Path = Newsletter1Path
+        Url = Newsletter1Url
       };
       Newsletter2 = new Newsletter {
         QueryHelper = QueryHelper,
         Date = Newsletter2Date,
-        Path = Newsletter2Path
+        Url = Newsletter2Url
       };
       Series1 = new Series {
         QueryHelper = QueryHelper,
@@ -95,9 +95,7 @@ namespace SoundExplorersDatabase.Tests.Data {
     private const string Location1Name = "Fred's";
     private const string Location2Name = "Pyramid Club";
     private const string Newsletter1Key = "2013/04/05";
-    private const string Newsletter1Path = "Path One";
     private const string Newsletter2Key = "2016/07/08";
-    private const string Newsletter2Path = "Path Two";
     private const string Series1Name = "Jazz Festival 2014";
     private const string Series2Name = "Field Recordings";
     private const int Set1SetNo = 1;
@@ -112,14 +110,16 @@ namespace SoundExplorersDatabase.Tests.Data {
     private Location Location1 { get; set; }
     private Location Location2 { get; set; }
     private Newsletter Newsletter1 { get; set; }
+    private static DateTime Newsletter1Date => DateTime.Parse(Newsletter1Key);
 
-    private static readonly DateTime Newsletter1Date =
-      DateTime.Parse(Newsletter1Key);
+    private static Uri Newsletter1Url => new Uri(
+      "https://archive.org/details/simpsons-lat.375923", UriKind.Absolute);
 
     private Newsletter Newsletter2 { get; set; }
+    private static DateTime Newsletter2Date => DateTime.Parse(Newsletter2Key);
 
-    private static readonly DateTime Newsletter2Date =
-      DateTime.Parse(Newsletter2Key);
+    private static Uri Newsletter2Url =>
+      new Uri("https://archive.org/details/policy_20191010", UriKind.Absolute);
 
     private Series Series1 { get; set; }
     private Series Series2 { get; set; }
