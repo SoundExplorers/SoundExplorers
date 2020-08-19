@@ -18,7 +18,10 @@ namespace SoundExplorersDatabase.Data {
     public DateTime Date {
       get => _date;
       set {
-        CheckCanSetDate(value);
+        if (value == DateTime.MinValue) {
+          throw new NoNullAllowedException(
+            "A valid Newsletter Date has not been specified.");
+        }
         UpdateNonIndexField();
         _date = value;
         SimpleKey = $"{Date:yyyy/MM/dd}";
@@ -30,9 +33,30 @@ namespace SoundExplorersDatabase.Data {
     public Uri Url {
       get => _url;
       set {
-        CheckCanSetUrl(value);
+        CheckCanChangeUrl(_url, value);
         UpdateNonIndexField();
         _url = value;
+      }
+    }
+
+    private void CheckCanChangeUrl([CanBeNull] Uri oldUrl,
+      [CanBeNull] Uri newUrl) {
+      if (newUrl == null) {
+        throw new NoNullAllowedException(
+          $"A valid URL has not been specified for Newsletter {SimpleKey}.");
+      }
+      if (IsPersistent && Session != null && newUrl != oldUrl) {
+        // If there's no session, which means we cannot check for a duplicate,
+        // EntityBase.UpdateNonIndexField will throw 
+        // an InvalidOperationException anyway.
+        var duplicate = FindDuplicateUrl(newUrl, Session);
+        if (duplicate != null) {
+          throw new DuplicateKeyException(
+            this,
+            $"Newsletter {SimpleKey}'s URL cannot be changed to " +
+            $"{newUrl}. Newsletter {duplicate.SimpleKey} " +
+            "has already been persisted with the that URL.");
+        }
       }
     }
 
@@ -54,56 +78,11 @@ namespace SoundExplorersDatabase.Data {
       }
     }
 
-    private void CheckCanSetDate(DateTime date) {
-      if (date == DateTime.MinValue) {
-        throw new NoNullAllowedException(
-          "A valid newsletter date has not been specified.");
-      }
-      if (IsPersistent && date != _date && Session != null) {
-        // If there's no session, which means we cannot check for a duplicate,
-        // EntityBase.UpdateNonIndexField will throw 
-        // an InvalidOperationException anyway.
-        var duplicate = FindDuplicateDate(date, Session);
-        if (duplicate != null) {
-          throw new DuplicateKeyException(
-            this,
-            $"Newsletter {SimpleKey}'s date cannot be changed to " +
-            $"{duplicate.SimpleKey} because another newsletter " +
-            $"with the that date has already been persisted.");
-        }
-      }
-    }
-
-    private void CheckCanSetUrl([CanBeNull] Uri url) {
-      if (url == null) {
-        throw new NoNullAllowedException(
-          $"A valid URL has not been specified for Newsletter {SimpleKey}.");
-      }
-      if (IsPersistent && url != _url && Session != null) {
-        // If there's no session, which means we cannot check for a duplicate,
-        // EntityBase.UpdateNonIndexField will throw 
-        // an InvalidOperationException anyway.
-        var duplicate = FindDuplicateUrl(url, Session);
-        if (duplicate != null) {
-          throw new DuplicateKeyException(
-            this,
-            $"Newsletter {SimpleKey}'s URL cannot be changed to " +
-            $"{url}. Newsletter {duplicate.SimpleKey} " +
-            $"has already been persisted with the that URL.");
-        }
-      }
-    }
-
     [CanBeNull]
-    private Newsletter FindDuplicateDate(DateTime date, [NotNull] SessionBase session) {
-      return QueryHelper.Find<Newsletter>(newsletter => newsletter.Date == date,
-        session);
-    }
-
-    [CanBeNull]
-    private Newsletter FindDuplicateUrl([NotNull] Uri url, [NotNull] SessionBase session) {
+    private Newsletter FindDuplicateUrl([NotNull] Uri url,
+      [NotNull] SessionBase session) {
       return QueryHelper.Find<Newsletter>(
-        newsletter => newsletter.Url.Equals(Url),
+        newsletter => newsletter.Url.Equals(url) && !newsletter.Oid.Equals(Oid),
         session);
     }
 

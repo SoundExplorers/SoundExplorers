@@ -83,7 +83,7 @@ namespace SoundExplorersDatabase.Data {
         new object[] {true, true});
       return (from EntityBase e in entities
         where string.Compare(e.SimpleKey, simpleKey,
-          StringComparison.OrdinalIgnoreCase) == 0
+          StringComparison.OrdinalIgnoreCase) == 0 && !e.Oid.Equals(oid)
         select e).FirstOrDefault();
     }
 
