@@ -22,7 +22,6 @@ namespace SoundExplorersDatabase.Data {
       }
     }
 
-    [CanBeNull]
     public Event Event {
       get => (Event)IdentifyingParent;
       set {

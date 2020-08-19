@@ -176,7 +176,7 @@ namespace SoundExplorersDatabase.Tests.Data {
       Assert.AreEqual(Event1.Date, Set1.Event?.Date,
         "Set1.Event.Date initially");
       Assert.AreSame(Event1, Set2.Event, "Set2.Event");
-      Assert.AreEqual(Event1.Date, Set2.Event?.Date, "Set2.Event.Date");
+      Assert.AreEqual(Event1.Date, Set2.Event.Date, "Set2.Event.Date");
     }
 
     [Test]

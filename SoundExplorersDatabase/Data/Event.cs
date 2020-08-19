@@ -22,7 +22,6 @@ namespace SoundExplorersDatabase.Data {
       }
     }
 
-    [CanBeNull]
     public Location Location {
       get => (Location)IdentifyingParent;
       set {
