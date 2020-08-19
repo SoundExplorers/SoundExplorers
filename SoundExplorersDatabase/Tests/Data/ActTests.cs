@@ -74,7 +74,7 @@ namespace SoundExplorersDatabase.Tests.Data {
     private Set Set2 { get; set; }
 
     [Test]
-    public void T010_Initial() {
+    public void A010_Initial() {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginRead();
         Act1 = QueryHelper.Read<Act>(Act1Name, session);
@@ -83,19 +83,30 @@ namespace SoundExplorersDatabase.Tests.Data {
         Set2 = QueryHelper.Read<Set>(Set2.SimpleKey, Event1, session);
         session.Commit();
       }
-      Assert.AreEqual(Act1Name, Act1.Name, "Act1.Name initially");
-      Assert.AreEqual(Act1Notes, Act1.Notes, "Act1.Notes initially");
-      Assert.AreEqual(Act2Name, Act2.Name, "Act2.Name initially");
-      Assert.AreEqual(1, Act1.Sets.Count,
-        "Act1.Sets.Count initially");
-      Assert.AreSame(Act1, Set1.Act, "Set1.Act initially");
-      Assert.AreEqual(Act1.Name, Set1.Act?.Name,
-        "Set1.Act.Name initially");
-      Assert.IsNull(Set2.Act, "Set2.Act initially");
+      Assert.AreEqual(Act1Name, Act1.Name, "Act1.Name");
+      Assert.AreEqual(Act1Notes, Act1.Notes, "Act1.Notes");
+      Assert.AreEqual(Act2Name, Act2.Name, "Act2.Name");
+      Assert.AreEqual(1, Act1.Sets.Count, "Act1.Sets.Count");
+      Assert.AreSame(Act1, Set1.Act, "Set1.Act");
+      Assert.AreEqual(Act1.Name, Set1.Act?.Name, "Set1.Act.Name");
+      Assert.IsNull(Set2.Act, "Set2.Act");
     }
 
     [Test]
-    public void T020_RemoveSet() {
+    public void DisallowPersistDuplicate() {
+      var duplicate = new Act {
+        QueryHelper = QueryHelper,
+        Name = Act1Name
+      };
+      using (var session = new TestSession(DatabaseFolderPath)) {
+        session.BeginUpdate();
+        Assert.Throws<DuplicateKeyException>(() => session.Persist(duplicate));
+        session.Commit();
+      }
+    }
+
+    [Test]
+    public void RemoveSet() {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
         Act1 = QueryHelper.Read<Act>(Act1Name, session);
@@ -103,23 +114,8 @@ namespace SoundExplorersDatabase.Tests.Data {
         Act1.Sets.Remove(Set1);
         session.Commit();
       }
-      Assert.AreEqual(0, Act1.Sets.Count,
-        "Act1.Sets.Count after remove");
-      Assert.IsNull(Set1.Act, "Set1.Act after remove");
-    }
-
-    [Test]
-    public void T030_DisallowDuplicate() {
-      var duplicate = new Act {
-        QueryHelper = QueryHelper,
-        Name = Act1Name
-      };
-      using (var session = new TestSession(DatabaseFolderPath)) {
-        session.BeginUpdate();
-        Assert.Throws<DuplicateKeyException>(() =>
-          session.Persist(duplicate), "Duplicate");
-        session.Commit();
-      }
+      Assert.AreEqual(0, Act1.Sets.Count, "Act1.Sets.Count");
+      Assert.IsNull(Set1.Act, "Set1.Act");
     }
   }
 }
