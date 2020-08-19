@@ -53,8 +53,8 @@ namespace SoundExplorersDatabase.Tests.Data {
     }
 
     private const string Location1Name = "Pyramid Club";
-    private const string Newsletter1SimpleKey = "2013/04/05";
-    private const string Newsletter2SimpleKey = "2016/07/08";
+    private const string Newsletter1SimpleKey = "2013/04/11";
+    private const string Newsletter2SimpleKey = "2013/04/22";
     private string DatabaseFolderPath { get; set; }
     private QueryHelper QueryHelper { get; set; }
     private Event Event1 { get; set; }
@@ -80,7 +80,7 @@ namespace SoundExplorersDatabase.Tests.Data {
       UriKind.Absolute);
 
     [Test]
-    public void T010_Initial() {
+    public void A010_Initial() {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginRead();
         Newsletter1 =
@@ -104,51 +104,19 @@ namespace SoundExplorersDatabase.Tests.Data {
     }
 
     [Test]
-    public void T020_RemoveEvent() {
-      using (var session = new TestSession(DatabaseFolderPath)) {
-        session.BeginUpdate();
-        Newsletter1 =
-          QueryHelper.Read<Newsletter>(Newsletter1.SimpleKey, session);
-        Event1 = QueryHelper.Read<Event>(Event1.SimpleKey, Location1, session);
-        Newsletter1.Events.Remove(Event1);
-        session.Commit();
-      }
-      Assert.AreEqual(0, Newsletter1.Events.Count,
-        "Newsletter1.Events.Count after remove");
-      Assert.IsNull(Event1.Newsletter, "Event1.Newsletter after remove");
+    public void CannotCheckSetDuplicateDateOutsideSession() {
+      Assert.Throws<InvalidOperationException>(() =>
+        Newsletter2.Date = Newsletter1Date);
     }
 
     [Test]
-    public void T030_DisallowPersistUnspecifiedDate() {
-      var url = new Uri("https://archive.org/details/jazzpop",
-        UriKind.Absolute);
-      var noDate = new Newsletter {
-        QueryHelper = QueryHelper,
-        Url = url
-      };
-      using (var session = new TestSession(DatabaseFolderPath)) {
-        session.BeginUpdate();
-        Assert.Throws<NoNullAllowedException>(() => session.Persist(noDate));
-        session.Commit();
-      }
+    public void CannotCheckSetDuplicateUrlOutsideSession() {
+      Assert.Throws<InvalidOperationException>(() =>
+        Newsletter2.Url = Newsletter1Url);
     }
 
     [Test]
-    public void T040_DisallowPersistUnspecifiedUrl() {
-      var date = DateTime.Parse("2020/08/19");
-      var noUrl = new Newsletter {
-        QueryHelper = QueryHelper,
-        Date = date
-      };
-      using (var session = new TestSession(DatabaseFolderPath)) {
-        session.BeginUpdate();
-        Assert.Throws<NoNullAllowedException>(() => session.Persist(noUrl));
-        session.Commit();
-      }
-    }
-
-    [Test]
-    public void T050_DisallowPersistDuplicateDate() {
+    public void DisallowPersistDuplicateDate() {
       var date = DateTime.Parse("2020/08/19");
       var url1 = new Uri("https://archive.org/details/jazzpop",
         UriKind.Absolute);
@@ -173,7 +141,7 @@ namespace SoundExplorersDatabase.Tests.Data {
     }
 
     [Test]
-    public void T070_DisallowPersistDuplicateUrl() {
+    public void DisallowPersistDuplicateUrl() {
       var date1 = DateTime.Parse("2020/08/18");
       var date2 = DateTime.Parse("2020/08/19");
       var url = new Uri("https://archive.org/details/jazzpop",
@@ -197,36 +165,36 @@ namespace SoundExplorersDatabase.Tests.Data {
     }
 
     [Test]
-    public void T080_DisallowSetMinimumDate() {
-      Assert.Throws<NoNullAllowedException>(() =>
-        Newsletter2.Date = DateTime.MinValue);
+    public void DisallowPersistUnspecifiedDate() {
+      var url = new Uri("https://archive.org/details/jazzpop",
+        UriKind.Absolute);
+      var noDate = new Newsletter {
+        QueryHelper = QueryHelper,
+        Url = url
+      };
+      using (var session = new TestSession(DatabaseFolderPath)) {
+        session.BeginUpdate();
+        Assert.Throws<NoNullAllowedException>(() => session.Persist(noDate));
+        session.Commit();
+      }
     }
 
     [Test]
-    public void T090_DisallowSetNullUrl() {
-      Assert.Throws<NoNullAllowedException>(() => Newsletter2.Url = null);
+    public void DisallowPersistUnspecifiedUrl() {
+      var date = DateTime.Parse("2020/08/19");
+      var noUrl = new Newsletter {
+        QueryHelper = QueryHelper,
+        Date = date
+      };
+      using (var session = new TestSession(DatabaseFolderPath)) {
+        session.BeginUpdate();
+        Assert.Throws<NoNullAllowedException>(() => session.Persist(noUrl));
+        session.Commit();
+      }
     }
 
     [Test]
-    public void T100_DisallowSetInvalidUrl() {
-      Assert.Throws<UriFormatException>(() =>
-        Newsletter2.Url = new Uri("Invalid URL"));
-    }
-
-    [Test]
-    public void T110_CannotCheckSetDuplicateDateOutsideSession() {
-      Assert.Throws<InvalidOperationException>(() =>
-        Newsletter2.Date = Newsletter1Date);
-    }
-
-    [Test]
-    public void T120_CannotCheckSetDuplicateUrlOutsideSession() {
-      Assert.Throws<InvalidOperationException>(() =>
-        Newsletter2.Url = Newsletter1Url);
-    }
-
-    [Test]
-    public void T130_DisallowSetDuplicateDate() {
+    public void DisallowSetDuplicateDate() {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
         Newsletter2 =
@@ -239,7 +207,7 @@ namespace SoundExplorersDatabase.Tests.Data {
     }
 
     [Test]
-    public void T140_DisallowSetDuplicateUrl() {
+    public void DisallowSetDuplicateUrl() {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
         Newsletter2 =
@@ -249,6 +217,38 @@ namespace SoundExplorersDatabase.Tests.Data {
           Newsletter2.Url = Newsletter1Url);
         session.Commit();
       }
+    }
+
+    [Test]
+    public void DisallowSetInvalidUrl() {
+      Assert.Throws<UriFormatException>(() =>
+        Newsletter2.Url = new Uri("Invalid URL"));
+    }
+
+    [Test]
+    public void DisallowSetMinimumDate() {
+      Assert.Throws<NoNullAllowedException>(() =>
+        Newsletter2.Date = DateTime.MinValue);
+    }
+
+    [Test]
+    public void DisallowSetNullUrl() {
+      Assert.Throws<NoNullAllowedException>(() => Newsletter2.Url = null);
+    }
+
+    [Test]
+    public void RemoveEvent() {
+      using (var session = new TestSession(DatabaseFolderPath)) {
+        session.BeginUpdate();
+        Newsletter1 =
+          QueryHelper.Read<Newsletter>(Newsletter1.SimpleKey, session);
+        Event1 = QueryHelper.Read<Event>(Event1.SimpleKey, Location1, session);
+        Newsletter1.Events.Remove(Event1);
+        session.Commit();
+      }
+      Assert.AreEqual(0, Newsletter1.Events.Count,
+        "Newsletter1.Events.Count after remove");
+      Assert.IsNull(Event1.Newsletter, "Event1.Newsletter after remove");
     }
   }
 }
