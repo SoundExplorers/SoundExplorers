@@ -1,6 +1,7 @@
 ﻿using System;
 using NUnit.Framework;
 using SoundExplorersDatabase.Data;
+using VelocityDb;
 
 namespace SoundExplorersDatabase.Tests.Data {
   [TestFixture]
@@ -80,7 +81,8 @@ namespace SoundExplorersDatabase.Tests.Data {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginRead();
         found =
-          QueryHelper.FindByType(typeof(Location), Location2Name, session) as
+          QueryHelper.FindDuplicateSimpleKey(typeof(Location), new Oid(),
+              Location2Name, session) as
             Location;
         session.Commit();
       }

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Linq;
 using System.Reflection;
 using JetBrains.Annotations;
+using VelocityDb;
 using VelocityDb.Session;
 
 namespace SoundExplorersDatabase.Data {
@@ -65,10 +66,11 @@ namespace SoundExplorersDatabase.Data {
     }
     /// <summary>
     ///   Returns an entity of the specified type with the specified SimpleKey
-    ///  (case-insensitive), if found, otherwise a null reference.
+    ///  (case-insensitive) but a different object identifier from the one specified,
+    /// if found, otherwise a null reference.
     /// </summary>
     [CanBeNull]
-    internal EntityBase FindByType([NotNull] Type entityType, [CanBeNull] string simpleKey,
+    internal EntityBase FindDuplicateSimpleKey([NotNull] Type entityType, Oid oid, [CanBeNull] string simpleKey,
       SessionBase session) {
       if (!SchemaExistsOnDatabase(session)) {
         return null;
