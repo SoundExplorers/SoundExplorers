@@ -76,7 +76,7 @@ namespace SoundExplorersDatabase.Tests.Data {
     }
 
     [Test]
-    public void FindByType() {
+    public void FindDuplicateSimpleKey() {
       Location found;
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginRead();
@@ -89,23 +89,6 @@ namespace SoundExplorersDatabase.Tests.Data {
       Assert.IsNotNull(found);
       Assert.AreEqual(Location2Name, found.Name);
     }
-
-    // [Test]
-    // public void FindWithSameSimpleKey() {
-    //   var duplicate = new Location {
-    //     QueryHelper = QueryHelper,
-    //     Name = Location2Name
-    //   };
-    //   Location found;
-    //   using (var session = new TestSession(DatabaseFolderPath)) {
-    //     session.BeginRead();
-    //     found =
-    //       QueryHelper.FindWithSameSimpleKey(duplicate, session) as Location;
-    //     session.Commit();
-    //   }
-    //   Assert.IsNotNull(found);
-    //   Assert.AreEqual(Location2Name, found.Name);
-    // }
 
     [Test]
     public void Read() {

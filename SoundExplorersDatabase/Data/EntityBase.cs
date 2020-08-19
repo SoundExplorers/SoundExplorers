@@ -204,7 +204,9 @@ namespace SoundExplorersDatabase.Data {
             + "has not been specified.");
         }
       }
-      if (IsTopLevel && IsDuplicateSimpleKey(session)) {
+      if (IsTopLevel &&
+          QueryHelper.FindDuplicateSimpleKey(EntityType, Oid, SimpleKey,
+            session) != null) {
         throw new DuplicateKeyException(
           this,
           $"{EntityType.Name} '{Key}' " +
@@ -295,13 +297,6 @@ namespace SoundExplorersDatabase.Data {
       if (backingField == null) {
         Initialise();
       }
-    }
-
-    private bool IsDuplicateSimpleKey([NotNull] SessionBase session) {
-      var existing =
-        QueryHelper.FindDuplicateSimpleKey(EntityType, Oid, SimpleKey, session);
-      //var existing = QueryHelper.FindWithSameSimpleKey(this, session);
-      return existing != null && !existing.Oid.Equals(Oid);
     }
 
     protected abstract void OnNonIdentifyingParentFieldToBeUpdated(
