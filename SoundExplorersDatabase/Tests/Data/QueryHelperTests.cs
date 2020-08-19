@@ -51,7 +51,7 @@ namespace SoundExplorersDatabase.Tests.Data {
     private Location Location2 { get; set; }
 
     [Test]
-    public void T010_Find() {
+    public void Find() {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginRead();
         var location1A =
@@ -75,7 +75,24 @@ namespace SoundExplorersDatabase.Tests.Data {
     }
 
     [Test]
-    public void T020_Read() {
+    public void FindWithSameSimpleKey() {
+      var duplicate = new Location {
+        QueryHelper = QueryHelper,
+        Name = Location2Name
+      };
+      Location found;
+      using (var session = new TestSession(DatabaseFolderPath)) {
+        session.BeginRead();
+        found =
+          QueryHelper.FindWithSameSimpleKey(duplicate, session) as Location;
+        session.Commit();
+      }
+      Assert.IsNotNull(found);
+      Assert.AreEqual(Location2Name, found.Name);
+    }
+
+    [Test]
+    public void Read() {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginRead();
         var location1A =
@@ -98,23 +115,6 @@ namespace SoundExplorersDatabase.Tests.Data {
         Assert.AreEqual(Event1Notes, event1B.Notes,
           "event1B.Notes after Read by SimpleKey and IdentifyingParent");
       }
-    }
-
-    [Test]
-    public void T030_FindWithSameSimpleKey() {
-      var duplicate = new Location {
-        QueryHelper = QueryHelper,
-        Name = Location2Name
-      };
-      Location found;
-      using (var session = new TestSession(DatabaseFolderPath)) {
-        session.BeginRead();
-        found =
-          QueryHelper.FindWithSameSimpleKey(duplicate, session) as Location;
-        session.Commit();
-      }
-      Assert.IsNotNull(found);
-      Assert.AreEqual(Location2Name, found.Name);
     }
   }
 }
