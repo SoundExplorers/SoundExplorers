@@ -150,11 +150,10 @@ namespace SoundExplorersDatabase.Data {
     [CanBeNull]
     public string SimpleKey {
       get => _simpleKey;
-      protected set =>
-        _simpleKey = value ?? throw new NoNullAllowedException(
-          $"A null reference has been specified as the {SimpleKeyName} " +
-          $"for {EntityType.Name} '{Key}'. " +
-          $"Null {SimpleKeyName}s are not supported.");
+      protected set {
+        CheckCanChangeSimpleKey(_simpleKey, value);
+        _simpleKey = value;
+      }
     }
 
     internal void AddChild([NotNull] EntityBase child) {
@@ -186,6 +185,30 @@ namespace SoundExplorersDatabase.Data {
           $"'{child.Parents[EntityType].Key}'.");
       }
       CheckForDuplicateChild(child.EntityType, CreateChildKey(child));
+    }
+
+    private void CheckCanChangeSimpleKey(
+      [CanBeNull] string oldSimpleKey, [CanBeNull] string newSimpleKey) {
+      if (newSimpleKey == null) {
+        throw new NoNullAllowedException(
+          $"A null reference has been specified as the {SimpleKeyName} " +
+          $"for {EntityType.Name} '{Key}'. " +
+          $"Null {SimpleKeyName}s are not supported.");
+      }
+      if (IsTopLevel && IsPersistent && Session != null &&
+          newSimpleKey != oldSimpleKey) {
+        // If there's no session, which means we cannot check for a duplicate,
+        // EntityBase.UpdateNonIndexField should already have thrown 
+        // an InvalidOperationException.
+        if (QueryHelper.FindDuplicateSimpleKey(EntityType, Oid, newSimpleKey,
+          Session) != null) {
+          throw new DuplicateKeyException(
+            this,
+            $"{EntityType.Name}'s {SimpleKeyName} cannot be changed to " +
+            $"{newSimpleKey} because another {EntityType.Name} " +
+            $"with the that {SimpleKeyName} has already been persisted.");
+        }
+      }
     }
 
     protected virtual void CheckCanPersist([NotNull] SessionBase session) {

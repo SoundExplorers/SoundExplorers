@@ -104,15 +104,41 @@ namespace SoundExplorersDatabase.Tests.Data {
     }
 
     [Test]
-    public void CannotCheckSetDuplicateDateOutsideSession() {
+    public void CannotCheckChangeDateToDuplicateOutsideSession() {
       Assert.Throws<InvalidOperationException>(() =>
         Newsletter2.Date = Newsletter1Date);
     }
 
     [Test]
-    public void CannotCheckSetDuplicateUrlOutsideSession() {
+    public void CannotCheckChangeUrlToDuplicateOutsideSession() {
       Assert.Throws<InvalidOperationException>(() =>
         Newsletter2.Url = Newsletter1Url);
+    }
+
+    [Test]
+    public void DisallowChangeDateToDuplicate() {
+      using (var session = new TestSession(DatabaseFolderPath)) {
+        session.BeginUpdate();
+        Newsletter2 =
+          QueryHelper.Read<Newsletter>(Newsletter2SimpleKey, session);
+        Newsletter2.Date = Newsletter2Date;
+        Assert.Throws<DuplicateKeyException>(() =>
+          Newsletter2.Date = Newsletter1Date);
+        session.Commit();
+      }
+    }
+
+    [Test]
+    public void DisallowChangeUrlToDuplicate() {
+      using (var session = new TestSession(DatabaseFolderPath)) {
+        session.BeginUpdate();
+        Newsletter2 =
+          QueryHelper.Read<Newsletter>(Newsletter2SimpleKey, session);
+        Newsletter2.Url = Newsletter2Url;
+        Assert.Throws<DuplicateKeyException>(() =>
+          Newsletter2.Url = Newsletter1Url);
+        session.Commit();
+      }
     }
 
     [Test]
@@ -189,32 +215,6 @@ namespace SoundExplorersDatabase.Tests.Data {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
         Assert.Throws<NoNullAllowedException>(() => session.Persist(noUrl));
-        session.Commit();
-      }
-    }
-
-    [Test]
-    public void DisallowSetDuplicateDate() {
-      using (var session = new TestSession(DatabaseFolderPath)) {
-        session.BeginUpdate();
-        Newsletter2 =
-          QueryHelper.Read<Newsletter>(Newsletter2SimpleKey, session);
-        Newsletter2.Date = Newsletter2Date;
-        Assert.Throws<DuplicateKeyException>(() =>
-          Newsletter2.Date = Newsletter1Date);
-        session.Commit();
-      }
-    }
-
-    [Test]
-    public void DisallowSetDuplicateUrl() {
-      using (var session = new TestSession(DatabaseFolderPath)) {
-        session.BeginUpdate();
-        Newsletter2 =
-          QueryHelper.Read<Newsletter>(Newsletter2SimpleKey, session);
-        Newsletter2.Url = Newsletter2Url;
-        Assert.Throws<DuplicateKeyException>(() =>
-          Newsletter2.Url = Newsletter1Url);
         session.Commit();
       }
     }
