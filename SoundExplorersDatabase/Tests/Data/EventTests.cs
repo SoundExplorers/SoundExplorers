@@ -89,14 +89,14 @@ namespace SoundExplorersDatabase.Tests.Data {
       TestSession.DeleteFolderIfExists(DatabaseFolderPath);
     }
 
-    private const string Event1SimpleKey = "2013/04/11";
+    private const string Event1SimpleKey = "2013/05/01";
     private const string Event1Notes = "My notes.";
-    private const string Event2SimpleKey = "2016/07/14";
+    private const string Event2SimpleKey = "2013/05/02";
     private const string Location1Name = "Fred's";
     private const string Location2Name = "Pyramid Club";
-    private const string Newsletter1Key = "2013/04/05";
-    private const string Newsletter2Key = "2016/07/08";
-    private const string Series1Name = "Jazz Festival 2014";
+    private const string Newsletter1SimpleKey = "2013/04/11";
+    private const string Newsletter2SimpleKey = "2013/04/22";
+    private const string Series1Name = "Jazz Festival 2013";
     private const string Series2Name = "Field Recordings";
     private const int Set1SetNo = 1;
     private const int Set2SetNo = 2;
@@ -110,13 +110,17 @@ namespace SoundExplorersDatabase.Tests.Data {
     private Location Location1 { get; set; }
     private Location Location2 { get; set; }
     private Newsletter Newsletter1 { get; set; }
-    private static DateTime Newsletter1Date => DateTime.Parse(Newsletter1Key);
+
+    private static DateTime Newsletter1Date =>
+      DateTime.Parse(Newsletter1SimpleKey);
 
     private static Uri Newsletter1Url => new Uri(
       "https://archive.org/details/simpsons-lat.375923", UriKind.Absolute);
 
     private Newsletter Newsletter2 { get; set; }
-    private static DateTime Newsletter2Date => DateTime.Parse(Newsletter2Key);
+
+    private static DateTime Newsletter2Date =>
+      DateTime.Parse(Newsletter2SimpleKey);
 
     private static Uri Newsletter2Url =>
       new Uri("https://archive.org/details/policy_20191010", UriKind.Absolute);
@@ -127,7 +131,7 @@ namespace SoundExplorersDatabase.Tests.Data {
     private Set Set2 { get; set; }
 
     [Test]
-    public void T010_Initial() {
+    public void A010_Initial() {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginRead();
         Event1 = QueryHelper.Read<Event>(Event1SimpleKey, Location1, session);
@@ -136,7 +140,8 @@ namespace SoundExplorersDatabase.Tests.Data {
         Event2 = QueryHelper.Read<Event>(Event2SimpleKey, Location1, session);
         Location1 = QueryHelper.Read<Location>(Location1Name, session);
         Location2 = QueryHelper.Read<Location>(Location2Name, session);
-        Newsletter1 = QueryHelper.Read<Newsletter>(Newsletter1Key, session);
+        Newsletter1 =
+          QueryHelper.Read<Newsletter>(Newsletter1SimpleKey, session);
         Series1 = QueryHelper.Read<Series>(Series1Name, session);
         Set1 = QueryHelper.Read<Set>(Set1.SimpleKey, Event1, session);
         Set2 = QueryHelper.Read<Set>(Set2.SimpleKey, Event1, session);
@@ -173,39 +178,9 @@ namespace SoundExplorersDatabase.Tests.Data {
       Assert.AreEqual(2, Event1.Sets.Count, "Event1.Sets.Count");
       Assert.AreEqual(2, Event1.References.Count, "Event1.References.Count");
       Assert.AreSame(Event1, Set1.Event, "Set1.Event");
-      Assert.AreEqual(Event1.Date, Set1.Event?.Date,
-        "Set1.Event.Date initially");
+      Assert.AreEqual(Event1.Date, Set1.Event?.Date, "Set1.Event.Date");
       Assert.AreSame(Event1, Set2.Event, "Set2.Event");
       Assert.AreEqual(Event1.Date, Set2.Event.Date, "Set2.Event.Date");
-    }
-
-    [Test]
-    public void T020_DisallowDuplicate() {
-      var duplicate = new Event {
-        QueryHelper = QueryHelper,
-        Date = Event1Date
-      };
-      using (var session = new TestSession(DatabaseFolderPath)) {
-        session.BeginUpdate();
-        Location1 = QueryHelper.Read<Location>(Location1Name, session);
-        Assert.Throws<DuplicateKeyException>(
-          () => duplicate.Location = Location1, "Duplicate not allowed");
-        session.Commit();
-      }
-    }
-
-    [Test]
-    public void T030_DisallowSetLocationToNull() {
-      using (var session = new TestSession(DatabaseFolderPath)) {
-        session.BeginUpdate();
-        Location1 = QueryHelper.Read<Location>(Location1Name, session);
-        Event1 = QueryHelper.Read<Event>(Event1SimpleKey, Location1, session);
-        Assert.Throws<NoNullAllowedException>(() =>
-            // ReSharper disable once AssignNullToNotNullAttribute
-            Event1.Location = null,
-          "Disallow remove Event from mandatory link to Location.");
-        session.Commit();
-      }
     }
 
     /// <summary>
@@ -213,24 +188,21 @@ namespace SoundExplorersDatabase.Tests.Data {
     ///   on the same Date at a different Location.
     /// </summary>
     [Test]
-    public void T040_AddToSeries() {
+    public void AddToSeries() {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
         Series2 = QueryHelper.Read<Series>(Series2Name, session);
         Event1 = QueryHelper.Read<Event>(Event1SimpleKey, Location1, session);
         Event1.Series = Series2;
         session.Commit();
-        Assert.AreSame(Series2, Event1.Series,
-          "Event1.Series after Event1 added to Series");
-        Assert.AreEqual(2, Series2.Events.Count,
-          "Series2.Events.Count after Event1 added to Series");
-        Assert.AreSame(Event1, Series2.Events[0],
-          "Series2 1st Event after Event1 added to Series");
+        Assert.AreSame(Series2, Event1.Series, "Event1.Series");
+        Assert.AreEqual(2, Series2.Events.Count, "Series2.Events.Count");
+        Assert.AreSame(Event1, Series2.Events[0], "Series2 1st Event");
       }
     }
 
     [Test]
-    public void T050_ChangeLocation() {
+    public void ChangeLocation() {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
         Location1 = QueryHelper.Read<Location>(Location1Name, session);
@@ -240,16 +212,12 @@ namespace SoundExplorersDatabase.Tests.Data {
         Event2 = Location1.Events[1];
         Event2.Location = Location2;
         session.Commit();
-        Assert.AreSame(Location2, Event2.Location,
-          "Event2.Location after Event2 changes Location");
-        Assert.AreEqual(1, Location1.Events.Count,
-          "Location1.Events.Count after Event2 changes Location");
-        Assert.AreEqual(2, Location2.Events.Count,
-          "Location2.Events.Count after Event2 changes Location");
+        Assert.AreSame(Location2, Event2.Location, "Event2.Location");
+        Assert.AreEqual(1, Location1.Events.Count, "Location1.Events.Count");
+        Assert.AreEqual(2, Location2.Events.Count, "Location2.Events.Count");
         Assert.AreSame(Event1AtLocation2, Location2.Events[0],
-          "Location2 1st Event after Event2 changes Location");
-        Assert.AreSame(Event2, Location2.Events[1],
-          "Location2 2nd Event after Event1 changes Location");
+          "Location2 1st Event");
+        Assert.AreSame(Event2, Location2.Events[1], "Location2 2nd Event");
       }
     }
 
@@ -258,27 +226,86 @@ namespace SoundExplorersDatabase.Tests.Data {
     ///   on the same Date at a different Location.
     /// </summary>
     [Test]
-    public void T060_ChangeNewsletter() {
+    public void ChangeNewsletter() {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
-        Newsletter1 = QueryHelper.Read<Newsletter>(Newsletter1Key, session);
-        Newsletter2 = QueryHelper.Read<Newsletter>(Newsletter2Key, session);
+        Newsletter1 =
+          QueryHelper.Read<Newsletter>(Newsletter1SimpleKey, session);
+        Newsletter2 =
+          QueryHelper.Read<Newsletter>(Newsletter2SimpleKey, session);
         Event1 = Newsletter1.Events[0];
         Event1.Newsletter = Newsletter2;
         session.Commit();
-        Assert.AreSame(Newsletter2, Event1.Newsletter,
-          "Event1.Newsletter after Event1 changes Newsletter");
+        Assert.AreSame(Newsletter2, Event1.Newsletter, "Event1.Newsletter");
         Assert.AreEqual(0, Newsletter1.Events.Count,
-          "Newsletter1.Events.Count after Event1 changes Newsletter");
+          "Newsletter1.Events.Count");
         Assert.AreEqual(2, Newsletter2.Events.Count,
-          "Newsletter2.Events.Count after Event1 changes Newsletter");
-        Assert.AreSame(Event1, Newsletter2.Events[0],
-          "Newsletter2 1st Event after Event1 changes Newsletter");
+          "Newsletter2.Events.Count");
+        Assert.AreSame(Event1, Newsletter2.Events[0], "Newsletter2 1st Event");
       }
     }
 
     [Test]
-    public void T070_SetNewsletterToNull() {
+    public void DisallowDuplicate() {
+      var duplicate = new Event {
+        QueryHelper = QueryHelper,
+        Date = Event1Date
+      };
+      using (var session = new TestSession(DatabaseFolderPath)) {
+        session.BeginUpdate();
+        Location1 = QueryHelper.Read<Location>(Location1Name, session);
+        Assert.Throws<DuplicateKeyException>(() =>
+          duplicate.Location = Location1);
+        session.Commit();
+      }
+    }
+
+    [Test]
+    public void DisallowRemoveSet() {
+      using (var session = new TestSession(DatabaseFolderPath)) {
+        session.BeginUpdate();
+        Event1 = QueryHelper.Read<Event>(Event1SimpleKey, Location1, session);
+        Set1 = QueryHelper.Read<Set>(Set1.SimpleKey, Event1, session);
+        Assert.Throws<ConstraintException>(() => Event1.Sets.Remove(Set1));
+        session.Commit();
+      }
+    }
+
+    [Test]
+    public void DisallowSetLocationToNull() {
+      using (var session = new TestSession(DatabaseFolderPath)) {
+        session.BeginUpdate();
+        Location1 = QueryHelper.Read<Location>(Location1Name, session);
+        Event1 = QueryHelper.Read<Event>(Event1SimpleKey, Location1, session);
+        Assert.Throws<NoNullAllowedException>(() =>
+          // ReSharper disable once AssignNullToNotNullAttribute
+          Event1.Location = null);
+        session.Commit();
+      }
+    }
+
+    [Test]
+    public void DisallowUnpersistEventWithSets() {
+      using (var session = new TestSession(DatabaseFolderPath)) {
+        session.BeginUpdate();
+        Event1 = QueryHelper.Read<Event>(Event1SimpleKey, Location1, session);
+        Assert.Throws<ReferentialIntegrityException>(() =>
+          Event1.Unpersist(session));
+        session.Commit();
+      }
+    }
+
+    [Test]
+    public void GetNullLocation() {
+      var @event = new Event {
+        QueryHelper = QueryHelper,
+        Date = Event2Date
+      };
+      Assert.IsNull(@event.Location);
+    }
+
+    [Test]
+    public void SetNewsletterToNull() {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
         Newsletter1 =
@@ -290,39 +317,6 @@ namespace SoundExplorersDatabase.Tests.Data {
         Assert.AreEqual(0, Newsletter1.Events.Count,
           "Newsletter1.Events.Count");
       }
-    }
-
-    [Test]
-    public void T080_DisallowUnpersistEventWithSets() {
-      using (var session = new TestSession(DatabaseFolderPath)) {
-        session.BeginUpdate();
-        Event1 = QueryHelper.Read<Event>(Event1SimpleKey, Location1, session);
-        Assert.Throws<ReferentialIntegrityException>(() =>
-          Event1.Unpersist(session));
-        session.Commit();
-      }
-    }
-
-    [Test]
-    public void T090_DisallowRemoveSet() {
-      using (var session = new TestSession(DatabaseFolderPath)) {
-        session.BeginUpdate();
-        Event1 = QueryHelper.Read<Event>(Event1SimpleKey, Location1, session);
-        Set1 = QueryHelper.Read<Set>(Set1.SimpleKey, Event1, session);
-        Assert.Throws<ConstraintException>(() =>
-            Event1.Sets.Remove(Set1),
-          "Disallow remove Set from mandatory link to Event.");
-        session.Commit();
-      }
-    }
-
-    [Test]
-    public void T100_GetNullLocation() {
-      var @event = new Event {
-        QueryHelper = QueryHelper,
-        Date = Event2Date
-      };
-      Assert.IsNull(@event.Location);
     }
   }
 }
