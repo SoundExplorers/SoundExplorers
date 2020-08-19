@@ -63,26 +63,45 @@ namespace SoundExplorersDatabase.Data {
       return session.AllObjects<TEntity>()
         .FirstOrDefault(predicate);
     }
-
     /// <summary>
-    ///   Returns an entity, if found, with the same SimpleKey (case-insensitive)
-    ///   as the specified entity, otherwise a null reference.
+    ///   Returns an entity of the specified type with the specified SimpleKey
+    ///  (case-insensitive), if found, otherwise a null reference.
     /// </summary>
     [CanBeNull]
-    internal EntityBase FindWithSameSimpleKey([NotNull] EntityBase entity,
+    internal EntityBase FindByType([NotNull] Type entityType, [CanBeNull] string simpleKey,
       SessionBase session) {
       if (!SchemaExistsOnDatabase(session)) {
         return null;
       }
       var allObjectsConstructedMethod =
-        AllObjectsGenericMethod.MakeGenericMethod(entity.EntityType);
+        AllObjectsGenericMethod.MakeGenericMethod(entityType);
       var entities = (IEnumerable)allObjectsConstructedMethod.Invoke(session,
         new object[] {true, true});
       return (from EntityBase e in entities
-        where string.Compare(e.SimpleKey, entity.SimpleKey,
+        where string.Compare(e.SimpleKey, simpleKey,
           StringComparison.OrdinalIgnoreCase) == 0
         select e).FirstOrDefault();
     }
+
+    // /// <summary>
+    // ///   Returns an entity, if found, with the same SimpleKey (case-insensitive)
+    // ///   as the specified entity, otherwise a null reference.
+    // /// </summary>
+    // [CanBeNull]
+    // internal EntityBase FindWithSameSimpleKey([NotNull] EntityBase entity,
+    //   SessionBase session) {
+    //   if (!SchemaExistsOnDatabase(session)) {
+    //     return null;
+    //   }
+    //   var allObjectsConstructedMethod =
+    //     AllObjectsGenericMethod.MakeGenericMethod(entity.EntityType);
+    //   var entities = (IEnumerable)allObjectsConstructedMethod.Invoke(session,
+    //     new object[] {true, true});
+    //   return (from EntityBase e in entities
+    //     where string.Compare(e.SimpleKey, entity.SimpleKey,
+    //       StringComparison.OrdinalIgnoreCase) == 0
+    //     select e).FirstOrDefault();
+    // }
 
     [NotNull]
     public static TEntity Read<TEntity>(

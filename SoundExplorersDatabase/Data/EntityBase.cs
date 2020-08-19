@@ -298,7 +298,8 @@ namespace SoundExplorersDatabase.Data {
     }
 
     private bool IsDuplicateSimpleKey([NotNull] SessionBase session) {
-      var existing = QueryHelper.FindWithSameSimpleKey(this, session);
+      var existing = QueryHelper.FindByType(EntityType, SimpleKey, session);
+      //var existing = QueryHelper.FindWithSameSimpleKey(this, session);
       return existing != null && !existing.Oid.Equals(Oid);
     }
 
