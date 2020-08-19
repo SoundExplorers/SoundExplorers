@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 using System.Data.Linq;
 using NUnit.Framework;
 using SoundExplorersDatabase.Data;
@@ -101,6 +102,40 @@ namespace SoundExplorersDatabase.Tests.Data {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
         Assert.Throws<DuplicateKeyException>(() => session.Persist(duplicate));
+        session.Commit();
+      }
+    }
+
+    [Test]
+    public void DisallowPersistUnspecifiedName() {
+      var noName = new Act {
+        QueryHelper = QueryHelper
+      };
+      using (var session = new TestSession(DatabaseFolderPath)) {
+        session.BeginUpdate();
+        Assert.Throws<NoNullAllowedException>(() => session.Persist(noName));
+        session.Commit();
+      }
+    }
+
+    [Test]
+    public void DisallowSetDuplicateName() {
+      using (var session = new TestSession(DatabaseFolderPath)) {
+        session.BeginUpdate();
+        Act2 =
+          QueryHelper.Read<Act>(Act2Name, session);
+        Act2.Name = Act2Name;
+        Assert.Throws<DuplicateKeyException>(() => Act2.Name = Act1Name);
+        session.Commit();
+      }
+    }
+
+    [Test]
+    public void DisallowSetNullName() {
+      using (var session = new TestSession(DatabaseFolderPath)) {
+        session.BeginUpdate();
+        Act1 = QueryHelper.Read<Act>(Act1Name, session);
+        Assert.Throws<NoNullAllowedException>(() => Act1.Name = null);
         session.Commit();
       }
     }
