@@ -173,10 +173,10 @@ namespace SoundExplorersDatabase.Tests.Data {
       Assert.AreEqual(2, Event1.Sets.Count, "Event1.Sets.Count");
       Assert.AreEqual(2, Event1.References.Count, "Event1.References.Count");
       Assert.AreSame(Event1, Set1.Event, "Set1.Event");
-      Assert.AreEqual(Event1.Date, Set1.Event.Date,
+      Assert.AreEqual(Event1.Date, Set1.Event?.Date,
         "Set1.Event.Date initially");
       Assert.AreSame(Event1, Set2.Event, "Set2.Event");
-      Assert.AreEqual(Event1.Date, Set2.Event.Date, "Set2.Event.Date");
+      Assert.AreEqual(Event1.Date, Set2.Event?.Date, "Set2.Event.Date");
     }
 
     [Test]

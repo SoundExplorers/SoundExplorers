@@ -134,10 +134,9 @@ namespace SoundExplorersDatabase.Tests.Data {
         var duplicate = new Newsletter {
           QueryHelper = QueryHelper,
           Date = DateTime.Today,
-          Path = Newsletter1Path
+          Path = "path one" // Tests that comparison is case-insensitive.
         };
-        Assert.Throws<DuplicateKeyException>(() =>
-          session.Persist(duplicate), "Duplicate Path");
+        Assert.Throws<DuplicateKeyException>(() => session.Persist(duplicate));
         session.Commit();
       }
     }
