@@ -365,13 +365,23 @@ namespace SoundExplorersDatabase.Data {
       }
     }
 
-    protected new bool UpdateNonIndexField() {
+    /// <summary>
+    ///   Marks the entity as being updated, so that the entity will be written
+    ///   at commit transaction. In this application, this is used instead of
+    ///   OptimizedPersistable.Update, even for key properties,
+    ///   because we don't use VelocityDbList for collections and indexing.
+    /// </summary>
+    /// <exception cref="InvalidOperationException">
+    ///   If an update of a persisted entity is attempted outside a session,
+    ///   provides an meaningful error message.
+    /// </exception>
+    protected new void UpdateNonIndexField() {
       if (IsPersistent && Session == null) {
         throw new InvalidOperationException(
           $"{EntityType.Name} '{SimpleKey}' cannot be updated outside a session " +
           "because it has already been persisted.");
       }
-      return base.UpdateNonIndexField();
+      base.UpdateNonIndexField();
     }
   }
 }
