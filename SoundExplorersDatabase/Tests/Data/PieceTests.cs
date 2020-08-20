@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 using System.Data.Linq;
 using NUnit.Framework;
 using SoundExplorersDatabase.Data;
@@ -97,7 +98,7 @@ namespace SoundExplorersDatabase.Tests.Data {
     private Set Set2 { get; set; }
 
     [Test]
-    public void T010_Initial() {
+    public void A010_Initial() {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginRead();
         Location1 = QueryHelper.Read<Location>(Location1Name, session);
@@ -133,23 +134,13 @@ namespace SoundExplorersDatabase.Tests.Data {
     }
 
     [Test]
-    public void T020_DisallowDuplicate() {
-      var duplicate = new Piece {
-        QueryHelper = QueryHelper,
-        PieceNo = Piece1PieceNo
-      };
-      using (var session = new TestSession(DatabaseFolderPath)) {
-        session.BeginUpdate();
-        Set1 = QueryHelper.Read<Set>(Set1.SimpleKey, Event1, session);
-        Piece1 = QueryHelper.Read<Piece>(Piece1SimpleKey, Set1, session);
-        Assert.Throws<DuplicateKeyException>(
-          () => duplicate.Set = Set1, "Duplicate not allowed");
-        session.Commit();
-      }
+    public void CannotCheckChangePieceNoToDuplicateOutsideSession() {
+      Assert.Throws<InvalidOperationException>(() =>
+        Piece2.PieceNo = Piece1PieceNo);
     }
 
     [Test]
-    public void T030_ChangeSet() {
+    public void ChangeSet() {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
         Set1 = QueryHelper.Read<Set>(Set1.SimpleKey, Event1, session);
@@ -159,16 +150,69 @@ namespace SoundExplorersDatabase.Tests.Data {
         Piece2 = Set1.Pieces[1];
         Piece2.Set = Set2;
         session.Commit();
-        Assert.AreSame(Set2, Piece2.Set,
-          "Piece2.Set after Piece2 changes Set");
-        Assert.AreEqual(1, Set1.Pieces.Count,
-          "Set1.Pieces.Count after Piece2 changes Set");
-        Assert.AreEqual(2, Set2.Pieces.Count,
-          "Set2.Pieces.Count after Piece2 changes Set");
-        Assert.AreSame(Piece1AtSet2, Set2.Pieces[0],
-          "Set2 1st Piece after Piece2 changes Set");
-        Assert.AreSame(Piece2, Set2.Pieces[1],
-          "Set2 2nd Piece after Piece1 changes Set");
+      }
+      Assert.AreSame(Set2, Piece2.Set,
+        "Piece2.Set after Piece2 changes Set");
+      Assert.AreEqual(1, Set1.Pieces.Count,
+        "Set1.Pieces.Count after Piece2 changes Set");
+      Assert.AreEqual(2, Set2.Pieces.Count,
+        "Set2.Pieces.Count after Piece2 changes Set");
+      Assert.AreSame(Piece1AtSet2, Set2.Pieces[0],
+        "Set2 1st Piece after Piece2 changes Set");
+      Assert.AreSame(Piece2, Set2.Pieces[1],
+        "Set2 2nd Piece after Piece1 changes Set");
+    }
+
+    [Test]
+    public void DisallowChangePieceNoToDuplicate() {
+      using (var session = new TestSession(DatabaseFolderPath)) {
+        session.BeginUpdate();
+        Piece2 =
+          QueryHelper.Read<Piece>(Piece2SimpleKey, Set1, session);
+        Piece2.PieceNo = Piece2PieceNo;
+        Assert.Throws<DuplicateKeyException>(() =>
+          Piece2.PieceNo = Piece1PieceNo);
+        session.Commit();
+      }
+    }
+
+    [Test]
+    public void DisallowChangePieceNoToZero() {
+      using (var session = new TestSession(DatabaseFolderPath)) {
+        session.BeginUpdate();
+        Piece2 = QueryHelper.Read<Piece>(Piece2SimpleKey, Set1, session);
+        Assert.Throws<NoNullAllowedException>(() =>
+          Piece2.PieceNo = 0);
+        session.Commit();
+      }
+    }
+
+    [Test]
+    public void DisallowPersistUnspecifiedPieceNo() {
+      var noPieceNo = new Piece {
+        QueryHelper = QueryHelper
+      };
+      using (var session = new TestSession(DatabaseFolderPath)) {
+        session.BeginUpdate();
+        Set1 = QueryHelper.Read<Set>(Set1.SimpleKey, Event1, session);
+        noPieceNo.Set = Set1;
+        Assert.Throws<NoNullAllowedException>(() => session.Persist(noPieceNo));
+        session.Abort();
+      }
+    }
+
+    [Test]
+    public void DisallowSetKeyToDuplicate() {
+      var duplicate = new Piece {
+        QueryHelper = QueryHelper,
+        PieceNo = Piece1PieceNo
+      };
+      using (var session = new TestSession(DatabaseFolderPath)) {
+        session.BeginUpdate();
+        Set1 = QueryHelper.Read<Set>(Set1.SimpleKey, Event1, session);
+        Piece1 = QueryHelper.Read<Piece>(Piece1SimpleKey, Set1, session);
+        Assert.Throws<DuplicateKeyException>(() => duplicate.Set = Set1);
+        session.Commit();
       }
     }
   }
