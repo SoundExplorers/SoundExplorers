@@ -59,7 +59,7 @@ namespace SoundExplorersDatabase.Tests.Data {
     private Location Location2 { get; set; }
 
     [Test]
-    public void T010_Initial() {
+    public void A010_Initial() {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginRead();
         Location1 = QueryHelper.Read<Location>(Location1Name, session);
@@ -81,31 +81,45 @@ namespace SoundExplorersDatabase.Tests.Data {
     }
 
     [Test]
-    public void T020_DisallowDuplicate() {
+    public void DisallowChangeNameToDuplicate() {
+      using (var session = new TestSession(DatabaseFolderPath)) {
+        session.BeginUpdate();
+        Location2 =
+          QueryHelper.Read<Location>(Location2Name, session);
+        Location2.Name = Location2Name;
+        Assert.Throws<DuplicateKeyException>(() =>
+          Location2.Name = Location1Name);
+        session.Commit();
+      }
+    }
+
+    [Test]
+    public void DisallowPersistDuplicate() {
       var duplicate = new Location {
         QueryHelper = QueryHelper,
         Name = Location1Name
       };
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
-        Assert.Throws<DuplicateKeyException>(() =>
-          session.Persist(duplicate), "Duplicate");
+        Assert.Throws<DuplicateKeyException>(() => session.Persist(duplicate));
         session.Commit();
       }
     }
 
     [Test]
-    public void T030_DisallowUnpersistLocationWithEvents() {
+    public void DisallowPersistUnspecifiedName() {
+      var noName = new Location {
+        QueryHelper = QueryHelper
+      };
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
-        Assert.Throws<ReferentialIntegrityException>(() =>
-          Location1.Unpersist(session));
+        Assert.Throws<NoNullAllowedException>(() => session.Persist(noName));
         session.Commit();
       }
     }
 
     [Test]
-    public void T040_DisallowRemoveEvent() {
+    public void DisallowRemoveEvent() {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
         Location1 = QueryHelper.Read<Location>(Location1Name, session);
@@ -113,6 +127,24 @@ namespace SoundExplorersDatabase.Tests.Data {
         Assert.Throws<ConstraintException>(() =>
             Location1.Events.Remove(Event1),
           "Disallow remove Event from mandatory link to Location.");
+        session.Commit();
+      }
+    }
+
+    [Test]
+    public void DisallowSetNullName() {
+      var nullName = new Location {
+        QueryHelper = QueryHelper
+      };
+      Assert.Throws<NoNullAllowedException>(() => nullName.Name = null);
+    }
+
+    [Test]
+    public void DisallowUnpersistLocationWithEvents() {
+      using (var session = new TestSession(DatabaseFolderPath)) {
+        session.BeginUpdate();
+        Assert.Throws<ReferentialIntegrityException>(() =>
+          Location1.Unpersist(session));
         session.Commit();
       }
     }
