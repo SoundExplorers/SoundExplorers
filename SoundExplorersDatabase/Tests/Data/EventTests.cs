@@ -246,17 +246,39 @@ namespace SoundExplorersDatabase.Tests.Data {
     }
 
     [Test]
-    public void DisallowDuplicate() {
-      var duplicate = new Event {
-        QueryHelper = QueryHelper,
-        Date = Event1Date
+    public void DisallowChangeDateToDuplicate() {
+      using (var session = new TestSession(DatabaseFolderPath)) {
+        session.BeginUpdate();
+        Event2 =
+          QueryHelper.Read<Event>(Event2SimpleKey, Location1, session);
+        Event2.Date = Event2Date;
+        Assert.Throws<DuplicateKeyException>(() => Event2.Date = Event1Date);
+        session.Commit();
+      }
+    }
+
+    [Test]
+    public void DisallowChangeDateToMinimum() {
+      using (var session = new TestSession(DatabaseFolderPath)) {
+        session.BeginUpdate();
+        Event2 = QueryHelper.Read<Event>(Event2SimpleKey, Location1, session);
+        Assert.Throws<NoNullAllowedException>(() =>
+          Event2.Date = DateTime.MinValue);
+        session.Commit();
+      }
+    }
+
+    [Test]
+    public void DisallowPersistUnspecifiedDate() {
+      var noDate = new Event {
+        QueryHelper = QueryHelper
       };
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
-        Location1 = QueryHelper.Read<Location>(Location1Name, session);
-        Assert.Throws<DuplicateKeyException>(() =>
-          duplicate.Location = Location1);
-        session.Commit();
+        Location1 = QueryHelper.Read<Location>(Location1.SimpleKey, session);
+        noDate.Location = Location1;
+        Assert.Throws<NoNullAllowedException>(() => session.Persist(noDate));
+        session.Abort();
       }
     }
 
@@ -267,6 +289,21 @@ namespace SoundExplorersDatabase.Tests.Data {
         Event1 = QueryHelper.Read<Event>(Event1SimpleKey, Location1, session);
         Set1 = QueryHelper.Read<Set>(Set1.SimpleKey, Event1, session);
         Assert.Throws<ConstraintException>(() => Event1.Sets.Remove(Set1));
+        session.Commit();
+      }
+    }
+
+    [Test]
+    public void DisallowSetKeyToDuplicate() {
+      var duplicate = new Event {
+        QueryHelper = QueryHelper,
+        Date = Event1Date
+      };
+      using (var session = new TestSession(DatabaseFolderPath)) {
+        session.BeginUpdate();
+        Location1 = QueryHelper.Read<Location>(Location1Name, session);
+        Assert.Throws<DuplicateKeyException>(() =>
+          duplicate.Location = Location1);
         session.Commit();
       }
     }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Data;
 using JetBrains.Annotations;
 
 namespace SoundExplorersDatabase.Data {
@@ -16,6 +17,10 @@ namespace SoundExplorersDatabase.Data {
     public DateTime Date {
       get => _date;
       set {
+        if (value == DateTime.MinValue) {
+          throw new NoNullAllowedException(
+            "A valid Event Date has not been specified.");
+        }
         UpdateNonIndexField();
         _date = value;
         SimpleKey = $"{Date:yyyy/MM/dd}";
