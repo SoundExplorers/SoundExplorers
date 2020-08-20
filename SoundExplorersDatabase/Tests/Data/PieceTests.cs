@@ -211,52 +211,33 @@ namespace SoundExplorersDatabase.Tests.Data {
 
     [Test]
     public void DisallowPersistDuplicateAudioUrl() {
-      var url = new Uri(
-        "https://soundcloud.com/simonor/chris-prosser-simon-ororke-duggereesh?in=simonor/sets/chris-prosser-simon-ororke",
-        UriKind.Absolute);
-      var original = new Piece {
-        QueryHelper = QueryHelper,
-        PieceNo = 8,
-        AudioUrl = url
-      };
       var duplicate = new Piece {
         QueryHelper = QueryHelper,
         PieceNo = 9,
-        AudioUrl = url
+        AudioUrl = Piece1AudioUrl
       };
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
         Set1 = QueryHelper.Read<Set>(Set1.SimpleKey, Event1, session);
-        original.Set = Set1;
         duplicate.Set = Set1;
-        session.Persist(original);
         Assert.Throws<DuplicateKeyException>(() => session.Persist(duplicate));
-        session.Commit();
+        session.Abort();
       }
     }
 
     [Test]
     public void DisallowPersistDuplicateVideoUrl() {
-      var url = new Uri("https://www.youtube.com/watch?v=SoOyaDWIoMA",
-        UriKind.Absolute);
-      var original = new Piece {
-        QueryHelper = QueryHelper,
-        PieceNo = 8,
-        VideoUrl = url
-      };
       var duplicate = new Piece {
         QueryHelper = QueryHelper,
         PieceNo = 9,
-        VideoUrl = url
+        VideoUrl = Piece1VideoUrl
       };
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
         Set1 = QueryHelper.Read<Set>(Set1.SimpleKey, Event1, session);
-        original.Set = Set1;
         duplicate.Set = Set1;
-        session.Persist(original);
         Assert.Throws<DuplicateKeyException>(() => session.Persist(duplicate));
-        session.Commit();
+        session.Abort();
       }
     }
 

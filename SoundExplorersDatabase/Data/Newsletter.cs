@@ -53,9 +53,9 @@ namespace SoundExplorersDatabase.Data {
         if (duplicate != null) {
           throw new DuplicateKeyException(
             this,
-            $"Newsletter {SimpleKey}'s URL cannot be changed to " +
-            $"{newUrl}. Newsletter {duplicate.SimpleKey} " +
-            "has already been persisted with the that URL.");
+            $"The URL of Newsletter '{SimpleKey}' cannot be changed to " +
+            $"'{newUrl}'. Newsletter {duplicate.SimpleKey} " +
+            "has already been persisted with that URL.");
         }
       }
     }
