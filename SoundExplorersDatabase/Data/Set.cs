@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Data;
 using JetBrains.Annotations;
 
 namespace SoundExplorersDatabase.Data {
@@ -44,6 +45,9 @@ namespace SoundExplorersDatabase.Data {
     public int SetNo {
       get => _setNo;
       set {
+        if (value == 0) {
+          throw new NoNullAllowedException("SetNo '00' is not valid.");
+        }
         UpdateNonIndexField();
         _setNo = value;
         SimpleKey = value.ToString().PadLeft(2, '0');

@@ -180,14 +180,48 @@ namespace SoundExplorersDatabase.Tests.Data {
     }
 
     [Test]
+    public void DisallowChangeSetNoToDuplicate() {
+      using (var session = new TestSession(DatabaseFolderPath)) {
+        session.BeginUpdate();
+        Set2 =
+          QueryHelper.Read<Set>(Set2SimpleKey, Event1, session);
+        Set2.SetNo = Set2SetNo;
+        Assert.Throws<DuplicateKeyException>(() => Set2.SetNo = Set1SetNo);
+        session.Commit();
+      }
+    }
+
+    [Test]
+    public void DisallowChangeSetNoToZero() {
+      using (var session = new TestSession(DatabaseFolderPath)) {
+        session.BeginUpdate();
+        Set2 = QueryHelper.Read<Set>(Set2SimpleKey, Event1, session);
+        Assert.Throws<NoNullAllowedException>(() => Set2.SetNo = 0);
+        session.Commit();
+      }
+    }
+
+    [Test]
+    public void DisallowPersistUnspecifiedSetNo() {
+      var noSetNo = new Set {
+        QueryHelper = QueryHelper
+      };
+      using (var session = new TestSession(DatabaseFolderPath)) {
+        session.BeginUpdate();
+        Event1 = QueryHelper.Read<Event>(Event1.SimpleKey, Location1, session);
+        noSetNo.Event = Event1;
+        Assert.Throws<NoNullAllowedException>(() => session.Persist(noSetNo));
+        session.Abort();
+      }
+    }
+
+    [Test]
     public void DisallowRemovePiece() {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
         Set1 = QueryHelper.Read<Set>(Set1.SimpleKey, Event1, session);
         Piece1 = QueryHelper.Read<Piece>(Piece1.SimpleKey, Set1, session);
-        Assert.Throws<ConstraintException>(() =>
-            Set1.Pieces.Remove(Piece1),
-          "Disallow remove Piece from mandatory link to Set.");
+        Assert.Throws<ConstraintException>(() => Set1.Pieces.Remove(Piece1));
         session.Commit();
       }
     }
