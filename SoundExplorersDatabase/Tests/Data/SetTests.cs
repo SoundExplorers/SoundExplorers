@@ -109,7 +109,7 @@ namespace SoundExplorersDatabase.Tests.Data {
     private Set Set2 { get; set; }
 
     [Test]
-    public void T010_Initial() {
+    public void A010_Initial() {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginRead();
         Location1 = QueryHelper.Read<Location>(Location1Name, session);
@@ -147,28 +147,12 @@ namespace SoundExplorersDatabase.Tests.Data {
       Assert.AreSame(Event1, Piece2.Set.Event, "Piece2.Set.Event");
     }
 
-    [Test]
-    public void T020_DisallowDuplicate() {
-      var duplicate = new Set {
-        QueryHelper = QueryHelper,
-        SetNo = Set1SetNo
-      };
-      using (var session = new TestSession(DatabaseFolderPath)) {
-        session.BeginUpdate();
-        Location1 = QueryHelper.Read<Location>(Location1Name, session);
-        Event1 = Location1.Events[Event1.Key];
-        Assert.Throws<DuplicateKeyException>(
-          () => duplicate.Event = Event1, "Duplicate not allowed");
-        session.Commit();
-      }
-    }
-
     /// <summary>
     ///   Changes a Set's Act to one that already played a Set with the same
     ///   SetNo at a different Event.
     /// </summary>
     [Test]
-    public void T040_ChangeAct() {
+    public void ChangeAct() {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
         Act1 = QueryHelper.Read<Act>(Act1.Name, session);
@@ -196,18 +180,7 @@ namespace SoundExplorersDatabase.Tests.Data {
     }
 
     [Test]
-    public void T050_DisallowUnpersistSetWithPieces() {
-      using (var session = new TestSession(DatabaseFolderPath)) {
-        session.BeginUpdate();
-        Set1 = QueryHelper.Read<Set>(Set1.SimpleKey, Event1, session);
-        Assert.Throws<ReferentialIntegrityException>(() =>
-          Set1.Unpersist(session));
-        session.Commit();
-      }
-    }
-
-    [Test]
-    public void T060_DisallowRemovePiece() {
+    public void DisallowRemovePiece() {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
         Set1 = QueryHelper.Read<Set>(Set1.SimpleKey, Event1, session);
@@ -215,6 +188,32 @@ namespace SoundExplorersDatabase.Tests.Data {
         Assert.Throws<ConstraintException>(() =>
             Set1.Pieces.Remove(Piece1),
           "Disallow remove Piece from mandatory link to Set.");
+        session.Commit();
+      }
+    }
+
+    [Test]
+    public void DisallowSetKeyToDuplicate() {
+      var duplicate = new Set {
+        QueryHelper = QueryHelper,
+        SetNo = Set1SetNo
+      };
+      using (var session = new TestSession(DatabaseFolderPath)) {
+        session.BeginUpdate();
+        Location1 = QueryHelper.Read<Location>(Location1Name, session);
+        Event1 = Location1.Events[Event1.Key];
+        Assert.Throws<DuplicateKeyException>(() => duplicate.Event = Event1);
+        session.Commit();
+      }
+    }
+
+    [Test]
+    public void DisallowUnpersistSetWithPieces() {
+      using (var session = new TestSession(DatabaseFolderPath)) {
+        session.BeginUpdate();
+        Set1 = QueryHelper.Read<Set>(Set1.SimpleKey, Event1, session);
+        Assert.Throws<ReferentialIntegrityException>(() =>
+          Set1.Unpersist(session));
         session.Commit();
       }
     }
