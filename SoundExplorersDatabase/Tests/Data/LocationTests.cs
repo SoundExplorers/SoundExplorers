@@ -143,7 +143,7 @@ namespace SoundExplorersDatabase.Tests.Data {
     public void DisallowUnpersistLocationWithEvents() {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
-        Assert.Throws<ReferentialIntegrityException>(() =>
+        Assert.Throws<ConstraintException>(() =>
           Location1.Unpersist(session));
         session.Commit();
       }

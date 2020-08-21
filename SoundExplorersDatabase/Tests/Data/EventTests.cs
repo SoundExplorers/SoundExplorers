@@ -326,7 +326,7 @@ namespace SoundExplorersDatabase.Tests.Data {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
         Event1 = QueryHelper.Read<Event>(Event1SimpleKey, Location1, session);
-        Assert.Throws<ReferentialIntegrityException>(() =>
+        Assert.Throws<ConstraintException>(() =>
           Event1.Unpersist(session));
         session.Commit();
       }

@@ -12,6 +12,11 @@ namespace SoundExplorersDatabase.Data {
     }
 
     public TChild this[int index] => Values[index];
+
+    public TChild this[[CanBeNull] string simpleKey,
+      EntityBase identifyingParent = null] =>
+      this[new Key(simpleKey, identifyingParent)];
+
     private EntityBase Parent { get; }
 
     public void Add([NotNull] TChild child) {

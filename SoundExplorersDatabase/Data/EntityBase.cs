@@ -61,7 +61,7 @@ namespace SoundExplorersDatabase.Data {
     ///   child collections, if any, as entities of the main Type.
     /// </summary>
     [NotNull]
-    internal Type EntityType { get; }
+    private Type EntityType { get; }
 
     [CanBeNull] private Type IdentifyingParentType { get; }
     private bool IsAddingToOrRemovingFromIdentifyingParent { get; set; }
@@ -340,16 +340,20 @@ namespace SoundExplorersDatabase.Data {
     internal void RemoveChild([NotNull] EntityBase child,
       bool isReplacingOrUnpersisting) {
       CheckCanRemoveChild(child, isReplacingOrUnpersisting);
-      UpdateChild(child, null);
       ChildrenOfType[child.EntityType].Remove(child.Key);
       References.Remove(References.First(r => r.To.Equals(child)));
+      UpdateChild(child, null);
     }
 
     public override void Unpersist(SessionBase session) {
+      if (References.Count > 0) {
+        throw new ConstraintException(
+          $"{EntityType.Name} '{Key}' cannot be deleted because " +
+          $"{References.Count} entities reference it.");
+      }
       var parents =
         Parents.Values.Where(parent => parent != null).ToList();
       for (int i = parents.Count - 1; i >= 0; i--) {
-        parents[i].ChildrenOfType[EntityType].Remove(this);
         parents[i].RemoveChild(this, true);
       }
       base.Unpersist(session);
@@ -380,12 +384,16 @@ namespace SoundExplorersDatabase.Data {
     ///   provides an meaningful error message.
     /// </exception>
     protected new void UpdateNonIndexField() {
-      if (IsPersistent && Session == null) {
-        throw new InvalidOperationException(
-          $"{EntityType.Name} '{SimpleKey}' cannot be updated outside a session " +
-          "because it has already been persisted.");
+      try {
+        base.UpdateNonIndexField();
+      } catch (NullReferenceException ex) {
+        if (IsPersistent && Session == null) {
+          throw new InvalidOperationException(
+            $"{EntityType.Name} '{SimpleKey}' cannot be updated outside a session " +
+            "because it has already been persisted.", ex);
+        }
+        throw;
       }
-      base.UpdateNonIndexField();
     }
   }
 }

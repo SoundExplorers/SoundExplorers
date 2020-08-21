@@ -60,6 +60,16 @@ namespace SoundExplorersDatabase.Tests.Data {
         session.Persist(Piece2);
         session.Commit();
       }
+      Session = new TestSession(DatabaseFolderPath);
+      Session.BeginRead();
+      Location1 = QueryHelper.Read<Location>(Location1Name, Session);
+      Event1 = QueryHelper.Read<Event>(Event1.SimpleKey, Location1, Session);
+      Set1 = QueryHelper.Read<Set>(Set1.SimpleKey, Event1, Session);
+      Set2 = QueryHelper.Read<Set>(Set2.SimpleKey, Event1, Session);
+      Piece1 = QueryHelper.Read<Piece>(Piece1SimpleKey, Set1, Session);
+      Piece1AtSet2 = QueryHelper.Read<Piece>(Piece1SimpleKey, Set2, Session);
+      Piece2 = QueryHelper.Read<Piece>(Piece2SimpleKey, Set1, Session);
+      Session.Commit();
     }
 
     [TearDown]
@@ -78,6 +88,7 @@ namespace SoundExplorersDatabase.Tests.Data {
     private const int Set2SetNo = 2;
     private string DatabaseFolderPath { get; set; }
     private QueryHelper QueryHelper { get; set; }
+    private TestSession Session { get; set; }
     private Event Event1 { get; set; }
     private static DateTime Event1Date => DateTime.Today.AddDays(-1);
     private Location Location1 { get; set; }
@@ -99,17 +110,6 @@ namespace SoundExplorersDatabase.Tests.Data {
 
     [Test]
     public void A010_Initial() {
-      using (var session = new TestSession(DatabaseFolderPath)) {
-        session.BeginRead();
-        Location1 = QueryHelper.Read<Location>(Location1Name, session);
-        Event1 = QueryHelper.Read<Event>(Event1.SimpleKey, Location1, session);
-        Set1 = QueryHelper.Read<Set>(Set1.SimpleKey, Event1, session);
-        Set2 = QueryHelper.Read<Set>(Set2.SimpleKey, Event1, session);
-        Piece1 = QueryHelper.Read<Piece>(Piece1SimpleKey, Set1, session);
-        Piece1AtSet2 = QueryHelper.Read<Piece>(Piece1SimpleKey, Set2, session);
-        Piece2 = QueryHelper.Read<Piece>(Piece2SimpleKey, Set1, session);
-        session.Commit();
-      }
       Assert.AreEqual(Piece1PieceNo, Piece1.PieceNo, "Piece1.PieceNo");
       Assert.AreEqual(Piece1AudioUrl, Piece1.AudioUrl, "Piece1.AudioUrl");
       Assert.AreEqual(Piece1Notes, Piece1.Notes, "Piece1.Notes");
@@ -134,23 +134,13 @@ namespace SoundExplorersDatabase.Tests.Data {
     }
 
     [Test]
-    public void CannotCheckChangePieceNoToDuplicateOutsideSession() {
-      Assert.Throws<InvalidOperationException>(() =>
-        Piece2.PieceNo = Piece1PieceNo);
-    }
-
-    [Test]
     public void ChangeSet() {
-      using (var session = new TestSession(DatabaseFolderPath)) {
-        session.BeginUpdate();
-        Set1 = QueryHelper.Read<Set>(Set1.SimpleKey, Event1, session);
-        Set2 = QueryHelper.Read<Set>(Set2.SimpleKey, Event1, session);
-        Piece1 = Set1.Pieces[0];
-        Piece1AtSet2 = Set2.Pieces[0];
-        Piece2 = Set1.Pieces[1];
-        Piece2.Set = Set2;
-        session.Commit();
-      }
+      Session.BeginUpdate();
+      Piece1 = Set1.Pieces[0];
+      Piece1AtSet2 = Set2.Pieces[0];
+      Piece2 = Set1.Pieces[1];
+      Piece2.Set = Set2;
+      Session.Commit();
       Assert.AreSame(Set2, Piece2.Set,
         "Piece2.Set after Piece2 changes Set");
       Assert.AreEqual(1, Set1.Pieces.Count,
@@ -165,48 +155,35 @@ namespace SoundExplorersDatabase.Tests.Data {
 
     [Test]
     public void DisallowChangeAudioUrlToDuplicate() {
-      using (var session = new TestSession(DatabaseFolderPath)) {
-        session.BeginUpdate();
-        Piece2 = QueryHelper.Read<Piece>(Piece2SimpleKey, Set1, session);
-        Assert.Throws<DuplicateKeyException>(() =>
-          Piece2.AudioUrl = Piece1AudioUrl);
-        session.Commit();
-      }
+      Session.BeginUpdate();
+      Assert.Throws<DuplicateKeyException>(() =>
+        Piece2.AudioUrl = Piece1AudioUrl);
+      Session.Commit();
     }
 
     [Test]
     public void DisallowChangePieceNoToDuplicate() {
-      using (var session = new TestSession(DatabaseFolderPath)) {
-        session.BeginUpdate();
-        Piece2 =
-          QueryHelper.Read<Piece>(Piece2SimpleKey, Set1, session);
-        Piece2.PieceNo = Piece2PieceNo;
-        Assert.Throws<DuplicateKeyException>(() =>
-          Piece2.PieceNo = Piece1PieceNo);
-        session.Commit();
-      }
+      Session.BeginUpdate();
+      Piece2.PieceNo = Piece2PieceNo;
+      Assert.Throws<DuplicateKeyException>(() =>
+        Piece2.PieceNo = Piece1PieceNo);
+      Session.Commit();
     }
 
     [Test]
     public void DisallowChangePieceNoToZero() {
-      using (var session = new TestSession(DatabaseFolderPath)) {
-        session.BeginUpdate();
-        Piece2 = QueryHelper.Read<Piece>(Piece2SimpleKey, Set1, session);
-        Assert.Throws<NoNullAllowedException>(() =>
-          Piece2.PieceNo = 0);
-        session.Commit();
-      }
+      Session.BeginUpdate();
+      Assert.Throws<NoNullAllowedException>(() =>
+        Piece2.PieceNo = 0);
+      Session.Commit();
     }
 
     [Test]
     public void DisallowChangeVideoUrlToDuplicate() {
-      using (var session = new TestSession(DatabaseFolderPath)) {
-        session.BeginUpdate();
-        Piece2 = QueryHelper.Read<Piece>(Piece2SimpleKey, Set1, session);
-        Assert.Throws<DuplicateKeyException>(() =>
-          Piece2.VideoUrl = Piece1VideoUrl);
-        session.Commit();
-      }
+      Session.BeginUpdate();
+      Assert.Throws<DuplicateKeyException>(() =>
+        Piece2.VideoUrl = Piece1VideoUrl);
+      Session.Commit();
     }
 
     [Test]
@@ -216,13 +193,10 @@ namespace SoundExplorersDatabase.Tests.Data {
         PieceNo = 9,
         AudioUrl = Piece1AudioUrl
       };
-      using (var session = new TestSession(DatabaseFolderPath)) {
-        session.BeginUpdate();
-        Set1 = QueryHelper.Read<Set>(Set1.SimpleKey, Event1, session);
-        duplicate.Set = Set1;
-        Assert.Throws<DuplicateKeyException>(() => session.Persist(duplicate));
-        session.Abort();
-      }
+      Session.BeginUpdate();
+      duplicate.Set = Set1;
+      Assert.Throws<DuplicateKeyException>(() => Session.Persist(duplicate));
+      Session.Abort();
     }
 
     [Test]
@@ -232,13 +206,10 @@ namespace SoundExplorersDatabase.Tests.Data {
         PieceNo = 9,
         VideoUrl = Piece1VideoUrl
       };
-      using (var session = new TestSession(DatabaseFolderPath)) {
-        session.BeginUpdate();
-        Set1 = QueryHelper.Read<Set>(Set1.SimpleKey, Event1, session);
-        duplicate.Set = Set1;
-        Assert.Throws<DuplicateKeyException>(() => session.Persist(duplicate));
-        session.Abort();
-      }
+      Session.BeginUpdate();
+      duplicate.Set = Set1;
+      Assert.Throws<DuplicateKeyException>(() => Session.Persist(duplicate));
+      Session.Abort();
     }
 
     [Test]
@@ -246,13 +217,10 @@ namespace SoundExplorersDatabase.Tests.Data {
       var noPieceNo = new Piece {
         QueryHelper = QueryHelper
       };
-      using (var session = new TestSession(DatabaseFolderPath)) {
-        session.BeginUpdate();
-        Set1 = QueryHelper.Read<Set>(Set1.SimpleKey, Event1, session);
-        noPieceNo.Set = Set1;
-        Assert.Throws<NoNullAllowedException>(() => session.Persist(noPieceNo));
-        session.Abort();
-      }
+      Session.BeginUpdate();
+      noPieceNo.Set = Set1;
+      Assert.Throws<NoNullAllowedException>(() => Session.Persist(noPieceNo));
+      Session.Abort();
     }
 
     [Test]
@@ -261,13 +229,17 @@ namespace SoundExplorersDatabase.Tests.Data {
         QueryHelper = QueryHelper,
         PieceNo = Piece1PieceNo
       };
-      using (var session = new TestSession(DatabaseFolderPath)) {
-        session.BeginUpdate();
-        Set1 = QueryHelper.Read<Set>(Set1.SimpleKey, Event1, session);
-        Piece1 = QueryHelper.Read<Piece>(Piece1SimpleKey, Set1, session);
-        Assert.Throws<DuplicateKeyException>(() => duplicate.Set = Set1);
-        session.Commit();
-      }
+      Session.BeginUpdate();
+      Assert.Throws<DuplicateKeyException>(() => duplicate.Set = Set1);
+      Session.Commit();
+    }
+
+    [Test]
+    public void Unpersist() {
+      Session.BeginUpdate();
+      Session.Unpersist(Piece1);
+      Session.Commit();
+      Assert.AreEqual(1, Set1.Pieces.Count, "Set1.Pieces.Count");
     }
   }
 }

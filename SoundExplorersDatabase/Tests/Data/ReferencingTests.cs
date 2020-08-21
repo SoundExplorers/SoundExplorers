@@ -425,7 +425,7 @@ namespace SoundExplorersDatabase.Tests.Data {
     public void T090_DisallowDeleteParentWithChildren() {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
-        Assert.Throws<ReferentialIntegrityException>(() =>
+        Assert.Throws<ConstraintException>(() =>
           Mother1.Unpersist(session));
         session.Commit();
       }
