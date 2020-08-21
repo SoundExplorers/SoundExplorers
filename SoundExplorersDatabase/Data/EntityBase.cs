@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Linq;
+using System.IO;
 using System.Linq;
 using JetBrains.Annotations;
 using VelocityDb;
@@ -305,6 +306,24 @@ namespace SoundExplorersDatabase.Data {
     }
 
     [NotNull]
+    private string CreateReferentialIntegrityViolationMessage() {
+      var list = new SortedList<string, int>();
+      foreach (var childOfTypeKvp in ChildrenOfType) {
+        if (childOfTypeKvp.Value.Count > 0) {
+          list.Add(childOfTypeKvp.Key.Name, childOfTypeKvp.Value.Count);
+        }
+      }
+      var writer = new StringWriter();
+      writer.Write(
+        $"{EntityType.Name} '{Key}' cannot be deleted because it is referenced by ");
+      for (var i = 0; i < list.Count; i++) {
+        writer.Write($"{list.Values[i]:N0} {list.Keys[i]}s");
+        writer.Write(i < list.Count - 1 ? ", " : ".");
+      }
+      return writer.ToString();
+    }
+
+    [NotNull]
     protected abstract IDictionary GetChildren([NotNull] Type childType);
 
     private void Initialise() {
@@ -347,9 +366,11 @@ namespace SoundExplorersDatabase.Data {
 
     public override void Unpersist(SessionBase session) {
       if (References.Count > 0) {
+        // If we did not do this,
+        // VelocityDB would throw a ReferentialIntegrityException
+        // on base.Unpersist.
         throw new ConstraintException(
-          $"{EntityType.Name} '{Key}' cannot be deleted because " +
-          $"{References.Count} entities reference it.");
+          CreateReferentialIntegrityViolationMessage());
       }
       var parents =
         Parents.Values.Where(parent => parent != null).ToList();

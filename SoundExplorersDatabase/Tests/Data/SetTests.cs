@@ -3,6 +3,7 @@ using System.Data;
 using System.Data.Linq;
 using NUnit.Framework;
 using SoundExplorersDatabase.Data;
+using VelocityDb.Exceptions;
 
 namespace SoundExplorersDatabase.Tests.Data {
   [TestFixture]
@@ -219,8 +220,6 @@ namespace SoundExplorersDatabase.Tests.Data {
     [Test]
     public void DisallowUnpersistSetWithPieces() {
       Session.BeginUpdate();
-      // ReferentialIntegrityException
-      // ConstraintException
       Assert.Throws<ConstraintException>(() =>
         Set1.Unpersist(Session));
       Session.Commit();
@@ -243,12 +242,16 @@ namespace SoundExplorersDatabase.Tests.Data {
         "Act2.Sets[set3.Key] after Persist");
       Assert.AreSame(set3, Event1.Sets[set3.Key],
         "Event1.Sets[set3.Key] after Persist");
+      Assert.AreSame(Act2, set3.Act, "set3.Act after Persist");
+      Assert.AreSame(Event1, set3.Event, "set3.Event after Persist");
       Session.BeginUpdate();
       Session.Unpersist(set3);
       Session.Commit();
       Assert.AreEqual(1, Act2.Sets.Count, "Act2.Sets.Count after Unpersist");
       Assert.AreEqual(2, Event1.Sets.Count,
         "Event1.Sets.Count after Unpersist");
+      Assert.IsNull(set3.Act, "set3.Act after Unpersist");
+      Assert.IsNull(set3.Event, "set3.Event after Unpersist");
     }
   }
 }
