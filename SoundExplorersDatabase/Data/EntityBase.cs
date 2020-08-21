@@ -372,12 +372,16 @@ namespace SoundExplorersDatabase.Data {
         throw new ConstraintException(
           CreateReferentialIntegrityViolationMessage());
       }
-      var parents =
-        Parents.Values.Where(parent => parent != null).ToList();
-      for (int i = parents.Count - 1; i >= 0; i--) {
-        parents[i].RemoveChild(this, true);
-      }
+      RemoveFromAllParents();
       base.Unpersist(session);
+
+      void RemoveFromAllParents() {
+        var parents =
+          Parents.Values.Where(parent => parent != null).ToList();
+        for (int i = parents.Count - 1; i >= 0; i--) {
+          parents[i].RemoveChild(this, true);
+        }
+      }
     }
 
     private void UpdateChild([NotNull] EntityBase child,
