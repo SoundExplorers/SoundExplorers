@@ -4,7 +4,6 @@ using System.Data;
 using System.Data.Linq;
 using NUnit.Framework;
 using SoundExplorersDatabase.Data;
-using VelocityDb.Exceptions;
 
 namespace SoundExplorersDatabase.Tests.Data {
   [TestFixture]
