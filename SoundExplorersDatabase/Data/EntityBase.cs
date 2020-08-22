@@ -196,23 +196,27 @@ namespace SoundExplorersDatabase.Data {
           $"for {EntityType.Name} '{Key}'. " +
           $"Null {SimpleKeyName}s are not supported.");
       }
-      if (newSimpleKey != oldSimpleKey) {
-        if (!IsTopLevel) {
-          IdentifyingParent?.CheckForDuplicateChild(EntityType,
-            new Key(newSimpleKey, IdentifyingParent));
-        } else if (IsPersistent && Session != null) {
-          // If there's no session, which means we cannot check for a duplicate,
-          // EntityBase.UpdateNonIndexField should already have thrown 
-          // an InvalidOperationException.
-          if (QueryHelper.FindDuplicateSimpleKey(EntityType, Oid, newSimpleKey,
-            Session) != null) {
-            throw new DuplicateKeyException(
-              this,
-              $"{EntityType.Name}'s {SimpleKeyName} cannot be changed to " +
-              $"{newSimpleKey} because another {EntityType.Name} " +
-              $"with the that {SimpleKeyName} has already been persisted.");
-          }
-        }
+      if (newSimpleKey == oldSimpleKey) {
+        return;
+      }
+      if (!IsTopLevel) {
+        IdentifyingParent?.CheckForDuplicateChild(EntityType,
+          new Key(newSimpleKey, IdentifyingParent));
+        return;
+      }
+      if (!IsPersistent || Session == null) {
+        return;
+      }
+      // If there's no session, which means we cannot check for a duplicate,
+      // EntityBase.UpdateNonIndexField should already have thrown 
+      // an InvalidOperationException.
+      if (QueryHelper.FindDuplicateSimpleKey(EntityType, Oid, newSimpleKey,
+        Session) != null) {
+        throw new DuplicateKeyException(
+          this,
+          $"{EntityType.Name}'s {SimpleKeyName} cannot be changed to " +
+          $"{newSimpleKey} because another {EntityType.Name} " +
+          $"with the that {SimpleKeyName} has already been persisted.");
       }
     }
 
@@ -412,12 +416,9 @@ namespace SoundExplorersDatabase.Data {
       try {
         base.UpdateNonIndexField();
       } catch (NullReferenceException ex) {
-        if (IsPersistent && Session == null) {
-          throw new InvalidOperationException(
-            $"{EntityType.Name} '{SimpleKey}' cannot be updated outside a session " +
-            "because it has already been persisted.", ex);
-        }
-        throw;
+        throw new InvalidOperationException(
+          $"{EntityType.Name} '{SimpleKey}' cannot be updated outside a session " +
+          "because it has already been persisted.", ex);
       }
     }
   }

@@ -17,7 +17,7 @@ namespace SoundExplorersDatabase.Tests.Data {
       };
       Drums = new Role {
         QueryHelper = QueryHelper,
-        Name = DrumsName,
+        Name = DrumsName
       };
       Location1 = new Location {
         QueryHelper = QueryHelper,
@@ -118,7 +118,6 @@ namespace SoundExplorersDatabase.Tests.Data {
     private const string Piece2SimpleKey = "02";
     private const int Set1SetNo = 1;
     private const int Set2SetNo = 2;
-    
     private string DatabaseFolderPath { get; set; }
     private QueryHelper QueryHelper { get; set; }
     private TestSession Session { get; set; }
@@ -173,11 +172,24 @@ namespace SoundExplorersDatabase.Tests.Data {
       Assert.AreSame(Credit1, Piece1.Credits[0], "Piece1.Credits[0]");
       Assert.AreSame(Credit2, Piece1.Credits[1], "Piece1.Credits[1]");
       Assert.AreSame(Piece1, Credit1.Piece, "Credit1.Piece");
-      Assert.AreEqual(Piece1PieceNo, Credit1.Piece.PieceNo, "Credit1.Piece.PieceNo");
+      Assert.AreEqual(Piece1PieceNo, Credit1.Piece.PieceNo,
+        "Credit1.Piece.PieceNo");
       Assert.AreSame(Piece1, Credit2.Piece, "Credit2.Piece");
-      Assert.AreEqual(Piece1PieceNo, Credit2.Piece.PieceNo, "Credit2.Piece.PieceNo");
+      Assert.AreEqual(Piece1PieceNo, Credit2.Piece.PieceNo,
+        "Credit2.Piece.PieceNo");
       Assert.AreSame(Set1, Credit1.Piece.Set, "Credit1.Piece.Set");
       Assert.AreSame(Set1, Credit2.Piece.Set, "Credit2.Piece.Set");
+    }
+
+    [Test]
+    public void ChangeAudioUrl() {
+      var newAudioUrl =
+        new Uri(
+          "https://soundcloud.com/simonor/peter-daly-simon-ororke-tippabo?in=simonor/sets/peter-daly-and-simon-ororke",
+          UriKind.Absolute);
+      Session.BeginUpdate();
+      Assert.DoesNotThrow(() => Piece1.AudioUrl = newAudioUrl);
+      Session.Commit();
     }
 
     [Test]
@@ -190,6 +202,17 @@ namespace SoundExplorersDatabase.Tests.Data {
       Assert.AreEqual(2, Set2.Pieces.Count, "Set2.Pieces.Count");
       Assert.AreSame(Piece1AtSet2, Set2.Pieces[0], "Set2 1st Piece");
       Assert.AreSame(Piece2, Set2.Pieces[1], "Set2 2nd Piece");
+    }
+
+    [Test]
+    public void ChangeVideoUrl() {
+      var newVideoUrl =
+        new Uri(
+          "https://www.youtube.com/watch?v=dPIaEWd8zf4",
+          UriKind.Absolute);
+      Session.BeginUpdate();
+      Assert.DoesNotThrow(() => Piece1.VideoUrl = newVideoUrl);
+      Session.Commit();
     }
 
     [Test]
@@ -285,6 +308,20 @@ namespace SoundExplorersDatabase.Tests.Data {
       Session.BeginUpdate();
       Assert.Throws<ConstraintException>(() =>
         Piece1.Unpersist(Session));
+      Session.Commit();
+    }
+
+    [Test]
+    public void SetAudioUrlToNull() {
+      Session.BeginUpdate();
+      Assert.DoesNotThrow(() => Piece1.AudioUrl = null);
+      Session.Commit();
+    }
+
+    [Test]
+    public void SetVideoUrlToNull() {
+      Session.BeginUpdate();
+      Assert.DoesNotThrow(() => Piece1.VideoUrl = null);
       Session.Commit();
     }
 

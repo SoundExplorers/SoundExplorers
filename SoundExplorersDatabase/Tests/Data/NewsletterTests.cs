@@ -116,6 +116,21 @@ namespace SoundExplorersDatabase.Tests.Data {
     }
 
     [Test]
+    public void ChangeUrl() {
+      var newUrl =
+        new Uri(
+          "https://docs.microsoft.com/en-us/dotnet/api/system.tuple?view=netcore-3.1",
+          UriKind.Absolute);
+      using (var session = new TestSession(DatabaseFolderPath)) {
+        session.BeginUpdate();
+        Newsletter1 =
+          QueryHelper.Read<Newsletter>(Newsletter1SimpleKey, session);
+        Assert.DoesNotThrow(() => Newsletter1.Url = newUrl);
+        session.Commit();
+      }
+    }
+
+    [Test]
     public void DisallowChangeDateToDuplicate() {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
