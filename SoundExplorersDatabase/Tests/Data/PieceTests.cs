@@ -11,14 +11,13 @@ namespace SoundExplorersDatabase.Tests.Data {
     public void Setup() {
       QueryHelper = new QueryHelper();
       DatabaseFolderPath = TestSession.CreateDatabaseFolder();
-      Artist1 = new Artist {
+      Baker = new Artist {
         QueryHelper = QueryHelper,
-        Forename = Artist1Forename,
-        Surname = Artist1Surname
+        Surname = BakerName
       };
-      Role1 = new Role {
+      Drums = new Role {
         QueryHelper = QueryHelper,
-        Name = Role1Name,
+        Name = DrumsName,
       };
       Location1 = new Location {
         QueryHelper = QueryHelper,
@@ -62,8 +61,8 @@ namespace SoundExplorersDatabase.Tests.Data {
       };
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
-        session.Persist(Artist1);
-        session.Persist(Role1);
+        session.Persist(Baker);
+        session.Persist(Drums);
         session.Persist(Location1);
         Event1.Location = Location1;
         session.Persist(Event1);
@@ -77,10 +76,10 @@ namespace SoundExplorersDatabase.Tests.Data {
         session.Persist(Piece1);
         session.Persist(Piece1AtSet2);
         session.Persist(Piece2);
-        Artist1.Credits.Add(Credit1);
-        Artist1.Credits.Add(Credit2);
-        Role1.Credits.Add(Credit1);
-        Role1.Credits.Add(Credit2);
+        Baker.Credits.Add(Credit1);
+        Baker.Credits.Add(Credit2);
+        Drums.Credits.Add(Credit1);
+        Drums.Credits.Add(Credit2);
         Piece1.Credits.Add(Credit1);
         Piece1.Credits.Add(Credit2);
         session.Persist(Credit1);
@@ -106,10 +105,10 @@ namespace SoundExplorersDatabase.Tests.Data {
       TestSession.DeleteFolderIfExists(DatabaseFolderPath);
     }
 
-    private const string Artist1Forename = "Ralph";
-    private const string Artist1Surname = "Jenkins";
+    private const string BakerName = "Baker";
     private const int Credit1CreditNo = 1;
     private const int Credit2CreditNo = 2;
+    private const string DrumsName = "Drums";
     private const string Location1Name = "Pyramid Club";
     private const string Piece1Notes = "My notes.";
     private const string Piece1SimpleKey = "01";
@@ -117,14 +116,13 @@ namespace SoundExplorersDatabase.Tests.Data {
     private const int Piece1PieceNo = 1;
     private const int Piece2PieceNo = 2;
     private const string Piece2SimpleKey = "02";
-    private const string Role1Name = "Banjo";
     private const int Set1SetNo = 1;
     private const int Set2SetNo = 2;
     
     private string DatabaseFolderPath { get; set; }
     private QueryHelper QueryHelper { get; set; }
     private TestSession Session { get; set; }
-    private Artist Artist1 { get; set; }
+    private Artist Baker { get; set; }
     private Credit Credit1 { get; set; }
     private Credit Credit2 { get; set; }
     private Event Event1 { get; set; }
@@ -143,7 +141,7 @@ namespace SoundExplorersDatabase.Tests.Data {
 
     private Piece Piece1AtSet2 { get; set; }
     private Piece Piece2 { get; set; }
-    private Role Role1 { get; set; }
+    private Role Drums { get; set; }
     private Set Set1 { get; set; }
     private Set Set2 { get; set; }
 
@@ -185,21 +183,13 @@ namespace SoundExplorersDatabase.Tests.Data {
     [Test]
     public void ChangeSet() {
       Session.BeginUpdate();
-      Piece1 = Set1.Pieces[0];
-      Piece1AtSet2 = Set2.Pieces[0];
-      Piece2 = Set1.Pieces[1];
       Piece2.Set = Set2;
       Session.Commit();
-      Assert.AreSame(Set2, Piece2.Set,
-        "Piece2.Set after Piece2 changes Set");
-      Assert.AreEqual(1, Set1.Pieces.Count,
-        "Set1.Pieces.Count after Piece2 changes Set");
-      Assert.AreEqual(2, Set2.Pieces.Count,
-        "Set2.Pieces.Count after Piece2 changes Set");
-      Assert.AreSame(Piece1AtSet2, Set2.Pieces[0],
-        "Set2 1st Piece after Piece2 changes Set");
-      Assert.AreSame(Piece2, Set2.Pieces[1],
-        "Set2 2nd Piece after Piece1 changes Set");
+      Assert.AreSame(Set2, Piece2.Set, "Piece2.Set");
+      Assert.AreEqual(1, Set1.Pieces.Count, "Set1.Pieces.Count");
+      Assert.AreEqual(2, Set2.Pieces.Count, "Set2.Pieces.Count");
+      Assert.AreSame(Piece1AtSet2, Set2.Pieces[0], "Set2 1st Piece");
+      Assert.AreSame(Piece2, Set2.Pieces[1], "Set2 2nd Piece");
     }
 
     [Test]

@@ -155,8 +155,6 @@ namespace SoundExplorersDatabase.Tests.Data {
     [Test]
     public void ChangeAct() {
       Session.BeginUpdate();
-      Set1 = Act1.Sets[0];
-      Set1AtEvent2 = Act2.Sets[0];
       Set2 = Act1.Sets[1];
       Assert.AreSame(Set1.Event, Set2.Event,
         "Set2.Event");

@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Data;
 using System.Diagnostics.CodeAnalysis;
-using JetBrains.Annotations;
 
 namespace SoundExplorersDatabase.Data {
   public class Credit : EntityBase {
