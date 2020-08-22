@@ -10,8 +10,10 @@ namespace SoundExplorersDatabase.Data {
     private string _surname;
 
     public Artist() : base(typeof(Artist), nameof(Name), null) {
-      //Credits = new SortedChildList<Credit>(this);
+      Credits = new SortedChildList<Credit>(this);
     }
+
+    [NotNull] public SortedChildList<Credit> Credits { get; }
 
     /// <summary>
     ///   The Name of an Artist who goes by a single name
@@ -64,11 +66,8 @@ namespace SoundExplorersDatabase.Data {
       }
     }
 
-    //[NotNull] public SortedChildList<Credit> Credits { get; }
-
     protected override IDictionary GetChildren(Type childType) {
-      //return Credits;
-      throw new NotImplementedException();
+      return Credits;
     }
 
     /// <summary>

@@ -13,7 +13,10 @@ namespace SoundExplorersDatabase.Data {
     private int _pieceNo;
     private string _title;
     private Uri _videoUrl;
-    public Piece() : base(typeof(Piece), nameof(PieceNo), typeof(Set)) { }
+
+    public Piece() : base(typeof(Piece), nameof(PieceNo), typeof(Set)) {
+      Credits = new SortedChildList<Credit>(this);
+    }
 
     [CanBeNull]
     public Uri AudioUrl {
@@ -24,6 +27,8 @@ namespace SoundExplorersDatabase.Data {
         _audioUrl = value;
       }
     }
+
+    [NotNull] public SortedChildList<Credit> Credits { get; }
 
     [CanBeNull]
     public string Notes {
@@ -159,7 +164,7 @@ namespace SoundExplorersDatabase.Data {
     }
 
     protected override IDictionary GetChildren(Type childType) {
-      throw new NotImplementedException();
+      return Credits;
     }
 
     [ExcludeFromCodeCoverage]

@@ -6,8 +6,10 @@ using JetBrains.Annotations;
 namespace SoundExplorersDatabase.Data {
   public class Role : EntityBase {
     public Role() : base(typeof(Role), nameof(Name), null) {
-      //Credits = new SortedChildList<Credit>(this);
+      Credits = new SortedChildList<Credit>(this);
     }
+
+    [NotNull] public SortedChildList<Credit> Credits { get; }
 
     [CanBeNull]
     public string Name {
@@ -18,10 +20,8 @@ namespace SoundExplorersDatabase.Data {
       }
     }
 
-    //[NotNull] public SortedChildList<Credit> Credits { get; }
-
     protected override IDictionary GetChildren(Type childType) {
-      //return Credits;
+      return Credits;
       throw new NotImplementedException();
     }
 

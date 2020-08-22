@@ -11,6 +11,15 @@ namespace SoundExplorersDatabase.Tests.Data {
     public void Setup() {
       QueryHelper = new QueryHelper();
       DatabaseFolderPath = TestSession.CreateDatabaseFolder();
+      Artist1 = new Artist {
+        QueryHelper = QueryHelper,
+        Forename = Artist1Forename,
+        Surname = Artist1Surname
+      };
+      Role1 = new Role {
+        QueryHelper = QueryHelper,
+        Name = Role1Name,
+      };
       Location1 = new Location {
         QueryHelper = QueryHelper,
         Name = Location1Name
@@ -43,8 +52,18 @@ namespace SoundExplorersDatabase.Tests.Data {
         QueryHelper = QueryHelper,
         PieceNo = Piece2PieceNo
       };
+      Credit1 = new Credit {
+        QueryHelper = QueryHelper,
+        CreditNo = Credit1CreditNo
+      };
+      Credit2 = new Credit {
+        QueryHelper = QueryHelper,
+        CreditNo = Credit2CreditNo
+      };
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
+        session.Persist(Artist1);
+        session.Persist(Role1);
         session.Persist(Location1);
         Event1.Location = Location1;
         session.Persist(Event1);
@@ -58,10 +77,20 @@ namespace SoundExplorersDatabase.Tests.Data {
         session.Persist(Piece1);
         session.Persist(Piece1AtSet2);
         session.Persist(Piece2);
+        Artist1.Credits.Add(Credit1);
+        Artist1.Credits.Add(Credit2);
+        Role1.Credits.Add(Credit1);
+        Role1.Credits.Add(Credit2);
+        Piece1.Credits.Add(Credit1);
+        Piece1.Credits.Add(Credit2);
+        session.Persist(Credit1);
+        session.Persist(Credit2);
         session.Commit();
       }
       Session = new TestSession(DatabaseFolderPath);
       Session.BeginRead();
+      Artist1 = QueryHelper.Read<Artist>(Artist1Name, Session);
+      Role1 = QueryHelper.Read<Role>(Role1Name, Session);
       Location1 = QueryHelper.Read<Location>(Location1Name, Session);
       Event1 = QueryHelper.Read<Event>(Event1.SimpleKey, Location1, Session);
       Set1 = QueryHelper.Read<Set>(Set1.SimpleKey, Event1, Session);
@@ -69,6 +98,8 @@ namespace SoundExplorersDatabase.Tests.Data {
       Piece1 = QueryHelper.Read<Piece>(Piece1SimpleKey, Set1, Session);
       Piece1AtSet2 = QueryHelper.Read<Piece>(Piece1SimpleKey, Set2, Session);
       Piece2 = QueryHelper.Read<Piece>(Piece2SimpleKey, Set1, Session);
+      Credit1 = QueryHelper.Read<Credit>(Credit1.SimpleKey, Piece1, Session);
+      Credit2 = QueryHelper.Read<Credit>(Credit2.SimpleKey, Piece1, Session);
       Session.Commit();
     }
 
@@ -77,6 +108,11 @@ namespace SoundExplorersDatabase.Tests.Data {
       TestSession.DeleteFolderIfExists(DatabaseFolderPath);
     }
 
+    private const string Artist1Forename = "Ralph";
+    private const string Artist1Name = "Ralph Jenkins";
+    private const string Artist1Surname = "Jenkins";
+    private const int Credit1CreditNo = 1;
+    private const int Credit2CreditNo = 2;
     private const string Location1Name = "Pyramid Club";
     private const string Piece1Notes = "My notes.";
     private const string Piece1SimpleKey = "01";
@@ -84,11 +120,15 @@ namespace SoundExplorersDatabase.Tests.Data {
     private const int Piece1PieceNo = 1;
     private const int Piece2PieceNo = 2;
     private const string Piece2SimpleKey = "02";
+    private const string Role1Name = "Banjo";
     private const int Set1SetNo = 1;
     private const int Set2SetNo = 2;
     private string DatabaseFolderPath { get; set; }
     private QueryHelper QueryHelper { get; set; }
     private TestSession Session { get; set; }
+    private Artist Artist1 { get; set; }
+    private Credit Credit1 { get; set; }
+    private Credit Credit2 { get; set; }
     private Event Event1 { get; set; }
     private static DateTime Event1Date => DateTime.Today.AddDays(-1);
     private Location Location1 { get; set; }
@@ -105,6 +145,7 @@ namespace SoundExplorersDatabase.Tests.Data {
 
     private Piece Piece1AtSet2 { get; set; }
     private Piece Piece2 { get; set; }
+    private Role Role1 { get; set; }
     private Set Set1 { get; set; }
     private Set Set2 { get; set; }
 
@@ -131,6 +172,14 @@ namespace SoundExplorersDatabase.Tests.Data {
       Assert.AreSame(Location1, Piece1.Set.Event.Location,
         "Piece1.Set.Event.Location");
       Assert.AreSame(Event1, Piece2.Set.Event, "Piece2.Set.Event");
+      Assert.AreEqual(2, Piece1.Credits.Count, "Piece1.Credits.Count");
+      Assert.AreEqual(2, Piece1.References.Count, "Piece1.References.Count");
+      Assert.AreSame(Piece1, Credit1.Piece, "Credit1.Piece");
+      Assert.AreEqual(Piece1.PieceNo, Credit1.Piece.PieceNo, "Credit1.Piece.PieceNo");
+      Assert.AreSame(Piece1, Credit2.Piece, "Credit2.Piece");
+      Assert.AreEqual(Piece1.PieceNo, Credit2.Piece.PieceNo, "Credit2.Piece.PieceNo");
+      Assert.AreSame(Set1, Credit1.Piece.Set, "Credit1.Piece.Set");
+      Assert.AreSame(Set1, Credit2.Piece.Set, "Credit2.Piece.Set");
     }
 
     [Test]
@@ -224,6 +273,13 @@ namespace SoundExplorersDatabase.Tests.Data {
     }
 
     [Test]
+    public void DisallowRemoveCredit() {
+      Session.BeginUpdate();
+      Assert.Throws<ConstraintException>(() => Piece1.Credits.Remove(Credit1));
+      Session.Commit();
+    }
+
+    [Test]
     public void DisallowSetKeyToDuplicate() {
       var duplicate = new Piece {
         QueryHelper = QueryHelper,
@@ -235,9 +291,17 @@ namespace SoundExplorersDatabase.Tests.Data {
     }
 
     [Test]
+    public void DisallowUnpersistPieceWithCredits() {
+      Session.BeginUpdate();
+      Assert.Throws<ConstraintException>(() =>
+        Piece1.Unpersist(Session));
+      Session.Commit();
+    }
+
+    [Test]
     public void Unpersist() {
       Session.BeginUpdate();
-      Session.Unpersist(Piece1);
+      Session.Unpersist(Piece2);
       Session.Commit();
       Assert.AreEqual(1, Set1.Pieces.Count, "Set1.Pieces.Count");
     }
