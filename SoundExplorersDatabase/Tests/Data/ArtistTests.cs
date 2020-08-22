@@ -45,10 +45,6 @@ namespace SoundExplorersDatabase.Tests.Data {
         QueryHelper = QueryHelper,
         PieceNo = Piece1PieceNo
       };
-      Role1 = new Role {
-        QueryHelper = QueryHelper,
-        Name = Role1Name
-      };
       Credit1 = new Credit {
         QueryHelper = QueryHelper,
         CreditNo = Credit1CreditNo
@@ -85,11 +81,6 @@ namespace SoundExplorersDatabase.Tests.Data {
       RalphJenkins = QueryHelper.Read<Artist>(RalphJenkinsName, Session);
       Clarissa = QueryHelper.Read<Artist>(ClarissaName, Session);
       Baker = QueryHelper.Read<Artist>(BakerName, Session);
-      Role1 = QueryHelper.Read<Role>(Role1Name, Session);
-      Location1 = QueryHelper.Read<Location>(Location1Name, Session);
-      Event1 = QueryHelper.Read<Event>(Event1.SimpleKey, Location1, Session);
-      Set1 = QueryHelper.Read<Set>(Set1.SimpleKey, Event1, Session);
-      Piece1 = QueryHelper.Read<Piece>(Piece1.SimpleKey, Set1, Session);
       Credit1 = QueryHelper.Read<Credit>(Credit1.SimpleKey, Piece1, Session);
       Credit2 = QueryHelper.Read<Credit>(Credit2.SimpleKey, Piece1, Session);
       Session.Commit();
@@ -114,6 +105,7 @@ namespace SoundExplorersDatabase.Tests.Data {
     private const int Piece1PieceNo = 1;
     private const string Role1Name = "Banjo";
     private const int Set1SetNo = 1;
+    
     private string DatabaseFolderPath { get; set; }
     private QueryHelper QueryHelper { get; set; }
     private TestSession Session { get; set; }
@@ -153,7 +145,7 @@ namespace SoundExplorersDatabase.Tests.Data {
       Assert.AreSame(Credit2, RalphJenkins.Credits[1],
         "RalphJenkins.Credits[1]");
       Assert.AreSame(RalphJenkins, Credit1.Artist, "Credit1.Artist");
-      Assert.AreEqual(RalphJenkins.Name, Credit1.Artist.Name,
+      Assert.AreEqual(RalphJenkinsName, Credit1.Artist.Name,
         "Credit1.Artist.Name");
       Assert.AreSame(RalphJenkins, Credit2.Artist, "Credit2.Artist");
     }

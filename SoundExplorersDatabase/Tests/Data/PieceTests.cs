@@ -89,8 +89,6 @@ namespace SoundExplorersDatabase.Tests.Data {
       }
       Session = new TestSession(DatabaseFolderPath);
       Session.BeginRead();
-      Artist1 = QueryHelper.Read<Artist>(Artist1Name, Session);
-      Role1 = QueryHelper.Read<Role>(Role1Name, Session);
       Location1 = QueryHelper.Read<Location>(Location1Name, Session);
       Event1 = QueryHelper.Read<Event>(Event1.SimpleKey, Location1, Session);
       Set1 = QueryHelper.Read<Set>(Set1.SimpleKey, Event1, Session);
@@ -109,7 +107,6 @@ namespace SoundExplorersDatabase.Tests.Data {
     }
 
     private const string Artist1Forename = "Ralph";
-    private const string Artist1Name = "Ralph Jenkins";
     private const string Artist1Surname = "Jenkins";
     private const int Credit1CreditNo = 1;
     private const int Credit2CreditNo = 2;
@@ -123,6 +120,7 @@ namespace SoundExplorersDatabase.Tests.Data {
     private const string Role1Name = "Banjo";
     private const int Set1SetNo = 1;
     private const int Set2SetNo = 2;
+    
     private string DatabaseFolderPath { get; set; }
     private QueryHelper QueryHelper { get; set; }
     private TestSession Session { get; set; }
@@ -177,9 +175,9 @@ namespace SoundExplorersDatabase.Tests.Data {
       Assert.AreSame(Credit1, Piece1.Credits[0], "Piece1.Credits[0]");
       Assert.AreSame(Credit2, Piece1.Credits[1], "Piece1.Credits[1]");
       Assert.AreSame(Piece1, Credit1.Piece, "Credit1.Piece");
-      Assert.AreEqual(Piece1.PieceNo, Credit1.Piece.PieceNo, "Credit1.Piece.PieceNo");
+      Assert.AreEqual(Piece1PieceNo, Credit1.Piece.PieceNo, "Credit1.Piece.PieceNo");
       Assert.AreSame(Piece1, Credit2.Piece, "Credit2.Piece");
-      Assert.AreEqual(Piece1.PieceNo, Credit2.Piece.PieceNo, "Credit2.Piece.PieceNo");
+      Assert.AreEqual(Piece1PieceNo, Credit2.Piece.PieceNo, "Credit2.Piece.PieceNo");
       Assert.AreSame(Set1, Credit1.Piece.Set, "Credit1.Piece.Set");
       Assert.AreSame(Set1, Credit2.Piece.Set, "Credit2.Piece.Set");
     }
