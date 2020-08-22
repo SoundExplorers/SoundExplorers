@@ -11,7 +11,6 @@ namespace SoundExplorersDatabase.Data {
     private Role _role;
     public Credit() : base(typeof(Credit), nameof(CreditNo), typeof(Piece)) { }
 
-    [CanBeNull]
     public Artist Artist {
       get => _artist;
       set {
@@ -41,7 +40,6 @@ namespace SoundExplorersDatabase.Data {
       }
     }
 
-    [CanBeNull]
     public Role Role {
       get => _role;
       set {

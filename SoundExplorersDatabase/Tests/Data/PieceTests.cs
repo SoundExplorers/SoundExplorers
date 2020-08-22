@@ -174,6 +174,8 @@ namespace SoundExplorersDatabase.Tests.Data {
       Assert.AreSame(Event1, Piece2.Set.Event, "Piece2.Set.Event");
       Assert.AreEqual(2, Piece1.Credits.Count, "Piece1.Credits.Count");
       Assert.AreEqual(2, Piece1.References.Count, "Piece1.References.Count");
+      Assert.AreSame(Credit1, Piece1.Credits[0], "Piece1.Credits[0]");
+      Assert.AreSame(Credit2, Piece1.Credits[1], "Piece1.Credits[1]");
       Assert.AreSame(Piece1, Credit1.Piece, "Credit1.Piece");
       Assert.AreEqual(Piece1.PieceNo, Credit1.Piece.PieceNo, "Credit1.Piece.PieceNo");
       Assert.AreSame(Piece1, Credit2.Piece, "Credit2.Piece");
