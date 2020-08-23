@@ -194,6 +194,9 @@ namespace SoundExplorersDatabase.Tests.Data {
       Assert.AreEqual(2, Piece2.Credits.Count, "Piece2.Credits.Count");
       Assert.AreSame(Credit2, Piece2.Credits[0], "Piece2 1st Credit");
       Assert.AreSame(Credit3, Piece2.Credits[1], "Piece2 2nd Credit");
+      Assert.AreSame(Credit2, Piece2.Credits[Credit2.Key], "Piece2.Credits[Credit2.Key]");
+      Assert.AreSame(Credit2, Baker.Credits[Credit2.Key], "Baker.Credits[Credit2.Key]");
+      Assert.AreSame(Credit2, Drums.Credits[Credit2.Key], "Drums.Credits[Credit2.Key]");
     }
 
     [Test]
