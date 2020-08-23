@@ -7,7 +7,6 @@ namespace SoundExplorersDatabase.Tests.Data {
   public class KeyTests {
     [SetUp]
     public void Setup() {
-      QueryHelper = new QueryHelper();
       DatabaseFolderPath = TestSession.CreateDatabaseFolder();
     }
 
@@ -17,7 +16,6 @@ namespace SoundExplorersDatabase.Tests.Data {
     }
 
     private string DatabaseFolderPath { get; set; }
-    private QueryHelper QueryHelper { get; set; }
 
     [Test]
     public void T010_Equality() {

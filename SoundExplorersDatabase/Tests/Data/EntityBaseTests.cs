@@ -30,16 +30,21 @@ namespace SoundExplorersDatabase.Tests.Data {
 
     [Test]
     public void T010_DisallowInconsistentIdentifyingParent() {
-      var dudDaughter1 = new DudDaughter(QueryHelper) {Name = "Xenia"};
-      var dudDaughter2 = new DudDaughter(QueryHelper, typeof(Father))
+      const string motherName = "Winifred";
+      var xenia = new DudDaughter(QueryHelper) {Name = "Xenia"};
+      var yvette = new DudDaughter(QueryHelper, typeof(Father))
         {Name = "Yvette"};
-      var mother1 = new Mother(QueryHelper);
+      var zoe = new DudDaughter(QueryHelper, typeof(Mother))
+        {Name = "Zoe"};
+      var mother = new Mother(QueryHelper) {Name = motherName};
       Assert.Throws<ConstraintException>(
-        () => dudDaughter1.Mother = mother1,
+        () => xenia.Mother = mother,
         "IdentifyingParentType has not been specified");
       Assert.Throws<ConstraintException>(
-        () => dudDaughter2.Mother = mother1,
+        () => yvette.Mother = mother,
         "Value's type is not IdentifyingParentType");
+      zoe.Mother = mother;
+      Assert.AreEqual(motherName, zoe.Mother.Name, "zoe.Mother.Name");
     }
   }
 }

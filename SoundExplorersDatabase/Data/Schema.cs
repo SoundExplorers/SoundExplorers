@@ -2,11 +2,21 @@
 using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
+using VelocityDb;
+using VelocityDb.Session;
 
 namespace SoundExplorersDatabase.Data {
-  public class Schema {
+  /// <summary>
+  ///   Database schema entity.
+  /// </summary>
+  /// <remarks>
+  ///   This is a single occurence entity with no key, parents or children.
+  ///   So it inherits from OptimizedPersistable instead of EntityBase.
+  /// </remarks>
+  public class Schema : OptimizedPersistable {
     private static Schema _instance;
     private IEnumerable<RelationInfo> _relations;
+    private int _version;
 
     [NotNull]
     public static Schema Instance => _instance ?? (_instance = new Schema());
@@ -14,6 +24,14 @@ namespace SoundExplorersDatabase.Data {
     [NotNull]
     public IEnumerable<RelationInfo> Relations =>
       _relations ?? (_relations = CreateRelations());
+
+    public int Version {
+      get => _version;
+      private set {
+        UpdateNonIndexField();
+        _version = value;
+      }
+    }
 
     [NotNull]
     protected virtual IEnumerable<RelationInfo> CreateRelations() {
@@ -32,12 +50,43 @@ namespace SoundExplorersDatabase.Data {
     }
 
     [CanBeNull]
-    public RelationInfo FindRelation(Type parentType, Type childType) {
+    public static Schema Find([NotNull] QueryHelper queryHelper,
+      [NotNull] SessionBase session) {
+      return queryHelper.SchemaExistsOnDatabase(session)
+        ? session.AllObjects<Schema>().FirstOrDefault()
+        : null;
+    }
+
+    [CanBeNull]
+    public RelationInfo FindRelation([NotNull] Type parentType,
+      [NotNull] Type childType) {
       return (
         from relation in Relations
         where relation.ParentType == parentType &&
               relation.ChildType == childType
         select relation).FirstOrDefault();
+    }
+
+    /// <summary>
+    ///   Upgrades the schema on the database.
+    ///   The entity types are registered so that a VelocityDB licence file
+    ///   ('license database') will not have to be included in the database.
+    /// </summary>
+    /// <param name="newVersion">New version number</param>
+    /// <param name="session">Database session</param>
+    public void Upgrade(int newVersion, [NotNull] SessionBase session) {
+      session.RegisterClass(typeof(Act));
+      session.RegisterClass(typeof(Artist));
+      session.RegisterClass(typeof(Credit));
+      session.RegisterClass(typeof(Event));
+      session.RegisterClass(typeof(Location));
+      session.RegisterClass(typeof(Newsletter));
+      session.RegisterClass(typeof(Piece));
+      session.RegisterClass(typeof(Role));
+      session.RegisterClass(typeof(Schema));
+      session.RegisterClass(typeof(Series));
+      session.RegisterClass(typeof(Set));
+      Version = newVersion;
     }
   }
 }

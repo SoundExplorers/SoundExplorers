@@ -12,6 +12,9 @@ namespace SoundExplorersDatabase.Tests.Data {
         session.BeginUpdate();
         session.Commit();
       }
+      Session = new TestSession(DatabaseFolderPath);
+      Session.BeginRead();
+      Session.Commit();
     }
 
     [TearDown]
@@ -21,5 +24,11 @@ namespace SoundExplorersDatabase.Tests.Data {
 
     private string DatabaseFolderPath { get; set; }
     private QueryHelper QueryHelper { get; set; }
+    private TestSession Session { get; set; }
+
+    [Test]
+    public void A010_Initial() {
+      Assert.IsNotNull(QueryHelper, "Dummy test");
+    }
   }
 }
