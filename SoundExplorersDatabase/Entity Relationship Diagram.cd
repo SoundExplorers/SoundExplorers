@@ -1,0 +1,223 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Comment CommentText="Mandatory&#xD;&#xA;&#xD;&#xA;">
+    <Position X="5.758" Y="0.85" Height="0.291" Width="0.858" />
+  </Comment>
+  <Comment CommentText="Mandatory&#xD;&#xA;&#xD;&#xA;">
+    <Position X="4.516" Y="8.192" Height="0.291" Width="0.858" />
+  </Comment>
+  <Comment CommentText="Mandatory&#xD;&#xA;&#xD;&#xA;">
+    <Position X="6.392" Y="9.75" Height="0.291" Width="0.858" />
+  </Comment>
+  <Comment CommentText="Mandatory&#xD;&#xA;&#xD;&#xA;">
+    <Position X="4.55" Y="5.125" Height="0.291" Width="0.858" />
+  </Comment>
+  <Class Name="SoundExplorersDatabase.Data.Act">
+    <Position X="0.5" Y="3" Width="1.5" />
+    <Members>
+      <Field Name="_notes" Hidden="true" />
+      <Method Name="Act" Hidden="true" />
+      <Method Name="GetChildren" Hidden="true" />
+      <Method Name="OnNonIdentifyingParentFieldToBeUpdated" Hidden="true" />
+    </Members>
+    <Compartments>
+      <Compartment Name="Methods" Collapsed="true" />
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAAwAQAAAAAAAAAAAAAACAQAAAAAQAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Data\Act.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Sets" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="SoundExplorersDatabase.Data.Location">
+    <Position X="6.75" Y="0.5" Width="1.5" />
+    <Members>
+      <Field Name="_notes" Hidden="true" />
+      <Method Name="GetChildren" Hidden="true" />
+      <Method Name="Location" Hidden="true" />
+      <Method Name="OnNonIdentifyingParentFieldToBeUpdated" Hidden="true" />
+    </Members>
+    <AssociationLine Name="Events" Type="SoundExplorersDatabase.Data.Event" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="6.75" Y="1.25" />
+        <Point X="6" Y="1.25" />
+        <Point X="6" Y="3" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAwAQAAAAAAAAAAAAAAAAQAAgAAQAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Data\Location.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Events" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="SoundExplorersDatabase.Data.Newsletter">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <Members>
+      <Field Name="_date" Hidden="true" />
+      <Field Name="_url" Hidden="true" />
+      <Method Name="CheckCanChangeUrl" Hidden="true" />
+      <Method Name="CheckCanPersist" Hidden="true" />
+      <Method Name="FindDuplicateUrl" Hidden="true" />
+      <Method Name="GetChildren" Hidden="true" />
+      <Method Name="Newsletter" Hidden="true" />
+      <Method Name="OnNonIdentifyingParentFieldToBeUpdated" Hidden="true" />
+    </Members>
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <AssociationLine Name="Events" Type="SoundExplorersDatabase.Data.Event" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="2" Y="1.213" />
+        <Point X="5" Y="1.213" />
+        <Point X="5" Y="3" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>gAAAAQAAAAAAAAAABAAAAAAAAgQAQAABCCAgAAAAAAA=</HashCode>
+      <FileName>Data\Newsletter.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Events" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="SoundExplorersDatabase.Data.Series">
+    <Position X="10.25" Y="0.5" Width="1.5" />
+    <Members>
+      <Field Name="_notes" Hidden="true" />
+      <Method Name="GetChildren" Hidden="true" />
+      <Method Name="OnNonIdentifyingParentFieldToBeUpdated" Hidden="true" />
+      <Method Name="Series" Hidden="true" />
+    </Members>
+    <AssociationLine Name="Events" Type="SoundExplorersDatabase.Data.Event" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="11" Y="1.925" />
+        <Point X="11" Y="4.14" />
+        <Point X="6.25" Y="4.14" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAwAQAAAAAAAAAAAAAAAAQAAgAAQAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Data\Series.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Events" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="SoundExplorersDatabase.Data.Event">
+    <Position X="4.75" Y="3" Width="1.5" />
+    <Members>
+      <Field Name="_date" Hidden="true" />
+      <Field Name="_newsletter" Hidden="true" />
+      <Field Name="_notes" Hidden="true" />
+      <Field Name="_series" Hidden="true" />
+      <Method Name="Event" Hidden="true" />
+      <Method Name="GetChildren" Hidden="true" />
+      <Method Name="OnNonIdentifyingParentFieldToBeUpdated" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAwAQAAAAAAAAAABAIACAgEAAAAQAABAABAAAAAAAE=</HashCode>
+      <FileName>Data\Event.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Sets" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="SoundExplorersDatabase.Data.Set">
+    <Position X="4.75" Y="6.25" Width="1.5" />
+    <Members>
+      <Field Name="_act" Hidden="true" />
+      <Field Name="_notes" Hidden="true" />
+      <Field Name="_setNo" Hidden="true" />
+      <Method Name="GetChildren" Hidden="true" />
+      <Method Name="OnNonIdentifyingParentFieldToBeUpdated" Hidden="true" />
+      <Method Name="Set" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAwAQAAAAAAAAAAAAAABAAAAgAEQAAAAAAAIAAAAGA=</HashCode>
+      <FileName>Data\Set.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Pieces" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="SoundExplorersDatabase.Data.Piece">
+    <Position X="4.75" Y="9" Width="1.5" />
+    <Members>
+      <Field Name="_audioUrl" Hidden="true" />
+      <Field Name="_notes" Hidden="true" />
+      <Field Name="_pieceNo" Hidden="true" />
+      <Field Name="_title" Hidden="true" />
+      <Field Name="_videoUrl" Hidden="true" />
+      <Method Name="CheckCanChangeAudioUrl" Hidden="true" />
+      <Method Name="CheckCanChangeVideoUrl" Hidden="true" />
+      <Method Name="CheckCanPersist" Hidden="true" />
+      <Method Name="FindDuplicateAudioUrl" Hidden="true" />
+      <Method Name="FindDuplicateVideoUrl" Hidden="true" />
+      <Method Name="GetChildren" Hidden="true" />
+      <Method Name="OnNonIdentifyingParentFieldToBeUpdated" Hidden="true" />
+      <Method Name="Piece" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>gAAwASAAAoACBEAAAAAAAAAABABAQARAAEAgAAAAEAQ=</HashCode>
+      <FileName>Data\Piece.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Credits" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="SoundExplorersDatabase.Data.Credit">
+    <Position X="13.5" Y="9.25" Width="1.5" />
+    <Members>
+      <Field Name="_artist" Hidden="true" />
+      <Field Name="_creditNo" Hidden="true" />
+      <Field Name="_role" Hidden="true" />
+      <Method Name="Credit" Hidden="true" />
+      <Method Name="GetChildren" Hidden="true" />
+      <Method Name="OnNonIdentifyingParentFieldToBeUpdated" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAAQAAAAAAAAAAEgAAAAAAAIAAQAAAIAABIIAAAAA=</HashCode>
+      <FileName>Data\Credit.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SoundExplorersDatabase.Data.Artist">
+    <Position X="13.5" Y="3" Width="1.5" />
+    <Members>
+      <Field Name="_forename" Hidden="true" />
+      <Field Name="_notes" Hidden="true" />
+      <Field Name="_surname" Hidden="true" />
+      <Method Name="Artist" Hidden="true" />
+      <Method Name="GetChildren" Hidden="true" />
+      <Method Name="MakeName" Hidden="true" />
+      <Method Name="OnNonIdentifyingParentFieldToBeUpdated" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>gAAwAQAAAAAAAAAAAAABAAQABAABQAAAAAgAAAAEAAA=</HashCode>
+      <FileName>Data\Artist.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Credits" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="SoundExplorersDatabase.Data.Role">
+    <Position X="16.5" Y="3" Width="1.5" />
+    <Members>
+      <Method Name="GetChildren" Hidden="true" />
+      <Method Name="OnNonIdentifyingParentFieldToBeUpdated" Hidden="true" />
+      <Method Name="Role" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>gAAAAQAAAAAAAAAAAAAAAAQAAAAAQAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Data\Role.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Credits" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
