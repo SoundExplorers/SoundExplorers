@@ -22,7 +22,6 @@ namespace SoundExplorersDatabase.Data {
 
     protected override IDictionary GetChildren(Type childType) {
       return Credits;
-      throw new NotImplementedException();
     }
 
     [ExcludeFromCodeCoverage]
