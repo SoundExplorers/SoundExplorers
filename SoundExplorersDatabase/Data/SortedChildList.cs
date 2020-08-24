@@ -3,8 +3,23 @@ using System.Collections.Generic;
 using JetBrains.Annotations;
 
 namespace SoundExplorersDatabase.Data {
+  
+  /// <summary>
+  /// The SortedList that is the collection of children,
+  /// of the specified entity type, of a parent entity.
+  /// </summary>
+  /// <typeparam name="TChild">
+  /// The entity type of the child entities in the collection.
+  /// </typeparam>
   public class SortedChildList<TChild> : SortedList<Key, TChild>
     where TChild : EntityBase {
+    
+    /// <summary>
+    /// Creates a SortedChildList instance. 
+    /// </summary>
+    /// <param name="parent">
+    /// The parent entity that owns the collection of children.
+    /// </param>
     internal SortedChildList([NotNull] EntityBase parent) : base(
       new KeyComparer()) {
       Parent = parent ??

@@ -4,6 +4,11 @@ using System.Diagnostics.CodeAnalysis;
 using JetBrains.Annotations;
 
 namespace SoundExplorersDatabase.Data {
+  /// <summary>
+  ///   An entity representing a location where Events have been held.
+  ///   Typically a music venue, but could, for example,
+  ///   be an outdoor location.
+  /// </summary>
   public class Location : EntityBase {
     private string _notes;
 

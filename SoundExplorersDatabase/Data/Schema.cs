@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
 using VelocityDb;
@@ -18,13 +17,23 @@ namespace SoundExplorersDatabase.Data {
     private IEnumerable<RelationInfo> _relations;
     private int _version;
 
+    /// <summary>
+    ///   The instance of the schema that is referenced by default by entities.
+    /// </summary>
     [NotNull]
     public static Schema Instance => _instance ?? (_instance = new Schema());
 
+    /// <summary>
+    ///   The structure of on-to-many relations between entity types.
+    /// </summary>
     [NotNull]
     public IEnumerable<RelationInfo> Relations =>
       _relations ?? (_relations = CreateRelations());
 
+    /// <summary>
+    ///   The schema version.
+    ///   Not the same as the application version.
+    /// </summary>
     public int Version {
       get => _version;
       private set {
@@ -49,22 +58,16 @@ namespace SoundExplorersDatabase.Data {
       return list.ToArray();
     }
 
+    /// <summary>
+    ///   Returns the one Schema entity, if it already exists on the database,
+    ///   otherwise null.
+    /// </summary>
     [CanBeNull]
     public static Schema Find([NotNull] QueryHelper queryHelper,
       [NotNull] SessionBase session) {
       return queryHelper.SchemaExistsOnDatabase(session)
         ? session.AllObjects<Schema>().FirstOrDefault()
         : null;
-    }
-
-    [CanBeNull]
-    public RelationInfo FindRelation([NotNull] Type parentType,
-      [NotNull] Type childType) {
-      return (
-        from relation in Relations
-        where relation.ParentType == parentType &&
-              relation.ChildType == childType
-        select relation).FirstOrDefault();
     }
 
     /// <summary>

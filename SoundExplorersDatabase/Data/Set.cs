@@ -4,6 +4,10 @@ using System.Data;
 using JetBrains.Annotations;
 
 namespace SoundExplorersDatabase.Data {
+  /// <summary>
+  ///   An entity representing a set of Pieces (at least one)
+  ///   performed at or in some other way part of an Event.
+  /// </summary>
   public class Set : EntityBase {
     private Act _act;
     private string _notes;
@@ -13,6 +17,9 @@ namespace SoundExplorersDatabase.Data {
       Pieces = new SortedChildList<Piece>(this);
     }
 
+    /// <summary>
+    /// Optionally specifies the Act that played the set.
+    /// </summary>
     [CanBeNull]
     public Act Act {
       get => _act;

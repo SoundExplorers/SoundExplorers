@@ -72,26 +72,6 @@ namespace SoundExplorersDatabase.Tests.Data {
     private Son Son2 { get; set; }
 
     [Test]
-    public void T005_Schema() {
-      var relation =
-        TestSchema.Instance.FindRelation(typeof(Father), typeof(Daughter));
-      Assert.IsNotNull(relation, "Father-Daughters relation");
-      Assert.IsFalse(relation.IsMandatory,
-        "Father-Daughters relation mandatory");
-      relation = TestSchema.Instance.FindRelation(typeof(Father), typeof(Son));
-      Assert.IsNotNull(relation, "Father-Sons relation");
-      Assert.IsFalse(relation.IsMandatory, "Father-Sons relation mandatory");
-      relation =
-        TestSchema.Instance.FindRelation(typeof(Mother), typeof(Daughter));
-      Assert.IsNotNull(relation, "Mother-Daughters relation");
-      Assert.IsTrue(relation.IsMandatory,
-        "Mother-Daughters relation mandatory");
-      relation = TestSchema.Instance.FindRelation(typeof(Mother), typeof(Son));
-      Assert.IsNotNull(relation, "Mother-Sons relation");
-      Assert.IsFalse(relation.IsMandatory, "Mother-Sons relation mandatory");
-    }
-
-    [Test]
     public void T010_Initial() {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginRead();

@@ -7,6 +7,10 @@ using JetBrains.Annotations;
 using VelocityDb.Session;
 
 namespace SoundExplorersDatabase.Data {
+  /// <summary>
+  ///   An entity representing a piece for which an audio and/or video
+  ///   recording is archived.
+  /// </summary>
   public class Piece : EntityBase {
     private Uri _audioUrl;
     private string _notes;
@@ -18,6 +22,10 @@ namespace SoundExplorersDatabase.Data {
       Credits = new SortedChildList<Credit>(this);
     }
 
+    /// <summary>
+    ///   The URL where the audio recording, if available, of the piece is archived.
+    ///   Must be unique if specified.
+    /// </summary>
     [CanBeNull]
     public Uri AudioUrl {
       get => _audioUrl;
@@ -68,6 +76,10 @@ namespace SoundExplorersDatabase.Data {
       }
     }
 
+    /// <summary>
+    ///   The URL where the video recording, if available, of the piece is archived.
+    ///   Must be unique if specified.
+    /// </summary>
     [CanBeNull]
     public Uri VideoUrl {
       get => _videoUrl;

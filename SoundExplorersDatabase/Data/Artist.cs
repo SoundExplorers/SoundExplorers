@@ -4,6 +4,9 @@ using System.Diagnostics.CodeAnalysis;
 using JetBrains.Annotations;
 
 namespace SoundExplorersDatabase.Data {
+  /// <summary>
+  ///   Artist entity, usually representing a musician.
+  /// </summary>
   public class Artist : EntityBase {
     private string _forename;
     private string _notes;

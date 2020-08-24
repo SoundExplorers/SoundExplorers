@@ -1,10 +1,30 @@
 ﻿using JetBrains.Annotations;
 
 namespace SoundExplorersDatabase.Data {
+  /// <summary>
+  ///   The key derived from an entity's SimpleKey and, where applicable,
+  ///   IdentifyingParent properties, for use as the entity's key
+  ///   in any SortedChildLists of which it is a member.
+  /// </summary>
   public class Key {
     private readonly IEntity _identifyingParent;
     private readonly string _simpleKey;
 
+    /// <summary>
+    ///   Use this constructor to instantiate a key that
+    ///   is the property of an entity and that will be
+    ///   the entity's key in any in SortedLists
+    ///   of which the entity is a member.
+    ///   May also be used to instantiate a key for comparison
+    ///   with a key that is the property of an entity
+    /// </summary>
+    /// <param name="owner">
+    ///   The entity whose Key property is set to this key.
+    /// </param>
+    /// <param name="identifyingParent">
+    ///   For comparative use only, optionally specifies
+    ///   the identifying parent entity.
+    /// </param>
     internal Key([NotNull] IEntity owner,
       IEntity identifyingParent = null) {
       Owner = owner;
@@ -12,6 +32,17 @@ namespace SoundExplorersDatabase.Data {
       _identifyingParent = identifyingParent;
     }
 
+    /// <summary>
+    ///   Use this constructor for a Key that can be used for
+    ///   comparisons with Keys that are properties of entities.
+    /// </summary>
+    /// <param name="simpleKey">
+    ///   The simple key to be used for comparison. 
+    /// </param>
+    /// <param name="identifyingParent">
+    ///   The identifying parent entity, if applicable,
+    ///   to be used for comparison.
+    /// </param>
     public Key([CanBeNull] string simpleKey,
       [CanBeNull] IEntity identifyingParent) {
       _simpleKey = simpleKey;

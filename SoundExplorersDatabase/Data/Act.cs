@@ -4,6 +4,9 @@ using System.Diagnostics.CodeAnalysis;
 using JetBrains.Annotations;
 
 namespace SoundExplorersDatabase.Data {
+  /// <summary>
+  ///   An entity representing an act that has performed at Events.
+  /// </summary>
   public class Act : EntityBase {
     private string _notes;
 

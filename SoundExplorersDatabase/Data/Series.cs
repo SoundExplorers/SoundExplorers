@@ -4,6 +4,10 @@ using System.Diagnostics.CodeAnalysis;
 using JetBrains.Annotations;
 
 namespace SoundExplorersDatabase.Data {
+  /// <summary>
+  ///   An entity representing a series of Events.
+  ///   A festival, for example.
+  /// </summary>
   public class Series : EntityBase {
     private string _notes;
 

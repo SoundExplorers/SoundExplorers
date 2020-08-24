@@ -11,6 +11,10 @@ using VelocityDb.Session;
 using VelocityDb.TypeInfo;
 
 namespace SoundExplorersDatabase.Data {
+  /// <summary>
+  ///   Base class for entity types that have one-to-many
+  ///   and/or many-to-one relations with other entity types.
+  /// </summary>
   public abstract class EntityBase : ReferenceTracked, IEntity {
     private IDictionary<Type, IDictionary> _childrenOfType;
     private IDictionary<Type, IRelationInfo> _childrenRelations;
@@ -21,6 +25,19 @@ namespace SoundExplorersDatabase.Data {
     private Schema _schema;
     [CanBeNull] private string _simpleKey;
 
+    /// <summary>
+    ///   Creates an instance of an entity.
+    /// </summary>
+    /// <param name="entityType">
+    ///   The main Type as which the entity will be persisted on the database.
+    /// </param>
+    /// <param name="simpleKeyName">
+    ///   The name, for use in error messages, of the perstistable
+    ///   public property corresponding to the simple key.
+    /// </param>
+    /// <param name="identifyingParentType">
+    ///   Where applicable, the entity type of the identifying parent entity.
+    /// </param>
     protected EntityBase([NotNull] Type entityType,
       [NotNull] string simpleKeyName, [CanBeNull] Type identifyingParentType) {
       EntityType = entityType ??
@@ -106,6 +123,19 @@ namespace SoundExplorersDatabase.Data {
 
     [NotNull] private string SimpleKeyName { get; }
 
+    /// <summary>
+    ///   The identifying parent entity, which, where applicable,
+    ///   uniquely identifies this entity in combination with SimpleKey.
+    /// </summary>
+    /// <remarks>
+    ///   Not applicable to top-level entity types,
+    ///   i.e. those with no many-to-one  relations to other entity types.
+    ///   Derived classes should set this to the value of the corresponding
+    ///   perstistable public property.
+    ///   This is null initially and must be set before persistence
+    ///   to a parent entity, of type specified by IdentifyingParentType,
+    ///   that already persists.
+    /// </remarks>
     [CanBeNull]
     public EntityBase IdentifyingParent {
       get => _identifyingParent;
@@ -146,8 +176,24 @@ namespace SoundExplorersDatabase.Data {
       }
     }
 
-    [NotNull] public Key Key { get; }
+    /// <summary>
+    ///   Derived from SimpleKey and, where applicable, IdentifyingParent,
+    ///   this is used as the key of this entity in any
+    ///   SortedChildLists of which it is a member.
+    /// </summary>
+    [NotNull]
+    public Key Key { get; }
 
+    /// <summary>
+    ///   In combination with the optional IdentifyingParent,
+    ///   uniquely identifies the entity.
+    /// </summary>
+    /// <remarks>
+    ///   Derived classes should set this to the value,
+    ///   converted to string if necessary, of the corresponding
+    ///   perstistable public property.
+    ///   It is null only initially.  It must be set before persistence.
+    /// </remarks>
     [CanBeNull]
     public string SimpleKey {
       get => _simpleKey;
@@ -327,6 +373,10 @@ namespace SoundExplorersDatabase.Data {
       return writer.ToString();
     }
 
+    /// <summary>
+    ///   Allows a derived entity to return
+    ///   its SortedChildList of child entities of the specified entity type.
+    /// </summary>
     [NotNull]
     protected abstract IDictionary GetChildren([NotNull] Type childType);
 
@@ -349,6 +399,11 @@ namespace SoundExplorersDatabase.Data {
       }
     }
 
+    /// <summary>
+    ///   Allows a derived entity to update the field (not property)
+    ///   corresponding to the parent entity of the specified entity type
+    ///   with the specified new value.
+    /// </summary>
     protected abstract void OnNonIdentifyingParentFieldToBeUpdated(
       [NotNull] Type parentEntityType, [CanBeNull] EntityBase newParent);
 

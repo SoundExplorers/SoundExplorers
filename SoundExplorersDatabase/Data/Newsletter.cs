@@ -7,6 +7,9 @@ using JetBrains.Annotations;
 using VelocityDb.Session;
 
 namespace SoundExplorersDatabase.Data {
+  /// <summary>
+  ///   An entity representing a newsletter that documents one or more Events.
+  /// </summary>
   public class Newsletter : EntityBase {
     private DateTime _date;
     private Uri _url;
@@ -15,6 +18,10 @@ namespace SoundExplorersDatabase.Data {
       Events = new SortedChildList<Event>(this);
     }
 
+    /// <summary>
+    /// The newsletter's publication date (email send date).
+    /// </summary>
+    /// <exception cref="NoNullAllowedException"></exception>
     public DateTime Date {
       get => _date;
       set {
@@ -30,6 +37,10 @@ namespace SoundExplorersDatabase.Data {
 
     [NotNull] public SortedChildList<Event> Events { get; }
 
+    /// <summary>
+    /// The URL where the newsletter is archived.
+    /// Must be specified and unique.
+    /// </summary>
     public Uri Url {
       get => _url;
       set {

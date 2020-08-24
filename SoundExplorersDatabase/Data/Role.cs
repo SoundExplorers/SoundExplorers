@@ -5,6 +5,9 @@ using JetBrains.Annotations;
 
 namespace SoundExplorersDatabase.Data {
   public class Role : EntityBase {
+    /// <summary>
+    ///   Role entity, usually representing a musical instrument.
+    /// </summary>
     public Role() : base(typeof(Role), nameof(Name), null) {
       Credits = new SortedChildList<Credit>(this);
     }

@@ -4,6 +4,11 @@ using System.Data;
 using JetBrains.Annotations;
 
 namespace SoundExplorersDatabase.Data {
+  /// <summary>
+  ///   An entity representing an event.
+  ///   Usually a performance, but could, for example,
+  ///   be a rehearsal.
+  /// </summary>
   public class Event : EntityBase {
     private DateTime _date;
     private Newsletter _newsletter;
