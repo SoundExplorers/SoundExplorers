@@ -30,8 +30,8 @@ namespace SoundExplorersDatabase.Tests.Data {
 
     [Test]
     public void A010_Initial() {
-      Assert.IsNotNull(QueryHelper, "Dummy test");
-      Assert.IsNotNull(TestDataFactory, "Another dummy test");
+      Assert.IsTrue(QueryHelper != null && TestDataFactory != null,
+        "Dummy test");
     }
   }
 }
