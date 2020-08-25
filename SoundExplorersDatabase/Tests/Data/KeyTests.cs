@@ -8,6 +8,7 @@ namespace SoundExplorersDatabase.Tests.Data {
     [SetUp]
     public void Setup() {
       DatabaseFolderPath = TestSession.CreateDatabaseFolder();
+      TestDataFactory = new TestDataFactory(new QueryHelper());
     }
 
     [TearDown]
@@ -16,6 +17,7 @@ namespace SoundExplorersDatabase.Tests.Data {
     }
 
     private string DatabaseFolderPath { get; set; }
+    private TestDataFactory TestDataFactory { get; set; }
 
     [Test]
     public void T010_Equality() {
@@ -70,16 +72,32 @@ namespace SoundExplorersDatabase.Tests.Data {
         session.BeginUpdate();
         session.Persist(location1);
         session.Persist(location2);
-        event1 = new Event {Date = DateTime.Today, Location = location1};
-        event2 = new Event {Date = event1.Date, Location = location2};
-        event3 = new Event
-          {Date = event1.Date.AddDays(1), Location = location1};
-        event4 = new Event
-          {Date = event1.Date.AddDays(2), Location = location1};
+        event1 = new Event {
+          Date = DateTime.Today,
+          Location = location1,
+          EventType = TestDataFactory.CreateEventTypePersisted(session)
+        };
+        event2 = new Event {
+          Date = event1.Date, Location = location2, EventType = event1.EventType
+        };
+        event3 = new Event {
+          Date = event1.Date.AddDays(1), Location = location1,
+          EventType = event1.EventType
+        };
+        event4 = new Event {
+          Date = event1.Date.AddDays(2), Location = location1,
+          EventType = event1.EventType
+        };
         event5 = new Event {Date = event2.Date.AddDays(1)};
-        event6 = new Event {Date = event5.Date, Location = location2};
-        set1 = new Set {SetNo = 1, Event = event1};
-        set2 = new Set {SetNo = 1, Event = event2};
+        event6 = new Event {
+          Date = event5.Date, Location = location2, EventType = event1.EventType
+        };
+        set1 = new Set {
+          SetNo = 1,
+          Event = event1,
+          Genre = TestDataFactory.CreateGenrePersisted(session)
+        };
+        set2 = new Set {SetNo = 1, Event = event2, Genre = set1.Genre};
         session.Commit();
       }
       Assert.IsTrue(location1.Key != location2.Key,

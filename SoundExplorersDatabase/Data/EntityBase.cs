@@ -79,7 +79,7 @@ namespace SoundExplorersDatabase.Data {
     ///   child collections, if any, as entities of the main Type.
     /// </summary>
     [NotNull]
-    private Type EntityType { get; }
+    internal Type EntityType { get; }
 
     [CanBeNull] private Type IdentifyingParentType { get; }
     private bool IsAddingToOrRemovingFromIdentifyingParent { get; set; }

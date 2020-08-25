@@ -10,15 +10,18 @@ namespace SoundExplorersDatabase.Data {
   /// </summary>
   public class Set : EntityBase {
     private Act _act;
+    private Genre _genre;
+    private bool _isPublic;
     private string _notes;
     private int _setNo;
 
     public Set() : base(typeof(Set), nameof(SetNo), typeof(Event)) {
       Pieces = new SortedChildList<Piece>(this);
+      IsPublic = true;
     }
 
     /// <summary>
-    /// Optionally specifies the Act that played the set.
+    ///   Optionally specifies the Act that played the set.
     /// </summary>
     [CanBeNull]
     public Act Act {
@@ -36,6 +39,20 @@ namespace SoundExplorersDatabase.Data {
         UpdateNonIndexField();
         IdentifyingParent = value;
       }
+    }
+
+    public Genre Genre {
+      get => _genre;
+      set {
+        UpdateNonIndexField();
+        ChangeNonIdentifyingParent(typeof(Genre), value);
+        _genre = value;
+      }
+    }
+
+    public bool IsPublic {
+      get => _isPublic;
+      set => _isPublic = value;
     }
 
     [CanBeNull]
@@ -67,7 +84,11 @@ namespace SoundExplorersDatabase.Data {
 
     protected override void OnNonIdentifyingParentFieldToBeUpdated(
       Type parentEntityType, EntityBase newParent) {
-      _act = (Act)newParent;
+      if (parentEntityType == typeof(Act)) {
+        _act = (Act)newParent;
+      } else {
+        _genre = (Genre)newParent;
+      }
     }
   }
 }

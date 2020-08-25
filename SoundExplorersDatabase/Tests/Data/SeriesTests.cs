@@ -10,6 +10,7 @@ namespace SoundExplorersDatabase.Tests.Data {
     public void Setup() {
       QueryHelper = new QueryHelper();
       DatabaseFolderPath = TestSession.CreateDatabaseFolder();
+      TestDataFactory = new TestDataFactory(QueryHelper);
       Location1 = new Location {
         QueryHelper = QueryHelper,
         Name = Location1Name
@@ -39,6 +40,8 @@ namespace SoundExplorersDatabase.Tests.Data {
         Location1.Events.Add(Event1);
         Location1.Events.Add(Event2);
         Series1.Events.Add(Event1);
+        Event1.EventType = TestDataFactory.CreateEventTypePersisted(session);
+        Event2.EventType = Event1.EventType; 
         session.Persist(Event1);
         session.Persist(Event2);
         session.Commit();
@@ -56,6 +59,7 @@ namespace SoundExplorersDatabase.Tests.Data {
     private const string Series2Name = "Field Recordings";
     private string DatabaseFolderPath { get; set; }
     private QueryHelper QueryHelper { get; set; }
+    private TestDataFactory TestDataFactory { get; set; }
     private Event Event1 { get; set; }
     private static DateTime Event1Date => DateTime.Today.AddDays(-1);
     private Event Event2 { get; set; }

@@ -79,6 +79,8 @@
     <Compile Include="Data\Act.cs" />
     <Compile Include="Data\Artist.cs" />
     <Compile Include="Data\Credit.cs" />
+    <Compile Include="Data\EventType.cs" />
+    <Compile Include="Data\Genre.cs" />
     <Compile Include="Data\IEntity.cs" />
     <Compile Include="Data\Key.cs" />
     <Compile Include="Data\IRelationInfo.cs" />

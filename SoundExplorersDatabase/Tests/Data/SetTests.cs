@@ -15,6 +15,10 @@ namespace SoundExplorersDatabase.Tests.Data {
         QueryHelper = QueryHelper,
         Name = Location1Name
       };
+      EventType1 = new EventType {
+        QueryHelper = QueryHelper,
+        Name = EventType1Name
+      };
       Event1 = new Event {
         QueryHelper = QueryHelper,
         Date = Event1Date
@@ -22,6 +26,10 @@ namespace SoundExplorersDatabase.Tests.Data {
       Event2 = new Event {
         QueryHelper = QueryHelper,
         Date = Event2Date
+      };
+      Genre1 = new Genre {
+        QueryHelper = QueryHelper,
+        Name = Genre1Name
       };
       Act1 = new Act {
         QueryHelper = QueryHelper,
@@ -34,7 +42,8 @@ namespace SoundExplorersDatabase.Tests.Data {
       Set1 = new Set {
         QueryHelper = QueryHelper,
         SetNo = Set1SetNo,
-        Notes = Set1Notes
+        Notes = Set1Notes,
+        IsPublic = false
       };
       Set1AtEvent2 = new Set {
         QueryHelper = QueryHelper,
@@ -54,16 +63,23 @@ namespace SoundExplorersDatabase.Tests.Data {
       };
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
+        session.Persist(EventType1);
         session.Persist(Location1);
         Event1.Location = Location1;
         Event2.Location = Location1;
+        Event1.EventType = EventType1;
+        Event2.EventType = EventType1;
         session.Persist(Event1);
         session.Persist(Event2);
         session.Persist(Act1);
         session.Persist(Act2);
+        session.Persist(Genre1);
         Set1.Event = Event1;
         Set1AtEvent2.Event = Event2;
         Set2.Event = Event1;
+        Set1.Genre = Genre1;
+        Set1AtEvent2.Genre = Genre1;
+        Set2.Genre = Genre1;
         session.Persist(Set1);
         session.Persist(Set2);
         Set1.Act = Act1;
@@ -79,6 +95,8 @@ namespace SoundExplorersDatabase.Tests.Data {
       Session.BeginRead();
       Event1 = QueryHelper.Read<Event>(Event1.SimpleKey, Location1, Session);
       Event2 = QueryHelper.Read<Event>(Event2.SimpleKey, Location1, Session);
+      Genre1 = QueryHelper.Read<Genre>(Genre1Name, Session);
+      Act2 = QueryHelper.Read<Act>(Act2Name, Session);
       Act1 = QueryHelper.Read<Act>(Act1Name, Session);
       Act2 = QueryHelper.Read<Act>(Act2Name, Session);
       Set1 = QueryHelper.Read<Set>(Set1SimpleKey, Event1, Session);
@@ -96,6 +114,8 @@ namespace SoundExplorersDatabase.Tests.Data {
 
     private const string Act1Name = "Ewan Husami";
     private const string Act2Name = "Ivanhoe Britches";
+    private const string EventType1Name = "Performance";
+    private const string Genre1Name = "Jazz";
     private const string Location1Name = "Pyramid Club";
     private const int Piece1PieceNo = 1;
     private const int Piece2PieceNo = 2;
@@ -113,6 +133,8 @@ namespace SoundExplorersDatabase.Tests.Data {
     private static DateTime Event1Date => DateTime.Today.AddDays(-1);
     private Event Event2 { get; set; }
     private static DateTime Event2Date => DateTime.Today;
+    private EventType EventType1 { get; set; }
+    private Genre Genre1 { get; set; }
     private Location Location1 { get; set; }
     private Piece Piece1 { get; set; }
     private Piece Piece2 { get; set; }
@@ -124,8 +146,11 @@ namespace SoundExplorersDatabase.Tests.Data {
     public void A010_Initial() {
       Assert.AreEqual(Set1SetNo, Set1.SetNo, "Set1.SetNo");
       Assert.AreEqual(Set1Notes, Set1.Notes, "Set1.Notes");
+      Assert.IsFalse(Set1.IsPublic, "Set1.IsPublic");
+      Assert.AreEqual( Genre1Name, Set1.Genre.Name, "Set1.Genre.Name");
       Assert.AreEqual(Set1SetNo, Set1AtEvent2.SetNo, "Set1_2.SetNo");
       Assert.AreEqual(Set2SetNo, Set2.SetNo, "Set2.SetNo");
+      Assert.IsTrue(Set2.IsPublic, "Set2.IsPublic");
       Assert.AreEqual(2, Event1.Sets.Count, "Event1.Sets.Count");
       Assert.AreEqual(1, Event2.Sets.Count, "Event1.Sets.Count");
       Assert.AreEqual(2, Act1.Sets.Count, "Act1.Sets.Count");
@@ -138,6 +163,7 @@ namespace SoundExplorersDatabase.Tests.Data {
       Assert.AreSame(Set2, Event1.Sets[1], "Event1.Sets[1]");
       Assert.AreSame(Set1, Act1.Sets[0], "Act1.Sets[0]");
       Assert.AreSame(Set1AtEvent2, Act2.Sets[0], "Act2.Sets[0]");
+      Assert.AreSame(Set1, Genre1.Sets[0], "Genre1.Sets[0]");
       Assert.AreEqual(2, Set1.Pieces.Count, "Set1.Pieces.Count");
       Assert.AreEqual(2, Set1.References.Count, "Set1.References.Count");
       Assert.AreSame(Set1, Piece1.Set, "Piece1.Set");
@@ -167,6 +193,20 @@ namespace SoundExplorersDatabase.Tests.Data {
       Assert.AreEqual(2, Act2.Sets.Count, "Act2.Sets.Count");
       Assert.AreSame(Set1, Act2.Sets[0], "Act2 1st Set");
       Assert.AreSame(Set1AtEvent2, Act2.Sets[1], "Act2 2nd Set");
+    }
+
+    [Test]
+    public void DisallowChangeEventToNull() {
+      Session.BeginUpdate();
+      Assert.Throws<NoNullAllowedException>(() => Set2.Event = null);
+      Session.Commit();
+    }
+
+    [Test]
+    public void DisallowChangeGenreToNull() {
+      Session.BeginUpdate();
+      Assert.Throws<ConstraintException>(() => Set2.Genre = null);
+      Session.Commit();
     }
 
     [Test]
@@ -230,6 +270,7 @@ namespace SoundExplorersDatabase.Tests.Data {
       Session.BeginUpdate();
       set3.Act = Act2;
       set3.Event = Event1;
+      set3.Genre = Genre1;
       Session.Persist(set3);
       Session.Commit();
       Assert.AreEqual(2, Act2.Sets.Count, "Act2.Sets.Count after Persist");

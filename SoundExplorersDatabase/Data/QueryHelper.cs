@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using JetBrains.Annotations;
@@ -99,9 +101,26 @@ namespace SoundExplorersDatabase.Data {
       [CanBeNull] string simpleKey,
       [CanBeNull] EntityBase identifyingParent,
       [NotNull] SessionBase session) where TEntity : EntityBase {
-      return Read(
-        CreateKeyPredicate<TEntity>(simpleKey, identifyingParent),
-        session);
+      try {
+        return Read(
+          CreateKeyPredicate<TEntity>(simpleKey, identifyingParent),
+          session);
+      } catch (InvalidOperationException exception) {
+        // with Message "Sequence contains no matching element"
+        throw CreateKeyNotFoundException(exception);
+      }
+
+      Exception CreateKeyNotFoundException(Exception innerException) {
+        var writer = new StringWriter();
+        writer.Write($"A {typeof(TEntity).Name} with SimpleKey '{simpleKey}' ");
+        if (identifyingParent != null) {
+          writer.Write(
+            $"and IdentifyingParent (presumed to be of EntityType {identifyingParent.EntityType.Name}) " +
+            $"'{identifyingParent.Key}' ");
+        }
+        writer.Write("cannot be found");
+        return new KeyNotFoundException(writer.ToString(), innerException);
+      }
     }
 
     [NotNull]

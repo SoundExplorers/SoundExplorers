@@ -11,6 +11,7 @@ namespace SoundExplorersDatabase.Tests.Data {
     public void Setup() {
       QueryHelper = new QueryHelper();
       DatabaseFolderPath = TestSession.CreateDatabaseFolder();
+      TestDataFactory = new TestDataFactory(QueryHelper);
       Baker = new Artist {
         QueryHelper = QueryHelper,
         Surname = BakerName
@@ -66,9 +67,11 @@ namespace SoundExplorersDatabase.Tests.Data {
         session.Persist(Drums);
         session.Persist(ElectricGuitar);
         session.Persist(Location1);
+        Event1.EventType = TestDataFactory.CreateEventTypePersisted(session);
         Event1.Location = Location1;
         session.Persist(Event1);
         Set1.Event = Event1;
+        Set1.Genre = TestDataFactory.CreateGenrePersisted(session);
         session.Persist(Set1);
         Piece1.Set = Set1;
         Piece2.Set = Set1;
@@ -125,6 +128,7 @@ namespace SoundExplorersDatabase.Tests.Data {
     private string DatabaseFolderPath { get; set; }
     private QueryHelper QueryHelper { get; set; }
     private TestSession Session { get; set; }
+    private TestDataFactory TestDataFactory { get; set; }
     private Artist Clarissa { get; set; }
     private Artist Baker { get; set; }
     private Role Drums { get; set; }
@@ -194,9 +198,12 @@ namespace SoundExplorersDatabase.Tests.Data {
       Assert.AreEqual(2, Piece2.Credits.Count, "Piece2.Credits.Count");
       Assert.AreSame(Credit2, Piece2.Credits[0], "Piece2 1st Credit");
       Assert.AreSame(Credit3, Piece2.Credits[1], "Piece2 2nd Credit");
-      Assert.AreSame(Credit2, Piece2.Credits[Credit2.Key], "Piece2.Credits[Credit2.Key]");
-      Assert.AreSame(Credit2, Baker.Credits[Credit2.Key], "Baker.Credits[Credit2.Key]");
-      Assert.AreSame(Credit2, Drums.Credits[Credit2.Key], "Drums.Credits[Credit2.Key]");
+      Assert.AreSame(Credit2, Piece2.Credits[Credit2.Key],
+        "Piece2.Credits[Credit2.Key]");
+      Assert.AreSame(Credit2, Baker.Credits[Credit2.Key],
+        "Baker.Credits[Credit2.Key]");
+      Assert.AreSame(Credit2, Drums.Credits[Credit2.Key],
+        "Drums.Credits[Credit2.Key]");
     }
 
     [Test]

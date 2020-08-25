@@ -11,6 +11,7 @@ namespace SoundExplorersDatabase.Data {
   /// </summary>
   public class Event : EntityBase {
     private DateTime _date;
+    private EventType _eventType;
     private Newsletter _newsletter;
     private string _notes;
     private Series _series;
@@ -29,6 +30,15 @@ namespace SoundExplorersDatabase.Data {
         UpdateNonIndexField();
         _date = value;
         SimpleKey = $"{Date:yyyy/MM/dd}";
+      }
+    }
+
+    public EventType EventType {
+      get => _eventType;
+      set {
+        UpdateNonIndexField();
+        ChangeNonIdentifyingParent(typeof(EventType), value);
+        _eventType = value;
       }
     }
 
@@ -78,7 +88,9 @@ namespace SoundExplorersDatabase.Data {
     protected override void OnNonIdentifyingParentFieldToBeUpdated(
       Type parentEntityType,
       EntityBase newParent) {
-      if (parentEntityType == typeof(Newsletter)) {
+      if (parentEntityType == typeof(EventType)) {
+        _eventType = (EventType)newParent;
+      } else if (parentEntityType == typeof(Newsletter)) {
         _newsletter = (Newsletter)newParent;
       } else {
         _series = (Series)newParent;

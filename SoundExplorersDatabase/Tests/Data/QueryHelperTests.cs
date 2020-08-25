@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using NUnit.Framework;
 using SoundExplorersDatabase.Data;
 using VelocityDb;
@@ -10,15 +11,7 @@ namespace SoundExplorersDatabase.Tests.Data {
     public void Setup() {
       QueryHelper = new QueryHelper();
       DatabaseFolderPath = TestSession.CreateDatabaseFolder();
-      Location1 = new Location {
-        QueryHelper = QueryHelper,
-        Name = Location1Name,
-        Notes = Location1Notes
-      };
-      Location2 = new Location {
-        QueryHelper = QueryHelper,
-        Name = Location2Name
-      };
+      TestDataFactory = new TestDataFactory(QueryHelper);
       Event1 = new Event {
         QueryHelper = QueryHelper,
         Date = Event1Date,
@@ -26,8 +19,10 @@ namespace SoundExplorersDatabase.Tests.Data {
       };
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
-        session.Persist(Location1);
-        session.Persist(Location2);
+        EventType1 = TestDataFactory.CreateEventTypePersisted(session);
+        Location1 = TestDataFactory.CreateLocationPersisted(session);
+        Location2 = TestDataFactory.CreateLocationPersisted(session);
+        Event1.EventType = EventType1;
         Event1.Location = Location1;
         session.Persist(Event1);
         session.Commit();
@@ -41,13 +36,12 @@ namespace SoundExplorersDatabase.Tests.Data {
 
     private const string Event1Notes = "My event notes.";
     private const string Event1SimpleKey = "2013/04/11";
-    private const string Location1Name = "Fred's";
-    private const string Location1Notes = "My location notes.";
-    private const string Location2Name = "Pyramid Club";
     private string DatabaseFolderPath { get; set; }
     private QueryHelper QueryHelper { get; set; }
+    private TestDataFactory TestDataFactory { get; set; }
     private Event Event1 { get; set; }
     private static DateTime Event1Date => DateTime.Parse(Event1SimpleKey);
+    private EventType EventType1 { get; set; }
     private Location Location1 { get; set; }
     private Location Location2 { get; set; }
 
@@ -56,13 +50,14 @@ namespace SoundExplorersDatabase.Tests.Data {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginRead();
         var location1A =
-          QueryHelper.Find<Location>(location => location.Name == Location1Name,
+          QueryHelper.Find<Location>(
+            location => location.Name == Location1.Name,
             session);
-        var location1B = QueryHelper.Find<Location>(Location1Name, session);
+        var location1B = QueryHelper.Find<Location>(Location1.Name, session);
         var event1A =
           QueryHelper.Find<Event>(
             @event => @event.Date == Event1Date &&
-                      @event.Location.Name == Location1Name, session);
+                      @event.Location.Name == Location1.Name, session);
         var event1B =
           QueryHelper.Find<Event>(Event1SimpleKey, Location1, session);
         session.Commit();
@@ -82,12 +77,12 @@ namespace SoundExplorersDatabase.Tests.Data {
         session.BeginRead();
         found =
           QueryHelper.FindDuplicateSimpleKey(typeof(Location), new Oid(),
-              Location2Name, session) as
+              Location2.Name, session) as
             Location;
         session.Commit();
       }
       Assert.IsNotNull(found);
-      Assert.AreEqual(Location2Name, found.Name);
+      Assert.AreEqual(Location2.Name, found.Name);
     }
 
     [Test]
@@ -95,24 +90,36 @@ namespace SoundExplorersDatabase.Tests.Data {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginRead();
         var location1A =
-          QueryHelper.Read<Location>(location => location.Name == Location1Name,
+          QueryHelper.Read<Location>(
+            location => location.Name == Location1.Name,
             session);
-        var location1B = QueryHelper.Read<Location>(Location1Name, session);
+        var location1B = QueryHelper.Read<Location>(Location1.Name, session);
         var event1A =
           QueryHelper.Read<Event>(
             @event => @event.Date == Event1Date &&
-                      @event.Location.Name == Location1Name, session);
+                      @event.Location.Name == Location1.Name, session);
         var event1B =
           QueryHelper.Read<Event>(Event1SimpleKey, Location1, session);
         session.Commit();
-        Assert.AreEqual(Location1Notes, location1A.Notes,
+        Assert.AreEqual(Location1.Notes, location1A.Notes,
           "location1A.Notes after Read by Name");
         Assert.AreEqual(Event1Notes, event1A.Notes,
           "event1A.Notes after Read by Date and Location.Name.");
-        Assert.AreEqual(Location1Notes, location1B.Notes,
+        Assert.AreEqual(Location1.Notes, location1B.Notes,
           "location1B.Notes after Read by SimpleKey");
         Assert.AreEqual(Event1Notes, event1B.Notes,
           "event1B.Notes after Read by SimpleKey and IdentifyingParent");
+      }
+    }
+
+    [Test]
+    public void ReadKeyNotFound() {
+      using (var session = new TestSession(DatabaseFolderPath)) {
+        session.BeginRead();
+        EventType1 = QueryHelper.Read<EventType>(EventType1.Name, session);
+        Assert.Throws<KeyNotFoundException>(() =>
+          QueryHelper.Read<Event>(Event1SimpleKey, EventType1, session));
+        session.Commit();
       }
     }
   }

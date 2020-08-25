@@ -3,7 +3,6 @@ using System.Data;
 using System.Data.Linq;
 using NUnit.Framework;
 using SoundExplorersDatabase.Data;
-using VelocityDb.Exceptions;
 
 namespace SoundExplorersDatabase.Tests.Data {
   [TestFixture]
@@ -12,6 +11,14 @@ namespace SoundExplorersDatabase.Tests.Data {
     public void Setup() {
       QueryHelper = new QueryHelper();
       DatabaseFolderPath = TestSession.CreateDatabaseFolder();
+      EventType1 = new EventType {
+        QueryHelper = QueryHelper,
+        Name = EventType1Name
+      };
+      Genre1 = new Genre {
+        QueryHelper = QueryHelper,
+        Name = Genre1Name
+      };
       Location1 = new Location {
         QueryHelper = QueryHelper,
         Name = Location1Name
@@ -61,15 +68,20 @@ namespace SoundExplorersDatabase.Tests.Data {
       };
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
+        session.Persist(EventType1);
+        session.Persist(Genre1);
         session.Persist(Location1);
         session.Persist(Location2);
         session.Persist(Newsletter1);
         session.Persist(Newsletter2);
         session.Persist(Series1);
         session.Persist(Series2);
-        Event2.Location = Location1;
         Event1.Location = Location1;
         Event1AtLocation2.Location = Location2;
+        Event2.Location = Location1;
+        Event1.EventType = EventType1;
+        Event1AtLocation2.EventType = EventType1;
+        Event2.EventType = EventType1;
         session.Persist(Event1);
         session.Persist(Event1AtLocation2);
         session.Persist(Event2);
@@ -78,6 +90,8 @@ namespace SoundExplorersDatabase.Tests.Data {
         Event1AtLocation2.Series = Series2;
         Event1.Sets.Add(Set1);
         Event1.Sets.Add(Set2);
+        Genre1.Sets.Add(Set1);
+        Genre1.Sets.Add(Set2);
         session.Persist(Set1);
         session.Persist(Set2);
         session.Commit();
@@ -92,6 +106,8 @@ namespace SoundExplorersDatabase.Tests.Data {
     private const string Event1SimpleKey = "2013/05/01";
     private const string Event1Notes = "My notes.";
     private const string Event2SimpleKey = "2013/05/02";
+    private const string EventType1Name = "Performance";
+    private const string Genre1Name = "Jazz";
     private const string Location1Name = "Fred's";
     private const string Location2Name = "Pyramid Club";
     private const string Newsletter1SimpleKey = "2013/04/11";
@@ -107,6 +123,8 @@ namespace SoundExplorersDatabase.Tests.Data {
     private Event Event1AtLocation2 { get; set; }
     private Event Event2 { get; set; }
     private static DateTime Event2Date => DateTime.Parse(Event2SimpleKey);
+    private EventType EventType1 { get; set; }
+    private Genre Genre1 { get; set; }
     private Location Location1 { get; set; }
     private Location Location2 { get; set; }
     private Newsletter Newsletter1 { get; set; }
@@ -138,6 +156,7 @@ namespace SoundExplorersDatabase.Tests.Data {
         Event1AtLocation2 =
           QueryHelper.Read<Event>(Event1SimpleKey, Location2, session);
         Event2 = QueryHelper.Read<Event>(Event2SimpleKey, Location1, session);
+        EventType1 = QueryHelper.Read<EventType>(EventType1Name, session);
         Location1 = QueryHelper.Read<Location>(Location1Name, session);
         Location2 = QueryHelper.Read<Location>(Location2Name, session);
         Newsletter1 =
@@ -147,8 +166,11 @@ namespace SoundExplorersDatabase.Tests.Data {
         Set2 = QueryHelper.Read<Set>(Set2.SimpleKey, Event1, session);
         session.Commit();
       }
+      Assert.AreEqual(3, EventType1.Events.Count, "EventType1.Events.Count");
       Assert.AreEqual(Event1Date, Event1.Date, "Event1.Date");
       Assert.AreEqual(Event1Notes, Event1.Notes, "Event1.Notes");
+      Assert.AreEqual(EventType1Name, Event1.EventType.Name,
+        "Event1.EventType.Name");
       Assert.AreSame(Location1, Event1.Location, "Event1.Location");
       Assert.AreEqual(2, Location1.Events.Count, "Location1.Events.Count");
       Assert.AreEqual(2, Location1.References.Count,
@@ -269,6 +291,28 @@ namespace SoundExplorersDatabase.Tests.Data {
     }
 
     [Test]
+    public void DisallowChangeEventTypeToNull() {
+      using (var session = new TestSession(DatabaseFolderPath)) {
+        session.BeginUpdate();
+        EventType1 = QueryHelper.Read<EventType>(EventType1Name, session);
+        Event1 = QueryHelper.Read<Event>(Event1SimpleKey, Location1, session);
+        Assert.Throws<ConstraintException>(() => Event1.EventType = null);
+        session.Commit();
+      }
+    }
+
+    [Test]
+    public void DisallowChangeLocationToNull() {
+      using (var session = new TestSession(DatabaseFolderPath)) {
+        session.BeginUpdate();
+        Location1 = QueryHelper.Read<Location>(Location1Name, session);
+        Event1 = QueryHelper.Read<Event>(Event1SimpleKey, Location1, session);
+        Assert.Throws<NoNullAllowedException>(() => Event1.Location = null);
+        session.Commit();
+      }
+    }
+
+    [Test]
     public void DisallowPersistUnspecifiedDate() {
       var noDate = new Event {
         QueryHelper = QueryHelper
@@ -304,19 +348,6 @@ namespace SoundExplorersDatabase.Tests.Data {
         Location1 = QueryHelper.Read<Location>(Location1Name, session);
         Assert.Throws<DuplicateKeyException>(() =>
           duplicate.Location = Location1);
-        session.Commit();
-      }
-    }
-
-    [Test]
-    public void DisallowSetLocationToNull() {
-      using (var session = new TestSession(DatabaseFolderPath)) {
-        session.BeginUpdate();
-        Location1 = QueryHelper.Read<Location>(Location1Name, session);
-        Event1 = QueryHelper.Read<Event>(Event1SimpleKey, Location1, session);
-        Assert.Throws<NoNullAllowedException>(() =>
-          // ReSharper disable once AssignNullToNotNullAttribute
-          Event1.Location = null);
         session.Commit();
       }
     }

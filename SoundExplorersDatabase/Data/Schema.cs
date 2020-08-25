@@ -48,6 +48,8 @@ namespace SoundExplorersDatabase.Data {
         new RelationInfo(typeof(Act), typeof(Set), false),
         new RelationInfo(typeof(Artist), typeof(Credit), true),
         new RelationInfo(typeof(Event), typeof(Set), true),
+        new RelationInfo(typeof(EventType), typeof(Event), true),
+        new RelationInfo(typeof(Genre), typeof(Set), true),
         new RelationInfo(typeof(Location), typeof(Event), true),
         new RelationInfo(typeof(Newsletter), typeof(Event), false),
         new RelationInfo(typeof(Series), typeof(Event), false),
@@ -75,13 +77,15 @@ namespace SoundExplorersDatabase.Data {
     ///   The entity types are registered so that a VelocityDB licence file
     ///   ('license database') will not have to be included in the database.
     /// </summary>
-    /// <param name="newVersion">New version number</param>
+    /// <param name="newVersion">New schema version number</param>
     /// <param name="session">Database session</param>
     public void Upgrade(int newVersion, [NotNull] SessionBase session) {
       session.RegisterClass(typeof(Act));
       session.RegisterClass(typeof(Artist));
       session.RegisterClass(typeof(Credit));
       session.RegisterClass(typeof(Event));
+      session.RegisterClass(typeof(EventType));
+      session.RegisterClass(typeof(Genre));
       session.RegisterClass(typeof(Location));
       session.RegisterClass(typeof(Newsletter));
       session.RegisterClass(typeof(Piece));

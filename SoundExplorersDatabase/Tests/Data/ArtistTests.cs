@@ -11,6 +11,7 @@ namespace SoundExplorersDatabase.Tests.Data {
     public void Setup() {
       QueryHelper = new QueryHelper();
       DatabaseFolderPath = TestSession.CreateDatabaseFolder();
+      TestDataFactory = new TestDataFactory(QueryHelper);
       RalphJenkins = new Artist {
         QueryHelper = QueryHelper,
         Forename = RalphJenkinsForename,
@@ -60,9 +61,11 @@ namespace SoundExplorersDatabase.Tests.Data {
         session.Persist(Baker);
         session.Persist(Role1);
         session.Persist(Location1);
+        Event1.EventType = TestDataFactory.CreateEventTypePersisted(session);
         Event1.Location = Location1;
         session.Persist(Event1);
         Set1.Event = Event1;
+        Set1.Genre = TestDataFactory.CreateGenrePersisted(session);
         session.Persist(Set1);
         Piece1.Set = Set1;
         session.Persist(Piece1);
@@ -105,9 +108,9 @@ namespace SoundExplorersDatabase.Tests.Data {
     private const int Piece1PieceNo = 1;
     private const string Role1Name = "Banjo";
     private const int Set1SetNo = 1;
-    
     private string DatabaseFolderPath { get; set; }
     private QueryHelper QueryHelper { get; set; }
+    private TestDataFactory TestDataFactory { get; set; }
     private TestSession Session { get; set; }
     private Artist RalphJenkins { get; set; }
     private Artist Clarissa { get; set; }

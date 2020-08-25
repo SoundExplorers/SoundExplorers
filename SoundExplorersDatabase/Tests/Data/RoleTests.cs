@@ -11,6 +11,7 @@ namespace SoundExplorersDatabase.Tests.Data {
     public void Setup() {
       QueryHelper = new QueryHelper();
       DatabaseFolderPath = TestSession.CreateDatabaseFolder();
+      TestDataFactory = new TestDataFactory(QueryHelper);
       Drums = new Role {
         QueryHelper = QueryHelper,
         Name = DrumsName
@@ -55,8 +56,10 @@ namespace SoundExplorersDatabase.Tests.Data {
         session.Persist(Artist1);
         session.Persist(Location1);
         Event1.Location = Location1;
+        Event1.EventType = TestDataFactory.CreateEventTypePersisted(session);
         session.Persist(Event1);
         Set1.Event = Event1;
+        Set1.Genre = TestDataFactory.CreateGenrePersisted(session);
         session.Persist(Set1);
         Piece1.Set = Set1;
         session.Persist(Piece1);
@@ -96,6 +99,7 @@ namespace SoundExplorersDatabase.Tests.Data {
     private string DatabaseFolderPath { get; set; }
     private QueryHelper QueryHelper { get; set; }
     private TestSession Session { get; set; }
+    private TestDataFactory TestDataFactory { get; set; }
     private Role Drums { get; set; }
     private Role ElectricGuitar { get; set; }
     private Artist Artist1 { get; set; }
