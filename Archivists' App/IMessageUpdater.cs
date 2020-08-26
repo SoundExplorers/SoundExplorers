@@ -1,15 +1,12 @@
-using System;
-
 namespace SoundExplorers {
-
 	/// <summary>
-	/// A simple interface for objects to set message text.
+	///   A simple interface for objects to set message text.
 	/// </summary>
 	public interface IMessageUpdater {
 		/// <summary>
-		/// Sets the message text.
+		///   Sets the message text.
 		/// </summary>
 		/// <param name="message">The new message to display.</param>
 		void SetMessage(string message);
-	} // end class
+  } // end class
 } // end namespace

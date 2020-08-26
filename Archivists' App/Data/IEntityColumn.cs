@@ -1,118 +1,109 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace SoundExplorers.Data {
-
     /// <summary>
-    /// Entity column metadata interface.
+    ///   Entity column metadata interface.
     /// </summary>
     internal interface IEntityColumn {
-
-        #region Properties
         /// <summary>
-        /// Gets or sets the name of the column.
-        /// This must be set to the name of the corresponding 
-        /// property of the class derived from <see cref="Entity"/>. 
+        ///   Gets or sets the name of the column.
+        ///   This must be set to the name of the corresponding
+        ///   property of the class derived from <see cref="Entity" />.
         /// </summary>
         string ColumnName { get; set; }
 
         /// <summary>
-        /// Gets or sets the type of data stored in the column.
+        ///   Gets or sets the type of data stored in the column.
         /// </summary>
         Type DataType { get; set; }
 
         /// <summary>
-        /// Gets or sets whether the corresponding property of the class
-        /// derived from <see cref="Entity"/>
-        /// is flagged with a <see cref="HiddenFieldAttribute"/>.
+        ///   Gets or sets whether the corresponding property of the class
+        ///   derived from <see cref="Entity" />
+        ///   is flagged with a <see cref="HiddenFieldAttribute" />.
         /// </summary>
         bool IsHidden { get; set; }
 
         /// <summary>
-        /// Gets or sets whether the column is in
-        /// the primary key required for database access.
+        ///   Gets or sets whether the column is in
+        ///   the primary key required for database access.
         /// </summary>
         bool IsInPrimaryKey { get; set; }
 
         /// <summary>
-        /// Gets or sets whether the column is in
-        /// the unique key (if there is one).
+        ///   Gets or sets whether the column is in
+        ///   the unique key (if there is one).
         /// </summary>
         bool IsInUniqueKey { get; set; }
 
         /// <summary>
-        /// Gets or sets the name of the column as on
-        /// the database table.
+        ///   Gets or sets the name of the column as on
+        ///   the database table.
         /// </summary>
         string NameOnDb { get; set; }
 
         /// <summary>
-        /// Gets or sets the name of the column on 
-        /// the referenced database table whose name
-        /// is the name of the corresponding 
-        /// property of the class derived from <see cref="Entity"/>.  
-        /// Null if the column is not from a referenced table.
+        ///   Gets or sets the name of the column on
+        ///   the referenced database table whose name
+        ///   is the name of the corresponding
+        ///   property of the class derived from <see cref="Entity" />.
+        ///   Null if the column is not from a referenced table.
         /// </summary>
         string ReferencedColumnName { get; set; }
 
         /// <summary>
-        /// Gets or sets the name of 
-        /// the referenced database table whose name
-        /// is the name of the corresponding referenced <see cref="Entity"/>.  
-        /// Null if the column is not from a referenced table.
+        ///   Gets or sets the name of
+        ///   the referenced database table whose name
+        ///   is the name of the corresponding referenced <see cref="Entity" />.
+        ///   Null if the column is not from a referenced table.
         /// </summary>
         string ReferencedTableName { get; set; }
 
         /// <summary>
-        /// Gets the name of the column's owning table.
-        /// This is the name of the corresponding 
-        /// class derived from <see cref="Entity"/>. 
+        ///   Gets the name of the column's owning table.
+        ///   This is the name of the corresponding
+        ///   class derived from <see cref="Entity" />.
         /// </summary>
         string TableName { get; }
 
         /// <summary>
-        /// Gets or sets whether the column is 
-        /// be shown in the table editor.
+        ///   Gets or sets whether the column is
+        ///   be shown in the table editor.
         /// </summary>
         bool Visible { get; set; }
-        #endregion Properties
 
-        #region Methods
         /// <summary>
-        /// Returns the field value
-        /// of the column in the specified
-        /// instance of the entity.
+        ///   Returns the field value
+        ///   of the column in the specified
+        ///   instance of the entity.
         /// </summary>
         /// <param name="entity">
-        /// The instance of the entity
-        /// for which the field value 
-        /// of the column is required.
+        ///   The instance of the entity
+        ///   for which the field value
+        ///   of the column is required.
         /// </param>
         /// <returns>
-        /// The field value
-        /// of the column in the specified
-        /// instance of the entity.
+        ///   The field value
+        ///   of the column in the specified
+        ///   instance of the entity.
         /// </returns>
         object GetValue(IEntity entity);
 
         /// <summary>
-        /// Sets the field value
-        /// of the column in the specified
-        /// instance of the entity.
+        ///   Sets the field value
+        ///   of the column in the specified
+        ///   instance of the entity.
         /// </summary>
         /// <param name="entity">
-        /// The instance of the entity
-        /// for which the field value 
-        /// of the column is to be set.
+        ///   The instance of the entity
+        ///   for which the field value
+        ///   of the column is to be set.
         /// </param>
         /// <param name="value">
-        /// The value to which
-        /// the field value 
-        /// of the column is to be set.
+        ///   The value to which
+        ///   the field value
+        ///   of the column is to be set.
         /// </param>
         void SetValue(IEntity entity, object value);
-        #endregion Methods
-    }//End of class
-}//End of namespace
+  } //End of class
+} //End of namespace

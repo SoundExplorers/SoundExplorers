@@ -1,44 +1,38 @@
-﻿using System;
-
-namespace SoundExplorers.Data {
-
+﻿namespace SoundExplorers.Data {
     /// <summary>
-    /// The audio metadata tags 
-    /// that we can usefully map to info on the database
-    /// and that are also available with all audio file types.
+    ///   The audio metadata tags
+    ///   that we can usefully map to info on the database
+    ///   and that are also available with all audio file types.
     /// </summary>
     internal class AudioTags : IAudioTags {
-
-        #region Properties
         /// <summary>
-        /// Gets or sets the Album audio metadata tag.
+        ///   Gets or sets the Album audio metadata tag.
         /// </summary>
         public virtual string Album { get; set; }
 
         /// <summary>
-        /// Gets or sets the Artist audio metadata tag.
+        ///   Gets or sets the Artist audio metadata tag.
         /// </summary>
         public virtual string Artist { get; set; }
 
         /// <summary>
-        /// Gets or sets the Comment audio metadata tag.
+        ///   Gets or sets the Comment audio metadata tag.
         /// </summary>
         public virtual string Comment { get; set; }
 
         /// <summary>
-        /// Gets or sets the Track audio metadata tag.
-        /// </summary>
-        public virtual uint Track { get; set; }
-
-        /// <summary>
-        /// Gets or sets the Title audio metadata tag.
+        ///   Gets or sets the Title audio metadata tag.
         /// </summary>
         public virtual string Title { get; set; }
 
         /// <summary>
-        /// Gets or sets the Year audio metadata tag.
+        ///   Gets or sets the Track audio metadata tag.
+        /// </summary>
+        public virtual uint Track { get; set; }
+
+        /// <summary>
+        ///   Gets or sets the Year audio metadata tag.
         /// </summary>
         public virtual uint Year { get; set; }
-        #endregion Properties
-    }//End of class
-}//End of namespace
+  } //End of class
+} //End of namespace
