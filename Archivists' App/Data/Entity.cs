@@ -220,7 +220,7 @@ namespace SoundExplorers.Data {
     public EntityColumnList Columns {
       get {
         if (_columns == null) {
-          _columns = CreateColumns();
+          _columns = EntityColumnList.Create<T>();
         }
         return _columns;
       }
@@ -336,117 +336,6 @@ namespace SoundExplorers.Data {
       var that = Factory<T>.Create(typeof(T));
       DeeplyCopyEntityProperties(this, that);
       return that;
-    }
-
-    /// <summary>
-    ///   Gets metadata about the database columns
-    ///   represented by the
-    ///   field properties of the listed <see cref="Entity" />.
-    /// </summary>
-    /// <returns>
-    ///   An <see cref="EntityColumnList" /> representing the columns.
-    /// </returns>
-    private EntityColumnList CreateColumns() {
-      var properties = typeof(T).GetProperties();
-      var columns = new EntityColumnList(properties.Count());
-      foreach (var property in properties) {
-        var customAttributes = property.GetCustomAttributes(true);
-        bool propertyIsField = (
-          from Attribute attribute in customAttributes
-          where attribute.GetType().IsSubclassOf(typeof(FieldAttribute))
-                || attribute.GetType() == typeof(FieldAttribute)
-          select attribute).Any();
-        if (propertyIsField) {
-          var column = new EntityColumn<T>();
-          var referencedFieldAttribute = (ReferencedFieldAttribute)(
-            from Attribute attribute in customAttributes
-            where attribute.GetType()
-                    .IsSubclassOf(typeof(ReferencedFieldAttribute))
-                  || attribute.GetType() == typeof(ReferencedFieldAttribute)
-            select attribute).FirstOrDefault();
-          if (referencedFieldAttribute != null) {
-            string referencedColumnName;
-            string referencedTableName;
-            if (referencedFieldAttribute.Name.Contains(".")) {
-              var chunks = referencedFieldAttribute.Name.Split('.');
-              referencedColumnName = chunks[1];
-              referencedTableName = chunks[0];
-            } else {
-              referencedColumnName = referencedFieldAttribute.Name;
-              referencedTableName = property.Name;
-            }
-            if (!Factory<IEntityList>.Types.ContainsKey(referencedTableName)) {
-              if (referencedFieldAttribute.Name.Contains(".")) {
-                throw new ApplicationException(
-                  "There is no EntityList class for table "
-                  + referencedTableName
-                  + " specified for referenced field property "
-                  + property.Name + " of Entity class " + TableName + ".");
-              }
-              throw new ApplicationException(
-                "There is no EntityList class for a table "
-                + "with the same name as referenced field property "
-                + referencedTableName + " of Entity class " + TableName + ".");
-            }
-            var referencedEntity = Factory<IEntity>.Create(referencedTableName);
-            var referencedColumn =
-              referencedEntity.Columns[referencedColumnName];
-            if (referencedColumn == null) {
-              throw new ApplicationException(
-                "Referenced Entity class "
-                + referencedTableName
-                + " does not contain a field property named "
-                + referencedColumnName
-                + " as specified in the ReferencedField attribute of field property "
-                + property.Name + " of Entity class " + TableName + ".");
-            }
-            if (referencedColumn.DataType != property.PropertyType) {
-              throw new ApplicationException(
-                "Data type " + referencedColumn.DataType
-                             + " of field property "
-                             + referencedColumnName
-                             + " of referenced Entity class "
-                             + referencedTableName
-                             + " is not the same as data type " +
-                             property.PropertyType
-                             + " of referencing field property "
-                             + property.Name + " of entity class " + TableName +
-                             ".");
-            }
-            column.ReferencedColumnName = referencedColumnName;
-            column.ReferencedTableName = referencedTableName;
-            if (property.PropertyType == typeof(DateTime)) {
-              column.NameOnDb = referencedTableName + "Date";
-            } else if (referencedTableName == "Artist") {
-              column.NameOnDb = referencedTableName + "Name";
-            } else {
-              column.NameOnDb = referencedTableName + "Id";
-            }
-          }
-          column.ColumnName = property.Name;
-          column.DataType = property.PropertyType;
-          column.IsInPrimaryKey = (
-            from Attribute attribute in customAttributes
-            where attribute.GetType()
-                    .IsSubclassOf(typeof(PrimaryKeyFieldAttribute))
-                  || attribute.GetType() == typeof(PrimaryKeyFieldAttribute)
-            select attribute).Any();
-          column.IsInUniqueKey = (
-            from Attribute attribute in customAttributes
-            where attribute.GetType()
-                    .IsSubclassOf(typeof(UniqueKeyFieldAttribute))
-                  || attribute.GetType() == typeof(UniqueKeyFieldAttribute)
-            select attribute).Any();
-          column.IsHidden = (
-            from Attribute attribute in customAttributes
-            where attribute.GetType().IsSubclassOf(typeof(HiddenFieldAttribute))
-                  || attribute.GetType() == typeof(HiddenFieldAttribute)
-            select attribute).Any();
-          column.Visible = !column.IsHidden;
-          columns.Add(column);
-        }
-      } //End of foreach
-      return columns;
     }
 
     /// <summary>

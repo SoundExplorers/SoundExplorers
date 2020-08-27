@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using JetBrains.Annotations;
 
 namespace SoundExplorers.Data {
@@ -57,9 +58,8 @@ namespace SoundExplorers.Data {
     public new void Add(IEntityColumn entityColumn) {
       if (ContainsKey(entityColumn.ColumnName)) {
         throw new ArgumentException(
-          "The list already contains an entity column named \""
-          + entityColumn.ColumnName + "\".",
-          "entityColumn");
+          $"The list already contains an entity column named {entityColumn.ColumnName}.",
+          nameof(entityColumn));
       }
       base.Add(entityColumn);
     }
@@ -80,6 +80,43 @@ namespace SoundExplorers.Data {
         from IEntityColumn entityColumn in this
         where entityColumn.ColumnName == columnName
         select entityColumn).Any();
+    }
+
+    /// <summary>
+    ///   Gets metadata about the database columns
+    ///   represented by the
+    ///   field properties of the listed <see cref="Entity" />.
+    /// </summary>
+    /// <returns>
+    ///   An <see cref="EntityColumnList" /> representing the columns.
+    /// </returns>
+    [NotNull]
+    public static EntityColumnList Create<T>() where T : Entity<T> {
+      var properties = typeof(T).GetProperties();
+      var result = new EntityColumnList(properties.Length);
+      foreach (var property in properties) {
+        var fieldAttributes = GetFieldAttributes(property);
+        if (PropertyIsField(fieldAttributes)) {
+          result.Add(EntityColumn<T>.Create(fieldAttributes, property));
+        }
+      }
+      result.Sort(new EntityColumnComparer());
+      return result;
+    }
+
+    [NotNull]
+    private static IList<FieldAttribute> GetFieldAttributes(
+      [NotNull] PropertyInfo property) {
+      return (
+        from Attribute attribute in property.GetCustomAttributes(true)
+        where attribute.GetType().IsSubclassOf(typeof(FieldAttribute))
+              || attribute.GetType() == typeof(FieldAttribute)
+        select (FieldAttribute)attribute).ToList();
+    }
+
+    private static bool PropertyIsField(
+      [NotNull] IEnumerable<FieldAttribute> fieldAttributes) {
+      return fieldAttributes.Any();
     }
   } //End of class
 } //End of namespace

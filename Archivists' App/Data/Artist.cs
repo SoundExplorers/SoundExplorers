@@ -15,11 +15,5 @@
        + (Surname != null ? Surname : string.Empty)).Trim();
 
     [UniqueKeyField(2)] public string Surname { get; set; }
-
-    //#region Private Fields
-    //private string _name;
-    //private string _forename;
-    //private string _surname;
-    //#endregion Private Fields
   } //End of class
 } //End of namespace

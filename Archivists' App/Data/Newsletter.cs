@@ -49,6 +49,6 @@ namespace SoundExplorers.Data {
       }
     }
 
-    [UniqueKeyField(1)] public string Path { get; set; }
+    [UniqueKeyField(2)] public string Path { get; set; }
   } //End of class
 } //End of namespace

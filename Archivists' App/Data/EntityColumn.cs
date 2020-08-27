@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
+using JetBrains.Annotations;
 
 namespace SoundExplorers.Data {
   /// <summary>
@@ -141,6 +144,12 @@ namespace SoundExplorers.Data {
     public virtual string ReferencedTableName { get; set; }
 
     /// <summary>
+    ///   Gets the one-based left-to-right sequence number of the column
+    ///   in the main grid.  Zero if not to be included in the main grid.
+    /// </summary>
+    public int SequenceNo { get; set; }
+
+    /// <summary>
     ///   Sets the field value
     ///   of the column in the specified
     ///   instance of the entity.
@@ -164,7 +173,7 @@ namespace SoundExplorers.Data {
           entity,
           new[] {value});
       } catch (TargetInvocationException ex) {
-        throw ex.InnerException;
+        throw ex.InnerException ?? ex;
       }
     }
 
@@ -189,5 +198,133 @@ namespace SoundExplorers.Data {
     ///   <see cref="IsHidden" /> property.
     /// </remarks>
     public virtual bool Visible { get; set; }
+
+    [NotNull]
+    public static EntityColumn<T> Create([NotNull] IList<FieldAttribute> fieldAttributes,
+      [NotNull] PropertyInfo property) {
+      var column = new EntityColumn<T>();
+      PopulateColumnReferenceDetailsIfAny(fieldAttributes, property, column);
+      column.ColumnName = property.Name;
+      column.DataType = property.PropertyType;
+      column.IsInPrimaryKey =
+        DoesPropertyHaveAttribute<PrimaryKeyFieldAttribute>(fieldAttributes);
+      column.IsInUniqueKey =
+        DoesPropertyHaveAttribute<UniqueKeyFieldAttribute>(fieldAttributes);
+      column.IsHidden =
+        DoesPropertyHaveAttribute<HiddenFieldAttribute>(fieldAttributes);
+      column.Visible = !column.IsHidden;
+      column.SequenceNo = GetPropertySequenceNo(fieldAttributes);
+      return column;
+    }
+
+    private static bool DoesPropertyHaveAttribute<TFieldAttribute>(
+      [NotNull] IEnumerable<FieldAttribute> fieldAttributes)
+      where TFieldAttribute : FieldAttribute {
+      return (
+        from Attribute attribute in fieldAttributes
+        where attribute.GetType()
+                .IsSubclassOf(typeof(TFieldAttribute))
+              || attribute.GetType() == typeof(TFieldAttribute)
+        select attribute).Any();
+    }
+
+    [CanBeNull]
+    private static ReferencedFieldAttribute FindReferencedFieldAttribute(
+      [NotNull] IEnumerable<FieldAttribute> fieldAttributes) {
+      return (ReferencedFieldAttribute)(
+        from Attribute attribute in fieldAttributes
+        where attribute.GetType()
+                .IsSubclassOf(typeof(ReferencedFieldAttribute))
+              || attribute.GetType() == typeof(ReferencedFieldAttribute)
+        select attribute).FirstOrDefault();
+    }
+
+    private static int GetPropertySequenceNo(
+      [NotNull] IEnumerable<FieldAttribute> fieldAttributes) {
+      return fieldAttributes.First().SequenceNo;
+    }
+
+    private static void PopulateColumnReferenceDetails([NotNull] PropertyInfo property,
+      [NotNull] IEntityColumn column, [NotNull] string referencedColumnName,
+      [NotNull] string referencedTableName) {
+      column.ReferencedColumnName = referencedColumnName;
+      column.ReferencedTableName = referencedTableName;
+      if (property.PropertyType == typeof(DateTime)) {
+        column.NameOnDb = referencedTableName + "Date";
+      } else if (referencedTableName == "Artist") {
+        column.NameOnDb = referencedTableName + "Name";
+      } else {
+        column.NameOnDb = referencedTableName + "Id";
+      }
+    }
+
+    private static void PopulateColumnReferenceDetailsIfAny(
+      [NotNull] IEnumerable<FieldAttribute> fieldAttributes,
+      [NotNull] PropertyInfo property, [NotNull] IEntityColumn column) {
+      var referencedFieldAttribute =
+        FindReferencedFieldAttribute(fieldAttributes);
+      if (referencedFieldAttribute == null) {
+        return;
+      }
+      string referencedColumnName;
+      string referencedTableName;
+      if (referencedFieldAttribute.Name.Contains(".")) {
+        var chunks = referencedFieldAttribute.Name.Split('.');
+        referencedColumnName = chunks[1];
+        referencedTableName = chunks[0];
+      } else {
+        referencedColumnName = referencedFieldAttribute.Name;
+        referencedTableName = property.Name;
+      }
+      ValidateReference(property, referencedTableName, referencedFieldAttribute,
+        referencedColumnName);
+      PopulateColumnReferenceDetails(property, column, referencedColumnName,
+        referencedTableName);
+    }
+
+    private static void ValidateReference([NotNull] PropertyInfo property,
+      [NotNull] string referencedTableName,
+      [NotNull] ReferencedFieldAttribute referencedFieldAttribute,
+      [NotNull] string referencedColumnName) {
+      if (!Factory<IEntityList>.Types.ContainsKey(referencedTableName)) {
+        if (referencedFieldAttribute.Name.Contains(".")) {
+          throw new ApplicationException(
+            "There is no EntityList class for table "
+            + referencedTableName
+            + " specified for referenced field property "
+            + property.Name + " of Entity class " + typeof(T).Name + ".");
+        }
+        throw new ApplicationException(
+          "There is no EntityList class for a table "
+          + "with the same name as referenced field property "
+          + referencedTableName + " of Entity class " + typeof(T).Name + ".");
+      }
+      var referencedEntity = Factory<IEntity>.Create(referencedTableName);
+      var referencedColumn =
+        referencedEntity.Columns[referencedColumnName];
+      if (referencedColumn == null) {
+        throw new ApplicationException(
+          "Referenced Entity class "
+          + referencedTableName
+          + " does not contain a field property named "
+          + referencedColumnName
+          + " as specified in the ReferencedField attribute of field property "
+          + property.Name + " of Entity class " + typeof(T).Name + ".");
+      }
+      if (referencedColumn.DataType != property.PropertyType) {
+        throw new ApplicationException(
+          "Data type " + referencedColumn.DataType
+                       + " of field property "
+                       + referencedColumnName
+                       + " of referenced Entity class "
+                       + referencedTableName
+                       + " is not the same as data type " +
+                       property.PropertyType
+                       + " of referencing field property "
+                       + property.Name + " of entity class " +
+                       typeof(T).Name +
+                       ".");
+      }
+    }
   } //End of class
 } //End of namespace

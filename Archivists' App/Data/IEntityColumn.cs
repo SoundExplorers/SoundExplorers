@@ -60,6 +60,12 @@ namespace SoundExplorers.Data {
     string ReferencedTableName { get; set; }
 
     /// <summary>
+    ///   Gets the one-based left-to-right sequence number of the column
+    ///   in the main grid.  Zero if not to be included in the main grid.
+    /// </summary>
+    int SequenceNo { get; set; }
+
+    /// <summary>
     ///   Gets the name of the column's owning table.
     ///   This is the name of the corresponding
     ///   class derived from <see cref="Entity" />.
