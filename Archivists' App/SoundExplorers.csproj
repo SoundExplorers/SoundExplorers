@@ -44,6 +44,10 @@
     <Reference Include="Devart.Data.PostgreSql, Version=5.80.341.0, Culture=neutral, PublicKeyToken=09af7300eec23701, processorArchitecture=MSIL">
       <Private>True</Private>
     </Reference>
+    <Reference Include="JetBrains.Annotations, Version=2020.1.0.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325">
+      <HintPath>packages\JetBrains.Annotations.2020.1.0\lib\net20\JetBrains.Annotations.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Design" />
@@ -209,6 +213,7 @@
       <DependentUpon>TableForm.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="app.config" />
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

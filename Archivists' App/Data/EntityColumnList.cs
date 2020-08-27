@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using JetBrains.Annotations;
 
 namespace SoundExplorers.Data {
   /// <summary>
@@ -34,6 +35,7 @@ namespace SoundExplorers.Data {
     ///   The entity column with the specified name (case-insensitive),
     ///   if found, otherwise a null reference.
     /// </returns>
+    [CanBeNull]
     public IEntityColumn this[string columnName] =>
     (
       from IEntityColumn entityColumn in this

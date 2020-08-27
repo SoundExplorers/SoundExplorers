@@ -421,8 +421,20 @@ namespace SoundExplorers.Data {
       Adapter.Fill(table);
       for (var i = 0; i < table.Columns.Count; i++) {
         var tableColumn = table.Columns[i];
-        tableColumn.ColumnName =
-          Entity.Columns[tableColumn.ColumnName].ColumnName;
+        var entityColumn = Entity.Columns[tableColumn.ColumnName];
+        tableColumn.ColumnName = entityColumn?.ColumnName ??
+                                 (typeof(T) == typeof(Credit) &&
+                                  tableColumn.ColumnName == "pieceno"
+                                   ? "Piece"
+                                   : null);
+        // if (entityColumn == null) {
+        //   Debug.WriteLine(tableColumn.ColumnName);
+        //   foreach (var column in Entity.Columns) {
+        //     Debug.WriteLine(column.ColumnName);
+        //   }
+        // }
+        // tableColumn.ColumnName =
+        //   Entity.Columns[tableColumn.ColumnName].ColumnName;
       } // End of for
       return table;
     }
