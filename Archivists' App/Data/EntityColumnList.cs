@@ -24,20 +24,21 @@ namespace SoundExplorers.Data {
     public EntityColumnList(int capacity) : base(capacity) { }
 
     /// <summary>
-    ///   Returns the entity column with the specified name,
+    ///   Returns the entity column with the specified name (case-insensitive),
     ///   if found, otherwise returns a null reference.
     /// </summary>
     /// <param name="columnName">
-    ///   The name of the column.
+    ///   The name of the column (case-insensitive).
     /// </param>
     /// <returns>
-    ///   The entity column with the specified name,
+    ///   The entity column with the specified name (case-insensitive),
     ///   if found, otherwise a null reference.
     /// </returns>
     public IEntityColumn this[string columnName] =>
     (
       from IEntityColumn entityColumn in this
-      where entityColumn.ColumnName == columnName
+      where string.Compare(entityColumn.ColumnName, columnName,
+        StringComparison.OrdinalIgnoreCase) == 0
       select entityColumn).FirstOrDefault();
 
     /// <summary>

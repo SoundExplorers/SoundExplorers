@@ -15,12 +15,6 @@ namespace SoundExplorers.Data {
     [ReferencedField("Date")] public DateTime Newsletter { get; set; }
     [ReferencedField("Name")] public string Series { get; set; }
 
-    // [PrimaryKeyField] public DateTime Date { get; set; }
-    // [PrimaryKeyField] [ReferencedField("Name")] public string Location { get; set; }
-    // [ReferencedField("Name")] public string Series { get; set; }
-    // [ReferencedField("Date")] public DateTime Newsletter { get; set; }
-    // [Field] public string Comments { get; set; }
-
     /// <summary>
     ///   Fetches the Performance's Newsletter (i.e. not just the Newsletter date)
     ///   from the database.

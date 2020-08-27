@@ -420,7 +420,8 @@ namespace SoundExplorers.Data {
       var table = new DataTable(typeof(T).Name);
       Adapter.Fill(table);
       for (var i = 0; i < table.Columns.Count; i++) {
-        table.Columns[i].ColumnName = Entity.Columns[i].ColumnName;
+        var tableColumn = table.Columns[i];
+        tableColumn.ColumnName = Entity.Columns[tableColumn.ColumnName].ColumnName;
       } // End of for
       return table;
     }
