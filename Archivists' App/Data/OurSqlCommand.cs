@@ -7,12 +7,12 @@ using System.Text;
 using Devart.Data.PostgreSql;
 
 namespace SoundExplorers.Data {
-    /// <summary>
-    ///   Represents an SQL statement to execute against the
-    ///   SoundExplorers database for an Entity
-    ///   of the specified type.
-    /// </summary>
-    internal abstract class OurSqlCommand<T> : PgSqlCommand
+  /// <summary>
+  ///   Represents an SQL statement to execute against the
+  ///   SoundExplorers database for an Entity
+  ///   of the specified type.
+  /// </summary>
+  internal abstract class OurSqlCommand<T> : PgSqlCommand
     where T : Entity<T> {
     private string _sqlFilename;
 

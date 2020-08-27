@@ -9,12 +9,12 @@ using System.Text;
 using Devart.Data.PostgreSql;
 
 namespace SoundExplorers.Data {
-    /// <summary>
-    ///   Helper methods for SQL execution.
-    /// </summary>
-    /// <remarks>
-    /// </remarks>
-    internal class SqlHelper {
+  /// <summary>
+  ///   Helper methods for SQL execution.
+  /// </summary>
+  /// <remarks>
+  /// </remarks>
+  internal class SqlHelper {
     public static readonly string ConnectionString =
       "Server=localhost;" +
       "Database=soundexplorers;" +

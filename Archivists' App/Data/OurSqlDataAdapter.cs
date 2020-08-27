@@ -3,41 +3,41 @@ using System.Data;
 using Devart.Data.PostgreSql;
 
 namespace SoundExplorers.Data {
-    /// <summary>
-    ///   A data adapter for accessing
-    ///   the table on the SoundExplorers database
-    ///   that corresponds to the Entity
-    ///   of the specified type.
-    /// </summary>
-    internal class OurSqlDataAdapter<T> : PgSqlDataAdapter
+  /// <summary>
+  ///   A data adapter for accessing
+  ///   the table on the SoundExplorers database
+  ///   that corresponds to the Entity
+  ///   of the specified type.
+  /// </summary>
+  internal class OurSqlDataAdapter<T> : PgSqlDataAdapter
     where T : Entity<T> {
-        /// <summary>
-        ///   Initialises a new instance of the <see cref="OurSqlDataAdapter" /> class.
-        /// </summary>
-        /// <param name="selectCommand">
-        ///   SELECT command.
-        ///   Null to to get the SQL from an embedded resource file,
-        ///   if found, or generate it
-        /// </param>
-        /// <param name="insertCommand">
-        ///   INSERT command.
-        ///   Null to to get the SQL from an embedded resource file,
-        ///   if found, or generate it
-        /// </param>
-        /// <param name="updateCommand">
-        ///   UPDATE command.
-        ///   Null to to get the SQL from an embedded resource file,
-        ///   if found, or generate it
-        /// </param>
-        /// <param name="deleteCommand">
-        ///   DELETE command.
-        ///   Null to to get the SQL from an embedded resource file,
-        ///   if found, or generate it
-        /// </param>
-        /// <exception cref="DataException">
-        ///   Error on preparing one of the SQL commands.
-        /// </exception>
-        public OurSqlDataAdapter(
+    /// <summary>
+    ///   Initialises a new instance of the <see cref="OurSqlDataAdapter" /> class.
+    /// </summary>
+    /// <param name="selectCommand">
+    ///   SELECT command.
+    ///   Null to to get the SQL from an embedded resource file,
+    ///   if found, or generate it
+    /// </param>
+    /// <param name="insertCommand">
+    ///   INSERT command.
+    ///   Null to to get the SQL from an embedded resource file,
+    ///   if found, or generate it
+    /// </param>
+    /// <param name="updateCommand">
+    ///   UPDATE command.
+    ///   Null to to get the SQL from an embedded resource file,
+    ///   if found, or generate it
+    /// </param>
+    /// <param name="deleteCommand">
+    ///   DELETE command.
+    ///   Null to to get the SQL from an embedded resource file,
+    ///   if found, or generate it
+    /// </param>
+    /// <exception cref="DataException">
+    ///   Error on preparing one of the SQL commands.
+    /// </exception>
+    public OurSqlDataAdapter(
       SelectCommand<T> selectCommand = null,
       InsertCommand<T> insertCommand = null,
       UpdateCommand<T> updateCommand = null,
@@ -68,62 +68,62 @@ namespace SoundExplorers.Data {
       DeleteCommand.Prepare();
     }
 
-        /// <summary>
-        ///   Gets or sets an SQL DELETE statement to execute against the
-        ///   SoundExplorers database for an Entity
-        ///   of the specified type.
-        /// </summary>
-        public new DeleteCommand<T> DeleteCommand {
+    /// <summary>
+    ///   Gets or sets an SQL DELETE statement to execute against the
+    ///   SoundExplorers database for an Entity
+    ///   of the specified type.
+    /// </summary>
+    public new DeleteCommand<T> DeleteCommand {
       get => (DeleteCommand<T>)base.DeleteCommand;
       set => base.DeleteCommand = value;
     }
 
-        /// <summary>
-        ///   Gets or sets an SQL INSERT statement to execute against the
-        ///   SoundExplorers database for an Entity
-        ///   of the specified type.
-        /// </summary>
-        public new InsertCommand<T> InsertCommand {
+    /// <summary>
+    ///   Gets or sets an SQL INSERT statement to execute against the
+    ///   SoundExplorers database for an Entity
+    ///   of the specified type.
+    /// </summary>
+    public new InsertCommand<T> InsertCommand {
       get => (InsertCommand<T>)base.InsertCommand;
       set => base.InsertCommand = value;
     }
 
-        /// <summary>
-        ///   Gets or sets an SQL SELECT statement to execute against the
-        ///   SoundExplorers database for an Entity
-        ///   of the specified type.
-        /// </summary>
-        public new SelectCommand<T> SelectCommand {
+    /// <summary>
+    ///   Gets or sets an SQL SELECT statement to execute against the
+    ///   SoundExplorers database for an Entity
+    ///   of the specified type.
+    /// </summary>
+    public new SelectCommand<T> SelectCommand {
       get => (SelectCommand<T>)base.SelectCommand;
       set => base.SelectCommand = value;
     }
 
-        /// <summary>
-        ///   Gets or sets an SQL UPDATE statement to execute against the
-        ///   SoundExplorers database for an Entity
-        ///   of the specified type.
-        /// </summary>
-        public new UpdateCommand<T> UpdateCommand {
+    /// <summary>
+    ///   Gets or sets an SQL UPDATE statement to execute against the
+    ///   SoundExplorers database for an Entity
+    ///   of the specified type.
+    /// </summary>
+    public new UpdateCommand<T> UpdateCommand {
       get => (UpdateCommand<T>)base.UpdateCommand;
       set => base.UpdateCommand = value;
     }
 
-        /// <summary>
-        ///   Calls the respective INSERT, UPDATE, or DELETE
-        ///   statements for each inserted, updated,
-        ///   or deleted row in the specified <see cref="DataTable" />.
-        /// </summary>
-        /// <param name="dataTable">
-        ///   The <see cref="DataTable" /> used to update the data source.
-        /// </param>
-        /// <param name="oldKeyFields">
-        ///   The names and original values of the primary key fields.
-        /// </param>
-        /// <exception cref="DataException">
-        ///   Thrown if
-        ///   there is an error on attempting to access the database.
-        /// </exception>
-        public virtual void Update(
+    /// <summary>
+    ///   Calls the respective INSERT, UPDATE, or DELETE
+    ///   statements for each inserted, updated,
+    ///   or deleted row in the specified <see cref="DataTable" />.
+    /// </summary>
+    /// <param name="dataTable">
+    ///   The <see cref="DataTable" /> used to update the data source.
+    /// </param>
+    /// <param name="oldKeyFields">
+    ///   The names and original values of the primary key fields.
+    /// </param>
+    /// <exception cref="DataException">
+    ///   Thrown if
+    ///   there is an error on attempting to access the database.
+    /// </exception>
+    public virtual void Update(
       DataTable dataTable,
       Dictionary<string, object> oldKeyFields = null) {
       try {

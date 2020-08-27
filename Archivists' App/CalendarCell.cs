@@ -2,20 +2,20 @@
 using System.Windows.Forms;
 
 namespace SoundExplorers {
-    /// <summary>
-    ///   Calendar cell of a DataGridView.
-    /// </summary>
-    /// <remarks>
-    ///   The cell displays dates in ordinary text box cells,
-    ///   but when the user edits a cell, a DateTimePicker control appears.
-    ///   The default date when inserting a new row will be today's date.
-    ///   <para>
-    ///     Code modified from
-    ///     MSDN/"How to: Host Controls in Windows Forms DataGridView Cells"
-    ///     http://msdn.microsoft.com/en-us/library/7tas5c80.aspx.
-    ///   </para>
-    /// </remarks>
-    internal class CalendarCell : DataGridViewTextBoxCell {
+  /// <summary>
+  ///   Calendar cell of a DataGridView.
+  /// </summary>
+  /// <remarks>
+  ///   The cell displays dates in ordinary text box cells,
+  ///   but when the user edits a cell, a DateTimePicker control appears.
+  ///   The default date when inserting a new row will be today's date.
+  ///   <para>
+  ///     Code modified from
+  ///     MSDN/"How to: Host Controls in Windows Forms DataGridView Cells"
+  ///     http://msdn.microsoft.com/en-us/library/7tas5c80.aspx.
+  ///   </para>
+  /// </remarks>
+  internal class CalendarCell : DataGridViewTextBoxCell {
     public override Type EditType =>
       // Return the type of the editing control that CalendarCell uses.
       typeof(CalendarEditingControl);

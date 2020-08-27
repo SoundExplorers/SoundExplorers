@@ -12,13 +12,13 @@ using ImageList = SoundExplorers.Data.ImageList;
 
 namespace SoundExplorers {
   internal partial class TableForm : Form {
-      /// <summary>
-      ///   Initialises a new instance of the <see cref="TableForm" /> class.
-      /// </summary>
-      /// <param name="tableName">
-      ///   The name of the table whose data is to be displayed.
-      /// </param>
-      public TableForm(
+    /// <summary>
+    ///   Initialises a new instance of the <see cref="TableForm" /> class.
+    /// </summary>
+    /// <param name="tableName">
+    ///   The name of the table whose data is to be displayed.
+    /// </param>
+    public TableForm(
       string tableName) {
       InitializeComponent();
       // A known Visual Studio bug is that PictureBox's AllowDrop property
@@ -32,10 +32,10 @@ namespace SoundExplorers {
       OpenTable(TableName);
     }
 
-      /// <summary>
-      ///   The entity list representing the table whose data is shown on the form.
-      /// </summary>
-      public IEntityList Entities { get; protected set; }
+    /// <summary>
+    ///   The entity list representing the table whose data is shown on the form.
+    /// </summary>
+    public IEntityList Entities { get; protected set; }
 
     private DataGridView FocusedGrid { get; set; }
     private Option GridSplitterDistanceOption { get; set; }

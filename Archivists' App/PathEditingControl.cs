@@ -6,10 +6,10 @@ using SoundExplorers.Data;
 using Image = SoundExplorers.Data.Image;
 
 namespace SoundExplorers {
-    /// <summary>
-    ///   Editing control for a path cell of a DataGridView.
-    /// </summary>
-    internal class PathEditingControl : UserControl, IDataGridViewEditingControl {
+  /// <summary>
+  ///   Editing control for a path cell of a DataGridView.
+  /// </summary>
+  internal class PathEditingControl : UserControl, IDataGridViewEditingControl {
     public PathEditingControl() {
       TextBox = new TextBox();
       TextBox.KeyDown += TextBox_KeyDown;

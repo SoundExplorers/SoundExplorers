@@ -16,90 +16,90 @@ using System.Threading;
 using System.Windows.Forms;
 
 namespace SoundExplorers {
-    /// <summary>
-    ///   A class for managing the application splash screen.
-    ///   The Splash screen is loaded in its own thread (i.e.,
-    ///   has its own message pump). This ensures that the form
-    ///   redraws correctly.
-    /// </summary>
-    /// <remarks>
-    ///   You cannot create a new instance of the <b>SplashManager</b> class.
-    ///   All members are static (<b>Shared</b> in Visual Basic).
-    ///   To show a splash
-    ///   <see cref="Form" />
-    ///   window, call the
-    ///   <see cref="O:Anz.NZInfo.SplashManager.Show">Show</see>
-    ///   method.
-    ///   To show information about the application load status
-    ///   on the splash window, use the <see cref="Status" /> property.
-    ///   To allow the <see cref="Status" /> property to be set, the splash
-    ///   <see cref="Form" /> must implement the
-    ///   <see cref="IMessageUpdater" /> interface.
-    ///   To close the splash window, call the
-    ///   <see cref="Close" /> method.
-    ///   <para>
-    ///     In order ensure that the main <see cref="Form" />
-    ///     will be shown in foreground (focused)
-    ///     when a splash window hs been shown with
-    ///     <b>SplashManager</b>,
-    ///     (i.e. even when
-    ///     a message box has not previously been shown
-    ///     in front of the splash form),
-    ///     the main form's
-    ///     <see cref="Control.VisibleChanged" />
-    ///     event handler must invoke the main Form's
-    ///     <see cref="Form.Activate" />
-    ///     method and then invoke
-    ///     <see cref="Close">SplashManager.Close</see>.
-    ///   </para>
-    /// </remarks>
-    /// <example>
-    ///   Loading a
-    ///   <see cref="Form" />
-    ///   called MainForm while showing details of the
-    ///   load progress on a splash
-    ///   <see cref="Form" />
-    ///   called SplashForm that implements the
-    ///   <see cref="IMessageUpdater" /> interface
-    ///   can be achieved by including code similar to
-    ///   the following in MainForm.
-    ///   <code>
-    ///  // C#
-    ///  using System.Windows.Forms;
-    ///  using Anz.NZInfo;
-    ///  
-    ///  [STAThread]
-    ///  static void Main(string[] args) {
-    /// 	    SplashManager.Show(typeof(SplashForm));
-    /// 	    MainForm mainForm = new MainForm();
-    /// 	    Application.Run(mainForm);
-    ///  }
-    /// 
-    ///  public MainForm() {
-    /// 	    // Required for Windows Form Designer support
-    /// 	    InitializeComponent();
-    /// 	    // Do some fake startup, showing progress
-    /// 	    // on the splah window.
-    /// 	    SplashManager.Status = "Loading Files...";
-    /// 	    System.Threading.Thread.Sleep(2000);
-    /// 	    SplashManager.Status = "Loading Plug/Ins...";
-    /// 	    System.Threading.Thread.Sleep(2000);
-    /// 	    SplashManager.Status = "Connecting to Database...";
-    /// 	    System.Threading.Thread.Sleep(2000);
-    ///  }
-    /// 
-    ///  private void MainForm_VisibleChanged(object sender, System.EventArgs e) {
-    /// 	    // Bring the form to the foreground when the load is complete.
-    /// 	    // If you do not do this before closing the splash window,
-    /// 	    // the main window will not show in foreground
-    /// 	    // unless a message box has previously been shown
-    ///      // in front of the splash form.
-    /// 	    this.Activate();
-    /// 	    SplashManager.Close();
-    ///  }
-    ///  </code>
-    /// </example>
-    public class SplashManager {
+  /// <summary>
+  ///   A class for managing the application splash screen.
+  ///   The Splash screen is loaded in its own thread (i.e.,
+  ///   has its own message pump). This ensures that the form
+  ///   redraws correctly.
+  /// </summary>
+  /// <remarks>
+  ///   You cannot create a new instance of the <b>SplashManager</b> class.
+  ///   All members are static (<b>Shared</b> in Visual Basic).
+  ///   To show a splash
+  ///   <see cref="Form" />
+  ///   window, call the
+  ///   <see cref="O:Anz.NZInfo.SplashManager.Show">Show</see>
+  ///   method.
+  ///   To show information about the application load status
+  ///   on the splash window, use the <see cref="Status" /> property.
+  ///   To allow the <see cref="Status" /> property to be set, the splash
+  ///   <see cref="Form" /> must implement the
+  ///   <see cref="IMessageUpdater" /> interface.
+  ///   To close the splash window, call the
+  ///   <see cref="Close" /> method.
+  ///   <para>
+  ///     In order ensure that the main <see cref="Form" />
+  ///     will be shown in foreground (focused)
+  ///     when a splash window hs been shown with
+  ///     <b>SplashManager</b>,
+  ///     (i.e. even when
+  ///     a message box has not previously been shown
+  ///     in front of the splash form),
+  ///     the main form's
+  ///     <see cref="Control.VisibleChanged" />
+  ///     event handler must invoke the main Form's
+  ///     <see cref="Form.Activate" />
+  ///     method and then invoke
+  ///     <see cref="Close">SplashManager.Close</see>.
+  ///   </para>
+  /// </remarks>
+  /// <example>
+  ///   Loading a
+  ///   <see cref="Form" />
+  ///   called MainForm while showing details of the
+  ///   load progress on a splash
+  ///   <see cref="Form" />
+  ///   called SplashForm that implements the
+  ///   <see cref="IMessageUpdater" /> interface
+  ///   can be achieved by including code similar to
+  ///   the following in MainForm.
+  ///   <code>
+  ///  // C#
+  ///  using System.Windows.Forms;
+  ///  using Anz.NZInfo;
+  ///  
+  ///  [STAThread]
+  ///  static void Main(string[] args) {
+  /// 	    SplashManager.Show(typeof(SplashForm));
+  /// 	    MainForm mainForm = new MainForm();
+  /// 	    Application.Run(mainForm);
+  ///  }
+  /// 
+  ///  public MainForm() {
+  /// 	    // Required for Windows Form Designer support
+  /// 	    InitializeComponent();
+  /// 	    // Do some fake startup, showing progress
+  /// 	    // on the splah window.
+  /// 	    SplashManager.Status = "Loading Files...";
+  /// 	    System.Threading.Thread.Sleep(2000);
+  /// 	    SplashManager.Status = "Loading Plug/Ins...";
+  /// 	    System.Threading.Thread.Sleep(2000);
+  /// 	    SplashManager.Status = "Connecting to Database...";
+  /// 	    System.Threading.Thread.Sleep(2000);
+  ///  }
+  /// 
+  ///  private void MainForm_VisibleChanged(object sender, System.EventArgs e) {
+  /// 	    // Bring the form to the foreground when the load is complete.
+  /// 	    // If you do not do this before closing the splash window,
+  /// 	    // the main window will not show in foreground
+  /// 	    // unless a message box has previously been shown
+  ///      // in front of the splash form.
+  /// 	    this.Activate();
+  /// 	    SplashManager.Close();
+  ///  }
+  ///  </code>
+  /// </example>
+  public class SplashManager {
     private static object[] _args;
     private static bool _isSplashFormBeingShown;
 

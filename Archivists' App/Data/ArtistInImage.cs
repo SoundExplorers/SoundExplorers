@@ -1,8 +1,8 @@
 ﻿namespace SoundExplorers.Data {
-    /// <summary>
-    ///   ArtistInImage entity.
-    /// </summary>
-    internal class ArtistInImage : Entity<ArtistInImage> {
+  /// <summary>
+  ///   ArtistInImage entity.
+  /// </summary>
+  internal class ArtistInImage : Entity<ArtistInImage> {
     [PrimaryKeyField]
     [ReferencedField("Name")]
     public string Artist { get; set; }

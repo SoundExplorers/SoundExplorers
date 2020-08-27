@@ -4,10 +4,10 @@ using System.IO;
 using Devart.Data.PostgreSql;
 
 namespace SoundExplorers.Data {
-    /// <summary>
-    ///   Image entity.
-    /// </summary>
-    internal class Image : Entity<Image> {
+  /// <summary>
+  ///   Image entity.
+  /// </summary>
+  internal class Image : Entity<Image> {
     private static DirectoryInfo _defaultFolder;
     private static Option _defaultFolderOption;
     private static PgSqlCommand _selectNextImageIdCommand;

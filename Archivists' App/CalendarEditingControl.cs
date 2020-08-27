@@ -2,15 +2,15 @@
 using System.Windows.Forms;
 
 namespace SoundExplorers {
-    /// <summary>
-    ///   Editing control for a calendar cell of a DataGridView.
-    /// </summary>
-    /// <remarks>
-    ///   Code modified from
-    ///   MSDN/"How to: Host Controls in Windows Forms DataGridView Cells"
-    ///   http://msdn.microsoft.com/en-us/library/7tas5c80.aspx.
-    /// </remarks>
-    internal class CalendarEditingControl : DateTimePicker,
+  /// <summary>
+  ///   Editing control for a calendar cell of a DataGridView.
+  /// </summary>
+  /// <remarks>
+  ///   Code modified from
+  ///   MSDN/"How to: Host Controls in Windows Forms DataGridView Cells"
+  ///   http://msdn.microsoft.com/en-us/library/7tas5c80.aspx.
+  /// </remarks>
+  internal class CalendarEditingControl : DateTimePicker,
     IDataGridViewEditingControl {
     public CalendarEditingControl() {
       //this.Format = DateTimePickerFormat.Short;

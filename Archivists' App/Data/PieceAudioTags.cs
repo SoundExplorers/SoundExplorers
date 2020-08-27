@@ -4,29 +4,29 @@ using System.Diagnostics;
 using System.IO;
 
 namespace SoundExplorers.Data {
+  /// <summary>
+  ///   The values generated from the data of a <see cref="Piece" />
+  ///   and its <see cref="Piece.Credits" />
+  ///   for those audio metadata tags
+  ///   that are available all audio file types
+  ///   and may or may not be saved to an actual audio file.
+  /// </summary>
+  /// <remarks>
+  ///   To save all the generated metadata tags to the audio file,
+  ///   if it exists,
+  ///   specified by the <see cref="Piece" />'s
+  ///   <see cref="Piece.AudioPath" /> property,
+  ///   invoke the <see cref="SaveToFile" /> method.
+  /// </remarks>
+  internal class PieceAudioTags : IAudioTags {
     /// <summary>
-    ///   The values generated from the data of a <see cref="Piece" />
-    ///   and its <see cref="Piece.Credits" />
-    ///   for those audio metadata tags
-    ///   that are available all audio file types
-    ///   and may or may not be saved to an actual audio file.
+    ///   Initialises a new instance of the
+    ///   <see cref="PieceAudioTags" /> class.
     /// </summary>
-    /// <remarks>
-    ///   To save all the generated metadata tags to the audio file,
-    ///   if it exists,
-    ///   specified by the <see cref="Piece" />'s
-    ///   <see cref="Piece.AudioPath" /> property,
-    ///   invoke the <see cref="SaveToFile" /> method.
-    /// </remarks>
-    internal class PieceAudioTags : IAudioTags {
-        /// <summary>
-        ///   Initialises a new instance of the
-        ///   <see cref="PieceAudioTags" /> class.
-        /// </summary>
-        /// <param name="piece">
-        ///   The Piece from whose data the tags are to be generated.
-        /// </param>
-        public PieceAudioTags(Piece piece) {
+    /// <param name="piece">
+    ///   The Piece from whose data the tags are to be generated.
+    /// </param>
+    public PieceAudioTags(Piece piece) {
       Piece = piece;
     }
 

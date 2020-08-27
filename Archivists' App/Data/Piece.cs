@@ -2,10 +2,10 @@
 using System.IO;
 
 namespace SoundExplorers.Data {
-    /// <summary>
-    ///   Piece entity.
-    /// </summary>
-    internal class Piece : Entity<Piece>, IMediaEntity {
+  /// <summary>
+  ///   Piece entity.
+  /// </summary>
+  internal class Piece : Entity<Piece>, IMediaEntity {
     private static DirectoryInfo _defaultAudioFolder;
     private static Option _defaultAudioFolderOption;
     private static DirectoryInfo _defaultVideoFolder;

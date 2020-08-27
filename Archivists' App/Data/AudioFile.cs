@@ -2,33 +2,33 @@
 using System.IO;
 
 namespace SoundExplorers.Data {
+  /// <summary>
+  ///   An audio file.
+  /// </summary>
+  /// <remarks>
+  ///   Those metadata tags that we can usefully map to info on the database
+  ///   and that are also available with all audio file types
+  ///   are made available for update.
+  /// </remarks>
+  internal class AudioFile : IDisposable {
     /// <summary>
-    ///   An audio file.
+    ///   Initialises a new instance of the
+    ///   <see cref="AudioFile" /> class,
+    ///   reading those metadata tags that we may update.
     /// </summary>
+    /// <param name="path">
+    ///   The file's path.
+    /// </param>
     /// <remarks>
-    ///   Those metadata tags that we can usefully map to info on the database
-    ///   and that are also available with all audio file types
-    ///   are made available for update.
+    ///   The file must exist.
     /// </remarks>
-    internal class AudioFile : IDisposable {
-        /// <summary>
-        ///   Initialises a new instance of the
-        ///   <see cref="AudioFile" /> class,
-        ///   reading those metadata tags that we may update.
-        /// </summary>
-        /// <param name="path">
-        ///   The file's path.
-        /// </param>
-        /// <remarks>
-        ///   The file must exist.
-        /// </remarks>
-        /// <exception cref="ArgumentNullException">
-        ///   The path argument is null.
-        /// </exception>
-        /// <exception cref="FileNotFoundException">
-        ///   The file specified by the path argument cannot be found.
-        /// </exception>
-        public AudioFile(string path) {
+    /// <exception cref="ArgumentNullException">
+    ///   The path argument is null.
+    /// </exception>
+    /// <exception cref="FileNotFoundException">
+    ///   The file specified by the path argument cannot be found.
+    /// </exception>
+    public AudioFile(string path) {
       Path = path;
       if (Path == null) {
         throw new ArgumentNullException(
@@ -49,10 +49,10 @@ namespace SoundExplorers.Data {
       OldTags.Year = Tags.Year;
     }
 
-        /// <summary>
-        ///   Gets whether the file exists.
-        /// </summary>
-        public virtual bool Exists =>
+    /// <summary>
+    ///   Gets whether the file exists.
+    /// </summary>
+    public virtual bool Exists =>
       !string.IsNullOrEmpty(Path)
       && File.Exists(Path);
 

@@ -3,20 +3,20 @@ using System.Reflection;
 using System.Windows.Forms;
 
 namespace SoundExplorers {
-    /// <summary>
-    ///   About <see cref="Form" />.
-    /// </summary>
-    internal class AboutForm : Form {
+  /// <summary>
+  ///   About <see cref="Form" />.
+  /// </summary>
+  internal class AboutForm : Form {
     private static readonly Assembly _entryAssembly =
       Assembly.GetEntryAssembly();
 
+    private readonly IContainer components = null;
     private PictureBox PictureBox1;
     private Button OKButtion;
     private Label CopyrightLabel;
     private Label ProductNameLabel;
     private Label VersionLabel;
     private Panel Panel1;
-    private readonly IContainer components = null;
 
     /// <summary>
     ///   Initialises a new instance of the

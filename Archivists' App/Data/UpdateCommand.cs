@@ -4,21 +4,21 @@ using System.Linq;
 using Devart.Data.PostgreSql;
 
 namespace SoundExplorers.Data {
-    /// <summary>
-    ///   Represents an SQL UPDATE statement to execute against the
-    ///   SoundExplorers database for an Entity
-    ///   of the specified type.
-    /// </summary>
-    /// <remarks>
-    /// </remarks>
-    internal class UpdateCommand<T> : OurSqlCommand<T>
+  /// <summary>
+  ///   Represents an SQL UPDATE statement to execute against the
+  ///   SoundExplorers database for an Entity
+  ///   of the specified type.
+  /// </summary>
+  /// <remarks>
+  /// </remarks>
+  internal class UpdateCommand<T> : OurSqlCommand<T>
     where T : Entity<T> {
-        /// <summary>
-        ///   Initialises a new instance of the <see cref="UpdateCommand" /> class,
-        ///   creating its <see cref="PgSqlConnection.Connection" />
-        ///   and <see cref="PgSqlConnection.Parameters" />.
-        /// </summary>
-        public UpdateCommand() {
+    /// <summary>
+    ///   Initialises a new instance of the <see cref="UpdateCommand" /> class,
+    ///   creating its <see cref="PgSqlConnection.Connection" />
+    ///   and <see cref="PgSqlConnection.Parameters" />.
+    /// </summary>
+    public UpdateCommand() {
       Parameters.AddRange(
         CreateParameters());
     }

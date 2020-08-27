@@ -2,64 +2,64 @@ using System.Drawing;
 using System.Windows.Forms;
 
 namespace SoundExplorers {
+  /// <summary>
+  ///   Allows a <see cref="Form" />'s size,
+  ///   location and state to be saved and restored.
+  /// </summary>
+  public class SizeableFormOptions {
     /// <summary>
-    ///   Allows a <see cref="Form" />'s size,
-    ///   location and state to be saved and restored.
+    ///   Initialises a new instance of the
+    ///   <see cref="SizeableFormOptions" /> class,
+    ///   restoring the size, position and state
+    ///   of the specified <see cref="Form" />
+    ///   from the UserOption table.
     /// </summary>
-    public class SizeableFormOptions {
-        /// <summary>
-        ///   Initialises a new instance of the
-        ///   <see cref="SizeableFormOptions" /> class,
-        ///   restoring the size, position and state
-        ///   of the specified <see cref="Form" />
-        ///   from the UserOption table.
-        /// </summary>
-        /// <param name="form">
-        ///   The <see cref="Form" />
-        ///   whose size, position and state are
-        ///   to be saved and restored.
-        /// </param>
-        /// <remarks>
-        ///   The <see cref="Form" />'s
-        ///   <see cref="Form.StartPosition" />
-        ///   will be set to <c>Manual</c> so that the settings for
-        ///   <see cref="Control.Left" /> and
-        ///   <see cref="Control.Top" />
-        ///   will take effect.  However, for documentary purposes,
-        ///   it is recommended that
-        ///   <see cref="Form.StartPosition" />
-        ///   still be explicity set in the calling assembly.
-        ///   <para>
-        ///     The position
-        ///     (<see cref="Control.Left" /> and
-        ///     <see cref="Control.Top" />) of the
-        ///     <see cref="Form" />
-        ///     will not be set if it would put the Form outside
-        ///     the bounds of the screen's working area.  This could
-        ///     happen if the user has switched to a monitor with
-        ///     a lower screem resolution, such as a laptop.
-        ///   </para>
-        ///   <para>
-        ///     If a <see cref="Form" />'s details have not
-        ///     previously beeen saved via the <see cref="Save" />
-        ///     method:  the default size will be as set
-        ///     at design time or before the <see cref="Restore" />
-        ///     method is invoked;  the default position will be
-        ///     top left.
-        ///     If the form is not sizable,
-        ///     the default size will always be used.
-        ///   </para>
-        ///   <para>
-        ///     For an MDI child form, only the size and state,
-        ///     not the location, will be restored.
-        ///     And where this will be a second or subsequent
-        ///     MDI child form currently shown within the MDI parent form,
-        ///     the size and state will be copied from the
-        ///     previously active MDI child form
-        ///     instead of being restored from the database.
-        ///   </para>
-        /// </remarks>
-        public SizeableFormOptions(Form form) {
+    /// <param name="form">
+    ///   The <see cref="Form" />
+    ///   whose size, position and state are
+    ///   to be saved and restored.
+    /// </param>
+    /// <remarks>
+    ///   The <see cref="Form" />'s
+    ///   <see cref="Form.StartPosition" />
+    ///   will be set to <c>Manual</c> so that the settings for
+    ///   <see cref="Control.Left" /> and
+    ///   <see cref="Control.Top" />
+    ///   will take effect.  However, for documentary purposes,
+    ///   it is recommended that
+    ///   <see cref="Form.StartPosition" />
+    ///   still be explicity set in the calling assembly.
+    ///   <para>
+    ///     The position
+    ///     (<see cref="Control.Left" /> and
+    ///     <see cref="Control.Top" />) of the
+    ///     <see cref="Form" />
+    ///     will not be set if it would put the Form outside
+    ///     the bounds of the screen's working area.  This could
+    ///     happen if the user has switched to a monitor with
+    ///     a lower screem resolution, such as a laptop.
+    ///   </para>
+    ///   <para>
+    ///     If a <see cref="Form" />'s details have not
+    ///     previously beeen saved via the <see cref="Save" />
+    ///     method:  the default size will be as set
+    ///     at design time or before the <see cref="Restore" />
+    ///     method is invoked;  the default position will be
+    ///     top left.
+    ///     If the form is not sizable,
+    ///     the default size will always be used.
+    ///   </para>
+    ///   <para>
+    ///     For an MDI child form, only the size and state,
+    ///     not the location, will be restored.
+    ///     And where this will be a second or subsequent
+    ///     MDI child form currently shown within the MDI parent form,
+    ///     the size and state will be copied from the
+    ///     previously active MDI child form
+    ///     instead of being restored from the database.
+    ///   </para>
+    /// </remarks>
+    public SizeableFormOptions(Form form) {
       Form = form;
       Form.StartPosition = FormStartPosition.Manual;
       HeightOption = new Option(Form.Name + ".Height");

@@ -1,22 +1,22 @@
 ﻿using TagLib;
 
 namespace SoundExplorers.Data {
+  /// <summary>
+  ///   The values actually or intended to be
+  ///   held in an audio file of
+  ///   those audio metadata tags
+  ///   that we can usefully map to info on the database
+  ///   and that are also available with all audio file types.
+  /// </summary>
+  internal class AudioFileTags : IAudioTags {
     /// <summary>
-    ///   The values actually or intended to be
-    ///   held in an audio file of
-    ///   those audio metadata tags
-    ///   that we can usefully map to info on the database
-    ///   and that are also available with all audio file types.
+    ///   Initialises a new instance of the
+    ///   <see cref="AudioFileTags" /> class.
     /// </summary>
-    internal class AudioFileTags : IAudioTags {
-        /// <summary>
-        ///   Initialises a new instance of the
-        ///   <see cref="AudioFileTags" /> class.
-        /// </summary>
-        /// <param name="tags">
-        ///   The audio file's metadata tags.
-        /// </param>
-        public AudioFileTags(Tag tags) {
+    /// <param name="tags">
+    ///   The audio file's metadata tags.
+    /// </param>
+    public AudioFileTags(Tag tags) {
       Tags = tags;
     }
 

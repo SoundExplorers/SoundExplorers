@@ -2,10 +2,10 @@
 using System.IO;
 
 namespace SoundExplorers.Data {
-    /// <summary>
-    ///   Newsletter entity.
-    /// </summary>
-    internal class Newsletter : PieceOwningEntity<Newsletter> {
+  /// <summary>
+  ///   Newsletter entity.
+  /// </summary>
+  internal class Newsletter : PieceOwningEntity<Newsletter> {
     private static DirectoryInfo _defaultFolder;
     private static Option _defaultFolderOption;
     [PrimaryKeyField] public DateTime Date { get; set; }

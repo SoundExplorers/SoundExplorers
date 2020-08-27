@@ -3,19 +3,19 @@ using System.Windows.Forms;
 using SoundExplorers.Data;
 
 namespace SoundExplorers {
+  /// <summary>
+  ///   Select a Table dialogue box.
+  /// </summary>
+  public partial class SelectTableForm : Form {
     /// <summary>
-    ///   Select a Table dialogue box.
+    ///   Initialises a new instance of the
+    ///   <see cref="SelectTableForm" /> class.
     /// </summary>
-    public partial class SelectTableForm : Form {
-        /// <summary>
-        ///   Initialises a new instance of the
-        ///   <see cref="SelectTableForm" /> class.
-        /// </summary>
-        /// <param name="tableName">
-        ///   The name of the table that is to be initially selected.
-        ///   An emtpy string for no table to be initially selected.
-        /// </param>
-        public SelectTableForm(string tableName) {
+    /// <param name="tableName">
+    ///   The name of the table that is to be initially selected.
+    ///   An emtpy string for no table to be initially selected.
+    /// </param>
+    public SelectTableForm(string tableName) {
       InitializeComponent();
       TableName = tableName;
       PopulateTableComboBox();
@@ -23,11 +23,11 @@ namespace SoundExplorers {
         tableComboBox.FindStringExact(TableName);
     }
 
-        /// <summary>
-        ///   Gets the name table whose
-        ///   data is to be displayed.
-        /// </summary>
-        public string TableName { get; private set; }
+    /// <summary>
+    ///   Gets the name table whose
+    ///   data is to be displayed.
+    /// </summary>
+    public string TableName { get; private set; }
 
     private void OKButton_Click(object sender, EventArgs e) {
       TableName = tableComboBox.Text;

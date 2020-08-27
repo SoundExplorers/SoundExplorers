@@ -1,10 +1,10 @@
 ﻿using System;
 
 namespace SoundExplorers.Data {
-    /// <summary>
-    ///   Set entity.
-    /// </summary>
-    internal class Set : PieceOwningMediaEntity<Set> {
+  /// <summary>
+  ///   Set entity.
+  /// </summary>
+  internal class Set : PieceOwningMediaEntity<Set> {
     [ReferencedField("Name")] public string Act { get; set; }
     [Field] public string Comments { get; set; }
     [PrimaryKeyField] public DateTime Date { get; set; }

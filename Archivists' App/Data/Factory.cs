@@ -4,12 +4,12 @@ using System.Linq;
 using System.Reflection;
 
 namespace SoundExplorers.Data {
-    /// <summary>
-    ///   A facility for the instantiation of types,
-    ///   which, in the case of Entity or EntityList types,
-    ///   can be specified by table name.
-    /// </summary>
-    internal static class Factory<T> {
+  /// <summary>
+  ///   A facility for the instantiation of types,
+  ///   which, in the case of Entity or EntityList types,
+  ///   can be specified by table name.
+  /// </summary>
+  internal static class Factory<T> {
     private static SortedDictionary<string, Type> _types;
 
     /// <summary>

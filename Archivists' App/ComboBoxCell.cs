@@ -5,36 +5,36 @@ using System.Windows.Forms;
 using SoundExplorers.Data;
 
 namespace SoundExplorers {
+  /// <summary>
+  ///   ComboBox cell of a DataGridView.
+  /// </summary>
+  /// <remarks>
+  ///   The cell displays dates in ordinary text box cells,
+  ///   but when the user edits a cell, a ComboBox control appears.
+  /// </remarks>
+  internal class ComboBoxCell : DataGridViewTextBoxCell {
     /// <summary>
-    ///   ComboBox cell of a DataGridView.
+    ///   Gets or sets the entity column metadata.
     /// </summary>
     /// <remarks>
-    ///   The cell displays dates in ordinary text box cells,
-    ///   but when the user edits a cell, a ComboBox control appears.
+    ///   For unknown reason,
+    ///   non-inherited properties of a ComboBoxCell
+    ///   (i.e. that are not inherited from DataGridViewTextBoxCell)
+    ///   to which a DataGridViewColumn.CellTemplate
+    ///   has been set
+    ///   don't persist when a cell is edited.
+    ///   So we are going to store this property in the Tag.
+    ///   That solves the problem.
     /// </remarks>
-    internal class ComboBoxCell : DataGridViewTextBoxCell {
-        /// <summary>
-        ///   Gets or sets the entity column metadata.
-        /// </summary>
-        /// <remarks>
-        ///   For unknown reason,
-        ///   non-inherited properties of a ComboBoxCell
-        ///   (i.e. that are not inherited from DataGridViewTextBoxCell)
-        ///   to which a DataGridViewColumn.CellTemplate
-        ///   has been set
-        ///   don't persist when a cell is edited.
-        ///   So we are going to store this property in the Tag.
-        ///   That solves the problem.
-        /// </remarks>
-        public virtual IEntityColumn Column {
+    public virtual IEntityColumn Column {
       get => Tag as IEntityColumn;
       set => Tag = value;
     }
 
-        /// <summary>
-        ///   Gets the cell's combo box.
-        /// </summary>
-        private ComboBoxEditingControl ComboBox =>
+    /// <summary>
+    ///   Gets the cell's combo box.
+    /// </summary>
+    private ComboBoxEditingControl ComboBox =>
       DataGridView.EditingControl as ComboBoxEditingControl;
 
     public override Type EditType =>

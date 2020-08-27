@@ -70,6 +70,11 @@ namespace SoundExplorers {
 	/// </remarks>
 	public class SplashFormBase : Form, IMessageUpdater {
 		/// <summary>
+		///   Required designer variable.
+		/// </summary>
+		private readonly Container components = null;
+
+		/// <summary>
 		///   A <see cref="System.Windows.Forms.Panel" />
 		///   onto which
 		///   <see cref="System.Windows.Forms.Control" />s
@@ -83,11 +88,6 @@ namespace SoundExplorers {
 		///   load status can be shown.
 		/// </summary>
 		public Label StatusLabel;
-
-		/// <summary>
-		///   Required designer variable.
-		/// </summary>
-		private readonly Container components = null;
 
     private string _status = "";
 

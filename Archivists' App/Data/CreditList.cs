@@ -3,53 +3,53 @@ using System.Data;
 using Devart.Data.PostgreSql;
 
 namespace SoundExplorers.Data {
+  /// <summary>
+  ///   A list of Credits.
+  /// </summary>
+  internal class CreditList : EntityList<Credit> {
+    /// <overloads>
+    ///   Initialises a new instance of the <see cref="CreditList" /> class.
+    /// </overloads>
     /// <summary>
-    ///   A list of Credits.
+    ///   Initialises a new instance of the <see cref="CreditList" /> class
+    ///   and, when the <paramref name="empty" /> parameter is False (default),
+    ///   populating its list
+    ///   with all the Credit records on the database
+    ///   and including all the Piece records as a parent list.
     /// </summary>
-    internal class CreditList : EntityList<Credit> {
-        /// <overloads>
-        ///   Initialises a new instance of the <see cref="CreditList" /> class.
-        /// </overloads>
-        /// <summary>
-        ///   Initialises a new instance of the <see cref="CreditList" /> class
-        ///   and, when the <paramref name="empty" /> parameter is False (default),
-        ///   populating its list
-        ///   with all the Credit records on the database
-        ///   and including all the Piece records as a parent list.
-        /// </summary>
-        /// <param name="empty">
-        ///   Whether an empty list is to be created.
-        ///   Default False.
-        /// </param>
-        public CreditList(bool empty = false)
+    /// <param name="empty">
+    ///   Whether an empty list is to be created.
+    ///   Default False.
+    /// </param>
+    public CreditList(bool empty = false)
       : this(null, empty) { }
 
-        /// <summary>
-        ///   Initialises a new instance of the <see cref="CreditList" /> class,
-        ///   populating its list
-        ///   with all the Credit records on the database
-        ///   and including all the Piece records as a parent list.
-        /// </summary>
-        public CreditList()
+    /// <summary>
+    ///   Initialises a new instance of the <see cref="CreditList" /> class,
+    ///   populating its list
+    ///   with all the Credit records on the database
+    ///   and including all the Piece records as a parent list.
+    /// </summary>
+    public CreditList()
       : this(typeof(PieceList), false) { }
 
-        /// <summary>
-        ///   Initialises a new instance of the <see cref="CreditList" /> class
-        ///   and, when the <paramref name="empty" /> parameter is False (default),
-        ///   populating its list
-        ///   with all the Credit records on the database,
-        ///   optionally specifying the type of parent entity list
-        ///   to include.
-        /// </summary>
-        /// <param name="parentListType">
-        ///   Optionally specifies the type of parent entity list
-        ///   to include.  Null if a parent list is not required.
-        /// </param>
-        /// <param name="empty">
-        ///   Whether an empty list is to be created.
-        ///   Default False.
-        /// </param>
-        public CreditList(
+    /// <summary>
+    ///   Initialises a new instance of the <see cref="CreditList" /> class
+    ///   and, when the <paramref name="empty" /> parameter is False (default),
+    ///   populating its list
+    ///   with all the Credit records on the database,
+    ///   optionally specifying the type of parent entity list
+    ///   to include.
+    /// </summary>
+    /// <param name="parentListType">
+    ///   Optionally specifies the type of parent entity list
+    ///   to include.  Null if a parent list is not required.
+    /// </param>
+    /// <param name="empty">
+    ///   Whether an empty list is to be created.
+    ///   Default False.
+    /// </param>
+    public CreditList(
       Type parentListType = null,
       bool empty = false)
       : base(parentListType, empty: empty) { }

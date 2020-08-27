@@ -3,17 +3,17 @@ using System.Linq;
 using System.Windows.Forms;
 
 namespace SoundExplorers {
+  /// <summary>
+  ///   Contains the main entry point for the application.
+  /// </summary>
+  internal static class Program {
     /// <summary>
-    ///   Contains the main entry point for the application.
+    ///   The main entry point for the application.
     /// </summary>
-    internal static class Program {
-        /// <summary>
-        ///   The main entry point for the application.
-        /// </summary>
-        /// <param name="args">
-        ///   Command line arguments.
-        /// </param>
-        [STAThread]
+    /// <param name="args">
+    ///   Command line arguments.
+    /// </param>
+    [STAThread]
     private static void Main(string[] args) {
       string entityTypeName = null;
       if (args.Count() > 0) {

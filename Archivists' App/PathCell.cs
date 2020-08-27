@@ -4,56 +4,56 @@ using System.Windows.Forms;
 using SoundExplorers.Data;
 
 namespace SoundExplorers {
+  /// <summary>
+  ///   Path cell of a DataGridView.
+  /// </summary>
+  /// <remarks>
+  ///   The cell displays dates in ordinary text box cells,
+  ///   but when the user edits a cell, a text box and
+  ///   a browse button to show an open dialogue appear.
+  ///   <para>
+  ///     After updating the path in the text box,
+  ///     to complete the edit of the cell with the keyboard
+  ///     without showing the open dialogue,
+  ///     press F2.
+  ///   </para>
+  ///   <para>
+  ///     After updating the path in the text box,
+  ///     Control+Enter, like F2,
+  ///     completes the edit of the cell with the keyboard
+  ///     without showing the open dialogue.
+  ///     But, unlike F2,
+  ///     Control+Enter also attempts to update the database.
+  ///     Control+Enter is not recommended because,
+  ///     for unknown reason,
+  ///     when there's a database update error and the rejected values
+  ///     are restored to the row and the cell put into edit mode,
+  ///     if the edit is then cancelled (by pressing Esc),
+  ///     the original values do not get restored.
+  ///     That's why it is worth implementing F2 to end edit here.
+  ///   </para>
+  ///   <para>
+  ///     On a Mac keyboard,
+  ///     ⌘+Enter completes the edit and goes to next row.
+  ///     (Command (⌘) key on a Mac keyboard does the same
+  ///     as Windows/Start key on a Windows keyboard.)
+  ///   </para>
+  /// </remarks>
+  internal class PathCell : DataGridViewTextBoxCell {
     /// <summary>
-    ///   Path cell of a DataGridView.
+    ///   Gets or sets the entity column metadata.
     /// </summary>
     /// <remarks>
-    ///   The cell displays dates in ordinary text box cells,
-    ///   but when the user edits a cell, a text box and
-    ///   a browse button to show an open dialogue appear.
-    ///   <para>
-    ///     After updating the path in the text box,
-    ///     to complete the edit of the cell with the keyboard
-    ///     without showing the open dialogue,
-    ///     press F2.
-    ///   </para>
-    ///   <para>
-    ///     After updating the path in the text box,
-    ///     Control+Enter, like F2,
-    ///     completes the edit of the cell with the keyboard
-    ///     without showing the open dialogue.
-    ///     But, unlike F2,
-    ///     Control+Enter also attempts to update the database.
-    ///     Control+Enter is not recommended because,
-    ///     for unknown reason,
-    ///     when there's a database update error and the rejected values
-    ///     are restored to the row and the cell put into edit mode,
-    ///     if the edit is then cancelled (by pressing Esc),
-    ///     the original values do not get restored.
-    ///     That's why it is worth implementing F2 to end edit here.
-    ///   </para>
-    ///   <para>
-    ///     On a Mac keyboard,
-    ///     ⌘+Enter completes the edit and goes to next row.
-    ///     (Command (⌘) key on a Mac keyboard does the same
-    ///     as Windows/Start key on a Windows keyboard.)
-    ///   </para>
+    ///   For unknown reason,
+    ///   non-inherited properties of a PathCell
+    ///   (i.e. that are not inherited from DataGridViewTextBoxCell)
+    ///   to which a DataGridViewColumn.CellTemplate
+    ///   has been set
+    ///   don't persist when a cell is edited.
+    ///   So we are going to store this property in the Tag.
+    ///   That solves the problem.
     /// </remarks>
-    internal class PathCell : DataGridViewTextBoxCell {
-        /// <summary>
-        ///   Gets or sets the entity column metadata.
-        /// </summary>
-        /// <remarks>
-        ///   For unknown reason,
-        ///   non-inherited properties of a PathCell
-        ///   (i.e. that are not inherited from DataGridViewTextBoxCell)
-        ///   to which a DataGridViewColumn.CellTemplate
-        ///   has been set
-        ///   don't persist when a cell is edited.
-        ///   So we are going to store this property in the Tag.
-        ///   That solves the problem.
-        /// </remarks>
-        public virtual IEntityColumn Column {
+    public virtual IEntityColumn Column {
       get => Tag as IEntityColumn;
       set => Tag = value;
     }

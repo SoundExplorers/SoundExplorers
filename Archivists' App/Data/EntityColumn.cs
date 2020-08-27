@@ -2,10 +2,10 @@
 using System.Reflection;
 
 namespace SoundExplorers.Data {
-    /// <summary>
-    ///   Entity column metadata.
-    /// </summary>
-    internal class EntityColumn<T> : IEntityColumn
+  /// <summary>
+  ///   Entity column metadata.
+  /// </summary>
+  internal class EntityColumn<T> : IEntityColumn
     where T : Entity<T> {
     private string _nameOnDb;
 

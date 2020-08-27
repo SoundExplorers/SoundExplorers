@@ -1,10 +1,10 @@
 ﻿using System;
 
 namespace SoundExplorers.Data {
-    /// <summary>
-    ///   Credit entity.
-    /// </summary>
-    internal class Credit : Entity<Credit>, IMediaEntity {
+  /// <summary>
+  ///   Credit entity.
+  /// </summary>
+  internal class Credit : Entity<Credit>, IMediaEntity {
     [Field] public string Act { get; set; }
 
     [PrimaryKeyField]

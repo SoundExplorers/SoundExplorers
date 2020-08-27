@@ -2,36 +2,36 @@
 using Devart.Data.PostgreSql;
 
 namespace SoundExplorers.Data {
+  /// <summary>
+  ///   A list of Pieces.
+  /// </summary>
+  internal class PieceList : EntityList<Piece> {
+    /// <overloads>
+    ///   Initialises a new instance of the <see cref="PieceList" /> class,
+    ///   populating its list
+    ///   with all the Piece records on the database.
+    /// </overloads>
     /// <summary>
-    ///   A list of Pieces.
+    ///   Initialises a new instance of the <see cref="PieceList" /> class,
+    ///   populating its list
+    ///   with all the Piece records on the database
+    ///   and including all the Set records as a parent list.
     /// </summary>
-    internal class PieceList : EntityList<Piece> {
-        /// <overloads>
-        ///   Initialises a new instance of the <see cref="PieceList" /> class,
-        ///   populating its list
-        ///   with all the Piece records on the database.
-        /// </overloads>
-        /// <summary>
-        ///   Initialises a new instance of the <see cref="PieceList" /> class,
-        ///   populating its list
-        ///   with all the Piece records on the database
-        ///   and including all the Set records as a parent list.
-        /// </summary>
-        public PieceList()
+    public PieceList()
       : this(typeof(SetList)) { }
 
-        /// <summary>
-        ///   Initialises a new instance of the <see cref="PieceList" /> class,
-        ///   populating its list
-        ///   with all the Piece records on the database,
-        ///   optionally specifying the type of parent entity list
-        ///   to include.
-        /// </summary>
-        /// <param name="parentListType">
-        ///   Optionally specifies the type of parent entity list
-        ///   to include.  Null if a parent list is not required.
-        /// </param>
-        public PieceList(Type parentListType = null)
+    /// <summary>
+    ///   Initialises a new instance of the <see cref="PieceList" /> class,
+    ///   populating its list
+    ///   with all the Piece records on the database,
+    ///   optionally specifying the type of parent entity list
+    ///   to include.
+    /// </summary>
+    /// <param name="parentListType">
+    ///   Optionally specifies the type of parent entity list
+    ///   to include.  Null if a parent list is not required.
+    /// </param>
+    public PieceList(Type parentListType = null)
       : base(parentListType) { }
 
     public PieceList(

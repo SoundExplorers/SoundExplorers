@@ -5,12 +5,12 @@ using System.Drawing.Imaging;
 using System.Windows.Forms;
 
 namespace SoundExplorers {
-    /// <summary>
-    ///   A picture box control for displaying an image,
-    ///   which will be resized to fit the picture box
-    ///   while retaining image's original aspect ratio.
-    /// </summary>
-    internal class FittedPictureBox : PictureBox {
+  /// <summary>
+  ///   A picture box control for displaying an image,
+  ///   which will be resized to fit the picture box
+  ///   while retaining image's original aspect ratio.
+  /// </summary>
+  internal class FittedPictureBox : PictureBox {
     private string _imageLocation;
     private Bitmap Original;
 

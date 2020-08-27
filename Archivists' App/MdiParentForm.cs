@@ -5,10 +5,10 @@ using System.Windows.Forms;
 
 namespace SoundExplorers {
   public partial class MdiParentForm : Form {
-      /// <summary>
-      ///   Initialises a new instance of the <see cref="MdiParentForm" /> class.
-      /// </summary>
-      public MdiParentForm() {
+    /// <summary>
+    ///   Initialises a new instance of the <see cref="MdiParentForm" /> class.
+    /// </summary>
+    public MdiParentForm() {
       SplashManager.Status = "Building window...";
       InitializeComponent();
       try {

@@ -1,8 +1,8 @@
 ﻿namespace SoundExplorers.Data {
-    /// <summary>
-    ///   Artist entity.
-    /// </summary>
-    internal class Artist : PieceOwningMediaEntity<Artist> {
+  /// <summary>
+  ///   Artist entity.
+  /// </summary>
+  internal class Artist : PieceOwningMediaEntity<Artist> {
     [Field] public string Comments { get; set; }
     [UniqueKeyField] public string Forename { get; set; }
 

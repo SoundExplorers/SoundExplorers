@@ -7,48 +7,48 @@ using System.Reflection;
 using Devart.Data.PostgreSql;
 
 namespace SoundExplorers.Data {
-    /// <summary>
-    ///   Entity list base class.
-    /// </summary>
-    internal abstract class EntityList<T> : List<IEntity>, IEntityList
+  /// <summary>
+  ///   Entity list base class.
+  /// </summary>
+  internal abstract class EntityList<T> : List<IEntity>, IEntityList
     where T : Entity<T> {
-        /// <summary>
-        ///   Initialises a new instance of the <see cref="EntityList" /> class,
-        ///   optionally specifying SQL commands,
-        ///   fetching all the records of the represented table.
-        /// </summary>
-        /// <param name="parentListType">
-        ///   Optionally specifies the type of parent entity list
-        ///   to include.  Null if a parent entity list is not required.
-        /// </param>
-        /// <param name="selectCommand">
-        ///   Optionally specifies the SELECT command.
-        ///   Null to to get the SQL from an embedded resource file,
-        ///   if found, or generate it
-        /// </param>
-        /// <param name="insertCommand">
-        ///   Optionally specifies the INSERT command.
-        ///   Null to to get the SQL from an embedded resource file,
-        ///   if found, or generate it
-        /// </param>
-        /// <param name="updateCommand">
-        ///   Optionally specifies the UPDATE command.
-        ///   Null to to get the SQL from an embedded resource file,
-        ///   if found, or generate it
-        /// </param>
-        /// <param name="deleteCommand">
-        ///   Optionally specifies the DELETE command.
-        ///   Null to to get the SQL from an embedded resource file,
-        ///   if found, or generate it
-        /// </param>
-        /// <param name="empty">
-        ///   Whether an empty list is to be created.
-        ///   Default False.
-        /// </param>
-        /// <exception cref="DataException">
-        ///   Error on preparing one of the SQL commands.
-        /// </exception>
-        protected EntityList(
+    /// <summary>
+    ///   Initialises a new instance of the <see cref="EntityList" /> class,
+    ///   optionally specifying SQL commands,
+    ///   fetching all the records of the represented table.
+    /// </summary>
+    /// <param name="parentListType">
+    ///   Optionally specifies the type of parent entity list
+    ///   to include.  Null if a parent entity list is not required.
+    /// </param>
+    /// <param name="selectCommand">
+    ///   Optionally specifies the SELECT command.
+    ///   Null to to get the SQL from an embedded resource file,
+    ///   if found, or generate it
+    /// </param>
+    /// <param name="insertCommand">
+    ///   Optionally specifies the INSERT command.
+    ///   Null to to get the SQL from an embedded resource file,
+    ///   if found, or generate it
+    /// </param>
+    /// <param name="updateCommand">
+    ///   Optionally specifies the UPDATE command.
+    ///   Null to to get the SQL from an embedded resource file,
+    ///   if found, or generate it
+    /// </param>
+    /// <param name="deleteCommand">
+    ///   Optionally specifies the DELETE command.
+    ///   Null to to get the SQL from an embedded resource file,
+    ///   if found, or generate it
+    /// </param>
+    /// <param name="empty">
+    ///   Whether an empty list is to be created.
+    ///   Default False.
+    /// </param>
+    /// <exception cref="DataException">
+    ///   Error on preparing one of the SQL commands.
+    /// </exception>
+    protected EntityList(
       Type parentListType = null,
       SelectCommand<T> selectCommand = null,
       InsertCommand<T> insertCommand = null,
@@ -93,10 +93,10 @@ namespace SoundExplorers.Data {
       Refresh();
     }
 
-        /// <summary>
-        ///   Gets or sets the data adapter.
-        /// </summary>
-        protected OurSqlDataAdapter<T> Adapter { get; set; }
+    /// <summary>
+    ///   Gets or sets the data adapter.
+    /// </summary>
+    protected OurSqlDataAdapter<T> Adapter { get; set; }
 
     protected IEntity Entity { get; set; }
     private IEntity UnchangedEntity { get; set; }
@@ -421,7 +421,8 @@ namespace SoundExplorers.Data {
       Adapter.Fill(table);
       for (var i = 0; i < table.Columns.Count; i++) {
         var tableColumn = table.Columns[i];
-        tableColumn.ColumnName = Entity.Columns[tableColumn.ColumnName].ColumnName;
+        tableColumn.ColumnName =
+          Entity.Columns[tableColumn.ColumnName].ColumnName;
       } // End of for
       return table;
     }

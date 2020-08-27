@@ -5,15 +5,15 @@ using System.Reflection;
 using Devart.Data.PostgreSql;
 
 namespace SoundExplorers.Data {
-    /// <summary>
-    ///   Entity base class.
-    /// </summary>
-    /// <remarks>
-    ///   For SQL generation to work,
-    ///   the name of a derived class should be
-    ///   the name of the corresponding database table.
-    /// </remarks>
-    internal class Entity<T> : IEntity
+  /// <summary>
+  ///   Entity base class.
+  /// </summary>
+  /// <remarks>
+  ///   For SQL generation to work,
+  ///   the name of a derived class should be
+  ///   the name of the corresponding database table.
+  /// </remarks>
+  internal class Entity<T> : IEntity
     // This recursion of the generic type
     // allows reflection to examine the properties 
     // of derived classes.

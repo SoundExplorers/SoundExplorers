@@ -1,8 +1,8 @@
 ﻿namespace SoundExplorers.Data {
-    /// <summary>
-    ///   An Entity that can have mutliple Pieces associated with it.
-    /// </summary>
-    internal abstract class PieceOwningEntity<T> : Entity<T>, IPieceOwningEntity
+  /// <summary>
+  ///   An Entity that can have mutliple Pieces associated with it.
+  /// </summary>
+  internal abstract class PieceOwningEntity<T> : Entity<T>, IPieceOwningEntity
     where T : PieceOwningEntity<T> {
     private PieceList _pieces;
 

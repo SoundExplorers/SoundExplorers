@@ -2,10 +2,10 @@
 using System.Windows.Forms;
 
 namespace SoundExplorers {
-    /// <summary>
-    ///   Editing control for a calendar cell of a DataGridView.
-    /// </summary>
-    internal class
+  /// <summary>
+  ///   Editing control for a calendar cell of a DataGridView.
+  /// </summary>
+  internal class
     ComboBoxEditingControl : ComboBox, IDataGridViewEditingControl {
     public ComboBoxEditingControl() {
       DropDownStyle = ComboBoxStyle.DropDownList;
