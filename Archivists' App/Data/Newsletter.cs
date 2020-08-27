@@ -8,7 +8,7 @@ namespace SoundExplorers.Data {
   internal class Newsletter : PieceOwningEntity<Newsletter> {
     private static DirectoryInfo _defaultFolder;
     private static Option _defaultFolderOption;
-    [PrimaryKeyField] public DateTime Date { get; set; }
+    [PrimaryKeyField(1)] public DateTime Date { get; set; }
 
     /// <summary>
     ///   Gets or sets a default folder to be used,
@@ -49,6 +49,6 @@ namespace SoundExplorers.Data {
       }
     }
 
-    [UniqueKeyField] public string Path { get; set; }
+    [UniqueKeyField(1)] public string Path { get; set; }
   } //End of class
 } //End of namespace

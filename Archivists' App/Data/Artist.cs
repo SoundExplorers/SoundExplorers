@@ -3,8 +3,8 @@
   ///   Artist entity.
   /// </summary>
   internal class Artist : PieceOwningMediaEntity<Artist> {
-    [Field] public string Comments { get; set; }
-    [UniqueKeyField] public string Forename { get; set; }
+    [Field(3)] public string Comments { get; set; }
+    [UniqueKeyField(1)] public string Forename { get; set; }
 
     [PrimaryKeyField]
     [HiddenField]
@@ -14,7 +14,7 @@
        + " "
        + (Surname != null ? Surname : string.Empty)).Trim();
 
-    [UniqueKeyField] public string Surname { get; set; }
+    [UniqueKeyField(2)] public string Surname { get; set; }
 
     //#region Private Fields
     //private string _name;

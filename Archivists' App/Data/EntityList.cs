@@ -427,15 +427,7 @@ namespace SoundExplorers.Data {
                                   tableColumn.ColumnName == "pieceno"
                                    ? "Piece"
                                    : null);
-        // if (entityColumn == null) {
-        //   Debug.WriteLine(tableColumn.ColumnName);
-        //   foreach (var column in Entity.Columns) {
-        //     Debug.WriteLine(column.ColumnName);
-        //   }
-        // }
-        // tableColumn.ColumnName =
-        //   Entity.Columns[tableColumn.ColumnName].ColumnName;
-      } // End of for
+      }
       return table;
     }
 

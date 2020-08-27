@@ -32,7 +32,7 @@ namespace SoundExplorers.Data {
       !string.IsNullOrEmpty(AudioPath)
       && File.Exists(AudioPath);
 
-    [Field] public string AudioPath { get; set; }
+    [Field(3)] public string AudioPath { get; set; }
 
     /// <summary>
     ///   Gets the values generated from the data of the Piece and its Credits
@@ -42,7 +42,7 @@ namespace SoundExplorers.Data {
     /// </summary>
     public PieceAudioTags AudioTags { get; }
 
-    [Field] public string Comments { get; set; }
+    [Field(5)] public string Comments { get; set; }
 
     /// <summary>
     ///   Gets or sets the Piece's child Credits.
@@ -163,13 +163,13 @@ namespace SoundExplorers.Data {
       set => _original = value;
     }
 
-    [PrimaryKeyField] public int PieceNo { get; set; }
+    [PrimaryKeyField(1)] public int PieceNo { get; set; }
 
     [PrimaryKeyField]
     [ReferencedField("SetNo")]
     public int Set { get; set; }
 
-    [Field] public string Title { get; set; }
+    [Field(2)] public string Title { get; set; }
 
     /// <summary>
     ///   Gets whether the file, if any, specified by
@@ -180,7 +180,7 @@ namespace SoundExplorers.Data {
       !string.IsNullOrEmpty(VideoPath)
       && File.Exists(VideoPath);
 
-    [Field] public string VideoPath { get; set; }
+    [Field(4)] public string VideoPath { get; set; }
 
     /// <summary>
     ///   Updates the metadata tags of any audio file

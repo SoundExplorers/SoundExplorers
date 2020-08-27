@@ -80,6 +80,7 @@
     <Compile Include="Data\AudioFile.cs" />
     <Compile Include="Data\AudioFileTags.cs" />
     <Compile Include="Data\AudioTags.cs" />
+    <Compile Include="Data\HiddenFieldAttribute.cs" />
     <Compile Include="Data\PieceOwningMediaEntity.cs" />
     <Compile Include="Data\IMediaEntity.cs" />
     <Compile Include="Data\IPieceOwningEntity.cs" />
@@ -89,6 +90,8 @@
     <Compile Include="Data\PieceOwningEntity.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Data\PrimaryKeyFieldAttribute.cs" />
+    <Compile Include="Data\ReferencedFieldAttribute.cs" />
     <Compile Include="Data\RowUpdatedEventArgs.cs" />
     <Compile Include="Data\RowErrorEventArgs.cs" />
     <Compile Include="Data\EntityColumnList.cs" />
@@ -105,6 +108,7 @@
     <Compile Include="Data\SetList.cs" />
     <Compile Include="Data\Set.cs" />
     <Compile Include="Data\IEntity.cs" />
+    <Compile Include="Data\UniqueKeyFieldAttribute.cs" />
     <Compile Include="Data\UserOptionList.cs" />
     <Compile Include="Data\Performance.cs" />
     <Compile Include="Data\PerformanceList.cs" />
@@ -146,7 +150,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Data\EntityColumn.cs" />
-    <Compile Include="Data\CustomAttributes.cs" />
+    <Compile Include="Data\FieldAttribute.cs" />
     <Compile Include="Data\IEntityList.cs" />
     <Compile Include="Data\LocationList.cs" />
     <Compile Include="Data\Entity.cs" />

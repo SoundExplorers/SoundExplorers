@@ -3,8 +3,8 @@
   ///   Location entity.
   /// </summary>
   internal class Location : PieceOwningMediaEntity<Location> {
-    [Field] public string Comments { get; set; }
-    [PrimaryKeyField] public string LocationId { get; set; }
-    [UniqueKeyField] public string Name { get; set; }
+    [Field(3)] public string Comments { get; set; }
+    [PrimaryKeyField(1)] public string LocationId { get; set; }
+    [UniqueKeyField(2)] public string Name { get; set; }
   } //End of class
 } //End of namespace

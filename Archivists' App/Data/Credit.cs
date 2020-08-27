@@ -5,10 +5,10 @@ namespace SoundExplorers.Data {
   ///   Credit entity.
   /// </summary>
   internal class Credit : Entity<Credit>, IMediaEntity {
-    [Field] public string Act { get; set; }
+    [Field(0)] public string Act { get; set; }
 
-    [PrimaryKeyField]
-    [ReferencedField("Name")]
+    [PrimaryKeyField(1)]
+    [ReferencedField("Name", 1)]
     public string Artist { get; set; }
 
     [PrimaryKeyField] public DateTime Date { get; set; }
@@ -22,8 +22,8 @@ namespace SoundExplorers.Data {
     [ReferencedField("PieceNo")]
     public int Piece { get; set; }
 
-    [PrimaryKeyField]
-    [ReferencedField("Name")]
+    [PrimaryKeyField(2)]
+    [ReferencedField("Name",2)]
     public string Role { get; set; }
 
     [PrimaryKeyField]

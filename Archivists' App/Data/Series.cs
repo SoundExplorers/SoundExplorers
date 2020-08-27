@@ -3,8 +3,8 @@
   ///   Series entity.
   /// </summary>
   internal class Series : PieceOwningEntity<Series> {
-    [Field] public string Comments { get; set; }
-    [UniqueKeyField] public string Name { get; set; }
-    [PrimaryKeyField] public string SeriesId { get; set; }
+    [Field(3)] public string Comments { get; set; }
+    [UniqueKeyField(2)] public string Name { get; set; }
+    [PrimaryKeyField(1)] public string SeriesId { get; set; }
   } //End of class
 } //End of namespace

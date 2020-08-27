@@ -11,7 +11,7 @@ namespace SoundExplorers.Data {
     private static DirectoryInfo _defaultFolder;
     private static Option _defaultFolderOption;
     private static PgSqlCommand _selectNextImageIdCommand;
-    [Field] public string Comments { get; set; }
+    [Field(0)] public string Comments { get; set; }
     [ReferencedField("Performance.Date")] public DateTime Date { get; set; }
 
     /// <summary>
@@ -64,7 +64,7 @@ namespace SoundExplorers.Data {
 
     [PrimaryKeyField] [HiddenField] public int ImageId { get; set; }
     [ReferencedField("Name")] public string Location { get; set; }
-    [UniqueKeyField] public string Path { get; set; }
+    [UniqueKeyField(0)] public string Path { get; set; }
 
     /// <summary>
     ///   Gets an SQL command to select the next value in the ImageId column's sequence.
@@ -101,7 +101,7 @@ namespace SoundExplorers.Data {
       }
     }
 
-    [Field] public string Title { get; set; }
+    [Field(0)] public string Title { get; set; }
 
     /// <summary>
     ///   Fetches the Newsletter (i.e. not just the Newsletter date)

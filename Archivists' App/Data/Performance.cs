@@ -5,15 +5,15 @@ namespace SoundExplorers.Data {
   ///   Performance entity.
   /// </summary>
   internal class Performance : PieceOwningMediaEntity<Performance> {
-    [Field] public string Comments { get; set; }
-    [PrimaryKeyField] public DateTime Date { get; set; }
+    [Field(5)] public string Comments { get; set; }
+    [PrimaryKeyField(1)] public DateTime Date { get; set; }
 
-    [PrimaryKeyField]
-    [ReferencedField("Name")]
+    [PrimaryKeyField(2)]
+    [ReferencedField("Name", 2)]
     public string Location { get; set; }
 
-    [ReferencedField("Date")] public DateTime Newsletter { get; set; }
-    [ReferencedField("Name")] public string Series { get; set; }
+    [ReferencedField("Date", 4)] public DateTime Newsletter { get; set; }
+    [ReferencedField("Name", 3)] public string Series { get; set; }
 
     /// <summary>
     ///   Fetches the Performance's Newsletter (i.e. not just the Newsletter date)

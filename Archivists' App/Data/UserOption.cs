@@ -3,8 +3,8 @@
   ///   UserOption entity.
   /// </summary>
   internal class UserOption : Entity<UserOption> {
-    [PrimaryKeyField] public string OptionName { get; set; }
-    [Field] public string OptionValue { get; set; }
-    [PrimaryKeyField] public string UserId { get; set; }
+    [PrimaryKeyField(2)] public string OptionName { get; set; }
+    [Field(3)] public string OptionValue { get; set; }
+    [PrimaryKeyField(1)] public string UserId { get; set; }
   } //End of class
 } //End of namespace

@@ -346,7 +346,7 @@ namespace SoundExplorers.Data {
     /// <returns>
     ///   An <see cref="EntityColumnList" /> representing the columns.
     /// </returns>
-    protected virtual EntityColumnList CreateColumns() {
+    private EntityColumnList CreateColumns() {
       var properties = typeof(T).GetProperties();
       var columns = new EntityColumnList(properties.Count());
       foreach (var property in properties) {

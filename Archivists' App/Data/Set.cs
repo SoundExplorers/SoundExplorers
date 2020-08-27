@@ -5,8 +5,8 @@ namespace SoundExplorers.Data {
   ///   Set entity.
   /// </summary>
   internal class Set : PieceOwningMediaEntity<Set> {
-    [ReferencedField("Name")] public string Act { get; set; }
-    [Field] public string Comments { get; set; }
+    [ReferencedField("Name", 2)] public string Act { get; set; }
+    [Field(3)] public string Comments { get; set; }
     [PrimaryKeyField] public DateTime Date { get; set; }
 
     [PrimaryKeyField]
@@ -14,7 +14,7 @@ namespace SoundExplorers.Data {
     public string Location { get; set; }
 
     [ReferencedField("Date")] public DateTime Newsletter { get; set; }
-    [PrimaryKeyField] public int SetNo { get; set; }
+    [PrimaryKeyField(1)] public int SetNo { get; set; }
 
     /// <summary>
     ///   Fetches the Set's Newsletter (i.e. not just the Newsletter date)
