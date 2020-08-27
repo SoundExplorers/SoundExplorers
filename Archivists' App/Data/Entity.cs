@@ -355,7 +355,7 @@ namespace SoundExplorers.Data {
           from Attribute attribute in customAttributes
           where attribute.GetType().IsSubclassOf(typeof(FieldAttribute))
                 || attribute.GetType() == typeof(FieldAttribute)
-          select attribute).Count() >= 1;
+          select attribute).Any();
         if (propertyIsField) {
           var column = new EntityColumn<T>();
           var referencedFieldAttribute = (ReferencedFieldAttribute)(
@@ -430,18 +430,18 @@ namespace SoundExplorers.Data {
             where attribute.GetType()
                     .IsSubclassOf(typeof(PrimaryKeyFieldAttribute))
                   || attribute.GetType() == typeof(PrimaryKeyFieldAttribute)
-            select attribute).Count() >= 1;
+            select attribute).Any();
           column.IsInUniqueKey = (
             from Attribute attribute in customAttributes
             where attribute.GetType()
                     .IsSubclassOf(typeof(UniqueKeyFieldAttribute))
                   || attribute.GetType() == typeof(UniqueKeyFieldAttribute)
-            select attribute).Count() >= 1;
+            select attribute).Any();
           column.IsHidden = (
             from Attribute attribute in customAttributes
             where attribute.GetType().IsSubclassOf(typeof(HiddenFieldAttribute))
                   || attribute.GetType() == typeof(HiddenFieldAttribute)
-            select attribute).Count() >= 1;
+            select attribute).Any();
           column.Visible = !column.IsHidden;
           columns.Add(column);
         }
