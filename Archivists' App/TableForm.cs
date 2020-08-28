@@ -12,17 +12,17 @@ using ImageList = SoundExplorers.Data.ImageList;
 
 namespace SoundExplorers {
   internal partial class TableForm : Form {
-      /// <summary>
-      ///   Initialises a new instance of the <see cref="TableForm" /> class.
-      /// </summary>
-      /// <param name="tableName">
-      ///   The name of the table whose data is to be displayed.
-      /// </param>
-      public TableForm(
+    /// <summary>
+    ///   Initialises a new instance of the <see cref="TableForm" /> class.
+    /// </summary>
+    /// <param name="tableName">
+    ///   The name of the table whose data is to be displayed.
+    /// </param>
+    public TableForm(
       string tableName) {
       InitializeComponent();
       // A known Visual Studio bug is that PictureBox's AllowDrop property
-      // appears neither in the designer nor in intellisence.
+      // appears neither in the designer nor in intellisense.
       // But is does exist and is required in order to 
       // allow anything to be dropped on to the PictureBox.
       FittedPictureBox1.AllowDrop = true;
@@ -32,14 +32,27 @@ namespace SoundExplorers {
       OpenTable(TableName);
     }
 
-      /// <summary>
-      ///   The entity list representing the table whose data is shown on the form.
-      /// </summary>
-      public IEntityList Entities { get; protected set; }
+    /// <summary>
+    ///   The entity list representing the table whose data is shown on the form.
+    /// </summary>
+    public IEntityList Entities { get; private set; }
 
     private DataGridView FocusedGrid { get; set; }
     private Option GridSplitterDistanceOption { get; set; }
     private Option ImageSplitterDistanceOption { get; set; }
+
+    private DataGridViewRow MainCurrentRow => MainGrid.CurrentRow ??
+                                              throw new NullReferenceException(
+                                                nameof(MainGrid.CurrentRow));
+
+    private MdiParentForm MdiParentForm => (MdiParentForm)ParentForm ??
+                                           throw new NullReferenceException(
+                                             nameof(ParentForm));
+
+    private DataGridViewRow ParentCurrentRow => ParentGrid.CurrentRow ??
+                                                throw new NullReferenceException(
+                                                  nameof(ParentGrid.CurrentRow));
+
     private bool ParentRowChanged { get; set; }
     private RowErrorEventArgs RowErrorEventArgs { get; set; }
     private SizeableFormOptions SizeableFormOptions { get; set; }
@@ -59,7 +72,7 @@ namespace SoundExplorers {
       // (the only grid that can be edited)
       // and is already being edited.
       if (MainGrid.EditingControl is TextBox) {
-        var textBox = MainGrid.EditingControl as TextBox;
+        var textBox = (TextBox)MainGrid.EditingControl;
         if (string.IsNullOrEmpty(textBox.SelectedText)) {
           // Clipboard.SetText throws an exception
           // if passed an empty string.
@@ -67,7 +80,7 @@ namespace SoundExplorers {
         }
         Clipboard.SetText(textBox.SelectedText);
       } else if (MainGrid.EditingControl is PathEditingControl) {
-        (MainGrid.EditingControl as PathEditingControl).Copy();
+        ((PathEditingControl)MainGrid.EditingControl).Copy();
       }
     }
 
@@ -86,21 +99,21 @@ namespace SoundExplorers {
       if (!MainGrid.IsCurrentCellInEditMode) {
         MainGrid.BeginEdit(true);
         MainGrid.CurrentCell.Value = string.Empty;
-        ;
         MainGrid.EndEdit();
-      } else { // The cell is already being edited
-        if (MainGrid.EditingControl is TextBox) {
-          var textBox = MainGrid.EditingControl as TextBox;
-          if (string.IsNullOrEmpty(textBox.SelectedText)) {
+      } else {
+        switch (MainGrid.EditingControl) {
+          // The cell is already being edited
+          case TextBox textBox when string.IsNullOrEmpty(textBox.SelectedText):
             // Clipboard.SetText throws an exception
             // if passed an empty string.
             return;
-          }
-          Clipboard.SetText(textBox.SelectedText);
-          textBox.SelectedText = string.Empty;
-          ;
-        } else if (MainGrid.EditingControl is PathEditingControl) {
-          (MainGrid.EditingControl as PathEditingControl).Cut();
+          case TextBox textBox:
+            Clipboard.SetText(textBox.SelectedText);
+            textBox.SelectedText = string.Empty;
+            break;
+          case PathEditingControl pathEditingControl:
+            pathEditingControl.Cut();
+            break;
         }
       }
     }
@@ -141,7 +154,7 @@ namespace SoundExplorers {
     public void EditAudioFileTags() {
       try {
         string path = GetMediumPath(Medium.Audio);
-        var audioFile = new AudioFile(path);
+        var dummy = new AudioFile(path);
       } catch (ApplicationException ex) {
         MessageBox.Show(
           this,
@@ -163,8 +176,7 @@ namespace SoundExplorers {
     //}
 
     /// <summary>
-    ///   Handles the entity lists's
-    ///   <see cref="EntityList.RowError" /> event,
+    ///   Handles the entity list's EntityList.RowError event,
     ///   which occurs when there is an error on
     ///   attempting to insert, update or delete a database table row
     ///   corresponding to a row in the main grid.
@@ -178,14 +190,14 @@ namespace SoundExplorers {
       //    + MainGrid.IsCurrentCellInEditMode);
       RowErrorEventArgs = e;
       UpdateCancelled = true;
-      //ErrorIsInCurrentRow = (e.RowIndex == MainGrid.CurrentRow.Index);
+      //ErrorIsInCurrentRow = (e.RowIndex == MainCurrentRow.Index);
       //Debug.WriteLine("Entities_RowError ErrorIsInCurrentRow = " + ErrorIsInCurrentRow);
       RowErrorTimer.Start();
     }
 
     /// <summary>
-    ///   Handles the entity lists's
-    ///   <see cref="EntityList.RowError" /> event,
+    ///   Handles the entity list's
+    ///   EntityList.RowError event,
     ///   which occurs when a database table row
     ///   corresponding to a row in the main grid
     ///   has been successfully inserted or updated on the database
@@ -195,7 +207,7 @@ namespace SoundExplorers {
     /// <param name="e">Event arguments.</param>
     private void Entities_RowUpdated(object sender, RowUpdatedEventArgs e) {
       //Debug.WriteLine("Entities_RowUpdated RowIndex = " + e.RowIndex);
-      var statusLabel = (ParentForm as MdiParentForm).StatusLabel;
+      var statusLabel = MdiParentForm.StatusLabel;
       statusLabel.Text = e.Message;
       var mediaEntity = e.Entity as IMediaEntity;
       if (mediaEntity == null) {
@@ -239,7 +251,7 @@ namespace SoundExplorers {
       if (Entities is ImageList
           && !MainGrid.IsCurrentCellInEditMode
           && e.Data.GetDataPresent(DataFormats.FileDrop)) {
-        var pathCell = (PathCell)MainGrid.CurrentRow.Cells["Path"];
+        var pathCell = (PathCell)MainCurrentRow.Cells["Path"];
         DropPathOnCell(
           e.Data,
           pathCell);
@@ -429,7 +441,7 @@ namespace SoundExplorers {
       if (Entities is ArtistInImageList) {
         if (Entities.ParentList.Count > 0) {
           var image =
-            (Image)Entities.ParentList[ParentGrid.CurrentRow.Index];
+            (Image)Entities.ParentList[ParentCurrentRow.Index];
           return image.FetchNewsletter();
         }
         throw new ApplicationException(
@@ -439,7 +451,7 @@ namespace SoundExplorers {
       if (Entities is CreditList) {
         if (Entities.ParentList.Count > 0) {
           var piece =
-            (Piece)Entities.ParentList[ParentGrid.CurrentRow.Index];
+            (Piece)Entities.ParentList[ParentCurrentRow.Index];
           return piece.FetchNewsletter();
         }
         throw new ApplicationException(
@@ -447,7 +459,7 @@ namespace SoundExplorers {
           + "no Pieces are listed in the Credit window.");
       }
       if (Entities is ImageList) {
-        if (MainGrid.CurrentRow.IsNewRow) {
+        if (MainCurrentRow.IsNewRow) {
           throw new ApplicationException(
             "You must add the new Image before you can show its Performance's newsletter.");
         }
@@ -457,9 +469,9 @@ namespace SoundExplorers {
             + "you cannot show its Performance's newsletter.");
         }
         var image =
-          (Image)Entities[MainGrid.CurrentRow.Index];
-        if (image.Location != MainGrid.CurrentRow.Cells["Location"].Value.ToString()
-            || image.Date != (DateTime)MainGrid.CurrentRow.Cells["Date"].Value) {
+          (Image)Entities[MainCurrentRow.Index];
+        if (image.Location != MainCurrentRow.Cells["Location"].Value.ToString()
+            || image.Date != (DateTime)MainCurrentRow.Cells["Date"].Value) {
           throw new ApplicationException(
             "You must save or cancel changes to the Image "
             + "before you can show its Performance's newsletter.");
@@ -467,7 +479,7 @@ namespace SoundExplorers {
         return image.FetchNewsletter();
       }
       if (Entities is NewsletterList) {
-        if (MainGrid.CurrentRow.IsNewRow) {
+        if (MainCurrentRow.IsNewRow) {
           throw new ApplicationException(
             "You must add the new Newsletter before you can show it.");
         }
@@ -475,8 +487,8 @@ namespace SoundExplorers {
           throw new ApplicationException(
             "You cannot show the Newsletter while you are editing it.");
         }
-        var newsletter = (Newsletter)Entities[MainGrid.CurrentRow.Index];
-        if (newsletter.Path != MainGrid.CurrentRow.Cells["Path"].Value.ToString()) {
+        var newsletter = (Newsletter)Entities[MainCurrentRow.Index];
+        if (newsletter.Path != MainCurrentRow.Cells["Path"].Value.ToString()) {
           throw new ApplicationException(
             "You must save or cancel changes to the Newsletter before you can show it.");
         }
@@ -485,7 +497,7 @@ namespace SoundExplorers {
       if (Entities is PieceList) {
         if (Entities.ParentList.Count > 0) {
           var set =
-            (Set)Entities.ParentList[ParentGrid.CurrentRow.Index];
+            (Set)Entities.ParentList[ParentCurrentRow.Index];
           return set.FetchNewsletter();
         }
         throw new ApplicationException(
@@ -493,7 +505,7 @@ namespace SoundExplorers {
           + "no Sets are listed in the Piece window.");
       }
       if (Entities is PerformanceList) {
-        if (MainGrid.CurrentRow.IsNewRow) {
+        if (MainCurrentRow.IsNewRow) {
           throw new ApplicationException(
             "You must add the new Performance before you can show its newsletter.");
         }
@@ -502,9 +514,9 @@ namespace SoundExplorers {
             "You cannot show the Performance's newsletter "
             + "while you are editing the Performance.");
         }
-        var performance = (Performance)Entities[MainGrid.CurrentRow.Index];
+        var performance = (Performance)Entities[MainCurrentRow.Index];
         if (performance.Newsletter !=
-            (DateTime)MainGrid.CurrentRow.Cells["Newsletter"].Value) {
+            (DateTime)MainCurrentRow.Cells["Newsletter"].Value) {
           throw new ApplicationException(
             "You must save or cancel changes to the Performance "
             + "before you can show its newsletter.");
@@ -514,7 +526,7 @@ namespace SoundExplorers {
       if (Entities is SetList) {
         if (Entities.ParentList.Count > 0) {
           var performance =
-            (Performance)Entities.ParentList[ParentGrid.CurrentRow.Index];
+            (Performance)Entities.ParentList[ParentCurrentRow.Index];
           return performance.FetchNewsletter();
         }
         throw new ApplicationException(
@@ -541,13 +553,13 @@ namespace SoundExplorers {
     private Piece GetPiece() {
       if (Entities is CreditList) {
         if (Entities.ParentList.Count > 0) {
-          return (Piece)Entities.ParentList[ParentGrid.CurrentRow.Index];
+          return (Piece)Entities.ParentList[ParentCurrentRow.Index];
         }
         throw new ApplicationException(
           "You cannot play a Piece because no Pieces are listed in the Credit window.");
       }
       if (Entities is PieceList) {
-        if (MainGrid.CurrentRow.IsNewRow) {
+        if (MainCurrentRow.IsNewRow) {
           throw new ApplicationException(
             "You must add the new Piece before you can play it.");
         }
@@ -562,12 +574,12 @@ namespace SoundExplorers {
         // So we need to find it the hard way.
         var piece = (
           from Piece p in (PieceList)Entities
-          where p.Date == (DateTime)MainGrid.CurrentRow.Cells["Date"].Value
-                && p.Location == MainGrid.CurrentRow.Cells["Location"].Value.ToString()
-                && p.Set == (int)MainGrid.CurrentRow.Cells["Set"].Value
-                && p.PieceNo == (int)MainGrid.CurrentRow.Cells["PieceNo"].Value
-                && p.AudioPath == MainGrid.CurrentRow.Cells["AudioPath"].Value.ToString()
-                && p.VideoPath == MainGrid.CurrentRow.Cells["VideoPath"].Value.ToString()
+          where p.Date == (DateTime)MainCurrentRow.Cells["Date"].Value
+                && p.Location == MainCurrentRow.Cells["Location"].Value.ToString()
+                && p.Set == (int)MainCurrentRow.Cells["Set"].Value
+                && p.PieceNo == (int)MainCurrentRow.Cells["PieceNo"].Value
+                && p.AudioPath == MainCurrentRow.Cells["AudioPath"].Value.ToString()
+                && p.VideoPath == MainCurrentRow.Cells["VideoPath"].Value.ToString()
           select p).FirstOrDefault();
         if (piece == null) {
           // Piece not found.
@@ -623,7 +635,7 @@ namespace SoundExplorers {
     ///   </para>
     /// </remarks>
     private void Grid_MouseDown(object sender, MouseEventArgs e) {
-      var grid = sender as DataGridView;
+      var grid = (DataGridView)sender;
       if (MainGrid.IsCurrentCellInEditMode) {
         return;
       }
@@ -706,9 +718,8 @@ namespace SoundExplorers {
     ///   Otherwise the initial folder for the Open dialogue
     ///   will be set to this column-specific default folder.)
     ///   <para>
-    ///   </para>
-    ///   If an image path specifies a valid image,
-    ///   the image will be shown below the main grid.
+    ///     If an image path specifies a valid image,
+    ///     the image will be shown below the main grid.
     ///   </para>
     ///   <para>
     ///     If an image path does not specifies a valid image,
@@ -953,7 +964,7 @@ namespace SoundExplorers {
       //Debug.WriteLine("MainGrid_RowEnter");
       //
       // e.RowIndex is not necessarily the same as 
-      // MainGrid.CurrentRow.Index.
+      // MainCurrentRow.Index.
       // In any case MainGrid.CurrentRow will be null 
       // while the grid is being built
       // and possibly at other times.
@@ -964,9 +975,9 @@ namespace SoundExplorers {
       //Debug.WriteLine("(e.RowIndex == MainGrid.RowCount - 1) = " + (e.RowIndex == MainGrid.RowCount - 1));
       //Debug.WriteLine("MainGrid.CurrentRow == null? " + (MainGrid.CurrentRow == null).ToString());
       //try {
-      //    Debug.WriteLine("MainGrid.CurrentRow.Index = " + MainGrid.CurrentRow.Index);
-      //    Debug.WriteLine("(MainGrid.CurrentRow.Index == MainGrid.RowCount - 1) = " + (MainGrid.CurrentRow.Index == MainGrid.RowCount - 1));
-      //    Debug.WriteLine("MainGrid.CurrentRow.IsNewRow = " + MainGrid.CurrentRow.IsNewRow);
+      //    Debug.WriteLine("MainCurrentRow.Index = " + MainCurrentRow.Index);
+      //    Debug.WriteLine("(MainCurrentRow.Index == MainGrid.RowCount - 1) = " + (MainCurrentRow.Index == MainGrid.RowCount - 1));
+      //    Debug.WriteLine("MainCurrentRow.IsNewRow = " + MainCurrentRow.IsNewRow);
       //} catch {
       //}
       //
@@ -974,9 +985,9 @@ namespace SoundExplorers {
       if (e.RowIndex == MainGrid.RowCount - 1) {
         // Not this:
         //if (MainGrid.CurrentRow == null
-        //||  MainGrid.CurrentRow.Index == MainGrid.RowCount - 1) {
+        //||  MainCurrentRow.Index == MainGrid.RowCount - 1) {
         // Nor this:
-        //if (MainGrid.CurrentRow.IsNewRow) {
+        //if (MainCurrentRow.IsNewRow) {
         // New row
         //Debug.WriteLine("New row");
         UnchangedRow = null;
@@ -989,7 +1000,8 @@ namespace SoundExplorers {
       //Debug.WriteLine("Not new row");
       // The inserted/updated row is not necessarily the current row.
       var row = MainGrid.Rows[e.RowIndex];
-      UnchangedRow = (DataGridViewRow)row.Clone();
+      UnchangedRow = (DataGridViewRow)row.Clone() ??
+                     throw new NullReferenceException(nameof(row.Clone));
       for (var columnIndex = 0; columnIndex < MainGrid.ColumnCount; columnIndex++) {
         //Debug.WriteLine(
         //    MainGrid.Columns[columnIndex].Name + " = "
@@ -1020,7 +1032,7 @@ namespace SoundExplorers {
           parentPiece.Original = parentPiece.Clone();
         }
       } else if (Entities is ImageList) {
-        var image = Entities[e.RowIndex] as Image;
+        var image = (Image)Entities[e.RowIndex];
         ShowImageOrMessage(image.Path);
       } else if (Entities is PieceList) {
         var piece = (
@@ -1082,6 +1094,7 @@ namespace SoundExplorers {
           // Nasty!
           // So we convert the new and old values to strings before comparing them.
           // That fixes the problem.
+          // TODO Instead of converting to string, .Equals() should work.
           var newValue = MainGrid.Rows[e.RowIndex].Cells[column.Name].Value;
           string newString = newValue != null ? newValue.ToString() : string.Empty;
           var oldValue = UnchangedRow != null
@@ -1091,7 +1104,8 @@ namespace SoundExplorers {
           if (column.Visible
               && newString != oldString) {
             if (column.ValueType != typeof(DateTime)
-                || (DateTime)newValue != DateTime.Parse("01 Jan 1900")) {
+                || column.ValueType == typeof(DateTime) && newValue != null &&
+                (DateTime)newValue != DateTime.Parse("01 Jan 1900")) {
               isUpdateRequired = true;
             }
           }
@@ -1114,6 +1128,9 @@ namespace SoundExplorers {
           //    }
           //    isUpdateRequired = true;
           //}
+          if (Entities.Columns[column.Name] == null) {
+            throw new NullReferenceException("Entities.Columns[column.Name");
+          }
           if (Entities.Columns[column.Name].IsInPrimaryKey) {
             oldKeyFields.Add(column.Name, oldValue);
           }
@@ -1192,7 +1209,7 @@ namespace SoundExplorers {
       ParentRowChanged = true;
       if (Entities.ParentList is ImageList
           && e.RowIndex < Entities.ParentList.Count) {
-        var image = Entities.ParentList[e.RowIndex] as Image;
+        var image =(Image)Entities.ParentList[e.RowIndex];
         ShowImageOrMessage(image.Path);
       }
     }
@@ -1208,9 +1225,9 @@ namespace SoundExplorers {
           MainGrid.EndEdit();
         } else { // The cell is already being edited
           if (MainGrid.EditingControl is TextBox) {
-            (MainGrid.EditingControl as TextBox).SelectedText = Clipboard.GetText();
+            ((TextBox)MainGrid.EditingControl).SelectedText = Clipboard.GetText();
           } else if (MainGrid.EditingControl is PathEditingControl) {
-            (MainGrid.EditingControl as PathEditingControl).Paste();
+            ((PathEditingControl)MainGrid.EditingControl).Paste();
           }
         }
       }
@@ -1475,10 +1492,11 @@ namespace SoundExplorers {
           Debug.WriteLine("RowErrorEventArgs.RowIndex = " + RowErrorEventArgs.RowIndex);
           Debug.WriteLine("MainGrid.CurrentCell.ColumnIndex = " +
                           MainGrid.CurrentCell.ColumnIndex);
-          Debug.WriteLine("MainGrid.CurrentRow.Index = " + MainGrid.CurrentRow.Index);
+          Debug.WriteLine("MainCurrentRow.Index = " + MainCurrentRow.Index);
           Debug.WriteLine("MainGrid.ColumnCount = " + MainGrid.ColumnCount);
           Debug.WriteLine("MainGrid.RowCount = " + MainGrid.RowCount);
           Debug.WriteLine("Entities.Count = " + Entities.Count);
+          // ReSharper disable once EmptyGeneralCatchClause
         } catch { }
         // Leave the breakpoint on Debug.Assert.
         // That way, if I hit the problem again,
@@ -1500,7 +1518,7 @@ namespace SoundExplorers {
         var rejectedValue = RowErrorEventArgs.RejectedValues[columnIndex];
         // All the rejected values will be DBNull if the user had tried to delete the row.
         if (rejectedValue != DBNull.Value) {
-          MainGrid.CurrentRow.Cells[columnIndex].Value = rejectedValue;
+          MainCurrentRow.Cells[columnIndex].Value = rejectedValue;
         }
       } //End of for
       if (RowErrorEventArgs.Exception is ApplicationException
@@ -1534,14 +1552,14 @@ namespace SoundExplorers {
     ///   unless it does not correspond to what is required.
     /// </remarks>
     private void ShowImageOrMessage(string path) {
-      const string NOT_SPECIFIED_MESSAGE =
+      const string notSpecifiedMessage =
         "You may drag an image file here.";
-      string InvalidImageMessage =
+      string invalidImageMessage =
         "The file is not an image." + Environment.NewLine
-                                    + NOT_SPECIFIED_MESSAGE;
-      string NotFoundMessage =
+                                    + notSpecifiedMessage;
+      string notFoundMessage =
         "The image file cannot be found." + Environment.NewLine
-                                          + NOT_SPECIFIED_MESSAGE;
+                                          + notSpecifiedMessage;
       var isRefreshRequired = false;
       if (!string.IsNullOrEmpty(path)
           && File.Exists(path)) {
@@ -1555,9 +1573,9 @@ namespace SoundExplorers {
       } else { // Not an existing file
         if (MissingImageLabel.Visible) {
           if (string.IsNullOrEmpty(path)
-              && MissingImageLabel.Text != NOT_SPECIFIED_MESSAGE) {
+              && MissingImageLabel.Text != notSpecifiedMessage) {
             isRefreshRequired = true;
-          } else if (MissingImageLabel.Text != NotFoundMessage) {
+          } else if (MissingImageLabel.Text != notFoundMessage) {
             isRefreshRequired = true;
           }
         } else { // Not an existing file but picture shown
@@ -1573,14 +1591,14 @@ namespace SoundExplorers {
           FittedPictureBox1.Load(path);
           FittedPictureBox1.Visible = true;
         } catch (ApplicationException) {
-          MissingImageLabel.Text = InvalidImageMessage;
+          MissingImageLabel.Text = invalidImageMessage;
           FittedPictureBox1.Visible = false;
         }
       } else { // Not an existing file
         if (string.IsNullOrEmpty(path)) {
-          MissingImageLabel.Text = NOT_SPECIFIED_MESSAGE;
+          MissingImageLabel.Text = notSpecifiedMessage;
         } else {
-          MissingImageLabel.Text = NotFoundMessage;
+          MissingImageLabel.Text = notFoundMessage;
         }
         FittedPictureBox1.Visible = false;
       }
@@ -1732,7 +1750,7 @@ namespace SoundExplorers {
     }
 
     //private void TableForm_FormClosing(object sender, FormClosingEventArgs e) {
-    //    //if (MainGrid.CurrentRow.IsNewRow) {
+    //    //if (MainCurrentRow.IsNewRow) {
     //    //    Debug.WriteLine("New row");
     //    //}
     //    //MainGrid.RowValidated -= new DataGridViewCellEventHandler(MainGrid_RowValidated);
