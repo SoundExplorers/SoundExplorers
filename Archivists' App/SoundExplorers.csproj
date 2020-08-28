@@ -81,6 +81,8 @@
     <Compile Include="Data\AudioFileTags.cs" />
     <Compile Include="Data\AudioTags.cs" />
     <Compile Include="Data\EntityColumnComparer.cs" />
+    <Compile Include="Data\EntityColumnFactory.cs" />
+    <Compile Include="Data\EntityColumnListFactory.cs" />
     <Compile Include="Data\HiddenFieldAttribute.cs" />
     <Compile Include="Data\PieceOwningMediaEntity.cs" />
     <Compile Include="Data\IMediaEntity.cs" />

@@ -35,7 +35,7 @@ namespace SoundExplorers {
     /// <summary>
     ///   The entity list representing the table whose data is shown on the form.
     /// </summary>
-    public IEntityList Entities { get; protected set; }
+    public IEntityList Entities { get; private set; }
 
     private DataGridView FocusedGrid { get; set; }
     private Option GridSplitterDistanceOption { get; set; }
@@ -47,7 +47,7 @@ namespace SoundExplorers {
     private DataGridViewRow UnchangedRow { get; set; }
     private bool UpdateCancelled { get; set; }
 
-    public virtual void Copy() {
+    public void Copy() {
       if (FocusedGrid.CurrentCell.Value == null) {
         return;
       }
@@ -55,23 +55,24 @@ namespace SoundExplorers {
         Clipboard.SetText(FocusedGrid.CurrentCell.Value.ToString());
         return;
       }
-      // The current cell is in the main grid,
-      // (the only grid that can be edited)
-      // and is already being edited.
-      if (MainGrid.EditingControl is TextBox) {
-        var textBox = MainGrid.EditingControl as TextBox;
-        if (string.IsNullOrEmpty(textBox.SelectedText)) {
+      switch (MainGrid.EditingControl) {
+        // The current cell is in the main grid,
+        // (the only grid that can be edited)
+        // and is already being edited.
+        case TextBox textBox when string.IsNullOrEmpty(textBox.SelectedText):
           // Clipboard.SetText throws an exception
           // if passed an empty string.
           return;
-        }
-        Clipboard.SetText(textBox.SelectedText);
-      } else if (MainGrid.EditingControl is PathEditingControl) {
-        (MainGrid.EditingControl as PathEditingControl).Copy();
+        case TextBox textBox:
+          Clipboard.SetText(textBox.SelectedText);
+          break;
+        case PathEditingControl pathEditingControl:
+          pathEditingControl.Copy();
+          break;
       }
     }
 
-    public virtual void Cut() {
+    public void Cut() {
       if (FocusedGrid.CurrentCell.Value == null) {
         return;
       }
@@ -86,21 +87,23 @@ namespace SoundExplorers {
       if (!MainGrid.IsCurrentCellInEditMode) {
         MainGrid.BeginEdit(true);
         MainGrid.CurrentCell.Value = string.Empty;
-        ;
         MainGrid.EndEdit();
-      } else { // The cell is already being edited
-        if (MainGrid.EditingControl is TextBox) {
-          var textBox = MainGrid.EditingControl as TextBox;
-          if (string.IsNullOrEmpty(textBox.SelectedText)) {
-            // Clipboard.SetText throws an exception
-            // if passed an empty string.
-            return;
+      } else {
+        switch (MainGrid.EditingControl) {
+          // The cell is already being edited
+          case TextBox textBox: {
+            if (string.IsNullOrEmpty(textBox.SelectedText)) {
+              // Clipboard.SetText throws an exception
+              // if passed an empty string.
+              return;
+            }
+            Clipboard.SetText(textBox.SelectedText);
+            textBox.SelectedText = string.Empty;
+            break;
           }
-          Clipboard.SetText(textBox.SelectedText);
-          textBox.SelectedText = string.Empty;
-          ;
-        } else if (MainGrid.EditingControl is PathEditingControl) {
-          (MainGrid.EditingControl as PathEditingControl).Cut();
+          case PathEditingControl pathEditingControl:
+            pathEditingControl.Cut();
+            break;
         }
       }
     }
@@ -141,7 +144,7 @@ namespace SoundExplorers {
     public void EditAudioFileTags() {
       try {
         string path = GetMediumPath(Medium.Audio);
-        var audioFile = new AudioFile(path);
+        var dummy = new AudioFile(path);
       } catch (ApplicationException ex) {
         MessageBox.Show(
           this,
@@ -151,20 +154,9 @@ namespace SoundExplorers {
           MessageBoxIcon.Error);
       }
     }
-    //private void Control_GotFocus(object sender, EventArgs e) {
-    //    Debug.WriteLine("Control_GotFocus " + (sender as Control).Name);
-    //    if (sender == GridSplitContainer) {
-    //        FocusTimer.Start();
-    //    }
-    //}
-
-    //private void Control_LostFocus(object sender, EventArgs e) {
-    //    Debug.WriteLine("Control_LostFocus " + (sender as Control).Name);
-    //}
 
     /// <summary>
-    ///   Handles the entity lists's
-    ///   <see cref="EntityList.RowError" /> event,
+    ///   Handles the entity lists's EntityList.RowError event,
     ///   which occurs when there is an error on
     ///   attempting to insert, update or delete a database table row
     ///   corresponding to a row in the main grid.
@@ -172,20 +164,14 @@ namespace SoundExplorers {
     /// <param name="sender">Event sender.</param>
     /// <param name="e">Event arguments.</param>
     private void Entities_RowError(object sender, RowErrorEventArgs e) {
-      //Debug.WriteLine("Entities_RowError");
-      //Debug.WriteLine(
-      //    "Entities_RowError IsCurrentCellInEditMode = " 
-      //    + MainGrid.IsCurrentCellInEditMode);
       RowErrorEventArgs = e;
       UpdateCancelled = true;
-      //ErrorIsInCurrentRow = (e.RowIndex == MainGrid.CurrentRow.Index);
-      //Debug.WriteLine("Entities_RowError ErrorIsInCurrentRow = " + ErrorIsInCurrentRow);
       RowErrorTimer.Start();
     }
 
     /// <summary>
     ///   Handles the entity lists's
-    ///   <see cref="EntityList.RowError" /> event,
+    ///   EntityList.RowError event,
     ///   which occurs when a database table row
     ///   corresponding to a row in the main grid
     ///   has been successfully inserted or updated on the database
@@ -195,7 +181,8 @@ namespace SoundExplorers {
     /// <param name="e">Event arguments.</param>
     private void Entities_RowUpdated(object sender, RowUpdatedEventArgs e) {
       //Debug.WriteLine("Entities_RowUpdated RowIndex = " + e.RowIndex);
-      var statusLabel = (ParentForm as MdiParentForm).StatusLabel;
+      var statusLabel = (ParentForm as MdiParentForm)?.StatusLabel ??
+                        throw new NullReferenceException();
       statusLabel.Text = e.Message;
       var mediaEntity = e.Entity as IMediaEntity;
       if (mediaEntity == null) {
@@ -239,7 +226,8 @@ namespace SoundExplorers {
       if (Entities is ImageList
           && !MainGrid.IsCurrentCellInEditMode
           && e.Data.GetDataPresent(DataFormats.FileDrop)) {
-        var pathCell = (PathCell)MainGrid.CurrentRow.Cells["Path"];
+        var pathCell = (PathCell)MainGrid.CurrentRow?.Cells["Path"] ??
+                       throw new NullReferenceException();
         DropPathOnCell(
           e.Data,
           pathCell);
@@ -399,7 +387,7 @@ namespace SoundExplorers {
           break;
         default:
           throw new ArgumentOutOfRangeException(
-            "medium",
+            nameof(medium),
             medium,
             "Medium " + medium + " is not supported.");
       } //End of switch (medium)
@@ -428,9 +416,11 @@ namespace SoundExplorers {
     private Newsletter GetNewsletterToShow() {
       if (Entities is ArtistInImageList) {
         if (Entities.ParentList.Count > 0) {
-          var image =
-            (Image)Entities.ParentList[ParentGrid.CurrentRow.Index];
-          return image.FetchNewsletter();
+          if (ParentGrid.CurrentRow != null) {
+            var image =
+              (Image)Entities.ParentList[ParentGrid.CurrentRow.Index];
+            return image.FetchNewsletter();
+          }
         }
         throw new ApplicationException(
           "You cannot show the newsletter for an Image's Performance because "
@@ -1112,25 +1102,6 @@ namespace SoundExplorers {
               isUpdateRequired = true;
             }
           }
-          //// If we've just been to the new row but not put anything into it,
-          //// the old and new values will both be null.
-          //if ((     oldValue == null
-          //     &&   newValue != null)
-          //||  newString != oldString) {
-          //    if (!column.Visible
-          //    &&  oldValue != null) {
-          //        // One of the invisible cells has changed value for an exising row.
-          //        // That only happens when a different row in the parent
-          //        // grid has just been made current and
-          //        // the contents of the main grid
-          //        // have therefore just been changed to show the children
-          //        // of the newly current parent row.
-          //        // So there cannot be any substantive changes 
-          //        // with which to update the database.
-          //        return;
-          //    }
-          //    isUpdateRequired = true;
-          //}
           if (Entities.Columns[column.Name].IsInPrimaryKey) {
             oldKeyFields.Add(column.Name, oldValue);
           }
@@ -1215,7 +1186,7 @@ namespace SoundExplorers {
       }
     }
 
-    public virtual void Paste() {
+    public void Paste() {
       if (FocusedGrid != MainGrid) {
         return;
       }

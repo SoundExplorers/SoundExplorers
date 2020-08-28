@@ -8,7 +8,7 @@ namespace SoundExplorers.Data {
     /// <summary>
     ///   Gets or sets the name of the column.
     ///   This must be set to the name of the corresponding
-    ///   property of the class derived from <see cref="Entity" />.
+    ///   property of the class derived from Entity.
     /// </summary>
     string ColumnName { get; set; }
 
@@ -19,7 +19,7 @@ namespace SoundExplorers.Data {
 
     /// <summary>
     ///   Gets or sets whether the corresponding property of the class
-    ///   derived from <see cref="Entity" />
+    ///   derived from Entity
     ///   is flagged with a <see cref="HiddenFieldAttribute" />.
     /// </summary>
     bool IsHidden { get; set; }
@@ -46,7 +46,7 @@ namespace SoundExplorers.Data {
     ///   Gets or sets the name of the column on
     ///   the referenced database table whose name
     ///   is the name of the corresponding
-    ///   property of the class derived from <see cref="Entity" />.
+    ///   property of the class derived from Entity.
     ///   Null if the column is not from a referenced table.
     /// </summary>
     string ReferencedColumnName { get; set; }
@@ -54,7 +54,7 @@ namespace SoundExplorers.Data {
     /// <summary>
     ///   Gets or sets the name of
     ///   the referenced database table whose name
-    ///   is the name of the corresponding referenced <see cref="Entity" />.
+    ///   is the name of the corresponding referenced Entity.
     ///   Null if the column is not from a referenced table.
     /// </summary>
     string ReferencedTableName { get; set; }
@@ -68,7 +68,7 @@ namespace SoundExplorers.Data {
     /// <summary>
     ///   Gets the name of the column's owning table.
     ///   This is the name of the corresponding
-    ///   class derived from <see cref="Entity" />.
+    ///   class derived from Entity.
     /// </summary>
     string TableName { get; }
 

@@ -68,7 +68,7 @@ namespace SoundExplorers {
     }
 
     private void CopyToolStripMenuItem_Click(object sender, EventArgs e) {
-      if (MdiChildren.Count() > 0) {
+      if (MdiChildren.Length > 0) {
         (ActiveMdiChild as TableForm).Copy();
       }
     }
@@ -118,7 +118,7 @@ namespace SoundExplorers {
     }
 
     private void CutToolStripMenuItem_Click(object sender, EventArgs e) {
-      if (MdiChildren.Count() > 0) {
+      if (MdiChildren.Length > 0) {
         (ActiveMdiChild as TableForm).Cut();
       }
     }
@@ -136,7 +136,7 @@ namespace SoundExplorers {
     /// <param name="e">Event arguments.</param>
     private void EditAudioFileTagsToolStripMenuItem_Click(object sender,
       EventArgs e) {
-      if (MdiChildren.Count() > 0) {
+      if (MdiChildren.Length > 0) {
         (ActiveMdiChild as TableForm).EditAudioFileTags();
       } else {
         MessageBox.Show(
@@ -157,7 +157,7 @@ namespace SoundExplorers {
       MdiParentForm_FormClosed(object sender, FormClosedEventArgs e) {
       StatusBarOption.BooleanValue = StatusStrip.Visible;
       ToolBarOption.BooleanValue = ToolStrip.Visible;
-      if (MdiChildren.Count() > 0) {
+      if (MdiChildren.Length > 0) {
         TableOption.StringValue =
           (ActiveMdiChild as TableForm).Entities.TableName;
       } else {
@@ -308,7 +308,7 @@ namespace SoundExplorers {
     }
 
     private void OpenToolStripMenuItem_Click(object sender, EventArgs e) {
-      if (MdiChildren.Count() == 0) {
+      if (MdiChildren.Length == 0) {
         NewToolStripMenuItem_Click(sender, e);
         return;
       }
@@ -379,7 +379,7 @@ namespace SoundExplorers {
     }
 
     private void PasteToolStripMenuItem_Click(object sender, EventArgs e) {
-      if (MdiChildren.Count() > 0) {
+      if (MdiChildren.Length > 0) {
         (ActiveMdiChild as TableForm).Paste();
       }
     }
@@ -396,7 +396,7 @@ namespace SoundExplorers {
     /// <param name="sender">Event sender.</param>
     /// <param name="e">Event arguments.</param>
     private void PlayAudioToolStripMenuItem_Click(object sender, EventArgs e) {
-      if (MdiChildren.Count() > 0) {
+      if (MdiChildren.Length > 0) {
         (ActiveMdiChild as TableForm).PlayAudio();
       } else {
         MessageBox.Show(
@@ -420,7 +420,7 @@ namespace SoundExplorers {
     /// <param name="sender">Event sender.</param>
     /// <param name="e">Event arguments.</param>
     private void PlayVideoToolStripMenuItem_Click(object sender, EventArgs e) {
-      if (MdiChildren.Count() > 0) {
+      if (MdiChildren.Length > 0) {
         (ActiveMdiChild as TableForm).PlayVideo();
       } else {
         MessageBox.Show(
@@ -433,7 +433,7 @@ namespace SoundExplorers {
     }
 
     private void RefreshToolStripMenuItem_Click(object sender, EventArgs e) {
-      if (MdiChildren.Count() > 0) {
+      if (MdiChildren.Length > 0) {
         (ActiveMdiChild as TableForm).Refresh();
       }
     }
@@ -450,7 +450,7 @@ namespace SoundExplorers {
     /// <param name="e">Event arguments.</param>
     private void ShowNewsletterToolStripMenuItem_Click(object sender,
       EventArgs e) {
-      if (MdiChildren.Count() > 0) {
+      if (MdiChildren.Length > 0) {
         (ActiveMdiChild as TableForm).ShowNewsletter();
       } else {
         MessageBox.Show(

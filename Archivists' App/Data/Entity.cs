@@ -13,33 +13,33 @@ namespace SoundExplorers.Data {
   ///   the name of a derived class should be
   ///   the name of the corresponding database table.
   /// </remarks>
-  internal class Entity<T> : IEntity
+  internal class Entity<TEntity> : IEntity
     // This recursion of the generic type
     // allows reflection to examine the properties 
     // of derived classes.
-    where T : Entity<T> {
-    private OurSqlDataAdapter<T> _adapter;
+    where TEntity : Entity<TEntity> {
+    private OurSqlDataAdapter<TEntity> _adapter;
     private EntityColumnList _columns;
+
+    public Entity() {
+      EntityColumnListFactory = new EntityColumnListFactory();
+    }
 
     /// <summary>
     ///   Gets the data adapter.
     /// </summary>
-    protected virtual OurSqlDataAdapter<T> Adapter {
-      get {
-        if (_adapter == null) {
-          _adapter = new OurSqlDataAdapter<T>(
-            new SelectCommand<T>(
-              false));
-        }
-        return _adapter;
-      }
-    }
+    private OurSqlDataAdapter<TEntity> Adapter =>
+      _adapter ?? (_adapter = new OurSqlDataAdapter<TEntity>(
+        new SelectCommand<TEntity>(
+          false)));
+
+    private EntityColumnListFactory EntityColumnListFactory { get; }
 
     /// <summary>
     ///   Gets or sets the data table containing the database record
     ///   represented by the entity.
     /// </summary>
-    protected virtual DataTable Table { get; set; }
+    private DataTable Table { get; set; }
 
     /// <summary>
     ///   Creates a deep copy of the entity.
@@ -66,7 +66,7 @@ namespace SoundExplorers.Data {
     ///   there is an error on attempting to access the database.
     /// </exception>
     public virtual void Delete() {
-      foreach (EntityColumn<T> primaryKeyColumn in PrimaryKeyColumns) {
+      foreach (var primaryKeyColumn in PrimaryKeyColumns) {
         Adapter.DeleteCommand.Parameters["@" + primaryKeyColumn.ColumnName]
             .Value =
           primaryKeyColumn.GetValue(this);
@@ -102,7 +102,7 @@ namespace SoundExplorers.Data {
     ///   there is an error on attempting to access the database.
     /// </exception>
     public virtual bool Fetch() {
-      foreach (EntityColumn<T> primaryKeyColumn in PrimaryKeyColumns) {
+      foreach (var primaryKeyColumn in PrimaryKeyColumns) {
         Adapter.SelectCommand.Parameters["@" + primaryKeyColumn.ColumnName]
             .Value =
           primaryKeyColumn.GetValue(this);
@@ -123,7 +123,7 @@ namespace SoundExplorers.Data {
       if (Table.Rows.Count == 0) {
         return false;
       }
-      foreach (EntityColumn<T> nonKeycolumn in NonPrimaryKeyColumns) {
+      foreach (var nonKeycolumn in NonPrimaryKeyColumns) {
         // Set the field property of the entity to the corresponding value
         // in the table row.
         nonKeycolumn.SetValue(
@@ -159,7 +159,7 @@ namespace SoundExplorers.Data {
         && Table.Rows.Count != 0
         || Fetch();
       if (hasbeenFetched) {
-        foreach (EntityColumn<T> column in Columns) {
+        foreach (var column in Columns) {
           Adapter.UpdateCommand.Parameters["@" + column.ColumnName].Value =
             column.GetValue(this);
           if (column.IsInPrimaryKey) {
@@ -184,7 +184,7 @@ namespace SoundExplorers.Data {
           Adapter.UpdateCommand.Connection.Close();
         }
       } else {
-        foreach (EntityColumn<T> column in Columns) {
+        foreach (var column in Columns) {
           Adapter.InsertCommand.Parameters["@" + column.ColumnName].Value =
             column.GetValue(this);
         } // End of foreach
@@ -212,19 +212,13 @@ namespace SoundExplorers.Data {
     ///   field properties.
     /// </summary>
     /// <remarks>
-    ///   Each <see cref="EntityColumn" />
+    ///   Each EntityColumn
     ///   will correspond to a property of the derived class
     ///   that is flagged with a <see cref="FieldAttribute" />
     ///   or an attribute that is derived from <see cref="FieldAttribute" />.
     /// </remarks>
-    public EntityColumnList Columns {
-      get {
-        if (_columns == null) {
-          _columns = EntityColumnList.Create<T>();
-        }
-        return _columns;
-      }
-    }
+    public EntityColumnList Columns =>
+      _columns ?? (_columns = EntityColumnListFactory.Create<TEntity>());
 
     /// <summary>
     ///   Gets metadata about the database columns
@@ -232,7 +226,7 @@ namespace SoundExplorers.Data {
     ///   field properties that are not in the primary key.
     /// </summary>
     /// <remarks>
-    ///   Each <see cref="EntityColumn" />
+    ///   Each EntityColumn
     ///   will correspond to a property of the derived class
     ///   that is flagged with a <see cref="FieldAttribute" />
     ///   or an attribute that is derived from <see cref="FieldAttribute" />
@@ -257,11 +251,11 @@ namespace SoundExplorers.Data {
     ///   (if there is one).
     /// </summary>
     /// <remarks>
-    ///   Each <see cref="EntityColumn" />
+    ///   Each EntityColumn
     ///   will correspond to a property of the derived class
     ///   that is flagged with a <see cref="FieldAttribute" />
     ///   or an attribute that is derived from <see cref="FieldAttribute" />
-    ///   but is not a <see cref="UniqueFieldAttribute" />.
+    ///   but is not a <see cref="UniqueKeyFieldAttribute" />.
     /// </remarks>
     public EntityColumnList NonUniqueKeyColumns {
       get {
@@ -281,7 +275,7 @@ namespace SoundExplorers.Data {
     ///   primary key field properties.
     /// </summary>
     /// <remarks>
-    ///   Each <see cref="EntityColumn" />
+    ///   Each EntityColumn
     ///   will correspond to a property of the derived class
     ///   that is flagged with a <see cref="PrimaryKeyFieldAttribute" />.
     /// </remarks>
@@ -301,7 +295,7 @@ namespace SoundExplorers.Data {
     ///   Gets the name of the database table
     ///   containing the row represented by the entity.
     /// </summary>
-    public string TableName => typeof(T).Name;
+    public string TableName => typeof(TEntity).Name;
 
     /// <summary>
     ///   Gets metadata about the database columns
@@ -310,7 +304,7 @@ namespace SoundExplorers.Data {
     /// </summary>
     /// <remarks>
     ///   Empty if there is no unique key.
-    ///   Each <see cref="EntityColumn" />
+    ///   Each EntityColumn
     ///   will correspond to a property of the derived class
     ///   that is flagged with a <see cref="UniqueKeyFieldAttribute" />.
     /// </remarks>
@@ -332,8 +326,8 @@ namespace SoundExplorers.Data {
     /// <returns>
     ///   The deep copy created.
     /// </returns>
-    public virtual T Clone() {
-      var that = Factory<T>.Create(typeof(T));
+    public TEntity Clone() {
+      var that = Factory<TEntity>.Create(typeof(TEntity));
       DeeplyCopyEntityProperties(this, that);
       return that;
     }
@@ -414,7 +408,7 @@ namespace SoundExplorers.Data {
               property.SetValue(targetEntity, targetSubEntity, null);
             }
           } else if (property.PropertyType == typeof(PieceAudioTags)) {
-            /// Piece.AudioTags
+            // Piece.AudioTags
             var audioTags = Factory<PieceAudioTags>.Create(
               typeof(PieceAudioTags),
               // Constructor arguments

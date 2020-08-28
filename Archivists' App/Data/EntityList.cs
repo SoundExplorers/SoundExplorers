@@ -13,7 +13,7 @@ namespace SoundExplorers.Data {
   internal abstract class EntityList<T> : List<IEntity>, IEntityList
     where T : Entity<T> {
     /// <summary>
-    ///   Initialises a new instance of the <see cref="EntityList" /> class,
+    ///   Initialises a new instance of the EntityList class,
     ///   optionally specifying SQL commands,
     ///   fetching all the records of the represented table.
     /// </summary>
@@ -75,17 +75,17 @@ namespace SoundExplorers.Data {
             ParentList = Factory<IEntityList>.Create(
               parentListType,
               // Indicate that the parent list does not itself require a parent list.
-              new Type[] {null});
+              new object[] {null});
           }
         } catch (TargetInvocationException ex) {
-          throw ex.InnerException;
+          throw ex.InnerException ?? ex;
         }
         DataSet = ParentList.DataSet;
         DataSet.Tables.Add(Table);
         // Create a relation between the main and parent tables.
         var parentColumns = ParentKeyColumnsToDataColumns();
         var childColumns = ForeignKeyColumnsToDataColumns();
-        var relation = DataSet.Relations.Add(
+        DataSet.Relations.Add(
           TableName + "_" + ParentList.TableName,
           parentColumns,
           childColumns);
@@ -96,9 +96,9 @@ namespace SoundExplorers.Data {
     /// <summary>
     ///   Gets or sets the data adapter.
     /// </summary>
-    protected OurSqlDataAdapter<T> Adapter { get; set; }
+    private OurSqlDataAdapter<T> Adapter { get; }
 
-    protected IEntity Entity { get; set; }
+    private IEntity Entity { get; }
     private IEntity UnchangedEntity { get; set; }
 
     /// <summary>
@@ -129,7 +129,6 @@ namespace SoundExplorers.Data {
     ///   primary key field properties.
     /// </summary>
     public EntityColumnList PrimaryKeyColumns => Entity.PrimaryKeyColumns;
-    //public virtual DataTable Table { get; set; }
 
     /// <summary>
     ///   Gets the name of the database table represented by the entity list.
@@ -137,7 +136,7 @@ namespace SoundExplorers.Data {
     /// <remarks>
     ///   The table name is the same as the type name of the listed Entities.
     /// </remarks>
-    public virtual string TableName => Table.TableName;
+    public string TableName => Table.TableName;
 
     /// <summary>
     ///   Gets metadata about the database columns
@@ -153,7 +152,7 @@ namespace SoundExplorers.Data {
     ///   Gets the data set containing the main <see cref="Table" />
     ///   and, if specified, the parent table.
     /// </summary>
-    public virtual DataSet DataSet { get; protected set; }
+    public DataSet DataSet { get; }
 
     /// <summary>
     ///   Gets the list of entities representing the main table's
@@ -163,7 +162,7 @@ namespace SoundExplorers.Data {
     ///   If the derived class does not specify a parent table,
     ///   a null reference will be returned.
     /// </remarks>
-    public virtual IEntityList ParentList { get; protected set; }
+    public IEntityList ParentList { get; }
 
     /// <summary>
     ///   An event that is raised when there is an error on
@@ -189,11 +188,11 @@ namespace SoundExplorers.Data {
     ///   Gets the data table containing the database records
     ///   represented by the list of entities.
     /// </summary>
-    public virtual DataTable Table { get; protected set; }
+    public DataTable Table { get; }
 
     /// <summary>
     ///   Updates the database table with any changes that have been input
-    ///   and refreshes the list of <see cref="Entity" />s.
+    ///   and refreshes the list of Entitys.
     /// </summary>
     /// <param name="oldKeyFields">
     ///   The names and original values of the primary key fields.
@@ -202,7 +201,7 @@ namespace SoundExplorers.Data {
     ///   Thrown if
     ///   there is an error on attempting to access the database.
     /// </exception>
-    public virtual void Update(Dictionary<string, object> oldKeyFields = null) {
+    public void Update(Dictionary<string, object> oldKeyFields = null) {
       Adapter.Update(Table, oldKeyFields);
     }
 
@@ -215,11 +214,8 @@ namespace SoundExplorers.Data {
       if (e.Status != UpdateStatus.ErrorsOccurred) {
         var message = new StringWriter();
         message.Write(TableName + " " + e.StatementType.ToString().ToLower());
-        if (e.StatementType.ToString().EndsWith("e")) {
-          message.Write("d"); // e.g. Credit updated
-        } else {
-          message.Write("ed"); // e.g. Credit inserted
-        }
+        // "d" e.g. "Credit updated".  "ed" e.g. "Credit inserted"
+        message.Write(e.StatementType.ToString().EndsWith("e") ? "d" : "ed");
         IEntity entity;
         switch (e.StatementType) {
           case StatementType.Insert:
@@ -242,15 +238,13 @@ namespace SoundExplorers.Data {
         } else if (e.StatementType == StatementType.Delete) {
           RemoveAt(rowIndex);
         }
-        if (RowUpdated != null) {
-          RowUpdated(
-            this,
-            new RowUpdatedEventArgs(
-              rowIndex,
-              entity,
-              e.StatementType,
-              message.ToString()));
-        }
+        RowUpdated?.Invoke(
+          this,
+          new RowUpdatedEventArgs(
+            rowIndex,
+            entity,
+            e.StatementType,
+            message.ToString()));
         return;
       }
       // e.Status == UpdateStatus.ErrorsOccurred
@@ -266,28 +260,28 @@ namespace SoundExplorers.Data {
       }
       Exception exception;
       var errorColumnIndex = 0;
-      if (e.Errors is PgSqlException) {
+      if (e.Errors is PgSqlException errors) {
         try {
-          if (e.Errors.Message.ToLower().Contains("duplicate key")) {
+          if (errors.Message.ToLower().Contains("duplicate key")) {
             exception = CreateDuplicateKeyException(
-              e.Errors as PgSqlException,
+              errors,
               rejectedValues,
               ref errorColumnIndex);
-          } else if (e.Errors.Message.ToLower().Contains("foreign key")) {
+          } else if (errors.Message.ToLower().Contains("foreign key")) {
             exception = CreateForeignKeyException(
-              e.Errors as PgSqlException,
+              errors,
               rejectedValues,
               ref errorColumnIndex);
-          } else if (e.Errors.Message.ToLower().Contains("null value")) {
+          } else if (errors.Message.ToLower().Contains("null value")) {
             exception = CreateNullValueException(
-              e.Errors as PgSqlException,
+              errors,
               ref errorColumnIndex);
           } else { // Other PgSqlException
             exception = new DataException(
-              e.Errors.Message + Environment.NewLine + Environment.NewLine
+              errors.Message + Environment.NewLine + Environment.NewLine
               + "SQL command text:" + Environment.NewLine + Environment.NewLine
               + e.Command.CommandText,
-              e.Errors);
+              errors);
           }
         } catch (NotSupportedException ex) {
           exception = ex;
@@ -295,15 +289,13 @@ namespace SoundExplorers.Data {
       } else { // Not a PgSqlException, unlikely.
         exception = e.Errors;
       }
-      if (RowError != null) {
-        RowError(
-          this,
-          new RowErrorEventArgs(
-            rowIndex,
-            errorColumnIndex,
-            rejectedValues,
-            exception));
-      }
+      RowError?.Invoke(
+        this,
+        new RowErrorEventArgs(
+          rowIndex,
+          errorColumnIndex,
+          rejectedValues,
+          exception));
       e.Row.RejectChanges();
       e.Status = UpdateStatus.SkipAllRemainingRows;
     }
@@ -323,7 +315,7 @@ namespace SoundExplorers.Data {
     ///   Adds an Entity to the end of the list.
     /// </summary>
     /// <param name="entity">The Entity to added</param>
-    public virtual void Add(Entity<T> entity) {
+    public void Add(Entity<T> entity) {
       base.Add(entity);
     }
 
@@ -455,10 +447,10 @@ namespace SoundExplorers.Data {
     /// <remarks>
     ///   The error message generated by the database engine
     ///   is expected to be something like this:
-    ///   insert or update on table "TABLE" violates foreign key constraint "FOREIGNKEY"
+    ///   insert or update on table "TABLE" violates foreign key constraint "ForeignKey"
     ///   or:
-    ///   update or delete on table "TABLE" violates foreign key constraint "FOREIGNKEY" on table
-    ///   "REFERENCINGTABLE"
+    ///   update or delete on table "TABLE" violates foreign key constraint "ForeignKey" on table
+    ///   "ReferencingTable"
     /// </remarks>
     /// <exception cref="NotSupportedException">
     ///   Thrown if a meaningful error message cannot be generated by parsing
@@ -470,7 +462,7 @@ namespace SoundExplorers.Data {
       ref int errorColumnIndex) {
       var chunks = exception.Message.Split('"');
       string foreignKeyName = chunks[3];
-      if (chunks.Count() >= 6) {
+      if (chunks.Length >= 6) {
         // Referencing table name in lower case, 
         // in the error message that was generated by the database engine.
         string referencingTableName = chunks[5];
@@ -479,10 +471,7 @@ namespace SoundExplorers.Data {
         string referencingEntityName = (
           from string tableName in Factory<IEntity>.Types.Keys
           where tableName.ToLower() == referencingTableName.ToLower()
-          select tableName).FirstOrDefault();
-        if (referencingEntityName == null) {
-          referencingEntityName = referencingTableName;
-        }
+          select tableName).FirstOrDefault() ?? referencingTableName;
         return new ApplicationException(
           "The " + TableName
                  + " is referenced by one or more "
@@ -623,26 +612,24 @@ namespace SoundExplorers.Data {
 
     private DataColumn[] ForeignKeyColumnsToDataColumns() {
       var dataColumns =
-        new List<DataColumn>(ParentList.PrimaryKeyColumns.Count());
+        new List<DataColumn>(ParentList.PrimaryKeyColumns.Count);
       foreach (var parentKeyColumn in ParentList.PrimaryKeyColumns) {
-        foreach (var mainKeyColumn in PrimaryKeyColumns) {
-          if (mainKeyColumn.ColumnName == parentKeyColumn.ColumnName
-              || mainKeyColumn.ReferencedColumnName ==
-              parentKeyColumn.ColumnName) {
-            dataColumns.Add(Table.Columns[mainKeyColumn.ColumnName]);
-            break;
-          }
-        } //End of foreach
+        foreach (var mainKeyColumn in PrimaryKeyColumns.Where(mainKeyColumn =>
+          mainKeyColumn.ColumnName == parentKeyColumn.ColumnName
+          || mainKeyColumn.ReferencedColumnName ==
+          parentKeyColumn.ColumnName)) {
+          dataColumns.Add(Table.Columns[mainKeyColumn.ColumnName]);
+          break;
+        }
       } //End of foreach
       return dataColumns.ToArray();
     }
 
     private DataColumn[] ParentKeyColumnsToDataColumns() {
       var dataColumns =
-        new List<DataColumn>(ParentList.PrimaryKeyColumns.Count());
-      foreach (var parentKeyColumn in ParentList.PrimaryKeyColumns) {
-        dataColumns.Add(ParentList.Table.Columns[parentKeyColumn.ColumnName]);
-      } //End of foreach
+        new List<DataColumn>(ParentList.PrimaryKeyColumns.Count);
+      dataColumns.AddRange(ParentList.PrimaryKeyColumns.Select(parentKeyColumn =>
+        ParentList.Table.Columns[parentKeyColumn.ColumnName]));
       return dataColumns.ToArray();
     }
 
@@ -679,9 +666,9 @@ namespace SoundExplorers.Data {
     }
 
     /// <summary>
-    ///   Refreshes the list of <see cref="Entity" />s.
+    ///   Refreshes the list of Entitys.
     /// </summary>
-    protected virtual void Refresh() {
+    private void Refresh() {
       Clear();
       for (var i = 0; i < Table.Rows.Count; i++) {
         var row = Table.Rows[i];
@@ -690,20 +677,5 @@ namespace SoundExplorers.Data {
         Add(entity);
       } // End of for
     }
-
-    ///// <summary>
-    ///// Not used at present.
-    ///// </summary>
-    ///// <remarks>
-    ///// Using PgSqlCommandBuilder to generate the 
-    ///// INSERT, UPDATE and DELETE commands did not work.
-    ///// It caused PgSqlDataAdapter.Update to throw this
-    ///// InvalidOperationException:
-    ///// "Dynamic SQL generation is not supported against a SelectCommand that does not return any base table information."
-    ///// That exception normally means that the primary key columns were not selected in the SELECT command.
-    ///// The same thing worked fine in MySql.
-    ///// TO DO: Replicate the bug with a PostgreSQL sample database and report if necessary.
-    ///// </remarks>
-    //protected PgSqlCommandBuilder CommandBuilder { get; private set; }
   } //End of class
 } //End of namespace

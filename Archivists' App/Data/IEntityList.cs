@@ -46,7 +46,7 @@ namespace SoundExplorers.Data {
 
     /// <summary>
     ///   Updates the database table with any changes that have been input
-    ///   and refreshes the list of <see cref="Entity" />s.
+    ///   and refreshes the list of Entitys.
     /// </summary>
     void Update(Dictionary<string, object> oldKeyFields = null);
   } //End of interface

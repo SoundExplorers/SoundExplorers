@@ -105,7 +105,7 @@ namespace SoundExplorers.Data {
     ///   (Delete / Insert / Select / Update)
     ///   represented by the derived class.
     ///   and ENTITY_TYPE is the name of the type of
-    ///   <see cref="Entity" /> listed
+    ///   Entity listed
     /// </summary>
     /// <remarks>
     ///   If the embedded resource file cannot be found
@@ -142,7 +142,7 @@ namespace SoundExplorers.Data {
     ///   An array of the created parameters.
     /// </returns>
     protected virtual PgSqlParameter[] CreateParameters(bool keyColumsOnly) {
-      var parameters = new List<PgSqlParameter>(Entity.Columns.Count());
+      var parameters = new List<PgSqlParameter>(Entity.Columns.Count);
       foreach (EntityColumn<T> column in Entity.Columns) {
         if (!keyColumsOnly || column.IsInPrimaryKey) {
           var parameter = new PgSqlParameter();
@@ -175,9 +175,9 @@ namespace SoundExplorers.Data {
     /// </returns>
     protected virtual string GenerateSqlColumnList() {
       var sql = new StringWriter();
-      for (var i = 0; i < Columns.Count(); i++) {
+      for (var i = 0; i < Columns.Count; i++) {
         sql.Write("    " + Columns[i].NameOnDb);
-        if (i < Columns.Count() - 1) {
+        if (i < Columns.Count - 1) {
           sql.WriteLine(",");
         } else {
           sql.WriteLine();
@@ -196,11 +196,11 @@ namespace SoundExplorers.Data {
     protected virtual string GenerateSqlWhereClause() {
       var sql = new StringWriter();
       sql.Write("where ");
-      for (var i = 0; i < PrimaryKeyColumns.Count(); i++) {
+      for (var i = 0; i < PrimaryKeyColumns.Count; i++) {
         sql.Write(PrimaryKeyColumns[i].NameOnDb + " = @" +
                   PrimaryKeyColumns[i].ColumnName);
         sql.WriteLine();
-        if (i < PrimaryKeyColumns.Count() - 1) {
+        if (i < PrimaryKeyColumns.Count - 1) {
           sql.Write("and ");
         }
       } // End of for
@@ -375,7 +375,7 @@ namespace SoundExplorers.Data {
           fieldPropertyFound =
             PrimaryKeyColumns.ContainsKey(
               placeholder.Replace("@OLD_", string.Empty));
-        } else if (Parameters.Count == PrimaryKeyColumns.Count()) {
+        } else if (Parameters.Count == PrimaryKeyColumns.Count) {
           fieldPropertyFound =
             PrimaryKeyColumns.ContainsKey(
               placeholder.Replace("@", string.Empty));
@@ -389,7 +389,7 @@ namespace SoundExplorers.Data {
             + SqlTypeName.ToUpper() + " command:" + Environment.NewLine
             + "Entity class " + EntityType.Name
             + " does not contain ";
-          if (Parameters.Count < Columns.Count()
+          if (Parameters.Count < Columns.Count
               || placeholder.StartsWith("@OLD_")) {
             message += "key ";
           }

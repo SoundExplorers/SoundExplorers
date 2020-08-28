@@ -66,9 +66,9 @@ namespace SoundExplorers.Data {
       sql.WriteLine("from " + EntityType.Name);
       if (All) {
         sql.WriteLine("order by");
-        for (var i = 0; i < PrimaryKeyColumns.Count(); i++) {
+        for (var i = 0; i < PrimaryKeyColumns.Count; i++) {
           sql.Write("    " + PrimaryKeyColumns[i].ColumnName);
-          if (i < PrimaryKeyColumns.Count() - 1) {
+          if (i < PrimaryKeyColumns.Count - 1) {
             sql.WriteLine(",");
           } else {
             sql.WriteLine();

@@ -16,7 +16,7 @@ namespace SoundExplorers {
     [STAThread]
     private static void Main(string[] args) {
       string entityTypeName = null;
-      if (args.Count() > 0) {
+      if (args.Length > 0) {
         entityTypeName = args[0];
       }
       Application.EnableVisualStyles();

@@ -51,7 +51,7 @@ namespace SoundExplorers.Data {
     protected override string GenerateSql() {
       var sql = new StringWriter();
       sql.WriteLine("update " + EntityType.Name + " set");
-      for (var i = 0; i < Columns.Count(); i++) {
+      for (var i = 0; i < Columns.Count; i++) {
         sql.Write("    " + Columns[i].NameOnDb + " = @" +
                   Columns[i].ColumnName);
         //if (AliasedNames.ContainsKey(Columns[i].ColumnName)) {
@@ -59,7 +59,7 @@ namespace SoundExplorers.Data {
         //} else {
         //    sql.Write("    " + Columns[i].ColumnName + " = @" + Columns[i].ColumnName);
         //}
-        if (i < Columns.Count() - 1) {
+        if (i < Columns.Count - 1) {
           sql.WriteLine(",");
         } else {
           sql.WriteLine();

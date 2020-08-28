@@ -36,7 +36,7 @@ namespace SoundExplorers.Data {
       sql.WriteLine("insert into " + EntityType.Name + " (");
       sql.Write(GenerateSqlColumnList());
       sql.WriteLine(") values (");
-      for (var i = 0; i < Columns.Count(); i++) {
+      for (var i = 0; i < Columns.Count; i++) {
         // A default is required in case the parameter value is null.
         sql.Write("    coalesce(@" + Columns[i].ColumnName + ", ");
         if (Columns[i].DataType == typeof(string)) {
@@ -53,7 +53,7 @@ namespace SoundExplorers.Data {
                         ") is not currently supported.");
         }
         sql.Write(")");
-        if (i < Columns.Count() - 1) {
+        if (i < Columns.Count - 1) {
           sql.WriteLine(",");
         } else {
           sql.WriteLine();

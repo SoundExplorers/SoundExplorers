@@ -81,42 +81,5 @@ namespace SoundExplorers.Data {
         where entityColumn.ColumnName == columnName
         select entityColumn).Any();
     }
-
-    /// <summary>
-    ///   Gets metadata about the database columns
-    ///   represented by the
-    ///   field properties of the listed <see cref="Entity" />.
-    /// </summary>
-    /// <returns>
-    ///   An <see cref="EntityColumnList" /> representing the columns.
-    /// </returns>
-    [NotNull]
-    public static EntityColumnList Create<T>() where T : Entity<T> {
-      var properties = typeof(T).GetProperties();
-      var result = new EntityColumnList(properties.Length);
-      foreach (var property in properties) {
-        var fieldAttributes = GetFieldAttributes(property);
-        if (PropertyIsField(fieldAttributes)) {
-          result.Add(EntityColumn<T>.Create(fieldAttributes, property));
-        }
-      }
-      result.Sort(new EntityColumnComparer());
-      return result;
-    }
-
-    [NotNull]
-    private static IList<FieldAttribute> GetFieldAttributes(
-      [NotNull] PropertyInfo property) {
-      return (
-        from Attribute attribute in property.GetCustomAttributes(true)
-        where attribute.GetType().IsSubclassOf(typeof(FieldAttribute))
-              || attribute.GetType() == typeof(FieldAttribute)
-        select (FieldAttribute)attribute).ToList();
-    }
-
-    private static bool PropertyIsField(
-      [NotNull] IEnumerable<FieldAttribute> fieldAttributes) {
-      return fieldAttributes.Any();
-    }
   } //End of class
 } //End of namespace
