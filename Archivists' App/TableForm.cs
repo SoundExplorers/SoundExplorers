@@ -21,7 +21,7 @@ namespace SoundExplorers {
     public TableForm(
       string tableName) {
       InitializeComponent();
-      // A known Visual Studio bug is that PictureBox's AllowDrop property
+      // A known Visual Studio error is that PictureBox's AllowDrop property
       // appears neither in the designer nor in intellisense.
       // But is does exist and is required in order to 
       // allow anything to be dropped on to the PictureBox.
@@ -68,19 +68,22 @@ namespace SoundExplorers {
         Clipboard.SetText(FocusedGrid.CurrentCell.Value.ToString());
         return;
       }
-      // The current cell is in the main grid,
-      // (the only grid that can be edited)
-      // and is already being edited.
-      if (MainGrid.EditingControl is TextBox) {
-        var textBox = (TextBox)MainGrid.EditingControl;
-        if (string.IsNullOrEmpty(textBox.SelectedText)) {
-          // Clipboard.SetText throws an exception
-          // if passed an empty string.
-          return;
+      switch (MainGrid.EditingControl) {
+        // The current cell is in the main grid,
+        // (the only grid that can be edited)
+        // and is already being edited.
+        case TextBox textBox: {
+          if (string.IsNullOrEmpty(textBox.SelectedText)) {
+            // Clipboard.SetText throws an exception
+            // if passed an empty string.
+            return;
+          }
+          Clipboard.SetText(textBox.SelectedText);
+          break;
         }
-        Clipboard.SetText(textBox.SelectedText);
-      } else if (MainGrid.EditingControl is PathEditingControl) {
-        ((PathEditingControl)MainGrid.EditingControl).Copy();
+        case PathEditingControl pathEditingControl:
+          pathEditingControl.Copy();
+          break;
       }
     }
 
@@ -352,11 +355,7 @@ namespace SoundExplorers {
     /// </remarks>
     private void FocusTimer_Tick(object sender, EventArgs e) {
       FocusTimer.Stop();
-      if (FocusedGrid != null) {
-        FocusGrid(FocusedGrid);
-      } else {
-        FocusGrid(ParentGrid);
-      }
+      FocusGrid(FocusedGrid ?? ParentGrid);
     }
 
     /// <summary>
@@ -411,7 +410,7 @@ namespace SoundExplorers {
           break;
         default:
           throw new ArgumentOutOfRangeException(
-            "medium",
+            nameof(medium),
             medium,
             "Medium " + medium + " is not supported.");
       } //End of switch (medium)
@@ -569,7 +568,7 @@ namespace SoundExplorers {
         }
         // Because this is the detail grid in a master-detail relationship
         // the index of the Piece in the grid is probably different
-        // from its index in the entitly list,
+        // from its index in the entity list,
         // which will contain all the Pieces of all the Performances in the parent grid.
         // So we need to find it the hard way.
         var piece = (
@@ -647,8 +646,7 @@ namespace SoundExplorers {
         var cell = GetCellAtClientCoOrdinates(e.X, e.Y);
         if (cell != null) { // Cell found
           grid.CurrentCell = cell;
-          var pathCell = cell as PathCell;
-          if (pathCell != null && pathCell.FileExists) {
+          if (cell is PathCell pathCell && pathCell.FileExists) {
             // This is a path cell that contains the path of an existing file
             var data = new DataObject(DataFormats.FileDrop, new[] {pathCell.Path});
             grid.DoDragDrop(data, DragDropEffects.Copy | DragDropEffects.None);
@@ -683,7 +681,7 @@ namespace SoundExplorers {
     /// <param name="sender">Event sender.</param>
     /// <param name="e">Event arguments.</param>
     /// <remarks>
-    ///   This is only relevent if the Path cell of an Image row is being edited.
+    ///   This is only relevant if the Path cell of an Image row is being edited.
     ///   If the Missing Image label was visible just before entering edit mode,
     ///   it will have been because the file was not specified or can't be found or is not an image file.
     ///   That's presumably about to be rectified.
@@ -729,10 +727,7 @@ namespace SoundExplorers {
     private void MainGrid_CellEndEdit(object sender, DataGridViewCellEventArgs e) {
       //Debug.WriteLine("MainGrid_CellEndEdit");
       var pathCell = MainGrid.CurrentCell as PathCell;
-      if (pathCell == null) { // Not a path cell.
-        return;
-      }
-      if (pathCell.Path == null) {
+      if (pathCell?.Path == null) {
         return;
       }
       var column = pathCell.OwningColumn;
@@ -753,9 +748,8 @@ namespace SoundExplorers {
         ShowImageOrMessage(pathCell.Path);
       }
       if (pathCell.Path != string.Empty
-          && (UnchangedRow == null
-              || UnchangedRow.Cells[e.ColumnIndex].Value == null
-              || pathCell.Path != UnchangedRow.Cells[e.ColumnIndex].Value.ToString())) {
+          && (UnchangedRow?.Cells[e.ColumnIndex].Value == null || pathCell.Path !=
+            UnchangedRow.Cells[e.ColumnIndex].Value.ToString())) {
         FileInfo file;
         try {
           file = new FileInfo(pathCell.Path);
@@ -837,21 +831,14 @@ namespace SoundExplorers {
       //MainGrid.CurrentCell = MainGrid.Rows[e.RowIndex].Cells[e.ColumnIndex];
       //Refresh();
       MainGrid.CancelEdit();
-      if (e.Exception is ApplicationException) {
-        MessageBox.Show(
-          this,
-          e.Exception.Message,
-          Application.ProductName,
-          MessageBoxButtons.OK,
-          MessageBoxIcon.Error);
-      } else {
-        MessageBox.Show(
-          this,
-          e.Exception.ToString(),
-          Application.ProductName,
-          MessageBoxButtons.OK,
-          MessageBoxIcon.Error);
-      }
+      MessageBox.Show(
+        this,
+        e.Exception is ApplicationException
+          ? e.Exception.Message
+          : e.Exception.ToString(),
+        Application.ProductName,
+        MessageBoxButtons.OK,
+        MessageBoxIcon.Error);
       e.Cancel = true; // This does not seem to make any difference.
       //e.Cancel = false;
     }
@@ -879,11 +866,9 @@ namespace SoundExplorers {
       }
       // Find the path cell, if any, that is being dropped onto.
       var clientCoOrdinates = MainGrid.PointToClient(new Point(e.X, e.Y));
-      var pathCell =
-        GetCellAtClientCoOrdinates(
-            clientCoOrdinates.X, clientCoOrdinates.Y)
-          as PathCell;
-      if (pathCell != null) { // Dropping onto a path cell
+      if (GetCellAtClientCoOrdinates(
+        clientCoOrdinates.X, clientCoOrdinates.Y) is PathCell pathCell) {
+        // Dropping onto a path cell
         DropPathOnCell(
           e.Data,
           pathCell);
@@ -912,15 +897,10 @@ namespace SoundExplorers {
       }
       // Find the cell, if any, that the mouse is over.
       var clientCoOrdinates = MainGrid.PointToClient(new Point(e.X, e.Y));
-      var pathCell =
-        GetCellAtClientCoOrdinates(
-            clientCoOrdinates.X, clientCoOrdinates.Y)
-          as PathCell;
-      if (pathCell != null) { // The mouse is over a path cell
-        e.Effect = DragDropEffects.Copy;
-      } else { // The mouse is not over a path cell
-        e.Effect = DragDropEffects.None;
-      }
+      e.Effect = GetCellAtClientCoOrdinates(
+        clientCoOrdinates.X, clientCoOrdinates.Y) is PathCell
+        ? DragDropEffects.Copy
+        : DragDropEffects.None;
     }
 
     /// <summary>
@@ -948,7 +928,7 @@ namespace SoundExplorers {
     /// <param name="e">Event arguments.</param>
     /// <remarks>
     ///   <para>
-    ///     The initial state of the row will be saved to a dettached row
+    ///     The initial state of the row will be saved to a detached row
     ///     to allow comparison with any changes if the row gets edited.
     ///   </para>
     ///   <para>
@@ -1034,9 +1014,9 @@ namespace SoundExplorers {
       } else if (Entities is ImageList) {
         var image = (Image)Entities[e.RowIndex];
         ShowImageOrMessage(image.Path);
-      } else if (Entities is PieceList) {
+      } else if (Entities is PieceList pieceList) {
         var piece = (
-          from Piece p in (PieceList)Entities
+          from Piece p in pieceList
           where p.Date == (DateTime)row.Cells["Date"].Value
                 && p.Location == row.Cells["Location"].Value.ToString()
                 && p.Set == (int)row.Cells["Set"].Value
@@ -1097,9 +1077,7 @@ namespace SoundExplorers {
           // TODO Instead of converting to string, .Equals() should work.
           var newValue = MainGrid.Rows[e.RowIndex].Cells[column.Name].Value;
           string newString = newValue != null ? newValue.ToString() : string.Empty;
-          var oldValue = UnchangedRow != null
-            ? UnchangedRow.Cells[column.Index].Value
-            : null;
+          var oldValue = UnchangedRow?.Cells[column.Index].Value;
           string oldString = oldValue != null ? oldValue.ToString() : string.Empty;
           if (column.Visible
               && newString != oldString) {
@@ -1116,7 +1094,7 @@ namespace SoundExplorers {
           //||  newString != oldString) {
           //    if (!column.Visible
           //    &&  oldValue != null) {
-          //        // One of the invisible cells has changed value for an exising row.
+          //        // One of the invisible cells has changed value for an existing row.
           //        // That only happens when a different row in the parent
           //        // grid has just been made current and
           //        // the contents of the main grid
@@ -1169,7 +1147,7 @@ namespace SoundExplorers {
     ///   The name of the table whose
     ///   data is to be displayed.
     /// </param>
-    protected void OpenTable(string tableName) {
+    private void OpenTable(string tableName) {
       InvertGridColors(ParentGrid); // Will revert when focused.
       PopulateGrid(tableName);
     }
@@ -1209,7 +1187,7 @@ namespace SoundExplorers {
       ParentRowChanged = true;
       if (Entities.ParentList is ImageList
           && e.RowIndex < Entities.ParentList.Count) {
-        var image =(Image)Entities.ParentList[e.RowIndex];
+        var image = (Image)Entities.ParentList[e.RowIndex];
         ShowImageOrMessage(image.Path);
       }
     }
@@ -1224,10 +1202,10 @@ namespace SoundExplorers {
           MainGrid.CurrentCell.Value = Clipboard.GetText();
           MainGrid.EndEdit();
         } else { // The cell is already being edited
-          if (MainGrid.EditingControl is TextBox) {
-            ((TextBox)MainGrid.EditingControl).SelectedText = Clipboard.GetText();
-          } else if (MainGrid.EditingControl is PathEditingControl) {
-            ((PathEditingControl)MainGrid.EditingControl).Paste();
+          if (MainGrid.EditingControl is TextBox textBox) {
+            textBox.SelectedText = Clipboard.GetText();
+          } else if (MainGrid.EditingControl is PathEditingControl pathEditingControl) {
+            pathEditingControl.Paste();
           }
         }
       }
@@ -1276,19 +1254,9 @@ namespace SoundExplorers {
     ///   The name of the table whose data is to be displayed.
     /// </param>
     private void PopulateGrid(string tableName) {
-      if (tableName == "ArtistInImage") {
-        Entities = new ArtistInImageList();
-        //if (tableName == "Credit") {
-        //    Entities = new CreditList();
-        //if (tableName == "Image") {
-        //    Entities = new SoundExplorers.Data.ImageList();
-        //} else if (tableName == "Piece") {
-        //    Entities = new PieceList();
-        //} else if (tableName == "Set") {
-        //    Entities = new SetList();
-      } else {
-        Entities = Factory<IEntityList>.Create(tableName);
-      }
+      Entities = tableName == "ArtistInImage"
+        ? new ArtistInImageList()
+        : Factory<IEntityList>.Create(tableName);
       Entities.RowError += Entities_RowError;
       Entities.RowUpdated += Entities_RowUpdated;
       Text = Entities.TableName;
@@ -1342,14 +1310,12 @@ namespace SoundExplorers {
             column.DefaultCellStyle.Format = "dd MMM yyyy";
           }
           if (!string.IsNullOrEmpty(entityColumn.ReferencedColumnName)) {
-            var comboBoxCell = new ComboBoxCell();
-            comboBoxCell.Column = entityColumn;
+            var comboBoxCell = new ComboBoxCell {Column = entityColumn};
             column.CellTemplate = comboBoxCell;
           } else if (column.ValueType == typeof(DateTime)) {
             column.CellTemplate = new CalendarCell();
           } else if (column.Name.EndsWith("Path")) {
-            var pathCell = new PathCell();
-            pathCell.Column = entityColumn;
+            var pathCell = new PathCell {Column = entityColumn};
             column.CellTemplate = pathCell;
           }
         }
@@ -1410,8 +1376,7 @@ namespace SoundExplorers {
             // Although we don't edit cells in the parent grid,
             // we still need to make the cell a PathCell,
             // as this is expected when playing media etc.
-            var pathCell = new PathCell();
-            pathCell.Column = entityColumn;
+            var pathCell = new PathCell {Column = entityColumn};
             column.CellTemplate = pathCell;
           }
         }
@@ -1595,11 +1560,8 @@ namespace SoundExplorers {
           FittedPictureBox1.Visible = false;
         }
       } else { // Not an existing file
-        if (string.IsNullOrEmpty(path)) {
-          MissingImageLabel.Text = notSpecifiedMessage;
-        } else {
-          MissingImageLabel.Text = notFoundMessage;
-        }
+        MissingImageLabel.Text =
+          string.IsNullOrEmpty(path) ? notSpecifiedMessage : notFoundMessage;
         FittedPictureBox1.Visible = false;
       }
       MissingImageLabel.Visible = !FittedPictureBox1.Visible;
@@ -1780,11 +1742,7 @@ namespace SoundExplorers {
           if (Entities.ParentList != null) {
             // A read-only related grid for the parent table is shown
             // above the main grid.
-            if (FocusedGrid == ParentGrid) {
-              FocusGrid(MainGrid);
-            } else {
-              FocusGrid(ParentGrid);
-            }
+            FocusGrid(FocusedGrid == ParentGrid ? MainGrid : ParentGrid);
           }
           break;
         // Tried command (⌘) key on a Mac keyboard + Enter
