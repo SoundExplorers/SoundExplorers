@@ -47,7 +47,7 @@ namespace SoundExplorers {
     private DataGridViewRow UnchangedRow { get; set; }
     private bool UpdateCancelled { get; set; }
 
-    public virtual void Copy() {
+    public void Copy() {
       if (FocusedGrid.CurrentCell.Value == null) {
         return;
       }
@@ -71,7 +71,7 @@ namespace SoundExplorers {
       }
     }
 
-    public virtual void Cut() {
+    public void Cut() {
       if (FocusedGrid.CurrentCell.Value == null) {
         return;
       }
@@ -1197,7 +1197,7 @@ namespace SoundExplorers {
       }
     }
 
-    public virtual void Paste() {
+    public void Paste() {
       if (FocusedGrid != MainGrid) {
         return;
       }
