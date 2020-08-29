@@ -6,11 +6,11 @@ using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using SoundExplorers.Controller;
-// using Image = SoundExplorers.Data.Image;
-// using ImageList = SoundExplorers.Data.ImageList;
+using Image = SoundExplorers.Data.Image;
+using ImageList = SoundExplorers.Data.ImageList;
 
 namespace SoundExplorers {
-  internal partial class TableForm : Form, ITableView {
+  internal partial class TableForm : Form, IView<TableController> {
     /// <summary>
     ///   Initialises a new instance of the <see cref="TableForm" /> class.
     /// </summary>

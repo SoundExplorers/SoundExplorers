@@ -7,7 +7,7 @@ namespace SoundExplorers.Controller {
     private Option _tableOption;
     private Option _toolBarOption;
 
-    public MainController([NotNull] IMainView view) {
+    public MainController([NotNull] IView<MainController> view) {
       view.SetController(this);
     }
 

@@ -74,7 +74,7 @@ namespace SoundExplorers.Data {
         return (T)Activator.CreateInstance(
           type, args);
       } catch (TargetInvocationException ex) {
-        throw ex.InnerException;
+        throw ex.InnerException ?? ex;
       }
     }
 

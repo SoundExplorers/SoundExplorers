@@ -5,7 +5,7 @@ using System.Windows.Forms;
 using SoundExplorers.Controller;
 
 namespace SoundExplorers {
-  public partial class MainView : Form, IMainView {
+  public partial class MainView : Form, IView<MainController> {
     /// <summary>
     ///   Initialises a new instance of the <see cref="MainView" /> class.
     /// </summary>
@@ -31,6 +31,7 @@ namespace SoundExplorers {
         Environment.Exit(0);
       }
     }
+
     private MainController Controller { get; set; }
     private EventShortcutList EventShortcuts { get; }
     private bool LWinIsDown { get; set; }
@@ -40,6 +41,10 @@ namespace SoundExplorers {
 
     private TableForm TableView => ActiveMdiChild as TableForm ??
                                    throw new NullReferenceException(nameof(TableView));
+
+    public void SetController(MainController controller) {
+      Controller = controller;
+    }
 
     private void AboutToolStripMenuItem_Click(object sender, EventArgs e) {
       new AboutForm().ShowDialog();
@@ -275,8 +280,8 @@ namespace SoundExplorers {
         return;
       }
       try {
-        var tableView = new TableForm {MdiParent = this};
-        var dummy = new TableController(tableView, SelectTableForm.TableName);
+        var tableView =
+          FormFactory.Create<TableForm, TableController>(SelectTableForm.TableName);
         tableView.Show();
       } catch (ApplicationException ex) {
         MessageBox.Show(
@@ -326,10 +331,10 @@ namespace SoundExplorers {
       //    SelectTableForm.EntityTypeName);
       var oldTableView = TableView;
       try {
-        var newTableView = new TableForm {
-          Location = oldTableView.Location, WindowState = oldTableView.WindowState
-        };
-        var dummy = new TableController(newTableView, SelectTableForm.TableName);
+        var newTableView =
+          FormFactory.Create<TableForm, TableController>(SelectTableForm.TableName);
+        newTableView.Location = oldTableView.Location;
+        newTableView.WindowState = oldTableView.WindowState;
         oldTableView.Close();
         newTableView.MdiParent = this;
         newTableView.Show();
@@ -470,10 +475,6 @@ namespace SoundExplorers {
 
     private void ToolBarToolStripMenuItem_Click(object sender, EventArgs e) {
       ToolStrip.Visible = ToolBarToolStripMenuItem.Checked;
-    }
-
-    public void SetController(MainController controller) {
-      Controller = controller;
     }
   } //End of class
 } //End of namespace

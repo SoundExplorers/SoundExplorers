@@ -15,17 +15,18 @@ namespace SoundExplorers.Controller {
     /// <param name="tableName">
     ///   The name of the table whose data is to be displayed.
     /// </param>
-    public TableController([NotNull] ITableView view, [NotNull] string tableName) {
+    public TableController([NotNull] IView<TableController> view,
+      [NotNull] string tableName) {
       view.SetController(this);
       TableName = tableName;
     }
-    
-    [NotNull]
-    public string TableName { get; }
-    
+
     private Option GridSplitterDistanceOption => _gridSplitterDistanceOption ??
-                                                 (_gridSplitterDistanceOption = new Option("Table"));
+                                                 (_gridSplitterDistanceOption =
+                                                   new Option("Table"));
+
     //private Option GridSplitterDistanceOption { get; set; }
     private Option ImageSplitterDistanceOption { get; set; }
+    [NotNull] public string TableName { get; }
   }
 }
