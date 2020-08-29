@@ -2,13 +2,14 @@
 using System.Data;
 using System.Linq;
 using System.Windows.Forms;
+using SoundExplorers.Controller;
 
 namespace SoundExplorers {
-  public partial class MdiParentForm : Form {
-      /// <summary>
-      ///   Initialises a new instance of the <see cref="MdiParentForm" /> class.
-      /// </summary>
-      public MdiParentForm() {
+  public partial class MainView : Form, IMainView {
+    /// <summary>
+    ///   Initialises a new instance of the <see cref="MainView" /> class.
+    /// </summary>
+    public MainView() {
       SplashManager.Status = "Building window...";
       InitializeComponent();
       try {
@@ -16,12 +17,9 @@ namespace SoundExplorers {
         SplashManager.Status = "Positioning window...";
         SizeableFormOptions = new SizeableFormOptions(this);
         SplashManager.Status = "Getting options...";
-        StatusBarOption = new Option("StatusBar", true);
-        StatusStrip.Visible = StatusBarOption.BooleanValue;
-        TableOption = new Option("Table");
-        SelectTableForm = new SelectTableForm(TableOption.StringValue);
-        ToolBarOption = new Option("ToolBar", true);
-        ToolStrip.Visible = ToolBarOption.BooleanValue;
+        StatusStrip.Visible = Controller.IsStatusBarVisible;
+        SelectTableForm = new SelectTableForm(Controller.TableName);
+        ToolStrip.Visible = Controller.IsToolBarVisible;
         SplashManager.Status = "Creating shortcuts...";
         EventShortcuts = CreateEventShortcuts();
       } catch (Exception ex) {
@@ -33,15 +31,15 @@ namespace SoundExplorers {
         Environment.Exit(0);
       }
     }
-
+    private MainController Controller { get; set; }
     private EventShortcutList EventShortcuts { get; }
     private bool LWinIsDown { get; set; }
     private bool RWinIsDown { get; set; }
     private SelectTableForm SelectTableForm { get; }
     private SizeableFormOptions SizeableFormOptions { get; }
-    private Option StatusBarOption { get; }
-    private Option TableOption { get; }
-    private Option ToolBarOption { get; }
+
+    private TableForm TableView => ActiveMdiChild as TableForm ??
+                                   throw new NullReferenceException(nameof(TableView));
 
     private void AboutToolStripMenuItem_Click(object sender, EventArgs e) {
       new AboutForm().ShowDialog();
@@ -67,17 +65,17 @@ namespace SoundExplorers {
     }
 
     private void CopyToolStripMenuItem_Click(object sender, EventArgs e) {
-      if (MdiChildren.Count() > 0) {
-        (ActiveMdiChild as TableForm).Copy();
+      if (MdiChildren.Any()) {
+        TableView.Copy();
       }
     }
 
     /// <summary>
     ///   For each menu item whose keyboard shortcut includes the Control key,
-    ///   create an keyboard alternative shortuct to use the Command (⌘) key
+    ///   create an keyboard alternative shortcut to use the Command (⌘) key
     ///   on a Mac keyboard instead of the Control key
     ///   and alter the text next to the menu item that shows the keyboard shortcut
-    ///   to show the Command key version of the shortuct
+    ///   to show the Command key version of the shortcut
     ///   instead of the Control key version of the shortcut.
     /// </summary>
     /// <returns>
@@ -103,7 +101,7 @@ namespace SoundExplorers {
       var result = new EventShortcutList();
       foreach (ToolStripMenuItem menu in MenuStrip.Items) {
         foreach (ToolStripItem dropDownItem in menu.DropDownItems) {
-          var menuItem = dropDownItem as ToolStripMenuItem;
+          var menuItem = (ToolStripMenuItem)dropDownItem;
           if (menuItem != null) {
             if (menuItem.ShortcutKeys.HasFlag(Keys.Control)) {
               var letterKeyCode = (Keys)(menuItem.ShortcutKeys - Keys.Control);
@@ -117,8 +115,8 @@ namespace SoundExplorers {
     }
 
     private void CutToolStripMenuItem_Click(object sender, EventArgs e) {
-      if (MdiChildren.Count() > 0) {
-        (ActiveMdiChild as TableForm).Cut();
+      if (MdiChildren.Any()) {
+        TableView.Cut();
       }
     }
 
@@ -134,8 +132,8 @@ namespace SoundExplorers {
     /// <param name="sender">Event sender.</param>
     /// <param name="e">Event arguments.</param>
     private void EditAudioFileTagsToolStripMenuItem_Click(object sender, EventArgs e) {
-      if (MdiChildren.Count() > 0) {
-        (ActiveMdiChild as TableForm).EditAudioFileTags();
+      if (MdiChildren.Any()) {
+        TableView.EditAudioFileTags();
       } else {
         MessageBox.Show(
           this,
@@ -151,16 +149,16 @@ namespace SoundExplorers {
       Close();
     }
 
-    private void MdiParentForm_FormClosed(object sender, FormClosedEventArgs e) {
-      StatusBarOption.BooleanValue = StatusStrip.Visible;
-      ToolBarOption.BooleanValue = ToolStrip.Visible;
-      if (MdiChildren.Count() > 0) {
-        TableOption.StringValue = (ActiveMdiChild as TableForm).Entities.TableName;
+    private void MainView_FormClosed(object sender, FormClosedEventArgs e) {
+      Controller.IsStatusBarVisible = StatusStrip.Visible;
+      Controller.IsToolBarVisible = ToolStrip.Visible;
+      if (MdiChildren.Any()) {
+        Controller.TableName = TableView.Entities.TableName;
       } else {
-        TableOption.StringValue = SelectTableForm.TableName;
+        Controller.TableName = SelectTableForm.TableName;
       }
       // Explicitly closing all the MIDI child forms
-      // fixes a bug where, 
+      // fixes a problem where, 
       // if multiple child forms were open and maximized
       // and the most recently opened child form was not active,
       // the child form window state was incorrectly saved
@@ -192,7 +190,7 @@ namespace SoundExplorers {
     ///     that use a control key on a Windows keyboard.
     ///   </para>
     /// </remarks>
-    private void MdiParentForm_KeyDown(object sender, KeyEventArgs e) {
+    private void MainView_KeyDown(object sender, KeyEventArgs e) {
       switch (e.KeyData) {
         case Keys.LWin:
           LWinIsDown = true;
@@ -223,7 +221,7 @@ namespace SoundExplorers {
     ///   the <see cref="Form" />'s <see cref="Form.KeyPreview" />
     ///   property must be set to <b>True</b>.
     /// </remarks>
-    private void MdiParentForm_KeyUp(object sender, KeyEventArgs e) {
+    private void MainView_KeyUp(object sender, KeyEventArgs e) {
       switch (e.KeyCode) {
         case Keys.LWin:
           LWinIsDown = false;
@@ -249,13 +247,13 @@ namespace SoundExplorers {
     ///   unless a message box has previously been shown
     ///   in front of the splash form.
     /// </remarks>
-    private void MdiParentForm_VisibleChanged(object sender, EventArgs e) {
+    private void MainView_VisibleChanged(object sender, EventArgs e) {
       Activate();
       SplashManager.Close();
     }
 
     /// <summary>
-    ///   Circumvents a known bug in WinForms where,
+    ///   Circumvents a known problem in WinForms where,
     ///   when an MDI child form is maximized,
     ///   a wrong (VS default) and unwanted icon is shown in the menu strip,
     ///   even when ShowIcon is false for the child form.
@@ -278,8 +276,7 @@ namespace SoundExplorers {
       }
       try {
         var tableForm = new TableForm(
-          SelectTableForm.TableName);
-        tableForm.MdiParent = this;
+          SelectTableForm.TableName) {MdiParent = this};
         tableForm.Show();
       } catch (ApplicationException ex) {
         MessageBox.Show(
@@ -304,7 +301,7 @@ namespace SoundExplorers {
     }
 
     private void OpenToolStripMenuItem_Click(object sender, EventArgs e) {
-      if (MdiChildren.Count() == 0) {
+      if (!MdiChildren.Any()) {
         NewToolStripMenuItem_Click(sender, e);
         return;
       }
@@ -315,24 +312,24 @@ namespace SoundExplorers {
       // When the grid is bound to a second or subsequent table,
       // the type of each cell, which determines the cell editor to be used,
       // is always DataGridViewTextBoxCell,
-      // irrespective of what the colunm's CellTemplate,
+      // irrespective of what the column's CellTemplate,
       // as shown by the column's CellType property,
       // has been set.
-      // This appears to be a bug in DataGridView.
-      // Even disposing of the grid and reinstantiating it
+      // This appears to be an error in DataGridView.
+      // Even disposing of the grid and re-instantiating it
       // did not solve the problem!
       // To get round this,
       // emulate repopulating the existing table form
       // by replacing it with a new table form
       // with the same location and size.
-      //(ActiveMdiChild as TableForm).OpenTable(
+      //TableView.OpenTable(
       //    SelectTableForm.EntityTypeName);
-      var oldTableForm = ActiveMdiChild as TableForm;
+      var oldTableForm = TableView;
       try {
         var newTableForm = new TableForm(
-          SelectTableForm.TableName);
-        newTableForm.Location = oldTableForm.Location;
-        newTableForm.WindowState = oldTableForm.WindowState;
+          SelectTableForm.TableName) {
+          Location = oldTableForm.Location, WindowState = oldTableForm.WindowState
+        };
         oldTableForm.Close();
         newTableForm.MdiParent = this;
         newTableForm.Show();
@@ -375,8 +372,8 @@ namespace SoundExplorers {
     }
 
     private void PasteToolStripMenuItem_Click(object sender, EventArgs e) {
-      if (MdiChildren.Count() > 0) {
-        (ActiveMdiChild as TableForm).Paste();
+      if (MdiChildren.Any()) {
+        TableView.Paste();
       }
     }
 
@@ -392,8 +389,8 @@ namespace SoundExplorers {
     /// <param name="sender">Event sender.</param>
     /// <param name="e">Event arguments.</param>
     private void PlayAudioToolStripMenuItem_Click(object sender, EventArgs e) {
-      if (MdiChildren.Count() > 0) {
-        (ActiveMdiChild as TableForm).PlayAudio();
+      if (MdiChildren.Any()) {
+        TableView.PlayAudio();
       } else {
         MessageBox.Show(
           this,
@@ -416,8 +413,8 @@ namespace SoundExplorers {
     /// <param name="sender">Event sender.</param>
     /// <param name="e">Event arguments.</param>
     private void PlayVideoToolStripMenuItem_Click(object sender, EventArgs e) {
-      if (MdiChildren.Count() > 0) {
-        (ActiveMdiChild as TableForm).PlayVideo();
+      if (MdiChildren.Any()) {
+        TableView.PlayVideo();
       } else {
         MessageBox.Show(
           this,
@@ -429,8 +426,8 @@ namespace SoundExplorers {
     }
 
     private void RefreshToolStripMenuItem_Click(object sender, EventArgs e) {
-      if (MdiChildren.Count() > 0) {
-        (ActiveMdiChild as TableForm).Refresh();
+      if (MdiChildren.Any()) {
+        TableView.Refresh();
       }
     }
 
@@ -445,8 +442,8 @@ namespace SoundExplorers {
     /// <param name="sender">Event sender.</param>
     /// <param name="e">Event arguments.</param>
     private void ShowNewsletterToolStripMenuItem_Click(object sender, EventArgs e) {
-      if (MdiChildren.Count() > 0) {
-        (ActiveMdiChild as TableForm).ShowNewsletter();
+      if (MdiChildren.Any()) {
+        TableView.ShowNewsletter();
       } else {
         MessageBox.Show(
           this,
@@ -473,6 +470,10 @@ namespace SoundExplorers {
 
     private void ToolBarToolStripMenuItem_Click(object sender, EventArgs e) {
       ToolStrip.Visible = ToolBarToolStripMenuItem.Checked;
+    }
+
+    public void SetController(MainController controller) {
+      Controller = controller;
     }
   } //End of class
 } //End of namespace
