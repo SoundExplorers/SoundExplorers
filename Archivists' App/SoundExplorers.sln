@@ -3,6 +3,10 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoundExplorers", "SoundExplorers.csproj", "{8C3EC55A-FE12-4564-99AB-A41722D3A99C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoundExplorers.Controller", "SoundExplorers.Controller\SoundExplorers.Controller.csproj", "{1DF40F87-9462-4211-9F51-A15AF63CB6AE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoundExplorers.Data", "SoundExplorers.Data\SoundExplorers.Data.csproj", "{18AFE356-86B5-48CF-8F8D-4C6C0BD72F2F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,6 +28,30 @@ Global
 		{8C3EC55A-FE12-4564-99AB-A41722D3A99C}.Release|x86.ActiveCfg = Release|x86
 		{8C3EC55A-FE12-4564-99AB-A41722D3A99C}.Release|x86.Build.0 = Release|x86
 		{8C3EC55A-FE12-4564-99AB-A41722D3A99C}.Debug|Any CPU.Build.0 = Debug|x86
+		{1DF40F87-9462-4211-9F51-A15AF63CB6AE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1DF40F87-9462-4211-9F51-A15AF63CB6AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1DF40F87-9462-4211-9F51-A15AF63CB6AE}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{1DF40F87-9462-4211-9F51-A15AF63CB6AE}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{1DF40F87-9462-4211-9F51-A15AF63CB6AE}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{1DF40F87-9462-4211-9F51-A15AF63CB6AE}.Debug|x86.Build.0 = Debug|Any CPU
+		{1DF40F87-9462-4211-9F51-A15AF63CB6AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1DF40F87-9462-4211-9F51-A15AF63CB6AE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1DF40F87-9462-4211-9F51-A15AF63CB6AE}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{1DF40F87-9462-4211-9F51-A15AF63CB6AE}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{1DF40F87-9462-4211-9F51-A15AF63CB6AE}.Release|x86.ActiveCfg = Release|Any CPU
+		{1DF40F87-9462-4211-9F51-A15AF63CB6AE}.Release|x86.Build.0 = Release|Any CPU
+		{18AFE356-86B5-48CF-8F8D-4C6C0BD72F2F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{18AFE356-86B5-48CF-8F8D-4C6C0BD72F2F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{18AFE356-86B5-48CF-8F8D-4C6C0BD72F2F}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{18AFE356-86B5-48CF-8F8D-4C6C0BD72F2F}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{18AFE356-86B5-48CF-8F8D-4C6C0BD72F2F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{18AFE356-86B5-48CF-8F8D-4C6C0BD72F2F}.Debug|x86.Build.0 = Debug|Any CPU
+		{18AFE356-86B5-48CF-8F8D-4C6C0BD72F2F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{18AFE356-86B5-48CF-8F8D-4C6C0BD72F2F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{18AFE356-86B5-48CF-8F8D-4C6C0BD72F2F}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{18AFE356-86B5-48CF-8F8D-4C6C0BD72F2F}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{18AFE356-86B5-48CF-8F8D-4C6C0BD72F2F}.Release|x86.ActiveCfg = Release|Any CPU
+		{18AFE356-86B5-48CF-8F8D-4C6C0BD72F2F}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

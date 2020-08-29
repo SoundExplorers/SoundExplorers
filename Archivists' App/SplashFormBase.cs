@@ -2,6 +2,7 @@
 
 using System.ComponentModel;
 using System.Windows.Forms;
+using SoundExplorers.Controller;
 
 namespace SoundExplorers {
 	/// <summary>

@@ -1,4 +1,4 @@
-namespace SoundExplorers {
+namespace SoundExplorers.Controller {
 	/// <summary>
 	///   A simple interface for objects to set message text.
 	/// </summary>

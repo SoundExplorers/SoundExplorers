@@ -14,6 +14,7 @@ using System;
 using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
+using SoundExplorers.Controller;
 
 namespace SoundExplorers {
   /// <summary>
