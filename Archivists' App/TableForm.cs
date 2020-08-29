@@ -45,7 +45,7 @@ namespace SoundExplorers {
                                               throw new NullReferenceException(
                                                 nameof(MainGrid.CurrentRow));
 
-    private MdiParentForm MdiParentForm => (MdiParentForm)ParentForm ??
+    private MainView MainView => (MainView)ParentForm ??
                                            throw new NullReferenceException(
                                              nameof(ParentForm));
 
@@ -210,7 +210,7 @@ namespace SoundExplorers {
     /// <param name="e">Event arguments.</param>
     private void Entities_RowUpdated(object sender, RowUpdatedEventArgs e) {
       //Debug.WriteLine("Entities_RowUpdated RowIndex = " + e.RowIndex);
-      var statusLabel = MdiParentForm.StatusLabel;
+      var statusLabel = MainView.StatusLabel;
       statusLabel.Text = e.Message;
       var mediaEntity = e.Entity as IMediaEntity;
       if (mediaEntity == null) {

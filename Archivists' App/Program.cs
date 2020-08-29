@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Linq;
 using System.Windows.Forms;
+using SoundExplorers.Controller;
 
 namespace SoundExplorers {
   /// <summary>
@@ -10,20 +10,14 @@ namespace SoundExplorers {
     /// <summary>
     ///   The main entry point for the application.
     /// </summary>
-    /// <param name="args">
-    ///   Command line arguments.
-    /// </param>
     [STAThread]
-    private static void Main(string[] args) {
-      string entityTypeName = null;
-      if (args.Length > 0) {
-        entityTypeName = args[0];
-      }
+    private static void Main() {
       Application.EnableVisualStyles();
       Application.SetCompatibleTextRenderingDefault(false);
       SplashManager.Show(typeof(SplashForm));
-      var mdiParentForm = new MdiParentForm();
-      Application.Run(mdiParentForm);
+      var mainView = new MainView();
+      var dummy = new MainController(mainView);
+      Application.Run(mainView);
     }
   } //End of class
 } //End of namespace

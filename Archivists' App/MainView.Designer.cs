@@ -1,5 +1,5 @@
 ﻿namespace SoundExplorers {
-    partial class MdiParentForm {
+    partial class MainView {
         /// <summary>
         /// Required designer variable.
         /// </summary>
@@ -24,7 +24,7 @@
         /// </summary>
         private void InitializeComponent() {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MdiParentForm));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainView));
             this.MenuStrip = new System.Windows.Forms.MenuStrip();
             this.FileMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.NewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -572,12 +572,12 @@
             this.KeyPreview = true;
             this.MainMenuStrip = this.MenuStrip;
             this.Margin = new System.Windows.Forms.Padding(4);
-            this.Name = "MdiParentForm";
+            this.Name = "MainView";
             this.Text = "Sound Explorers Archive";
-            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MdiParentForm_FormClosed);
-            this.VisibleChanged += new System.EventHandler(this.MdiParentForm_VisibleChanged);
-            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MdiParentForm_KeyDown);
-            this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.MdiParentForm_KeyUp);
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainView_FormClosed);
+            this.VisibleChanged += new System.EventHandler(this.MainView_VisibleChanged);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MainView_KeyDown);
+            this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.MainView_KeyUp);
             this.MenuStrip.ResumeLayout(false);
             this.MenuStrip.PerformLayout();
             this.ToolStrip.ResumeLayout(false);
