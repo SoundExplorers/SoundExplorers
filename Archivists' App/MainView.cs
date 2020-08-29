@@ -275,9 +275,9 @@ namespace SoundExplorers {
         return;
       }
       try {
-        var tableForm = new TableForm(
-          SelectTableForm.TableName) {MdiParent = this};
-        tableForm.Show();
+        var tableView = new TableForm {MdiParent = this};
+        var dummy = new TableController(tableView, SelectTableForm.TableName);
+        tableView.Show();
       } catch (ApplicationException ex) {
         MessageBox.Show(
           ex.Message,
@@ -324,17 +324,17 @@ namespace SoundExplorers {
       // with the same location and size.
       //TableView.OpenTable(
       //    SelectTableForm.EntityTypeName);
-      var oldTableForm = TableView;
+      var oldTableView = TableView;
       try {
-        var newTableForm = new TableForm(
-          SelectTableForm.TableName) {
-          Location = oldTableForm.Location, WindowState = oldTableForm.WindowState
+        var newTableView = new TableForm {
+          Location = oldTableView.Location, WindowState = oldTableView.WindowState
         };
-        oldTableForm.Close();
-        newTableForm.MdiParent = this;
-        newTableForm.Show();
-        newTableForm.Size = oldTableForm.Size;
-        oldTableForm.Dispose();
+        var dummy = new TableController(newTableView, SelectTableForm.TableName);
+        oldTableView.Close();
+        newTableView.MdiParent = this;
+        newTableView.Show();
+        newTableView.Size = oldTableView.Size;
+        oldTableView.Dispose();
         // This won't always work, because SizeableFormOptions
         // copies the size and state of an MDI child form
         // from the last active MDI child form, if any,

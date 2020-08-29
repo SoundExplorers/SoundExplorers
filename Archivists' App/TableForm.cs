@@ -4,22 +4,17 @@ using System.Data;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Windows.Forms;
-using SoundExplorers.Data;
-using Image = SoundExplorers.Data.Image;
-using ImageList = SoundExplorers.Data.ImageList;
+using SoundExplorers.Controller;
+// using Image = SoundExplorers.Data.Image;
+// using ImageList = SoundExplorers.Data.ImageList;
 
 namespace SoundExplorers {
-  internal partial class TableForm : Form {
+  internal partial class TableForm : Form, ITableView {
     /// <summary>
     ///   Initialises a new instance of the <see cref="TableForm" /> class.
     /// </summary>
-    /// <param name="tableName">
-    ///   The name of the table whose data is to be displayed.
-    /// </param>
-    public TableForm(
-      string tableName) {
+    public TableForm() {
       InitializeComponent();
       // A known Visual Studio error is that PictureBox's AllowDrop property
       // appears neither in the designer nor in intellisense.
@@ -28,9 +23,10 @@ namespace SoundExplorers {
       FittedPictureBox1.AllowDrop = true;
       GridSplitContainer.GotFocus += SplitContainer_GotFocus;
       ImageSplitContainer.GotFocus += SplitContainer_GotFocus;
-      TableName = tableName;
-      OpenTable(TableName);
+      OpenTable(Controller.TableName);
     }
+    
+    private TableController Controller { get; set; }
 
     /// <summary>
     ///   The entity list representing the table whose data is shown on the form.
@@ -38,8 +34,8 @@ namespace SoundExplorers {
     public IEntityList Entities { get; private set; }
 
     private DataGridView FocusedGrid { get; set; }
-    private Option GridSplitterDistanceOption { get; set; }
-    private Option ImageSplitterDistanceOption { get; set; }
+    // private Option GridSplitterDistanceOption { get; set; }
+    // private Option ImageSplitterDistanceOption { get; set; }
 
     private DataGridViewRow MainCurrentRow => MainGrid.CurrentRow ??
                                               throw new NullReferenceException(
@@ -56,7 +52,7 @@ namespace SoundExplorers {
     private bool ParentRowChanged { get; set; }
     private RowErrorEventArgs RowErrorEventArgs { get; set; }
     private SizeableFormOptions SizeableFormOptions { get; set; }
-    private string TableName { get; }
+    //private string TableName { get; }
     private DataGridViewRow UnchangedRow { get; set; }
     private bool UpdateCancelled { get; set; }
 
@@ -1856,6 +1852,10 @@ namespace SoundExplorers {
     private enum Medium {
       Audio,
       Video
+    }
+
+    public void SetController(TableController controller) {
+      Controller = controller;
     }
   } //End of class
 } //End of namespace

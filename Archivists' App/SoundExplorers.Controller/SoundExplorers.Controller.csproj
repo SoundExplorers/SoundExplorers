@@ -44,8 +44,10 @@
     <ItemGroup>
         <Compile Include="IMainView.cs" />
         <Compile Include="IMessageUpdater.cs" />
+        <Compile Include="ITableView.cs" />
         <Compile Include="MainController.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
+        <Compile Include="TableController.cs" />
     </ItemGroup>
     <ItemGroup>
       <ProjectReference Include="..\SoundExplorers.Data\SoundExplorers.Data.csproj">
