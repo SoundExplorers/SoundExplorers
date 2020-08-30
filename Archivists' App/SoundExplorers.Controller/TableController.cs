@@ -1,4 +1,4 @@
-﻿using JetBrains.Annotations;
+using JetBrains.Annotations;
 using SoundExplorers.Data;
 
 namespace SoundExplorers.Controller {
@@ -21,12 +21,24 @@ namespace SoundExplorers.Controller {
       TableName = tableName;
     }
 
-    private Option GridSplitterDistanceOption => _gridSplitterDistanceOption ??
-                                                 (_gridSplitterDistanceOption =
-                                                   new Option("Table"));
+    public int GridSplitterDistance {
+      get => GridSplitterDistanceOption.Int32Value;
+      set => GridSplitterDistanceOption.Int32Value = value;
+    }
 
-    //private Option GridSplitterDistanceOption { get; set; }
-    private Option ImageSplitterDistanceOption { get; set; }
+    private Option GridSplitterDistanceOption =>
+      _gridSplitterDistanceOption ?? (_gridSplitterDistanceOption =
+        new Option($"{TableName}.GridSplitterDistance"));
+
+    public int ImageSplitterDistance {
+      get => ImageSplitterDistanceOption.Int32Value;
+      set => ImageSplitterDistanceOption.Int32Value = value;
+    }
+
+    private Option ImageSplitterDistanceOption =>
+      _imageSplitterDistanceOption ?? (_imageSplitterDistanceOption =
+        new Option($"{TableName}.ImageSplitterDistance"));
+
     [NotNull] public string TableName { get; }
   }
 }

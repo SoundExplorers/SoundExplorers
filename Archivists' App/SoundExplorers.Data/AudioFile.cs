@@ -10,7 +10,7 @@ namespace SoundExplorers.Data {
   ///   and that are also available with all audio file types
   ///   are made available for update.
   /// </remarks>
-  internal class AudioFile : IDisposable {
+  public class AudioFile : IDisposable {
     /// <summary>
     ///   Initialises a new instance of the
     ///   <see cref="AudioFile" /> class,

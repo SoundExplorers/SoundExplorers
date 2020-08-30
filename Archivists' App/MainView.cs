@@ -138,7 +138,16 @@ namespace SoundExplorers {
     /// <param name="e">Event arguments.</param>
     private void EditAudioFileTagsToolStripMenuItem_Click(object sender, EventArgs e) {
       if (MdiChildren.Any()) {
-        TableView.EditAudioFileTags();
+        try {
+          TableView.EditAudioFileTags();
+        } catch (ApplicationException ex) {
+          MessageBox.Show(
+            this,
+            ex.Message,
+            Application.ProductName,
+            MessageBoxButtons.OK,
+            MessageBoxIcon.Error);
+        }
       } else {
         MessageBox.Show(
           this,

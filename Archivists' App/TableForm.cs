@@ -1,15 +1,20 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
+using JetBrains.Annotations;
 using SoundExplorers.Controller;
 using Image = SoundExplorers.Data.Image;
 using ImageList = SoundExplorers.Data.ImageList;
 
 namespace SoundExplorers {
+  /// <summary>
+  /// Table editor MDI child window of the main window. 
+  /// </summary>
+  [UsedImplicitly]
   internal partial class TableForm : Form, IView<TableController> {
     /// <summary>
     ///   Initialises a new instance of the <see cref="TableForm" /> class.
@@ -23,9 +28,8 @@ namespace SoundExplorers {
       FittedPictureBox1.AllowDrop = true;
       GridSplitContainer.GotFocus += SplitContainer_GotFocus;
       ImageSplitContainer.GotFocus += SplitContainer_GotFocus;
-      OpenTable(Controller.TableName);
     }
-    
+
     private TableController Controller { get; set; }
 
     /// <summary>
@@ -34,16 +38,14 @@ namespace SoundExplorers {
     public IEntityList Entities { get; private set; }
 
     private DataGridView FocusedGrid { get; set; }
-    // private Option GridSplitterDistanceOption { get; set; }
-    // private Option ImageSplitterDistanceOption { get; set; }
 
     private DataGridViewRow MainCurrentRow => MainGrid.CurrentRow ??
                                               throw new NullReferenceException(
                                                 nameof(MainGrid.CurrentRow));
 
     private MainView MainView => (MainView)ParentForm ??
-                                           throw new NullReferenceException(
-                                             nameof(ParentForm));
+                                 throw new NullReferenceException(
+                                   nameof(ParentForm));
 
     private DataGridViewRow ParentCurrentRow => ParentGrid.CurrentRow ??
                                                 throw new NullReferenceException(
@@ -52,9 +54,14 @@ namespace SoundExplorers {
     private bool ParentRowChanged { get; set; }
     private RowErrorEventArgs RowErrorEventArgs { get; set; }
     private SizeableFormOptions SizeableFormOptions { get; set; }
+
     //private string TableName { get; }
     private DataGridViewRow UnchangedRow { get; set; }
     private bool UpdateCancelled { get; set; }
+
+    public void SetController(TableController controller) {
+      Controller = controller;
+    }
 
     public void Copy() {
       if (FocusedGrid.CurrentCell.Value == null) {
@@ -1698,12 +1705,12 @@ namespace SoundExplorers {
       SizeableFormOptions.Save();
       if (Entities is ArtistInImageList
           || Entities is ImageList) {
-        ImageSplitterDistanceOption.Int32Value = ImageSplitContainer.SplitterDistance;
+        Controller.ImageSplitterDistance = ImageSplitContainer.SplitterDistance;
       }
       if (Entities.ParentList != null) {
         // A read-only related grid for the parent table is shown
         // above the main grid.
-        GridSplitterDistanceOption.Int32Value = GridSplitContainer.SplitterDistance;
+        Controller.GridSplitterDistance = GridSplitContainer.SplitterDistance;
       }
     }
 
@@ -1796,6 +1803,7 @@ namespace SoundExplorers {
       // Has to be done here rather than in constructor
       // in order to tell that this is an MDI child form.
       SizeableFormOptions = new SizeableFormOptions(this);
+      OpenTable(Controller.TableName);
     }
 
     private void TableForm_VisibleChanged(object sender, EventArgs e) {
@@ -1808,10 +1816,7 @@ namespace SoundExplorers {
         if (Entities is ArtistInImageList
             || Entities is ImageList) {
           ImageSplitContainer.Panel2Collapsed = false;
-          ImageSplitterDistanceOption = new Option(
-            TableName + ".ImageSplitterDistance",
-            ImageSplitContainer.SplitterDistance);
-          ImageSplitContainer.SplitterDistance = ImageSplitterDistanceOption.Int32Value;
+          ImageSplitContainer.SplitterDistance = Controller.ImageSplitterDistance;
           ShowImageOrMessage(null); // Force image refresh
           if (Entities is ImageList) {
             if (Entities.Count > 0) {
@@ -1831,11 +1836,8 @@ namespace SoundExplorers {
           // A read-only related grid for the parent table is shown
           // above the main grid.
           GridSplitContainer.Panel1Collapsed = false;
-          GridSplitterDistanceOption = new Option(
-            TableName + ".GridSplitterDistance",
-            GridSplitContainer.SplitterDistance);
           // Does not work if done in TableForm_Load.
-          GridSplitContainer.SplitterDistance = GridSplitterDistanceOption.Int32Value;
+          GridSplitContainer.SplitterDistance = Controller.GridSplitterDistance;
           ParentGrid.AutoResizeColumns();
         } else {
           GridSplitContainer.Panel1Collapsed = true;
