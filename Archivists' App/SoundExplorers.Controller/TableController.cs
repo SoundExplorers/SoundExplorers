@@ -2,6 +2,7 @@ using JetBrains.Annotations;
 using SoundExplorers.Data;
 
 namespace SoundExplorers.Controller {
+  [UsedImplicitly]
   public class TableController {
     private Option _gridSplitterDistanceOption;
     private Option _imageSplitterDistanceOption;

@@ -2,6 +2,7 @@
 using SoundExplorers.Data;
 
 namespace SoundExplorers.Controller {
+  [UsedImplicitly]
   public class MainController {
     private Option _statusBarOption;
     private Option _tableOption;
