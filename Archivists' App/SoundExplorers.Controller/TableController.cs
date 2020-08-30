@@ -21,6 +21,10 @@ namespace SoundExplorers.Controller {
       TableName = tableName;
     }
 
+    /// <summary>
+    ///   User option for the position of the split between the
+    ///   (upper) parent grid, if shown, and the (lower) main grid.
+    /// </summary>
     public int GridSplitterDistance {
       get => GridSplitterDistanceOption.Int32Value;
       set => GridSplitterDistanceOption.Int32Value = value;
@@ -30,6 +34,10 @@ namespace SoundExplorers.Controller {
       _gridSplitterDistanceOption ?? (_gridSplitterDistanceOption =
         new Option($"{TableName}.GridSplitterDistance"));
 
+    /// <summary>
+    ///   User option for the position of the split between the
+    ///   image data (above) and the image (below) in the image table editor.
+    /// </summary>
     public int ImageSplitterDistance {
       get => ImageSplitterDistanceOption.Int32Value;
       set => ImageSplitterDistanceOption.Int32Value = value;

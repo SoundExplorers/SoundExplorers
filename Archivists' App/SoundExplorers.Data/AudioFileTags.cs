@@ -8,7 +8,7 @@ namespace SoundExplorers.Data {
   ///   that we can usefully map to info on the database
   ///   and that are also available with all audio file types.
   /// </summary>
-  internal class AudioFileTags : IAudioTags {
+  public class AudioFileTags : IAudioTags {
     /// <summary>
     ///   Initialises a new instance of the
     ///   <see cref="AudioFileTags" /> class.
