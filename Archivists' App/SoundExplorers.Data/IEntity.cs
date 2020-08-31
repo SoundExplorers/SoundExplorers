@@ -4,7 +4,7 @@ namespace SoundExplorers.Data {
   /// <summary>
   ///   Entity interface.
   /// </summary>
-  internal interface IEntity : IEntityColumnContainer, ICloneable {
+  public interface IEntity : IEntityColumnContainer, ICloneable {
     /// <summary>
     ///   Deletes the row of the table whose primary key field values
     ///   match the values of the corresponding primary key column properties.

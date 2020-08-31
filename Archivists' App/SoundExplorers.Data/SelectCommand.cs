@@ -10,7 +10,7 @@ namespace SoundExplorers.Data {
   /// </summary>
   /// <remarks>
   /// </remarks>
-  internal class SelectCommand<T> : OurSqlCommand<T>
+  public class SelectCommand<T> : OurSqlCommand<T>
     where T : Entity<T> {
     /// <summary>
     ///   Initialises a new instance of the <see cref="SelectCommand" /> class,

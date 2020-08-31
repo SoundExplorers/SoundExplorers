@@ -9,7 +9,7 @@ namespace SoundExplorers.Data {
   /// </summary>
   /// <remarks>
   /// </remarks>
-  internal class DeleteCommand<T> : OurSqlCommand<T>
+  public class DeleteCommand<T> : OurSqlCommand<T>
     where T : Entity<T> {
     /// <summary>
     ///   Initialises a new instance of the <see cref="DeleteCommand" /> class,

@@ -4,7 +4,7 @@ namespace SoundExplorers.Data {
   /// <summary>
   ///   Entity column metadata interface.
   /// </summary>
-  internal interface IEntityColumn {
+  public interface IEntityColumn {
     /// <summary>
     ///   Gets or sets the name of the column.
     ///   This must be set to the name of the corresponding

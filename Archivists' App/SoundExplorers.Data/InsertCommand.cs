@@ -11,7 +11,7 @@ namespace SoundExplorers.Data {
   /// </summary>
   /// <remarks>
   /// </remarks>
-  internal class InsertCommand<T> : OurSqlCommand<T>
+  public class InsertCommand<T> : OurSqlCommand<T>
     where T : Entity<T> {
     /// <summary>
     ///   Initialises a new instance of the <see cref="InsertCommand" /> class,

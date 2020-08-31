@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Data;
 
-namespace SoundExplorers.Data {
+namespace SoundExplorers.Common {
   /// <summary>
   ///   Provides data for a RowError event
   ///   that is raised when there is an error on
   ///   attempting to insert, update or delete a <see cref="DataRow" />.
   /// </summary>
-  internal class RowErrorEventArgs : EventArgs {
+  public class RowErrorEventArgs : EventArgs {
     /// <summary>
     ///   Initialises an instance of the
     ///   <see cref="RowErrorEventArgs" /> class.
@@ -49,7 +49,7 @@ namespace SoundExplorers.Data {
     ///   insertion, update or deletion to fail.
     ///   Zero if the failure cannot be attributed to a specific field value.
     /// </summary>
-    public virtual int ColumnIndex { get; }
+    public int ColumnIndex { get; }
 
     /// <summary>
     ///   Gets an <see cref="Exception" /> that provides
@@ -69,7 +69,7 @@ namespace SoundExplorers.Data {
     ///   the <see cref="Exception" />,
     ///   this will be that <see cref="Exception" /> unchanged.
     /// </remarks>
-    public virtual Exception Exception { get; }
+    public Exception Exception { get; }
 
     /// <summary>
     ///   Gets an array of the values of the row's fields
@@ -77,12 +77,12 @@ namespace SoundExplorers.Data {
     ///   If the user had tried to delete the row,
     ///   All the values will be DBNull.
     /// </summary>
-    public virtual object[] RejectedValues { get; }
+    public object[] RejectedValues { get; }
 
     /// <summary>
     ///   Gets the index of the <see cref="DataRow" /> whose
     ///   insertion, update or deletion failed.
     /// </summary>
-    public virtual int RowIndex { get; }
+    public int RowIndex { get; }
   } //End of class
 } //End of namespace

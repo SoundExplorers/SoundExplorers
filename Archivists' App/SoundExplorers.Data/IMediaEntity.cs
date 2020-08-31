@@ -3,7 +3,7 @@
   ///   Interface for
   ///   an Entity from whose data media file metadata tags may need to be updated.
   /// </summary>
-  internal interface IMediaEntity : IEntity {
+  public interface IMediaEntity : IEntity {
     /// <summary>
     ///   Updates the metadata tags of any audio files
     ///   associated with the entity with appropriate data from the database.

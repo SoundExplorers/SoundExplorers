@@ -6,6 +6,7 @@ using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using JetBrains.Annotations;
+using SoundExplorers.Common;
 using SoundExplorers.Controller;
 using Image = SoundExplorers.Data.Image;
 using ImageList = SoundExplorers.Data.ImageList;
@@ -15,7 +16,7 @@ namespace SoundExplorers {
   /// Table editor MDI child window of the main window. 
   /// </summary>
   [UsedImplicitly]
-  internal partial class TableForm : Form, IView<TableController> {
+  internal partial class TableForm : Form, ITableView {
     /// <summary>
     ///   Initialises a new instance of the <see cref="TableForm" /> class.
     /// </summary>
@@ -31,12 +32,6 @@ namespace SoundExplorers {
     }
 
     private TableController Controller { get; set; }
-
-    /// <summary>
-    ///   The entity list representing the table whose data is shown on the form.
-    /// </summary>
-    public IEntityList Entities { get; private set; }
-
     private DataGridView FocusedGrid { get; set; }
 
     private DataGridViewRow MainCurrentRow => MainGrid.CurrentRow ??
@@ -54,8 +49,6 @@ namespace SoundExplorers {
     private bool ParentRowChanged { get; set; }
     private RowErrorEventArgs RowErrorEventArgs { get; set; }
     private SizeableFormOptions SizeableFormOptions { get; set; }
-
-    //private string TableName { get; }
     private DataGridViewRow UnchangedRow { get; set; }
     private bool UpdateCancelled { get; set; }
 
@@ -170,69 +163,38 @@ namespace SoundExplorers {
           MessageBoxIcon.Error);
       }
     }
-    //private void Control_GotFocus(object sender, EventArgs e) {
-    //    Debug.WriteLine("Control_GotFocus " + (sender as Control).Name);
-    //    if (sender == GridSplitContainer) {
-    //        FocusTimer.Start();
-    //    }
-    //}
-
-    //private void Control_LostFocus(object sender, EventArgs e) {
-    //    Debug.WriteLine("Control_LostFocus " + (sender as Control).Name);
-    //}
 
     /// <summary>
-    ///   Handles the entity list's EntityList.RowError event,
-    ///   which occurs when there is an error on
+    ///   Occurs when there is an error on
     ///   attempting to insert, update or delete a database table row
     ///   corresponding to a row in the main grid.
     /// </summary>
-    /// <param name="sender">Event sender.</param>
-    /// <param name="e">Event arguments.</param>
-    private void Entities_RowError(object sender, RowErrorEventArgs e) {
-      //Debug.WriteLine("Entities_RowError");
-      //Debug.WriteLine(
-      //    "Entities_RowError IsCurrentCellInEditMode = " 
-      //    + MainGrid.IsCurrentCellInEditMode);
+    /// <param name="e">Error details.</param>
+    public void OnRowError(RowErrorEventArgs e) {
       RowErrorEventArgs = e;
       UpdateCancelled = true;
-      //ErrorIsInCurrentRow = (e.RowIndex == MainCurrentRow.Index);
-      //Debug.WriteLine("Entities_RowError ErrorIsInCurrentRow = " + ErrorIsInCurrentRow);
       RowErrorTimer.Start();
     }
 
     /// <summary>
-    ///   Handles the entity list's
-    ///   EntityList.RowError event,
-    ///   which occurs when a database table row
+    ///   occurs when a database table row
     ///   corresponding to a row in the main grid
-    ///   has been successfully inserted or updated on the database
-    ///   and <see cref="Entities" /> has been updated with the change.
+    ///   has been successfully inserted or updated on the database.
     /// </summary>
-    /// <param name="sender">Event sender.</param>
-    /// <param name="e">Event arguments.</param>
-    private void Entities_RowUpdated(object sender, RowUpdatedEventArgs e) {
-      //Debug.WriteLine("Entities_RowUpdated RowIndex = " + e.RowIndex);
-      var statusLabel = MainView.StatusLabel;
-      statusLabel.Text = e.Message;
-      var mediaEntity = e.Entity as IMediaEntity;
-      if (mediaEntity == null) {
-        return;
-      }
-      string updateTagsMessage;
-      try {
-        updateTagsMessage = mediaEntity.UpdateTags();
-      } catch (ApplicationException ex) {
+    /// <param name="databaseUpdateMessage">A message describing the update.</param>
+    /// <param name="mediaTagsUpdateErrorMessage">
+    ///   If specified, an error message from a failed update of media tags.
+    /// </param>
+    public void OnRowUpdated(string databaseUpdateMessage,
+      string mediaTagsUpdateErrorMessage = null) {
+      MainView.StatusLabel.Text = databaseUpdateMessage;
+      if (mediaTagsUpdateErrorMessage != null) {
         MessageBox.Show(
           this,
-          ex.Message,
+          mediaTagsUpdateErrorMessage,
           Application.ProductName,
           MessageBoxButtons.OK,
           MessageBoxIcon.Error);
-        return;
-      }
-      if (updateTagsMessage != string.Empty) {
-        statusLabel.Text += ". " + updateTagsMessage + ".";
       }
     }
 
@@ -320,7 +282,7 @@ namespace SoundExplorers {
     ///   on the other grid.
     /// </remarks>
     private void FocusGrid(DataGridView grid) {
-      if (Entities.ParentList == null) {
+      if (Controller.ParentList == null) {
         grid.Focus();
         return;
       }
@@ -441,9 +403,9 @@ namespace SoundExplorers {
     /// </exception>
     private Newsletter GetNewsletterToShow() {
       if (Entities is ArtistInImageList) {
-        if (Entities.ParentList.Count > 0) {
+        if (Controller.ParentList.Count > 0) {
           var image =
-            (Image)Entities.ParentList[ParentCurrentRow.Index];
+            (Image)Controller.ParentList[ParentCurrentRow.Index];
           return image.FetchNewsletter();
         }
         throw new ApplicationException(
@@ -451,9 +413,9 @@ namespace SoundExplorers {
           + "no Images are listed in the ArtistInImageList window.");
       }
       if (Entities is CreditList) {
-        if (Entities.ParentList.Count > 0) {
+        if (Controller.ParentList.Count > 0) {
           var piece =
-            (Piece)Entities.ParentList[ParentCurrentRow.Index];
+            (Piece)Controller.ParentList[ParentCurrentRow.Index];
           return piece.FetchNewsletter();
         }
         throw new ApplicationException(
@@ -497,9 +459,9 @@ namespace SoundExplorers {
         return newsletter;
       }
       if (Entities is PieceList) {
-        if (Entities.ParentList.Count > 0) {
+        if (Controller.ParentList.Count > 0) {
           var set =
-            (Set)Entities.ParentList[ParentCurrentRow.Index];
+            (Set)Controller.ParentList[ParentCurrentRow.Index];
           return set.FetchNewsletter();
         }
         throw new ApplicationException(
@@ -526,9 +488,9 @@ namespace SoundExplorers {
         return performance.FetchNewsletter();
       }
       if (Entities is SetList) {
-        if (Entities.ParentList.Count > 0) {
+        if (Controller.ParentList.Count > 0) {
           var performance =
-            (Performance)Entities.ParentList[ParentCurrentRow.Index];
+            (Performance)Controller.ParentList[ParentCurrentRow.Index];
           return performance.FetchNewsletter();
         }
         throw new ApplicationException(
@@ -554,8 +516,8 @@ namespace SoundExplorers {
     /// </exception>
     private Piece GetPiece() {
       if (Entities is CreditList) {
-        if (Entities.ParentList.Count > 0) {
-          return (Piece)Entities.ParentList[ParentCurrentRow.Index];
+        if (Controller.ParentList.Count > 0) {
+          return (Piece)Controller.ParentList[ParentCurrentRow.Index];
         }
         throw new ApplicationException(
           "You cannot play a Piece because no Pieces are listed in the Credit window.");
@@ -1143,16 +1105,9 @@ namespace SoundExplorers {
       }
     }
 
-    /// <summary>
-    ///   Opens the specified table.
-    /// </summary>
-    /// <param name="tableName">
-    ///   The name of the table whose
-    ///   data is to be displayed.
-    /// </param>
-    private void OpenTable(string tableName) {
+    private void OpenTable() {
       InvertGridColors(ParentGrid); // Will revert when focused.
-      PopulateGrid(tableName);
+      PopulateGrid();
     }
 
     /// <summary>
@@ -1188,9 +1143,9 @@ namespace SoundExplorers {
     /// </remarks>
     private void ParentGrid_RowEnter(object sender, DataGridViewCellEventArgs e) {
       ParentRowChanged = true;
-      if (Entities.ParentList is ImageList
-          && e.RowIndex < Entities.ParentList.Count) {
-        var image = (Image)Entities.ParentList[e.RowIndex];
+      if (Controller.ParentList is ImageList
+          && e.RowIndex < Controller.ParentList.Count) {
+        var image = (Image)Controller.ParentList[e.RowIndex];
         ShowImageOrMessage(image.Path);
       }
     }
@@ -1250,19 +1205,9 @@ namespace SoundExplorers {
       }
     }
 
-    /// <summary>
-    ///   Populates the grid.
-    /// </summary>
-    /// <param name="tableName">
-    ///   The name of the table whose data is to be displayed.
-    /// </param>
-    private void PopulateGrid(string tableName) {
-      Entities = tableName == "ArtistInImage"
-        ? new ArtistInImageList()
-        : Factory<IEntityList>.Create(tableName);
-      Entities.RowError += Entities_RowError;
-      Entities.RowUpdated += Entities_RowUpdated;
-      Text = Entities.TableName;
+    private void PopulateGrid() {
+      Controller.FetchData();
+      Text = Controller.TableName;
       MainGrid.CellBeginEdit -= MainGrid_CellBeginEdit;
       MainGrid.CellEndEdit -= MainGrid_CellEndEdit;
       //MainGrid.CellEnter -= new DataGridViewCellEventHandler(MainGrid_CellEnter);
@@ -1280,24 +1225,24 @@ namespace SoundExplorers {
       MainGrid.RowEnter -= MainGrid_RowEnter;
       MainGrid.RowsRemoved -= MainGrid_RowsRemoved;
       MainGrid.RowValidated -= MainGrid_RowValidated;
-      if (Entities.ParentList != null) {
+      if (Controller.IsParentTableToBeShown) {
         // A read-only related grid for the parent table is to be shown
         // above the main grid.
         PopulateParentGrid();
         MainGrid.DataSource = new BindingSource(
           ParentGrid.DataSource,
-          Entities.DataSet.Relations[0].RelationName);
+          Controller.DataSet?.Relations[0].RelationName);
         foreach (var entityColumn in Entities.Columns) {
           if (entityColumn.ColumnName != "Comments") { // Comments is on multiple tables
-            if (Entities.ParentList.Columns.ContainsKey(entityColumn.ColumnName)
-                || Entities.ParentList.Columns.ContainsKey(entityColumn
+            if (Controller.ParentList.Columns.ContainsKey(entityColumn.ColumnName)
+                || Controller.ParentList.Columns.ContainsKey(entityColumn
                   .ReferencedColumnName)) {
               entityColumn.Visible = false;
             }
           }
         } //End of foreach
       } else { // No parent grid
-        MainGrid.DataSource = Entities.Table.DefaultView;
+        MainGrid.DataSource = Controller.Table.DefaultView;
       }
       foreach (DataGridViewColumn column in MainGrid.Columns) {
         var entityColumn = Entities.Columns[column.Index];
@@ -1348,7 +1293,7 @@ namespace SoundExplorers {
       // So can't be done when called from constructor.
       if (Visible) {
         MainGrid.AutoResizeColumns();
-        if (Entities.ParentList != null) {
+        if (Controller.IsParentTableToBeShown) {
           // A read-only related grid for the parent table is to be shown
           // above the main grid.
           ParentGrid.Focus();
@@ -1366,10 +1311,10 @@ namespace SoundExplorers {
       ParentGrid.MouseDown -= Grid_MouseDown;
       ParentGrid.RowEnter -= ParentGrid_RowEnter;
       ParentGrid.DataSource = new BindingSource(
-        Entities.DataSet,
-        Entities.ParentList.TableName);
+        Controller.DataSet,
+        Controller.ParentTableName);
       foreach (DataGridViewColumn column in ParentGrid.Columns) {
-        var entityColumn = Entities.ParentList.Columns[column.Index];
+        var entityColumn = Controller.ParentList.Columns[column.Index];
         column.Visible = entityColumn.Visible;
         if (column.Visible) {
           if (column.ValueType == typeof(DateTime)) {
@@ -1407,8 +1352,8 @@ namespace SoundExplorers {
     ///   and any child controls.
     /// </summary>
     public override void Refresh() {
-      PopulateGrid(Entities.TableName);
-      if (Entities.ParentList != null) {
+      PopulateGrid();
+      if (Controller.IsParentTableToBeShown) {
         // A read-only related grid for the parent table is shown
         // above the main grid.
         FocusGrid(ParentGrid);
@@ -1662,7 +1607,7 @@ namespace SoundExplorers {
     private void TableForm_Activated(object sender, EventArgs e) {
       //Debug.WriteLine("TableForm_Activated: " + this.Text);
       MainGrid.Enabled = true;
-      if (Entities.ParentList != null) {
+      if (Controller.IsParentTableToBeShown) {
         // A read-only related grid for the parent table is shown
         // above the main grid.
         FocusGrid(ParentGrid);
@@ -1691,7 +1636,7 @@ namespace SoundExplorers {
     private void TableForm_Deactivate(object sender, EventArgs e) {
       //Debug.WriteLine("TableForm_Deactivate: " + this.Text);
       MainGrid.Enabled = false;
-      if (Entities.ParentList != null) {
+      if (Controller.IsParentTableToBeShown) {
         // A read-only related grid for the parent table is shown
         // above the main grid.
         ParentGrid.Enabled = false;
@@ -1707,7 +1652,7 @@ namespace SoundExplorers {
           || Entities is ImageList) {
         Controller.ImageSplitterDistance = ImageSplitContainer.SplitterDistance;
       }
-      if (Entities.ParentList != null) {
+      if (Controller.IsParentTableToBeShown) {
         // A read-only related grid for the parent table is shown
         // above the main grid.
         Controller.GridSplitterDistance = GridSplitContainer.SplitterDistance;
@@ -1742,7 +1687,7 @@ namespace SoundExplorers {
       //}
       switch (e.KeyData) {
         case Keys.F6:
-          if (Entities.ParentList != null) {
+          if (Controller.IsParentTableToBeShown) {
             // A read-only related grid for the parent table is shown
             // above the main grid.
             FocusGrid(FocusedGrid == ParentGrid ? MainGrid : ParentGrid);
@@ -1803,7 +1748,7 @@ namespace SoundExplorers {
       // Has to be done here rather than in constructor
       // in order to tell that this is an MDI child form.
       SizeableFormOptions = new SizeableFormOptions(this);
-      OpenTable(Controller.TableName);
+      OpenTable();
     }
 
     private void TableForm_VisibleChanged(object sender, EventArgs e) {
@@ -1824,7 +1769,7 @@ namespace SoundExplorers {
                 MainGrid.Rows[0].Cells["Path"].Value.ToString());
             }
           } else { // ArtistInImageList
-            if (Entities.ParentList.Count > 0) {
+            if (Controller.ParentList.Count > 0) {
               ShowImageOrMessage(
                 ParentGrid.Rows[0].Cells["Path"].Value.ToString());
             }
@@ -1832,7 +1777,7 @@ namespace SoundExplorers {
         } else {
           ImageSplitContainer.Panel2Collapsed = true;
         }
-        if (Entities.ParentList != null) {
+        if (Controller.IsParentTableToBeShown) {
           // A read-only related grid for the parent table is shown
           // above the main grid.
           GridSplitContainer.Panel1Collapsed = false;
@@ -1854,10 +1799,6 @@ namespace SoundExplorers {
     private enum Medium {
       Audio,
       Video
-    }
-
-    public void SetController(TableController controller) {
-      Controller = controller;
     }
   } //End of class
 } //End of namespace

@@ -7,7 +7,7 @@ namespace SoundExplorers.Data {
   ///   that is raised when a <see cref="DataRow" />
   ///   has been successfully inserted, updated or deleted on the database.
   /// </summary>
-  internal class RowUpdatedEventArgs : EventArgs {
+  public class RowUpdatedEventArgs : EventArgs {
     /// <summary>
     ///   Initialises an instance of the
     ///   <see cref="RowUpdatedEventArgs" /> class.
@@ -39,12 +39,12 @@ namespace SoundExplorers.Data {
     /// <summary>
     ///   Gets the entity that has been inserted, updated or deleted.
     /// </summary>
-    public virtual IEntity Entity { get; }
+    public IEntity Entity { get; }
 
     /// <summary>
     ///   Gets a message describing the insertion, update or deletion.
     /// </summary>
-    public virtual string Message { get; }
+    public string Message { get; }
 
     /// <summary>
     ///   Gets the index of the <see cref="DataRow" />
@@ -52,11 +52,11 @@ namespace SoundExplorers.Data {
     ///   For inserts and updates,
     ///   this is also the index of the Entity in the EntityList.
     /// </summary>
-    public virtual int RowIndex { get; }
+    public int RowIndex { get; }
 
     /// <summary>
     ///   Gets the type of SQL statement executed.
     /// </summary>
-    public virtual StatementType StatementType { get; }
+    public StatementType StatementType { get; }
   } //End of class
 } //End of namespace

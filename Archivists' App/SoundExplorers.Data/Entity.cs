@@ -13,7 +13,7 @@ namespace SoundExplorers.Data {
   ///   the name of a derived class should be
   ///   the name of the corresponding database table.
   /// </remarks>
-  internal class Entity<TEntity> : IEntity
+  public class Entity<TEntity> : IEntity
     // This recursion of the generic type
     // allows reflection to examine the properties 
     // of derived classes.

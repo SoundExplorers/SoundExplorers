@@ -2,7 +2,7 @@
   /// <summary>
   ///   Entity column container interface.
   /// </summary>
-  internal interface IEntityColumnContainer {
+  public interface IEntityColumnContainer {
     /// <summary>
     ///   Gets metadata about the database columns
     ///   represented by the Entity's

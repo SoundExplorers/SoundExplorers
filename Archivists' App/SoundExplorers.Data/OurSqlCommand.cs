@@ -12,7 +12,7 @@ namespace SoundExplorers.Data {
   ///   SoundExplorers database for an Entity
   ///   of the specified type.
   /// </summary>
-  internal abstract class OurSqlCommand<T> : PgSqlCommand
+  public abstract class OurSqlCommand<T> : PgSqlCommand
     where T : Entity<T> {
     private string _sqlFilename;
 

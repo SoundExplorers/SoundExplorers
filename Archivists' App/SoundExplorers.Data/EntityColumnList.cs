@@ -9,7 +9,7 @@ namespace SoundExplorers.Data {
   ///   A keyed list of entity columns with
   ///   <see cref="IEntityColumn.ColumnName" /> as the key.
   /// </summary>
-  internal class EntityColumnList : List<IEntityColumn> {
+  public class EntityColumnList : List<IEntityColumn> {
     /// <summary>
     ///   Initialises a new instance of the <see cref="EntityColumnList" /> class.
     /// </summary>

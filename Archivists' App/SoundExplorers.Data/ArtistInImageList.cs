@@ -4,7 +4,7 @@ namespace SoundExplorers.Data {
   /// <summary>
   ///   A list of ArtistInImages.
   /// </summary>
-  internal class ArtistInImageList : EntityList<ArtistInImage> {
+  public class ArtistInImageList : EntityList<ArtistInImage> {
     /// <overloads>
     ///   Initialises a new instance of the <see cref="ArtistInImageList" /> class,
     ///   populating its list

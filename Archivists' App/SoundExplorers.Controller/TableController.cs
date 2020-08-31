@@ -1,7 +1,13 @@
+using System;
+using System.Data;
 using JetBrains.Annotations;
+using SoundExplorers.Common;
 using SoundExplorers.Data;
 
 namespace SoundExplorers.Controller {
+  /// <summary>
+  ///   Controller for the table editor.
+  /// </summary>
   [UsedImplicitly]
   public class TableController {
     private Option _gridSplitterDistanceOption;
@@ -16,11 +22,25 @@ namespace SoundExplorers.Controller {
     /// <param name="tableName">
     ///   The name of the table whose data is to be displayed.
     /// </param>
-    public TableController([NotNull] IView<TableController> view,
+    public TableController([NotNull] ITableView view,
       [NotNull] string tableName) {
-      view.SetController(this);
+      View = view;
+      View.SetController(this);
       TableName = tableName;
     }
+
+    /// <summary>
+    ///   Gets the data set containing the main table
+    ///   and, if specified, the parent table.
+    /// </summary>
+    [CanBeNull]
+    public DataSet DataSet => Entities?.DataSet;
+
+    /// <summary>
+    ///   The entity list representing the table whose data is shown in the table editor.
+    /// </summary>
+    [CanBeNull]
+    private IEntityList Entities { get; set; }
 
     /// <summary>
     ///   User option for the position of the split between the
@@ -48,6 +68,39 @@ namespace SoundExplorers.Controller {
       _imageSplitterDistanceOption ?? (_imageSplitterDistanceOption =
         new Option($"{TableName}.ImageSplitterDistance"));
 
+    public bool IsParentTableToBeShown => ParentTableName != null;
+    [CanBeNull] public string ParentTableName => Entities?.ParentList?.TableName;
+    private RowErrorEventArgs RowErrorEventArgs { get; set; }
+    [CanBeNull] public DataTable Table => Entities?.Table;
     [NotNull] public string TableName { get; }
+    [NotNull] private ITableView View { get; }
+
+    private void Entities_RowError(object sender, RowErrorEventArgs e) {
+      View.OnRowError(e);
+    }
+
+    private void Entities_RowUpdated(object sender, RowUpdatedEventArgs e) {
+      string databaseUpdateMessage = e.Message;
+      string mediaTagsUpdateErrorMessage = null;
+      if (e.Entity is IMediaEntity mediaEntity) {
+        try {
+          string updateTagsMessage = mediaEntity.UpdateTags();
+          if (!string.IsNullOrEmpty(updateTagsMessage)) {
+            databaseUpdateMessage += ". " + updateTagsMessage;
+          }
+        } catch (ApplicationException ex) {
+          mediaTagsUpdateErrorMessage = ex.Message;
+        }
+      }
+      View.OnRowUpdated(databaseUpdateMessage, mediaTagsUpdateErrorMessage);
+    }
+
+    public void FetchData() {
+      Entities = TableName == nameof(ArtistInImage)
+        ? new ArtistInImageList()
+        : Factory<IEntityList>.Create(TableName);
+      Entities.RowError += Entities_RowError;
+      Entities.RowUpdated += Entities_RowUpdated;
+    }
   }
 }

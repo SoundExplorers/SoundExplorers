@@ -131,7 +131,6 @@
         <Compile Include="ReferencedFieldAttribute.cs" />
         <Compile Include="Role.cs" />
         <Compile Include="RoleList.cs" />
-        <Compile Include="RowErrorEventArgs.cs" />
         <Compile Include="RowUpdatedEventArgs.cs" />
         <Compile Include="SelectCommand.cs" />
         <Compile Include="Series.cs" />
@@ -186,6 +185,12 @@
     <ItemGroup>
       <None Include="app.config" />
       <None Include="packages.config" />
+    </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\SoundExplorers.Common\SoundExplorers.Common.csproj">
+        <Project>{24f52a9c-6679-4029-abfd-7eaa964cc945}</Project>
+        <Name>SoundExplorers.Common</Name>
+      </ProjectReference>
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
     <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

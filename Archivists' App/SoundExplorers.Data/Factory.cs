@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using JetBrains.Annotations;
 
 namespace SoundExplorers.Data {
   /// <summary>
@@ -9,7 +10,7 @@ namespace SoundExplorers.Data {
   ///   which, in the case of Entity or EntityList types,
   ///   can be specified by table name.
   /// </summary>
-  internal static class Factory<T> {
+  public static class Factory<T> {
     private static SortedDictionary<string, Type> _types;
 
     /// <summary>
@@ -17,6 +18,7 @@ namespace SoundExplorers.Data {
     ///   with the Entity name as the key
     ///   and the type as the value.
     /// </summary>
+    [NotNull]
     public static SortedDictionary<string, Type> Types {
       get {
         if (_types == null) {
@@ -45,6 +47,7 @@ namespace SoundExplorers.Data {
     /// <returns>
     ///   The new instance.
     /// </returns>
+    [NotNull]
     public static T Create(string tableName, params object[] args) {
       if (!Types.ContainsKey(tableName)) {
         throw new ArgumentOutOfRangeException(
@@ -69,6 +72,7 @@ namespace SoundExplorers.Data {
     /// <returns>
     ///   The new instance.
     /// </returns>
+    [NotNull]
     public static T Create(Type type, params object[] args) {
       try {
         return (T)Activator.CreateInstance(
@@ -86,6 +90,7 @@ namespace SoundExplorers.Data {
     /// <returns>
     ///   The sorted dictionary created.
     /// </returns>
+    [NotNull]
     private static SortedDictionary<string, Type> CreateTypeDictionary() {
       if (!typeof(T).GetInterfaces().Contains(typeof(IEntityColumnContainer))) {
         throw new NotSupportedException(

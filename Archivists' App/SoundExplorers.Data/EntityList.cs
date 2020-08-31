@@ -5,12 +5,14 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using Devart.Data.PostgreSql;
+using JetBrains.Annotations;
+using SoundExplorers.Common;
 
 namespace SoundExplorers.Data {
   /// <summary>
   ///   Entity list base class.
   /// </summary>
-  internal abstract class EntityList<T> : List<IEntity>, IEntityList
+  public abstract class EntityList<T> : List<IEntity>, IEntityList
     where T : Entity<T> {
     /// <summary>
     ///   Initialises a new instance of the EntityList class,
@@ -136,7 +138,7 @@ namespace SoundExplorers.Data {
     /// <remarks>
     ///   The table name is the same as the type name of the listed Entities.
     /// </remarks>
-    public string TableName => Table.TableName;
+    [CanBeNull] public string TableName => Table?.TableName;
 
     /// <summary>
     ///   Gets metadata about the database columns
@@ -152,7 +154,7 @@ namespace SoundExplorers.Data {
     ///   Gets the data set containing the main <see cref="Table" />
     ///   and, if specified, the parent table.
     /// </summary>
-    public DataSet DataSet { get; }
+    [CanBeNull] public DataSet DataSet { get; }
 
     /// <summary>
     ///   Gets the list of entities representing the main table's
@@ -162,7 +164,7 @@ namespace SoundExplorers.Data {
     ///   If the derived class does not specify a parent table,
     ///   a null reference will be returned.
     /// </remarks>
-    public IEntityList ParentList { get; }
+    [CanBeNull] public IEntityList ParentList { get; }
 
     /// <summary>
     ///   An event that is raised when there is an error on
@@ -188,7 +190,7 @@ namespace SoundExplorers.Data {
     ///   Gets the data table containing the database records
     ///   represented by the list of entities.
     /// </summary>
-    public DataTable Table { get; }
+    [CanBeNull] public DataTable Table { get; }
 
     /// <summary>
     ///   Updates the database table with any changes that have been input

@@ -2,7 +2,7 @@
   /// <summary>
   ///   ArtistInImage entity.
   /// </summary>
-  internal class ArtistInImage : Entity<ArtistInImage> {
+  public class ArtistInImage : Entity<ArtistInImage> {
     [PrimaryKeyField]
     [ReferencedField("Name")]
     public string Artist { get; set; }
