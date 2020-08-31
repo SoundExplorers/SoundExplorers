@@ -1242,7 +1242,7 @@ namespace SoundExplorers {
           }
         } //End of foreach
       } else { // No parent grid
-        MainGrid.DataSource = Controller.Table.DefaultView;
+        MainGrid.DataSource = Controller.Table?.DefaultView;
       }
       foreach (DataGridViewColumn column in MainGrid.Columns) {
         var entityColumn = Entities.Columns[column.Index];

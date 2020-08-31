@@ -1,4 +1,5 @@
 ﻿using System;
+using JetBrains.Annotations;
 
 namespace SoundExplorers.Data {
   /// <summary>
@@ -15,22 +16,9 @@ namespace SoundExplorers.Data {
     ///   populating its list
     ///   with all the Set records on the database.
     /// </summary>
+    [UsedImplicitly]
     public SetList()
-      : this(typeof(PerformanceList)) { }
-
-    /// <summary>
-    ///   Initialises a new instance of the <see cref="SetList" /> class,
-    ///   populating its list
-    ///   with all the Set records on the database,
-    ///   optionally specifying the type of parent entity list
-    ///   to include.
-    /// </summary>
-    /// <param name="parentListType">
-    ///   Optionally specifies the type of parent entity list
-    ///   to include.  Null if a parent list is not required.
-    /// </param>
-    public SetList(Type parentListType = null)
-      : base(parentListType) { }
+      : base(typeof(PerformanceList)) { }
 
     /// <summary>
     ///   An indexer that returns

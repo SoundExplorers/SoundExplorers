@@ -14,7 +14,7 @@ namespace SoundExplorers.Data {
     ///   Gets the data set containing the main <see cref="Table" />
     ///   and, if specified, the parent table.
     /// </summary>
-    [CanBeNull] DataSet DataSet { get; }
+    DataSet DataSet { get; }
 
     /// <summary>
     ///   Gets the list of entities representing the main table's
@@ -27,7 +27,7 @@ namespace SoundExplorers.Data {
     ///   Gets name of the the data table containing the database records
     ///   represented by the list of entities.
     /// </summary>
-    [CanBeNull] DataTable Table { get; }
+    DataTable Table { get; }
 
     /// <summary>
     ///   Adds an Entity to the end of the list.

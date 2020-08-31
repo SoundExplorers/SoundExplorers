@@ -88,7 +88,7 @@ namespace SoundExplorers.Data {
         var parentColumns = ParentKeyColumnsToDataColumns();
         var childColumns = ForeignKeyColumnsToDataColumns();
         DataSet.Relations.Add(
-          TableName + "_" + ParentList.TableName,
+          TableName + "_" + ParentList?.TableName,
           parentColumns,
           childColumns);
       }
@@ -138,7 +138,8 @@ namespace SoundExplorers.Data {
     /// <remarks>
     ///   The table name is the same as the type name of the listed Entities.
     /// </remarks>
-    [CanBeNull] public string TableName => Table?.TableName;
+    [CanBeNull]
+    public string TableName => Table?.TableName;
 
     /// <summary>
     ///   Gets metadata about the database columns
@@ -154,7 +155,7 @@ namespace SoundExplorers.Data {
     ///   Gets the data set containing the main <see cref="Table" />
     ///   and, if specified, the parent table.
     /// </summary>
-    [CanBeNull] public DataSet DataSet { get; }
+    public DataSet DataSet { get; }
 
     /// <summary>
     ///   Gets the list of entities representing the main table's
@@ -164,7 +165,7 @@ namespace SoundExplorers.Data {
     ///   If the derived class does not specify a parent table,
     ///   a null reference will be returned.
     /// </remarks>
-    [CanBeNull] public IEntityList ParentList { get; }
+    public IEntityList ParentList { get; }
 
     /// <summary>
     ///   An event that is raised when there is an error on
@@ -190,7 +191,7 @@ namespace SoundExplorers.Data {
     ///   Gets the data table containing the database records
     ///   represented by the list of entities.
     /// </summary>
-    [CanBeNull] public DataTable Table { get; }
+    public DataTable Table { get; }
 
     /// <summary>
     ///   Updates the database table with any changes that have been input
@@ -410,6 +411,7 @@ namespace SoundExplorers.Data {
     ///   even if the column names (or aliases)
     ///   in the SELECT SQL have been specified in Pascal case.
     /// </remarks>
+    [NotNull]
     private DataTable CreateFilledTable() {
       var table = new DataTable(typeof(T).Name);
       Adapter.Fill(table);
