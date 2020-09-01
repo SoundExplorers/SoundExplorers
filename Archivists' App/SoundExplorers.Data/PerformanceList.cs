@@ -6,7 +6,7 @@ namespace SoundExplorers.Data {
   /// <summary>
   ///   A list of Performances.
   /// </summary>
-  internal class PerformanceList : EntityList<Performance> {
+  public class PerformanceList : EntityList<Performance> {
     /// <overloads>
     ///   Initialises a new instance of the <see cref="PerformanceList" /> class,
     ///   populating its list

@@ -139,7 +139,7 @@ namespace SoundExplorers {
     private void EditAudioFileTagsToolStripMenuItem_Click(object sender, EventArgs e) {
       if (MdiChildren.Any()) {
         try {
-          TableView.EditAudioFileTags();
+          TableView.Controller.EditAudioFileTags();
         } catch (ApplicationException ex) {
           MessageBox.Show(
             this,
@@ -167,7 +167,7 @@ namespace SoundExplorers {
       Controller.IsStatusBarVisible = StatusStrip.Visible;
       Controller.IsToolBarVisible = ToolStrip.Visible;
       if (MdiChildren.Any()) {
-        Controller.TableName = TableView.Entities.TableName;
+        Controller.TableName = TableView.Controller.TableName;
       } else {
         Controller.TableName = SelectTableForm.TableName;
       }
@@ -404,7 +404,16 @@ namespace SoundExplorers {
     /// <param name="e">Event arguments.</param>
     private void PlayAudioToolStripMenuItem_Click(object sender, EventArgs e) {
       if (MdiChildren.Any()) {
-        TableView.PlayAudio();
+        try {
+          TableView.Controller.PlayAudio();
+        } catch (ApplicationException ex) {
+          MessageBox.Show(
+            this,
+            ex.Message,
+            Application.ProductName,
+            MessageBoxButtons.OK,
+            MessageBoxIcon.Information);
+        }
       } else {
         MessageBox.Show(
           this,
@@ -428,7 +437,16 @@ namespace SoundExplorers {
     /// <param name="e">Event arguments.</param>
     private void PlayVideoToolStripMenuItem_Click(object sender, EventArgs e) {
       if (MdiChildren.Any()) {
-        TableView.PlayVideo();
+        try {
+          TableView.Controller.PlayVideo();
+        } catch (ApplicationException ex) {
+          MessageBox.Show(
+            this,
+            ex.Message,
+            Application.ProductName,
+            MessageBoxButtons.OK,
+            MessageBoxIcon.Information);
+        }
       } else {
         MessageBox.Show(
           this,
@@ -457,7 +475,16 @@ namespace SoundExplorers {
     /// <param name="e">Event arguments.</param>
     private void ShowNewsletterToolStripMenuItem_Click(object sender, EventArgs e) {
       if (MdiChildren.Any()) {
-        TableView.ShowNewsletter();
+        try {
+          TableView.Controller.ShowNewsletter();
+        } catch (ApplicationException exception) {
+          MessageBox.Show(
+            this,
+            exception.Message,
+            Application.ProductName,
+            MessageBoxButtons.OK,
+            MessageBoxIcon.Information);
+        }
       } else {
         MessageBox.Show(
           this,

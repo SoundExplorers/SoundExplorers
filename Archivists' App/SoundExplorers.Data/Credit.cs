@@ -4,7 +4,7 @@ namespace SoundExplorers.Data {
   /// <summary>
   ///   Credit entity.
   /// </summary>
-  internal class Credit : Entity<Credit>, IMediaEntity {
+  public class Credit : Entity<Credit>, IMediaEntity {
     [Field(0)] public string Act { get; set; }
 
     [PrimaryKeyField(1)]

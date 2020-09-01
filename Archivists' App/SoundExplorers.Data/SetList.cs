@@ -5,7 +5,7 @@ namespace SoundExplorers.Data {
   /// <summary>
   ///   A list of Sets.
   /// </summary>
-  internal class SetList : EntityList<Set> {
+  public class SetList : EntityList<Set> {
     /// <overloads>
     ///   Initialises a new instance of the <see cref="SetList" /> class,
     ///   populating its list

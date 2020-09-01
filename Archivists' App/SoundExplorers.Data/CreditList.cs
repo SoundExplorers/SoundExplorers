@@ -6,7 +6,7 @@ namespace SoundExplorers.Data {
   /// <summary>
   ///   A list of Credits.
   /// </summary>
-  internal class CreditList : EntityList<Credit> {
+  public class CreditList : EntityList<Credit> {
     /// <overloads>
     ///   Initialises a new instance of the <see cref="CreditList" /> class.
     /// </overloads>

@@ -6,7 +6,7 @@ namespace SoundExplorers.Data {
   ///   An Entity that can have mutliple Pieces associated with it
   ///   and from whose data media file metadata tags may need to be updated.
   /// </summary>
-  internal abstract class PieceOwningMediaEntity<T> : PieceOwningEntity<T>,
+  public abstract class PieceOwningMediaEntity<T> : PieceOwningEntity<T>,
     IMediaEntity
     where T : PieceOwningMediaEntity<T> {
     /// <summary>

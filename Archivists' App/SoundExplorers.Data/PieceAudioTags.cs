@@ -18,7 +18,7 @@ namespace SoundExplorers.Data {
   ///   <see cref="Piece.AudioPath" /> property,
   ///   invoke the <see cref="SaveToFile" /> method.
   /// </remarks>
-  internal class PieceAudioTags : IAudioTags {
+  public class PieceAudioTags : IAudioTags {
     /// <summary>
     ///   Initialises a new instance of the
     ///   <see cref="PieceAudioTags" /> class.

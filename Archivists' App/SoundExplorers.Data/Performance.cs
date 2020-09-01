@@ -4,7 +4,7 @@ namespace SoundExplorers.Data {
   /// <summary>
   ///   Performance entity.
   /// </summary>
-  internal class Performance : PieceOwningMediaEntity<Performance> {
+  public class Performance : PieceOwningMediaEntity<Performance> {
     [Field(5)] public string Comments { get; set; }
     [PrimaryKeyField(1)] public DateTime Date { get; set; }
 

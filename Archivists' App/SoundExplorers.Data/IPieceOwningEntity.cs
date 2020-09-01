@@ -5,7 +5,7 @@ namespace SoundExplorers.Data {
   ///   Interface for
   ///   an Entity that can have mutliple Pieces associated with it.
   /// </summary>
-  internal interface IPieceOwningEntity : IEntity {
+  public interface IPieceOwningEntity : IEntity {
     /// <summary>
     ///   Gets or sets the entity's Pieces.
     ///   Will be fetched from the database if not previously set when got.

@@ -5,7 +5,7 @@ namespace SoundExplorers.Data {
   /// <summary>
   ///   Newsletter entity.
   /// </summary>
-  internal class Newsletter : PieceOwningEntity<Newsletter> {
+  public class Newsletter : PieceOwningEntity<Newsletter> {
     private static DirectoryInfo _defaultFolder;
     private static Option _defaultFolderOption;
     [PrimaryKeyField(1)] public DateTime Date { get; set; }

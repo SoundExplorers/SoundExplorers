@@ -6,7 +6,7 @@ namespace SoundExplorers.Data {
   /// <summary>
   ///   A list of Pieces.
   /// </summary>
-  internal class PieceList : EntityList<Piece> {
+  public class PieceList : EntityList<Piece> {
     /// <overloads>
     ///   Initialises a new instance of the <see cref="PieceList" /> class,
     ///   populating its list

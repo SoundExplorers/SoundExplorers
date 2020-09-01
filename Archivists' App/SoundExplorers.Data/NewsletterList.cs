@@ -2,7 +2,7 @@
   /// <summary>
   ///   A list of Newsletters.
   /// </summary>
-  internal class NewsletterList : EntityList<Newsletter> {
+  public class NewsletterList : EntityList<Newsletter> {
     /// <summary>
     ///   An indexer that returns
     ///   the Newsletter at the specified index in the list.
