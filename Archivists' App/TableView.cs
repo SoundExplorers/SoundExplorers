@@ -16,11 +16,11 @@ namespace SoundExplorers {
   ///   Table editor MDI child window of the main window.
   /// </summary>
   [UsedImplicitly]
-  internal partial class TableForm : Form, ITableView {
+  internal partial class TableView : Form, ITableView {
     /// <summary>
-    ///   Initialises a new instance of the <see cref="TableForm" /> class.
+    ///   Initialises a new instance of the <see cref="TableView" /> class.
     /// </summary>
-    public TableForm() {
+    public TableView() {
       InitializeComponent();
       // A known Visual Studio error is that PictureBox's AllowDrop property
       // appears neither in the designer nor in intellisense.
@@ -281,7 +281,7 @@ namespace SoundExplorers {
       // By trial an error,
       // I found that this complicated rigmarole was required to
       // properly shift the focus programatically, 
-      // i.e. in TableForm_KeyDown to implement doing it with the F6 key.
+      // i.e. in TableView_KeyDown to implement doing it with the F6 key.
       var unfocusedGrid =
         grid == MainGrid ? ParentGrid : MainGrid;
       unfocusedGrid.Enabled = false;
@@ -1241,10 +1241,10 @@ namespace SoundExplorers {
     /// <param name="e">Event arguments.</param>
     /// <remarks>
     ///   This is necessary because of the
-    ///   workaround implemented in TableForm_Deactivate.
+    ///   workaround implemented in TableView_Deactivate.
     /// </remarks>
-    private void TableForm_Activated(object sender, EventArgs e) {
-      //Debug.WriteLine("TableForm_Activated: " + this.Text);
+    private void TableView_Activated(object sender, EventArgs e) {
+      //Debug.WriteLine("TableView_Activated: " + this.Text);
       MainGrid.Enabled = true;
       if (Controller.IsParentTableToBeShown) {
         // A read-only related grid for the parent table is shown
@@ -1272,8 +1272,8 @@ namespace SoundExplorers {
     ///   To be safe, disable the grid even if there aren't date columns:
     ///   maybe there are other data types that would cause similar problems.
     /// </remarks>
-    private void TableForm_Deactivate(object sender, EventArgs e) {
-      //Debug.WriteLine("TableForm_Deactivate: " + this.Text);
+    private void TableView_Deactivate(object sender, EventArgs e) {
+      //Debug.WriteLine("TableView_Deactivate: " + this.Text);
       MainGrid.Enabled = false;
       if (Controller.IsParentTableToBeShown) {
         // A read-only related grid for the parent table is shown
@@ -1282,7 +1282,7 @@ namespace SoundExplorers {
       }
     }
 
-    private void TableForm_FormClosed(object sender, FormClosedEventArgs e) {
+    private void TableView_FormClosed(object sender, FormClosedEventArgs e) {
       //MainGrid.RowValidated -= new DataGridViewCellEventHandler(MainGrid_RowValidated);
       //MainGrid.ReadOnly = true;
       //Refresh();
@@ -1298,7 +1298,7 @@ namespace SoundExplorers {
       }
     }
 
-    //private void TableForm_FormClosing(object sender, FormClosingEventArgs e) {
+    //private void TableView_FormClosing(object sender, FormClosingEventArgs e) {
     //    //if (MainCurrentRow.IsNewRow) {
     //    //    Debug.WriteLine("New row");
     //    //}
@@ -1318,7 +1318,7 @@ namespace SoundExplorers {
     ///   the <see cref="Form" />'s <see cref="Form.KeyPreview" />
     ///   property must be set to <b>True</b>.
     /// </remarks>
-    private void TableForm_KeyDown(object sender, KeyEventArgs e) {
+    private void TableView_KeyDown(object sender, KeyEventArgs e) {
       //switch (e.KeyCode) {
       //case Keys.Enter:
       //    Debug.WriteLine(e.KeyCode);
@@ -1372,7 +1372,7 @@ namespace SoundExplorers {
     ///// the <see cref="Form"/>'s <see cref="Form.KeyPreview"/> 
     ///// property must be set to <b>True</b>.
     ///// </remarks>
-    //private void TableForm_KeyUp(object sender, KeyEventArgs e) {
+    //private void TableView_KeyUp(object sender, KeyEventArgs e) {
     //    switch (e.KeyCode) {
     //    case Keys.LWin:
     //        LWinIsDown = false;
@@ -1383,16 +1383,16 @@ namespace SoundExplorers {
     //    }//End of switch
     //}
 
-    private void TableForm_Load(object sender, EventArgs e) {
+    private void TableView_Load(object sender, EventArgs e) {
       // Has to be done here rather than in constructor
       // in order to tell that this is an MDI child form.
       SizeableFormOptions = new SizeableFormOptions(this);
       OpenTable();
     }
 
-    private void TableForm_VisibleChanged(object sender, EventArgs e) {
+    private void TableView_VisibleChanged(object sender, EventArgs e) {
       if (Visible) {
-        //Debug.WriteLine("TableForm_VisibleChanged: " + this.Text);
+        //Debug.WriteLine("TableView_VisibleChanged: " + this.Text);
         MainGrid.AutoResizeColumns();
         // We need to work out whether we need the image panel
         // before we position the grid splitter.
@@ -1420,7 +1420,7 @@ namespace SoundExplorers {
           // A read-only related grid for the parent table is shown
           // above the main grid.
           GridSplitContainer.Panel1Collapsed = false;
-          // Does not work if done in TableForm_Load.
+          // Does not work if done in TableView_Load.
           GridSplitContainer.SplitterDistance = Controller.GridSplitterDistance;
           ParentGrid.AutoResizeColumns();
         } else {

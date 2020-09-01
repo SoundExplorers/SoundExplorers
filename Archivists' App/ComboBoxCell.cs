@@ -178,7 +178,7 @@ namespace SoundExplorers {
     /// <remarks>
     ///   When this exception is thrown,
     ///   the DataGridView.DataError event,
-    ///   which is handled by TableForm.MainGrid_DataError,
+    ///   which is handled by TableView.MainGrid_DataError,
     ///   gets raised.
     /// </remarks>
     private void ThrowNoAvailableReferencesException(string parentColunnName,

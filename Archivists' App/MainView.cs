@@ -39,7 +39,7 @@ namespace SoundExplorers {
     private SelectTableForm SelectTableForm { get; }
     private SizeableFormOptions SizeableFormOptions { get; }
 
-    private TableForm TableView => ActiveMdiChild as TableForm ??
+    private TableView TableView => ActiveMdiChild as TableView ??
                                    throw new NullReferenceException(nameof(TableView));
 
     public void SetController(MainController controller) {
@@ -59,7 +59,7 @@ namespace SoundExplorers {
     }
 
     //private void ChildForm_Activated(object sender, EventArgs e) {
-    //    var activeTableForm = sender as TableForm;
+    //    var activeTableForm = sender as TableView;
     //    Debug.WriteLine("ChildForm_Activated: " + activeTableForm.Text);
     //}
 
@@ -290,7 +290,7 @@ namespace SoundExplorers {
       }
       try {
         var tableView =
-          FormFactory.Create<TableForm, TableController>(SelectTableForm.TableName);
+          FormFactory.Create<TableView, TableController>(SelectTableForm.TableName);
         tableView.Show();
       } catch (ApplicationException ex) {
         MessageBox.Show(
@@ -341,7 +341,7 @@ namespace SoundExplorers {
       var oldTableView = TableView;
       try {
         var newTableView =
-          FormFactory.Create<TableForm, TableController>(SelectTableForm.TableName);
+          FormFactory.Create<TableView, TableController>(SelectTableForm.TableName);
         newTableView.Location = oldTableView.Location;
         newTableView.WindowState = oldTableView.WindowState;
         oldTableView.Close();
@@ -358,7 +358,7 @@ namespace SoundExplorers {
         // it won't be an MDI child any more.
         //Point oldLocation = oldTableForm.Location;
         //oldTableForm.Close();
-        //TableForm newTableForm = new TableForm(
+        //TableView newTableForm = new TableView(
         //    SelectTableForm.TableName);
         //newTableForm.MdiParent = this;
         //newTableForm.Show();

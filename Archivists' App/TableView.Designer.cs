@@ -1,5 +1,5 @@
 ﻿namespace SoundExplorers {
-    partial class TableForm {
+    partial class TableView {
         /// <summary>
         /// Required designer variable.
         /// </summary>
@@ -144,7 +144,7 @@
             this.FittedPictureBox1.DragOver += new System.Windows.Forms.DragEventHandler(this.FittedPictureBox1_DragOver);
             this.FittedPictureBox1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.FittedPictureBox1_MouseDown);
             // 
-            // TableForm
+            // TableView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -153,15 +153,15 @@
             this.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.KeyPreview = true;
             this.Margin = new System.Windows.Forms.Padding(4);
-            this.Name = "TableForm";
+            this.Name = "TableView";
             this.ShowIcon = false;
-            this.Text = "TableForm";
-            this.Activated += new System.EventHandler(this.TableForm_Activated);
-            this.Deactivate += new System.EventHandler(this.TableForm_Deactivate);
-            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.TableForm_FormClosed);
-            this.Load += new System.EventHandler(this.TableForm_Load);
-            this.VisibleChanged += new System.EventHandler(this.TableForm_VisibleChanged);
-            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TableForm_KeyDown);
+            this.Text = "TableView";
+            this.Activated += new System.EventHandler(this.TableView_Activated);
+            this.Deactivate += new System.EventHandler(this.TableView_Deactivate);
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.TableView_FormClosed);
+            this.Load += new System.EventHandler(this.TableView_Load);
+            this.VisibleChanged += new System.EventHandler(this.TableView_VisibleChanged);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TableView_KeyDown);
             this.ImageSplitContainer.Panel1.ResumeLayout(false);
             this.ImageSplitContainer.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.ImageSplitContainer)).EndInit();
