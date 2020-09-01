@@ -2,7 +2,6 @@
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
-using SoundExplorers.Data;
 using Image = SoundExplorers.Data.Image;
 
 namespace SoundExplorers {

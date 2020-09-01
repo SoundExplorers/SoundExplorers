@@ -108,14 +108,14 @@ namespace SoundExplorers.Data {
     ///   represented by the listed Entity's
     ///   field properties.
     /// </summary>
-    public EntityColumnList Columns => Entity.Columns;
+    public IEntityColumnList Columns => Entity.Columns;
 
     /// <summary>
     ///   Gets metadata about the database columns
     ///   represented by those of the derived class's
     ///   field properties that are not in the primary key.
     /// </summary>
-    public EntityColumnList NonPrimaryKeyColumns => Entity.NonPrimaryKeyColumns;
+    public IEntityColumnList NonPrimaryKeyColumns => Entity.NonPrimaryKeyColumns;
 
     /// <summary>
     ///   Gets metadata about the database columns
@@ -123,14 +123,14 @@ namespace SoundExplorers.Data {
     ///   field properties that are not in the unique key
     ///   (if there is one).
     /// </summary>
-    public EntityColumnList NonUniqueKeyColumns => Entity.NonUniqueKeyColumns;
+    public IEntityColumnList NonUniqueKeyColumns => Entity.NonUniqueKeyColumns;
 
     /// <summary>
     ///   Gets metadata about the database columns
     ///   represented by the listed Entity's
     ///   primary key field properties.
     /// </summary>
-    public EntityColumnList PrimaryKeyColumns => Entity.PrimaryKeyColumns;
+    public IEntityColumnList PrimaryKeyColumns => Entity.PrimaryKeyColumns;
 
     /// <summary>
     ///   Gets the name of the database table represented by the entity list.
@@ -149,7 +149,7 @@ namespace SoundExplorers.Data {
     /// <remarks>
     ///   Empty if there is no unique key.
     /// </remarks>
-    public EntityColumnList UniqueKeyColumns => Entity.UniqueKeyColumns;
+    public IEntityColumnList UniqueKeyColumns => Entity.UniqueKeyColumns;
 
     /// <summary>
     ///   Gets the data set containing the main <see cref="Table" />
@@ -357,7 +357,7 @@ namespace SoundExplorers.Data {
       object[] rejectedValues,
       ref int errorColumnIndex) {
       string keyName = exception.Message.Split('"')[1];
-      EntityColumnList keyColumns;
+      IEntityColumnList keyColumns;
       var message = new StringWriter();
       message.Write("A " + TableName + " with ");
       if (keyName.ToLower().StartsWith("pk_")) {
@@ -415,7 +415,7 @@ namespace SoundExplorers.Data {
     private DataTable CreateFilledTable() {
       var table = new DataTable(typeof(T).Name);
       Adapter.Fill(table);
-      for (var i = 0; i < table.Columns.Count; i++) {
+      for (int i = table.Columns.Count - 1; i >= 0; i--) {
         var tableColumn = table.Columns[i];
         var entityColumn = Entity.Columns[tableColumn.ColumnName];
         tableColumn.ColumnName = entityColumn?.ColumnName ??
@@ -423,6 +423,9 @@ namespace SoundExplorers.Data {
                                   tableColumn.ColumnName == "pieceno"
                                    ? "Piece"
                                    : null);
+        if (entityColumn != null && entityColumn.SequenceNo <= 0) {
+          table.Columns.RemoveAt(i);
+        }
       }
       return table;
     }

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SoundExplorers.Data {
+namespace SoundExplorers.Common {
   /// <summary>
   ///   Entity column metadata interface.
   /// </summary>

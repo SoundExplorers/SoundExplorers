@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Windows.Forms;
-using SoundExplorers.Data;
+using SoundExplorers.Common;
 
 namespace SoundExplorers {
   /// <summary>

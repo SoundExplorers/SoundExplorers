@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Data;
 using JetBrains.Annotations;
 using SoundExplorers.Common;
@@ -30,6 +31,13 @@ namespace SoundExplorers.Controller {
     }
 
     /// <summary>
+    ///   Gets metadata about the database columns
+    ///   represented by the Entity's field properties.
+    /// </summary>
+    [CanBeNull]
+    public IEntityColumnList Columns => Entities?.Columns;
+
+    /// <summary>
     ///   Gets the data set containing the main table
     ///   and, if specified, the parent table.
     /// </summary>
@@ -59,6 +67,7 @@ namespace SoundExplorers.Controller {
     ///   User option for the position of the split between the
     ///   image data (above) and the image (below) in the image table editor.
     /// </summary>
+    // ReSharper disable once UnusedMember.Global
     public int ImageSplitterDistance {
       get => ImageSplitterDistanceOption.Int32Value;
       set => ImageSplitterDistanceOption.Int32Value = value;
@@ -69,8 +78,15 @@ namespace SoundExplorers.Controller {
         new Option($"{TableName}.ImageSplitterDistance"));
 
     public bool IsParentTableToBeShown => ParentTableName != null;
-    [CanBeNull] public string ParentTableName => Entities?.ParentList?.TableName;
-    private RowErrorEventArgs RowErrorEventArgs { get; set; }
+
+    /// <summary>
+    ///   Gets the list of entities representing the main table's
+    ///   parent table, if specified.
+    /// </summary>
+    [CanBeNull]
+    public IEntityList ParentList => Entities?.ParentList;
+
+    [CanBeNull] public string ParentTableName => ParentList?.TableName;
     [CanBeNull] public DataTable Table => Entities?.Table;
     [NotNull] public string TableName { get; }
     [NotNull] private ITableView View { get; }
@@ -101,6 +117,14 @@ namespace SoundExplorers.Controller {
         : Factory<IEntityList>.Create(TableName);
       Entities.RowError += Entities_RowError;
       Entities.RowUpdated += Entities_RowUpdated;
+    }
+
+    /// <summary>
+    ///   Updates the database table with any changes that have been input
+    ///   and refreshes the list of Entities.
+    /// </summary>
+    public void Update(Dictionary<string, object> oldKeyFields = null) {
+      Entities?.Update(oldKeyFields);
     }
   }
 }

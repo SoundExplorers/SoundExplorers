@@ -1,21 +1,20 @@
-﻿namespace SoundExplorers.Data {
+﻿namespace SoundExplorers.Common {
   /// <summary>
   ///   Entity column container interface.
   /// </summary>
   public interface IEntityColumnContainer {
     /// <summary>
     ///   Gets metadata about the database columns
-    ///   represented by the Entity's
-    ///   field properties.
+    ///   represented by the Entity's field properties.
     /// </summary>
-    EntityColumnList Columns { get; }
+    IEntityColumnList Columns { get; }
 
     /// <summary>
     ///   Gets metadata about the database columns
     ///   represented by those of the Entity's
     ///   field properties that are not in the primary key.
     /// </summary>
-    EntityColumnList NonPrimaryKeyColumns { get; }
+    IEntityColumnList NonPrimaryKeyColumns { get; }
 
     /// <summary>
     ///   Gets metadata about the database columns
@@ -23,14 +22,14 @@
     ///   field properties that are not in the unique key
     ///   (if there is one).
     /// </summary>
-    EntityColumnList NonUniqueKeyColumns { get; }
+    IEntityColumnList NonUniqueKeyColumns { get; }
 
     /// <summary>
     ///   Gets metadata about the database columns
     ///   represented by the Entity's
     ///   primary key field properties.
     /// </summary>
-    EntityColumnList PrimaryKeyColumns { get; }
+    IEntityColumnList PrimaryKeyColumns { get; }
 
     /// <summary>
     ///   Gets the name of the database table
@@ -46,6 +45,6 @@
     /// <remarks>
     ///   Empty if there is no unique key.
     /// </remarks>
-    EntityColumnList UniqueKeyColumns { get; }
+    IEntityColumnList UniqueKeyColumns { get; }
   } //End of class
 } //End of namespace

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Windows.Forms;
-using SoundExplorers.Data;
+using SoundExplorers.Common;
 
 namespace SoundExplorers {
   /// <summary>

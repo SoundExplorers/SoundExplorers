@@ -3,6 +3,7 @@ using System.Data;
 using System.Linq;
 using System.Reflection;
 using Devart.Data.PostgreSql;
+using SoundExplorers.Common;
 
 namespace SoundExplorers.Data {
   /// <summary>
@@ -217,7 +218,7 @@ namespace SoundExplorers.Data {
     ///   that is flagged with a <see cref="FieldAttribute" />
     ///   or an attribute that is derived from <see cref="FieldAttribute" />.
     /// </remarks>
-    public EntityColumnList Columns =>
+    public IEntityColumnList Columns =>
       _columns ?? (_columns = EntityColumnListFactory.Create<TEntity>());
 
     /// <summary>
@@ -232,7 +233,7 @@ namespace SoundExplorers.Data {
     ///   or an attribute that is derived from <see cref="FieldAttribute" />
     ///   but is not a <see cref="PrimaryKeyFieldAttribute" />.
     /// </remarks>
-    public EntityColumnList NonPrimaryKeyColumns {
+    public IEntityColumnList NonPrimaryKeyColumns {
       get {
         var nonPrimaryKeyColumns = new EntityColumnList();
         foreach (var column in Columns) {
@@ -257,7 +258,7 @@ namespace SoundExplorers.Data {
     ///   or an attribute that is derived from <see cref="FieldAttribute" />
     ///   but is not a <see cref="UniqueKeyFieldAttribute" />.
     /// </remarks>
-    public EntityColumnList NonUniqueKeyColumns {
+    public IEntityColumnList NonUniqueKeyColumns {
       get {
         var nonUniqueKeyColumns = new EntityColumnList();
         foreach (var column in Columns) {
@@ -279,7 +280,7 @@ namespace SoundExplorers.Data {
     ///   will correspond to a property of the derived class
     ///   that is flagged with a <see cref="PrimaryKeyFieldAttribute" />.
     /// </remarks>
-    public EntityColumnList PrimaryKeyColumns {
+    public IEntityColumnList PrimaryKeyColumns {
       get {
         var primaryKeyColumns = new EntityColumnList();
         foreach (var column in Columns) {
@@ -308,7 +309,7 @@ namespace SoundExplorers.Data {
     ///   will correspond to a property of the derived class
     ///   that is flagged with a <see cref="UniqueKeyFieldAttribute" />.
     /// </remarks>
-    public EntityColumnList UniqueKeyColumns {
+    public IEntityColumnList UniqueKeyColumns {
       get {
         var uniqueKeyColumns = new EntityColumnList();
         foreach (var column in Columns) {

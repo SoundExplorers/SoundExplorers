@@ -1,4 +1,6 @@
-﻿namespace SoundExplorers.Data {
+﻿using SoundExplorers.Common;
+
+namespace SoundExplorers.Data {
   /// <summary>
   ///   Interface for
   ///   an Entity from whose data media file metadata tags may need to be updated.

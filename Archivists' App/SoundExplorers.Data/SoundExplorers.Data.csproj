@@ -103,10 +103,6 @@
         <Compile Include="FieldAttribute.cs" />
         <Compile Include="HiddenFieldAttribute.cs" />
         <Compile Include="IAudioTags.cs" />
-        <Compile Include="IEntity.cs" />
-        <Compile Include="IEntityColumn.cs" />
-        <Compile Include="IEntityColumnContainer.cs" />
-        <Compile Include="IEntityList.cs" />
         <Compile Include="Image.cs" />
         <Compile Include="ImageList.cs" />
         <Compile Include="IMediaEntity.cs" />
@@ -131,7 +127,6 @@
         <Compile Include="ReferencedFieldAttribute.cs" />
         <Compile Include="Role.cs" />
         <Compile Include="RoleList.cs" />
-        <Compile Include="RowUpdatedEventArgs.cs" />
         <Compile Include="SelectCommand.cs" />
         <Compile Include="Series.cs" />
         <Compile Include="SeriesList.cs" />

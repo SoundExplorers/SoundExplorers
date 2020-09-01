@@ -8,12 +8,12 @@ using System.Windows.Forms;
 using JetBrains.Annotations;
 using SoundExplorers.Common;
 using SoundExplorers.Controller;
-using Image = SoundExplorers.Data.Image;
-using ImageList = SoundExplorers.Data.ImageList;
+// using Image = SoundExplorers.Data.Image;
+// using ImageList = SoundExplorers.Data.ImageList;
 
 namespace SoundExplorers {
   /// <summary>
-  /// Table editor MDI child window of the main window. 
+  ///   Table editor MDI child window of the main window.
   /// </summary>
   [UsedImplicitly]
   internal partial class TableForm : Form, ITableView {
@@ -51,6 +51,40 @@ namespace SoundExplorers {
     private SizeableFormOptions SizeableFormOptions { get; set; }
     private DataGridViewRow UnchangedRow { get; set; }
     private bool UpdateCancelled { get; set; }
+
+    /// <summary>
+    ///   Occurs when there is an error on
+    ///   attempting to insert, update or delete a database table row
+    ///   corresponding to a row in the main grid.
+    /// </summary>
+    /// <param name="e">Error details.</param>
+    public void OnRowError(RowErrorEventArgs e) {
+      RowErrorEventArgs = e;
+      UpdateCancelled = true;
+      RowErrorTimer.Start();
+    }
+
+    /// <summary>
+    ///   occurs when a database table row
+    ///   corresponding to a row in the main grid
+    ///   has been successfully inserted or updated on the database.
+    /// </summary>
+    /// <param name="databaseUpdateMessage">A message describing the update.</param>
+    /// <param name="mediaTagsUpdateErrorMessage">
+    ///   If specified, an error message from a failed update of media tags.
+    /// </param>
+    public void OnRowUpdated(string databaseUpdateMessage,
+      string mediaTagsUpdateErrorMessage = null) {
+      MainView.StatusLabel.Text = databaseUpdateMessage;
+      if (mediaTagsUpdateErrorMessage != null) {
+        MessageBox.Show(
+          this,
+          mediaTagsUpdateErrorMessage,
+          Application.ProductName,
+          MessageBoxButtons.OK,
+          MessageBoxIcon.Error);
+      }
+    }
 
     public void SetController(TableController controller) {
       Controller = controller;
@@ -165,40 +199,6 @@ namespace SoundExplorers {
     }
 
     /// <summary>
-    ///   Occurs when there is an error on
-    ///   attempting to insert, update or delete a database table row
-    ///   corresponding to a row in the main grid.
-    /// </summary>
-    /// <param name="e">Error details.</param>
-    public void OnRowError(RowErrorEventArgs e) {
-      RowErrorEventArgs = e;
-      UpdateCancelled = true;
-      RowErrorTimer.Start();
-    }
-
-    /// <summary>
-    ///   occurs when a database table row
-    ///   corresponding to a row in the main grid
-    ///   has been successfully inserted or updated on the database.
-    /// </summary>
-    /// <param name="databaseUpdateMessage">A message describing the update.</param>
-    /// <param name="mediaTagsUpdateErrorMessage">
-    ///   If specified, an error message from a failed update of media tags.
-    /// </param>
-    public void OnRowUpdated(string databaseUpdateMessage,
-      string mediaTagsUpdateErrorMessage = null) {
-      MainView.StatusLabel.Text = databaseUpdateMessage;
-      if (mediaTagsUpdateErrorMessage != null) {
-        MessageBox.Show(
-          this,
-          mediaTagsUpdateErrorMessage,
-          Application.ProductName,
-          MessageBoxButtons.OK,
-          MessageBoxIcon.Error);
-      }
-    }
-
-    /// <summary>
     ///   Handles both the missing image label's
     ///   and the picture box's
     ///   <see cref="Control.DragDrop" /> event
@@ -216,15 +216,15 @@ namespace SoundExplorers {
     ///   is in edit mode.
     /// </remarks>
     private void FittedPictureBox1_DragDrop(object sender, DragEventArgs e) {
-      if (Entities is ImageList
-          && !MainGrid.IsCurrentCellInEditMode
-          && e.Data.GetDataPresent(DataFormats.FileDrop)) {
-        var pathCell = (PathCell)MainCurrentRow.Cells["Path"];
-        DropPathOnCell(
-          e.Data,
-          pathCell);
-        ShowImageOrMessage(pathCell.Path);
-      }
+      // if (Controller.Entities is ImageList
+      //     && !MainGrid.IsCurrentCellInEditMode
+      //     && e.Data.GetDataPresent(DataFormats.FileDrop)) {
+      //   var pathCell = (PathCell)MainCurrentRow.Cells["Path"];
+      //   DropPathOnCell(
+      //     e.Data,
+      //     pathCell);
+      //   ShowImageOrMessage(pathCell.Path);
+      // }
     }
 
     /// <summary>
@@ -242,13 +242,13 @@ namespace SoundExplorers {
     ///   path dropping is not supported while the main grid is in edit mode.
     /// </remarks>
     private void FittedPictureBox1_DragOver(object sender, DragEventArgs e) {
-      if (Entities is ImageList
-          && !MainGrid.IsCurrentCellInEditMode
-          && e.Data.GetDataPresent(DataFormats.FileDrop)) {
-        e.Effect = DragDropEffects.Copy;
-      } else {
-        e.Effect = DragDropEffects.None;
-      }
+      // if (Entities is ImageList
+      //     && !MainGrid.IsCurrentCellInEditMode
+      //     && e.Data.GetDataPresent(DataFormats.FileDrop)) {
+      //   e.Effect = DragDropEffects.Copy;
+      // } else {
+      //   e.Effect = DragDropEffects.None;
+      // }
     }
 
     /// <summary>
@@ -282,7 +282,7 @@ namespace SoundExplorers {
     ///   on the other grid.
     /// </remarks>
     private void FocusGrid(DataGridView grid) {
-      if (Controller.ParentList == null) {
+      if (!Controller.IsParentTableToBeShown) {
         grid.Focus();
         return;
       }
@@ -402,16 +402,16 @@ namespace SoundExplorers {
     ///   A suitable Newsletter to show is not associated with the selected row.
     /// </exception>
     private Newsletter GetNewsletterToShow() {
-      if (Entities is ArtistInImageList) {
-        if (Controller.ParentList.Count > 0) {
-          var image =
-            (Image)Controller.ParentList[ParentCurrentRow.Index];
-          return image.FetchNewsletter();
-        }
-        throw new ApplicationException(
-          "You cannot show the newsletter for an Image's Performance because "
-          + "no Images are listed in the ArtistInImageList window.");
-      }
+      // if (Entities is ArtistInImageList) {
+      //   if (Controller.ParentList.Count > 0) {
+      //     var image =
+      //       (Image)Controller.ParentList[ParentCurrentRow.Index];
+      //     return image.FetchNewsletter();
+      //   }
+      //   throw new ApplicationException(
+      //     "You cannot show the newsletter for an Image's Performance because "
+      //     + "no Images are listed in the ArtistInImageList window.");
+      // }
       if (Entities is CreditList) {
         if (Controller.ParentList.Count > 0) {
           var piece =
@@ -422,26 +422,26 @@ namespace SoundExplorers {
           "You cannot show a Piece's newsletter because "
           + "no Pieces are listed in the Credit window.");
       }
-      if (Entities is ImageList) {
-        if (MainCurrentRow.IsNewRow) {
-          throw new ApplicationException(
-            "You must add the new Image before you can show its Performance's newsletter.");
-        }
-        if (MainGrid.IsCurrentCellInEditMode) {
-          throw new ApplicationException(
-            "While you are editing the Image, "
-            + "you cannot show its Performance's newsletter.");
-        }
-        var image =
-          (Image)Entities[MainCurrentRow.Index];
-        if (image.Location != MainCurrentRow.Cells["Location"].Value.ToString()
-            || image.Date != (DateTime)MainCurrentRow.Cells["Date"].Value) {
-          throw new ApplicationException(
-            "You must save or cancel changes to the Image "
-            + "before you can show its Performance's newsletter.");
-        }
-        return image.FetchNewsletter();
-      }
+      // if (Entities is ImageList) {
+      //   if (MainCurrentRow.IsNewRow) {
+      //     throw new ApplicationException(
+      //       "You must add the new Image before you can show its Performance's newsletter.");
+      //   }
+      //   if (MainGrid.IsCurrentCellInEditMode) {
+      //     throw new ApplicationException(
+      //       "While you are editing the Image, "
+      //       + "you cannot show its Performance's newsletter.");
+      //   }
+      //   var image =
+      //     (Image)Entities[MainCurrentRow.Index];
+      //   if (image.Location != MainCurrentRow.Cells["Location"].Value.ToString()
+      //       || image.Date != (DateTime)MainCurrentRow.Cells["Date"].Value) {
+      //     throw new ApplicationException(
+      //       "You must save or cancel changes to the Image "
+      //       + "before you can show its Performance's newsletter.");
+      //   }
+      //   return image.FetchNewsletter();
+      // }
       if (Entities is NewsletterList) {
         if (MainCurrentRow.IsNewRow) {
           throw new ApplicationException(
@@ -498,10 +498,10 @@ namespace SoundExplorers {
           + "no Performances are listed in the Set window.");
       }
       throw new ApplicationException(
-        "Newsletters are not associated with the " + TableName + " table."
+        "Newsletters are not associated with the " + Controller.TableName + " table."
         + Environment.NewLine
-        + "To show a newsletter, first select a row in an "
-        + "ArtistInImage, Credit, Image, Newsletter, "
+        + "To show a newsletter, first select a row in a "
+        + "Credit, Newsletter, "
         + "Performance, Piece or Set table window.");
     }
 
@@ -557,7 +557,7 @@ namespace SoundExplorers {
         return piece;
       }
       throw new ApplicationException(
-        "Media files are not associated with the " + TableName + " table."
+        "Media files are not associated with the " + Controller.TableName + " table."
         + Environment.NewLine
         + "To play a piece, first select a row in a Credit or Piece table window.");
     }
@@ -697,21 +697,21 @@ namespace SoundExplorers {
       }
       var column = pathCell.OwningColumn;
       //Debug.WriteLine("MainGrid_CellEndEdit " + column.Name);
-      if (Entities is ImageList) { // Image.Path
-        // We need to have a go at showing the image or message
-        // even if nothing has changed.
-        // This allows for:
-        //
-        // a) the message being temporarily hidden while editing
-        //    (see MainGrid_CellBeginEdit)
-        //
-        // and
-        //
-        // b) a new image being shown as a result of
-        //    a path being dropped on the cell
-        //    but the user then cancelling the update of the row.
-        ShowImageOrMessage(pathCell.Path);
-      }
+      // if (Entities is ImageList) { // Image.Path
+      //   // We need to have a go at showing the image or message
+      //   // even if nothing has changed.
+      //   // This allows for:
+      //   //
+      //   // a) the message being temporarily hidden while editing
+      //   //    (see MainGrid_CellBeginEdit)
+      //   //
+      //   // and
+      //   //
+      //   // b) a new image being shown as a result of
+      //   //    a path being dropped on the cell
+      //   //    but the user then cancelling the update of the row.
+      //   ShowImageOrMessage(pathCell.Path);
+      // }
       if (pathCell.Path != string.Empty
           && (UnchangedRow?.Cells[e.ColumnIndex].Value == null || pathCell.Path !=
             UnchangedRow.Cells[e.ColumnIndex].Value.ToString())) {
@@ -733,13 +733,14 @@ namespace SoundExplorers {
               Piece.DefaultAudioFolder = file.Directory;
               break;
             case "Path":
-              if (Entities is ImageList) { // Image.Path
-                Image.DefaultFolder = file.Directory;
-              } else if (Entities is NewsletterList) { // Newsletter.Path
+              // if (Entities is ImageList) { // Image.Path
+              //   Image.DefaultFolder = file.Directory;
+              // } else if (Entities is NewsletterList) { // Newsletter.Path
+              if (Entities is NewsletterList) { // Newsletter.Path
                 Newsletter.DefaultFolder = file.Directory;
               } else {
                 throw new NotSupportedException(
-                  TableName + ".Path is not supported.");
+                  Controller.TableName + ".Path is not supported.");
               }
               break;
             case "VideoPath": // Piece.VideoPath
@@ -936,9 +937,9 @@ namespace SoundExplorers {
         // New row
         //Debug.WriteLine("New row");
         UnchangedRow = null;
-        if (Entities is ImageList) {
-          ShowImageOrMessage(null);
-        }
+        // if (Entities is ImageList) {
+        //   ShowImageOrMessage(null);
+        // }
         return;
       }
       // Not new row
@@ -976,9 +977,9 @@ namespace SoundExplorers {
           }
           parentPiece.Original = parentPiece.Clone();
         }
-      } else if (Entities is ImageList) {
-        var image = (Image)Entities[e.RowIndex];
-        ShowImageOrMessage(image.Path);
+      // } else if (Entities is ImageList) {
+      //   var image = (Image)Entities[e.RowIndex];
+      //   ShowImageOrMessage(image.Path);
       } else if (Entities is PieceList pieceList) {
         var piece = (
           from Piece p in pieceList
@@ -1071,25 +1072,25 @@ namespace SoundExplorers {
           //    }
           //    isUpdateRequired = true;
           //}
-          if (Entities.Columns[column.Name] == null) {
-            throw new NullReferenceException("Entities.Columns[column.Name");
+          if (Controller.Columns?[column.Name] == null) {
+            throw new NullReferenceException("Controller.Columns[column.Name]");
           }
-          if (Entities.Columns[column.Name].IsInPrimaryKey) {
+          if (Controller.Columns[column.Name].IsInPrimaryKey) {
             oldKeyFields.Add(column.Name, oldValue);
           }
           if (newValue == DBNull.Value) {
             if (column.ValueType == typeof(DateTime)) {
               MainGrid.Rows[e.RowIndex].Cells[column.Name].Value =
                 DateTime.Parse("01 Jan 1900");
-            } else if (column.Name == "ImageId") {
-              // Set ImageId to the next value in the ImageId column's sequence.
-              // ImageId is a SERIAL column.
-              // So it could be defaulted to get the same effect.
-              // But, without setting ImageId in the grid and its bound DataTable,
-              // it would not be possible for EntityList.Refresh
-              // to refresh the Image entities in the ImageList.
-              MainGrid.Rows[e.RowIndex].Cells[column.Name].Value =
-                Image.GetNextImageId();
+            // } else if (column.Name == "ImageId") {
+            //   // Set ImageId to the next value in the ImageId column's sequence.
+            //   // ImageId is a SERIAL column.
+            //   // So it could be defaulted to get the same effect.
+            //   // But, without setting ImageId in the grid and its bound DataTable,
+            //   // it would not be possible for EntityList.Refresh
+            //   // to refresh the Image entities in the ImageList.
+            //   MainGrid.Rows[e.RowIndex].Cells[column.Name].Value =
+            //     Image.GetNextImageId();
             }
           }
         } // End of foreach
@@ -1143,11 +1144,11 @@ namespace SoundExplorers {
     /// </remarks>
     private void ParentGrid_RowEnter(object sender, DataGridViewCellEventArgs e) {
       ParentRowChanged = true;
-      if (Controller.ParentList is ImageList
-          && e.RowIndex < Controller.ParentList.Count) {
-        var image = (Image)Controller.ParentList[e.RowIndex];
-        ShowImageOrMessage(image.Path);
-      }
+      // if (Controller.ParentList is ImageList
+      //     && e.RowIndex < Controller.ParentList.Count) {
+      //   var image = (Image)Controller.ParentList[e.RowIndex];
+      //   ShowImageOrMessage(image.Path);
+      // }
     }
 
     public void Paste() {
@@ -1207,6 +1208,9 @@ namespace SoundExplorers {
 
     private void PopulateGrid() {
       Controller.FetchData();
+      if (Controller.Columns == null) {
+        throw new NullReferenceException(nameof(Controller.Columns));
+      }
       Text = Controller.TableName;
       MainGrid.CellBeginEdit -= MainGrid_CellBeginEdit;
       MainGrid.CellEndEdit -= MainGrid_CellEndEdit;
@@ -1232,40 +1236,28 @@ namespace SoundExplorers {
         MainGrid.DataSource = new BindingSource(
           ParentGrid.DataSource,
           Controller.DataSet?.Relations[0].RelationName);
-        foreach (var entityColumn in Entities.Columns) {
-          if (entityColumn.ColumnName != "Comments") { // Comments is on multiple tables
-            if (Controller.ParentList.Columns.ContainsKey(entityColumn.ColumnName)
-                || Controller.ParentList.Columns.ContainsKey(entityColumn
-                  .ReferencedColumnName)) {
-              entityColumn.Visible = false;
-            }
-          }
-        } //End of foreach
       } else { // No parent grid
         MainGrid.DataSource = Controller.Table?.DefaultView;
       }
       foreach (DataGridViewColumn column in MainGrid.Columns) {
-        var entityColumn = Entities.Columns[column.Index];
-        column.Visible = entityColumn.Visible;
-        if (column.Visible) {
-          if (column.ValueType == typeof(string)) {
-            // Interpret blanking a cell as an empty string, not NULL.
-            // This only works when updating, not inserting.
-            // When inserting, do something like this in the SQL:
-            //  coalesce(@Comments, '')
-            column.DefaultCellStyle.DataSourceNullValue = string.Empty;
-          } else if (column.ValueType == typeof(DateTime)) {
-            column.DefaultCellStyle.Format = "dd MMM yyyy";
-          }
-          if (!string.IsNullOrEmpty(entityColumn.ReferencedColumnName)) {
-            var comboBoxCell = new ComboBoxCell {Column = entityColumn};
-            column.CellTemplate = comboBoxCell;
-          } else if (column.ValueType == typeof(DateTime)) {
-            column.CellTemplate = new CalendarCell();
-          } else if (column.Name.EndsWith("Path")) {
-            var pathCell = new PathCell {Column = entityColumn};
-            column.CellTemplate = pathCell;
-          }
+        var entityColumn = Controller.Columns[column.Index];
+        if (column.ValueType == typeof(string)) {
+          // Interpret blanking a cell as an empty string, not NULL.
+          // This only works when updating, not inserting.
+          // When inserting, do something like this in the SQL:
+          //  coalesce(@Comments, '')
+          column.DefaultCellStyle.DataSourceNullValue = string.Empty;
+        } else if (column.ValueType == typeof(DateTime)) {
+          column.DefaultCellStyle.Format = "dd MMM yyyy";
+        }
+        if (!string.IsNullOrEmpty(entityColumn.ReferencedColumnName)) {
+          var comboBoxCell = new ComboBoxCell {Column = entityColumn};
+          column.CellTemplate = comboBoxCell;
+        } else if (column.ValueType == typeof(DateTime)) {
+          column.CellTemplate = new CalendarCell();
+        } else if (column.Name.EndsWith("Path")) {
+          var pathCell = new PathCell {Column = entityColumn};
+          column.CellTemplate = pathCell;
         }
       } // End of foreach
       MainGrid.CellBeginEdit += MainGrid_CellBeginEdit;
@@ -1314,19 +1306,16 @@ namespace SoundExplorers {
         Controller.DataSet,
         Controller.ParentTableName);
       foreach (DataGridViewColumn column in ParentGrid.Columns) {
-        var entityColumn = Controller.ParentList.Columns[column.Index];
-        column.Visible = entityColumn.Visible;
-        if (column.Visible) {
-          if (column.ValueType == typeof(DateTime)) {
-            column.DefaultCellStyle.Format = "dd MMM yyyy";
-          }
-          if (column.Name.EndsWith("Path")) {
-            // Although we don't edit cells in the parent grid,
-            // we still need to make the cell a PathCell,
-            // as this is expected when playing media etc.
-            var pathCell = new PathCell {Column = entityColumn};
-            column.CellTemplate = pathCell;
-          }
+        var entityColumn = Controller.ParentList?.Columns[column.Index];
+        if (column.ValueType == typeof(DateTime)) {
+          column.DefaultCellStyle.Format = "dd MMM yyyy";
+        }
+        if (column.Name.EndsWith("Path")) {
+          // Although we don't edit cells in the parent grid,
+          // we still need to make the cell a PathCell,
+          // as this is expected when playing media etc.
+          var pathCell = new PathCell {Column = entityColumn};
+          column.CellTemplate = pathCell;
         }
       } // End of foreach
       // Has to be done when visible.
@@ -1399,7 +1388,7 @@ namespace SoundExplorers {
         // They can complain if they observe the problem.
         Debug.WriteLine("RowErrorTimer_Tick ArgumentOutOfRangeException");
         try {
-          Debug.WriteLine("TableName = " + TableName);
+          Debug.WriteLine("TableName = " + Controller.TableName);
           Debug.WriteLine("RowErrorEventArgs.ColumnIndex = " +
                           RowErrorEventArgs.ColumnIndex);
           Debug.WriteLine("RowErrorEventArgs.RowIndex = " + RowErrorEventArgs.RowIndex);
@@ -1408,7 +1397,7 @@ namespace SoundExplorers {
           Debug.WriteLine("MainCurrentRow.Index = " + MainCurrentRow.Index);
           Debug.WriteLine("MainGrid.ColumnCount = " + MainGrid.ColumnCount);
           Debug.WriteLine("MainGrid.RowCount = " + MainGrid.RowCount);
-          Debug.WriteLine("Entities.Count = " + Entities.Count);
+          //Debug.WriteLine("Entities.Count = " + Entities.Count);
           // ReSharper disable once EmptyGeneralCatchClause
         } catch { }
         // Leave the breakpoint on Debug.Assert.
@@ -1427,7 +1416,10 @@ namespace SoundExplorers {
       // So put the new values back into the grid row.
       // The user can then either modify or cancel the change.
       //bool rejectsRestored = false;
-      for (var columnIndex = 0; columnIndex < Entities.Columns.Count; columnIndex++) {
+      if (Controller.Columns == null) {
+        throw new NullReferenceException(nameof(Controller.Columns));
+      }
+      for (var columnIndex = 0; columnIndex < Controller.Columns.Count; columnIndex++) {
         var rejectedValue = RowErrorEventArgs.RejectedValues[columnIndex];
         // All the rejected values will be DBNull if the user had tried to delete the row.
         if (rejectedValue != DBNull.Value) {
@@ -1648,10 +1640,10 @@ namespace SoundExplorers {
       //MainGrid.ReadOnly = true;
       //Refresh();
       SizeableFormOptions.Save();
-      if (Entities is ArtistInImageList
-          || Entities is ImageList) {
-        Controller.ImageSplitterDistance = ImageSplitContainer.SplitterDistance;
-      }
+      // if (Entities is ArtistInImageList
+      //     || Entities is ImageList) {
+      //   Controller.ImageSplitterDistance = ImageSplitContainer.SplitterDistance;
+      // }
       if (Controller.IsParentTableToBeShown) {
         // A read-only related grid for the parent table is shown
         // above the main grid.
@@ -1758,25 +1750,25 @@ namespace SoundExplorers {
         // We need to work out whether we need the image panel
         // before we position the grid splitter.
         // Otherwise the grid splitter gets out of kilter.
-        if (Entities is ArtistInImageList
-            || Entities is ImageList) {
-          ImageSplitContainer.Panel2Collapsed = false;
-          ImageSplitContainer.SplitterDistance = Controller.ImageSplitterDistance;
-          ShowImageOrMessage(null); // Force image refresh
-          if (Entities is ImageList) {
-            if (Entities.Count > 0) {
-              ShowImageOrMessage(
-                MainGrid.Rows[0].Cells["Path"].Value.ToString());
-            }
-          } else { // ArtistInImageList
-            if (Controller.ParentList.Count > 0) {
-              ShowImageOrMessage(
-                ParentGrid.Rows[0].Cells["Path"].Value.ToString());
-            }
-          }
-        } else {
-          ImageSplitContainer.Panel2Collapsed = true;
-        }
+        // if (Entities is ArtistInImageList
+        //     || Entities is ImageList) {
+        //   ImageSplitContainer.Panel2Collapsed = false;
+        //   ImageSplitContainer.SplitterDistance = Controller.ImageSplitterDistance;
+        //   ShowImageOrMessage(null); // Force image refresh
+        //   if (Entities is ImageList) {
+        //     if (Entities.Count > 0) {
+        //       ShowImageOrMessage(
+        //         MainGrid.Rows[0].Cells["Path"].Value.ToString());
+        //     }
+        //   } else { // ArtistInImageList
+        //     if (Controller.ParentList.Count > 0) {
+        //       ShowImageOrMessage(
+        //         ParentGrid.Rows[0].Cells["Path"].Value.ToString());
+        //     }
+        //   }
+        // } else {
+        //   ImageSplitContainer.Panel2Collapsed = true;
+        // }
         if (Controller.IsParentTableToBeShown) {
           // A read-only related grid for the parent table is shown
           // above the main grid.
@@ -1791,7 +1783,7 @@ namespace SoundExplorers {
     }
 
     private void UpdateDatabase(Dictionary<string, object> oldKeyFields = null) {
-      Entities.Update(oldKeyFields);
+      Controller.Update(oldKeyFields);
       MainGrid.AutoResizeColumns();
       MainGrid.Focus();
     }
