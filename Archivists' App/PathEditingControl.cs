@@ -2,7 +2,6 @@
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
-using Image = SoundExplorers.Data.Image;
 
 namespace SoundExplorers {
   /// <summary>
@@ -27,8 +26,8 @@ namespace SoundExplorers {
     private TextBox TextBox { get; }
 
     /// <summary>
-    /// Changes the control's user interface (UI) to be consistent with the specified
-    //  cell style.
+    ///   Changes the control's user interface (UI) to be consistent with the specified
+    ///   cell style.
     /// </summary>
     /// <param name="dataGridViewCellStyle">
     ///   The System.Windows.Forms.DataGridViewCellStyle to use as the model for the
@@ -63,26 +62,26 @@ namespace SoundExplorers {
     public int EditingControlRowIndex { get; set; }
 
     /// <summary>
-    /// Gets or sets a value indicating whether the value of the editing control
-    //  differs from the value of the hosting cell.
+    ///   Gets or sets a value indicating whether the value of the editing control
+    ///   differs from the value of the hosting cell.
     /// </summary>
     public bool EditingControlValueChanged { get; set; }
 
     /// <summary>
-    /// Determines whether the specified key is a regular input key that the editing
-    //  control should process or a special key that the System.Windows.Forms.DataGridView
-    //  should process.
+    ///   Determines whether the specified key is a regular input key that the editing
+    ///   control should process or a special key that the System.Windows.Forms.DataGridView
+    ///   should process.
     /// </summary>
     /// <param name="keyData">
-    /// A System.Windows.Forms.Keys that represents the key that was pressed.
+    ///   A System.Windows.Forms.Keys that represents the key that was pressed.
     /// </param>
     /// <param name="dataGridViewWantsInputKey">
-    /// True when the System.Windows.Forms.DataGridView wants to process the System.Windows.Forms.Keys
-    //  in keyData; otherwise, False.
+    ///   True when the System.Windows.Forms.DataGridView wants to process the System.Windows.Forms.Keys
+    ///   in keyData; otherwise, False.
     /// </param>
     /// <returns>
-    /// True if the specified key is a regular input key that should be handled by
-    //  the editing control; otherwise, False.
+    ///   True if the specified key is a regular input key that should be handled by
+    ///   the editing control; otherwise, False.
     /// </returns>
     public bool EditingControlWantsInputKey(Keys keyData,
       bool dataGridViewWantsInputKey) {
@@ -110,17 +109,18 @@ namespace SoundExplorers {
     }
 
     /// <summary>
-    /// Gets the cursor used when the mouse pointer is over the System.Windows.Forms.DataGridView.EditingPanel
-    //  but not over the editing control.
+    ///   Gets the cursor used when the mouse pointer is over the
+    ///   System.Windows.Forms.DataGridView.EditingPanel
+    ///   but not over the editing control.
     /// </summary>
     public Cursor EditingPanelCursor => base.Cursor;
 
     /// <summary>
-    /// Retrieves the formatted value of the cell.
+    ///   Retrieves the formatted value of the cell.
     /// </summary>
     /// <param name="context">
-    /// A bitwise combination of System.Windows.Forms.DataGridViewDataErrorContexts
-    //  values that specifies the context in which the data is needed.
+    ///   A bitwise combination of System.Windows.Forms.DataGridViewDataErrorContexts
+    ///   values that specifies the context in which the data is needed.
     /// </param>
     /// <returns>
     ///   An System.Object that represents the formatted version of the cell contents.
@@ -142,8 +142,8 @@ namespace SoundExplorers {
     public void PrepareEditingControlForEdit(bool selectAll) { }
 
     /// <summary>
-    /// Gets or sets a value indicating whether the cell contents need to be repositioned
-    //  whenever the value changes.
+    ///   Gets or sets a value indicating whether the cell contents need to be repositioned
+    ///   whenever the value changes.
     /// </summary>
     public bool RepositionEditingControlOnValueChange => false;
 
@@ -180,9 +180,9 @@ namespace SoundExplorers {
     /// </remarks>
     private void Button_GotFocus(object sender, EventArgs e) {
       TextBox.Focus();
-      var openFileDialog = new OpenFileDialog();
-      openFileDialog.Title =
-        ("Select " + FileType + " File").Replace("  ", " ");
+      var openFileDialog = new OpenFileDialog {
+        Title = ("Select " + FileType + " File").Replace("  ", " ")
+      };
       var path = EditingControlFormattedValue.ToString();
       if (path != string.Empty) {
         FileInfo file = null;
@@ -193,33 +193,14 @@ namespace SoundExplorers {
         }
         if (folder == null
             || !folder.Exists) {
-          var pathCell = EditingControlDataGridView.CurrentCell as PathCell;
-          switch (pathCell.OwningColumn.Name) {
-            case "AudioPath": // Piece.AudioPath
-              folder = Piece.DefaultAudioFolder;
-              break;
-            case "Path":
-              if (pathCell.Column.TableName == "Image") {
-                folder = Image.DefaultFolder; // Image.Path
-              } else if (pathCell.Column.TableName == "Newsletter") {
-                // Newsletter.Path
-                folder = Newsletter.DefaultFolder; // Newsletter.Path
-              } else {
-                throw new NotSupportedException(
-                  pathCell.Column.TableName + ".Path is not supported.");
-              }
-              break;
-            case "VideoPath": // Piece.VideoPath
-              folder = Piece.DefaultVideoFolder;
-              break;
-          } //End of switch
-          if (folder != null
-              && folder.Exists) {
+          var pathCell = (PathCell)EditingControlDataGridView.CurrentCell;
+          folder = pathCell.Controller.GetDefaultFolder();
+          if (folder.Exists) {
             if (path.Contains(Path.DirectorySeparatorChar.ToString())) {
               file = new FileInfo(
                 folder.FullName
                 + Path.DirectorySeparatorChar
-                + file.Name);
+                + file?.Name);
             } else {
               file = new FileInfo(
                 folder.FullName
@@ -230,7 +211,7 @@ namespace SoundExplorers {
         }
         if (folder.Exists) {
           openFileDialog.InitialDirectory = folder.FullName;
-          if (file.Exists) {
+          if (file != null && file.Exists) {
             openFileDialog.FileName = file.Name;
           }
         }
@@ -240,7 +221,7 @@ namespace SoundExplorers {
       }
     }
 
-    public virtual void Copy() {
+    public void Copy() {
       if (string.IsNullOrEmpty(TextBox.SelectedText)) {
         // Clipboard.SetText throws an exception
         // if passed an empty string.
@@ -249,7 +230,7 @@ namespace SoundExplorers {
       Clipboard.SetText(TextBox.SelectedText);
     }
 
-    public virtual void Cut() {
+    public void Cut() {
       if (string.IsNullOrEmpty(TextBox.SelectedText)) {
         // Clipboard.SetText throws an exception
         // if passed an empty string.
@@ -257,14 +238,13 @@ namespace SoundExplorers {
       }
       Clipboard.SetText(TextBox.SelectedText);
       TextBox.SelectedText = string.Empty;
-      ;
     }
 
-    public virtual void Paste() {
+    public void Paste() {
       TextBox.SelectedText = Clipboard.GetText();
     }
 
-    protected void RenderControl() {
+    private void RenderControl() {
       Button.BackColor = SystemColors.Control;
       Button.ForeColor = SystemColors.ControlText;
       Button.Width = 32;

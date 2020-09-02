@@ -2,6 +2,7 @@
 using System.Data;
 using System.Linq;
 using System.Windows.Forms;
+using JetBrains.Annotations;
 using SoundExplorers.Controller;
 
 namespace SoundExplorers {
@@ -119,6 +120,12 @@ namespace SoundExplorers {
       return result;
     }
 
+    [NotNull]
+    private TableView CreateTableView() {
+      return (TableView)ViewFactory.Create<TableView, TableController>(SelectTableForm
+        .TableName);
+    }
+
     private void CutToolStripMenuItem_Click(object sender, EventArgs e) {
       if (MdiChildren.Any()) {
         TableView.Cut();
@@ -166,11 +173,9 @@ namespace SoundExplorers {
     private void MainView_FormClosed(object sender, FormClosedEventArgs e) {
       Controller.IsStatusBarVisible = StatusStrip.Visible;
       Controller.IsToolBarVisible = ToolStrip.Visible;
-      if (MdiChildren.Any()) {
-        Controller.TableName = TableView.Controller.TableName;
-      } else {
-        Controller.TableName = SelectTableForm.TableName;
-      }
+      Controller.TableName = MdiChildren.Any()
+        ? TableView.Controller.TableName
+        : SelectTableForm.TableName;
       // Explicitly closing all the MIDI child forms
       // fixes a problem where, 
       // if multiple child forms were open and maximized
@@ -289,9 +294,7 @@ namespace SoundExplorers {
         return;
       }
       try {
-        var tableView =
-          FormFactory.Create<TableView, TableController>(SelectTableForm.TableName);
-        tableView.Show();
+        CreateTableView().Show();
       } catch (ApplicationException ex) {
         MessageBox.Show(
           ex.Message,
@@ -340,8 +343,7 @@ namespace SoundExplorers {
       //    SelectTableForm.EntityTypeName);
       var oldTableView = TableView;
       try {
-        var newTableView =
-          FormFactory.Create<TableView, TableController>(SelectTableForm.TableName);
+        var newTableView = CreateTableView();
         newTableView.Location = oldTableView.Location;
         newTableView.WindowState = oldTableView.WindowState;
         oldTableView.Close();

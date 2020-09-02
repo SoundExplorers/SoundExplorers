@@ -1,11 +1,11 @@
 ﻿using System;
 using System.IO;
 using System.Windows.Forms;
-using SoundExplorers.Common;
+using SoundExplorers.Controller;
 
 namespace SoundExplorers {
   /// <summary>
-  ///   Path cell of a DataGridView.
+  ///   A DataGridView Cell that supports the editing of a file path.
   /// </summary>
   /// <remarks>
   ///   The cell displays dates in ordinary text box cells,
@@ -39,24 +39,25 @@ namespace SoundExplorers {
   ///     as Windows/Start key on a Windows keyboard.)
   ///   </para>
   /// </remarks>
-  internal class PathCell : DataGridViewTextBoxCell {
-    /// <summary>
-    ///   Gets or sets the entity column metadata.
-    /// </summary>
-    /// <remarks>
-    ///   For unknown reason,
-    ///   non-inherited properties of a PathCell
-    ///   (i.e. that are not inherited from DataGridViewTextBoxCell)
-    ///   to which a DataGridViewColumn.CellTemplate
-    ///   has been set
-    ///   don't persist when a cell is edited.
-    ///   So we are going to store this property in the Tag.
-    ///   That solves the problem.
-    /// </remarks>
-    public virtual IEntityColumn Column {
-      get => Tag as IEntityColumn;
-      set => Tag = value;
-    }
+  internal class PathCell : DataGridViewTextBoxCell, IView<PathCellController> {
+    // /// <summary>
+    // ///   Gets or sets the entity column metadata.
+    // /// </summary>
+    // /// <remarks>
+    // ///   For unknown reason,
+    // ///   non-inherited properties of a PathCell
+    // ///   (i.e. that are not inherited from DataGridViewTextBoxCell)
+    // ///   to which a DataGridViewColumn.CellTemplate
+    // ///   has been set
+    // ///   don't persist when a cell is edited.
+    // ///   So we are going to store this property in the Tag.
+    // ///   That solves the problem.
+    // /// </remarks>
+    // public IEntityColumn Column {
+    //   get => Tag as IEntityColumn;
+    //   set => Tag = value;
+    // }
+    public PathCellController Controller { get; private set; }
 
     public override Type EditType =>
       // Return the type of the editing control that PathCell uses.
@@ -67,7 +68,7 @@ namespace SoundExplorers {
     ///   the path in the cell exists.
     ///   False if a path is not specified or the file does not exist.
     /// </summary>
-    public virtual bool FileExists =>
+    public bool FileExists =>
       !string.IsNullOrEmpty(Path)
       && File.Exists(Path);
 
@@ -75,20 +76,10 @@ namespace SoundExplorers {
     ///   Gets or sets the file path contained in the cell.
     ///   Null only if the path cell is on the new row and had not been edited.
     /// </summary>
-    public virtual string Path {
-      get {
-        if (Value != null) {
-          return Value.ToString();
-        }
-        return null;
-      }
-      set {
-        if (value != null) {
-          Value = value;
-        } else {
-          Value = string.Empty;
-        }
-      }
+    public string Path => Value?.ToString();
+
+    public void SetController(PathCellController controller) {
+      Controller = controller;
     }
 
     public override void InitializeEditingControl(
@@ -98,8 +89,7 @@ namespace SoundExplorers {
       // Set the value of the editing control to the current cell value.
       base.InitializeEditingControl(rowIndex, initialFormattedValue,
         dataGridViewCellStyle);
-      var pathEditingControl =
-        DataGridView.EditingControl as PathEditingControl;
+      var pathEditingControl = (PathEditingControl)DataGridView.EditingControl;
       pathEditingControl.KeyDown += PathEditingControl_KeyDown;
       if (Value == null
           || Value == DBNull.Value) {

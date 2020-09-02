@@ -37,8 +37,9 @@ namespace SoundExplorers.Controller {
     ///   Gets metadata about the database columns
     ///   represented by the Entity's field properties.
     /// </summary>
-    [CanBeNull]
-    private IEntityColumnList Columns => Entities?.Columns;
+    private IEntityColumnList Columns => Entities?.Columns ??
+                                         throw new NullReferenceException(
+                                           nameof(Columns));
 
     /// <summary>
     ///   Gets the data set containing the main table
@@ -81,14 +82,14 @@ namespace SoundExplorers.Controller {
         new Option($"{TableName}.ImageSplitterDistance"));
 
     public bool IsParentTableToBeShown => ParentTableName != null;
-    [CanBeNull] public IDictionary<string, object> OldFieldValues { get; set; }
+    [CanBeNull] private IDictionary<string, object> OldFieldValues { get; set; }
 
     /// <summary>
     ///   Gets the list of entities representing the main table's
     ///   parent table, if specified.
     /// </summary>
     [CanBeNull]
-    public IEntityList ParentList => Entities?.ParentList;
+    private IEntityList ParentList => Entities?.ParentList;
 
     [CanBeNull] public string ParentTableName => ParentList?.TableName;
     [CanBeNull] public DataTable Table => Entities?.Table;
@@ -142,11 +143,6 @@ namespace SoundExplorers.Controller {
           break;
         }
       }
-    }
-
-    public void ConserveOldFieldValues(int rowIndex) {
-      OldFieldValues = View.GetFieldValues(rowIndex);
-      ConservePieceIfRequired(rowIndex);
     }
 
     /// <summary>
@@ -297,7 +293,7 @@ namespace SoundExplorers.Controller {
         }
         var newsletter = (Newsletter)Entities[View.MainCurrentIndex];
         if (newsletter.Path !=
-            View.GetCurrentFieldValue(nameof(newsletter.Path)).ToString()) {
+            View.GetCurrentRowFieldValue(nameof(newsletter.Path)).ToString()) {
           throw new ApplicationException(
             "You must save or cancel changes to the Newsletter before you can show it.");
         }
@@ -325,7 +321,7 @@ namespace SoundExplorers.Controller {
         }
         var performance = (Performance)Entities[View.MainCurrentIndex];
         if (performance.Newsletter !=
-            (DateTime)View.GetCurrentFieldValue(nameof(performance.Newsletter))) {
+            (DateTime)View.GetCurrentRowFieldValue(nameof(performance.Newsletter))) {
           throw new ApplicationException(
             "You must save or cancel changes to the Performance "
             + "before you can show its newsletter.");
@@ -354,9 +350,6 @@ namespace SoundExplorers.Controller {
     private IDictionary<string, object> GetOldKeyFieldValues() {
       if (OldFieldValues == null) {
         throw new NullReferenceException(nameof(OldFieldValues));
-      }
-      if (Columns == null) {
-        throw new NullReferenceException(nameof(Columns));
       }
       return (
         from kvp in OldFieldValues
@@ -396,11 +389,11 @@ namespace SoundExplorers.Controller {
         case PieceList pieceList: {
           var piece = (
             from Piece p in pieceList
-            where p.Date == (DateTime)View.GetCurrentFieldValue(nameof(p.Date))
+            where p.Date == (DateTime)View.GetCurrentRowFieldValue(nameof(p.Date))
                   && p.Location ==
-                  View.GetCurrentFieldValue(nameof(p.Location)).ToString()
-                  && p.Set == (int)View.GetCurrentFieldValue(nameof(p.Set))
-                  && p.PieceNo == (int)View.GetCurrentFieldValue(nameof(p.PieceNo))
+                  View.GetCurrentRowFieldValue(nameof(p.Location)).ToString()
+                  && p.Set == (int)View.GetCurrentRowFieldValue(nameof(p.Set))
+                  && p.PieceNo == (int)View.GetCurrentRowFieldValue(nameof(p.PieceNo))
             select p).FirstOrDefault();
           if (piece == null) {
             // Piece not found.
@@ -434,6 +427,23 @@ namespace SoundExplorers.Controller {
     }
 
     /// <summary>
+    ///   An existing row on the table editor has been entered.
+    ///   So its current data will be conserved for comparison,
+    ///   in case the row is to be edited.
+    /// </summary>
+    public void OnEnteringExistingRow(int rowIndex) {
+      OldFieldValues = View.GetFieldValues(rowIndex);
+      ConservePieceIfRequired(rowIndex);
+    }
+
+    /// <summary>
+    ///   The insertion ('new') row on the table editor has been entered.
+    /// </summary>
+    public void OnEnteringInsertionRow() {
+      OldFieldValues = null;
+    }
+
+    /// <summary>
     ///   Plays the audio, if found,
     ///   of the current Piece, if any.
     /// </summary>
@@ -453,6 +463,23 @@ namespace SoundExplorers.Controller {
     /// </exception>
     public void PlayVideo() {
       Process.Start(GetMediumPath(Medium.Video));
+    }
+
+    /// <summary>
+    ///   The error row's values will have been restored to their
+    ///   originals when the change was rejected.
+    ///   So put the reject new values back into the grid row.
+    ///   The user can then either modify or cancel the change.
+    /// </summary>
+    public void RestoreRejectedValues([NotNull] object[] rejectedValues) {
+      for (var columnIndex = 0; columnIndex < Columns?.Count; columnIndex++) {
+        var rejectedValue = rejectedValues[columnIndex];
+        // All the rejected values will be DBNull if the user had tried to delete the row.
+        if (rejectedValue != DBNull.Value) {
+          View.SetCurrentRowFieldValue(Columns[columnIndex].ColumnName, rejectedValue);
+          //MainCurrentRow.Cells[columnIndex].Value = rejectedValue;
+        }
+      } //End of for
     }
 
     /// <summary>
@@ -477,9 +504,9 @@ namespace SoundExplorers.Controller {
     /// <summary>
     ///   Updates the database table with the changes that have been input.
     /// </summary>
-    public void UpdateDatabase(bool useOldKeyFieldValues = false) {
+    public void UpdateDatabase(bool isUpdatingExistingRow = false) {
       try {
-        Entities?.Update(useOldKeyFieldValues ? GetOldKeyFieldValues() : null);
+        Entities?.Update(isUpdatingExistingRow ? GetOldKeyFieldValues() : null);
         View.OnDatabaseUpdated();
       } catch (DataException exception) {
         View.OnDatabaseUpdateError(exception);
@@ -492,9 +519,6 @@ namespace SoundExplorers.Controller {
     /// </summary>
     public void UpdateDatabaseIfRowDataHasChanged(int rowIndex) {
       var newFieldValues = View.GetFieldValues(rowIndex);
-      if (Columns == null) {
-        throw new NullReferenceException(nameof(Columns));
-      }
       if (OldFieldValues == null) {
         throw new NullReferenceException(nameof(OldFieldValues));
       }

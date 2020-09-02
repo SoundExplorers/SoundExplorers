@@ -11,7 +11,7 @@ namespace SoundExplorers.Controller {
     int ParentCurrentIndex { get; }
 
     [NotNull]
-    object GetCurrentFieldValue([NotNull] string columnName);
+    object GetCurrentRowFieldValue([NotNull] string columnName);
 
     [NotNull]
     object GetFieldValue([NotNull] string columnName, int rowIndex);
@@ -26,7 +26,8 @@ namespace SoundExplorers.Controller {
     void OnRowUpdated([NotNull] string databaseUpdateMessage,
       string mediaTagsUpdateErrorMessage = null);
 
-    [NotNull]
+    void SetCurrentRowFieldValue([NotNull] string columnName, [NotNull] object newValue);
+
     void SetFieldValue([NotNull] string columnName, int rowIndex,
       [NotNull] object newValue);
   }

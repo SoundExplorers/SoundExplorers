@@ -15,7 +15,7 @@ namespace SoundExplorers {
       Application.EnableVisualStyles();
       Application.SetCompatibleTextRenderingDefault(false);
       SplashManager.Show(typeof(SplashForm));
-      Application.Run(FormFactory.Create<MainView, MainController>());
+      Application.Run((MainView)ViewFactory.Create<MainView, MainController>());
     }
   } //End of class
 } //End of namespace

@@ -80,7 +80,6 @@
     <Compile Include="FittedPictureBox.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="FormFactory.cs" />
     <Compile Include="PathCell.cs" />
     <Compile Include="MainView.cs">
       <SubType>Form</SubType>

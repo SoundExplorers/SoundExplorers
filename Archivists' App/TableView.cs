@@ -15,7 +15,6 @@ namespace SoundExplorers {
   /// <summary>
   ///   Table editor MDI child window of the main window.
   /// </summary>
-  [UsedImplicitly]
   internal partial class TableView : Form, ITableView {
     /// <summary>
     ///   Initialises a new instance of the <see cref="TableView" /> class.
@@ -51,19 +50,14 @@ namespace SoundExplorers {
     private SizeableFormOptions SizeableFormOptions { get; set; }
     private bool UpdateCancelled { get; set; }
 
-    public bool IsEditing => MainGrid.IsCurrentCellInEditMode;
-    public bool IsThereACurrentMainEntity => !MainCurrentRow.IsNewRow;
-    public int MainCurrentIndex => MainCurrentRow.Index;
-
-
-    public object GetCurrentFieldValue(string columnName) {
+    public object GetCurrentRowFieldValue(string columnName) {
       return MainCurrentRow.Cells[columnName].Value;
     }
 
     public object GetFieldValue(string columnName, int rowIndex) {
       return MainGrid.Rows[rowIndex].Cells[columnName].Value;
     }
-    
+
     public IDictionary<string, object> GetFieldValues(int rowIndex) {
       var result = new Dictionary<string, object>();
       for (var columnIndex = 0; columnIndex < MainGrid.ColumnCount; columnIndex++) {
@@ -72,6 +66,10 @@ namespace SoundExplorers {
       }
       return result;
     }
+
+    public bool IsEditing => MainGrid.IsCurrentCellInEditMode;
+    public bool IsThereACurrentMainEntity => !MainCurrentRow.IsNewRow;
+    public int MainCurrentIndex => MainCurrentRow.Index;
 
     public void OnDatabaseUpdated() {
       MainGrid.AutoResizeColumns();
@@ -122,6 +120,10 @@ namespace SoundExplorers {
 
     public int ParentCurrentIndex => ParentCurrentRow.Index;
 
+    public void SetCurrentRowFieldValue(string columnName, object newValue) {
+      MainCurrentRow.Cells[columnName].Value = newValue;
+    }
+
     public void SetFieldValue(string columnName, int rowIndex, object newValue) {
       MainGrid.Rows[rowIndex].Cells[columnName].Value = newValue;
     }
@@ -155,6 +157,12 @@ namespace SoundExplorers {
           pathEditingControl.Copy();
           break;
       }
+    }
+
+    [NotNull]
+    private PathCell CreatePathCell([NotNull] string columnName) {
+      return (PathCell)ViewFactory.Create<PathCell, PathCellController>(
+        Controller.TableName, columnName);
     }
 
     public void Cut() {
@@ -685,43 +693,16 @@ namespace SoundExplorers {
     ///   </para>
     /// </remarks>
     private void MainGrid_RowEnter(object sender, DataGridViewCellEventArgs e) {
-      //Debug.WriteLine("MainGrid_RowEnter");
-      //
-      // e.RowIndex is not necessarily the same as 
-      // MainCurrentRow.Index.
-      // In any case MainGrid.CurrentRow will be null 
-      // while the grid is being built
-      // and possibly at other times.
-      // The following Debugs prove those two points:
-      //
-      //Debug.WriteLine("e.RowIndex = " + e.RowIndex);
-      //Debug.WriteLine("MainGrid.RowCount = " + MainGrid.RowCount);
-      //Debug.WriteLine("(e.RowIndex == MainGrid.RowCount - 1) = " + (e.RowIndex == MainGrid.RowCount - 1));
-      //Debug.WriteLine("MainGrid.CurrentRow == null? " + (MainGrid.CurrentRow == null).ToString());
-      //try {
-      //    Debug.WriteLine("MainCurrentRow.Index = " + MainCurrentRow.Index);
-      //    Debug.WriteLine("(MainCurrentRow.Index == MainGrid.RowCount - 1) = " + (MainCurrentRow.Index == MainGrid.RowCount - 1));
-      //    Debug.WriteLine("MainCurrentRow.IsNewRow = " + MainCurrentRow.IsNewRow);
-      //} catch {
-      //}
-      //
-      // So this is the safe way of checking whether we have entered the new row:
+      // This is the safe way of checking whether we have entered the insertion (new) row:
       if (e.RowIndex == MainGrid.RowCount - 1) {
-        // Not this:
-        //if (MainGrid.CurrentRow == null
-        //||  MainCurrentRow.Index == MainGrid.RowCount - 1) {
-        // Nor this:
-        //if (MainCurrentRow.IsNewRow) {
-        // New row
-        //Debug.WriteLine("New row");
-        Controller.OldFieldValues = null;
+        Controller.OnEnteringInsertionRow();
         // if (Entities is ImageList) {
         //   ShowImageOrMessage(null);
         // }
         return;
       }
       // Not new row
-      Controller.ConserveOldFieldValues(e.RowIndex);
+      Controller.OnEnteringExistingRow(e.RowIndex);
     }
 
     private void MainGrid_RowsRemoved(object sender, DataGridViewRowsRemovedEventArgs e) {
@@ -815,9 +796,6 @@ namespace SoundExplorers {
 
     private void PopulateGrid() {
       Controller.FetchData();
-      if (Controller.Columns == null) {
-        throw new NullReferenceException(nameof(Controller.Columns));
-      }
       Text = Controller.TableName;
       MainGrid.CellBeginEdit -= MainGrid_CellBeginEdit;
       MainGrid.CellEndEdit -= MainGrid_CellEndEdit;
@@ -847,7 +825,6 @@ namespace SoundExplorers {
         MainGrid.DataSource = Controller.Table?.DefaultView;
       }
       foreach (DataGridViewColumn column in MainGrid.Columns) {
-        var entityColumn = Controller.Columns[column.Index];
         if (column.ValueType == typeof(string)) {
           // Interpret blanking a cell as an empty string, not NULL.
           // This only works when updating, not inserting.
@@ -857,13 +834,14 @@ namespace SoundExplorers {
         } else if (column.ValueType == typeof(DateTime)) {
           column.DefaultCellStyle.Format = "dd MMM yyyy";
         }
+        //var entityColumn = Controller.Columns[column.Index];
         if (!string.IsNullOrEmpty(entityColumn.ReferencedColumnName)) {
           var comboBoxCell = new ComboBoxCell {Column = entityColumn};
           column.CellTemplate = comboBoxCell;
         } else if (column.ValueType == typeof(DateTime)) {
           column.CellTemplate = new CalendarCell();
         } else if (column.Name.EndsWith("Path")) {
-          var pathCell = new PathCell {Column = entityColumn};
+          var pathCell = CreatePathCell(column.Name);
           column.CellTemplate = pathCell;
         }
       } // End of foreach
@@ -913,7 +891,6 @@ namespace SoundExplorers {
         Controller.DataSet,
         Controller.ParentTableName);
       foreach (DataGridViewColumn column in ParentGrid.Columns) {
-        var entityColumn = Controller.ParentList?.Columns[column.Index];
         if (column.ValueType == typeof(DateTime)) {
           column.DefaultCellStyle.Format = "dd MMM yyyy";
         }
@@ -921,8 +898,9 @@ namespace SoundExplorers {
           // Although we don't edit cells in the parent grid,
           // we still need to make the cell a PathCell,
           // as this is expected when playing media etc.
-          var pathCell = new PathCell {Column = entityColumn};
-          column.CellTemplate = pathCell;
+          //var entityColumn = Controller.ParentList?.Columns[column.Index];
+          //var pathCell = new PathCell {Column = entityColumn};
+          column.CellTemplate = CreatePathCell(column.Name);
         }
       } // End of foreach
       // Has to be done when visible.
@@ -1012,21 +990,7 @@ namespace SoundExplorers {
         return;
       }
       UpdateCancelled = false;
-      // The error row's values will have been restored to their
-      // originals when the change was rejected.
-      // So put the new values back into the grid row.
-      // The user can then either modify or cancel the change.
-      //bool rejectsRestored = false;
-      if (Controller.Columns == null) {
-        throw new NullReferenceException(nameof(Controller.Columns));
-      }
-      for (var columnIndex = 0; columnIndex < Controller.Columns.Count; columnIndex++) {
-        var rejectedValue = RowErrorEventArgs.RejectedValues[columnIndex];
-        // All the rejected values will be DBNull if the user had tried to delete the row.
-        if (rejectedValue != DBNull.Value) {
-          MainCurrentRow.Cells[columnIndex].Value = rejectedValue;
-        }
-      } //End of for
+      Controller.RestoreRejectedValues(RowErrorEventArgs.RejectedValues);
       if (RowErrorEventArgs.Exception is ApplicationException
           || RowErrorEventArgs.Exception is DataException) {
         MessageBox.Show(
