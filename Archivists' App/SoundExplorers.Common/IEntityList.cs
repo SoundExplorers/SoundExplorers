@@ -50,6 +50,6 @@ namespace SoundExplorers.Common {
     ///   Updates the database table with any changes that have been input
     ///   and refreshes the list of Entities.
     /// </summary>
-    void Update(Dictionary<string, object> oldKeyFields = null);
+    void Update(IDictionary<string, object> oldKeyFieldValues = null);
   } //End of interface
 } //End of interface

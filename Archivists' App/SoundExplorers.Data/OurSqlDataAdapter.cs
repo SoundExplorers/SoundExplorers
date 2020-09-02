@@ -125,7 +125,7 @@ namespace SoundExplorers.Data {
     /// </exception>
     public virtual void Update(
       DataTable dataTable,
-      Dictionary<string, object> oldKeyFields = null) {
+      IDictionary<string, object> oldKeyFields = null) {
       try {
         if (oldKeyFields != null) {
           foreach (var oldKeyField in oldKeyFields) {

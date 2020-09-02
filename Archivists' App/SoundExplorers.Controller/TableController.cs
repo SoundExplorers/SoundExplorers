@@ -38,7 +38,7 @@ namespace SoundExplorers.Controller {
     ///   represented by the Entity's field properties.
     /// </summary>
     [CanBeNull]
-    public IEntityColumnList Columns => Entities?.Columns;
+    private IEntityColumnList Columns => Entities?.Columns;
 
     /// <summary>
     ///   Gets the data set containing the main table
@@ -92,6 +92,7 @@ namespace SoundExplorers.Controller {
     [CanBeNull] public string ParentTableName => ParentList?.TableName;
     [CanBeNull] public DataTable Table => Entities?.Table;
     [NotNull] public string TableName { get; }
+    [CanBeNull] public IDictionary<string, object> UnchangedFieldValues { get; set; }
     [NotNull] private ITableView View { get; }
 
     /// <summary>
@@ -339,6 +340,22 @@ namespace SoundExplorers.Controller {
         + "Performance, Piece or Set table window.");
     }
 
+    [NotNull]
+    private IDictionary<string, object> GetOldKeyFieldValues() {
+      if (UnchangedFieldValues == null) {
+        throw new NullReferenceException(nameof(UnchangedFieldValues));
+      }
+      if (Columns == null) {
+        throw new NullReferenceException(nameof(Columns));
+      }
+      return (
+        from kvp in UnchangedFieldValues
+        where Columns[kvp.Key].IsInPrimaryKey
+        select kvp).ToDictionary(
+        kvp => kvp.Key,
+        kvp => kvp.Value);
+    }
+
     /// <summary>
     ///   Returns the Piece to be played.
     /// </summary>
@@ -395,6 +412,18 @@ namespace SoundExplorers.Controller {
     }
 
     /// <summary>
+    ///   Returns whether the string field in the specified column
+    ///   and with the specified new value is changing
+    ///   to a new non-null non-empty string
+    /// </summary>
+    private bool IsNewString([NotNull] string columnName, [CanBeNull] string newString) {
+      if (string.IsNullOrEmpty(newString)) {
+        return false;
+      }
+      return newString != UnchangedFieldValues?[columnName].ToString();
+    }
+
+    /// <summary>
     ///   Plays the audio, if found,
     ///   of the current Piece, if any.
     /// </summary>
@@ -414,28 +443,6 @@ namespace SoundExplorers.Controller {
     /// </exception>
     public void PlayVideo() {
       Process.Start(GetMediumPath(Medium.Video));
-    }
-
-    public void SetDefaultFolder([NotNull] string columnName, [NotNull] FileInfo file) {
-      switch (columnName) {
-        case "AudioPath": // Piece.AudioPath
-          Piece.DefaultAudioFolder = file.Directory;
-          break;
-        case "Path":
-          // if (Entities is ImageList) { // Image.Path
-          //   Image.DefaultFolder = file.Directory;
-          // } else if (Entities is NewsletterList) { // Newsletter.Path
-          if (Entities is NewsletterList) { // Newsletter.Path
-            Newsletter.DefaultFolder = file.Directory;
-          } else {
-            throw new NotSupportedException(
-              TableName + ".Path is not supported.");
-          }
-          break;
-        case "VideoPath": // Piece.VideoPath
-          Piece.DefaultVideoFolder = file.Directory;
-          break;
-      } //End of switch
     }
 
     /// <summary>
@@ -461,8 +468,53 @@ namespace SoundExplorers.Controller {
     ///   Updates the database table with any changes that have been input
     ///   and refreshes the list of Entities.
     /// </summary>
-    public void Update(Dictionary<string, object> oldKeyFields = null) {
-      Entities?.Update(oldKeyFields);
+    public void Update(bool useOldKeyFieldValues = false) {
+      Entities?.Update(useOldKeyFieldValues ? GetOldKeyFieldValues() : null);
+    }
+
+    private void UpdateDefaultFolder([NotNull] string columnName,
+      [NotNull] FileInfo file) {
+      switch (columnName) {
+        case "AudioPath": // Piece.AudioPath
+          Piece.DefaultAudioFolder = file.Directory;
+          break;
+        case "Path":
+          // if (Entities is ImageList) { // Image.Path
+          //   Image.DefaultFolder = file.Directory;
+          // } else if (Entities is NewsletterList) { // Newsletter.Path
+          if (Entities is NewsletterList) { // Newsletter.Path
+            Newsletter.DefaultFolder = file.Directory;
+          } else {
+            throw new NotSupportedException(
+              TableName + ".Path is not supported.");
+          }
+          break;
+        case "VideoPath": // Piece.VideoPath
+          Piece.DefaultVideoFolder = file.Directory;
+          break;
+      } //End of switch
+    }
+
+    /// <summary>
+    ///   Updates the default folder for the specified path if required.
+    /// </summary>
+    /// <exception cref="ApplicationException">
+    ///   Invalid path.
+    /// </exception>
+    public void UpdateDefaultFolderIfRequired([NotNull] string columnName,
+      [NotNull] string newPath) {
+      if (!IsNewString(columnName, newPath)) {
+        return;
+      }
+      FileInfo file;
+      try {
+        file = new FileInfo(newPath);
+      } catch (ArgumentException ex) {
+        throw new ApplicationException("Invalid path.", ex);
+      }
+      if (file.Exists) {
+        UpdateDefaultFolder(columnName, file);
+      }
     }
 
     private enum Medium {

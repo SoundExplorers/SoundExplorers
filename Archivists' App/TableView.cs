@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using JetBrains.Annotations;
 using SoundExplorers.Common;
 using SoundExplorers.Controller;
+
 // using Image = SoundExplorers.Data.Image;
 // using ImageList = SoundExplorers.Data.ImageList;
 
@@ -33,30 +34,35 @@ namespace SoundExplorers {
 
     public TableController Controller { get; private set; }
     private DataGridView FocusedGrid { get; set; }
-    public bool IsEditing => MainGrid.IsCurrentCellInEditMode;
-    public bool IsThereACurrentMainEntity => !MainCurrentRow.IsNewRow;
 
     private DataGridViewRow MainCurrentRow => MainGrid.CurrentRow ??
                                               throw new NullReferenceException(
                                                 nameof(MainGrid.CurrentRow));
 
-    public int MainCurrentIndex => MainCurrentRow.Index;
-
     private MainView MainView => (MainView)ParentForm ??
                                  throw new NullReferenceException(
                                    nameof(ParentForm));
 
-    public int ParentCurrentIndex => ParentCurrentRow.Index;
-    
     private DataGridViewRow ParentCurrentRow => ParentGrid.CurrentRow ??
                                                 throw new NullReferenceException(
                                                   nameof(ParentGrid.CurrentRow));
-    
+
     private bool ParentRowChanged { get; set; }
     private RowErrorEventArgs RowErrorEventArgs { get; set; }
     private SizeableFormOptions SizeableFormOptions { get; set; }
-    private DataGridViewRow UnchangedRow { get; set; }
     private bool UpdateCancelled { get; set; }
+
+    public object GetCurrentFieldValue(string columnName) {
+      return MainCurrentRow.Cells[columnName].Value;
+    }
+
+    public object GetFieldValue(string columnName, int rowIndex) {
+      return MainGrid.Rows[rowIndex].Cells[columnName].Value;
+    }
+
+    public bool IsEditing => MainGrid.IsCurrentCellInEditMode;
+    public bool IsThereACurrentMainEntity => !MainCurrentRow.IsNewRow;
+    public int MainCurrentIndex => MainCurrentRow.Index;
 
     /// <summary>
     ///   Occurs when there is an error on
@@ -92,8 +98,19 @@ namespace SoundExplorers {
       }
     }
 
+    public int ParentCurrentIndex => ParentCurrentRow.Index;
+
     public void SetController(TableController controller) {
       Controller = controller;
+    }
+
+    private void ConserveUnchangedRow(int rowIndex) {
+      // The inserted/updated row is not necessarily the current row.
+      Controller.UnchangedFieldValues = new Dictionary<string, object>();
+      for (var columnIndex = 0; columnIndex < MainGrid.ColumnCount; columnIndex++) {
+        Controller.UnchangedFieldValues.Add(MainGrid.Columns[columnIndex].Name,
+          MainGrid.Rows[rowIndex].Cells[columnIndex].Value);
+      }
     }
 
     public void Copy() {
@@ -333,14 +350,6 @@ namespace SoundExplorers {
       return null;
     }
 
-    public object GetCurrentFieldValue(string columnName) {
-      return MainCurrentRow.Cells[columnName].Value;
-    }
-
-    public object GetFieldValue(string columnName, int rowIndex) {
-      return MainGrid.Rows[rowIndex].Cells[columnName].Value;
-    }
-
     private void Grid_Click(object sender, EventArgs e) {
       var grid = sender as DataGridView;
       if (grid != FocusedGrid) {
@@ -491,24 +500,15 @@ namespace SoundExplorers {
       //   //    but the user then cancelling the update of the row.
       //   ShowImageOrMessage(pathCell.Path);
       // }
-      if (pathCell.Path != string.Empty
-          && (UnchangedRow?.Cells[e.ColumnIndex].Value == null || pathCell.Path !=
-            UnchangedRow.Cells[e.ColumnIndex].Value.ToString())) {
-        FileInfo file;
-        try {
-          file = new FileInfo(pathCell.Path);
-        } catch (ArgumentException ex) {
-          MessageBox.Show(
-            this,
-            ex.Message,
-            Application.ProductName,
-            MessageBoxButtons.OK,
-            MessageBoxIcon.Warning);
-          return;
-        }
-        if (pathCell.FileExists) {
-          Controller.SetDefaultFolder(column.Name, file);
-        }
+      try {
+        Controller.UpdateDefaultFolderIfRequired(column.Name, pathCell.Path);
+      } catch (ApplicationException ex) {
+        MessageBox.Show(
+          this,
+          ex.Message,
+          Application.ProductName,
+          MessageBoxButtons.OK,
+          MessageBoxIcon.Warning);
       }
     }
 
@@ -516,7 +516,7 @@ namespace SoundExplorers {
     //    // This debug proves that, when the grid is bound to a second or subsequent list,
     //    // the type of each cell, which determines the cell editor to be used,
     //    // is always DataGridViewTextBoxCell,
-    //    // irrespective of what the colunm's CellTemplate,
+    //    // irrespective of what the column's CellTemplate,
     //    // as shown by the column's CellType property,
     //    // has been set.
     //    //var cell = MainGrid.CurrentCell;
@@ -697,25 +697,14 @@ namespace SoundExplorers {
         //if (MainCurrentRow.IsNewRow) {
         // New row
         //Debug.WriteLine("New row");
-        UnchangedRow = null;
+        Controller.UnchangedFieldValues = null;
         // if (Entities is ImageList) {
         //   ShowImageOrMessage(null);
         // }
         return;
       }
       // Not new row
-      //Debug.WriteLine("Not new row");
-      // The inserted/updated row is not necessarily the current row.
-      var row = MainGrid.Rows[e.RowIndex];
-      UnchangedRow = (DataGridViewRow)row.Clone() ??
-                     throw new NullReferenceException(nameof(row.Clone));
-      for (var columnIndex = 0; columnIndex < MainGrid.ColumnCount; columnIndex++) {
-        //Debug.WriteLine(
-        //    MainGrid.Columns[columnIndex].Name + " = "
-        //    + row.Cells[columnIndex].Value);
-        UnchangedRow.Cells[columnIndex].Value = row.Cells[columnIndex].Value;
-      } // End of for
-      //Debug.WriteLine(UnchangedRow.Cells[0].Value);
+      ConserveUnchangedRow(e.RowIndex);
       Controller.ConservePieceIfRequired(e.RowIndex);
     }
 
@@ -755,7 +744,6 @@ namespace SoundExplorers {
       }
       //Debug.WriteLine("UnchangedRow.Index = " + UnchangedRow.Index);
       var isUpdateRequired = false;
-      var oldKeyFields = new Dictionary<string, object>();
       try {
         foreach (DataGridViewColumn column in MainGrid.Columns) {
           // When object values are compared here,
@@ -767,10 +755,9 @@ namespace SoundExplorers {
           // TODO Instead of converting to string, .Equals() should work.
           var newValue = MainGrid.Rows[e.RowIndex].Cells[column.Name].Value;
           string newString = newValue != null ? newValue.ToString() : string.Empty;
-          var oldValue = UnchangedRow?.Cells[column.Index].Value;
+          var oldValue = Controller.UnchangedFieldValues?[column.Name];
           string oldString = oldValue != null ? oldValue.ToString() : string.Empty;
-          if (column.Visible
-              && newString != oldString) {
+          if (newString != oldString) {
             if (column.ValueType != typeof(DateTime)
                 || column.ValueType == typeof(DateTime) && newValue != null &&
                 (DateTime)newValue != DateTime.Parse("01 Jan 1900")) {
@@ -799,27 +786,24 @@ namespace SoundExplorers {
           if (Controller.Columns?[column.Name] == null) {
             throw new NullReferenceException("Controller.Columns[column.Name]");
           }
-          if (Controller.Columns[column.Name].IsInPrimaryKey) {
-            oldKeyFields.Add(column.Name, oldValue);
-          }
           if (newValue == DBNull.Value) {
             if (column.ValueType == typeof(DateTime)) {
               MainGrid.Rows[e.RowIndex].Cells[column.Name].Value =
                 DateTime.Parse("01 Jan 1900");
-            // } else if (column.Name == "ImageId") {
-            //   // Set ImageId to the next value in the ImageId column's sequence.
-            //   // ImageId is a SERIAL column.
-            //   // So it could be defaulted to get the same effect.
-            //   // But, without setting ImageId in the grid and its bound DataTable,
-            //   // it would not be possible for EntityList.Refresh
-            //   // to refresh the Image entities in the ImageList.
-            //   MainGrid.Rows[e.RowIndex].Cells[column.Name].Value =
-            //     Image.GetNextImageId();
+              // } else if (column.Name == "ImageId") {
+              //   // Set ImageId to the next value in the ImageId column's sequence.
+              //   // ImageId is a SERIAL column.
+              //   // So it could be defaulted to get the same effect.
+              //   // But, without setting ImageId in the grid and its bound DataTable,
+              //   // it would not be possible for EntityList.Refresh
+              //   // to refresh the Image entities in the ImageList.
+              //   MainGrid.Rows[e.RowIndex].Cells[column.Name].Value =
+              //     Image.GetNextImageId();
             }
           }
         } // End of foreach
         if (isUpdateRequired) {
-          UpdateDatabase(oldKeyFields);
+          UpdateDatabase(true);
         }
       } catch (DataException ex) {
         MessageBox.Show(
@@ -1056,15 +1040,9 @@ namespace SoundExplorers {
       MainGrid.CancelEdit();
       // Focus the error row and cell.
       try {
-        if (MainGrid.Columns[RowErrorEventArgs.ColumnIndex].Visible) {
-          MainGrid.CurrentCell = MainGrid.Rows[
-            RowErrorEventArgs.RowIndex].Cells[
-            RowErrorEventArgs.ColumnIndex];
-        } else {
-          MainGrid.CurrentCell = MainGrid.Rows[
-            RowErrorEventArgs.RowIndex].Cells[
-            MainGrid.CurrentCell.ColumnIndex];
-        }
+        MainGrid.CurrentCell = MainGrid.Rows[
+          RowErrorEventArgs.RowIndex].Cells[
+          RowErrorEventArgs.ColumnIndex];
       } catch (ArgumentOutOfRangeException) {
         // Hopefully this is fixed now
         // (by comparing strings instead of objects in MainGrid_RowValidated)
@@ -1429,8 +1407,8 @@ namespace SoundExplorers {
       }
     }
 
-    private void UpdateDatabase(Dictionary<string, object> oldKeyFields = null) {
-      Controller.Update(oldKeyFields);
+    private void UpdateDatabase(bool useOldKeyFields = false) {
+      Controller.Update(useOldKeyFields);
       MainGrid.AutoResizeColumns();
       MainGrid.Focus();
     }

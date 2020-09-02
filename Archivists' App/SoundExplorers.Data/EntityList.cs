@@ -197,15 +197,15 @@ namespace SoundExplorers.Data {
     ///   Updates the database table with any changes that have been input
     ///   and refreshes the list of Entities.
     /// </summary>
-    /// <param name="oldKeyFields">
+    /// <param name="oldKeyFieldValues">
     ///   The names and original values of the primary key fields.
     /// </param>
     /// <exception cref="DataException">
     ///   Thrown if
     ///   there is an error on attempting to access the database.
     /// </exception>
-    public void Update(Dictionary<string, object> oldKeyFields = null) {
-      Adapter.Update(Table, oldKeyFields);
+    public void Update(IDictionary<string, object> oldKeyFieldValues = null) {
+      Adapter.Update(Table, oldKeyFieldValues);
     }
 
     private void Adapter_RowUpdated(object sender, PgSqlRowUpdatedEventArgs e) {
