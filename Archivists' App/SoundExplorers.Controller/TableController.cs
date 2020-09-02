@@ -81,6 +81,7 @@ namespace SoundExplorers.Controller {
         new Option($"{TableName}.ImageSplitterDistance"));
 
     public bool IsParentTableToBeShown => ParentTableName != null;
+    [CanBeNull] public IDictionary<string, object> OldFieldValues { get; set; }
 
     /// <summary>
     ///   Gets the list of entities representing the main table's
@@ -92,7 +93,6 @@ namespace SoundExplorers.Controller {
     [CanBeNull] public string ParentTableName => ParentList?.TableName;
     [CanBeNull] public DataTable Table => Entities?.Table;
     [NotNull] public string TableName { get; }
-    [CanBeNull] public IDictionary<string, object> UnchangedFieldValues { get; set; }
     [NotNull] private ITableView View { get; }
 
     /// <summary>
@@ -103,40 +103,50 @@ namespace SoundExplorers.Controller {
     ///   saving any changes to the current Piece or Credit
     ///   to the metadata tags of the Piece's audio file.
     /// </summary>
-    public void ConservePieceIfRequired(int rowIndex) {
-      if (Entities is CreditList) {
-        var parentPiece = GetPiece();
-        if (parentPiece != null) {
-          var credits = (
-            from Credit credit in (CreditList)Entities
-            where credit.Date == parentPiece.Date
-                  && credit.Location == parentPiece.Location
-                  && credit.Set == parentPiece.Set
-                  && credit.Piece == parentPiece.PieceNo
-            select credit).ToList();
-          parentPiece.Credits = new CreditList(true);
-          foreach (var credit in credits) {
-            parentPiece.Credits.Add(credit);
+    private void ConservePieceIfRequired(int rowIndex) {
+      switch (Entities) {
+        case CreditList _: {
+          var parentPiece = GetPiece();
+          if (parentPiece != null) {
+            var credits = (
+              from Credit credit in (CreditList)Entities
+              where credit.Date == parentPiece.Date
+                    && credit.Location == parentPiece.Location
+                    && credit.Set == parentPiece.Set
+                    && credit.Piece == parentPiece.PieceNo
+              select credit).ToList();
+            parentPiece.Credits = new CreditList(true);
+            foreach (var credit in credits) {
+              parentPiece.Credits.Add(credit);
+            }
+            parentPiece.Original = parentPiece.Clone();
           }
-          parentPiece.Original = parentPiece.Clone();
+          // } else if (Entities is ImageList) {
+          //   var image = (Image)Entities[e.RowIndex];
+          //   ShowImageOrMessage(image.Path);
+          break;
         }
-        // } else if (Entities is ImageList) {
-        //   var image = (Image)Entities[e.RowIndex];
-        //   ShowImageOrMessage(image.Path);
-      } else if (Entities is PieceList pieceList) {
-        var piece = (
-          from Piece p in pieceList
-          where p.Date == (DateTime)View.GetFieldValue(nameof(p.Date), rowIndex)
-                && p.Location == View.GetFieldValue(nameof(p.Location), rowIndex)
-                  .ToString()
-                && p.Set == (int)View.GetFieldValue(nameof(p.Set), rowIndex)
-                && p.PieceNo == (int)View.GetFieldValue(nameof(p.PieceNo), rowIndex)
-          select p).FirstOrDefault();
-        if (piece != null) {
-          piece.Credits = piece.FetchCredits();
-          piece.Original = piece.Clone();
+        case PieceList pieceList: {
+          var piece = (
+            from Piece p in pieceList
+            where p.Date == (DateTime)View.GetFieldValue(nameof(p.Date), rowIndex)
+                  && p.Location == View.GetFieldValue(nameof(p.Location), rowIndex)
+                    .ToString()
+                  && p.Set == (int)View.GetFieldValue(nameof(p.Set), rowIndex)
+                  && p.PieceNo == (int)View.GetFieldValue(nameof(p.PieceNo), rowIndex)
+            select p).FirstOrDefault();
+          if (piece != null) {
+            piece.Credits = piece.FetchCredits();
+            piece.Original = piece.Clone();
+          }
+          break;
         }
       }
+    }
+
+    public void ConserveOldFieldValues(int rowIndex) {
+      OldFieldValues = View.GetFieldValues(rowIndex);
+      ConservePieceIfRequired(rowIndex);
     }
 
     /// <summary>
@@ -342,14 +352,14 @@ namespace SoundExplorers.Controller {
 
     [NotNull]
     private IDictionary<string, object> GetOldKeyFieldValues() {
-      if (UnchangedFieldValues == null) {
-        throw new NullReferenceException(nameof(UnchangedFieldValues));
+      if (OldFieldValues == null) {
+        throw new NullReferenceException(nameof(OldFieldValues));
       }
       if (Columns == null) {
         throw new NullReferenceException(nameof(Columns));
       }
       return (
-        from kvp in UnchangedFieldValues
+        from kvp in OldFieldValues
         where Columns[kvp.Key].IsInPrimaryKey
         select kvp).ToDictionary(
         kvp => kvp.Key,
@@ -372,10 +382,10 @@ namespace SoundExplorers.Controller {
         case CreditList _:
           throw new ApplicationException(
             "You cannot play a Piece because no Pieces are listed in the Credit window.");
-        case PieceList dummy when !View.IsThereACurrentMainEntity:
+        case PieceList _ when !View.IsThereACurrentMainEntity:
           throw new ApplicationException(
             "You must add the new Piece before you can play it.");
-        case PieceList dummy when View.IsEditing:
+        case PieceList _ when View.IsEditing:
           throw new ApplicationException(
             "You cannot play the Piece while you are editing it.");
         // Because this is the detail grid in a master-detail relationship
@@ -420,7 +430,7 @@ namespace SoundExplorers.Controller {
       if (string.IsNullOrEmpty(newString)) {
         return false;
       }
-      return newString != UnchangedFieldValues?[columnName].ToString();
+      return newString != OldFieldValues?[columnName].ToString();
     }
 
     /// <summary>
@@ -465,11 +475,51 @@ namespace SoundExplorers.Controller {
     }
 
     /// <summary>
-    ///   Updates the database table with any changes that have been input
-    ///   and refreshes the list of Entities.
+    ///   Updates the database table with the changes that have been input.
     /// </summary>
-    public void Update(bool useOldKeyFieldValues = false) {
-      Entities?.Update(useOldKeyFieldValues ? GetOldKeyFieldValues() : null);
+    public void UpdateDatabase(bool useOldKeyFieldValues = false) {
+      try {
+        Entities?.Update(useOldKeyFieldValues ? GetOldKeyFieldValues() : null);
+        View.OnDatabaseUpdated();
+      } catch (DataException exception) {
+        View.OnDatabaseUpdateError(exception);
+      }
+    }
+
+    /// <summary>
+    ///   If there have been any changes to the data in the specified row,
+    ///   updates the database table.
+    /// </summary>
+    public void UpdateDatabaseIfRowDataHasChanged(int rowIndex) {
+      var newFieldValues = View.GetFieldValues(rowIndex);
+      if (Columns == null) {
+        throw new NullReferenceException(nameof(Columns));
+      }
+      if (OldFieldValues == null) {
+        throw new NullReferenceException(nameof(OldFieldValues));
+      }
+      var isUpdateRequired = false;
+      foreach (var newKvp in newFieldValues) {
+        var column = Columns[newKvp.Key];
+        var newValue = newKvp.Value;
+        var oldValue = OldFieldValues[newKvp.Key];
+        if (!newValue.Equals(oldValue)) {
+          if (column.DataType != typeof(DateTime)
+              || column.DataType == typeof(DateTime) &&
+              (DateTime)newValue != DateTime.Parse("01 Jan 1900")) {
+            isUpdateRequired = true;
+          }
+        }
+        if (newValue == DBNull.Value) {
+          if (column.DataType == typeof(DateTime)) {
+            View.SetFieldValue(column.ColumnName, rowIndex,
+              DateTime.Parse("01 Jan 1900"));
+          }
+        }
+      }
+      if (isUpdateRequired) {
+        UpdateDatabase(true);
+      }
     }
 
     private void UpdateDefaultFolder([NotNull] string columnName,
