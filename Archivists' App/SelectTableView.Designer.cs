@@ -1,5 +1,5 @@
 ﻿namespace SoundExplorers {
-    partial class SelectTableForm {
+    partial class SelectTableView {
         /// <summary>
         /// Required designer variable.
         /// </summary>
@@ -69,7 +69,7 @@
             this.cancelButton.Text = "Cancel";
             this.cancelButton.UseVisualStyleBackColor = true;
             // 
-            // SelectTableForm
+            // SelectTableView
             // 
             this.AcceptButton = this.okButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -85,7 +85,7 @@
             this.Margin = new System.Windows.Forms.Padding(4);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "SelectTableForm";
+            this.Name = "SelectTableView";
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;

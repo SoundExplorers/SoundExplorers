@@ -19,7 +19,7 @@ namespace SoundExplorers {
         SizeableFormOptions = new SizeableFormOptions(this);
         SplashManager.Status = "Getting options...";
         StatusStrip.Visible = Controller.IsStatusBarVisible;
-        SelectTableForm = new SelectTableForm(Controller.TableName);
+        SelectTableView = CreateSelectTableView();
         ToolStrip.Visible = Controller.IsToolBarVisible;
         SplashManager.Status = "Creating shortcuts...";
         EventShortcuts = CreateEventShortcuts();
@@ -37,7 +37,7 @@ namespace SoundExplorers {
     private EventShortcutList EventShortcuts { get; }
     private bool LWinIsDown { get; set; }
     private bool RWinIsDown { get; set; }
-    private SelectTableForm SelectTableForm { get; }
+    private SelectTableView SelectTableView { get; }
     private SizeableFormOptions SizeableFormOptions { get; }
 
     private TableView TableView => ActiveMdiChild as TableView ??
@@ -121,9 +121,15 @@ namespace SoundExplorers {
     }
 
     [NotNull]
+    private SelectTableView CreateSelectTableView() {
+      return (SelectTableView)ViewFactory.Create<SelectTableView, SelectTableController>(
+        Controller.TableName);
+    }
+
+    [NotNull]
     private TableView CreateTableView() {
-      return (TableView)ViewFactory.Create<TableView, TableController>(SelectTableForm
-        .TableName);
+      return (TableView)ViewFactory.Create<TableView, TableController>(
+        SelectTableView.Controller.TableName);
     }
 
     private void CutToolStripMenuItem_Click(object sender, EventArgs e) {
@@ -175,7 +181,7 @@ namespace SoundExplorers {
       Controller.IsToolBarVisible = ToolStrip.Visible;
       Controller.TableName = MdiChildren.Any()
         ? TableView.Controller.TableName
-        : SelectTableForm.TableName;
+        : SelectTableView.Controller.TableName;
       // Explicitly closing all the MIDI child forms
       // fixes a problem where, 
       // if multiple child forms were open and maximized
@@ -289,8 +295,8 @@ namespace SoundExplorers {
     }
 
     private void NewToolStripMenuItem_Click(object sender, EventArgs e) {
-      SelectTableForm.Text = "Select Table for New Editor";
-      if (SelectTableForm.ShowDialog(this) == DialogResult.Cancel) {
+      SelectTableView.Text = "Select Table for New Editor";
+      if (SelectTableView.ShowDialog(this) == DialogResult.Cancel) {
         return;
       }
       try {
@@ -322,8 +328,8 @@ namespace SoundExplorers {
         NewToolStripMenuItem_Click(sender, e);
         return;
       }
-      SelectTableForm.Text = "Select Table for Current Editor";
-      if (SelectTableForm.ShowDialog(this) == DialogResult.Cancel) {
+      SelectTableView.Text = "Select Table for Current Editor";
+      if (SelectTableView.ShowDialog(this) == DialogResult.Cancel) {
         return;
       }
       // When the grid is bound to a second or subsequent table,
