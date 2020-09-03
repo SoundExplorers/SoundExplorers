@@ -13,7 +13,7 @@ namespace SoundExplorers {
 
     /// <summary>
     /// Changes the control's user interface (UI) to be consistent with the specified
-    //  cell style.
+    ///  cell style.
     /// </summary>
     /// <param name="dataGridViewCellStyle">
     ///   The System.Windows.Forms.DataGridViewCellStyle to use as the model for the
@@ -47,25 +47,25 @@ namespace SoundExplorers {
 
     /// <summary>
     /// Gets or sets a value indicating whether the value of the editing control
-    //  differs from the value of the hosting cell.
+    ///  differs from the value of the hosting cell.
     /// </summary>
     public bool EditingControlValueChanged { get; set; }
 
     /// <summary>
     /// Determines whether the specified key is a regular input key that the editing
-    //  control should process or a special key that the System.Windows.Forms.DataGridView
-    //  should process.
+    ///  control should process or a special key that the System.Windows.Forms.DataGridView
+    ///  should process.
     /// </summary>
-    /// <param name="keyData">
+    /// <param name="key">
     /// A System.Windows.Forms.Keys that represents the key that was pressed.
     /// </param>
     /// <param name="dataGridViewWantsInputKey">
     /// True when the System.Windows.Forms.DataGridView wants to process the System.Windows.Forms.Keys
-    //  in keyData; otherwise, False.
+    ///  in keyData; otherwise, False.
     /// </param>
     /// <returns>
     /// True if the specified key is a regular input key that should be handled by
-    //  the editing control; otherwise, False.
+    ///  the editing control; otherwise, False.
     /// </returns>
     public bool EditingControlWantsInputKey(
       Keys key,
@@ -88,7 +88,7 @@ namespace SoundExplorers {
 
     /// <summary>
     /// Gets the cursor used when the mouse pointer is over the System.Windows.Forms.DataGridView.EditingPanel
-    //  but not over the editing control.
+    ///  but not over the editing control.
     /// </summary>
     public Cursor EditingPanelCursor => base.Cursor;
 
@@ -97,7 +97,7 @@ namespace SoundExplorers {
     /// </summary>
     /// <param name="context">
     /// A bitwise combination of System.Windows.Forms.DataGridViewDataErrorContexts
-    //  values that specifies the context in which the data is needed.
+    ///  values that specifies the context in which the data is needed.
     /// </param>
     /// <returns>
     ///   An System.Object that represents the formatted version of the cell contents.
@@ -120,7 +120,7 @@ namespace SoundExplorers {
 
     /// <summary>
     /// Gets or sets a value indicating whether the cell contents need to be repositioned
-    //  whenever the value changes.
+    /// whenever the value changes.
     /// </summary>
     public bool RepositionEditingControlOnValueChange => false;
 

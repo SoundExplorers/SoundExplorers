@@ -42,6 +42,7 @@
         <Reference Include="System.Xml" />
     </ItemGroup>
     <ItemGroup>
+        <Compile Include="ComboBoxCellController.cs" />
         <Compile Include="IMessageUpdater.cs" />
         <Compile Include="ITableView.cs" />
         <Compile Include="IView.cs" />

@@ -2,44 +2,32 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Windows.Forms;
-using SoundExplorers.Common;
+using SoundExplorers.Controller;
 
 namespace SoundExplorers {
   /// <summary>
-  ///   ComboBox cell of a DataGridView.
+  ///   A DataGridView cell that supports editing via an embedded ComboBox control.
   /// </summary>
   /// <remarks>
   ///   The cell displays dates in ordinary text box cells,
   ///   but when the user edits a cell, a ComboBox control appears.
   /// </remarks>
-  internal class ComboBoxCell : DataGridViewTextBoxCell {
-    /// <summary>
-    ///   Gets or sets the entity column metadata.
-    /// </summary>
-    /// <remarks>
-    ///   For unknown reason,
-    ///   non-inherited properties of a ComboBoxCell
-    ///   (i.e. that are not inherited from DataGridViewTextBoxCell)
-    ///   to which a DataGridViewColumn.CellTemplate
-    ///   has been set
-    ///   don't persist when a cell is edited.
-    ///   So we are going to store this property in the Tag.
-    ///   That solves the problem.
-    /// </remarks>
-    public virtual IEntityColumn Column {
-      get => Tag as IEntityColumn;
-      set => Tag = value;
-    }
-
+  internal class ComboBoxCell : DataGridViewTextBoxCell, IView<ComboBoxCellController> {
     /// <summary>
     ///   Gets the cell's combo box.
     /// </summary>
     private ComboBoxEditingControl ComboBox =>
       DataGridView.EditingControl as ComboBoxEditingControl;
 
+    private ComboBoxCellController Controller { get; set; }
+
     public override Type EditType =>
       // Return the type of the editing control that ComboBoxCell uses.
       typeof(ComboBoxEditingControl);
+
+    public void SetController(ComboBoxCellController controller) {
+      Controller = controller;
+    }
 
     /// <summary>
     ///   Attaches and initializes the hosted drop-down list control.
@@ -65,51 +53,50 @@ namespace SoundExplorers {
       // Set the value of the editing control to the current cell value.
       base.InitializeEditingControl(rowIndex, initialFormattedValue,
         dataGridViewCellStyle);
-      IEntityList referencedEntities;
-      string parentColunnName = null;
-      object parentColunnValue = null;
-      if (Column.TableName == "Image"
-          && Column.ColumnName == "Date") {
-        parentColunnName = "Location";
-        parentColunnValue = OwningRow.Cells[parentColunnName].Value; // Location
-        referencedEntities = Factory<IEntityList>.Create(
-          Column.ReferencedTableName, // Table name:  Performance in this case
-          // Constructor arguments
-          null, // parentListType
-          parentColunnValue); // location
-      } else {
-        referencedEntities =
-          Factory<IEntityList>.Create(Column.ReferencedTableName);
-      }
+      var referencedTable = Controller.GetReferencedTable();
+      // string parentColumnName = null;
+      // object parentColumnValue = null;
+      // if (Column.TableName == "Image"
+      //     && Column.ColumnName == "Date") {
+      //   parentColumnName = "Location";
+      //   parentColumnValue = OwningRow.Cells[parentColumnName].Value; // Location
+      //   referencedEntities = Factory<IEntityList>.Create(
+      //     Column.ReferencedTableName, // Table name:  Performance in this case
+      //     // Constructor arguments
+      //     null, // parentListType
+      //     parentColumnValue); // location
+      // } else {
+      //   referencedEntities =
+      //     Factory<IEntityList>.Create(Column.ReferencedTableName);
+      // }
       if (ValueType == typeof(string)) {
-        ComboBox.DataSource = referencedEntities.Table.DefaultView;
-        ComboBox.DisplayMember = Column.ReferencedColumnName;
-        ComboBox.ValueMember = Column.ReferencedColumnName;
+        ComboBox.DataSource = referencedTable.DefaultView;
+        ComboBox.DisplayMember = Controller.ReferencedColumnName;
+        ComboBox.ValueMember = Controller.ReferencedColumnName;
         ComboBox.SelectedIndex =
           ComboBox.FindStringExact(initialFormattedValue.ToString());
       } else { // DateTime
-        if (referencedEntities.Count > 0) {
+        if (referencedTable.Rows.Count > 0) {
           PopulateDateDropDownList(
             initialFormattedValue.ToString(),
-            referencedEntities);
+            referencedTable);
         } else {
           ComboBox.DataSource = null;
-          ThrowNoAvailableReferencesException(parentColunnName,
-            parentColunnValue);
+          ThrowNoAvailableReferencesException();
+          //ThrowNoAvailableReferencesException(parentColumnName, parentColumnValue);
         }
       }
     }
 
     /// <summary>
     ///   Populates the drop-down list of dates with the
-    ///   available values of the date key colum of the referenced table.
+    ///   available values of the date key column of the referenced table.
     /// </summary>
     /// <param name="initialFormattedDate">
     ///   The formatted date to be initially selected in the drop-down list of dates.
     /// </param>
-    /// <param name="referencedEntities">
-    ///   An entity list representing those rows of the referenced table
-    ///   that are to be used to populate the date list.
+    /// <param name="referencedTable">
+    ///   The referenced table that will be used to populate the date list.
     /// </param>
     /// <remarks>
     ///   If the cell does not already contain a date:
@@ -120,14 +107,14 @@ namespace SoundExplorers {
     ///   will be initially selected.
     /// </remarks>
     private void PopulateDateDropDownList(
-      string initialFormattedDate, IEntityList referencedEntities) {
+      string initialFormattedDate, DataTable referencedTable) {
       var dictionary =
-        new Dictionary<string, DateTime>(referencedEntities.Count);
-      foreach (DataRow row in referencedEntities.Table.Rows) {
+        new Dictionary<string, DateTime>(referencedTable.Rows.Count);
+      foreach (DataRow row in referencedTable.Rows) {
         dictionary.Add(
-          ((DateTime)row[Column.ReferencedColumnName]).ToString(
+          ((DateTime)row[Controller.ReferencedColumnName]).ToString(
             OwningColumn.DefaultCellStyle.Format),
-          (DateTime)row[Column.ReferencedColumnName]);
+          (DateTime)row[Controller.ReferencedColumnName]);
       } //End of foreach
       ComboBox.DataSource =
         new BindingSource(dictionary, null);
@@ -136,8 +123,8 @@ namespace SoundExplorers {
       ComboBox.SelectedIndex = ComboBox.FindStringExact(initialFormattedDate);
       if (ComboBox.SelectedIndex == -1) {
         var firstDate =
-          (DateTime)referencedEntities.Table.Rows[0][
-            Column.ReferencedColumnName];
+          (DateTime)referencedTable.Rows[0][
+            Controller.ReferencedColumnName];
         if (firstDate == DateTime.Parse("01 Jan 1900")) {
           ComboBox.SelectedIndex = 0;
           if (string.IsNullOrEmpty(Value.ToString())) {
@@ -145,9 +132,9 @@ namespace SoundExplorers {
           }
         } else {
           var lastDate =
-            (DateTime)referencedEntities.Table.Rows[
-              referencedEntities.Count - 1][Column.ReferencedColumnName];
-          ComboBox.SelectedIndex = referencedEntities.Count - 1;
+            (DateTime)referencedTable.Rows[referencedTable.Rows.Count - 1][
+              Controller.ReferencedColumnName];
+          ComboBox.SelectedIndex = referencedTable.Rows.Count - 1;
           if (string.IsNullOrEmpty(Value.ToString())) {
             Value = lastDate;
           }
@@ -160,14 +147,14 @@ namespace SoundExplorers {
     ///   that the referenced table contains no rows that
     ///   can be made available for selection in the cell's drop-down list.
     /// </summary>
-    /// <param name="parentColunnName">
+    /// <param name="parentColumnName">
     ///   The name of the parent column, if any.
     ///   This is the grid column whose value in the current row
     ///   determines which rows of the current column's referenced table
     ///   can be made available for selection.
     ///   Null if the grid contains no such parent column.
     /// </param>
-    /// <param name="parentColunnValue">
+    /// <param name="parentColumnValue">
     ///   If the current column has a parent column,
     ///   the value of the parent cell in the current row.
     ///   Otherwise null.
@@ -181,31 +168,31 @@ namespace SoundExplorers {
     ///   which is handled by TableView.MainGrid_DataError,
     ///   gets raised.
     /// </remarks>
-    private void ThrowNoAvailableReferencesException(string parentColunnName,
-      object parentColunnValue) {
+    private void ThrowNoAvailableReferencesException(string parentColumnName = null,
+      object parentColumnValue = null) {
       string message =
-        "There are no " + Column.ReferencedTableName
-                        + " " + Column.ReferencedColumnName + "s ";
-      if (parentColunnName != null) {
+        "There are no " + Controller.ReferencedTableName
+                        + " " + Controller.ReferencedColumnName + "s ";
+      if (parentColumnName != null) {
         message +=
-          "for " + parentColunnName
-                 + " \"" + parentColunnValue + "\" ";
+          "for " + parentColumnName
+                 + " \"" + parentColumnValue + "\" ";
       }
       message +=
         "to choose between.  You need to insert at least one row into the "
-        + Column.ReferencedTableName + " table ";
-      if (parentColunnName != null) {
+        + Controller.ReferencedTableName + " table ";
+      if (parentColumnName != null) {
         message +=
-          "for " + parentColunnName
-                 + " \"" + parentColunnValue + "\" ";
+          "for " + parentColumnName
+                 + " \"" + parentColumnValue + "\" ";
       }
       message +=
         "before you can add rows to the "
-        + Column.TableName + " table";
-      if (parentColunnName != null) {
+        + Controller.TableController.TableName + " table";
+      if (parentColumnName != null) {
         message +=
-          " for " + parentColunnName
-                  + " \"" + parentColunnValue + "\"";
+          " for " + parentColumnName
+                  + " \"" + parentColumnValue + "\"";
       }
       message += ".";
       throw new ApplicationException(message);

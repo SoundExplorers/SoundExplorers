@@ -146,6 +146,13 @@ namespace SoundExplorers.Controller {
     }
 
     /// <summary>
+    ///  Returns whether the specified column references another entity. 
+    /// </summary>
+    public bool DoesColumnReferenceAnotherEntity([NotNull] string columnName) {
+      return !string.IsNullOrEmpty(Columns[columnName].ReferencedColumnName);
+    }
+
+    /// <summary>
     ///   Edit the tags of the audio file, if found,
     ///   of the current Piece, if any,
     ///   Otherwise shows an informative message box.
@@ -413,6 +420,14 @@ namespace SoundExplorers.Controller {
             + "To play a piece, first select a row in a Credit or Piece table window.");
       }
     }
+
+    [NotNull]
+    internal string GetReferencedColumnName([NotNull] string columnName) =>
+      Columns[columnName].ReferencedColumnName;
+
+    [NotNull]
+    internal string GetReferencedTableName([NotNull] string columnName) =>
+      Columns[columnName].ReferencedTableName;
 
     /// <summary>
     ///   Returns whether the string field in the specified column

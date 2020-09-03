@@ -5,31 +5,31 @@ using SoundExplorers.Data;
 
 namespace SoundExplorers.Controller {
   /// <summary>
-  ///   Controller for a path cell.
+  ///   Controller for a cell that supports the editing of a file path.
   /// </summary>
   [UsedImplicitly]
   public class PathCellController {
     /// <summary>
-    ///   Initialises a new instance of the <see cref="TableController" /> class.
+    ///   Initialises a new instance of the <see cref="PathCellController" /> class.
     /// </summary>
     /// <param name="view">
     ///   The view of the path cell to be controlled.
     /// </param>
-    /// <param name="tableName">
-    ///   The name of the table whose data is displayed.
+    /// <param name="tableController">
+    ///   The controller of the table editor.
     /// </param>
     /// <param name="columnName">
     ///   The name of the column that is edited with the path cell.
     /// </param>
     public PathCellController([NotNull] IView<PathCellController> view,
-      [NotNull] string tableName, [NotNull] string columnName) {
+      [NotNull] TableController tableController, [NotNull] string columnName) {
       view.SetController(this);
       ColumnName = columnName;
-      TableName = tableName;
+      TableController = tableController;
     }
 
     [NotNull] private string ColumnName { get; }
-    [NotNull] private string TableName { get; }
+    [NotNull] private TableController TableController { get; }
 
     [NotNull]
     public DirectoryInfo GetDefaultFolder() {
@@ -42,11 +42,11 @@ namespace SoundExplorers.Controller {
           // if (TableName == "Image") {
           //   result = Image.DefaultFolder; // Image.Path
           // } else if (TableName == "Newsletter") {
-          if (TableName == "Newsletter") { // Newsletter.Path
+          if (TableController.TableName == "Newsletter") { // Newsletter.Path
             result = Newsletter.DefaultFolder;
           } else {
             throw new NotSupportedException(
-              TableName + ".Path is not supported.");
+              TableController + ".Path is not supported.");
           }
           break;
         case "VideoPath": // Piece.VideoPath

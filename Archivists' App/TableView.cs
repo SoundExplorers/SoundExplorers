@@ -160,9 +160,15 @@ namespace SoundExplorers {
     }
 
     [NotNull]
+    private ComboBoxCell CreateComboBoxCell([NotNull] string columnName) {
+      return (ComboBoxCell)ViewFactory.Create<ComboBoxCell, ComboBoxCellController>(
+        Controller, columnName);
+    }
+
+    [NotNull]
     private PathCell CreatePathCell([NotNull] string columnName) {
       return (PathCell)ViewFactory.Create<PathCell, PathCellController>(
-        Controller.TableName, columnName);
+        Controller, columnName);
     }
 
     public void Cut() {
@@ -835,8 +841,9 @@ namespace SoundExplorers {
           column.DefaultCellStyle.Format = "dd MMM yyyy";
         }
         //var entityColumn = Controller.Columns[column.Index];
-        if (!string.IsNullOrEmpty(entityColumn.ReferencedColumnName)) {
-          var comboBoxCell = new ComboBoxCell {Column = entityColumn};
+        // if (!string.IsNullOrEmpty(entityColumn.ReferencedColumnName)) {
+        if (Controller.DoesColumnReferenceAnotherEntity(column.Name)) {
+          var comboBoxCell = CreateComboBoxCell(column.Name);
           column.CellTemplate = comboBoxCell;
         } else if (column.ValueType == typeof(DateTime)) {
           column.CellTemplate = new CalendarCell();
