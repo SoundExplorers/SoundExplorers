@@ -10,7 +10,7 @@ namespace SoundExplorers.Controller {
   /// </summary>
   [UsedImplicitly]
   public class SelectTableController {
-
+    private SortedDictionary<string, Type> _entityListTypes;
     /// <summary>
     ///   Initialises a new instance of the <see cref="TableController" /> class.
     /// </summary>
@@ -29,7 +29,11 @@ namespace SoundExplorers.Controller {
     
     [NotNull] public string TableName { get; set; }
 
-    [NotNull]
-    public SortedDictionary<string, Type> EntityListTypes => Factory<IEntityList>.Types;
+    [NotNull] public SortedDictionary<string, Type> EntityListTypes {
+      get => _entityListTypes ?? (_entityListTypes = Factory<IEntityList>.Types);
+      // The setter is for testing.
+      // ReSharper disable once UnusedMember.Global
+      set => _entityListTypes = value;
+    }
   }
 }

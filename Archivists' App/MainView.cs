@@ -76,6 +76,11 @@ namespace SoundExplorers {
       }
     }
 
+    [NotNull]
+    public static MainView Create() {
+      return (MainView)ViewFactory.Create<MainView, MainController>();
+    }
+
     /// <summary>
     ///   For each menu item whose keyboard shortcut includes the Control key,
     ///   create an keyboard alternative shortcut to use the Command (⌘) key
@@ -122,14 +127,12 @@ namespace SoundExplorers {
 
     [NotNull]
     private SelectTableView CreateSelectTableView() {
-      return (SelectTableView)ViewFactory.Create<SelectTableView, SelectTableController>(
-        Controller.TableName);
+      return SelectTableView.Create(Controller.TableName);
     }
 
     [NotNull]
     private TableView CreateTableView() {
-      return (TableView)ViewFactory.Create<TableView, TableController>(
-        SelectTableView.Controller.TableName);
+      return TableView.Create(SelectTableView.Controller.TableName);
     }
 
     private void CutToolStripMenuItem_Click(object sender, EventArgs e) {

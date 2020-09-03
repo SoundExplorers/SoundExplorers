@@ -50,6 +50,11 @@ namespace SoundExplorers {
     private SizeableFormOptions SizeableFormOptions { get; set; }
     private bool UpdateCancelled { get; set; }
 
+    [NotNull]
+    public static TableView Create([NotNull] string tableName) {
+      return (TableView)ViewFactory.Create<TableView, TableController>(tableName);
+    }
+
     public object GetCurrentRowFieldValue(string columnName) {
       return MainCurrentRow.Cells[columnName].Value;
     }
@@ -157,18 +162,6 @@ namespace SoundExplorers {
           pathEditingControl.Copy();
           break;
       }
-    }
-
-    [NotNull]
-    private ComboBoxCell CreateComboBoxCell([NotNull] string columnName) {
-      return (ComboBoxCell)ViewFactory.Create<ComboBoxCell, ComboBoxCellController>(
-        Controller, columnName);
-    }
-
-    [NotNull]
-    private PathCell CreatePathCell([NotNull] string columnName) {
-      return (PathCell)ViewFactory.Create<PathCell, PathCellController>(
-        Controller, columnName);
     }
 
     public void Cut() {
@@ -840,16 +833,12 @@ namespace SoundExplorers {
         } else if (column.ValueType == typeof(DateTime)) {
           column.DefaultCellStyle.Format = "dd MMM yyyy";
         }
-        //var entityColumn = Controller.Columns[column.Index];
-        // if (!string.IsNullOrEmpty(entityColumn.ReferencedColumnName)) {
         if (Controller.DoesColumnReferenceAnotherEntity(column.Name)) {
-          var comboBoxCell = CreateComboBoxCell(column.Name);
-          column.CellTemplate = comboBoxCell;
+          column.CellTemplate = ComboBoxCell.Create(Controller, column.Name);
         } else if (column.ValueType == typeof(DateTime)) {
           column.CellTemplate = new CalendarCell();
         } else if (column.Name.EndsWith("Path")) {
-          var pathCell = CreatePathCell(column.Name);
-          column.CellTemplate = pathCell;
+          column.CellTemplate = PathCell.Create(Controller, column.Name);
         }
       } // End of foreach
       MainGrid.CellBeginEdit += MainGrid_CellBeginEdit;
@@ -907,7 +896,7 @@ namespace SoundExplorers {
           // as this is expected when playing media etc.
           //var entityColumn = Controller.ParentList?.Columns[column.Index];
           //var pathCell = new PathCell {Column = entityColumn};
-          column.CellTemplate = CreatePathCell(column.Name);
+          column.CellTemplate = PathCell.Create(Controller, column.Name);
         }
       } // End of foreach
       // Has to be done when visible.

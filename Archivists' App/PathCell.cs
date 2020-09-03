@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Windows.Forms;
+using JetBrains.Annotations;
 using SoundExplorers.Controller;
 
 namespace SoundExplorers {
@@ -77,6 +78,13 @@ namespace SoundExplorers {
     ///   Null only if the path cell is on the new row and had not been edited.
     /// </summary>
     public string Path => Value?.ToString();
+
+    [NotNull]
+    public static PathCell Create([NotNull] TableController tableController,
+      [NotNull] string columnName) {
+      return (PathCell)ViewFactory.Create<PathCell, PathCellController>(
+        tableController, columnName);
+    }
 
     public void SetController(PathCellController controller) {
       Controller = controller;

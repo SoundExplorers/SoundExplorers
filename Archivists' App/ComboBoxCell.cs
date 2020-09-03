@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Windows.Forms;
+using JetBrains.Annotations;
 using SoundExplorers.Controller;
 
 namespace SoundExplorers {
@@ -27,6 +28,13 @@ namespace SoundExplorers {
 
     public void SetController(ComboBoxCellController controller) {
       Controller = controller;
+    }
+
+    [NotNull]
+    public static ComboBoxCell Create([NotNull] TableController tableController,
+      [NotNull] string columnName) {
+      return (ComboBoxCell)ViewFactory.Create<ComboBoxCell, ComboBoxCellController>(
+        tableController, columnName);
     }
 
     /// <summary>

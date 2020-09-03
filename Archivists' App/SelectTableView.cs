@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using JetBrains.Annotations;
 using SoundExplorers.Controller;
 
 namespace SoundExplorers {
@@ -16,7 +17,17 @@ namespace SoundExplorers {
       Load += SelectTableView_Load;
     }
     
-    public SelectTableController Controller { get; set; }
+    public SelectTableController Controller { get; private set; }
+
+    [NotNull]
+    public static SelectTableView Create([NotNull] string tableName) {
+      return (SelectTableView)ViewFactory.Create<SelectTableView, SelectTableController>(
+        tableName);
+    }
+
+    public void SetController(SelectTableController controller) {
+      Controller = controller;
+    }
 
     private void OKButton_Click(object sender, EventArgs e) {
       Controller.TableName = tableComboBox.Text;
@@ -37,10 +48,6 @@ namespace SoundExplorers {
       PopulateTableComboBox();
       tableComboBox.SelectedIndex =
         tableComboBox.FindStringExact(Controller.TableName);
-    }
-
-    public void SetController(SelectTableController controller) {
-      Controller = controller;
     }
   } //End of class
 } //End of namespace
