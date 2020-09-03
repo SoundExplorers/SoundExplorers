@@ -21,8 +21,9 @@ namespace SoundExplorers.Controller {
     /// </param>
     public static IView<TController> Create<TView, TController>(params object[] args)
       where TView : IView<TController>, new() {
-      var result = new TView();
+      IView<TController> result;
       try {
+        result = new TView();
         Activator.CreateInstance(typeof(TController), PrependViewToArgs(result, args));
       } catch (TargetInvocationException ex) {
         throw ex.InnerException ?? ex;

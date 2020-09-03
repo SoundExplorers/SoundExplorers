@@ -1,13 +1,50 @@
 using System;
 using System.Drawing;
+using System.Reflection;
 using System.Windows.Forms;
+using JetBrains.Annotations;
+using SoundExplorers.Controller;
 
 namespace SoundExplorers {
   /// <summary>
   ///   Allows a <see cref="Form" />'s size,
   ///   location and state to be saved and restored.
   /// </summary>
-  public class SizeableFormOptions {
+  /// <remarks>
+  ///   The <see cref="Form" />'s StartPosition
+  ///   will be set to <c>Manual</c> so that the settings for
+  ///   <see cref="Control.Left" /> and
+  ///   <see cref="Control.Top" />
+  ///   will take effect.  However, for documentary purposes,
+  ///   it is recommended that StartPosition
+  ///   still be explicitly set in the calling assembly.
+  ///   <para>
+  ///     The position (<see cref="Control.Left" /> and
+  ///     <see cref="Control.Top" />) of the <see cref="Form" />
+  ///     will not be set if it would put the Form outside
+  ///     the bounds of the screen's working area.  This could
+  ///     happen if the user has switched to a monitor with
+  ///     a lower screen resolution, such as a laptop.
+  ///   </para>
+  ///   <para>
+  ///     If a <see cref="Form" />'s details have not
+  ///     previously been saved via the <see cref="Save" />
+  ///     method:  the default size will be as set
+  ///     at design time;  the default position will be
+  ///     top left.  If the form is not sizable,
+  ///     the default size will always be used.
+  ///   </para>
+  ///   <para>
+  ///     For an MDI child form, only the size and state,
+  ///     not the location, will be restored.
+  ///     And where this will be a second or subsequent
+  ///     MDI child form currently shown within the MDI parent form,
+  ///     the size and state will be copied from the
+  ///     previously active MDI child form
+  ///     instead of being restored from the database.
+  ///   </para>
+  /// </remarks>
+  public class SizeableFormOptions : IView<SizeableFormOptionsController> {
     /// <summary>
     ///   Initialises a new instance of the
     ///   <see cref="SizeableFormOptions" /> class,
@@ -19,63 +56,47 @@ namespace SoundExplorers {
     ///   The <see cref="Form" /> whose size, position and state are
     ///   to be saved and restored.
     /// </param>
-    /// <remarks>
-    ///   The <see cref="Form" />'s StartPosition
-    ///   will be set to <c>Manual</c> so that the settings for
-    ///   <see cref="Control.Left" /> and
-    ///   <see cref="Control.Top" />
-    ///   will take effect.  However, for documentary purposes,
-    ///   it is recommended that StartPosition
-    ///   still be explicitly set in the calling assembly.
-    ///   <para>
-    ///     The position (<see cref="Control.Left" /> and
-    ///     <see cref="Control.Top" />) of the <see cref="Form" />
-    ///     will not be set if it would put the Form outside
-    ///     the bounds of the screen's working area.  This could
-    ///     happen if the user has switched to a monitor with
-    ///     a lower screen resolution, such as a laptop.
-    ///   </para>
-    ///   <para>
-    ///     If a <see cref="Form" />'s details have not
-    ///     previously been saved via the <see cref="Save" />
-    ///     method:  the default size will be as set
-    ///     at design time;  the default position will be
-    ///     top left.  If the form is not sizable,
-    ///     the default size will always be used.
-    ///   </para>
-    ///   <para>
-    ///     For an MDI child form, only the size and state,
-    ///     not the location, will be restored.
-    ///     And where this will be a second or subsequent
-    ///     MDI child form currently shown within the MDI parent form,
-    ///     the size and state will be copied from the
-    ///     previously active MDI child form
-    ///     instead of being restored from the database.
-    ///   </para>
-    /// </remarks>
-    public SizeableFormOptions(Form form) {
+    private SizeableFormOptions([NotNull] Form form) {
       Form = form;
+    }
+
+    private SizeableFormOptionsController Controller { get; set; }
+    private Form Form { get; }
+    private Rectangle InitialScreenBounds { get; set; }
+
+    /// <summary>
+    ///   Creates a SizeableFormOptions instance and its associated controller,
+    ///   as per the Model-View-Controller design pattern,
+    ///   returning the view instance created.
+    /// </summary>
+    /// <param name="form">
+    ///   The <see cref="Form" /> whose size, position and state are
+    ///   to be saved and restored.
+    /// </param>
+    [NotNull]
+    public static SizeableFormOptions Create([NotNull] Form form) {
+      // ViewFactory cannot be used to create the view and controller in this case,
+      // as the view constructor requires the form parameter.
+      SizeableFormOptions result;
+      try {
+        result = new SizeableFormOptions(form);
+        var dummy =
+          new SizeableFormOptionsController(result, form.Name, !form.IsMdiChild);
+      } catch (TargetInvocationException ex) {
+        throw ex.InnerException ?? ex;
+      }
+      return result;
+    }
+
+    public void SetController(SizeableFormOptionsController controller) {
+      Controller = controller;
       Form.StartPosition = FormStartPosition.Manual;
-      HeightOption = new Option(Form.Name + ".Height");
-      WidthOption = new Option(Form.Name + ".Width");
-      WindowStateOption = new Option(
-        Form.Name + ".WindowState", FormWindowState.Normal);
       if (Form.IsMdiChild) {
         SizeChildForm();
       } else {
-        LeftOption = new Option(Form.Name + ".Left");
-        TopOption = new Option(Form.Name + ".Top");
         PositionParentForm();
       }
     }
-
-    private Form Form { get; }
-    private Option HeightOption { get; }
-    private Rectangle InitialScreenBounds { get; set; }
-    private Option LeftOption { get; }
-    private Option TopOption { get; }
-    private Option WidthOption { get; }
-    private Option WindowStateOption { get; }
 
     /// <summary>
     ///   Attempts to restore the location, size and state
@@ -83,30 +104,29 @@ namespace SoundExplorers {
     /// </summary>
     private void PositionParentForm() {
       InitialScreenBounds =
-        Screen.GetBounds(new Point(LeftOption.Int32Value,
-          TopOption.Int32Value));
+        Screen.GetBounds(new Point(Controller.Left, Controller.Top));
       int x;
-      if (LeftOption.Int32Value >
+      if (Controller.Left >
           InitialScreenBounds.X + InitialScreenBounds.Width
-          || LeftOption.Int32Value < InitialScreenBounds.X) {
+          || Controller.Left < InitialScreenBounds.X) {
         // A screen or area to the right is missing
         // or a screen to the left of the primary screen is missing
         // (X co-ordinates to the left of the primary screen are negative)
         x = 0;
       } else {
-        x = LeftOption.Int32Value;
+        x = Controller.Left;
       }
-      int y = TopOption.Int32Value >
+      int y = Controller.Top >
               InitialScreenBounds.Y + InitialScreenBounds.Height
         // Area to the bottom of the screen is missing
         ? 0
-        : TopOption.Int32Value;
-      if (HeightOption.Int32Value >= Form.MinimumSize.Height
-          && HeightOption.Int32Value > 0
-          && WidthOption.Int32Value >= Form.MinimumSize.Width
-          && WidthOption.Int32Value > 0) {
+        : Controller.Top;
+      if (Controller.Height >= Form.MinimumSize.Height
+          && Controller.Height > 0
+          && Controller.Width >= Form.MinimumSize.Width
+          && Controller.Width > 0) {
         Form.DesktopBounds = new Rectangle(
-          x, y, WidthOption.Int32Value, HeightOption.Int32Value);
+          x, y, Controller.Width, Controller.Height);
       } else {
         Form.DesktopBounds = new Rectangle(
           x, y, Form.Width, Form.Height);
@@ -121,7 +141,7 @@ namespace SoundExplorers {
       // be impossible to set the UserOption back to Normal because
       // Form_Unload will not update the UserOption if Me.WindowState
       // = WindowStateOption.
-      Form.WindowState = (FormWindowState)WindowStateOption.Int32Value;
+      Form.WindowState = (FormWindowState)Controller.WindowState;
     }
 
     /// <summary>
@@ -132,7 +152,7 @@ namespace SoundExplorers {
     public void Save() {
       //Debug.WriteLine(Form.Text + " " + Form.WindowState.ToString());
       if (Form.WindowState != FormWindowState.Minimized) {
-        WindowStateOption.Int32Value = (int)Form.WindowState;
+        Controller.WindowState = (int)Form.WindowState;
       }
       if (!Form.IsMdiChild) {
         // We need to save Left and Top
@@ -141,12 +161,12 @@ namespace SoundExplorers {
         // from maximised on the secondary screen to 
         // maximised on the primary screen, 
         // the new position will not be restored on subsequent load.
-        LeftOption.Int32Value = Form.DesktopBounds.X;
-        TopOption.Int32Value = Form.DesktopBounds.Y;
+        Controller.Left = Form.DesktopBounds.X;
+        Controller.Top = Form.DesktopBounds.Y;
       }
       if (Form.WindowState == FormWindowState.Normal) {
-        HeightOption.Int32Value = Form.DesktopBounds.Height;
-        WidthOption.Int32Value = Form.DesktopBounds.Width;
+        Controller.Height = Form.DesktopBounds.Height;
+        Controller.Width = Form.DesktopBounds.Width;
       }
       //if (Form.WindowState == FormWindowState.Maximized
       //&& (   Form.DesktopBounds.X < InitialScreenBounds.X - 100
@@ -164,7 +184,7 @@ namespace SoundExplorers {
       //    // we test for a range + or -100.
       //    // That should be plenty safe because no screen
       //    // is as narrow as 200.
-      //    LeftOption.Int32Value = Form.DesktopBounds.X;
+      //    Controller.Left = Form.DesktopBounds.X;
       //}
     }
 
@@ -180,12 +200,12 @@ namespace SoundExplorers {
                                     nameof(Form.MdiParent.ActiveMdiChild));
         Form.Size = new Size(lastActiveChildForm.Width,
           lastActiveChildForm.Height);
-      } else if (HeightOption.Int32Value >= Form.MinimumSize.Height
-                 && HeightOption.Int32Value > 0
-                 && WidthOption.Int32Value >= Form.MinimumSize.Width
-                 && WidthOption.Int32Value > 0) {
-        Form.Size = new Size(WidthOption.Int32Value, HeightOption.Int32Value);
-        Form.WindowState = (FormWindowState)WindowStateOption.Int32Value;
+      } else if (Controller.Height >= Form.MinimumSize.Height
+                 && Controller.Height > 0
+                 && Controller.Width >= Form.MinimumSize.Width
+                 && Controller.Width > 0) {
+        Form.Size = new Size(Controller.Width, Controller.Height);
+        Form.WindowState = (FormWindowState)Controller.WindowState;
       }
     }
   } //End of class

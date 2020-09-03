@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace SoundExplorers.Common {
+namespace SoundExplorers.Data {
   public interface IEntityColumnList : IList<IEntityColumn> {
     /// <summary>
     ///   Returns the entity column with the specified name (case-insensitive),

@@ -1,4 +1,4 @@
-﻿namespace SoundExplorers.Common {
+﻿namespace SoundExplorers.Data {
   /// <summary>
   ///   Entity column container interface.
   /// </summary>

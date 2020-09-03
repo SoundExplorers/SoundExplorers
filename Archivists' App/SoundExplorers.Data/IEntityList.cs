@@ -3,8 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using JetBrains.Annotations;
+using SoundExplorers.Common;
 
-namespace SoundExplorers.Common {
+namespace SoundExplorers.Data {
   /// <summary>
   ///   Entity list interface.
   /// </summary>

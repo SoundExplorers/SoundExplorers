@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SoundExplorers.Common {
+namespace SoundExplorers.Data {
   /// <summary>
   ///   Entity interface.
   /// </summary>

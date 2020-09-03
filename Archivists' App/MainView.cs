@@ -16,7 +16,7 @@ namespace SoundExplorers {
       try {
         StatusLabel.Text = string.Empty;
         SplashManager.Status = "Positioning window...";
-        SizeableFormOptions = new SizeableFormOptions(this);
+        SizeableFormOptions = SizeableFormOptions.Create(this);
         SplashManager.Status = "Getting options...";
         StatusStrip.Visible = Controller.IsStatusBarVisible;
         SelectTableView = CreateSelectTableView();

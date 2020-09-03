@@ -1268,7 +1268,7 @@ namespace SoundExplorers {
     private void TableView_Load(object sender, EventArgs e) {
       // Has to be done here rather than in constructor
       // in order to tell that this is an MDI child form.
-      SizeableFormOptions = new SizeableFormOptions(this);
+      SizeableFormOptions = SizeableFormOptions.Create(this);
       OpenTable();
     }
 

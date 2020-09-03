@@ -42,14 +42,8 @@
         <Reference Include="System.Xml" />
     </ItemGroup>
     <ItemGroup>
-        <Compile Include="IEntity.cs" />
-        <Compile Include="IEntityColumn.cs" />
-        <Compile Include="IEntityColumnContainer.cs" />
-        <Compile Include="IEntityColumnList.cs" />
-        <Compile Include="IEntityList.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
         <Compile Include="RowErrorEventArgs.cs" />
-        <Compile Include="RowUpdatedEventArgs.cs" />
     </ItemGroup>
     <ItemGroup>
       <None Include="packages.config" />

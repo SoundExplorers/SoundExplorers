@@ -41,23 +41,6 @@ namespace SoundExplorers {
   ///   </para>
   /// </remarks>
   internal class PathCell : DataGridViewTextBoxCell, IView<PathCellController> {
-    // /// <summary>
-    // ///   Gets or sets the entity column metadata.
-    // /// </summary>
-    // /// <remarks>
-    // ///   For unknown reason,
-    // ///   non-inherited properties of a PathCell
-    // ///   (i.e. that are not inherited from DataGridViewTextBoxCell)
-    // ///   to which a DataGridViewColumn.CellTemplate
-    // ///   has been set
-    // ///   don't persist when a cell is edited.
-    // ///   So we are going to store this property in the Tag.
-    // ///   That solves the problem.
-    // /// </remarks>
-    // public IEntityColumn Column {
-    //   get => Tag as IEntityColumn;
-    //   set => Tag = value;
-    // }
     public PathCellController Controller { get; private set; }
 
     public override Type EditType =>
