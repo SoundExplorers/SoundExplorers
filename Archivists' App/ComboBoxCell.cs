@@ -148,6 +148,7 @@ namespace SoundExplorers {
     ///   can be made available for selection in the cell's drop-down list.
     /// </summary>
     /// <param name="parentColumnName">
+    ///   For possible future with images.
     ///   The name of the parent column, if any.
     ///   This is the grid column whose value in the current row
     ///   determines which rows of the current column's referenced table
@@ -155,6 +156,7 @@ namespace SoundExplorers {
     ///   Null if the grid contains no such parent column.
     /// </param>
     /// <param name="parentColumnValue">
+    ///   For possible future with images.
     ///   If the current column has a parent column,
     ///   the value of the parent cell in the current row.
     ///   Otherwise null.
@@ -188,7 +190,8 @@ namespace SoundExplorers {
       }
       message +=
         "before you can add rows to the "
-        + Controller.TableController.TableName + " table";
+        + Controller.TableName + " table";
+      // For possible future with images.
       if (parentColumnName != null) {
         message +=
           " for " + parentColumnName
