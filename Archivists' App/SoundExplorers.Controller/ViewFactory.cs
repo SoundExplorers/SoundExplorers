@@ -9,7 +9,7 @@ namespace SoundExplorers.Controller {
   /// </summary>
   public static class ViewFactory {
     /// <summary>
-    ///   Creates a view and its associated controllers,
+    ///   Creates a view and its associated controller,
     ///   as per the Model-View-Controller design pattern,
     ///   returning the view instance created.
     /// </summary>

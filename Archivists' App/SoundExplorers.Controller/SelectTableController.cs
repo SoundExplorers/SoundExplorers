@@ -19,7 +19,7 @@ namespace SoundExplorers.Controller {
     /// </param>
     /// <param name="tableName">
     ///   The name of the table that is to be initially selected.
-    ///   An emtpy string for no table to be initially selected.
+    ///   An empty string for no table to be initially selected.
     /// </param>
     public SelectTableController([NotNull] IView<SelectTableController> view,
       [NotNull] string tableName) {

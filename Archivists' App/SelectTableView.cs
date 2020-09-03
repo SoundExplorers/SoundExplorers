@@ -19,6 +19,17 @@ namespace SoundExplorers {
     
     public SelectTableController Controller { get; private set; }
 
+    /// <summary>
+    ///   Creates a SelectTableView and its associated controller,
+    ///   as per the Model-View-Controller design pattern,
+    ///   returning the view instance created.
+    ///   The parameter is passed to the controller's constructor.
+    /// </summary>
+    /// <param name="tableName">
+    ///   The name of the table that is to be initially selected.
+    ///   An empty string for no table to be initially selected.
+    /// </param>
+    /// <returns></returns>
     [NotNull]
     public static SelectTableView Create([NotNull] string tableName) {
       return (SelectTableView)ViewFactory.Create<SelectTableView, SelectTableController>(

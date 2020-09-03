@@ -21,7 +21,7 @@ namespace SoundExplorers.Controller {
     ///   Initialises a new instance of the <see cref="TableController" /> class.
     /// </summary>
     /// <param name="view">
-    ///   The view to be shown.
+    ///   The table editor view to be shown.
     /// </param>
     /// <param name="tableName">
     ///   The name of the table whose data is to be displayed.

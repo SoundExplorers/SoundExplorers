@@ -50,6 +50,15 @@ namespace SoundExplorers {
     private SizeableFormOptions SizeableFormOptions { get; set; }
     private bool UpdateCancelled { get; set; }
 
+    /// <summary>
+    ///   Creates a TableView and its associated controller,
+    ///   as per the Model-View-Controller design pattern,
+    ///   returning the view instance created.
+    ///   The parameter is passed to the controller's constructor.
+    /// </summary>
+    /// <param name="tableName">
+    ///   The name of the table whose data is to be displayed.
+    /// </param>
     [NotNull]
     public static TableView Create([NotNull] string tableName) {
       return (TableView)ViewFactory.Create<TableView, TableController>(tableName);

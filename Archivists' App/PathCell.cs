@@ -74,11 +74,23 @@ namespace SoundExplorers {
       && File.Exists(Path);
 
     /// <summary>
-    ///   Gets or sets the file path contained in the cell.
+    ///   Gets the file path contained in the cell.
     ///   Null only if the path cell is on the new row and had not been edited.
     /// </summary>
     public string Path => Value?.ToString();
 
+    /// <summary>
+    ///   Creates a PathCell and its associated controller,
+    ///   as per the Model-View-Controller design pattern,
+    ///   returning the view instance created.
+    ///   The parameters are passed to the controller's constructor.
+    /// </summary>
+    /// <param name="tableController">
+    ///   The controller of the table editor.
+    /// </param>
+    /// <param name="columnName">
+    ///   The name of the column that is edited with the path cell.
+    /// </param>
     [NotNull]
     public static PathCell Create([NotNull] TableController tableController,
       [NotNull] string columnName) {

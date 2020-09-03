@@ -76,6 +76,11 @@ namespace SoundExplorers {
       }
     }
 
+    /// <summary>
+    ///   Creates a MainView and its associated controller,
+    ///   as per the Model-View-Controller design pattern,
+    ///   returning the view instance created.
+    /// </summary>
     [NotNull]
     public static MainView Create() {
       return (MainView)ViewFactory.Create<MainView, MainController>();

@@ -30,6 +30,18 @@ namespace SoundExplorers {
       Controller = controller;
     }
 
+    /// <summary>
+    ///   Creates a ComboBoxCell and its associated controller,
+    ///   as per the Model-View-Controller design pattern,
+    ///   returning the view instance created.
+    ///   The parameters are passed to the controller's constructor.
+    /// </summary>
+    /// <param name="tableController">
+    ///   The controller of the table editor.
+    /// </param>
+    /// <param name="columnName">
+    ///   The name of the column that is edited with the combo box cell.
+    /// </param>
     [NotNull]
     public static ComboBoxCell Create([NotNull] TableController tableController,
       [NotNull] string columnName) {
