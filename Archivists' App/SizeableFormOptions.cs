@@ -1,3 +1,4 @@
+using System;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -15,38 +16,31 @@ namespace SoundExplorers {
     ///   from the UserOption table.
     /// </summary>
     /// <param name="form">
-    ///   The <see cref="Form" />
-    ///   whose size, position and state are
+    ///   The <see cref="Form" /> whose size, position and state are
     ///   to be saved and restored.
     /// </param>
     /// <remarks>
-    ///   The <see cref="Form" />'s
-    ///   <see cref="Form.StartPosition" />
+    ///   The <see cref="Form" />'s StartPosition
     ///   will be set to <c>Manual</c> so that the settings for
     ///   <see cref="Control.Left" /> and
     ///   <see cref="Control.Top" />
     ///   will take effect.  However, for documentary purposes,
-    ///   it is recommended that
-    ///   <see cref="Form.StartPosition" />
-    ///   still be explicity set in the calling assembly.
+    ///   it is recommended that StartPosition
+    ///   still be explicitly set in the calling assembly.
     ///   <para>
-    ///     The position
-    ///     (<see cref="Control.Left" /> and
-    ///     <see cref="Control.Top" />) of the
-    ///     <see cref="Form" />
+    ///     The position (<see cref="Control.Left" /> and
+    ///     <see cref="Control.Top" />) of the <see cref="Form" />
     ///     will not be set if it would put the Form outside
     ///     the bounds of the screen's working area.  This could
     ///     happen if the user has switched to a monitor with
-    ///     a lower screem resolution, such as a laptop.
+    ///     a lower screen resolution, such as a laptop.
     ///   </para>
     ///   <para>
     ///     If a <see cref="Form" />'s details have not
-    ///     previously beeen saved via the <see cref="Save" />
+    ///     previously been saved via the <see cref="Save" />
     ///     method:  the default size will be as set
-    ///     at design time or before the <see cref="Restore" />
-    ///     method is invoked;  the default position will be
-    ///     top left.
-    ///     If the form is not sizable,
+    ///     at design time;  the default position will be
+    ///     top left.  If the form is not sizable,
     ///     the default size will always be used.
     ///   </para>
     ///   <para>
@@ -92,7 +86,6 @@ namespace SoundExplorers {
         Screen.GetBounds(new Point(LeftOption.Int32Value,
           TopOption.Int32Value));
       int x;
-      int y;
       if (LeftOption.Int32Value >
           InitialScreenBounds.X + InitialScreenBounds.Width
           || LeftOption.Int32Value < InitialScreenBounds.X) {
@@ -103,13 +96,11 @@ namespace SoundExplorers {
       } else {
         x = LeftOption.Int32Value;
       }
-      if (TopOption.Int32Value >
-          InitialScreenBounds.Y + InitialScreenBounds.Height) {
+      int y = TopOption.Int32Value >
+              InitialScreenBounds.Y + InitialScreenBounds.Height
         // Area to the bottom of the screen is missing
-        y = 0;
-      } else {
-        y = TopOption.Int32Value;
-      }
+        ? 0
+        : TopOption.Int32Value;
       if (HeightOption.Int32Value >= Form.MinimumSize.Height
           && HeightOption.Int32Value > 0
           && WidthOption.Int32Value >= Form.MinimumSize.Width
@@ -125,7 +116,7 @@ namespace SoundExplorers {
       // So we need to store the UserOption in WindowStateOption and
       // then set Me.WindowState to WindowStateOption.  Otherwise
       // WindowStateOption will always be 0, which would cause the
-      // following bug:
+      // following error:
       // When the window is closed maximised and then reopened, it would
       // be impossible to set the UserOption back to Normal because
       // Form_Unload will not update the UserOption if Me.WindowState
@@ -136,10 +127,7 @@ namespace SoundExplorers {
     /// <summary>
     ///   Saves the size, state and, except for MDI child forms,
     ///   location of the <see cref="Form" /> specified in the
-    ///   <see cref="SizeableFormOptions(Form)">
-    ///     constructor
-    ///   </see>
-    ///   to the UserOption table.
+    ///   SizeableFormOptions(Form) constructor to the UserOption table.
     /// </summary>
     public void Save() {
       //Debug.WriteLine(Form.Text + " " + Form.WindowState.ToString());
@@ -187,7 +175,9 @@ namespace SoundExplorers {
     /// </summary>
     private void SizeChildForm() {
       if (Form.MdiParent.MdiChildren.Length > 1) {
-        var lastActiveChildForm = Form.MdiParent.ActiveMdiChild;
+        var lastActiveChildForm = Form.MdiParent.ActiveMdiChild ??
+                                  throw new NullReferenceException(
+                                    nameof(Form.MdiParent.ActiveMdiChild));
         Form.Size = new Size(lastActiveChildForm.Width,
           lastActiveChildForm.Height);
       } else if (HeightOption.Int32Value >= Form.MinimumSize.Height
