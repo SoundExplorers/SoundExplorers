@@ -8,7 +8,7 @@ namespace SoundExplorers.Controller {
   ///   Controller for a cell that supports an embedded combo box control.
   /// </summary>
   [UsedImplicitly]
-  public class ComboBoxCellController {
+  public class ComboBoxCellController : CellControllerBase {
     private string _referencedColumnName;
     private string _referencedTableName;
 
@@ -25,13 +25,10 @@ namespace SoundExplorers.Controller {
     ///   The name of the column that is edited with the combo box cell.
     /// </param>
     public ComboBoxCellController([NotNull] IView<ComboBoxCellController> view,
-      [NotNull] TableController tableController, [NotNull] string columnName) {
+      [NotNull] TableController tableController, [NotNull] string columnName) : base(
+      tableController, columnName) {
       view.SetController(this);
-      ColumnName = columnName;
-      TableController = tableController;
     }
-
-    [NotNull] private string ColumnName { get; }
 
     [NotNull]
     public string ReferencedColumnName => _referencedColumnName ??
@@ -44,8 +41,6 @@ namespace SoundExplorers.Controller {
                                          (_referencedTableName =
                                            TableController.GetReferencedTableName(
                                              ColumnName));
-
-    [NotNull] public TableController TableController { get; }
 
     [NotNull]
     public DataTable GetReferencedTable() {

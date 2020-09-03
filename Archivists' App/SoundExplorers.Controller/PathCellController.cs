@@ -8,7 +8,7 @@ namespace SoundExplorers.Controller {
   ///   Controller for a cell that supports the editing of a file path.
   /// </summary>
   [UsedImplicitly]
-  public class PathCellController {
+  public class PathCellController : CellControllerBase {
     /// <summary>
     ///   Initialises a new instance of the <see cref="PathCellController" /> class.
     /// </summary>
@@ -22,14 +22,10 @@ namespace SoundExplorers.Controller {
     ///   The name of the column that is edited with the path cell.
     /// </param>
     public PathCellController([NotNull] IView<PathCellController> view,
-      [NotNull] TableController tableController, [NotNull] string columnName) {
+      [NotNull] TableController tableController, [NotNull] string columnName) : base(
+      tableController, columnName) {
       view.SetController(this);
-      ColumnName = columnName;
-      TableController = tableController;
     }
-
-    [NotNull] private string ColumnName { get; }
-    [NotNull] private TableController TableController { get; }
 
     [NotNull]
     public DirectoryInfo GetDefaultFolder() {
