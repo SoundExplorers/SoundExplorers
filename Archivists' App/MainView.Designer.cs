@@ -576,8 +576,6 @@
             this.Text = "Sound Explorers Archive";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainView_FormClosed);
             this.VisibleChanged += new System.EventHandler(this.MainView_VisibleChanged);
-            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MainView_KeyDown);
-            this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.MainView_KeyUp);
             this.MenuStrip.ResumeLayout(false);
             this.MenuStrip.PerformLayout();
             this.ToolStrip.ResumeLayout(false);

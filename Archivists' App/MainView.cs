@@ -17,14 +17,9 @@ namespace SoundExplorers {
         StatusLabel.Text = string.Empty;
         SplashManager.Status = "Positioning window...";
         SizeableFormOptions = SizeableFormOptions.Create(this);
-        SplashManager.Status = "Getting options...";
-        StatusStrip.Visible = Controller.IsStatusBarVisible;
-        SelectTableView = CreateSelectTableView();
-        ToolStrip.Visible = Controller.IsToolBarVisible;
-        SplashManager.Status = "Creating shortcuts...";
-        EventShortcuts = CreateEventShortcuts();
       } catch (Exception ex) {
         MessageBox.Show(
+          owner: SplashManager.SplashForm,
           ex.ToString(),
           Application.ProductName,
           MessageBoxButtons.OK,
@@ -34,10 +29,7 @@ namespace SoundExplorers {
     }
 
     private MainController Controller { get; set; }
-    private EventShortcutList EventShortcuts { get; }
-    private bool LWinIsDown { get; set; }
-    private bool RWinIsDown { get; set; }
-    private SelectTableView SelectTableView { get; }
+    private SelectTableView SelectTableView { get; set; }
     private SizeableFormOptions SizeableFormOptions { get; }
 
     private TableView TableView => ActiveMdiChild as TableView ??
@@ -45,6 +37,20 @@ namespace SoundExplorers {
 
     public void SetController(MainController controller) {
       Controller = controller;
+      try {
+        SplashManager.Status = "Getting options...";
+        StatusStrip.Visible = Controller.IsStatusBarVisible;
+        SelectTableView = CreateSelectTableView();
+        ToolStrip.Visible = Controller.IsToolBarVisible;
+      } catch (Exception ex) {
+        MessageBox.Show(
+          owner: SplashManager.SplashForm,
+          ex.ToString(),
+          Application.ProductName,
+          MessageBoxButtons.OK,
+          MessageBoxIcon.Error);
+        Environment.Exit(0);
+      }
     }
 
     private void AboutToolStripMenuItem_Click(object sender, EventArgs e) {
@@ -58,11 +64,6 @@ namespace SoundExplorers {
     private void CascadeToolStripMenuItem_Click(object sender, EventArgs e) {
       LayoutMdi(MdiLayout.Cascade);
     }
-
-    //private void ChildForm_Activated(object sender, EventArgs e) {
-    //    var activeTableForm = sender as TableView;
-    //    Debug.WriteLine("ChildForm_Activated: " + activeTableForm.Text);
-    //}
 
     private void CloseAllToolStripMenuItem_Click(object sender, EventArgs e) {
       foreach (var childForm in MdiChildren) {
@@ -84,50 +85,6 @@ namespace SoundExplorers {
     [NotNull]
     public static MainView Create() {
       return (MainView)ViewFactory.Create<MainView, MainController>();
-    }
-
-    /// <summary>
-    ///   For each menu item whose keyboard shortcut includes the Control key,
-    ///   create an keyboard alternative shortcut to use the Command (⌘) key
-    ///   on a Mac keyboard instead of the Control key
-    ///   and alter the text next to the menu item that shows the keyboard shortcut
-    ///   to show the Command key version of the shortcut
-    ///   instead of the Control key version of the shortcut.
-    /// </summary>
-    /// <returns>
-    ///   The list of alternative keyboard shortcuts.
-    /// </returns>
-    /// <remarks>
-    ///   It would be nice to only show the Mac shortcuts
-    ///   on the menu when we are running on a Mac.
-    ///   That's probably difficult or impossible to
-    ///   be certain of, as we will be running in a Windows VM
-    ///   on the Mac.
-    ///   One way might be by detecting whether a Mac keyboard
-    ///   is plugged into the computer.  But that's no reliable,
-    ///   as Device Manager just calls the Mac keyboard "HID Keyboard Device",
-    ///   which it would call any keyboard that did not provide its model name
-    ///   via plug and play.  Besides, I've so far not been able to find out how to
-    ///   enumerate the device manager's keyboard list in code.
-    ///   Another way would be to detect whether we are running in a VM.
-    ///   It looks like there could be several possible ways of doing that,
-    ///   sometimes depending on VM publisher and sometimes not 100% reliable.
-    /// </remarks>
-    private EventShortcutList CreateEventShortcuts() {
-      var result = new EventShortcutList();
-      foreach (ToolStripMenuItem menu in MenuStrip.Items) {
-        foreach (ToolStripItem dropDownItem in menu.DropDownItems) {
-          var menuItem = (ToolStripMenuItem)dropDownItem;
-          if (menuItem != null) {
-            if (menuItem.ShortcutKeys.HasFlag(Keys.Control)) {
-              var letterKeyCode = (Keys)(menuItem.ShortcutKeys - Keys.Control);
-              result.Add(new EventShortcut(letterKeyCode, menuItem, "Click"));
-              menuItem.ShortcutKeyDisplayString = "⌘+" + letterKeyCode;
-            }
-          }
-        } //End of foreach
-      } //End of foreach
-      return result;
     }
 
     [NotNull]
@@ -198,71 +155,6 @@ namespace SoundExplorers {
       // as Normal.
       CloseAllToolStripMenuItem_Click(this, EventArgs.Empty);
       SizeableFormOptions.Save();
-    }
-
-    /// <summary>
-    ///   Handles the <see cref="Form" />'s
-    ///   <see cref="Control.KeyDown" /> event.
-    /// </summary>
-    /// <param name="sender">Event sender.</param>
-    /// <param name="e">Event arguments.</param>
-    /// <remarks>
-    ///   In order for this event handler to be triggered,
-    ///   the <see cref="Form" />'s <see cref="Form.KeyPreview" />
-    ///   property must be set to <b>True</b>.
-    ///   <para>
-    ///     Mac keyboard:
-    ///     Delete = Keys.Back (Backspace)
-    ///     Left Command (⌘) = Keys.LWin ((Left) Start)
-    ///     Right Command (⌘) = Keys.RWin (Right Start - not on most Windows keyboards)
-    ///   </para>
-    ///   <para>
-    ///     This is used to provide alternative shortcuts
-    ///     using a command (⌘) key on a Mac keyboard
-    ///     to substitute for menu item shortcuts
-    ///     that use a control key on a Windows keyboard.
-    ///   </para>
-    /// </remarks>
-    private void MainView_KeyDown(object sender, KeyEventArgs e) {
-      switch (e.KeyData) {
-        case Keys.LWin:
-          LWinIsDown = true;
-          break;
-        case Keys.RWin:
-          RWinIsDown = true;
-          break;
-        default:
-          if (LWinIsDown
-              || RWinIsDown) {
-            if (EventShortcuts.ContainsKey(e.KeyCode)) {
-              e.SuppressKeyPress = true;
-              EventShortcuts[e.KeyCode].RaiseEvent(EventArgs.Empty);
-            }
-          }
-          break;
-      } //End of switch
-    }
-
-    /// <summary>
-    ///   Handles the <see cref="Form" />'s
-    ///   <see cref="Control.KeyUp" /> event.
-    /// </summary>
-    /// <param name="sender">Event sender.</param>
-    /// <param name="e">Event arguments.</param>
-    /// <remarks>
-    ///   In order for this event handler to be triggered,
-    ///   the <see cref="Form" />'s <see cref="Form.KeyPreview" />
-    ///   property must be set to <b>True</b>.
-    /// </remarks>
-    private void MainView_KeyUp(object sender, KeyEventArgs e) {
-      switch (e.KeyCode) {
-        case Keys.LWin:
-          LWinIsDown = false;
-          break;
-        case Keys.RWin:
-          RWinIsDown = false;
-          break;
-      } //End of switch
     }
 
     /// <summary>
