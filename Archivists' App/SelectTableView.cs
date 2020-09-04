@@ -14,13 +14,15 @@ namespace SoundExplorers {
     /// </summary>
     public SelectTableView() {
       InitializeComponent();
-      Load += SelectTableView_Load;
     }
 
     public SelectTableController Controller { get; private set; }
 
     public void SetController(SelectTableController controller) {
       Controller = controller;
+      PopulateTableComboBox();
+      tableComboBox.SelectedIndex =
+        tableComboBox.FindStringExact(Controller.TableName);
     }
 
     /// <summary>
@@ -53,12 +55,6 @@ namespace SoundExplorers {
         new BindingSource(Controller.EntityListTypes, null);
       tableComboBox.DisplayMember = "Key";
       tableComboBox.ValueMember = "Key";
-    }
-
-    private void SelectTableView_Load(object sender, EventArgs e) {
-      PopulateTableComboBox();
-      tableComboBox.SelectedIndex =
-        tableComboBox.FindStringExact(Controller.TableName);
     }
   } //End of class
 } //End of namespace
