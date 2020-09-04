@@ -23,7 +23,7 @@ namespace SoundExplorers.Data {
     public int Piece { get; set; }
 
     [PrimaryKeyField(2)]
-    [ReferencedField("Name",2)]
+    [ReferencedField("Name", 2)]
     public string Role { get; set; }
 
     [PrimaryKeyField]

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Windows.Forms;
-using SoundExplorers.Controller;
 
 namespace SoundExplorers {
   /// <summary>

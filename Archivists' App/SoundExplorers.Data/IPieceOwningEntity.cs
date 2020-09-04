@@ -1,6 +1,4 @@
-﻿using SoundExplorers.Common;
-
-namespace SoundExplorers.Data {
+﻿namespace SoundExplorers.Data {
   /// <summary>
   ///   Interface for
   ///   an Entity that can have mutliple Pieces associated with it.

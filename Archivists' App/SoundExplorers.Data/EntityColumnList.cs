@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
-using SoundExplorers.Common;
 
 namespace SoundExplorers.Data {
   /// <summary>
@@ -10,25 +9,6 @@ namespace SoundExplorers.Data {
   ///   <see cref="IEntityColumn.ColumnName" /> as the key.
   /// </summary>
   public class EntityColumnList : List<IEntityColumn>, IEntityColumnList {
-    /// <summary>
-    ///   Returns the entity column with the specified name (case-insensitive),
-    ///   if found, otherwise returns a null reference.
-    /// </summary>
-    /// <param name="columnName">
-    ///   The name of the column (case-insensitive).
-    /// </param>
-    /// <returns>
-    ///   The entity column with the specified name (case-insensitive),
-    ///   if found, otherwise a null reference.
-    /// </returns>
-    [CanBeNull]
-    public IEntityColumn this[string columnName] =>
-    (
-      from IEntityColumn entityColumn in this
-      where string.Compare(entityColumn.ColumnName, columnName,
-        StringComparison.OrdinalIgnoreCase) == 0
-      select entityColumn).FirstOrDefault();
-
     /// <summary>
     ///   Add the specified entity column to the list,
     ///   provided its name is unique in the list.
@@ -66,5 +46,24 @@ namespace SoundExplorers.Data {
         where entityColumn.ColumnName == columnName
         select entityColumn).Any();
     }
+
+    /// <summary>
+    ///   Returns the entity column with the specified name (case-insensitive),
+    ///   if found, otherwise returns a null reference.
+    /// </summary>
+    /// <param name="columnName">
+    ///   The name of the column (case-insensitive).
+    /// </param>
+    /// <returns>
+    ///   The entity column with the specified name (case-insensitive),
+    ///   if found, otherwise a null reference.
+    /// </returns>
+    [CanBeNull]
+    public IEntityColumn this[string columnName] =>
+    (
+      from IEntityColumn entityColumn in this
+      where string.Compare(entityColumn.ColumnName, columnName,
+        StringComparison.OrdinalIgnoreCase) == 0
+      select entityColumn).FirstOrDefault();
   } //End of class
 } //End of namespace

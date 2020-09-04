@@ -19,7 +19,7 @@ namespace SoundExplorers {
         SizeableFormOptions = SizeableFormOptions.Create(this);
       } catch (Exception ex) {
         MessageBox.Show(
-          owner: SplashManager.SplashForm,
+          SplashManager.SplashForm,
           ex.ToString(),
           Application.ProductName,
           MessageBoxButtons.OK,
@@ -44,7 +44,7 @@ namespace SoundExplorers {
         ToolStrip.Visible = Controller.IsToolBarVisible;
       } catch (Exception ex) {
         MessageBox.Show(
-          owner: SplashManager.SplashForm,
+          SplashManager.SplashForm,
           ex.ToString(),
           Application.ProductName,
           MessageBoxButtons.OK,
@@ -200,7 +200,9 @@ namespace SoundExplorers {
         return;
       }
       try {
-        CreateTableView().Show();
+        var tableView = CreateTableView();
+        tableView.MdiParent = this;
+        tableView.Show();
       } catch (ApplicationException ex) {
         MessageBox.Show(
           ex.Message,

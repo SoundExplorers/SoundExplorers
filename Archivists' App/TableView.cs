@@ -50,20 +50,6 @@ namespace SoundExplorers {
     private SizeableFormOptions SizeableFormOptions { get; set; }
     private bool UpdateCancelled { get; set; }
 
-    /// <summary>
-    ///   Creates a TableView and its associated controller,
-    ///   as per the Model-View-Controller design pattern,
-    ///   returning the view instance created.
-    ///   The parameter is passed to the controller's constructor.
-    /// </summary>
-    /// <param name="tableName">
-    ///   The name of the table whose data is to be displayed.
-    /// </param>
-    [NotNull]
-    public static TableView Create([NotNull] string tableName) {
-      return (TableView)ViewFactory.Create<TableView, TableController>(tableName);
-    }
-
     public object GetCurrentRowFieldValue(string columnName) {
       return MainCurrentRow.Cells[columnName].Value;
     }
@@ -144,6 +130,7 @@ namespace SoundExplorers {
 
     public void SetController(TableController controller) {
       Controller = controller;
+      OpenTable();
     }
 
     public void Copy() {
@@ -171,6 +158,20 @@ namespace SoundExplorers {
           pathEditingControl.Copy();
           break;
       }
+    }
+
+    /// <summary>
+    ///   Creates a TableView and its associated controller,
+    ///   as per the Model-View-Controller design pattern,
+    ///   returning the view instance created.
+    ///   The parameter is passed to the controller's constructor.
+    /// </summary>
+    /// <param name="tableName">
+    ///   The name of the table whose data is to be displayed.
+    /// </param>
+    [NotNull]
+    public static TableView Create([NotNull] string tableName) {
+      return (TableView)ViewFactory.Create<TableView, TableController>(tableName);
     }
 
     public void Cut() {
@@ -1269,13 +1270,13 @@ namespace SoundExplorers {
       // Has to be done here rather than in constructor
       // in order to tell that this is an MDI child form.
       SizeableFormOptions = SizeableFormOptions.Create(this);
-      OpenTable();
     }
 
     private void TableView_VisibleChanged(object sender, EventArgs e) {
       if (Visible) {
         //Debug.WriteLine("TableView_VisibleChanged: " + this.Text);
         MainGrid.AutoResizeColumns();
+        ImageSplitContainer.Panel2Collapsed = true;
         // We need to work out whether we need the image panel
         // before we position the grid splitter.
         // Otherwise the grid splitter gets out of kilter.

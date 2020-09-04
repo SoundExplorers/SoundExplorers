@@ -29,8 +29,8 @@ namespace SoundExplorers.Controller {
     public TableController([NotNull] ITableView view,
       [NotNull] string tableName) {
       View = view;
-      View.SetController(this);
       TableName = tableName;
+      View.SetController(this);
     }
 
     /// <summary>
@@ -146,7 +146,7 @@ namespace SoundExplorers.Controller {
     }
 
     /// <summary>
-    ///  Returns whether the specified column references another entity. 
+    ///   Returns whether the specified column references another entity.
     /// </summary>
     public bool DoesColumnReferenceAnotherEntity([NotNull] string columnName) {
       return !string.IsNullOrEmpty(Columns[columnName].ReferencedColumnName);
@@ -422,12 +422,14 @@ namespace SoundExplorers.Controller {
     }
 
     [NotNull]
-    internal string GetReferencedColumnName([NotNull] string columnName) =>
-      Columns[columnName].ReferencedColumnName;
+    internal string GetReferencedColumnName([NotNull] string columnName) {
+      return Columns[columnName].ReferencedColumnName;
+    }
 
     [NotNull]
-    internal string GetReferencedTableName([NotNull] string columnName) =>
-      Columns[columnName].ReferencedTableName;
+    internal string GetReferencedTableName([NotNull] string columnName) {
+      return Columns[columnName].ReferencedTableName;
+    }
 
     /// <summary>
     ///   Returns whether the string field in the specified column

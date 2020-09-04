@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using SoundExplorers.Common;
 
 namespace SoundExplorers.Data {
   internal class EntityColumnComparer : Comparer<IEntityColumn> {

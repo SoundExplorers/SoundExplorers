@@ -62,6 +62,10 @@ namespace SoundExplorers {
     /// </summary>
     public string Path => Value?.ToString();
 
+    public void SetController(PathCellController controller) {
+      Controller = controller;
+    }
+
     /// <summary>
     ///   Creates a PathCell and its associated controller,
     ///   as per the Model-View-Controller design pattern,
@@ -79,10 +83,6 @@ namespace SoundExplorers {
       [NotNull] string columnName) {
       return (PathCell)ViewFactory.Create<PathCell, PathCellController>(
         tableController, columnName);
-    }
-
-    public void SetController(PathCellController controller) {
-      Controller = controller;
     }
 
     public override void InitializeEditingControl(

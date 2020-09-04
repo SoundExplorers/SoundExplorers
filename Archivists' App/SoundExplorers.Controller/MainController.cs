@@ -22,18 +22,18 @@ namespace SoundExplorers.Controller {
       set => ToolBarOption.BooleanValue = value;
     }
 
+    private Option StatusBarOption => _statusBarOption ??
+                                      (_statusBarOption = new Option("StatusBar", true));
+
     public string TableName {
       get => TableOption.StringValue;
       set => TableOption.StringValue = value;
     }
 
-    private Option StatusBarOption => _statusBarOption ??
-                                      (_statusBarOption = new Option("StatusBar", true));
-
     private Option TableOption => _tableOption ??
-                                      (_tableOption = new Option("Table"));
+                                  (_tableOption = new Option("Table"));
 
     private Option ToolBarOption => _toolBarOption ??
-                                  (_toolBarOption = new Option("ToolBar", true));
+                                    (_toolBarOption = new Option("ToolBar", true));
   }
 }

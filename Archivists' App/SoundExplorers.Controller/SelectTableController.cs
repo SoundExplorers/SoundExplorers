@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using JetBrains.Annotations;
-using SoundExplorers.Common;
 using SoundExplorers.Data;
 
 namespace SoundExplorers.Controller {
@@ -11,6 +10,7 @@ namespace SoundExplorers.Controller {
   [UsedImplicitly]
   public class SelectTableController {
     private SortedDictionary<string, Type> _entityListTypes;
+
     /// <summary>
     ///   Initialises a new instance of the <see cref="TableController" /> class.
     /// </summary>
@@ -23,17 +23,18 @@ namespace SoundExplorers.Controller {
     /// </param>
     public SelectTableController([NotNull] IView<SelectTableController> view,
       [NotNull] string tableName) {
-      view.SetController(this);
       TableName = tableName;
+      view.SetController(this);
     }
-    
-    [NotNull] public string TableName { get; set; }
 
-    [NotNull] public SortedDictionary<string, Type> EntityListTypes {
+    [NotNull]
+    public SortedDictionary<string, Type> EntityListTypes {
       get => _entityListTypes ?? (_entityListTypes = Factory<IEntityList>.Types);
       // The setter is for testing.
       // ReSharper disable once UnusedMember.Global
       set => _entityListTypes = value;
     }
+
+    [NotNull] public string TableName { get; set; }
   }
 }

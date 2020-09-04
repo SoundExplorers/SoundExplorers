@@ -16,8 +16,12 @@ namespace SoundExplorers {
       InitializeComponent();
       Load += SelectTableView_Load;
     }
-    
+
     public SelectTableController Controller { get; private set; }
+
+    public void SetController(SelectTableController controller) {
+      Controller = controller;
+    }
 
     /// <summary>
     ///   Creates a SelectTableView and its associated controller,
@@ -34,10 +38,6 @@ namespace SoundExplorers {
     public static SelectTableView Create([NotNull] string tableName) {
       return (SelectTableView)ViewFactory.Create<SelectTableView, SelectTableController>(
         tableName);
-    }
-
-    public void SetController(SelectTableController controller) {
-      Controller = controller;
     }
 
     private void OKButton_Click(object sender, EventArgs e) {

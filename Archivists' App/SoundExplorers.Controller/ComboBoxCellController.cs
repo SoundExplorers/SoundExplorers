@@ -1,6 +1,5 @@
 ﻿using System.Data;
 using JetBrains.Annotations;
-using SoundExplorers.Common;
 using SoundExplorers.Data;
 
 namespace SoundExplorers.Controller {

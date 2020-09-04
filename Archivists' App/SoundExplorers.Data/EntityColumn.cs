@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Reflection;
-using SoundExplorers.Common;
 
 namespace SoundExplorers.Data {
   /// <summary>

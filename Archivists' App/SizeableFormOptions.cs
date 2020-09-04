@@ -64,6 +64,16 @@ namespace SoundExplorers {
     private Form Form { get; }
     private Rectangle InitialScreenBounds { get; set; }
 
+    public void SetController(SizeableFormOptionsController controller) {
+      Controller = controller;
+      Form.StartPosition = FormStartPosition.Manual;
+      if (Form.IsMdiChild) {
+        SizeChildForm();
+      } else {
+        PositionParentForm();
+      }
+    }
+
     /// <summary>
     ///   Creates a SizeableFormOptions instance and its associated controller,
     ///   as per the Model-View-Controller design pattern,
@@ -86,16 +96,6 @@ namespace SoundExplorers {
         throw ex.InnerException ?? ex;
       }
       return result;
-    }
-
-    public void SetController(SizeableFormOptionsController controller) {
-      Controller = controller;
-      Form.StartPosition = FormStartPosition.Manual;
-      if (Form.IsMdiChild) {
-        SizeChildForm();
-      } else {
-        PositionParentForm();
-      }
     }
 
     /// <summary>

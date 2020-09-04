@@ -138,8 +138,8 @@ namespace SoundExplorers.Data {
     /// <remarks>
     ///   The table name is the same as the type name of the listed Entities.
     /// </remarks>
-    [CanBeNull]
-    public string TableName => Table?.TableName;
+    public string TableName => Table?.TableName ??
+                               throw new NullReferenceException(nameof(TableName));
 
     /// <summary>
     ///   Gets metadata about the database columns
