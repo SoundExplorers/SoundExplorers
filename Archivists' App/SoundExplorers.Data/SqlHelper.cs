@@ -552,7 +552,7 @@ namespace SoundExplorers.Data {
       //private string GetSql(
       string filename,
       Dictionary<string, string> parameters = null) {
-      string sql = GetEmbeddedText("Data.Sql." + filename, parameters);
+      string sql = GetEmbeddedText("Sql." + filename, parameters);
       RejectMultipleSqlStatements(sql);
       return sql;
     }
