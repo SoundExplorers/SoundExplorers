@@ -5,9 +5,12 @@ namespace SoundExplorers.Data {
   ///   Set entity.
   /// </summary>
   public class Set : PieceOwningMediaEntity<Set> {
-    [ReferencedField("Name", 2)] public string Act { get; set; }
+    [ReferencedField("Act.Name", 2)] public string Act { get; set; }
     [Field(3)] public string Comments { get; set; }
-    [PrimaryKeyField] public DateTime Date { get; set; }
+
+    [PrimaryKeyField(0)]
+    [ReferencedField("Performance.Date")]
+    public DateTime Date { get; set; }
 
     [PrimaryKeyField]
     [ReferencedField("Name")]

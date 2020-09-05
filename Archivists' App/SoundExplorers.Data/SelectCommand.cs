@@ -56,17 +56,14 @@ namespace SoundExplorers.Data {
             "    " + column.NameOnDb + " as " + column.ColumnName);
         }
       } // End of foreach
-      //foreach (KeyValuePair<string, string> aliasedName in AliasedNames) {
-      //    columnList = columnList.Replace(
-      //    "    " + aliasedName.Value,
-      //    "    " + aliasedName.Value + " as " + aliasedName.Key);
-      //} // End of foreach
       sql.Write(columnList);
       sql.WriteLine("from " + EntityType.Name);
       if (All) {
         sql.WriteLine("order by");
         for (var i = 0; i < PrimaryKeyColumns.Count; i++) {
-          sql.Write("    " + PrimaryKeyColumns[i].ColumnName);
+          var column = PrimaryKeyColumns[i];
+          sql.Write("    " + PrimaryKeyColumns[i].NameOnDb);
+          //sql.Write("    " + PrimaryKeyColumns[i].ColumnName);
           if (i < PrimaryKeyColumns.Count - 1) {
             sql.WriteLine(",");
           } else {

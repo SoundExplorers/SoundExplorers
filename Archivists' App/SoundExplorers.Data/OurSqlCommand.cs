@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
+using System.Linq;
 using System.Text;
 using Devart.Data.PostgreSql;
 
@@ -172,11 +173,15 @@ namespace SoundExplorers.Data {
     /// <returns>
     ///   The SQL fragment generated.
     /// </returns>
-    protected virtual string GenerateSqlColumnList() {
+    protected string GenerateSqlColumnList() {
+      var requiredColumns = (
+        from column in Columns
+        where column.SequenceNo > 0 || column.IsInPrimaryKey
+        select column).ToList();
       var sql = new StringWriter();
-      for (var i = 0; i < Columns.Count; i++) {
-        sql.Write("    " + Columns[i].NameOnDb);
-        if (i < Columns.Count - 1) {
+      for (var i = 0; i < requiredColumns.Count; i++) {
+        sql.Write("    " + requiredColumns[i].NameOnDb);
+        if (i < requiredColumns.Count - 1) {
           sql.WriteLine(",");
         } else {
           sql.WriteLine();

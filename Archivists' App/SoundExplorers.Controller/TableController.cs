@@ -431,6 +431,10 @@ namespace SoundExplorers.Controller {
       return Columns[columnName].ReferencedTableName;
     }
 
+    public bool IsColumnVisible([NotNull] string columnName) {
+      return Columns[columnName].Visible;
+    }
+
     /// <summary>
     ///   Returns whether the string field in the specified column
     ///   and with the specified new value is changing

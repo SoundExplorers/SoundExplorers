@@ -19,34 +19,29 @@ namespace SoundExplorers.Data {
       Property = property;
       Column = new EntityColumn<TEntity>();
       EntityType = typeof(TEntity);
-      PopulateColumnReferenceDetailsIfAny();
       Column.ColumnName = property.Name;
       Column.DataType = property.PropertyType;
-      Column.IsInPrimaryKey = DoesPropertyHaveAttribute<PrimaryKeyFieldAttribute>();
-      Column.IsInUniqueKey = DoesPropertyHaveAttribute<UniqueKeyFieldAttribute>();
-      Column.IsHidden = DoesPropertyHaveAttribute<HiddenFieldAttribute>();
-      Column.Visible = !Column.IsHidden;
+      Column.IsInPrimaryKey = FindAttribute<PrimaryKeyFieldAttribute>() != null;
+      Column.IsInUniqueKey = FindAttribute<UniqueKeyFieldAttribute>() != null;
       Column.SequenceNo = GetPropertySequenceNo();
+      Column.IsHidden = FindAttribute<HiddenFieldAttribute>() != null ||
+                        Column.SequenceNo < 1;
+      Column.Visible = !Column.IsHidden;
+      var referencedFieldAttribute = FindAttribute<ReferencedFieldAttribute>();
+      if (referencedFieldAttribute != null) {
+        PopulateColumnReferenceDetails(referencedFieldAttribute);
+      }
       return (EntityColumn<TEntity>)Column;
     }
 
-    private bool DoesPropertyHaveAttribute<TFieldAttribute>()
+    [CanBeNull]
+    private TFieldAttribute FindAttribute<TFieldAttribute>()
       where TFieldAttribute : FieldAttribute {
-      return (
+      return (TFieldAttribute)(
         from Attribute attribute in FieldAttributes
         where attribute.GetType()
                 .IsSubclassOf(typeof(TFieldAttribute))
               || attribute.GetType() == typeof(TFieldAttribute)
-        select attribute).Any();
-    }
-
-    [CanBeNull]
-    private ReferencedFieldAttribute FindReferencedFieldAttribute() {
-      return (ReferencedFieldAttribute)(
-        from Attribute attribute in FieldAttributes
-        where attribute.GetType()
-                .IsSubclassOf(typeof(ReferencedFieldAttribute))
-              || attribute.GetType() == typeof(ReferencedFieldAttribute)
         select attribute).FirstOrDefault();
     }
 
@@ -54,24 +49,8 @@ namespace SoundExplorers.Data {
       return FieldAttributes.First().SequenceNo;
     }
 
-    private void PopulateColumnReferenceDetails([NotNull] string referencedTableName,
-      [NotNull] string referencedColumnName) {
-      Column.ReferencedColumnName = referencedColumnName;
-      Column.ReferencedTableName = referencedTableName;
-      if (Property.PropertyType == typeof(DateTime)) {
-        Column.NameOnDb = referencedTableName + "Date";
-      } else if (referencedTableName == "Artist") {
-        Column.NameOnDb = referencedTableName + "Name";
-      } else {
-        Column.NameOnDb = referencedTableName + "Id";
-      }
-    }
-
-    private void PopulateColumnReferenceDetailsIfAny() {
-      var referencedFieldAttribute = FindReferencedFieldAttribute();
-      if (referencedFieldAttribute == null) {
-        return;
-      }
+    private void PopulateColumnReferenceDetails(
+      [NotNull] ReferencedFieldAttribute referencedFieldAttribute) {
       string referencedColumnName;
       string referencedTableName;
       if (referencedFieldAttribute.Name.Contains(".")) {
@@ -84,7 +63,21 @@ namespace SoundExplorers.Data {
       }
       ValidateReference(referencedFieldAttribute, referencedTableName,
         referencedColumnName);
-      PopulateColumnReferenceDetails(referencedTableName, referencedColumnName);
+      SetColumnReferenceProperties(referencedTableName, referencedColumnName);
+    }
+
+    private void SetColumnReferenceProperties([NotNull] string referencedTableName,
+      [NotNull] string referencedColumnName) {
+      Column.ReferencedColumnName = referencedColumnName;
+      Column.ReferencedTableName = referencedTableName;
+      if (Property.PropertyType == typeof(DateTime)) {
+        Column.NameOnDb = referencedTableName + "Date";
+      } else if (referencedTableName == nameof(Artist) ||
+                 referencedTableName == nameof(Act)) {
+        Column.NameOnDb = referencedTableName + "Name";
+      } else {
+        Column.NameOnDb = referencedTableName + "Id";
+      }
     }
 
     private void ValidateReference(

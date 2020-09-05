@@ -423,9 +423,9 @@ namespace SoundExplorers.Data {
                                   tableColumn.ColumnName == "pieceno"
                                    ? "Piece"
                                    : null);
-        if (entityColumn != null && entityColumn.SequenceNo <= 0) {
-          table.Columns.RemoveAt(i);
-        }
+        // if (entityColumn != null && entityColumn.SequenceNo <= 0) {
+        //   table.Columns.RemoveAt(i);
+        // }
       }
       return table;
     }

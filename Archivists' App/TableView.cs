@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
+using System.Reflection;
 using System.Windows.Forms;
 using JetBrains.Annotations;
 using SoundExplorers.Common;
@@ -172,6 +173,14 @@ namespace SoundExplorers {
     [NotNull]
     public static TableView Create([NotNull] string tableName) {
       return (TableView)ViewFactory.Create<TableView, TableController>(tableName);
+      // TableView result;
+      // try {
+      //   result = new TableView();
+      //   var dummy = new TableController(result, tableName); 
+      // } catch (TargetInvocationException ex) {
+      //   throw ex.InnerException ?? ex;
+      // }
+      // return result;
     }
 
     public void Cut() {
@@ -205,6 +214,25 @@ namespace SoundExplorers {
             pathEditingControl.Cut();
             break;
         }
+      }
+    }
+
+    private void ConfigureCellStyle([NotNull] DataGridViewColumn column) {
+      if (column.ValueType == typeof(string)) {
+        // Interpret blanking a cell as an empty string, not NULL.
+        // This only works when updating, not inserting.
+        // When inserting, do something like this in the SQL:
+        //  coalesce(@Comments, '')
+        column.DefaultCellStyle.DataSourceNullValue = string.Empty;
+      } else if (column.ValueType == typeof(DateTime)) {
+        column.DefaultCellStyle.Format = "dd MMM yyyy";
+      }
+      if (Controller.DoesColumnReferenceAnotherEntity(column.Name)) {
+        column.CellTemplate = ComboBoxCell.Create(Controller, column.Name);
+      } else if (column.ValueType == typeof(DateTime)) {
+        column.CellTemplate = new CalendarCell();
+      } else if (column.Name.EndsWith("Path")) {
+        column.CellTemplate = PathCell.Create(Controller, column.Name);
       }
     }
 
@@ -834,21 +862,9 @@ namespace SoundExplorers {
         MainGrid.DataSource = Controller.Table?.DefaultView;
       }
       foreach (DataGridViewColumn column in MainGrid.Columns) {
-        if (column.ValueType == typeof(string)) {
-          // Interpret blanking a cell as an empty string, not NULL.
-          // This only works when updating, not inserting.
-          // When inserting, do something like this in the SQL:
-          //  coalesce(@Comments, '')
-          column.DefaultCellStyle.DataSourceNullValue = string.Empty;
-        } else if (column.ValueType == typeof(DateTime)) {
-          column.DefaultCellStyle.Format = "dd MMM yyyy";
-        }
-        if (Controller.DoesColumnReferenceAnotherEntity(column.Name)) {
-          column.CellTemplate = ComboBoxCell.Create(Controller, column.Name);
-        } else if (column.ValueType == typeof(DateTime)) {
-          column.CellTemplate = new CalendarCell();
-        } else if (column.Name.EndsWith("Path")) {
-          column.CellTemplate = PathCell.Create(Controller, column.Name);
+        column.Visible = Controller.IsColumnVisible(column.Name);
+        if (column.Visible) {
+          ConfigureCellStyle(column);
         }
       } // End of foreach
       MainGrid.CellBeginEdit += MainGrid_CellBeginEdit;
