@@ -35,6 +35,7 @@ namespace SoundExplorers.Data {
     ///   Creates an instance of an Entity or EntityList type, specifying
     ///   the name of the table whose data is to be listed
     ///   and optionally specifying constructor arguments.
+    ///   If an EntityList is created, its data will be fetched.
     /// </summary>
     /// <param name="tableName">
     ///   The name of the table whose data is to be listed.
@@ -53,8 +54,11 @@ namespace SoundExplorers.Data {
         throw new ArgumentOutOfRangeException(
           "Entity type " + tableName + " is not supported.");
       }
-      return Create(
-        Types[tableName], args);
+      var result = Create(Types[tableName], args);
+      if (result is IEntityList entityList) {
+        entityList.Fetch();
+      }
+      return result;
     }
 
     /// <summary>

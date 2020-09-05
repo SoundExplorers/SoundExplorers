@@ -36,6 +36,11 @@ namespace SoundExplorers.Data {
     void Add(IEntity entity);
 
     /// <summary>
+    ///   Fetches the required records of the represented table.
+    /// </summary>
+    void Fetch();
+
+    /// <summary>
     ///   An event that is raised when there is an error on
     ///   attempting to insert, update or delete a <see cref="DataRow" />.
     /// </summary>

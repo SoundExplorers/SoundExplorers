@@ -16,8 +16,7 @@ namespace SoundExplorers.Data {
     where T : Entity<T> {
     /// <summary>
     ///   Initialises a new instance of the EntityList class,
-    ///   optionally specifying SQL commands,
-    ///   fetching all the records of the represented table.
+    ///   optionally specifying SQL commands.
     /// </summary>
     /// <param name="parentListType">
     ///   Optionally specifies the type of parent entity list
@@ -61,45 +60,19 @@ namespace SoundExplorers.Data {
       if (empty) {
         return;
       }
-      Adapter = new OurSqlDataAdapter<T>(
-        selectCommand, insertCommand, updateCommand, deleteCommand);
-      Adapter.RowUpdated += Adapter_RowUpdated;
-      Adapter.RowUpdating += Adapter_RowUpdating;
-      Table = CreateFilledTable();
-      if (parentListType == null) {
-        DataSet = new DataSet(TableName);
-        DataSet.Tables.Add(Table);
-      } else { // A parent entity list needs to be added.
-        try {
-          if (parentListType == typeof(PieceList)) {
-            ParentList = new PieceList(null);
-          } else {
-            ParentList = Factory<IEntityList>.Create(
-              parentListType,
-              // Indicate that the parent list does not itself require a parent list.
-              new object[] {null});
-          }
-        } catch (TargetInvocationException ex) {
-          throw ex.InnerException ?? ex;
-        }
-        DataSet = ParentList.DataSet;
-        DataSet.Tables.Add(Table);
-        // Create a relation between the main and parent tables.
-        var parentColumns = ParentKeyColumnsToDataColumns();
-        var childColumns = ForeignKeyColumnsToDataColumns();
-        DataSet.Relations.Add(
-          TableName + "_" + ParentList?.TableName,
-          parentColumns,
-          childColumns);
+      AdapterCommands = CreateAdapterCommands(selectCommand, insertCommand, updateCommand,
+        deleteCommand);
+      if (parentListType != null) {
+        ParentList = CreateParentList(parentListType);
       }
-      Refresh();
     }
 
     /// <summary>
     ///   Gets or sets the data adapter.
     /// </summary>
-    private OurSqlDataAdapter<T> Adapter { get; }
+    private OurSqlDataAdapter<T> Adapter { get; set; }
 
+    private IList<OurSqlCommand<T>> AdapterCommands { get; }
     private IEntity Entity { get; }
     private IEntity UnchangedEntity { get; set; }
 
@@ -155,7 +128,24 @@ namespace SoundExplorers.Data {
     ///   Gets the data set containing the main <see cref="Table" />
     ///   and, if specified, the parent table.
     /// </summary>
-    public DataSet DataSet { get; }
+    public DataSet DataSet { get; private set; }
+
+    /// <summary>
+    ///   Fetches the required records of the represented table.
+    /// </summary>
+    public void Fetch() {
+      Table = CreateFilledTable();
+      if (ParentList == null) {
+        DataSet = new DataSet(TableName);
+        DataSet.Tables.Add(Table);
+      } else { // A parent entity list needs to be added.
+        ParentList.Fetch();
+        DataSet = ParentList.DataSet;
+        DataSet.Tables.Add(Table);
+        DataSet.Relations.Add(CreateRelationBetweenMainAndParentTables());
+      }
+      Refresh();
+    }
 
     /// <summary>
     ///   Gets the list of entities representing the main table's
@@ -191,7 +181,7 @@ namespace SoundExplorers.Data {
     ///   Gets the data table containing the database records
     ///   represented by the list of entities.
     /// </summary>
-    public DataTable Table { get; }
+    public DataTable Table { get; private set; }
 
     /// <summary>
     ///   Updates the database table with any changes that have been input
@@ -322,6 +312,32 @@ namespace SoundExplorers.Data {
       base.Add(entity);
     }
 
+    [NotNull]
+    private OurSqlDataAdapter<T> CreateAdapter() {
+      var result = new OurSqlDataAdapter<T>(
+        (SelectCommand<T>)AdapterCommands[0],
+        (InsertCommand<T>)AdapterCommands[1],
+        (UpdateCommand<T>)AdapterCommands[2],
+        (DeleteCommand<T>)AdapterCommands[3]);
+      result.RowUpdated += Adapter_RowUpdated;
+      result.RowUpdating += Adapter_RowUpdating;
+      return result;
+    }
+
+    [NotNull]
+    private static IList<OurSqlCommand<T>> CreateAdapterCommands(
+      [CanBeNull] SelectCommand<T> selectCommand,
+      [CanBeNull] InsertCommand<T> insertCommand,
+      [CanBeNull] UpdateCommand<T> updateCommand,
+      [CanBeNull] DeleteCommand<T> deleteCommand) {
+      return new List<OurSqlCommand<T>>(4) {
+        selectCommand,
+        insertCommand,
+        updateCommand,
+        deleteCommand
+      };
+    }
+
     /// <summary>
     ///   Creates an <see cref="ApplicationException" />
     ///   for a duplicate key, providing a more meaningful
@@ -413,6 +429,7 @@ namespace SoundExplorers.Data {
     /// </remarks>
     [NotNull]
     private DataTable CreateFilledTable() {
+      Adapter = CreateAdapter();
       var table = new DataTable(typeof(T).Name);
       Adapter.Fill(table);
       for (int i = table.Columns.Count - 1; i >= 0; i--) {
@@ -612,6 +629,33 @@ namespace SoundExplorers.Data {
         + "\" cannot be found for table \"" + TableName
         + "\".",
         exception);
+    }
+
+    [NotNull]
+    private static IEntityList CreateParentList([NotNull] Type parentListType) {
+      IEntityList result;
+      try {
+        if (parentListType == typeof(PieceList)) {
+          result = new PieceList(null);
+        } else {
+          result = Factory<IEntityList>.Create(
+            parentListType,
+            // Indicate that the parent list does not itself require a parent list.
+            new object[] {null});
+        }
+      } catch (TargetInvocationException ex) {
+        throw ex.InnerException ?? ex;
+      }
+      return result;
+    }
+
+    private DataRelation CreateRelationBetweenMainAndParentTables() {
+      var parentColumns = ParentKeyColumnsToDataColumns();
+      var childColumns = ForeignKeyColumnsToDataColumns();
+      return new DataRelation(
+        TableName + "_" + ParentList?.TableName,
+        parentColumns,
+        childColumns);
     }
 
     private DataColumn[] ForeignKeyColumnsToDataColumns() {
