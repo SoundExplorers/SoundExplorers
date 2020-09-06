@@ -5,18 +5,28 @@ namespace SoundExplorers.Data {
   ///   A list of Sets.
   /// </summary>
   public class SetList : EntityList<Set> {
-    /// <overloads>
-    ///   Initialises a new instance of the <see cref="SetList" /> class,
-    ///   populating its list
-    ///   with all the Set records on the database,
-    /// </overloads>
     /// <summary>
     ///   Initialises a new instance of the <see cref="SetList" /> class,
-    ///   populating its list
-    ///   with all the Set records on the database.
+    ///   so that a subsequent call of the Fetch method will populate
+    ///   the instance's list with all the Set records on the database.
     /// </summary>
+    /// <remarks>
+    ///   Used when Set is the main table.
+    /// </remarks>
     [UsedImplicitly]
     public SetList()
+      : base(typeof(PerformanceList)) { }
+    
+    /// <summary>
+    ///   Initialises a new instance of the <see cref="SetList" /> class,
+    ///   so that a subsequent call of the Fetch method will populate
+    ///   the instance's list with all the Set records on the database.
+    /// </summary>
+    /// <remarks>
+    ///   Used when Set is the parent table.
+    /// </remarks>
+    [UsedImplicitly]
+    public SetList(object[] dummy = null)
       : base(typeof(PerformanceList)) { }
 
     /// <summary>
