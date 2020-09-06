@@ -26,8 +26,7 @@ namespace SoundExplorers.Data {
     ///   Used when Set is the parent table.
     /// </remarks>
     [UsedImplicitly]
-    public SetList(object[] dummy = null)
-      : base(typeof(PerformanceList)) { }
+    public SetList(object[] dummy = null) { }
 
     /// <summary>
     ///   An indexer that returns
