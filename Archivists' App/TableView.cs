@@ -131,7 +131,6 @@ namespace SoundExplorers {
 
     public void SetController(TableController controller) {
       Controller = controller;
-      OpenTable();
     }
 
     public void Copy() {
@@ -172,15 +171,15 @@ namespace SoundExplorers {
     /// </param>
     [NotNull]
     public static TableView Create([NotNull] string tableName) {
-      return (TableView)ViewFactory.Create<TableView, TableController>(tableName);
-      // TableView result;
-      // try {
-      //   result = new TableView();
-      //   var dummy = new TableController(result, tableName); 
-      // } catch (TargetInvocationException ex) {
-      //   throw ex.InnerException ?? ex;
-      // }
-      // return result;
+      //return (TableView)ViewFactory.Create<TableView, TableController>(tableName);
+      TableView result;
+      try {
+        result = new TableView();
+        var dummy = new TableController(result, tableName); 
+      } catch (TargetInvocationException ex) {
+        throw ex.InnerException ?? ex;
+      }
+      return result;
     }
 
     public void Cut() {
@@ -1286,6 +1285,10 @@ namespace SoundExplorers {
       // Has to be done here rather than in constructor
       // in order to tell that this is an MDI child form.
       SizeableFormOptions = SizeableFormOptions.Create(this);
+      // And better to do this here than in SetController,
+      // where any exception would be indirectly reported,
+      // due to the generic view/controller constructor.
+      OpenTable();
     }
 
     private void TableView_VisibleChanged(object sender, EventArgs e) {

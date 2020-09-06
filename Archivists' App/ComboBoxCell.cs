@@ -73,7 +73,7 @@ namespace SoundExplorers {
       // Set the value of the editing control to the current cell value.
       base.InitializeEditingControl(rowIndex, initialFormattedValue,
         dataGridViewCellStyle);
-      var referencedTable = Controller.GetReferencedTable();
+      var referencedTable = Controller.FetchReferencedTable();
       // string parentColumnName = null;
       // object parentColumnValue = null;
       // if (Column.TableName == "Image"

@@ -33,12 +33,6 @@ namespace SoundExplorers {
   ///     the original values do not get restored.
   ///     That's why it is worth implementing F2 to end edit here.
   ///   </para>
-  ///   <para>
-  ///     On a Mac keyboard,
-  ///     ⌘+Enter completes the edit and goes to next row.
-  ///     (Command (⌘) key on a Mac keyboard does the same
-  ///     as Windows/Start key on a Windows keyboard.)
-  ///   </para>
   /// </remarks>
   internal class PathCell : DataGridViewTextBoxCell, IView<PathCellController> {
     public PathCellController Controller { get; private set; }

@@ -189,6 +189,7 @@ namespace SoundExplorers.Controller {
       Entities = TableName == nameof(ArtistInImage)
         ? new ArtistInImageList()
         : Factory<IEntityList>.Create(TableName);
+      Entities.Fetch();
       Entities.RowError += Entities_RowError;
       Entities.RowUpdated += Entities_RowUpdated;
     }

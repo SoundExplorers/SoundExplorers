@@ -42,8 +42,10 @@ namespace SoundExplorers.Controller {
                                              ColumnName));
 
     [NotNull]
-    public DataTable GetReferencedTable() {
-      return Factory<IEntityList>.Create(ReferencedTableName).Table;
+    public DataTable FetchReferencedTable() {
+      var entityList = Factory<IEntityList>.Create(ReferencedTableName);
+      entityList.Fetch();
+      return entityList.Table;
     }
   }
 }
