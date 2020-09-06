@@ -6,14 +6,9 @@ namespace SoundExplorers.Data {
   ///   A list of Pieces.
   /// </summary>
   public class PieceList : EntityList<Piece> {
-    /// <overloads>
-    ///   Initialises a new instance of the <see cref="PieceList" /> class,
-    ///   populating its list
-    ///   with all the Piece records on the database.
-    /// </overloads>
     /// <summary>
     ///   Initialises a new instance of the <see cref="PieceList" /> class,
-    ///   populating its list
+    ///   so that a subsequent call of the Fetch method will populate its list
     ///   with all the Piece records on the database
     ///   and including all the Set records as a parent list.
     /// </summary>
@@ -22,7 +17,7 @@ namespace SoundExplorers.Data {
 
     /// <summary>
     ///   Initialises a new instance of the <see cref="PieceList" /> class,
-    ///   populating its list
+    ///   so that a subsequent call of the Fetch method will populate its list
     ///   with all the Piece records on the database,
     ///   optionally specifying the type of parent entity list
     ///   to include.

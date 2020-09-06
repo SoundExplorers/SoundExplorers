@@ -1,4 +1,5 @@
-﻿namespace SoundExplorers.Data {
+﻿
+namespace SoundExplorers.Data {
   /// <summary>
   ///   A list of Acts.
   /// </summary>

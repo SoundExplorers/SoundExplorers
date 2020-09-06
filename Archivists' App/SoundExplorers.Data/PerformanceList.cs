@@ -36,7 +36,7 @@ namespace SoundExplorers.Data {
 
     /// <summary>
     ///   Initialises a new instance of the <see cref="PerformanceList" /> class,
-    ///   populating its list
+    ///   so that a subsequent call of the Fetch method will populate its list
     ///   with all the Performance records on the database,
     ///   optionally specifying the type of parent entity list
     ///   to include.

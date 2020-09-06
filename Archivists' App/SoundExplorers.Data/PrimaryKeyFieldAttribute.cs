@@ -15,14 +15,7 @@ namespace SoundExplorers.Data {
     ///   The one-based left-to-right sequence number of the column
     ///   in the main grid.  Zero if not to be included in the main grid.
     /// </param>
-    /// <param name="nameOnDb">
-    ///   Optionally specifies the name of the column on the database.
-    ///   Required if different from the entity property name.
-    /// </param>
-    public PrimaryKeyFieldAttribute(int sequenceNo = 0, string nameOnDb = null) : base(sequenceNo) {
-      NameOnDb = nameOnDb;
+    public PrimaryKeyFieldAttribute(int sequenceNo = 0) : base(sequenceNo) {
     }
-
-    public string NameOnDb { get; }
   }
 }
