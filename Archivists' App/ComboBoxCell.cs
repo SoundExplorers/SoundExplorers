@@ -20,14 +20,14 @@ namespace SoundExplorers {
     private ComboBoxEditingControl ComboBox =>
       DataGridView.EditingControl as ComboBoxEditingControl;
 
-    private ComboBoxCellController Controller { get; set; }
+    private ComboBoxCellController Controller => (ComboBoxCellController)Tag; 
 
     public override Type EditType =>
       // Return the type of the editing control that ComboBoxCell uses.
       typeof(ComboBoxEditingControl);
 
     public void SetController(ComboBoxCellController controller) {
-      Controller = controller;
+      Tag = controller;
     }
 
     /// <summary>
@@ -73,6 +73,10 @@ namespace SoundExplorers {
       // Set the value of the editing control to the current cell value.
       base.InitializeEditingControl(rowIndex, initialFormattedValue,
         dataGridViewCellStyle);
+      FetchListData(initialFormattedValue);
+    }
+
+    private void FetchListData(object initialFormattedValue) {
       var referencedTable = Controller.FetchReferencedTable();
       // string parentColumnName = null;
       // object parentColumnValue = null;

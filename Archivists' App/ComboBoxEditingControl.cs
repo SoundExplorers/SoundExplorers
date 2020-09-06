@@ -3,7 +3,7 @@ using System.Windows.Forms;
 
 namespace SoundExplorers {
   /// <summary>
-  ///   Editing control for a calendar cell of a DataGridView.
+  ///   Editing control for a ComboBox cell of a DataGridView.
   /// </summary>
   internal class
     ComboBoxEditingControl : ComboBox, IDataGridViewEditingControl {
