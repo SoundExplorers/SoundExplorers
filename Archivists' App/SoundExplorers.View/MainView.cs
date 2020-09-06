@@ -5,7 +5,7 @@ using System.Windows.Forms;
 using JetBrains.Annotations;
 using SoundExplorers.Controller;
 
-namespace SoundExplorers {
+namespace SoundExplorers.View {
   public partial class MainView : Form, IView<MainController> {
     /// <summary>
     ///   Initialises a new instance of the <see cref="MainView" /> class.

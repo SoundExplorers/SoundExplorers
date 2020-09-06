@@ -3,7 +3,7 @@ using System.Windows.Forms;
 using JetBrains.Annotations;
 using SoundExplorers.Controller;
 
-namespace SoundExplorers {
+namespace SoundExplorers.View {
   /// <summary>
   ///   Select a Table dialog box.
   /// </summary>
