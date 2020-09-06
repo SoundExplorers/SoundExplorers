@@ -2,7 +2,7 @@ using System.ComponentModel;
 using System.Reflection;
 using System.Windows.Forms;
 
-namespace SoundExplorers {
+namespace SoundExplorers.View {
   /// <summary>
   ///   About <see cref="Form" />.
   /// </summary>
@@ -160,7 +160,7 @@ namespace SoundExplorers {
       this.PictureBox1.Cursor = System.Windows.Forms.Cursors.Default;
       this.PictureBox1.ForeColor = System.Drawing.SystemColors.ControlText;
       this.PictureBox1.Image =
-        global::SoundExplorers.Properties.Resources.FredFlintstone;
+        global::SoundExplorers.View.Properties.Resources.FredFlintstone;
       this.PictureBox1.Location = new System.Drawing.Point(24, 24);
       this.PictureBox1.Name = "PictureBox1";
       this.PictureBox1.Size = new System.Drawing.Size(200, 200);

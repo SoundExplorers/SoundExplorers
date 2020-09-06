@@ -1,4 +1,4 @@
-﻿namespace SoundExplorers {
+﻿namespace SoundExplorers.View {
     partial class TableView {
         /// <summary>
         /// Required designer variable.
@@ -31,7 +31,7 @@
             this.ParentGrid = new System.Windows.Forms.DataGridView();
             this.MainGrid = new System.Windows.Forms.DataGridView();
             this.MissingImageLabel = new System.Windows.Forms.Label();
-            this.FittedPictureBox1 = new SoundExplorers.FittedPictureBox();
+            this.FittedPictureBox1 = new FittedPictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.ImageSplitContainer)).BeginInit();
             this.ImageSplitContainer.Panel1.SuspendLayout();
             this.ImageSplitContainer.Panel2.SuspendLayout();
@@ -185,7 +185,7 @@
         private System.Windows.Forms.SplitContainer GridSplitContainer;
         private System.Windows.Forms.DataGridView ParentGrid;
         private System.Windows.Forms.DataGridView MainGrid;
-        private SoundExplorers.FittedPictureBox FittedPictureBox1;
+        private FittedPictureBox FittedPictureBox1;
         private System.Windows.Forms.Label MissingImageLabel;
 
     }

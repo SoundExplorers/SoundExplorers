@@ -16,7 +16,7 @@ using System.Threading;
 using System.Windows.Forms;
 using SoundExplorers.Controller;
 
-namespace SoundExplorers {
+namespace SoundExplorers.View {
   /// <summary>
   ///   A class for managing the application splash screen.
   ///   The Splash screen is loaded in its own thread (i.e.,

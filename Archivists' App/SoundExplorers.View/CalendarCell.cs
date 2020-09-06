@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 
-namespace SoundExplorers {
+namespace SoundExplorers.View {
   /// <summary>
   ///   Calendar cell of a DataGridView.
   /// </summary>

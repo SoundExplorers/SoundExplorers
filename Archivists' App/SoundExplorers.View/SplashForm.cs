@@ -1,6 +1,6 @@
 using System.Windows.Forms;
 
-namespace SoundExplorers {
+namespace SoundExplorers.View {
   public class SplashForm : SplashFormBase {
     private PictureBox pictureBox1;
     private Label productNameLabel;
@@ -54,7 +54,7 @@ namespace SoundExplorers {
       // pictureBox1
       // 
       this.pictureBox1.Image =
-        global::SoundExplorers.Properties.Resources.FredFlintstone;
+        global::SoundExplorers.View.Properties.Resources.FredFlintstone;
       this.pictureBox1.ImageLocation = "";
       this.pictureBox1.Location = new System.Drawing.Point(142, 79);
       this.pictureBox1.Name = "pictureBox1";

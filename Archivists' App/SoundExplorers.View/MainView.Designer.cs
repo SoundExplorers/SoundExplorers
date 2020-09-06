@@ -1,4 +1,4 @@
-﻿namespace SoundExplorers {
+﻿namespace SoundExplorers.View {
     partial class MainView {
         /// <summary>
         /// Required designer variable.
@@ -424,7 +424,7 @@
             // 
             this.NewToolStripButton.AutoSize = false;
             this.NewToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.NewToolStripButton.Image = global::SoundExplorers.Properties.Resources.ActionsDocumentNew32x32;
+            this.NewToolStripButton.Image = global::SoundExplorers.View.Properties.Resources.ActionsDocumentNew32x32;
             this.NewToolStripButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.NewToolStripButton.ImageTransparentColor = System.Drawing.Color.Black;
             this.NewToolStripButton.Name = "NewToolStripButton";
@@ -436,7 +436,7 @@
             // 
             this.OpenToolStripButton.AutoSize = false;
             this.OpenToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.OpenToolStripButton.Image = global::SoundExplorers.Properties.Resources.ActionsDocumentOpen32x32;
+            this.OpenToolStripButton.Image = global::SoundExplorers.View.Properties.Resources.ActionsDocumentOpen32x32;
             this.OpenToolStripButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.OpenToolStripButton.ImageTransparentColor = System.Drawing.Color.Black;
             this.OpenToolStripButton.Name = "OpenToolStripButton";
@@ -448,7 +448,7 @@
             // 
             this.RefreshToolStripButton.AutoSize = false;
             this.RefreshToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.RefreshToolStripButton.Image = global::SoundExplorers.Properties.Resources.ActionsViewRefresh32x32;
+            this.RefreshToolStripButton.Image = global::SoundExplorers.View.Properties.Resources.ActionsViewRefresh32x32;
             this.RefreshToolStripButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.RefreshToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.RefreshToolStripButton.Name = "RefreshToolStripButton";
@@ -460,7 +460,7 @@
             // 
             this.CopyToolStripButton.AutoSize = false;
             this.CopyToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.CopyToolStripButton.Image = global::SoundExplorers.Properties.Resources.ActionsEditCopy32x32;
+            this.CopyToolStripButton.Image = global::SoundExplorers.View.Properties.Resources.ActionsEditCopy32x32;
             this.CopyToolStripButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.CopyToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.CopyToolStripButton.Name = "CopyToolStripButton";
@@ -472,7 +472,7 @@
             // 
             this.CutToolStripButton.AutoSize = false;
             this.CutToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.CutToolStripButton.Image = global::SoundExplorers.Properties.Resources.ActionsEditCut32x32;
+            this.CutToolStripButton.Image = global::SoundExplorers.View.Properties.Resources.ActionsEditCut32x32;
             this.CutToolStripButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.CutToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.CutToolStripButton.Name = "CutToolStripButton";
@@ -484,7 +484,7 @@
             // 
             this.PasteToolStripButton.AutoSize = false;
             this.PasteToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.PasteToolStripButton.Image = global::SoundExplorers.Properties.Resources.ActionsEditPaste32x32;
+            this.PasteToolStripButton.Image = global::SoundExplorers.View.Properties.Resources.ActionsEditPaste32x32;
             this.PasteToolStripButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.PasteToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.PasteToolStripButton.Name = "PasteToolStripButton";
@@ -496,7 +496,7 @@
             // 
             this.PlayAudioToolStripButton.AutoSize = false;
             this.PlayAudioToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.PlayAudioToolStripButton.Image = global::SoundExplorers.Properties.Resources.MusicLibrary32x32;
+            this.PlayAudioToolStripButton.Image = global::SoundExplorers.View.Properties.Resources.MusicLibrary32x32;
             this.PlayAudioToolStripButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.PlayAudioToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.PlayAudioToolStripButton.Name = "PlayAudioToolStripButton";
@@ -508,7 +508,7 @@
             // 
             this.PlayVideoToolStripButton.AutoSize = false;
             this.PlayVideoToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.PlayVideoToolStripButton.Image = global::SoundExplorers.Properties.Resources.DevicesVideoDisplay32x32;
+            this.PlayVideoToolStripButton.Image = global::SoundExplorers.View.Properties.Resources.DevicesVideoDisplay32x32;
             this.PlayVideoToolStripButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.PlayVideoToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.PlayVideoToolStripButton.Name = "PlayVideoToolStripButton";
@@ -520,7 +520,7 @@
             // 
             this.ShowNewsletterToolStripButton.AutoSize = false;
             this.ShowNewsletterToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.ShowNewsletterToolStripButton.Image = global::SoundExplorers.Properties.Resources.News32x32;
+            this.ShowNewsletterToolStripButton.Image = global::SoundExplorers.View.Properties.Resources.News32x32;
             this.ShowNewsletterToolStripButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.ShowNewsletterToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.ShowNewsletterToolStripButton.Name = "ShowNewsletterToolStripButton";
@@ -532,7 +532,7 @@
             // 
             this.HelpToolStripButton.AutoSize = false;
             this.HelpToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.HelpToolStripButton.Image = global::SoundExplorers.Properties.Resources.HelpAndSupport32x32;
+            this.HelpToolStripButton.Image = global::SoundExplorers.View.Properties.Resources.HelpAndSupport32x32;
             this.HelpToolStripButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.HelpToolStripButton.ImageTransparentColor = System.Drawing.Color.Black;
             this.HelpToolStripButton.Name = "HelpToolStripButton";

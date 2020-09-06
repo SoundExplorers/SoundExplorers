@@ -3,7 +3,7 @@ using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 
-namespace SoundExplorers {
+namespace SoundExplorers.View {
   /// <summary>
   ///   Editing control for a path cell of a DataGridView.
   /// </summary>

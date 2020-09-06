@@ -55,62 +55,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AboutForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="CalendarCell.cs" />
-    <Compile Include="CalendarEditingControl.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="ComboBoxEditingControl.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="ComboBoxCell.cs" />
-    <Compile Include="EventShortcut.cs" />
-    <Compile Include="EventShortcutList.cs" />
-    <Compile Include="FittedPictureBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="PathCell.cs" />
-    <Compile Include="MainView.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="MainView.Designer.cs">
-      <DependentUpon>MainView.cs</DependentUpon>
-    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SelectTableView.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="SelectTableView.Designer.cs">
-      <DependentUpon>SelectTableView.cs</DependentUpon>
-    </Compile>
-    <Compile Include="SizeableFormOptions.cs" />
-    <Compile Include="SplashForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="SplashFormBase.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="SplashManager.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="TableView.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="TableView.Designer.cs">
-      <DependentUpon>TableView.cs</DependentUpon>
-    </Compile>
-    <Compile Include="PathEditingControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <EmbeddedResource Include="AboutForm.resx">
-      <DependentUpon>AboutForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="MainView.resx">
-      <DependentUpon>MainView.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -121,15 +67,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <EmbeddedResource Include="SelectTableView.resx">
-      <DependentUpon>SelectTableView.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="SplashForm.resx">
-      <DependentUpon>SplashForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="TableView.resx">
-      <DependentUpon>TableView.cs</DependentUpon>
-    </EmbeddedResource>
     <None Include="app.config" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
@@ -143,107 +80,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="SoundExplorers.Common\SoundExplorers.Common.csproj">
-      <Project>{24f52a9c-6679-4029-abfd-7eaa964cc945}</Project>
-      <Name>SoundExplorers.Common</Name>
+    <ProjectReference Include="SoundExplorers.View\SoundExplorers.View.csproj">
+      <Project>{09f2f432-dc9e-4638-9d5e-69753732150e}</Project>
+      <Name>SoundExplorers.View</Name>
     </ProjectReference>
-    <ProjectReference Include="SoundExplorers.Controller\SoundExplorers.Controller.csproj">
-      <Project>{1df40f87-9462-4211-9f51-a15af63cb6ae}</Project>
-      <Name>SoundExplorers.Controller</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Images\Actions Document New 16x16.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Images\Actions Document New 32x32.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Images\Actions Document New 48x48.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Images\Actions Document Open 16x16.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Images\Actions Document Open 32x32.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Images\Actions Document Open 48x48.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Images\Actions Edit Copy 16x16.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Images\Actions Edit Copy 32x32.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Images\Actions Edit Copy 48x48.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Images\Actions Edit Cut 16x16.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Images\Actions Edit Cut 32x32.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Images\Actions Edit Cut 48x48.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Images\Actions Edit Paste 16x16.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Images\Actions Edit Paste 32x32.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Images\Actions Edit Paste 48x48.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Images\Actions View Refresh 16x16.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Images\Actions View Refresh 32x32.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Images\Actions View Refresh 48x48.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Images\Devices Video Display 16x16.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Images\Devices Video Display 32x32.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Images\Devices Video Display 48x48.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Images\Help and Support 16x16.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Images\Help and Support 32x32.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Images\Help and Support 48x48.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Images\Music Library 16x16.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Images\Music Library 32x32.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Images\Music Library 48x48.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Images\News 16x16.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Images\News 32x32.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Images\News 48x48.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Images\Fred Flintstone.jpg" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Fred Flintstone.ico" />

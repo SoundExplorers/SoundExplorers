@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using SoundExplorers.Controller;
 
-namespace SoundExplorers {
+namespace SoundExplorers.View {
 	/// <summary>
 	///   Base class for splash forms.
 	/// </summary>

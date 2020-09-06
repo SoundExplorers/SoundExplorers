@@ -5,7 +5,7 @@ using System.Windows.Forms;
 using JetBrains.Annotations;
 using SoundExplorers.Controller;
 
-namespace SoundExplorers {
+namespace SoundExplorers.View {
   /// <summary>
   ///   A DataGridView cell that supports editing via an embedded ComboBox control.
   /// </summary>

@@ -4,7 +4,7 @@ using System.Windows.Forms;
 using JetBrains.Annotations;
 using SoundExplorers.Controller;
 
-namespace SoundExplorers {
+namespace SoundExplorers.View {
   /// <summary>
   ///   A DataGridView Cell that supports the editing of a file path.
   /// </summary>

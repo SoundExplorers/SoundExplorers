@@ -5,7 +5,7 @@ using System.Windows.Forms;
 using JetBrains.Annotations;
 using SoundExplorers.Controller;
 
-namespace SoundExplorers {
+namespace SoundExplorers.View {
   /// <summary>
   ///   Allows a <see cref="Form" />'s size,
   ///   location and state to be saved and restored.

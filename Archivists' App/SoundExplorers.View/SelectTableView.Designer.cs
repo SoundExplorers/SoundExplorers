@@ -1,4 +1,4 @@
-﻿namespace SoundExplorers {
+﻿namespace SoundExplorers.View {
     partial class SelectTableView {
         /// <summary>
         /// Required designer variable.
