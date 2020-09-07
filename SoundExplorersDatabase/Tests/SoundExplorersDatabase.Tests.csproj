@@ -73,12 +73,12 @@
         </Reference>
         <Reference Include="System.Transactions" />
         <Reference Include="System.Xml" />
-        <Reference Include="VelocityDb, Version=9.1.0.0, Culture=neutral, PublicKeyToken=f050dff7995aa24a">
-          <HintPath>..\packages\VelocityDB.9.1.0\lib\net45\VelocityDb.dll</HintPath>
+        <Reference Include="VelocityDb, Version=9.1.1.0, Culture=neutral, PublicKeyToken=f050dff7995aa24a">
+          <HintPath>..\packages\VelocityDB.9.1.2\lib\net45\VelocityDb.dll</HintPath>
           <Private>True</Private>
         </Reference>
-        <Reference Include="VelocityDBExtensions, Version=9.1.0.0, Culture=neutral, PublicKeyToken=null">
-          <HintPath>..\packages\VelocityDBExtensions.9.1.0\lib\net45\VelocityDBExtensions.dll</HintPath>
+        <Reference Include="VelocityDBExtensions, Version=9.1.1.0, Culture=neutral, PublicKeyToken=null">
+          <HintPath>..\packages\VelocityDBExtensions.9.1.2\lib\net45\VelocityDBExtensions.dll</HintPath>
           <Private>True</Private>
         </Reference>
     </ItemGroup>
