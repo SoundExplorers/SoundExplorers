@@ -77,6 +77,10 @@
       <Project>{09f2f432-dc9e-4638-9d5e-69753732150e}</Project>
       <Name>SoundExplorers.View</Name>
     </ProjectReference>
+    <ProjectReference Include="View\SoundExplorers.View.csproj">
+      <Project>{09f2f432-dc9e-4638-9d5e-69753732150e}</Project>
+      <Name>SoundExplorers.View</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Fred Flintstone.ico" />

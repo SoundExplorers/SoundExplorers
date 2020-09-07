@@ -56,17 +56,17 @@
         <Compile Include="ViewFactory.cs" />
     </ItemGroup>
     <ItemGroup>
-      <ProjectReference Include="..\SoundExplorers.Common\SoundExplorers.Common.csproj">
+      <None Include="packages.config" />
+    </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\Common\SoundExplorers.Common.csproj">
         <Project>{24f52a9c-6679-4029-abfd-7eaa964cc945}</Project>
         <Name>SoundExplorers.Common</Name>
       </ProjectReference>
-      <ProjectReference Include="..\SoundExplorers.Data\SoundExplorers.Data.csproj">
+      <ProjectReference Include="..\Data\SoundExplorers.Data.csproj">
         <Project>{18afe356-86b5-48cf-8f8d-4c6c0bd72f2f}</Project>
         <Name>SoundExplorers.Data</Name>
       </ProjectReference>
-    </ItemGroup>
-    <ItemGroup>
-      <None Include="packages.config" />
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
     <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
