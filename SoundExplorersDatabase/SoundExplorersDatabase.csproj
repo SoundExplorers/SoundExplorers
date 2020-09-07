@@ -98,6 +98,7 @@
     <Compile Include="Series.cs" />
     <Compile Include="Set.cs" />
     <Compile Include="SortedChildList.cs" />
+    <Compile Include="UserOption.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Entity Relationship Diagram.cd" />

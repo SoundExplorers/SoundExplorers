@@ -106,6 +106,7 @@
         <Compile Include="Data\Son.cs" />
         <Compile Include="Data\TestSchema.cs" />
         <Compile Include="Data\TestSession.cs" />
+        <Compile Include="Data\UserOptionTests.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
     </ItemGroup>
     <ItemGroup>
