@@ -12,7 +12,7 @@ namespace SoundExplorersDatabase {
     private string _optionName;
     private string _optionValue;
     private string _userId;
-    public UserOption() : base(typeof(UserOption), "SimpleKey", null) { }
+    public UserOption() : base(typeof(UserOption), nameof(SimpleKey), null) { }
 
     public string OptionName {
       get => _optionName;
