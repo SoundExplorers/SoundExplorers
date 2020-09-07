@@ -1,5 +1,5 @@
 ﻿using JetBrains.Annotations;
-using SoundExplorers.Data;
+using SoundExplorers.Model;
 
 namespace SoundExplorers.Controller {
   public class SizeableFormOptionsController {

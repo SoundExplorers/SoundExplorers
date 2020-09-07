@@ -26,7 +26,7 @@ namespace SoundExplorers.Data {
       }
     }
 
-    [NotNull]
+    [CanBeNull]
     public string OptionValue {
       get => _optionValue;
       set {

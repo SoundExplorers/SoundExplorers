@@ -90,8 +90,13 @@
     <Compile Include="EntityBase.cs" />
     <Compile Include="Event.cs" />
     <Compile Include="EventType.cs" />
+    <Compile Include="Factory.cs" />
     <Compile Include="Genre.cs" />
     <Compile Include="IEntity.cs" />
+    <Compile Include="IEntityColumn.cs" />
+    <Compile Include="IEntityColumnContainer.cs" />
+    <Compile Include="IEntityColumnList.cs" />
+    <Compile Include="IEntityList.cs" />
     <Compile Include="IRelationInfo.cs" />
     <Compile Include="Key.cs" />
     <Compile Include="KeyComparer.cs" />
@@ -102,6 +107,7 @@
     <Compile Include="QueryHelper.cs" />
     <Compile Include="RelationInfo.cs" />
     <Compile Include="Role.cs" />
+    <Compile Include="RowUpdatedEventArgs.cs" />
     <Compile Include="Schema.cs" />
     <Compile Include="Series.cs" />
     <Compile Include="Set.cs" />
@@ -111,6 +117,12 @@
   <ItemGroup>
     <None Include="Entity Relationship Diagram.cd" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Common\SoundExplorers.Common.csproj">
+      <Project>{24f52a9c-6679-4029-abfd-7eaa964cc945}</Project>
+      <Name>SoundExplorers.Common</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

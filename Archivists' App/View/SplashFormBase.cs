@@ -75,22 +75,22 @@ namespace SoundExplorers.View {
 		/// </summary>
 		private readonly Container components = null;
 
-		/// <summary>
-		///   A <see cref="System.Windows.Forms.Panel" />
-		///   onto which
-		///   <see cref="System.Windows.Forms.Control" />s
-		///   for the splash form can be placed.
-		/// </summary>
-		public Panel SplashPanel;
-
-		/// <summary>
-		///   A <see cref="System.Windows.Forms.Label" />
-		///   where information about the application
-		///   load status can be shown.
-		/// </summary>
-		public Label StatusLabel;
-
     private string _status = "";
+
+    /// <summary>
+    ///   A <see cref="System.Windows.Forms.Panel" />
+    ///   onto which
+    ///   <see cref="System.Windows.Forms.Control" />s
+    ///   for the splash form can be placed.
+    /// </summary>
+    public Panel SplashPanel;
+
+    /// <summary>
+    ///   A <see cref="System.Windows.Forms.Label" />
+    ///   where information about the application
+    ///   load status can be shown.
+    /// </summary>
+    public Label StatusLabel;
 
     /// <summary>
     ///   Creates a new instance of the <see cref="SplashFormBase" /> classs.

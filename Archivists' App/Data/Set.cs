@@ -11,7 +11,6 @@ namespace SoundExplorers.Data {
   public class Set : EntityBase {
     private Act _act;
     private Genre _genre;
-    private bool _isPublic;
     private string _notes;
     private int _setNo;
 
@@ -50,10 +49,7 @@ namespace SoundExplorers.Data {
       }
     }
 
-    public bool IsPublic {
-      get => _isPublic;
-      set => _isPublic = value;
-    }
+    public bool IsPublic { get; set; }
 
     [CanBeNull]
     public string Notes {

@@ -37,7 +37,7 @@ namespace SoundExplorers.Data {
     ///   comparisons with Keys that are properties of entities.
     /// </summary>
     /// <param name="simpleKey">
-    ///   The simple key to be used for comparison. 
+    ///   The simple key to be used for comparison.
     /// </param>
     /// <param name="identifyingParent">
     ///   The identifying parent entity, if applicable,

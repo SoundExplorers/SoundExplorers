@@ -4,11 +4,11 @@
     <PropertyGroup>
         <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
         <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-        <ProjectGuid>{1DF40F87-9462-4211-9F51-A15AF63CB6AE}</ProjectGuid>
+        <ProjectGuid>{F49E2374-EF0D-46A3-AD01-6F52A5826473}</ProjectGuid>
         <OutputType>Library</OutputType>
         <AppDesignerFolder>Properties</AppDesignerFolder>
-        <RootNamespace>SoundExplorers.Controller</RootNamespace>
-        <AssemblyName>SoundExplorers.Controller</AssemblyName>
+        <RootNamespace>SoundExplorers.Model</RootNamespace>
+        <AssemblyName>SoundExplorers.Model</AssemblyName>
         <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
         <FileAlignment>512</FileAlignment>
     </PropertyGroup>
@@ -40,37 +40,24 @@
         <Reference Include="System.Core" />
         <Reference Include="System.Data" />
         <Reference Include="System.Xml" />
+        <Reference Include="VelocityDb, Version=9.1.1.0, Culture=neutral, PublicKeyToken=f050dff7995aa24a">
+          <HintPath>..\packages\VelocityDB.9.1.2\lib\net45\VelocityDb.dll</HintPath>
+          <Private>True</Private>
+        </Reference>
     </ItemGroup>
     <ItemGroup>
-        <Compile Include="CellControllerBase.cs" />
-        <Compile Include="ComboBoxCellController.cs" />
-        <Compile Include="IMessageUpdater.cs" />
-        <Compile Include="ITableView.cs" />
-        <Compile Include="IView.cs" />
-        <Compile Include="MainController.cs" />
-        <Compile Include="PathCellController.cs" />
+        <Compile Include="Global.cs" />
+        <Compile Include="Option.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
-        <Compile Include="SelectTableController.cs" />
-        <Compile Include="SizeableFormOptionsController.cs" />
-        <Compile Include="TableController.cs" />
-        <Compile Include="ViewFactory.cs" />
     </ItemGroup>
     <ItemGroup>
-      <None Include="packages.config" />
-    </ItemGroup>
-    <ItemGroup>
-      <ProjectReference Include="..\Common\SoundExplorers.Common.csproj">
-        <Project>{24f52a9c-6679-4029-abfd-7eaa964cc945}</Project>
-        <Name>SoundExplorers.Common</Name>
-      </ProjectReference>
       <ProjectReference Include="..\Data\SoundExplorers.Data.csproj">
         <Project>{eb9dd1ae-4445-45c2-bd75-b27cf5a87642}</Project>
         <Name>SoundExplorers.Data</Name>
       </ProjectReference>
-      <ProjectReference Include="..\Model\SoundExplorers.Model.csproj">
-        <Project>{f49e2374-ef0d-46a3-ad01-6f52a5826473}</Project>
-        <Name>SoundExplorers.Model</Name>
-      </ProjectReference>
+    </ItemGroup>
+    <ItemGroup>
+      <None Include="packages.config" />
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
     <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

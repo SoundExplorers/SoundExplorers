@@ -6,7 +6,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace SoundExplorers.Data {
   /// <summary>
   ///   Credit entity, specifying the Role played by an Artist in a Piece,
-  ///   usually the instrument played by a musician. 
+  ///   usually the instrument played by a musician.
   /// </summary>
   public class Credit : EntityBase {
     private Artist _artist;

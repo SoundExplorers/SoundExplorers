@@ -147,7 +147,7 @@ namespace SoundExplorers.Tests.Data {
       Assert.AreEqual(Set1SetNo, Set1.SetNo, "Set1.SetNo");
       Assert.AreEqual(Set1Notes, Set1.Notes, "Set1.Notes");
       Assert.IsFalse(Set1.IsPublic, "Set1.IsPublic");
-      Assert.AreEqual( Genre1Name, Set1.Genre.Name, "Set1.Genre.Name");
+      Assert.AreEqual(Genre1Name, Set1.Genre.Name, "Set1.Genre.Name");
       Assert.AreEqual(Set1SetNo, Set1AtEvent2.SetNo, "Set1_2.SetNo");
       Assert.AreEqual(Set2SetNo, Set2.SetNo, "Set2.SetNo");
       Assert.IsTrue(Set2.IsPublic, "Set2.IsPublic");

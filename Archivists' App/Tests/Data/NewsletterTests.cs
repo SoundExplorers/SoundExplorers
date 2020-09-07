@@ -43,7 +43,7 @@ namespace SoundExplorers.Tests.Data {
         Location1.Events.Add(Event2);
         Newsletter1.Events.Add(Event1);
         Event1.EventType = TestDataFactory.CreateEventTypePersisted(session);
-        Event2.EventType = Event1.EventType; 
+        Event2.EventType = Event1.EventType;
         session.Persist(Event1);
         session.Persist(Event2);
         session.Commit();

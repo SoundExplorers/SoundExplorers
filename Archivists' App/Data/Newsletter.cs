@@ -19,7 +19,7 @@ namespace SoundExplorers.Data {
     }
 
     /// <summary>
-    /// The newsletter's publication date (email send date).
+    ///   The newsletter's publication date (email send date).
     /// </summary>
     /// <exception cref="NoNullAllowedException"></exception>
     public DateTime Date {
@@ -38,8 +38,8 @@ namespace SoundExplorers.Data {
     [NotNull] public SortedChildList<Event> Events { get; }
 
     /// <summary>
-    /// The URL where the newsletter is archived.
-    /// Must be specified and unique.
+    ///   The URL where the newsletter is archived.
+    ///   Must be specified and unique.
     /// </summary>
     public Uri Url {
       get => _url;

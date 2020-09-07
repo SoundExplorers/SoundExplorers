@@ -20,7 +20,7 @@ namespace SoundExplorers.View {
     private ComboBoxEditingControl ComboBox =>
       DataGridView.EditingControl as ComboBoxEditingControl;
 
-    private ComboBoxCellController Controller => (ComboBoxCellController)Tag; 
+    private ComboBoxCellController Controller => (ComboBoxCellController)Tag;
 
     public override Type EditType =>
       // Return the type of the editing control that ComboBoxCell uses.

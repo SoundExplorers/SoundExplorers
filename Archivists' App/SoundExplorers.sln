@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoundExplorers.Data", "Data
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoundExplorers.Tests", "Tests\SoundExplorers.Tests.csproj", "{70A5D5EE-C1A7-48E3-A777-10435BDD84DC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoundExplorers.Model", "Model\SoundExplorers.Model.csproj", "{F49E2374-EF0D-46A3-AD01-6F52A5826473}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -85,6 +87,18 @@ Global
 		{70A5D5EE-C1A7-48E3-A777-10435BDD84DC}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{70A5D5EE-C1A7-48E3-A777-10435BDD84DC}.Release|x86.ActiveCfg = Release|Any CPU
 		{70A5D5EE-C1A7-48E3-A777-10435BDD84DC}.Release|x86.Build.0 = Release|Any CPU
+		{F49E2374-EF0D-46A3-AD01-6F52A5826473}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F49E2374-EF0D-46A3-AD01-6F52A5826473}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F49E2374-EF0D-46A3-AD01-6F52A5826473}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{F49E2374-EF0D-46A3-AD01-6F52A5826473}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{F49E2374-EF0D-46A3-AD01-6F52A5826473}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{F49E2374-EF0D-46A3-AD01-6F52A5826473}.Debug|x86.Build.0 = Debug|Any CPU
+		{F49E2374-EF0D-46A3-AD01-6F52A5826473}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F49E2374-EF0D-46A3-AD01-6F52A5826473}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F49E2374-EF0D-46A3-AD01-6F52A5826473}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{F49E2374-EF0D-46A3-AD01-6F52A5826473}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{F49E2374-EF0D-46A3-AD01-6F52A5826473}.Release|x86.ActiveCfg = Release|Any CPU
+		{F49E2374-EF0D-46A3-AD01-6F52A5826473}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

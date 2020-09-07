@@ -11,12 +11,12 @@ namespace SoundExplorers.View {
       Assembly.GetEntryAssembly();
 
     private readonly IContainer components = null;
-    private PictureBox PictureBox1;
-    private Button OKButtion;
     private Label CopyrightLabel;
+    private Button OKButtion;
+    private Panel Panel1;
+    private PictureBox PictureBox1;
     private Label ProductNameLabel;
     private Label VersionLabel;
-    private Panel Panel1;
 
     /// <summary>
     ///   Initialises a new instance of the

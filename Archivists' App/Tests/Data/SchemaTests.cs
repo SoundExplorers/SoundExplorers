@@ -24,7 +24,7 @@ namespace SoundExplorers.Tests.Data {
     public void NewSchema() {
       // Must be update transaction to allow for the existence of
       // the database schema file ('schema database')to be checked.
-      Session.BeginUpdate(); 
+      Session.BeginUpdate();
       var schema = Schema.Find(QueryHelper, Session);
       Session.Commit();
       Assert.IsNull(schema, "Schema initially");
