@@ -6,7 +6,7 @@ using System.Diagnostics.CodeAnalysis;
 using JetBrains.Annotations;
 using VelocityDb.Session;
 
-namespace SoundExplorersDatabase.Data {
+namespace SoundExplorersDatabase {
   /// <summary>
   ///   An entity representing a piece for which an audio and/or video
   ///   recording is archived.

@@ -1,7 +1,7 @@
 ﻿using System;
 using JetBrains.Annotations;
 
-namespace SoundExplorersDatabase.Data {
+namespace SoundExplorersDatabase {
   public class RelationInfo : IRelationInfo {
     internal RelationInfo(
       [NotNull] Type parentType, [NotNull] Type childType, bool isMandatory) {

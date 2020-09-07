@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using NUnit.Framework;
-using SoundExplorersDatabase.Data;
 using VelocityDb;
 
 namespace SoundExplorersDatabase.Tests.Data {

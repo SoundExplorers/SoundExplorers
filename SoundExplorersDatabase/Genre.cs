@@ -3,16 +3,15 @@ using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using JetBrains.Annotations;
 
-namespace SoundExplorersDatabase.Data {
-  public class Role : EntityBase {
-    /// <summary>
-    ///   Role entity, usually representing a musical instrument.
-    /// </summary>
-    public Role() : base(typeof(Role), nameof(Name), null) {
-      Credits = new SortedChildList<Credit>(this);
-    }
+namespace SoundExplorersDatabase {
+  /// <summary>
+  ///   An entity representing a Set's genre.
+  /// </summary>
+  public class Genre : EntityBase {
 
-    [NotNull] public SortedChildList<Credit> Credits { get; }
+    public Genre() : base(typeof(Genre), nameof(Name), null) {
+      Sets = new SortedChildList<Set>(this);
+    }
 
     [CanBeNull]
     public string Name {
@@ -23,8 +22,10 @@ namespace SoundExplorersDatabase.Data {
       }
     }
 
+    [NotNull] public SortedChildList<Set> Sets { get; }
+
     protected override IDictionary GetChildren(Type childType) {
-      return Credits;
+      return Sets;
     }
 
     [ExcludeFromCodeCoverage]

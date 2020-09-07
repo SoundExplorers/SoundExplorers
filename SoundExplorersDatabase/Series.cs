@@ -3,14 +3,15 @@ using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using JetBrains.Annotations;
 
-namespace SoundExplorersDatabase.Data {
+namespace SoundExplorersDatabase {
   /// <summary>
-  ///   An entity representing a type of Events.
-  ///   A performance or rehearsal, for example.
+  ///   An entity representing a series of Events.
+  ///   A festival, for example.
   /// </summary>
-  public class EventType : EntityBase {
+  public class Series : EntityBase {
+    private string _notes;
 
-    public EventType() : base(typeof(EventType), nameof(Name), null) {
+    public Series() : base(typeof(Series), nameof(Name), null) {
       Events = new SortedChildList<Event>(this);
     }
 
@@ -22,6 +23,15 @@ namespace SoundExplorersDatabase.Data {
       set {
         UpdateNonIndexField();
         SimpleKey = value;
+      }
+    }
+
+    [CanBeNull]
+    public string Notes {
+      get => _notes;
+      set {
+        UpdateNonIndexField();
+        _notes = value;
       }
     }
 

@@ -3,7 +3,7 @@ using System.Collections;
 using System.Data;
 using JetBrains.Annotations;
 
-namespace SoundExplorersDatabase.Data {
+namespace SoundExplorersDatabase {
   /// <summary>
   ///   An entity representing an event.
   ///   Usually a performance, but could, for example,

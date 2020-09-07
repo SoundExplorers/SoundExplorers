@@ -4,7 +4,7 @@ using JetBrains.Annotations;
 using VelocityDb;
 using VelocityDb.Session;
 
-namespace SoundExplorersDatabase.Data {
+namespace SoundExplorersDatabase {
   /// <summary>
   ///   Database schema entity.
   /// </summary>

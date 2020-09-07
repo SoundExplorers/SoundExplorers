@@ -3,20 +3,16 @@ using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using JetBrains.Annotations;
 
-namespace SoundExplorersDatabase.Data {
+namespace SoundExplorersDatabase {
   /// <summary>
-  ///   An entity representing a location where Events have been held.
-  ///   Typically a music venue, but could, for example,
-  ///   be an outdoor location.
+  ///   An entity representing an act that has performed at Events.
   /// </summary>
-  public class Location : EntityBase {
+  public class Act : EntityBase {
     private string _notes;
 
-    public Location() : base(typeof(Location), nameof(Name), null) {
-      Events = new SortedChildList<Event>(this);
+    public Act() : base(typeof(Act), nameof(Name), null) {
+      Sets = new SortedChildList<Set>(this);
     }
-
-    [NotNull] public SortedChildList<Event> Events { get; }
 
     [CanBeNull]
     public string Name {
@@ -36,8 +32,10 @@ namespace SoundExplorersDatabase.Data {
       }
     }
 
+    [NotNull] public SortedChildList<Set> Sets { get; }
+
     protected override IDictionary GetChildren(Type childType) {
-      return Events;
+      return Sets;
     }
 
     [ExcludeFromCodeCoverage]

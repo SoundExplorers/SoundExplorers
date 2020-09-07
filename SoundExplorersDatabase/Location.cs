@@ -3,15 +3,16 @@ using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using JetBrains.Annotations;
 
-namespace SoundExplorersDatabase.Data {
+namespace SoundExplorersDatabase {
   /// <summary>
-  ///   An entity representing a series of Events.
-  ///   A festival, for example.
+  ///   An entity representing a location where Events have been held.
+  ///   Typically a music venue, but could, for example,
+  ///   be an outdoor location.
   /// </summary>
-  public class Series : EntityBase {
+  public class Location : EntityBase {
     private string _notes;
 
-    public Series() : base(typeof(Series), nameof(Name), null) {
+    public Location() : base(typeof(Location), nameof(Name), null) {
       Events = new SortedChildList<Event>(this);
     }
 

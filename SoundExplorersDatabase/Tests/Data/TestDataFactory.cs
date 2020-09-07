@@ -2,7 +2,6 @@
 using System.Security.Cryptography;
 using System.Text;
 using JetBrains.Annotations;
-using SoundExplorersDatabase.Data;
 using VelocityDb.Session;
 
 namespace SoundExplorersDatabase.Tests.Data {

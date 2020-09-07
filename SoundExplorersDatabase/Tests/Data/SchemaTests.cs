@@ -1,5 +1,4 @@
 ﻿using NUnit.Framework;
-using SoundExplorersDatabase.Data;
 
 namespace SoundExplorersDatabase.Tests.Data {
   [TestFixture]

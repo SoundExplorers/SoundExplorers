@@ -2,7 +2,6 @@
 using System.Data;
 using System.Data.Linq;
 using NUnit.Framework;
-using SoundExplorersDatabase.Data;
 
 namespace SoundExplorersDatabase.Tests.Data {
   [TestFixture]

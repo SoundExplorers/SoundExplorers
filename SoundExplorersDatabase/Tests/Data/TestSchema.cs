@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using JetBrains.Annotations;
-using SoundExplorersDatabase.Data;
 
 namespace SoundExplorersDatabase.Tests.Data {
   public class TestSchema : Schema {

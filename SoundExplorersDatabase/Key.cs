@@ -1,6 +1,6 @@
 ﻿using JetBrains.Annotations;
 
-namespace SoundExplorersDatabase.Data {
+namespace SoundExplorersDatabase {
   /// <summary>
   ///   The key derived from an entity's SimpleKey and, where applicable,
   ///   IdentifyingParent properties, for use as the entity's key

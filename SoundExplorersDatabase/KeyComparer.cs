@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace SoundExplorersDatabase.Data {
+namespace SoundExplorersDatabase {
   public class KeyComparer : Comparer<Key> {
     public override int Compare(Key x, Key y) {
       if (x < y) {

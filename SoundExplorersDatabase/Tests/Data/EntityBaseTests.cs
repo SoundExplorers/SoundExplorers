@@ -2,7 +2,6 @@
 using System.Data;
 using JetBrains.Annotations;
 using NUnit.Framework;
-using SoundExplorersDatabase.Data;
 
 namespace SoundExplorersDatabase.Tests.Data {
   [TestFixture]

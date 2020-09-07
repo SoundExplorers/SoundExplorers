@@ -10,7 +10,7 @@ using VelocityDb;
 using VelocityDb.Session;
 using VelocityDb.TypeInfo;
 
-namespace SoundExplorersDatabase.Data {
+namespace SoundExplorersDatabase {
   /// <summary>
   ///   Base class for entity types that have one-to-many
   ///   and/or many-to-one relations with other entity types.

@@ -8,7 +8,7 @@ using JetBrains.Annotations;
 using VelocityDb;
 using VelocityDb.Session;
 
-namespace SoundExplorersDatabase.Data {
+namespace SoundExplorersDatabase {
   public class QueryHelper {
     private static QueryHelper _instance;
     private bool _schemaExistsOnDatabase;

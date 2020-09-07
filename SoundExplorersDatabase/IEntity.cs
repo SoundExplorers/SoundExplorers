@@ -1,4 +1,4 @@
-﻿namespace SoundExplorersDatabase.Data {
+﻿namespace SoundExplorersDatabase {
   public interface IEntity {
     EntityBase IdentifyingParent { get; }
     Key Key { get; }

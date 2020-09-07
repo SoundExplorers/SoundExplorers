@@ -6,7 +6,7 @@ using System.Diagnostics.CodeAnalysis;
 using JetBrains.Annotations;
 using VelocityDb.Session;
 
-namespace SoundExplorersDatabase.Data {
+namespace SoundExplorersDatabase {
   /// <summary>
   ///   An entity representing a newsletter that documents one or more Events.
   /// </summary>

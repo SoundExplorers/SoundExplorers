@@ -3,16 +3,16 @@ using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using JetBrains.Annotations;
 
-namespace SoundExplorersDatabase.Data {
-  /// <summary>
-  ///   An entity representing an act that has performed at Events.
-  /// </summary>
-  public class Act : EntityBase {
-    private string _notes;
-
-    public Act() : base(typeof(Act), nameof(Name), null) {
-      Sets = new SortedChildList<Set>(this);
+namespace SoundExplorersDatabase {
+  public class Role : EntityBase {
+    /// <summary>
+    ///   Role entity, usually representing a musical instrument.
+    /// </summary>
+    public Role() : base(typeof(Role), nameof(Name), null) {
+      Credits = new SortedChildList<Credit>(this);
     }
+
+    [NotNull] public SortedChildList<Credit> Credits { get; }
 
     [CanBeNull]
     public string Name {
@@ -23,19 +23,8 @@ namespace SoundExplorersDatabase.Data {
       }
     }
 
-    [CanBeNull]
-    public string Notes {
-      get => _notes;
-      set {
-        UpdateNonIndexField();
-        _notes = value;
-      }
-    }
-
-    [NotNull] public SortedChildList<Set> Sets { get; }
-
     protected override IDictionary GetChildren(Type childType) {
-      return Sets;
+      return Credits;
     }
 
     [ExcludeFromCodeCoverage]

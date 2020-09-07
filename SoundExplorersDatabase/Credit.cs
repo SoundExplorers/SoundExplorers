@@ -3,7 +3,7 @@ using System.Collections;
 using System.Data;
 using System.Diagnostics.CodeAnalysis;
 
-namespace SoundExplorersDatabase.Data {
+namespace SoundExplorersDatabase {
   /// <summary>
   ///   Credit entity, specifying the Role played by an Artist in a Piece,
   ///   usually the instrument played by a musician. 

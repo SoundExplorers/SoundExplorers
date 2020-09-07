@@ -3,15 +3,18 @@ using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using JetBrains.Annotations;
 
-namespace SoundExplorersDatabase.Data {
+namespace SoundExplorersDatabase {
   /// <summary>
-  ///   An entity representing a Set's genre.
+  ///   An entity representing a type of Events.
+  ///   A performance or rehearsal, for example.
   /// </summary>
-  public class Genre : EntityBase {
+  public class EventType : EntityBase {
 
-    public Genre() : base(typeof(Genre), nameof(Name), null) {
-      Sets = new SortedChildList<Set>(this);
+    public EventType() : base(typeof(EventType), nameof(Name), null) {
+      Events = new SortedChildList<Event>(this);
     }
+
+    [NotNull] public SortedChildList<Event> Events { get; }
 
     [CanBeNull]
     public string Name {
@@ -22,10 +25,8 @@ namespace SoundExplorersDatabase.Data {
       }
     }
 
-    [NotNull] public SortedChildList<Set> Sets { get; }
-
     protected override IDictionary GetChildren(Type childType) {
-      return Sets;
+      return Events;
     }
 
     [ExcludeFromCodeCoverage]
