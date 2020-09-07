@@ -1,36 +1,94 @@
 ﻿using System;
+using System.Collections;
+using System.Data;
+using JetBrains.Annotations;
 
 namespace SoundExplorers.Data {
   /// <summary>
-  ///   Set entity.
+  ///   An entity representing a set of Pieces (at least one)
+  ///   performed at or in some other way part of an Event.
   /// </summary>
-  public class Set : PieceOwningMediaEntity<Set> {
-    [ReferencedField("Act.Name", 2)] public string Act { get; set; }
-    [Field(3)] public string Comments { get; set; }
+  public class Set : EntityBase {
+    private Act _act;
+    private Genre _genre;
+    private bool _isPublic;
+    private string _notes;
+    private int _setNo;
 
-    [PrimaryKeyField(0)]
-    [ReferencedField("Performance.Date")]
-    public DateTime Date { get; set; }
-
-    [PrimaryKeyField]
-    [ReferencedField("Name")]
-    public string Location { get; set; }
-
-    [ReferencedField("Date")] public DateTime Newsletter { get; set; }
-    [PrimaryKeyField(1)] public int SetNo { get; set; }
+    public Set() : base(typeof(Set), nameof(SetNo), typeof(Event)) {
+      Pieces = new SortedChildList<Piece>(this);
+      IsPublic = true;
+    }
 
     /// <summary>
-    ///   Fetches the Set's Newsletter (i.e. not just the Newsletter date)
-    ///   from the database.
+    ///   Optionally specifies the Act that played the set.
     /// </summary>
-    /// <returns>
-    ///   The Set's Newsletter.
-    /// </returns>
-    public virtual Newsletter FetchNewsletter() {
-      var newsletter = new Newsletter();
-      newsletter.Date = Newsletter;
-      newsletter.Fetch();
-      return newsletter;
+    [CanBeNull]
+    public Act Act {
+      get => _act;
+      set {
+        UpdateNonIndexField();
+        ChangeNonIdentifyingParent(typeof(Act), value);
+        _act = value;
+      }
     }
-  } //End of class
-} //End of namespace
+
+    public Event Event {
+      get => (Event)IdentifyingParent;
+      set {
+        UpdateNonIndexField();
+        IdentifyingParent = value;
+      }
+    }
+
+    public Genre Genre {
+      get => _genre;
+      set {
+        UpdateNonIndexField();
+        ChangeNonIdentifyingParent(typeof(Genre), value);
+        _genre = value;
+      }
+    }
+
+    public bool IsPublic {
+      get => _isPublic;
+      set => _isPublic = value;
+    }
+
+    [CanBeNull]
+    public string Notes {
+      get => _notes;
+      set {
+        UpdateNonIndexField();
+        _notes = value;
+      }
+    }
+
+    [NotNull] public SortedChildList<Piece> Pieces { get; }
+
+    public int SetNo {
+      get => _setNo;
+      set {
+        if (value == 0) {
+          throw new NoNullAllowedException("SetNo '00' is not valid.");
+        }
+        UpdateNonIndexField();
+        _setNo = value;
+        SimpleKey = value.ToString().PadLeft(2, '0');
+      }
+    }
+
+    protected override IDictionary GetChildren(Type childType) {
+      return Pieces;
+    }
+
+    protected override void SetNonIdentifyingParentField(
+      Type parentEntityType, EntityBase newParent) {
+      if (parentEntityType == typeof(Act)) {
+        _act = (Act)newParent;
+      } else {
+        _genre = (Genre)newParent;
+      }
+    }
+  }
+}

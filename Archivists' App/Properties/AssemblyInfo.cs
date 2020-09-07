@@ -7,9 +7,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("Sound Explorers Archive")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Simon O'Rorke")]
-[assembly: AssemblyProduct("Sound Explorers Archive")]
-[assembly: AssemblyCopyright("Copyright © 2012 Simon O'Rorke")]
+[assembly: AssemblyCompany("Sound and Light Exploration Society")]
+[assembly: AssemblyProduct("Sound Explorers Audio Archive")]
+[assembly: AssemblyCopyright("Copyright © 2012-20 Sound and Light Exploration Society")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

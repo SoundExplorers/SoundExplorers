@@ -64,7 +64,7 @@
         <Name>SoundExplorers.Common</Name>
       </ProjectReference>
       <ProjectReference Include="..\Data\SoundExplorers.Data.csproj">
-        <Project>{18afe356-86b5-48cf-8f8d-4c6c0bd72f2f}</Project>
+        <Project>{eb9dd1ae-4445-45c2-bd75-b27cf5a87642}</Project>
         <Name>SoundExplorers.Data</Name>
       </ProjectReference>
     </ItemGroup>

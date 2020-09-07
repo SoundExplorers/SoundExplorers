@@ -7,9 +7,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("SoundExplorers.Common")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("SoundExplorers.Common")]
-[assembly: AssemblyCopyright("Copyright ©  2020")]
+[assembly: AssemblyCompany("Sound and Light Exploration Society")]
+[assembly: AssemblyProduct("Sound Explorers Audio Archive")]
+[assembly: AssemblyCopyright("Copyright © Sound and Light Exploration Society 2020")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
