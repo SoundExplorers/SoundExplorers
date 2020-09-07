@@ -49,7 +49,7 @@ namespace SoundExplorersDatabase.Tests.Data {
       throw new NotSupportedException();
     }
 
-    protected override void OnNonIdentifyingParentFieldToBeUpdated(
+    protected override void SetNonIdentifyingParentField(
       Type parentEntityType,
       EntityBase newParent) {
       if (parentEntityType == typeof(Father)) {

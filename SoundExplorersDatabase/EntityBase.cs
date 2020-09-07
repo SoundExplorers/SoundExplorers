@@ -399,14 +399,6 @@ namespace SoundExplorersDatabase {
       }
     }
 
-    /// <summary>
-    ///   Allows a derived entity to update the field (not property)
-    ///   corresponding to the parent entity of the specified entity type
-    ///   with the specified new value.
-    /// </summary>
-    protected abstract void OnNonIdentifyingParentFieldToBeUpdated(
-      [NotNull] Type parentEntityType, [CanBeNull] EntityBase newParent);
-
     public override ulong Persist(Placement place, SessionBase session,
       bool persistRefs = true,
       bool disableFlush = false,
@@ -452,10 +444,18 @@ namespace SoundExplorersDatabase {
         child.IdentifyingParent = newParent;
         child.IsAddingToOrRemovingFromIdentifyingParent = false;
       } else {
-        child.OnNonIdentifyingParentFieldToBeUpdated(EntityType,
+        child.SetNonIdentifyingParentField(EntityType,
           newParent);
       }
     }
+
+    /// <summary>
+    ///   Allows a derived entity to update the field (not property)
+    ///   corresponding to the parent entity of the specified entity type
+    ///   with the specified new value.
+    /// </summary>
+    protected abstract void SetNonIdentifyingParentField(
+      [NotNull] Type parentEntityType, [CanBeNull] EntityBase newParent);
 
     /// <summary>
     ///   Marks the entity as being updated, so that the entity will be written

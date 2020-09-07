@@ -98,7 +98,7 @@ namespace SoundExplorersDatabase {
     }
 
     [ExcludeFromCodeCoverage]
-    protected override void OnNonIdentifyingParentFieldToBeUpdated(
+    protected override void SetNonIdentifyingParentField(
       Type parentEntityType, EntityBase newParent) {
       throw new NotSupportedException();
     }
