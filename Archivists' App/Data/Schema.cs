@@ -93,6 +93,7 @@ namespace SoundExplorers.Data {
       session.RegisterClass(typeof(Schema));
       session.RegisterClass(typeof(Series));
       session.RegisterClass(typeof(Set));
+      session.RegisterClass(typeof(UserOption));
       Version = newVersion;
     }
   }
