@@ -9,6 +9,7 @@ namespace SoundExplorers.Model {
   ///   as held on the UserOption table.
   /// </summary>
   public class Option {
+    private QueryHelper _queryHelper;
     private SessionBase _session;
 
     /// <summary>
@@ -39,11 +40,12 @@ namespace SoundExplorers.Model {
     ///   there is an error on attempting to access the database.
     /// </exception>
     public Option(string name, object defaultValue = null) {
-      UserOption = new UserOption {UserId = Environment.UserName, OptionName = name};
       DefaultValue = defaultValue;
-      if (!UserOption.Fetch()) {
-        if (DefaultValue != null
-            && DefaultValue.ToString() != string.Empty) {
+      var temp = new UserOption {UserId = Environment.UserName, OptionName = name};
+      UserOption = QueryHelper.Find<UserOption>(temp.SimpleKey, Session);
+      if (UserOption == null) {
+        UserOption = temp;
+        if (DefaultValue != null && DefaultValue.ToString() != string.Empty) {
           UserOption.OptionValue = DefaultValue.ToString();
         } else {
           UserOption.OptionValue = string.Empty;
@@ -51,10 +53,21 @@ namespace SoundExplorers.Model {
       }
     }
 
+    internal QueryHelper QueryHelper {
+      get => _queryHelper ?? (_queryHelper = Global.QueryHelper);
+      set => _queryHelper = value;
+    }
+
     internal SessionBase Session {
       get => _session ?? (_session = Global.Session);
       set => _session = value;
     }
+
+    /// <summary>
+    ///   Gets or sets the entity that represents the
+    ///   data for the UserOption database record.
+    /// </summary>
+    private UserOption UserOption { get; }
 
     /// <summary>
     ///   Gets or sets the current value of the option as a boolean.
@@ -158,18 +171,14 @@ namespace SoundExplorers.Model {
         }
         if (!string.IsNullOrEmpty(value)) {
           UserOption.OptionValue = value;
-          UserOption.Save();
-        } else if (UserOption.Fetch()) {
-          UserOption.Delete();
+          if (!UserOption.IsPersistent) {
+            Session.Persist(UserOption);
+          }
+        } else if (UserOption.IsPersistent) {
+          Session.Unpersist(UserOption);
           UserOption.OptionValue = value;
         }
       }
     }
-
-    /// <summary>
-    ///   Gets or sets the entity that represents the
-    ///   data for the UserOption database record.
-    /// </summary>
-    private UserOption UserOption { get; }
   } //End of class
 } //End of namespace
