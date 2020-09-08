@@ -1,4 +1,5 @@
 ﻿using JetBrains.Annotations;
+using SoundExplorers.Model;
 
 namespace SoundExplorers.Controller {
   [UsedImplicitly]

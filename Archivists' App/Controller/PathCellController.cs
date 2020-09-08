@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using JetBrains.Annotations;
-using SoundExplorers.Data;
 
 namespace SoundExplorers.Controller {
   /// <summary>
@@ -29,27 +28,29 @@ namespace SoundExplorers.Controller {
 
     [NotNull]
     public DirectoryInfo GetDefaultFolder() {
-      DirectoryInfo result = null;
-      switch (ColumnName) {
-        case "AudioPath": // Piece.AudioPath
-          result = Piece.DefaultAudioFolder;
-          break;
-        case "Path":
-          // if (TableName == "Image") {
-          //   result = Image.DefaultFolder; // Image.Path
-          // } else if (TableName == "Newsletter") {
-          if (TableController.TableName == "Newsletter") { // Newsletter.Path
-            result = Newsletter.DefaultFolder;
-          } else {
-            throw new NotSupportedException(
-              TableController + ".Path is not supported.");
-          }
-          break;
-        case "VideoPath": // Piece.VideoPath
-          result = Piece.DefaultVideoFolder;
-          break;
-      } //End of switch
-      return result ?? throw new InvalidOperationException("Not a path.");
+      // TODO Implement URLs instead of paths
+      throw new NotSupportedException();
+      // DirectoryInfo result = null;
+      // switch (ColumnName) {
+      //   case "AudioPath": // Piece.AudioPath
+      //     result = Piece.DefaultAudioFolder;
+      //     break;
+      //   case "Path":
+      //     // if (TableName == "Image") {
+      //     //   result = Image.DefaultFolder; // Image.Path
+      //     // } else if (TableName == "Newsletter") {
+      //     if (TableController.TableName == "Newsletter") { // Newsletter.Path
+      //       result = Newsletter.DefaultFolder;
+      //     } else {
+      //       throw new NotSupportedException(
+      //         TableController + ".Path is not supported.");
+      //     }
+      //     break;
+      //   case "VideoPath": // Piece.VideoPath
+      //     result = Piece.DefaultVideoFolder;
+      //     break;
+      // } //End of switch
+      // return result ?? throw new InvalidOperationException("Not a path.");
     }
   }
 }

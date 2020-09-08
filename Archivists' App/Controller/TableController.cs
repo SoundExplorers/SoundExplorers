@@ -7,6 +7,7 @@ using System.Linq;
 using JetBrains.Annotations;
 using SoundExplorers.Common;
 using SoundExplorers.Data;
+using SoundExplorers.Model;
 
 namespace SoundExplorers.Controller {
   /// <summary>
@@ -105,44 +106,44 @@ namespace SoundExplorers.Controller {
     ///   to the metadata tags of the Piece's audio file.
     /// </summary>
     private void ConservePieceIfRequired(int rowIndex) {
-      switch (Entities) {
-        case CreditList _: {
-          var parentPiece = GetPiece();
-          if (parentPiece != null) {
-            var credits = (
-              from Credit credit in (CreditList)Entities
-              where credit.Date == parentPiece.Date
-                    && credit.Location == parentPiece.Location
-                    && credit.Set == parentPiece.Set
-                    && credit.Piece == parentPiece.PieceNo
-              select credit).ToList();
-            parentPiece.Credits = new CreditList(true);
-            foreach (var credit in credits) {
-              parentPiece.Credits.Add(credit);
-            }
-            parentPiece.Original = parentPiece.Clone();
-          }
-          // } else if (Entities is ImageList) {
-          //   var image = (Image)Entities[e.RowIndex];
-          //   ShowImageOrMessage(image.Path);
-          break;
-        }
-        case PieceList pieceList: {
-          var piece = (
-            from Piece p in pieceList
-            where p.Date == (DateTime)View.GetFieldValue(nameof(p.Date), rowIndex)
-                  && p.Location == View.GetFieldValue(nameof(p.Location), rowIndex)
-                    .ToString()
-                  && p.Set == (int)View.GetFieldValue(nameof(p.Set), rowIndex)
-                  && p.PieceNo == (int)View.GetFieldValue(nameof(p.PieceNo), rowIndex)
-            select p).FirstOrDefault();
-          if (piece != null) {
-            piece.Credits = piece.FetchCredits();
-            piece.Original = piece.Clone();
-          }
-          break;
-        }
-      }
+      // switch (Entities) {
+      //   case CreditList _: {
+      //     var parentPiece = GetPiece();
+      //     if (parentPiece != null) {
+      //       var credits = (
+      //         from Credit credit in (CreditList)Entities
+      //         where credit.Date == parentPiece.Date
+      //               && credit.Location == parentPiece.Location
+      //               && credit.Set == parentPiece.Set
+      //               && credit.Piece == parentPiece.PieceNo
+      //         select credit).ToList();
+      //       parentPiece.Credits = new CreditList(true);
+      //       foreach (var credit in credits) {
+      //         parentPiece.Credits.Add(credit);
+      //       }
+      //       parentPiece.Original = parentPiece.Clone();
+      //     }
+      //     // } else if (Entities is ImageList) {
+      //     //   var image = (Image)Entities[e.RowIndex];
+      //     //   ShowImageOrMessage(image.Path);
+      //     break;
+      //   }
+      //   case PieceList pieceList: {
+      //     var piece = (
+      //       from Piece p in pieceList
+      //       where p.Date == (DateTime)View.GetFieldValue(nameof(p.Date), rowIndex)
+      //             && p.Location == View.GetFieldValue(nameof(p.Location), rowIndex)
+      //               .ToString()
+      //             && p.Set == (int)View.GetFieldValue(nameof(p.Set), rowIndex)
+      //             && p.PieceNo == (int)View.GetFieldValue(nameof(p.PieceNo), rowIndex)
+      //       select p).FirstOrDefault();
+      //     if (piece != null) {
+      //       piece.Credits = piece.FetchCredits();
+      //       piece.Original = piece.Clone();
+      //     }
+      //     break;
+      //   }
+      // }
     }
 
     /// <summary>
@@ -161,8 +162,8 @@ namespace SoundExplorers.Controller {
     ///   Whatever error might be thrown on attempting to update the tags.
     /// </exception>
     public void EditAudioFileTags() {
-      string path = GetMediumPath(Medium.Audio);
-      var dummy = new AudioFile(path);
+      // string path = GetMediumPath(Medium.Audio);
+      // var dummy = new AudioFile(path);
     }
 
     private void Entities_RowError(object sender, RowErrorEventArgs e) {
@@ -170,25 +171,27 @@ namespace SoundExplorers.Controller {
     }
 
     private void Entities_RowUpdated(object sender, RowUpdatedEventArgs e) {
-      string databaseUpdateMessage = e.Message;
-      string mediaTagsUpdateErrorMessage = null;
-      if (e.Entity is IMediaEntity mediaEntity) {
-        try {
-          string updateTagsMessage = mediaEntity.UpdateTags();
-          if (!string.IsNullOrEmpty(updateTagsMessage)) {
-            databaseUpdateMessage += ". " + updateTagsMessage;
-          }
-        } catch (ApplicationException ex) {
-          mediaTagsUpdateErrorMessage = ex.Message;
-        }
-      }
-      View.OnRowUpdated(databaseUpdateMessage, mediaTagsUpdateErrorMessage);
+      View.OnRowUpdated(e.Message);
+      //string databaseUpdateMessage = e.Message;
+      //string mediaTagsUpdateErrorMessage = null;
+      // if (e.Entity is IMediaEntity mediaEntity) {
+      //   try {
+      //     string updateTagsMessage = mediaEntity.UpdateTags();
+      //     if (!string.IsNullOrEmpty(updateTagsMessage)) {
+      //       databaseUpdateMessage += ". " + updateTagsMessage;
+      //     }
+      //   } catch (ApplicationException ex) {
+      //     mediaTagsUpdateErrorMessage = ex.Message;
+      //   }
+      // }
+      //View.OnRowUpdated(databaseUpdateMessage, mediaTagsUpdateErrorMessage);
     }
 
     public void FetchData() {
-      Entities = TableName == nameof(ArtistInImage)
-        ? new ArtistInImageList()
-        : Factory<IEntityList>.Create(TableName);
+      // Entities = TableName == nameof(ArtistInImage)
+      //   ? new ArtistInImageList()
+      //   : Factory<IEntityList>.Create(TableName);
+      Entities = Factory<IEntityList>.Create(TableName);
       Entities.Fetch();
       Entities.RowError += Entities_RowError;
       Entities.RowUpdated += Entities_RowUpdated;
@@ -209,35 +212,35 @@ namespace SoundExplorers.Controller {
     ///   The specified medium is not supported.
     /// </exception>
     private string GetMediumPath(Medium medium) {
-      var piece = GetPiece();
-      string indefiniteArticle;
-      string path;
-      switch (medium) {
-        case Medium.Audio:
-          indefiniteArticle = "An";
-          path = piece.AudioPath;
-          break;
-        case Medium.Video:
-          indefiniteArticle = "A";
-          path = piece.VideoPath;
-          break;
-        default:
-          throw new ArgumentOutOfRangeException(
-            nameof(medium),
-            medium,
-            "Medium " + medium + " is not supported.");
-      } //End of switch (medium)
-      if (string.IsNullOrEmpty(path)) {
-        throw new ApplicationException(
-          indefiniteArticle + " " + medium.ToString().ToLower()
-          + " file has not been specified for the Piece.");
-      }
-      if (!File.Exists(path)) {
-        throw new ApplicationException(
-          medium + " file \"" + path + "\" cannot be found.");
-      }
-      return path;
-      //Process.Start(path);
+      return null;
+      // var piece = GetPiece();
+      // string indefiniteArticle;
+      // string path;
+      // switch (medium) {
+      //   case Medium.Audio:
+      //     indefiniteArticle = "An";
+      //     path = piece.AudioPath;
+      //     break;
+      //   case Medium.Video:
+      //     indefiniteArticle = "A";
+      //     path = piece.VideoPath;
+      //     break;
+      //   default:
+      //     throw new ArgumentOutOfRangeException(
+      //       nameof(medium),
+      //       medium,
+      //       "Medium " + medium + " is not supported.");
+      // } //End of switch (medium)
+      // if (string.IsNullOrEmpty(path)) {
+      //   throw new ApplicationException(
+      //     indefiniteArticle + " " + medium.ToString().ToLower()
+      //     + " file has not been specified for the Piece.");
+      // }
+      // if (!File.Exists(path)) {
+      //   throw new ApplicationException(
+      //     medium + " file \"" + path + "\" cannot be found.");
+      // }
+      // return path;
     }
 
     /// <summary>
@@ -250,108 +253,109 @@ namespace SoundExplorers.Controller {
     ///   A suitable Newsletter to show is not associated with the selected row.
     /// </exception>
     private Newsletter GetNewsletterToShow() {
-      // if (Entities is ArtistInImageList) {
-      //   if (Controller.ParentList.Count > 0) {
-      //     var image =
-      //       (Image)Controller.ParentList[ParentCurrentRow.Index];
-      //     return image.FetchNewsletter();
+      return null;
+      // // if (Entities is ArtistInImageList) {
+      // //   if (Controller.ParentList.Count > 0) {
+      // //     var image =
+      // //       (Image)Controller.ParentList[ParentCurrentRow.Index];
+      // //     return image.FetchNewsletter();
+      // //   }
+      // //   throw new ApplicationException(
+      // //     "You cannot show the newsletter for an Image's Performance because "
+      // //     + "no Images are listed in the ArtistInImageList window.");
+      // // }
+      // if (Entities is CreditList) {
+      //   if (ParentList?.Count > 0) {
+      //     var piece =
+      //       (Piece)ParentList[View.ParentCurrentIndex];
+      //     return piece.FetchNewsletter();
       //   }
       //   throw new ApplicationException(
-      //     "You cannot show the newsletter for an Image's Performance because "
-      //     + "no Images are listed in the ArtistInImageList window.");
+      //     "You cannot show a Piece's newsletter because "
+      //     + "no Pieces are listed in the Credit window.");
       // }
-      if (Entities is CreditList) {
-        if (ParentList?.Count > 0) {
-          var piece =
-            (Piece)ParentList[View.ParentCurrentIndex];
-          return piece.FetchNewsletter();
-        }
-        throw new ApplicationException(
-          "You cannot show a Piece's newsletter because "
-          + "no Pieces are listed in the Credit window.");
-      }
-      // if (Entities is ImageList) {
-      //   if (MainCurrentRow.IsNewRow) {
+      // // if (Entities is ImageList) {
+      // //   if (MainCurrentRow.IsNewRow) {
+      // //     throw new ApplicationException(
+      // //       "You must add the new Image before you can show its Performance's newsletter.");
+      // //   }
+      // //   if (MainGrid.IsCurrentCellInEditMode) {
+      // //     throw new ApplicationException(
+      // //       "While you are editing the Image, "
+      // //       + "you cannot show its Performance's newsletter.");
+      // //   }
+      // //   var image =
+      // //     (Image)Entities[MainCurrentRow.Index];
+      // //   if (image.Location != MainCurrentRow.Cells["Location"].Value.ToString()
+      // //       || image.Date != (DateTime)MainCurrentRow.Cells["Date"].Value) {
+      // //     throw new ApplicationException(
+      // //       "You must save or cancel changes to the Image "
+      // //       + "before you can show its Performance's newsletter.");
+      // //   }
+      // //   return image.FetchNewsletter();
+      // // }
+      // if (Entities is NewsletterList) {
+      //   if (!View.IsThereACurrentMainEntity) {
       //     throw new ApplicationException(
-      //       "You must add the new Image before you can show its Performance's newsletter.");
+      //       "You must add the new Newsletter before you can show it.");
       //   }
-      //   if (MainGrid.IsCurrentCellInEditMode) {
+      //   if (View.IsEditing) {
       //     throw new ApplicationException(
-      //       "While you are editing the Image, "
-      //       + "you cannot show its Performance's newsletter.");
+      //       "You cannot show the Newsletter while you are editing it.");
       //   }
-      //   var image =
-      //     (Image)Entities[MainCurrentRow.Index];
-      //   if (image.Location != MainCurrentRow.Cells["Location"].Value.ToString()
-      //       || image.Date != (DateTime)MainCurrentRow.Cells["Date"].Value) {
+      //   var newsletter = (Newsletter)Entities[View.MainCurrentIndex];
+      //   if (newsletter.Path !=
+      //       View.GetCurrentRowFieldValue(nameof(newsletter.Path)).ToString()) {
       //     throw new ApplicationException(
-      //       "You must save or cancel changes to the Image "
-      //       + "before you can show its Performance's newsletter.");
+      //       "You must save or cancel changes to the Newsletter before you can show it.");
       //   }
-      //   return image.FetchNewsletter();
+      //   return newsletter;
       // }
-      if (Entities is NewsletterList) {
-        if (!View.IsThereACurrentMainEntity) {
-          throw new ApplicationException(
-            "You must add the new Newsletter before you can show it.");
-        }
-        if (View.IsEditing) {
-          throw new ApplicationException(
-            "You cannot show the Newsletter while you are editing it.");
-        }
-        var newsletter = (Newsletter)Entities[View.MainCurrentIndex];
-        if (newsletter.Path !=
-            View.GetCurrentRowFieldValue(nameof(newsletter.Path)).ToString()) {
-          throw new ApplicationException(
-            "You must save or cancel changes to the Newsletter before you can show it.");
-        }
-        return newsletter;
-      }
-      if (Entities is PieceList) {
-        if (ParentList?.Count > 0) {
-          var set =
-            (Set)ParentList[View.ParentCurrentIndex];
-          return set.FetchNewsletter();
-        }
-        throw new ApplicationException(
-          "You cannot show a Set's newsletter because "
-          + "no Sets are listed in the Piece window.");
-      }
-      if (Entities is PerformanceList) {
-        if (!View.IsThereACurrentMainEntity) {
-          throw new ApplicationException(
-            "You must add the new Performance before you can show its newsletter.");
-        }
-        if (View.IsEditing) {
-          throw new ApplicationException(
-            "You cannot show the Performance's newsletter "
-            + "while you are editing the Performance.");
-        }
-        var performance = (Performance)Entities[View.MainCurrentIndex];
-        if (performance.Newsletter !=
-            (DateTime)View.GetCurrentRowFieldValue(nameof(performance.Newsletter))) {
-          throw new ApplicationException(
-            "You must save or cancel changes to the Performance "
-            + "before you can show its newsletter.");
-        }
-        return performance.FetchNewsletter();
-      }
-      if (Entities is SetList) {
-        if (ParentList?.Count > 0) {
-          var performance =
-            (Performance)ParentList[View.ParentCurrentIndex];
-          return performance.FetchNewsletter();
-        }
-        throw new ApplicationException(
-          "You cannot show a Performance's newsletter because "
-          + "no Performances are listed in the Set window.");
-      }
-      throw new ApplicationException(
-        "Newsletters are not associated with the " + TableName + " table."
-        + Environment.NewLine
-        + "To show a newsletter, first select a row in a "
-        + "Credit, Newsletter, "
-        + "Performance, Piece or Set table window.");
+      // if (Entities is PieceList) {
+      //   if (ParentList?.Count > 0) {
+      //     var set =
+      //       (Set)ParentList[View.ParentCurrentIndex];
+      //     return set.FetchNewsletter();
+      //   }
+      //   throw new ApplicationException(
+      //     "You cannot show a Set's newsletter because "
+      //     + "no Sets are listed in the Piece window.");
+      // }
+      // if (Entities is PerformanceList) {
+      //   if (!View.IsThereACurrentMainEntity) {
+      //     throw new ApplicationException(
+      //       "You must add the new Performance before you can show its newsletter.");
+      //   }
+      //   if (View.IsEditing) {
+      //     throw new ApplicationException(
+      //       "You cannot show the Performance's newsletter "
+      //       + "while you are editing the Performance.");
+      //   }
+      //   var performance = (Performance)Entities[View.MainCurrentIndex];
+      //   if (performance.Newsletter !=
+      //       (DateTime)View.GetCurrentRowFieldValue(nameof(performance.Newsletter))) {
+      //     throw new ApplicationException(
+      //       "You must save or cancel changes to the Performance "
+      //       + "before you can show its newsletter.");
+      //   }
+      //   return performance.FetchNewsletter();
+      // }
+      // if (Entities is SetList) {
+      //   if (ParentList?.Count > 0) {
+      //     var performance =
+      //       (Performance)ParentList[View.ParentCurrentIndex];
+      //     return performance.FetchNewsletter();
+      //   }
+      //   throw new ApplicationException(
+      //     "You cannot show a Performance's newsletter because "
+      //     + "no Performances are listed in the Set window.");
+      // }
+      // throw new ApplicationException(
+      //   "Newsletters are not associated with the " + TableName + " table."
+      //   + Environment.NewLine
+      //   + "To show a newsletter, first select a row in a "
+      //   + "Credit, Newsletter, "
+      //   + "Performance, Piece or Set table window.");
     }
 
     [NotNull]
@@ -377,49 +381,50 @@ namespace SoundExplorers.Controller {
     ///   A suitable Piece to play is not selected.
     /// </exception>
     private Piece GetPiece() {
-      switch (Entities) {
-        case CreditList _ when ParentList?.Count > 0:
-          return (Piece)ParentList[View.ParentCurrentIndex];
-        case CreditList _:
-          throw new ApplicationException(
-            "You cannot play a Piece because no Pieces are listed in the Credit window.");
-        case PieceList _ when !View.IsThereACurrentMainEntity:
-          throw new ApplicationException(
-            "You must add the new Piece before you can play it.");
-        case PieceList _ when View.IsEditing:
-          throw new ApplicationException(
-            "You cannot play the Piece while you are editing it.");
-        // Because this is the detail grid in a master-detail relationship
-        // the index of the Piece in the grid is probably different
-        // from its index in the entity list,
-        // which will contain all the Pieces of all the Performances in the parent grid.
-        // So we need to find it the hard way.
-        case PieceList pieceList: {
-          var piece = (
-            from Piece p in pieceList
-            where p.Date == (DateTime)View.GetCurrentRowFieldValue(nameof(p.Date))
-                  && p.Location ==
-                  View.GetCurrentRowFieldValue(nameof(p.Location)).ToString()
-                  && p.Set == (int)View.GetCurrentRowFieldValue(nameof(p.Set))
-                  && p.PieceNo == (int)View.GetCurrentRowFieldValue(nameof(p.PieceNo))
-            select p).FirstOrDefault();
-          if (piece == null) {
-            // Piece not found.
-            // As Date, Location and Set are invisible
-            // (because common to the parent Set row),
-            // PieceNo, AudioPath or VideoPath must have been 
-            // changed without yet updating the database.
-            throw new ApplicationException(
-              "You must save or cancel changes to the Piece before you can play it.");
-          }
-          return piece;
-        }
-        default:
-          throw new ApplicationException(
-            "Media files are not associated with the " + TableName + " table."
-            + Environment.NewLine
-            + "To play a piece, first select a row in a Credit or Piece table window.");
-      }
+      return null;
+      // switch (Entities) {
+      //   case CreditList _ when ParentList?.Count > 0:
+      //     return (Piece)ParentList[View.ParentCurrentIndex];
+      //   case CreditList _:
+      //     throw new ApplicationException(
+      //       "You cannot play a Piece because no Pieces are listed in the Credit window.");
+      //   case PieceList _ when !View.IsThereACurrentMainEntity:
+      //     throw new ApplicationException(
+      //       "You must add the new Piece before you can play it.");
+      //   case PieceList _ when View.IsEditing:
+      //     throw new ApplicationException(
+      //       "You cannot play the Piece while you are editing it.");
+      //   // Because this is the detail grid in a master-detail relationship
+      //   // the index of the Piece in the grid is probably different
+      //   // from its index in the entity list,
+      //   // which will contain all the Pieces of all the Performances in the parent grid.
+      //   // So we need to find it the hard way.
+      //   case PieceList pieceList: {
+      //     var piece = (
+      //       from Piece p in pieceList
+      //       where p.Date == (DateTime)View.GetCurrentRowFieldValue(nameof(p.Date))
+      //             && p.Location ==
+      //             View.GetCurrentRowFieldValue(nameof(p.Location)).ToString()
+      //             && p.Set == (int)View.GetCurrentRowFieldValue(nameof(p.Set))
+      //             && p.PieceNo == (int)View.GetCurrentRowFieldValue(nameof(p.PieceNo))
+      //       select p).FirstOrDefault();
+      //     if (piece == null) {
+      //       // Piece not found.
+      //       // As Date, Location and Set are invisible
+      //       // (because common to the parent Set row),
+      //       // PieceNo, AudioPath or VideoPath must have been 
+      //       // changed without yet updating the database.
+      //       throw new ApplicationException(
+      //         "You must save or cancel changes to the Piece before you can play it.");
+      //     }
+      //     return piece;
+      //   }
+      //   default:
+      //     throw new ApplicationException(
+      //       "Media files are not associated with the " + TableName + " table."
+      //       + Environment.NewLine
+      //       + "To play a piece, first select a row in a Credit or Piece table window.");
+      // }
     }
 
     [NotNull]
@@ -473,7 +478,7 @@ namespace SoundExplorers.Controller {
     ///   The audio cannot be played.
     /// </exception>
     public void PlayAudio() {
-      Process.Start(GetMediumPath(Medium.Audio));
+      //Process.Start(GetMediumPath(Medium.Audio));
     }
 
     /// <summary>
@@ -484,7 +489,7 @@ namespace SoundExplorers.Controller {
     ///   The video cannot be played.
     /// </exception>
     public void PlayVideo() {
-      Process.Start(GetMediumPath(Medium.Video));
+      //Process.Start(GetMediumPath(Medium.Video));
     }
 
     /// <summary>
@@ -511,16 +516,16 @@ namespace SoundExplorers.Controller {
     ///   A newsletter cannot be shown.
     /// </exception>
     public void ShowNewsletter() {
-      var newsletter = GetNewsletterToShow();
-      if (string.IsNullOrEmpty(newsletter.Path)) { } else if (!File.Exists(
-        newsletter.Path)) {
-        throw new ApplicationException("Newsletter file \"" + newsletter.Path
-          + "\", specified by the Path of the "
-          + newsletter.Date.ToString("dd MMM yyyy")
-          + " Newsletter, cannot be found.");
-      } else {
-        Process.Start(newsletter.Path);
-      }
+      // var newsletter = GetNewsletterToShow();
+      // if (string.IsNullOrEmpty(newsletter.Path)) { } else if (!File.Exists(
+      //   newsletter.Path)) {
+      //   throw new ApplicationException("Newsletter file \"" + newsletter.Path
+      //     + "\", specified by the Path of the "
+      //     + newsletter.Date.ToString("dd MMM yyyy")
+      //     + " Newsletter, cannot be found.");
+      // } else {
+      //   Process.Start(newsletter.Path);
+      // }
     }
 
     /// <summary>
@@ -570,25 +575,25 @@ namespace SoundExplorers.Controller {
 
     private void UpdateDefaultFolder([NotNull] string columnName,
       [NotNull] FileInfo file) {
-      switch (columnName) {
-        case "AudioPath": // Piece.AudioPath
-          Piece.DefaultAudioFolder = file.Directory;
-          break;
-        case "Path":
-          // if (Entities is ImageList) { // Image.Path
-          //   Image.DefaultFolder = file.Directory;
-          // } else if (Entities is NewsletterList) { // Newsletter.Path
-          if (Entities is NewsletterList) { // Newsletter.Path
-            Newsletter.DefaultFolder = file.Directory;
-          } else {
-            throw new NotSupportedException(
-              TableName + ".Path is not supported.");
-          }
-          break;
-        case "VideoPath": // Piece.VideoPath
-          Piece.DefaultVideoFolder = file.Directory;
-          break;
-      } //End of switch
+      // switch (columnName) {
+      //   case "AudioPath": // Piece.AudioPath
+      //     Piece.DefaultAudioFolder = file.Directory;
+      //     break;
+      //   case "Path":
+      //     // if (Entities is ImageList) { // Image.Path
+      //     //   Image.DefaultFolder = file.Directory;
+      //     // } else if (Entities is NewsletterList) { // Newsletter.Path
+      //     if (Entities is NewsletterList) { // Newsletter.Path
+      //       Newsletter.DefaultFolder = file.Directory;
+      //     } else {
+      //       throw new NotSupportedException(
+      //         TableName + ".Path is not supported.");
+      //     }
+      //     break;
+      //   case "VideoPath": // Piece.VideoPath
+      //     Piece.DefaultVideoFolder = file.Directory;
+      //     break;
+      // } //End of switch
     }
 
     /// <summary>
@@ -599,18 +604,18 @@ namespace SoundExplorers.Controller {
     /// </exception>
     public void UpdateDefaultFolderIfRequired([NotNull] string columnName,
       [NotNull] string newPath) {
-      if (!IsNewString(columnName, newPath)) {
-        return;
-      }
-      FileInfo file;
-      try {
-        file = new FileInfo(newPath);
-      } catch (ArgumentException ex) {
-        throw new ApplicationException("Invalid path.", ex);
-      }
-      if (file.Exists) {
-        UpdateDefaultFolder(columnName, file);
-      }
+      // if (!IsNewString(columnName, newPath)) {
+      //   return;
+      // }
+      // FileInfo file;
+      // try {
+      //   file = new FileInfo(newPath);
+      // } catch (ArgumentException ex) {
+      //   throw new ApplicationException("Invalid path.", ex);
+      // }
+      // if (file.Exists) {
+      //   UpdateDefaultFolder(columnName, file);
+      // }
     }
 
     private enum Medium {
