@@ -1,4 +1,4 @@
-﻿namespace SoundExplorers.Data {
+﻿namespace SoundExplorers.OldData {
   /// <summary>
   ///   Series entity.
   /// </summary>

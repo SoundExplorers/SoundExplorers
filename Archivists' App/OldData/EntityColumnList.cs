@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
 
-namespace SoundExplorers.Data {
+namespace SoundExplorers.OldData {
   /// <summary>
   ///   A keyed list of entity columns with
   ///   <see cref="IEntityColumn.ColumnName" /> as the key.

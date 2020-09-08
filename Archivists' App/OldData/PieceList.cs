@@ -1,7 +1,7 @@
 ﻿using System;
 using Devart.Data.PostgreSql;
 
-namespace SoundExplorers.Data {
+namespace SoundExplorers.OldData {
   /// <summary>
   ///   A list of Pieces.
   /// </summary>

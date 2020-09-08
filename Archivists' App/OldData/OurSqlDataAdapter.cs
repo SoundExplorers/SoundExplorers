@@ -2,7 +2,7 @@
 using System.Data;
 using Devart.Data.PostgreSql;
 
-namespace SoundExplorers.Data {
+namespace SoundExplorers.OldData {
   /// <summary>
   ///   A data adapter for accessing
   ///   the table on the SoundExplorers database

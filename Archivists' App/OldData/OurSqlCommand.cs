@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using Devart.Data.PostgreSql;
 
-namespace SoundExplorers.Data {
+namespace SoundExplorers.OldData {
   /// <summary>
   ///   Represents an SQL statement to execute against the
   ///   SoundExplorers database for an Entity

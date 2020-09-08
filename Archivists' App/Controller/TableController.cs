@@ -92,7 +92,7 @@ namespace SoundExplorers.Controller {
     [CanBeNull]
     private IEntityList ParentList => Entities?.ParentList;
 
-    [CanBeNull] public string ParentTableName => ParentList?.TableName;
+    [CanBeNull] public string ParentTableName => ParentList?.EntityTypeName;
     [CanBeNull] public DataTable Table => Entities?.Table;
     [NotNull] public string TableName { get; }
     [NotNull] private ITableView View { get; }
@@ -150,7 +150,7 @@ namespace SoundExplorers.Controller {
     ///   Returns whether the specified column references another entity.
     /// </summary>
     public bool DoesColumnReferenceAnotherEntity([NotNull] string columnName) {
-      return !string.IsNullOrEmpty(Columns[columnName].ReferencedColumnName);
+      return !string.IsNullOrEmpty(Columns[columnName].ReferencedPropertyName);
     }
 
     /// <summary>
@@ -191,7 +191,7 @@ namespace SoundExplorers.Controller {
       // Entities = TableName == nameof(ArtistInImage)
       //   ? new ArtistInImageList()
       //   : Factory<IEntityList>.Create(TableName);
-      Entities = Factory<IEntityList>.Create(TableName);
+      Entities = EntityListFactory<IEntityList>.Create(TableName);
       Entities.Fetch();
       Entities.RowError += Entities_RowError;
       Entities.RowUpdated += Entities_RowUpdated;
@@ -360,15 +360,16 @@ namespace SoundExplorers.Controller {
 
     [NotNull]
     private IDictionary<string, object> GetOldKeyFieldValues() {
-      if (OldFieldValues == null) {
-        throw new NullReferenceException(nameof(OldFieldValues));
-      }
-      return (
-        from kvp in OldFieldValues
-        where Columns[kvp.Key].IsInPrimaryKey
-        select kvp).ToDictionary(
-        kvp => kvp.Key,
-        kvp => kvp.Value);
+      throw new NotImplementedException();
+      // if (OldFieldValues == null) {
+      //   throw new NullReferenceException(nameof(OldFieldValues));
+      // }
+      // return (
+      //   from kvp in OldFieldValues
+      //   where Columns[kvp.Key].IsInPrimaryKey
+      //   select kvp).ToDictionary(
+      //   kvp => kvp.Key,
+      //   kvp => kvp.Value);
     }
 
     /// <summary>
@@ -429,16 +430,12 @@ namespace SoundExplorers.Controller {
 
     [NotNull]
     internal string GetReferencedColumnName([NotNull] string columnName) {
-      return Columns[columnName].ReferencedColumnName;
+      return Columns[columnName].ReferencedPropertyName;
     }
 
     [NotNull]
     internal string GetReferencedTableName([NotNull] string columnName) {
-      return Columns[columnName].ReferencedTableName;
-    }
-
-    public bool IsColumnVisible([NotNull] string columnName) {
-      return Columns[columnName].Visible;
+      return Columns[columnName].ReferencedEntityName;
     }
 
     /// <summary>
@@ -503,8 +500,7 @@ namespace SoundExplorers.Controller {
         var rejectedValue = rejectedValues[columnIndex];
         // All the rejected values will be DBNull if the user had tried to delete the row.
         if (rejectedValue != DBNull.Value) {
-          View.SetCurrentRowFieldValue(Columns[columnIndex].ColumnName, rejectedValue);
-          //MainCurrentRow.Cells[columnIndex].Value = rejectedValue;
+          View.SetCurrentRowFieldValue(Columns[columnIndex].DisplayName, rejectedValue);
         }
       } //End of for
     }
@@ -563,7 +559,7 @@ namespace SoundExplorers.Controller {
         }
         if (newValue == DBNull.Value) {
           if (column.DataType == typeof(DateTime)) {
-            View.SetFieldValue(column.ColumnName, rowIndex,
+            View.SetFieldValue(column.DisplayName, rowIndex,
               DateTime.Parse("01 Jan 1900"));
           }
         }

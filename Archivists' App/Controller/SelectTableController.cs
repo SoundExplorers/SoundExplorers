@@ -29,7 +29,7 @@ namespace SoundExplorers.Controller {
 
     [NotNull]
     public SortedDictionary<string, Type> EntityListTypes {
-      get => _entityListTypes ?? (_entityListTypes = Factory<IEntityList>.Types);
+      get => _entityListTypes ?? (_entityListTypes = EntityListFactory<IEntityList>.Types);
       // The setter is for testing.
       // ReSharper disable once UnusedMember.Global
       set => _entityListTypes = value;

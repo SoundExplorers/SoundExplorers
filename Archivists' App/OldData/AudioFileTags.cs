@@ -1,6 +1,6 @@
 ﻿using TagLib;
 
-namespace SoundExplorers.Data {
+namespace SoundExplorers.OldData {
   /// <summary>
   ///   The values actually or intended to be
   ///   held in an audio file of

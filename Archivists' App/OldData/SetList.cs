@@ -1,6 +1,6 @@
 ﻿using JetBrains.Annotations;
 
-namespace SoundExplorers.Data {
+namespace SoundExplorers.OldData {
   /// <summary>
   ///   A list of Sets.
   /// </summary>

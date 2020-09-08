@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
 using VelocityDb;
@@ -13,6 +14,7 @@ namespace SoundExplorers.Data {
   ///   So it inherits from OptimizedPersistable instead of EntityBase.
   /// </remarks>
   public class Schema : OptimizedPersistable {
+    private IEnumerable<Type> _entityTypes;
     private static Schema _instance;
     private IEnumerable<RelationInfo> _relations;
     private int _version;
@@ -22,6 +24,13 @@ namespace SoundExplorers.Data {
     /// </summary>
     [NotNull]
     public static Schema Instance => _instance ?? (_instance = new Schema());
+
+    /// <summary>
+    ///   Enumerates the entity types persisted on the database
+    /// </summary>
+    [NotNull]
+    public IEnumerable<Type> EntityTypes =>
+      _entityTypes ?? (_entityTypes = CreateEntityTypes());
 
     /// <summary>
     ///   The structure of on-to-many relations between entity types.
@@ -40,6 +49,26 @@ namespace SoundExplorers.Data {
         UpdateNonIndexField();
         _version = value;
       }
+    }
+
+    private static IEnumerable<Type> CreateEntityTypes() {
+      var list = new List<Type> {
+        typeof(Act),
+        typeof(Artist),
+        typeof(Credit),
+        typeof(Event),
+        typeof(EventType),
+        typeof(Genre),
+        typeof(Location),
+        typeof(Newsletter),
+        typeof(Series),
+        typeof(Piece),
+        typeof(Role),
+        typeof(Schema),
+        typeof(Set),
+        typeof(UserOption),
+      };
+      return list.ToArray();
     }
 
     [NotNull]
@@ -80,20 +109,9 @@ namespace SoundExplorers.Data {
     /// <param name="newVersion">New schema version number</param>
     /// <param name="session">Database session</param>
     public void Upgrade(int newVersion, [NotNull] SessionBase session) {
-      session.RegisterClass(typeof(Act));
-      session.RegisterClass(typeof(Artist));
-      session.RegisterClass(typeof(Credit));
-      session.RegisterClass(typeof(Event));
-      session.RegisterClass(typeof(EventType));
-      session.RegisterClass(typeof(Genre));
-      session.RegisterClass(typeof(Location));
-      session.RegisterClass(typeof(Newsletter));
-      session.RegisterClass(typeof(Piece));
-      session.RegisterClass(typeof(Role));
-      session.RegisterClass(typeof(Schema));
-      session.RegisterClass(typeof(Series));
-      session.RegisterClass(typeof(Set));
-      session.RegisterClass(typeof(UserOption));
+      foreach (var entityType in EntityTypes) {
+        session.RegisterClass(entityType);
+      }
       Version = newVersion;
     }
   }

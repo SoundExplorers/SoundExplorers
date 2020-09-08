@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reflection;
 
-namespace SoundExplorers.Data {
+namespace SoundExplorers.OldData {
   /// <summary>
   ///   Entity column metadata.
   /// </summary>

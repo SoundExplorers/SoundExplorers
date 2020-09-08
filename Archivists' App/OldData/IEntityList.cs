@@ -5,7 +5,7 @@ using System.Data;
 using JetBrains.Annotations;
 using SoundExplorers.Common;
 
-namespace SoundExplorers.Data {
+namespace SoundExplorers.OldData {
   /// <summary>
   ///   Entity list interface.
   /// </summary>

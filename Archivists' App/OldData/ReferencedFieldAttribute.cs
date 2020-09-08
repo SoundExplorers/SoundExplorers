@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SoundExplorers.Data {
+namespace SoundExplorers.OldData {
   /// <summary>
   ///   Indicates that a property of an entity class represents a
   ///   field required for database access,

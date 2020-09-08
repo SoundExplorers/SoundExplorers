@@ -18,6 +18,7 @@ namespace SoundExplorers.Data {
   public abstract class EntityBase : ReferenceTracked, IEntity {
     private IDictionary<Type, IDictionary> _childrenOfType;
     private IDictionary<Type, IRelationInfo> _childrenRelations;
+    private IEntityColumnList _columns;
     private EntityBase _identifyingParent;
     private IDictionary<Type, IRelationInfo> _parentRelations;
     private IDictionary<Type, EntityBase> _parents;
@@ -71,6 +72,11 @@ namespace SoundExplorers.Data {
         UpdateNonIndexField();
         _childrenRelations = value;
       }
+    }
+
+    public IEntityColumnList Columns {
+      get => _columns;
+      protected set => _columns = value;
     }
 
     /// <summary>

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace SoundExplorers.Data {
+namespace SoundExplorers.OldData {
   internal class EntityColumnComparer : Comparer<IEntityColumn> {
     public override int Compare(IEntityColumn x, IEntityColumn y) {
       if (x?.SequenceNo < y?.SequenceNo) {

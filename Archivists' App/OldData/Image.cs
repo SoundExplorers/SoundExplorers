@@ -3,7 +3,7 @@ using System.Data;
 using System.IO;
 using Devart.Data.PostgreSql;
 
-namespace SoundExplorers.Data {
+namespace SoundExplorers.OldData {
   /// <summary>
   ///   Image entity.
   /// </summary>

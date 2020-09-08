@@ -2,7 +2,7 @@
 using System.IO;
 using Devart.Data.PostgreSql;
 
-namespace SoundExplorers.Data {
+namespace SoundExplorers.OldData {
   /// <summary>
   ///   Represents an SQL UPDATE statement to execute against the
   ///   SoundExplorers database for an Entity

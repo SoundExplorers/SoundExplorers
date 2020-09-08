@@ -5,111 +5,34 @@ namespace SoundExplorers.Data {
   ///   Entity column metadata interface.
   /// </summary>
   public interface IEntityColumn {
-    /// <summary>
-    ///   Gets or sets the name of the column.
-    ///   This must be set to the name of the corresponding
-    ///   property of the class derived from Entity.
-    /// </summary>
-    string ColumnName { get; set; }
 
     /// <summary>
-    ///   Gets or sets the type of data stored in the column.
+    ///   Gets or sets the type of data stored in the property.
     /// </summary>
     Type DataType { get; set; }
+    
+    /// <summary>
+    ///   Gets or sets the display name to be used for reporting.
+    /// </summary>
+    string DisplayName { get; set; }
+    
+    /// <summary>
+    ///   Gets or sets the name of the property of the entity.
+    /// </summary>
+    string PropertyName { get; set; }
 
     /// <summary>
-    ///   Gets or sets whether the corresponding property of the class
-    ///   derived from Entity
-    ///   is flagged with a <see cref="HiddenFieldAttribute" />.
+    ///   Gets or sets the name of the property on
+    ///   the referenced entity.
+    ///   Null if the column is not from a referenced entity.
     /// </summary>
-    bool IsHidden { get; set; }
-
-    /// <summary>
-    ///   Gets or sets whether the column is in
-    ///   the primary key required for database access.
-    /// </summary>
-    bool IsInPrimaryKey { get; set; }
-
-    /// <summary>
-    ///   Gets or sets whether the column is in
-    ///   the unique key (if there is one).
-    /// </summary>
-    bool IsInUniqueKey { get; set; }
-
-    /// <summary>
-    ///   Gets or sets the name of the column as on
-    ///   the database table.
-    /// </summary>
-    string NameOnDb { get; set; }
-
-    /// <summary>
-    ///   Gets or sets the name of the column on
-    ///   the referenced database table whose name
-    ///   is the name of the corresponding
-    ///   property of the class derived from Entity.
-    ///   Null if the column is not from a referenced table.
-    /// </summary>
-    string ReferencedColumnName { get; set; }
+    string ReferencedPropertyName { get; set; }
 
     /// <summary>
     ///   Gets or sets the name of
-    ///   the referenced database table whose name
-    ///   is the name of the corresponding referenced Entity.
-    ///   Null if the column is not from a referenced table.
+    ///   the referenced entity type.
+    ///   Null if the column is not from a referenced entity.
     /// </summary>
-    string ReferencedTableName { get; set; }
-
-    /// <summary>
-    ///   Gets the one-based left-to-right sequence number of the column
-    ///   in the main grid.  Zero if not to be included in the main grid.
-    /// </summary>
-    int SequenceNo { get; set; }
-
-    /// <summary>
-    ///   Gets the name of the column's owning table.
-    ///   This is the name of the corresponding
-    ///   class derived from Entity.
-    /// </summary>
-    string TableName { get; }
-
-    /// <summary>
-    ///   Gets or sets whether the column is
-    ///   be shown in the table editor.
-    /// </summary>
-    bool Visible { get; set; }
-
-    /// <summary>
-    ///   Returns the field value
-    ///   of the column in the specified
-    ///   instance of the entity.
-    /// </summary>
-    /// <param name="entity">
-    ///   The instance of the entity
-    ///   for which the field value
-    ///   of the column is required.
-    /// </param>
-    /// <returns>
-    ///   The field value
-    ///   of the column in the specified
-    ///   instance of the entity.
-    /// </returns>
-    object GetValue(IEntity entity);
-
-    /// <summary>
-    ///   Sets the field value
-    ///   of the column in the specified
-    ///   instance of the entity.
-    /// </summary>
-    /// <param name="entity">
-    ///   The instance of the entity
-    ///   for which the field value
-    ///   of the column is to be set.
-    /// </param>
-    /// <param name="value">
-    ///   The value to which
-    ///   the field value
-    ///   of the column is to be set.
-    /// </param>
-    void SetValue(IEntity entity, object value);
+    string ReferencedEntityName { get; set; }
   } //End of class
 } //End of namespace

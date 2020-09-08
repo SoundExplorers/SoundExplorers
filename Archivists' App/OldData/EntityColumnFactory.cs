@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using JetBrains.Annotations;
 
-namespace SoundExplorers.Data {
+namespace SoundExplorers.OldData {
   internal class EntityColumnFactory {
     private IEntityColumn Column { get; set; }
     private Type EntityType { get; set; }

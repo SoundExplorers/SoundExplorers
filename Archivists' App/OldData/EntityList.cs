@@ -8,7 +8,7 @@ using Devart.Data.PostgreSql;
 using JetBrains.Annotations;
 using SoundExplorers.Common;
 
-namespace SoundExplorers.Data {
+namespace SoundExplorers.OldData {
   /// <summary>
   ///   Entity list base class.
   /// </summary>

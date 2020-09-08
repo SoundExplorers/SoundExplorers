@@ -9,12 +9,23 @@ namespace SoundExplorers.Data {
   /// <summary>
   ///   Entity list interface.
   /// </summary>
-  public interface IEntityList : IEntityColumnContainer, IList {
+  public interface IEntityList : IList {
+    /// <summary>
+    ///   Gets metadata about the database columns
+    ///   represented by the Entity's field properties.
+    /// </summary>
+    IEntityColumnList Columns { get; }
+    
     /// <summary>
     ///   Gets the data set containing the main <see cref="Table" />
     ///   and, if specified, the parent table.
     /// </summary>
     DataSet DataSet { get; }
+
+    /// <summary>
+    ///   Gets the name of the entity type persisted on the database.
+    /// </summary>
+    string EntityTypeName { get; }
 
     /// <summary>
     ///   Gets the list of entities representing the main table's

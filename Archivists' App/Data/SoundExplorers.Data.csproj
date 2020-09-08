@@ -88,13 +88,15 @@
     <Compile Include="Artist.cs" />
     <Compile Include="Credit.cs" />
     <Compile Include="EntityBase.cs" />
+    <Compile Include="EntityColumn.cs" />
+    <Compile Include="EntityColumnList.cs" />
+    <Compile Include="EntityList.cs" />
     <Compile Include="Event.cs" />
     <Compile Include="EventType.cs" />
-    <Compile Include="Factory.cs" />
+    <Compile Include="EntityListFactory.cs" />
     <Compile Include="Genre.cs" />
     <Compile Include="IEntity.cs" />
     <Compile Include="IEntityColumn.cs" />
-    <Compile Include="IEntityColumnContainer.cs" />
     <Compile Include="IEntityColumnList.cs" />
     <Compile Include="IEntityList.cs" />
     <Compile Include="IRelationInfo.cs" />

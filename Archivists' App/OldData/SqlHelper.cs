@@ -8,7 +8,7 @@ using System.Reflection;
 using System.Text;
 using Devart.Data.PostgreSql;
 
-namespace SoundExplorers.Data {
+namespace SoundExplorers.OldData {
   /// <summary>
   ///   Helper methods for SQL execution.
   /// </summary>

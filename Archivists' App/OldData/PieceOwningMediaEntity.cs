@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace SoundExplorers.Data {
+namespace SoundExplorers.OldData {
   /// <summary>
   ///   An Entity that can have mutliple Pieces associated with it
   ///   and from whose data media file metadata tags may need to be updated.

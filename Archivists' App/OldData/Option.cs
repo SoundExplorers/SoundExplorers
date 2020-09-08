@@ -1,6 +1,6 @@
 using System;
 
-namespace SoundExplorers.Data {
+namespace SoundExplorers.OldData {
   /// <summary>
   ///   Accesses an option/preference for the current user,
   ///   as held on the UserOption table.

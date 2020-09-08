@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SoundExplorers.Data {
+namespace SoundExplorers.OldData {
   internal class DeepCloneable<T> : ICloneable {
     object ICloneable.Clone() {
       return Clone();

@@ -1,4 +1,4 @@
-﻿namespace SoundExplorers.Data {
+﻿namespace SoundExplorers.OldData {
   /// <summary>
   ///   The audio metadata tags
   ///   that we can usefully map to info on the database

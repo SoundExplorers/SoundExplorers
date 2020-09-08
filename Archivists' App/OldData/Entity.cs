@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using Devart.Data.PostgreSql;
 
-namespace SoundExplorers.Data {
+namespace SoundExplorers.OldData {
   /// <summary>
   ///   Entity base class.
   /// </summary>

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace SoundExplorers.Data {
+namespace SoundExplorers.OldData {
   /// <summary>
   ///   An audio file.
   /// </summary>

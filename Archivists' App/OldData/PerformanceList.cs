@@ -2,7 +2,7 @@
 using System.Data;
 using Devart.Data.PostgreSql;
 
-namespace SoundExplorers.Data {
+namespace SoundExplorers.OldData {
   /// <summary>
   ///   A list of Performances.
   /// </summary>
