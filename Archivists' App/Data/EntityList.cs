@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
 using System.Reflection;
 using JetBrains.Annotations;
 using SoundExplorers.Common;
@@ -38,6 +37,7 @@ namespace SoundExplorers.Data {
         ParentList = CreateParentList(parentListType);
       }
     }
+
     private IEntity Entity { get; }
     private IEntity UnchangedEntity { get; set; }
 
@@ -55,7 +55,8 @@ namespace SoundExplorers.Data {
     ///   The table name is the same as the type name of the listed Entities.
     /// </remarks>
     public string EntityTypeName => Table?.TableName ??
-                               throw new NullReferenceException(nameof(EntityTypeName));
+                                    throw new NullReferenceException(
+                                      nameof(EntityTypeName));
 
     /// <summary>
     ///   Gets the data set containing the main <see cref="Table" />
@@ -289,10 +290,10 @@ namespace SoundExplorers.Data {
         // if (parentListType == typeof(PieceList)) {
         //   result = new PieceList(null);
         // } else {
-          result = EntityListFactory<IEntityList>.Create(
-            parentListType,
-            // Indicate that the parent list does not itself require a parent list.
-            new object[] {null});
+        result = EntityListFactory<IEntityList>.Create(
+          parentListType,
+          // Indicate that the parent list does not itself require a parent list.
+          new object[] {null});
         // }
       } catch (TargetInvocationException ex) {
         throw ex.InnerException ?? ex;
@@ -310,7 +311,6 @@ namespace SoundExplorers.Data {
     }
 
     protected abstract DataColumn[] GetForeignKeyDataColumns();
-
     protected abstract DataColumn[] GetParentKeyDataColumns();
 
     private void PopulateEntityFromRow(IEntity entity, DataRow row) {

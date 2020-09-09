@@ -95,6 +95,7 @@
     <Compile Include="EventType.cs" />
     <Compile Include="EntityListFactory.cs" />
     <Compile Include="Genre.cs" />
+    <Compile Include="Global.cs" />
     <Compile Include="IEntity.cs" />
     <Compile Include="IEntityColumn.cs" />
     <Compile Include="IEntityColumnList.cs" />
@@ -103,6 +104,7 @@
     <Compile Include="Key.cs" />
     <Compile Include="KeyComparer.cs" />
     <Compile Include="Location.cs" />
+    <Compile Include="SetList.cs" />
     <Compile Include="Newsletter.cs" />
     <Compile Include="Piece.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

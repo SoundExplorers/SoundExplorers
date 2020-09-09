@@ -54,7 +54,7 @@ namespace SoundExplorers.Model {
     }
 
     internal QueryHelper QueryHelper {
-      get => _queryHelper ?? (_queryHelper = Global.QueryHelper);
+      get => _queryHelper ?? (_queryHelper = QueryHelper.Instance);
       set => _queryHelper = value;
     }
 

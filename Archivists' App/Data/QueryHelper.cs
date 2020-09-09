@@ -22,7 +22,7 @@ namespace SoundExplorers.Data {
     [NotNull] private static MethodInfo AllObjectsGenericMethod { get; }
 
     [NotNull]
-    internal static QueryHelper Instance =>
+    public static QueryHelper Instance =>
       _instance ?? (_instance = new QueryHelper());
 
     [NotNull]
