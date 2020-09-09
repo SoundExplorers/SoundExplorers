@@ -15,6 +15,12 @@ namespace SoundExplorers.Data {
     ///   Gets or sets the display name to be used for reporting.
     /// </summary>
     string DisplayName { get; set; }
+
+    /// <summary>
+    ///   Gets or sets whether the column is to
+    ///   be shown in the table editor.
+    /// </summary>
+    bool IsVisible { get; set; }
     
     /// <summary>
     ///   Gets or sets the name of the property of the entity.

@@ -91,6 +91,7 @@
     <Compile Include="EntityColumn.cs" />
     <Compile Include="EntityColumnList.cs" />
     <Compile Include="EntityList.cs" />
+    <Compile Include="EntityListBase.cs" />
     <Compile Include="Event.cs" />
     <Compile Include="EventType.cs" />
     <Compile Include="EntityListFactory.cs" />

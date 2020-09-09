@@ -8,6 +8,7 @@ namespace SoundExplorers.Data {
     where TEntity : EntityBase {
     public Type DataType { get; set; }
     public string DisplayName { get; set; }
+    public bool IsVisible { get; set; }
     public string PropertyName { get; set; }
     public string ReferencedPropertyName { get; set; }
     public string ReferencedEntityName { get; set; }

@@ -438,6 +438,10 @@ namespace SoundExplorers.Controller {
       return Columns[columnName].ReferencedEntityName;
     }
 
+    public bool IsColumnVisible([NotNull] string columnName) {
+      return Columns[columnName].IsVisible;
+    }
+
     /// <summary>
     ///   Returns whether the string field in the specified column
     ///   and with the specified new value is changing

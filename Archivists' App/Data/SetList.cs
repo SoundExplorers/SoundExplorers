@@ -1,39 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
-using JetBrains.Annotations;
-using VelocityDb.Session;
 
 namespace SoundExplorers.Data {
-  public class SetList : List<Set> {
-    private SessionBase _session;
-    public SetList() {
-      Table = CreateEmptyTableWithColumns();
+  public class SetList : EntityListBase<Set> {
+    protected override void AddRowsToTable() {
+      foreach (var set in this) {
+        Table.Rows.Add(set.Event.Location.Name, set.Event.Date, set.SetNo, set.Act?.Name,
+          set.Notes);
+      }
     }
 
-    /// <summary>
-    ///   Gets the data table representing the list of entities.
-    /// </summary>
-    [NotNull]
-    public DataTable Table { get;}
-
-    [NotNull]
-    internal SessionBase Session {
-      get => _session ?? (_session = Global.Session);
-      set => _session = value;
-    }
-
-    /// <summary>
-    ///   Fetches the required entities from the database
-    ///   and populates the list and table with them.
-    /// </summary>
-    public void Fetch() {
-      Clear();
-      AddRange(Session.AllObjects<Set>());
-      Table.Clear();
-    }
-
-    private static DataTable CreateEmptyTableWithColumns() {
+    protected override DataTable CreateEmptyTableWithColumns() {
       var result = new DataTable(nameof(Event.Date));
       result.Columns.Add(nameof(Location), typeof(string));
       result.Columns.Add(nameof(Event), typeof(DateTime));
