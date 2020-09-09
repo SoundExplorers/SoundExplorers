@@ -860,10 +860,10 @@ namespace SoundExplorers.View {
         MainGrid.DataSource = Controller.Table?.DefaultView;
       }
       foreach (DataGridViewColumn column in MainGrid.Columns) {
-        //column.Visible = Controller.IsColumnVisible(column.Name);
-        //if (column.Visible) {
+        column.Visible = Controller.IsColumnVisible(column.Name);
+        if (column.Visible) {
           ConfigureCellStyle(column);
-        //}
+        }
       } // End of foreach
       MainGrid.CellBeginEdit += MainGrid_CellBeginEdit;
       MainGrid.CellEndEdit += MainGrid_CellEndEdit;
