@@ -1,1 +1,0 @@
-﻿insert into ArtistInImage (    ImageId,    ArtistName) values (    coalesce(@ImageId, 0),    coalesce(@Artist, ''))
