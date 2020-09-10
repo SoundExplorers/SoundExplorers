@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Data;
+using SoundExplorers.Data;
 
-namespace SoundExplorers.Data {
+namespace SoundExplorers.Model {
   /// <summary>
   ///   Provides data for a RowUpdated event
   ///   that is raised when a <see cref="DataRow" />

@@ -1,7 +1,7 @@
 ﻿using System.Data;
 using JetBrains.Annotations;
 
-namespace SoundExplorers.Data {
+namespace SoundExplorers.Model {
   /// <summary>
   ///   Entity list interface.
   /// </summary>

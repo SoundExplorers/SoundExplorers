@@ -1,6 +1,6 @@
 ﻿using VelocityDb.Session;
 
-namespace SoundExplorers.Data {
+namespace SoundExplorers.Model {
   public static class Global {
     public static SessionBase Session { get; set; }
   }

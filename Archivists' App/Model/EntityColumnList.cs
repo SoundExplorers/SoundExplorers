@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
 
-namespace SoundExplorers.Data {
+namespace SoundExplorers.Model {
   /// <summary>
   ///   Metadata for the columns of a table representing
   ///   a list of entities of a specific entity type.

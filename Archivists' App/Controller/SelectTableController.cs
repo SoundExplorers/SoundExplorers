@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using JetBrains.Annotations;
 using SoundExplorers.Data;
+using SoundExplorers.Model;
 
 namespace SoundExplorers.Controller {
   /// <summary>

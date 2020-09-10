@@ -4,9 +4,10 @@ using System.Data;
 using System.Data.Linq;
 using System.Reflection;
 using JetBrains.Annotations;
+using SoundExplorers.Data;
 using VelocityDb.Session;
 
-namespace SoundExplorers.Data {
+namespace SoundExplorers.Model {
   public abstract class EntityListBase<TEntity> : List<TEntity>, IEntityList
     where TEntity : EntityBase {
     private EntityColumnList _columns;

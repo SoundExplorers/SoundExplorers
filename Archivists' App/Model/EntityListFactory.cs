@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using JetBrains.Annotations;
 
-namespace SoundExplorers.Data {
+namespace SoundExplorers.Model {
   /// <summary>
   ///   A facility for the instantiation of EntityList types.
   /// </summary>

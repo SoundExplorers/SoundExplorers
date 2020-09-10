@@ -39,6 +39,7 @@
         <Reference Include="System" />
         <Reference Include="System.Core" />
         <Reference Include="System.Data" />
+        <Reference Include="System.Data.Linq" />
         <Reference Include="System.Xml" />
         <Reference Include="VelocityDb, Version=9.1.1.0, Culture=neutral, PublicKeyToken=f050dff7995aa24a">
           <HintPath>..\packages\VelocityDB.9.1.2\lib\net45\VelocityDb.dll</HintPath>
@@ -46,10 +47,22 @@
         </Reference>
     </ItemGroup>
     <ItemGroup>
+        <Compile Include="EntityColumn.cs" />
+        <Compile Include="EntityColumnList.cs" />
+        <Compile Include="EntityListBase.cs" />
+        <Compile Include="EntityListFactory.cs" />
+        <Compile Include="Global.cs" />
+        <Compile Include="IEntityList.cs" />
         <Compile Include="Option.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
+        <Compile Include="RowUpdatedEventArgs.cs" />
+        <Compile Include="SetList.cs" />
     </ItemGroup>
     <ItemGroup>
+      <ProjectReference Include="..\Common\SoundExplorers.Common.csproj">
+        <Project>{24f52a9c-6679-4029-abfd-7eaa964cc945}</Project>
+        <Name>SoundExplorers.Common</Name>
+      </ProjectReference>
       <ProjectReference Include="..\Data\SoundExplorers.Data.csproj">
         <Project>{eb9dd1ae-4445-45c2-bd75-b27cf5a87642}</Project>
         <Name>SoundExplorers.Data</Name>

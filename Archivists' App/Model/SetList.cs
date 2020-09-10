@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Data;
 using JetBrains.Annotations;
+using SoundExplorers.Data;
 
-namespace SoundExplorers.Data {
+namespace SoundExplorers.Model {
   public class SetList : EntityListBase<Set> {
     /// <summary>
     ///   Initialises a new instance of the <see cref="SetList" /> class,
