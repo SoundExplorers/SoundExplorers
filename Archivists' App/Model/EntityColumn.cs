@@ -18,7 +18,6 @@ namespace SoundExplorers.Model {
       }
       ReferencedTableName = referencedTableName;
       ReferencedColumnDisplayName = referencedColumnDisplayName;
-      IsVisible = true;
     }
 
     /// <summary>
@@ -32,12 +31,6 @@ namespace SoundExplorers.Model {
     /// </summary>
     [NotNull]
     public string DisplayName { get; }
-
-    /// <summary>
-    ///   Gets whether the column is to be shown in the table editor.
-    ///   Default: true.
-    /// </summary>
-    public bool IsVisible { get; internal set; }
 
     /// <summary>
     ///   Gets the display name of the corresponding column on the referenced table.

@@ -5,19 +5,12 @@ namespace SoundExplorers.Model {
   public class SetList : EntityListBase<Set> {
     protected override void AddRowsToTable() {
       foreach (var set in this) {
-        Table.Rows.Add(set.Event.Location.Name, set.Event.Date, set.SetNo, set.Act?.Name,
-              set.Genre.Name, set.Notes);
+        Table.Rows.Add(set.SetNo, set.Act?.Name, set.Genre.Name, set.Notes);
       }
     }
 
     protected override EntityColumnList CreateColumns() {
       return new EntityColumnList {
-        new EntityColumn(nameof(Event.Location), typeof(string),
-          nameof(Set.Event),
-          nameof(Event.Location)) {IsVisible = false},
-        new EntityColumn(nameof(Set.Event), typeof(DateTime),
-          nameof(Set.Event),
-          nameof(Event.Date)) {IsVisible = false},
         new EntityColumn(nameof(Set.SetNo), typeof(int)),
         new EntityColumn(nameof(Set.Act), typeof(string),
           nameof(Set.Act), nameof(Act.Name)),
