@@ -44,7 +44,7 @@ namespace SoundExplorers.Model {
     ///   Whether the list contains
     ///   an entity column with the specified display name.
     /// </returns>
-    public bool ContainsKey(string displayName) {
+    private bool ContainsKey(string displayName) {
       return (
         from EntityColumn entityColumn in this
         where entityColumn.DisplayName == displayName
