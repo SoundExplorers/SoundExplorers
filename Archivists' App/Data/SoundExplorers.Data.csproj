@@ -88,7 +88,6 @@
     <Compile Include="Artist.cs" />
     <Compile Include="Credit.cs" />
     <Compile Include="EntityBase.cs" />
-    <Compile Include="EntityColumn.cs" />
     <Compile Include="EntityColumnList.cs" />
     <Compile Include="EntityList.cs" />
     <Compile Include="EntityListBase.cs" />
@@ -98,9 +97,10 @@
     <Compile Include="Genre.cs" />
     <Compile Include="Global.cs" />
     <Compile Include="IEntity.cs" />
-    <Compile Include="IEntityColumn.cs" />
+    <Compile Include="EntityColumn.cs" />
     <Compile Include="IEntityColumnList.cs" />
     <Compile Include="IEntityList.cs" />
+    <Compile Include="IEntityListOld.cs" />
     <Compile Include="IRelationInfo.cs" />
     <Compile Include="Key.cs" />
     <Compile Include="KeyComparer.cs" />

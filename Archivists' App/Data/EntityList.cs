@@ -9,7 +9,7 @@ namespace SoundExplorers.Data {
   /// <summary>
   ///   Entity list base class.
   /// </summary>
-  public abstract class EntityList<TEntity> : List<IEntity>, IEntityList
+  public abstract class EntityList<TEntity> : List<IEntity>, IEntityListOld
     where TEntity : EntityBase, new() {
     /// <summary>
     ///   Initialises a new instance of the EntityList class,
@@ -89,7 +89,7 @@ namespace SoundExplorers.Data {
     ///   If the derived class does not specify a parent table,
     ///   a null reference will be returned.
     /// </remarks>
-    public IEntityList ParentList { get; }
+    public IEntityListOld ParentList { get; }
 
     /// <summary>
     ///   An event that is raised when there is an error on
@@ -284,13 +284,13 @@ namespace SoundExplorers.Data {
     }
 
     [NotNull]
-    private static IEntityList CreateParentList([NotNull] Type parentListType) {
-      IEntityList result;
+    private static IEntityListOld CreateParentList([NotNull] Type parentListType) {
+      IEntityListOld result;
       try {
         // if (parentListType == typeof(PieceList)) {
         //   result = new PieceList(null);
         // } else {
-        result = EntityListFactory<IEntityList>.Create(
+        result = EntityListFactory<IEntityListOld>.Create(
           parentListType,
           // Indicate that the parent list does not itself require a parent list.
           new object[] {null});
@@ -309,7 +309,6 @@ namespace SoundExplorers.Data {
         parentColumns,
         childColumns);
     }
-
     protected abstract DataColumn[] GetForeignKeyDataColumns();
     protected abstract DataColumn[] GetParentKeyDataColumns();
 

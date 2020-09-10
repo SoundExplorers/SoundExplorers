@@ -93,7 +93,7 @@ namespace SoundExplorers.View {
     public Label StatusLabel;
 
     /// <summary>
-    ///   Creates a new instance of the <see cref="SplashFormBase" /> classs.
+    ///   Creates a new instance of the <see cref="SplashFormBase" /> class.
     /// </summary>
     protected SplashFormBase() {
       // Required for Windows Form Designer support

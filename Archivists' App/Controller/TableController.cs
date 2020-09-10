@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using JetBrains.Annotations;
 using SoundExplorers.Common;
 using SoundExplorers.Data;
@@ -92,7 +90,7 @@ namespace SoundExplorers.Controller {
     [CanBeNull]
     private IEntityList ParentList => Entities?.ParentList;
 
-    [CanBeNull] public string ParentTableName => ParentList?.EntityTypeName;
+    [CanBeNull] public string ParentTableName => ParentList?.Table.TableName;
     [CanBeNull] public DataTable Table => Entities?.Table;
     [NotNull] public string TableName { get; }
     [NotNull] private ITableView View { get; }
@@ -150,7 +148,7 @@ namespace SoundExplorers.Controller {
     ///   Returns whether the specified column references another entity.
     /// </summary>
     public bool DoesColumnReferenceAnotherEntity([NotNull] string columnName) {
-      return !string.IsNullOrEmpty(Columns[columnName].ReferencedPropertyName);
+      return !string.IsNullOrEmpty(Columns[columnName].ReferencedColumnDisplayName);
     }
 
     /// <summary>
@@ -193,8 +191,8 @@ namespace SoundExplorers.Controller {
       //   : Factory<IEntityList>.Create(TableName);
       Entities = EntityListFactory<IEntityList>.Create(TableName);
       Entities.Fetch();
-      Entities.RowError += Entities_RowError;
-      Entities.RowUpdated += Entities_RowUpdated;
+      // Entities.RowError += Entities_RowError;
+      // Entities.RowUpdated += Entities_RowUpdated;
     }
 
     /// <summary>
@@ -430,12 +428,14 @@ namespace SoundExplorers.Controller {
 
     [NotNull]
     internal string GetReferencedColumnName([NotNull] string columnName) {
-      return Columns[columnName].ReferencedPropertyName;
+      return Columns[columnName].ReferencedColumnDisplayName ??
+             throw new NullReferenceException("ReferencedParentColumnDisplayName");
     }
 
     [NotNull]
     internal string GetReferencedTableName([NotNull] string columnName) {
-      return Columns[columnName].ReferencedEntityName;
+      return Entities?.Columns[columnName].ReferencedTableName ??
+             throw new NullReferenceException("ReferencedTableName");
     }
 
     public bool IsColumnVisible([NotNull] string columnName) {
@@ -531,9 +531,9 @@ namespace SoundExplorers.Controller {
     /// <summary>
     ///   Updates the database table with the changes that have been input.
     /// </summary>
-    public void UpdateDatabase(bool isUpdatingExistingRow = false) {
+    public void UpdateDatabase() {
       try {
-        Entities?.Update(isUpdatingExistingRow ? GetOldKeyFieldValues() : null);
+        Entities?.Update();
         View.OnDatabaseUpdated();
       } catch (DataException exception) {
         View.OnDatabaseUpdateError(exception);
@@ -569,7 +569,7 @@ namespace SoundExplorers.Controller {
         }
       }
       if (isUpdateRequired) {
-        UpdateDatabase(true);
+        UpdateDatabase();
       }
     }
 

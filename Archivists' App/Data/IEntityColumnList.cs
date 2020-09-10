@@ -2,20 +2,24 @@
 using JetBrains.Annotations;
 
 namespace SoundExplorers.Data {
-  public interface IEntityColumnList : IList<IEntityColumn> {
+  /// <summary>
+  ///   Metadata for the columns of a table representing
+  ///   a list of entities of a specific type.
+  /// </summary>
+  public interface IEntityColumnList : IList<EntityColumn> {
     
     /// <summary>
-    ///   Returns the entity column with the specified name (case-insensitive),
+    ///   Returns the entity column with the specified display name (case-insensitive),
     ///   if found, otherwise returns a null reference.
     /// </summary>
     /// <param name="displayName">
-    ///   The name of the column (case-insensitive).
+    ///   The display name of the column (case-insensitive).
     /// </param>
     /// <returns>
-    ///   The entity column with the specified name (case-insensitive),
+    ///   The entity column with the specified display name (case-insensitive),
     ///   if found, otherwise a null reference.
     /// </returns>
-    IEntityColumn this[string displayName] { get; }
+    EntityColumn this[string displayName] { get; }
 
     /// <summary>
     ///   Add the specified entity column to the list,
@@ -24,19 +28,6 @@ namespace SoundExplorers.Data {
     /// <param name="entityColumn">
     ///   The entity column to be added.
     /// </param>
-    new void Add([NotNull] IEntityColumn entityColumn);
-
-    /// <summary>
-    ///   Returns whether the list contains
-    ///   an entity column with the specified name.
-    /// </summary>
-    /// <param name="displayName">
-    ///   The name of the column.
-    /// </param>
-    /// <returns>
-    ///   Whether the list contains
-    ///   an entity column with the specified name.
-    /// </returns>
-    bool ContainsKey([NotNull] string displayName);
+    new void Add([NotNull] EntityColumn entityColumn);
   }
 }
