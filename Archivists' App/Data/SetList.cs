@@ -35,7 +35,7 @@ namespace SoundExplorers.Data {
       }
     }
 
-    protected override IEntityColumnList CreateColumns() {
+    protected override EntityColumnList CreateColumns() {
       return new EntityColumnList {
         new EntityColumn(nameof(Location), typeof(string),
           nameof(Event),
@@ -57,6 +57,23 @@ namespace SoundExplorers.Data {
         Table.Columns[nameof(Set.SetNo)]
       };
       return list.ToArray();
+    }
+
+    protected override void UpdateEntityAtRow(int rowIndex) {
+      var row = Table.Rows[rowIndex];
+      var newSetNo = (int)row[nameof(Set.SetNo)];
+      var newActName = row[nameof(Act)].ToString();
+      var newNotes = row[nameof(Set.Notes)].ToString();
+      var set = this[rowIndex];
+      if (newSetNo != set.SetNo) {
+        set.SetNo = newSetNo;
+      }
+      if (newActName != set.Act?.Name) {
+        set.Act = QueryHelper.Read<Act>(newActName, Session);
+      }
+      if (newNotes != set.Notes) {
+        set.Notes = newNotes;
+      }
     }
   }
 }

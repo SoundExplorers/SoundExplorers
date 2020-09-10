@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Linq;
 using System.Reflection;
 using JetBrains.Annotations;
 using VelocityDb.Session;
@@ -11,6 +12,7 @@ namespace SoundExplorers.Data {
     private EntityColumnList _columns;
     private IEntityList _parentList;
     private DataColumn[] _primaryKeyDataColumns;
+    private QueryHelper _queryHelper;
     private SessionBase _session;
     private DataTable _table;
 
@@ -26,6 +28,12 @@ namespace SoundExplorers.Data {
     }
 
     private Type ParentListType { get; }
+
+    [NotNull]
+    internal QueryHelper QueryHelper {
+      get => _queryHelper ?? (_queryHelper = QueryHelper.Instance);
+      set => _queryHelper = value;
+    }
 
     [NotNull]
     internal SessionBase Session {
@@ -80,10 +88,54 @@ namespace SoundExplorers.Data {
       }
     }
 
+    /// <summary>
+    ///   Deletes the entity at the specified row index
+    ///   from the database and removes it from the list.
+    /// </summary>
+    /// <param name="rowIndex">
+    ///   Zero-based row index.
+    /// </param>
+    /// <exception cref="ApplicationException">
+    ///   A database update error occured.
+    /// </exception>
+    public void DeleteEntity(int rowIndex) {
+      try {
+        Session.Unpersist(this[rowIndex]);
+      } catch (Exception exception) {
+        throw ConvertException(exception);
+      }
+      RemoveAt(rowIndex);
+    }
+
+    /// <summary>
+    ///   Updates the entity at the specified row index.
+    /// </summary>
+    /// <param name="rowIndex">
+    ///   Zero-based row index.
+    /// </param>
+    /// <exception cref="ApplicationException">
+    ///   A database update error occured.
+    /// </exception>
+    public void UpdateEntity(int rowIndex) {
+      try { } catch (Exception exception) {
+        throw ConvertException(exception);
+      }
+    }
+    
+    protected abstract void UpdateEntityAtRow(int rowIndex);
+
     protected abstract void AddRowsToTable();
 
     [NotNull]
     protected abstract EntityColumnList CreateColumns();
+
+    [NotNull]
+    private static Exception ConvertException([NotNull] Exception exception) {
+      if (exception is DataException || exception is DuplicateKeyException) {
+        return new ApplicationException(exception.Message, exception);
+      }
+      return exception;
+    }
 
     [NotNull]
     private DataTable CreateEmptyTableWithColumns() {

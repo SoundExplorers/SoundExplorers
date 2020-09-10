@@ -535,7 +535,7 @@ namespace SoundExplorers.Controller {
       try {
         Entities?.Update();
         View.OnDatabaseUpdated();
-      } catch (DataException exception) {
+      } catch (Exception exception) {
         View.OnDatabaseUpdateError(exception);
       }
     }

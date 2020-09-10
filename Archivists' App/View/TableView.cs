@@ -76,9 +76,12 @@ namespace SoundExplorers.View {
       MainGrid.Focus();
     }
 
-    public void OnDatabaseUpdateError(DataException exception) {
+    public void OnDatabaseUpdateError(Exception exception) {
+      string message = exception is ApplicationException
+        ? exception.Message
+        : exception.ToString();
       MessageBox.Show(
-        exception.ToString(),
+        message,
         Application.ProductName,
         MessageBoxButtons.OK,
         MessageBoxIcon.Error);

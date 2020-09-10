@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using JetBrains.Annotations;
 using SoundExplorers.Common;
@@ -20,7 +21,7 @@ namespace SoundExplorers.Controller {
     IDictionary<string, object> GetFieldValues(int rowIndex);
 
     void OnDatabaseUpdated();
-    void OnDatabaseUpdateError([NotNull] DataException exception);
+    void OnDatabaseUpdateError([NotNull] Exception exception);
     void OnRowError([NotNull] RowErrorEventArgs e);
 
     void OnRowUpdated([NotNull] string databaseUpdateMessage,
