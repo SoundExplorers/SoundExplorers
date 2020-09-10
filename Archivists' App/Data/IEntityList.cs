@@ -28,13 +28,6 @@ namespace SoundExplorers.Data {
     IEntityList ParentList { get; }
 
     /// <summary>
-    ///   Gets the name of the identifying parent table.
-    ///   Null if this list does not have a parent list.
-    /// </summary>
-    [CanBeNull]
-    string ParentTableName { get; }
-
-    /// <summary>
     ///   Gets the data columns that uniquely identify the a row in the table.
     /// </summary>
     [NotNull]

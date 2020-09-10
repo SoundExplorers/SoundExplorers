@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using JetBrains.Annotations;
 
 namespace SoundExplorers.Data {
   /// <summary>
@@ -21,13 +20,13 @@ namespace SoundExplorers.Data {
     /// </returns>
     EntityColumn this[string displayName] { get; }
 
-    /// <summary>
-    ///   Add the specified entity column to the list,
-    ///   provided its name is unique in the list.
-    /// </summary>
-    /// <param name="entityColumn">
-    ///   The entity column to be added.
-    /// </param>
-    new void Add([NotNull] EntityColumn entityColumn);
+    // /// <summary>
+    // ///   Add the specified entity column to the list,
+    // ///   provided its name is unique in the list.
+    // /// </summary>
+    // /// <param name="entityColumn">
+    // ///   The entity column to be added.
+    // /// </param>
+    // new void Add([NotNull] EntityColumn entityColumn);
   }
 }

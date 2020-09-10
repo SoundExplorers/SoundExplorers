@@ -49,12 +49,6 @@ namespace SoundExplorers.Data {
       : null;
 
     /// <summary>
-    ///   Gets the name of the identifying parent table.
-    ///   Null if this list does not have a parent list.
-    /// </summary>
-    public string ParentTableName => ParentList?.Table.TableName;
-
-    /// <summary>
     ///   Gets the data columns that uniquely identify the a row in the table.
     /// </summary>
     public DataColumn[] PrimaryKeyDataColumns => _primaryKeyDataColumns ??
@@ -129,14 +123,14 @@ namespace SoundExplorers.Data {
 
     /// <summary>
     ///   The foreign key columns that reference the identifying parent entity
-    ///   need to be hidden when a parent is show, otherwise they would
+    ///   need to be hidden when a parent table is shown, otherwise they would
     ///   duplicate the same columns shown in the parent table.
     /// </summary>
     [NotNull]
     private DataColumn[] GetAndHideForeignKeyDataColumnsReferencingIdentifyingParent() {
       var list = new List<DataColumn>();
       foreach (var column in Columns) {
-        if (column.ReferencedTableName == ParentTableName) {
+        if (column.ReferencedTableName == ParentList?.Table.TableName) {
           column.IsVisible = false;
           list.Add(Table.Columns[column.DisplayName]);
         }
