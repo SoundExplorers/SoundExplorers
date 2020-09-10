@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Reflection;
 using JetBrains.Annotations;
 using VelocityDb.Session;
 
@@ -16,15 +17,15 @@ namespace SoundExplorers.Data {
     /// <summary>
     ///   Base constructor for derived entity lists.
     /// </summary>
-    /// <param name="isParentListRequired">
-    ///   Specifies whether an identifying parent entity list
-    ///   is to be included.
+    /// <param name="parentListType">
+    ///   Optionally specifies the type of parent entity list
+    ///   to include.  Null if a parent entity list is not required.
     /// </param>
-    protected EntityListBase(bool isParentListRequired) {
-      IsParentListRequired = isParentListRequired;
+    protected EntityListBase(Type parentListType = null) {
+      ParentListType = parentListType;
     }
 
-    private bool IsParentListRequired { get; }
+    private Type ParentListType { get; }
 
     [NotNull]
     internal SessionBase Session {
@@ -43,7 +44,7 @@ namespace SoundExplorers.Data {
     ///   Gets the list of entities represented in the main table's
     ///   parent table, or null if a parent list is not required.
     /// </summary>
-    public IEntityList ParentList => IsParentListRequired
+    public IEntityList ParentList => ParentListType == null
       ? _parentList ?? (_parentList = CreateParentList())
       : null;
 
@@ -99,13 +100,6 @@ namespace SoundExplorers.Data {
       return result;
     }
 
-    /// <summary>
-    ///   Creates the parent list, indicating that the parent list
-    ///   does not itself require a parent list.
-    /// </summary>
-    [NotNull]
-    protected abstract IEntityList CreateParentList();
-
     [NotNull]
     private DataRelation CreateRelationBetweenMainAndParentTables() {
       return new DataRelation(
@@ -115,6 +109,29 @@ namespace SoundExplorers.Data {
         GetAndHideForeignKeyDataColumnsReferencingIdentifyingParent());
     }
 
+    [NotNull]
+    private IEntityList CreateParentList() {
+      IEntityList result;
+      try {
+        // if (parentListType == typeof(PieceList)) {
+        //   result = new PieceList(null);
+        // } else {
+        result = EntityListFactory<IEntityList>.Create(
+          ParentListType,
+          // Indicate that the parent list does not itself require a parent list.
+          new object[] {null});
+        // }
+      } catch (TargetInvocationException ex) {
+        throw ex.InnerException ?? ex;
+      }
+      return result;
+    }
+
+    /// <summary>
+    ///   The foreign key columns that reference the identifying parent entity
+    ///   need to be hidden when a parent is show, otherwise they would
+    ///   duplicate the same columns shown in the parent table.
+    /// </summary>
     [NotNull]
     private DataColumn[] GetAndHideForeignKeyDataColumnsReferencingIdentifyingParent() {
       var list = new List<DataColumn>();

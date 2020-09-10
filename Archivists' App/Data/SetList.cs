@@ -1,17 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using JetBrains.Annotations;
 
 namespace SoundExplorers.Data {
   public class SetList : EntityListBase<Set> {
     /// <summary>
-    ///   Creates a new instance of the <see cref="SetList" /> class.
+    ///   Initialises a new instance of the <see cref="SetList" /> class,
+    ///   so that a subsequent call of the Fetch method will populate
+    ///   the instance's list with all the Set records on the database.
     /// </summary>
-    /// <param name="isParentListRequired">
-    ///   Specifies whether an identifying parent Event list
-    ///   is to be included.
-    /// </param>
-    public SetList(bool isParentListRequired) : base(isParentListRequired) { }
+    /// <remarks>
+    ///   Used when Set is the main table.
+    /// </remarks>
+    [UsedImplicitly]
+    public SetList()
+      : base(typeof(EventList)) { }
+    
+    /// <summary>
+    ///   Initialises a new instance of the <see cref="SetList" /> class,
+    ///   so that a subsequent call of the Fetch method will populate
+    ///   the instance's list with all the Set records on the database.
+    /// </summary>
+    /// <remarks>
+    ///   Used when Set is the parent table.
+    /// </remarks>
+    [UsedImplicitly]
+    public SetList(object[] dummy = null) { }
 
     protected override void AddRowsToTable() {
       foreach (var set in this) {
@@ -33,13 +48,6 @@ namespace SoundExplorers.Data {
           nameof(Act), nameof(Act.Name)),
         new EntityColumn(nameof(Set.Notes), typeof(string))
       };
-    }
-
-    protected override IEntityList CreateParentList() {
-      // The constructor indicates that the parent list
-      // does not itself require a parent list.
-      throw new NotImplementedException();
-      //return new EventList(false);
     }
 
     protected override DataColumn[] GetPrimaryKeyDataColumns() {
