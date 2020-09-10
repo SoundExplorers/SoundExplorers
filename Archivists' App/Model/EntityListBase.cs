@@ -17,15 +17,8 @@ namespace SoundExplorers.Model {
   public abstract class EntityListBase<TEntity> : List<TEntity>, IEntityList
     where TEntity : EntityBase {
     private EntityColumnList _columns;
-    //private QueryHelper _queryHelper;
     private SessionBase _session;
     private DataTable _table;
-
-    // [NotNull]
-    // internal QueryHelper QueryHelper {
-    //   get => _queryHelper ?? (_queryHelper = QueryHelper.Instance);
-    //   set => _queryHelper = value;
-    // }
 
     [NotNull]
     internal SessionBase Session {
