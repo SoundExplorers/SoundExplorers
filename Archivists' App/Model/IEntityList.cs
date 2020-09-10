@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using JetBrains.Annotations;
+using SoundExplorers.Data;
 
 namespace SoundExplorers.Model {
   /// <summary>
@@ -14,26 +15,6 @@ namespace SoundExplorers.Model {
     EntityColumnList Columns { get; }
 
     /// <summary>
-    ///   Gets the data set containing the main <see cref="Table" />
-    ///   and, if specified, the parent table.
-    /// </summary>
-    [CanBeNull]
-    DataSet DataSet { get; }
-
-    /// <summary>
-    ///   Gets the list of entities represented in the main table's
-    ///   parent table, or null if a parent list is not required.
-    /// </summary>
-    [CanBeNull]
-    IEntityList ParentList { get; }
-
-    /// <summary>
-    ///   Gets the data columns that uniquely identify the a row in the table.
-    /// </summary>
-    [NotNull]
-    DataColumn[] PrimaryKeyDataColumns { get; }
-
-    /// <summary>
     ///   Gets the data table representing the list of entities.
     /// </summary>
     [NotNull]
@@ -43,6 +24,11 @@ namespace SoundExplorers.Model {
     ///   Fetches the required entities from the database
     ///   and populates the list and table with them.
     /// </summary>
-    void Fetch();
+    /// <param name="identifyingParent">
+    ///   Optionally specifies the identifying parent entity
+    ///   whose child entities of the class's entity type are to be listed.
+    ///   Null if all entities of the class's entity type are to be listed.
+    /// </param>
+    void Fetch(EntityBase identifyingParent = null);
   }
 }

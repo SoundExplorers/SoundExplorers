@@ -8,27 +8,17 @@ using SoundExplorers.Data;
 using VelocityDb.Session;
 
 namespace SoundExplorers.Model {
+  
+  /// <summary>
+  /// 
+  /// </summary>
+  /// <typeparam name="TEntity"></typeparam>
   public abstract class EntityListBase<TEntity> : List<TEntity>, IEntityList
     where TEntity : EntityBase {
     private EntityColumnList _columns;
-    private IEntityList _parentList;
-    private DataColumn[] _primaryKeyDataColumns;
     private QueryHelper _queryHelper;
     private SessionBase _session;
     private DataTable _table;
-
-    /// <summary>
-    ///   Base constructor for derived entity lists.
-    /// </summary>
-    /// <param name="parentListType">
-    ///   Optionally specifies the type of parent entity list
-    ///   to include.  Null if a parent entity list is not required.
-    /// </param>
-    protected EntityListBase(Type parentListType = null) {
-      ParentListType = parentListType;
-    }
-
-    private Type ParentListType { get; }
 
     [NotNull]
     internal QueryHelper QueryHelper {
@@ -47,23 +37,6 @@ namespace SoundExplorers.Model {
     /// </summary>
     public EntityColumnList Columns => _columns ?? (_columns = CreateColumns());
 
-    public DataSet DataSet { get; private set; }
-
-    /// <summary>
-    ///   Gets the list of entities represented in the main table's
-    ///   parent table, or null if a parent list is not required.
-    /// </summary>
-    public IEntityList ParentList => ParentListType == null
-      ? _parentList ?? (_parentList = CreateParentList())
-      : null;
-
-    /// <summary>
-    ///   Gets the data columns that uniquely identify the a row in the table.
-    /// </summary>
-    public DataColumn[] PrimaryKeyDataColumns => _primaryKeyDataColumns ??
-                                                 (_primaryKeyDataColumns =
-                                                   GetPrimaryKeyDataColumns());
-
     /// <summary>
     ///   Gets the data table representing the list of entities.
     /// </summary>
@@ -73,20 +46,16 @@ namespace SoundExplorers.Model {
     ///   Fetches the required entities from the database
     ///   and populates the list and table with them.
     /// </summary>
-    public void Fetch() {
+    /// <param name="list">
+    ///   Optionally specifies the identifying parent entity
+    ///   whose child entities of the class's entity type are to be listed.
+    ///   Null if all entities of the class's entity type are to be listed.
+    /// </param>
+    public void Fetch(IList<TEntity> list = null) {
       Clear();
       AddRange(Session.AllObjects<TEntity>());
       Table.Clear();
       AddRowsToTable();
-      if (ParentList == null) {
-        DataSet = new DataSet(Table.TableName);
-        DataSet.Tables.Add(Table);
-      } else { // A parent entity list needs to be added.
-        ParentList.Fetch();
-        DataSet = ParentList.DataSet;
-        DataSet?.Tables.Add(Table);
-        DataSet?.Relations.Add(CreateRelationBetweenMainAndParentTables());
-      }
     }
 
     /// <summary>
@@ -164,7 +133,7 @@ namespace SoundExplorers.Model {
         //   result = new PieceList(null);
         // } else {
         result = EntityListFactory<IEntityList>.Create(
-          ParentListType,
+          IdentifyingParent,
           // Indicate that the parent list does not itself require a parent list.
           new object[] {null});
         // }
