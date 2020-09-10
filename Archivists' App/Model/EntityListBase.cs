@@ -1,30 +1,31 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Linq;
-using System.Reflection;
 using JetBrains.Annotations;
 using SoundExplorers.Data;
 using VelocityDb.Session;
 
 namespace SoundExplorers.Model {
-  
   /// <summary>
-  /// 
+  ///   Base class for a list of entities that populates a DataTable.
   /// </summary>
-  /// <typeparam name="TEntity"></typeparam>
+  /// <typeparam name="TEntity">
+  ///   Entity type
+  /// </typeparam>
   public abstract class EntityListBase<TEntity> : List<TEntity>, IEntityList
     where TEntity : EntityBase {
     private EntityColumnList _columns;
-    private QueryHelper _queryHelper;
+    //private QueryHelper _queryHelper;
     private SessionBase _session;
     private DataTable _table;
 
-    [NotNull]
-    internal QueryHelper QueryHelper {
-      get => _queryHelper ?? (_queryHelper = QueryHelper.Instance);
-      set => _queryHelper = value;
-    }
+    // [NotNull]
+    // internal QueryHelper QueryHelper {
+    //   get => _queryHelper ?? (_queryHelper = QueryHelper.Instance);
+    //   set => _queryHelper = value;
+    // }
 
     [NotNull]
     internal SessionBase Session {
@@ -43,17 +44,20 @@ namespace SoundExplorers.Model {
     public DataTable Table => _table ?? (_table = CreateEmptyTableWithColumns());
 
     /// <summary>
-    ///   Fetches the required entities from the database
-    ///   and populates the list and table with them.
+    ///   Populates the list and table.
     /// </summary>
     /// <param name="list">
-    ///   Optionally specifies the identifying parent entity
-    ///   whose child entities of the class's entity type are to be listed.
-    ///   Null if all entities of the class's entity type are to be listed.
+    ///   Optionally specifies the required list of entities.
+    ///   If null, all entities of the class's entity type
+    ///   will be fetched from the database.
     /// </param>
-    public void Fetch(IList<TEntity> list = null) {
+    public void Populate(IList list = null) {
       Clear();
-      AddRange(Session.AllObjects<TEntity>());
+      if (list != null) {
+        AddRange((IList<TEntity>)list);
+      } else {
+        AddRange(Session.AllObjects<TEntity>());
+      }
       Table.Clear();
       AddRowsToTable();
     }
@@ -87,13 +91,14 @@ namespace SoundExplorers.Model {
     ///   A database update error occured.
     /// </exception>
     public void UpdateEntity(int rowIndex) {
-      try { } catch (Exception exception) {
+      try {
+        UpdateEntityAtRow(rowIndex);
+      } catch (Exception exception) {
         throw ConvertException(exception);
       }
     }
-    
-    protected abstract void UpdateEntityAtRow(int rowIndex);
 
+    protected abstract void UpdateEntityAtRow(int rowIndex);
     protected abstract void AddRowsToTable();
 
     [NotNull]
@@ -115,52 +120,5 @@ namespace SoundExplorers.Model {
       }
       return result;
     }
-
-    [NotNull]
-    private DataRelation CreateRelationBetweenMainAndParentTables() {
-      return new DataRelation(
-        Table.TableName + "_" + ParentList?.Table.TableName,
-        ParentList?.PrimaryKeyDataColumns ??
-        throw new NullReferenceException("ParentList.PrimaryKeyDataColumns"),
-        GetAndHideForeignKeyDataColumnsReferencingIdentifyingParent());
-    }
-
-    [NotNull]
-    private IEntityList CreateParentList() {
-      IEntityList result;
-      try {
-        // if (parentListType == typeof(PieceList)) {
-        //   result = new PieceList(null);
-        // } else {
-        result = EntityListFactory<IEntityList>.Create(
-          IdentifyingParent,
-          // Indicate that the parent list does not itself require a parent list.
-          new object[] {null});
-        // }
-      } catch (TargetInvocationException ex) {
-        throw ex.InnerException ?? ex;
-      }
-      return result;
-    }
-
-    /// <summary>
-    ///   The foreign key columns that reference the identifying parent entity
-    ///   need to be hidden when a parent table is shown, otherwise they would
-    ///   duplicate the same columns shown in the parent table.
-    /// </summary>
-    [NotNull]
-    private DataColumn[] GetAndHideForeignKeyDataColumnsReferencingIdentifyingParent() {
-      var list = new List<DataColumn>();
-      foreach (var column in Columns) {
-        if (column.ReferencedTableName == ParentList?.Table.TableName) {
-          column.IsVisible = false;
-          list.Add(Table.Columns[column.DisplayName]);
-        }
-      }
-      return list.ToArray();
-    }
-
-    [NotNull]
-    protected abstract DataColumn[] GetPrimaryKeyDataColumns();
   }
 }

@@ -1,10 +1,10 @@
-﻿using System.Data;
+﻿using System.Collections;
+using System.Data;
 using JetBrains.Annotations;
-using SoundExplorers.Data;
 
 namespace SoundExplorers.Model {
   /// <summary>
-  ///   Entity list interface.
+  ///   Base class for a list of entities that populates a DataTable.
   /// </summary>
   public interface IEntityList {
     /// <summary>
@@ -21,14 +21,13 @@ namespace SoundExplorers.Model {
     DataTable Table { get; }
 
     /// <summary>
-    ///   Fetches the required entities from the database
-    ///   and populates the list and table with them.
+    ///   Populates the list and table.
     /// </summary>
-    /// <param name="identifyingParent">
-    ///   Optionally specifies the identifying parent entity
-    ///   whose child entities of the class's entity type are to be listed.
-    ///   Null if all entities of the class's entity type are to be listed.
+    /// <param name="list">
+    ///   Optionally specifies the required list of entities.
+    ///   If null, all entities of the class's entity type
+    ///   will be fetched from the database.
     /// </param>
-    void Fetch(EntityBase identifyingParent = null);
+    void Populate(IList list = null);
   }
 }

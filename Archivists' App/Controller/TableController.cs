@@ -190,7 +190,7 @@ namespace SoundExplorers.Controller {
       //   ? new ArtistInImageList()
       //   : Factory<IEntityList>.Create(TableName);
       Entities = EntityListFactory<IEntityList>.Create(TableName);
-      Entities.Fetch();
+      Entities.Populate();
       // Entities.RowError += Entities_RowError;
       // Entities.RowUpdated += Entities_RowUpdated;
     }
