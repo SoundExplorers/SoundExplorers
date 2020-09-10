@@ -46,7 +46,7 @@ namespace SoundExplorers.Data {
     ///   represented by the listed Entity's
     ///   field properties.
     /// </summary>
-    public IEntityColumnList Columns => Entity.Columns;
+    public EntityColumnList Columns => Entity.Columns;
 
     /// <summary>
     ///   Gets the name of the database table represented by the entity list.

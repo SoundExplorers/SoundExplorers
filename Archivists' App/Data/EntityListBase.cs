@@ -8,7 +8,7 @@ using VelocityDb.Session;
 namespace SoundExplorers.Data {
   public abstract class EntityListBase<TEntity> : List<TEntity>, IEntityList
     where TEntity : EntityBase {
-    private IEntityColumnList _columns;
+    private EntityColumnList _columns;
     private IEntityList _parentList;
     private DataColumn[] _primaryKeyDataColumns;
     private SessionBase _session;
@@ -36,7 +36,7 @@ namespace SoundExplorers.Data {
     /// <summary>
     ///   Gets metadata for the Table's columns.
     /// </summary>
-    public IEntityColumnList Columns => _columns ?? (_columns = CreateColumns());
+    public EntityColumnList Columns => _columns ?? (_columns = CreateColumns());
 
     public DataSet DataSet { get; private set; }
 
@@ -83,7 +83,7 @@ namespace SoundExplorers.Data {
     protected abstract void AddRowsToTable();
 
     [NotNull]
-    protected abstract IEntityColumnList CreateColumns();
+    protected abstract EntityColumnList CreateColumns();
 
     [NotNull]
     private DataTable CreateEmptyTableWithColumns() {

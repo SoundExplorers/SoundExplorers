@@ -11,7 +11,7 @@ namespace SoundExplorers.Data {
     ///   a list of entities of a specific type.
     /// </summary>
     [NotNull]
-    IEntityColumnList Columns { get; }
+    EntityColumnList Columns { get; }
 
     /// <summary>
     ///   Gets the data set containing the main <see cref="Table" />

@@ -14,7 +14,7 @@ namespace SoundExplorers.Data {
     ///   Gets metadata about the database columns
     ///   represented by the Entity's field properties.
     /// </summary>
-    IEntityColumnList Columns { get; }
+    EntityColumnList Columns { get; }
     
     /// <summary>
     ///   Gets the data set containing the main <see cref="Table" />

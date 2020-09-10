@@ -36,7 +36,7 @@ namespace SoundExplorers.Controller {
     ///   Gets metadata about the database columns
     ///   represented by the Entity's field properties.
     /// </summary>
-    private IEntityColumnList Columns => Entities?.Columns ??
+    private EntityColumnList Columns => Entities?.Columns ??
                                          throw new NullReferenceException(
                                            nameof(Columns));
 

@@ -98,7 +98,6 @@
     <Compile Include="Global.cs" />
     <Compile Include="IEntity.cs" />
     <Compile Include="EntityColumn.cs" />
-    <Compile Include="IEntityColumnList.cs" />
     <Compile Include="IEntityList.cs" />
     <Compile Include="IEntityListOld.cs" />
     <Compile Include="IRelationInfo.cs" />

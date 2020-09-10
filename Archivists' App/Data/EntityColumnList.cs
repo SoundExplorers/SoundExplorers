@@ -12,7 +12,7 @@ namespace SoundExplorers.Data {
   ///   A keyed list of entity columns with
   ///   <see cref="EntityColumn.DisplayName" /> as the key.
   /// </remarks>
-  public class EntityColumnList : List<EntityColumn>, IEntityColumnList {
+  public class EntityColumnList : List<EntityColumn> {
     /// <summary>
     ///   Add the specified entity column to the list,
     ///   provided its display name is unique in the list.
