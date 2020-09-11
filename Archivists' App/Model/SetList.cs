@@ -1,5 +1,4 @@
-﻿using System;
-using SoundExplorers.Data;
+﻿using SoundExplorers.Data;
 
 namespace SoundExplorers.Model {
   public class SetList : EntityListBase<Set> {

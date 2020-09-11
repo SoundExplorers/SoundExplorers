@@ -37,25 +37,6 @@ namespace SoundExplorers.Model {
     public DataTable Table => _table ?? (_table = CreateEmptyTableWithColumns());
 
     /// <summary>
-    ///   Populates the list and table.
-    /// </summary>
-    /// <param name="list">
-    ///   Optionally specifies the required list of entities.
-    ///   If null, all entities of the class's entity type
-    ///   will be fetched from the database.
-    /// </param>
-    public void Populate(IList list = null) {
-      Clear();
-      if (list != null) {
-        AddRange((IList<TEntity>)list);
-      } else {
-        AddRange(Session.AllObjects<TEntity>());
-      }
-      Table.Clear();
-      AddRowsToTable();
-    }
-
-    /// <summary>
     ///   Deletes the entity at the specified row index
     ///   from the database and removes it from the list.
     /// </summary>
@@ -75,7 +56,27 @@ namespace SoundExplorers.Model {
     }
 
     /// <summary>
-    ///   Updates the entity at the specified row index.
+    ///   Populates the list and table.
+    /// </summary>
+    /// <param name="list">
+    ///   Optionally specifies the required list of entities.
+    ///   If null, all entities of the class's entity type
+    ///   will be fetched from the database.
+    /// </param>
+    public void Populate(IList list = null) {
+      Clear();
+      if (list != null) {
+        AddRange((IList<TEntity>)list);
+      } else {
+        AddRange(Session.AllObjects<TEntity>());
+      }
+      Table.Clear();
+      AddRowsToTable();
+    }
+
+    /// <summary>
+    ///   Updates the entity at the specified row index
+    ///   with the data in the corresponding table row.
     /// </summary>
     /// <param name="rowIndex">
     ///   Zero-based row index.

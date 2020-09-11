@@ -21,6 +21,15 @@ namespace SoundExplorers.Model {
     DataTable Table { get; }
 
     /// <summary>
+    ///   Deletes the entity at the specified row index
+    ///   from the database and removes it from the list.
+    /// </summary>
+    /// <param name="rowIndex">
+    ///   Zero-based row index.
+    /// </param>
+    void DeleteEntity(int rowIndex);
+
+    /// <summary>
     ///   Populates the list and table.
     /// </summary>
     /// <param name="list">
@@ -29,5 +38,14 @@ namespace SoundExplorers.Model {
     ///   will be fetched from the database.
     /// </param>
     void Populate(IList list = null);
+
+    /// <summary>
+    ///   Updates the entity at the specified row index
+    ///   with the data in the corresponding table row.
+    /// </summary>
+    /// <param name="rowIndex">
+    ///   Zero-based row index.
+    /// </param>
+    void UpdateEntity(int rowIndex);
   }
 }

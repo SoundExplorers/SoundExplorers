@@ -81,6 +81,7 @@ namespace SoundExplorers.View {
         ? exception.Message
         : exception.ToString();
       MessageBox.Show(
+        this,
         message,
         Application.ProductName,
         MessageBoxButtons.OK,
@@ -749,7 +750,7 @@ namespace SoundExplorers.View {
       if (UpdateCancelled) {
         return;
       }
-      Controller.UpdateDatabase();
+      Controller.DeleteEntity(e.RowIndex);
     }
 
     private void MainGrid_RowValidated(object sender, DataGridViewCellEventArgs e) {
@@ -765,7 +766,7 @@ namespace SoundExplorers.View {
         // There's only the uncommitted new row, which can be discarded.
         return;
       }
-      Controller.UpdateDatabaseIfRowDataHasChanged(e.RowIndex);
+      Controller.UpdateEntityIfRowDataHasChanged(e.RowIndex);
     }
 
     private void OpenTable() {
@@ -863,10 +864,7 @@ namespace SoundExplorers.View {
         MainGrid.DataSource = Controller.Table?.DefaultView;
       }
       foreach (DataGridViewColumn column in MainGrid.Columns) {
-        column.Visible = Controller.IsColumnVisible(column.Name);
-        if (column.Visible) {
-          ConfigureCellStyle(column);
-        }
+        ConfigureCellStyle(column);
       } // End of foreach
       MainGrid.CellBeginEdit += MainGrid_CellBeginEdit;
       MainGrid.CellEndEdit += MainGrid_CellEndEdit;

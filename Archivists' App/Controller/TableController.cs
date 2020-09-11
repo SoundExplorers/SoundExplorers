@@ -41,13 +41,6 @@ namespace SoundExplorers.Controller {
                                            nameof(Columns));
 
     /// <summary>
-    ///   Gets the data set containing the main table
-    ///   and, if specified, the parent table.
-    /// </summary>
-    [CanBeNull]
-    public DataSet DataSet => Entities?.DataSet;
-
-    /// <summary>
     ///   The entity list representing the table whose data is shown in the table editor.
     /// </summary>
     [CanBeNull]
@@ -142,6 +135,19 @@ namespace SoundExplorers.Controller {
       //     break;
       //   }
       // }
+    }
+
+    /// <summary>
+    ///   Deletes the entity at the specified row index
+    ///   from the database and removes it from the list.
+    /// </summary>
+    public void DeleteEntity(int rowIndex) {
+      try {
+        Entities?.DeleteEntity(rowIndex);
+        View.OnDatabaseUpdated();
+      } catch (Exception exception) {
+        View.OnDatabaseUpdateError(exception);
+      }
     }
 
     /// <summary>
@@ -438,10 +444,6 @@ namespace SoundExplorers.Controller {
              throw new NullReferenceException("ReferencedTableName");
     }
 
-    public bool IsColumnVisible([NotNull] string columnName) {
-      return Columns[columnName].IsVisible;
-    }
-
     /// <summary>
     ///   Returns whether the string field in the specified column
     ///   and with the specified new value is changing
@@ -529,11 +531,12 @@ namespace SoundExplorers.Controller {
     }
 
     /// <summary>
-    ///   Updates the database table with the changes that have been input.
+    ///   Updates the entity at the specified row index
+    ///   with the data in the corresponding table row.
     /// </summary>
-    public void UpdateDatabase() {
+    private void UpdateEntity(int rowIndex) {
       try {
-        Entities?.Update();
+        Entities?.UpdateEntity(rowIndex);
         View.OnDatabaseUpdated();
       } catch (Exception exception) {
         View.OnDatabaseUpdateError(exception);
@@ -542,9 +545,9 @@ namespace SoundExplorers.Controller {
 
     /// <summary>
     ///   If there have been any changes to the data in the specified row,
-    ///   updates the database table.
+    ///   updates the corresponding entity, saving the changes to the database.
     /// </summary>
-    public void UpdateDatabaseIfRowDataHasChanged(int rowIndex) {
+    public void UpdateEntityIfRowDataHasChanged(int rowIndex) {
       var newFieldValues = View.GetFieldValues(rowIndex);
       if (OldFieldValues == null) {
         throw new NullReferenceException(nameof(OldFieldValues));
@@ -569,7 +572,7 @@ namespace SoundExplorers.Controller {
         }
       }
       if (isUpdateRequired) {
-        UpdateDatabase();
+        UpdateEntity(rowIndex);
       }
     }
 
