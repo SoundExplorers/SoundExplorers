@@ -24,11 +24,17 @@ namespace SoundExplorers.Model {
     /// <summary>
     ///   Base constructor for derived entity list classes.
     /// </summary>
+    /// <param name="isParentList">
+    ///   True if this is a (read-only) parent list.
+    ///   False if this is the (updatable) main (and maybe only) list.
+    /// </param>
     /// <param name="parentListType">
-    ///   The type of parent list (IEntityList) required when this is the main list.
+    ///   The type of (read-only) parent list (IEntityList)
+    ///   required when this is the (updatable) main list.
     ///   Null if a parent list is not required when this is the main list.
     /// </param>
-    protected EntityListBase(Type parentListType = null) {
+    protected EntityListBase(bool isParentList = false, Type parentListType = null) {
+      IsParentList = isParentList;
       if (parentListType != null) {
         ParentListType = parentListType.GetInterfaces().Contains(typeof(IEntityList))
           ? parentListType
@@ -39,6 +45,12 @@ namespace SoundExplorers.Model {
         ParentListType = null;
       }
     }
+
+    /// <summary>
+    ///   True if this is a (read-only) parent list.
+    ///   False if this is the (updatable) main (and maybe only) list.
+    /// </summary>
+    protected bool IsParentList { get; }
 
     [NotNull]
     internal SessionBase Session {

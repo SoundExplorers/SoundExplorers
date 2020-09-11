@@ -51,6 +51,7 @@
         <Compile Include="EntityColumnList.cs" />
         <Compile Include="EntityListBase.cs" />
         <Compile Include="EntityListFactory.cs" />
+        <Compile Include="EventList.cs" />
         <Compile Include="Global.cs" />
         <Compile Include="IEntityList.cs" />
         <Compile Include="Option.cs" />
