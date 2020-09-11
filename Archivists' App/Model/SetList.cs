@@ -3,6 +3,8 @@ using SoundExplorers.Data;
 
 namespace SoundExplorers.Model {
   public class SetList : EntityListBase<Set> {
+    public SetList() : base(typeof(EventList)) { }
+
     protected override Set CreateBackupEntity(Set set) {
       return new Set
         {SetNo = set.SetNo, Act = set.Act, Genre = set.Genre, Notes = set.Notes};

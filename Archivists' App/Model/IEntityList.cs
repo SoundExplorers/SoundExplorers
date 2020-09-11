@@ -1,18 +1,26 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Data;
 using JetBrains.Annotations;
 
 namespace SoundExplorers.Model {
   /// <summary>
-  ///   Base class for a list of entities that populates a DataTable.
+  ///   Interface for a list of entities that populates a DataTable.
   /// </summary>
   public interface IEntityList {
     /// <summary>
-    ///   Gets metadata for the columns of a table representing
-    ///   a list of entities of a specific type.
+    ///   Gets metadata for the columns of the Table that represents
+    ///   the list of entities.
     /// </summary>
     [NotNull]
     EntityColumnList Columns { get; }
+
+    /// <summary>
+    ///   Gets the type of parent list (IEntityList) required when this is the main list.
+    ///   Null if a parent list is not required when this is the main list.
+    /// </summary>
+    [CanBeNull]
+    Type ParentListType { get; }
 
     /// <summary>
     ///   Gets the data table representing the list of entities.

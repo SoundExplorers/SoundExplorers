@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Linq;
+using System.Linq;
 using JetBrains.Annotations;
 using SoundExplorers.Data;
 using VelocityDb.Session;
@@ -20,6 +21,25 @@ namespace SoundExplorers.Model {
     private SessionBase _session;
     private DataTable _table;
 
+    /// <summary>
+    ///   Base constructor for derived entity list classes.
+    /// </summary>
+    /// <param name="parentListType">
+    ///   The type of parent list (IEntityList) required when this is the main list.
+    ///   Null if a parent list is not required when this is the main list.
+    /// </param>
+    protected EntityListBase(Type parentListType = null) {
+      if (parentListType != null) {
+        ParentListType = parentListType.GetInterfaces().Contains(typeof(IEntityList))
+          ? parentListType
+          : throw new ArgumentException(
+            $"If specified, {nameof(parentListType)} must implement {nameof(IEntityList)}.",
+            nameof(parentListType));
+      } else {
+        ParentListType = null;
+      }
+    }
+
     [NotNull]
     internal SessionBase Session {
       get => _session ?? (_session = Global.Session);
@@ -27,9 +47,16 @@ namespace SoundExplorers.Model {
     }
 
     /// <summary>
-    ///   Gets metadata for the Table's columns.
+    ///   Gets metadata for the columns of the Table that represents
+    ///   the list of entities.
     /// </summary>
     public EntityColumnList Columns => _columns ?? (_columns = CreateColumns());
+
+    /// <summary>
+    ///   Gets the type of parent list (IEntityList) required when this is the main list.
+    ///   Null if a parent list is not required when this is the main list.
+    /// </summary>
+    public Type ParentListType { get; }
 
     /// <summary>
     ///   Gets the data table representing the list of entities.
