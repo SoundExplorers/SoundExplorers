@@ -85,18 +85,36 @@ namespace SoundExplorers.Model {
     ///   A database update error occured.
     /// </exception>
     public void UpdateEntity(int rowIndex) {
+      var backupEntity = CreateBackupEntity(this[rowIndex]);
       try {
         UpdateEntityAtRow(rowIndex);
       } catch (Exception exception) {
+        RestoreEntityAndRow(backupEntity, rowIndex);
         throw ConvertException(exception);
       }
     }
 
-    protected abstract void UpdateEntityAtRow(int rowIndex);
-    protected abstract void AddRowsToTable();
+    private void AddRowsToTable() {
+      foreach (var entity in this) {
+        Table.Rows.Add(CreateRowFromEntity(entity));
+      }
+    }
+
+    [NotNull]
+    protected abstract TEntity CreateBackupEntity([NotNull] TEntity entity);
 
     [NotNull]
     protected abstract EntityColumnList CreateColumns();
+
+    [NotNull]
+    private DataRow CreateRowFromEntity([NotNull] TEntity entity) {
+      var result = Table.NewRow();
+      var values = GetRowItemValuesFromEntity(entity);
+      for (var i = 0; i < values.Count; i++) {
+        result[i] = values[i];
+      }
+      return result;
+    }
 
     [NotNull]
     private static Exception ConvertException([NotNull] Exception exception) {
@@ -114,5 +132,22 @@ namespace SoundExplorers.Model {
       }
       return result;
     }
+
+    [NotNull]
+    protected abstract IList<object> GetRowItemValuesFromEntity([NotNull] TEntity entity);
+
+    private void RestoreEntityAndRow([NotNull] TEntity backupEntity, int rowIndex) {
+      var entity = this[rowIndex];
+      RestoreEntityPropertiesFromBackup(backupEntity, entity);
+      var values = GetRowItemValuesFromEntity(entity);
+      for (var i = 0; i < values.Count; i++) {
+        Table.Rows[rowIndex][i] = values[i];
+      }
+    }
+
+    protected abstract void RestoreEntityPropertiesFromBackup(
+      [NotNull] TEntity backupEntity, [NotNull] TEntity entityToRestore);
+
+    protected abstract void UpdateEntityAtRow(int rowIndex);
   }
 }

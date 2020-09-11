@@ -1,11 +1,11 @@
-﻿using SoundExplorers.Data;
+﻿using System.Collections.Generic;
+using SoundExplorers.Data;
 
 namespace SoundExplorers.Model {
   public class SetList : EntityListBase<Set> {
-    protected override void AddRowsToTable() {
-      foreach (var set in this) {
-        Table.Rows.Add(set.SetNo, set.Act?.Name, set.Genre.Name, set.Notes);
-      }
+    protected override Set CreateBackupEntity(Set set) {
+      return new Set
+        {SetNo = set.SetNo, Act = set.Act, Genre = set.Genre, Notes = set.Notes};
     }
 
     protected override EntityColumnList CreateColumns() {
@@ -17,6 +17,18 @@ namespace SoundExplorers.Model {
           nameof(Set.Genre), nameof(Genre.Name)),
         new EntityColumn(nameof(Set.Notes), typeof(string))
       };
+    }
+
+    protected override IList<object> GetRowItemValuesFromEntity(Set set) {
+      return new List<object> {set.SetNo, set.Act?.Name, set.Genre.Name, set.Notes};
+    }
+
+    protected override void RestoreEntityPropertiesFromBackup(Set backupSet,
+      Set setToRestore) {
+      setToRestore.SetNo = backupSet.SetNo;
+      setToRestore.Act = backupSet.Act;
+      setToRestore.Genre = backupSet.Genre;
+      setToRestore.Notes = backupSet.Notes;
     }
 
     protected override void UpdateEntityAtRow(int rowIndex) {
