@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Linq;
 using System.Linq;
+using System.Reflection;
 using JetBrains.Annotations;
 using SoundExplorers.Data;
 using VelocityDb.Session;
@@ -122,8 +123,9 @@ namespace SoundExplorers.Model {
     }
 
     /// <summary>
-    ///   Updates the entity at the specified row index
-    ///   with the data in the corresponding table row.
+    ///   If the specified table row is new or its data has changed,
+    ///   inserts (if new) or updates corresponding the entity
+    ///   on the database with the table row data.
     /// </summary>
     /// <param name="rowIndex">
     ///   Zero-based row index.
@@ -131,10 +133,19 @@ namespace SoundExplorers.Model {
     /// <exception cref="ApplicationException">
     ///   A database update error occured.
     /// </exception>
-    public void UpdateEntity(int rowIndex) {
+    public void InsertOrUpdateEntityIfRequired(int rowIndex) {
       var backupEntity = CreateBackupEntity(this[rowIndex]);
+      TEntity newEntity = null;
+      bool isNewRow = rowIndex == Count;
+      if (isNewRow) {
+        newEntity = CreateEntity(); 
+        Add(newEntity);
+      }
       try {
         UpdateEntityAtRow(rowIndex);
+        if (isNewRow) {
+          Session.Persist(newEntity);
+        }
       } catch (Exception exception) {
         RestoreEntityAndRow(backupEntity, rowIndex);
         throw ConvertException(exception);
@@ -152,6 +163,14 @@ namespace SoundExplorers.Model {
 
     [NotNull]
     protected abstract EntityColumnList CreateColumns();
+
+    private static TEntity CreateEntity() {
+      try {
+        return (TEntity)Activator.CreateInstance(typeof(TEntity));
+      } catch (TargetInvocationException ex) {
+        throw ex.InnerException ?? ex;
+      }
+    }
 
     [NotNull]
     private DataRow CreateRowFromEntity([NotNull] TEntity entity) {

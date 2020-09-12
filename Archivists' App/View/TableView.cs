@@ -37,10 +37,6 @@ namespace SoundExplorers.View {
                                               throw new NullReferenceException(
                                                 nameof(MainGrid.CurrentRow));
 
-    private MainView MainView => (MainView)ParentForm ??
-                                 throw new NullReferenceException(
-                                   nameof(ParentForm));
-
     private DataGridViewRow ParentCurrentRow => ParentGrid.CurrentRow ??
                                                 throw new NullReferenceException(
                                                   nameof(ParentGrid.CurrentRow));
@@ -71,26 +67,9 @@ namespace SoundExplorers.View {
     public bool IsThereACurrentMainEntity => !MainCurrentRow.IsNewRow;
     public int MainCurrentIndex => MainCurrentRow.Index;
 
-    public void OnDatabaseUpdated() {
-      MainGrid.AutoResizeColumns();
-      MainGrid.Focus();
-    }
-
-    public void OnDatabaseUpdateError(Exception exception) {
-      string message = exception is ApplicationException
-        ? exception.Message
-        : exception.ToString();
-      MessageBox.Show(
-        this,
-        message,
-        Application.ProductName,
-        MessageBoxButtons.OK,
-        MessageBoxIcon.Error);
-    }
-
     /// <summary>
     ///   Occurs when there is an error on
-    ///   attempting to insert, update or delete a database table row
+    ///   attempting to insert, update or delete an entity
     ///   corresponding to a row in the main grid.
     /// </summary>
     /// <param name="e">Error details.</param>
@@ -101,25 +80,13 @@ namespace SoundExplorers.View {
     }
 
     /// <summary>
-    ///   occurs when a database table row
+    ///   Occurs when an entity
     ///   corresponding to a row in the main grid
-    ///   has been successfully inserted or updated on the database.
+    ///   has been successfully inserted, updated or deleted on the database.
     /// </summary>
-    /// <param name="databaseUpdateMessage">A message describing the update.</param>
-    /// <param name="mediaTagsUpdateErrorMessage">
-    ///   If specified, an error message from a failed update of media tags.
-    /// </param>
-    public void OnRowUpdated(string databaseUpdateMessage,
-      string mediaTagsUpdateErrorMessage = null) {
-      MainView.StatusLabel.Text = databaseUpdateMessage;
-      if (mediaTagsUpdateErrorMessage != null) {
-        MessageBox.Show(
-          this,
-          mediaTagsUpdateErrorMessage,
-          Application.ProductName,
-          MessageBoxButtons.OK,
-          MessageBoxIcon.Error);
-      }
+    public void OnRowUpdated() {
+      MainGrid.AutoResizeColumns();
+      MainGrid.Focus();
     }
 
     public int ParentCurrentIndex => ParentCurrentRow.Index;
@@ -649,16 +616,16 @@ namespace SoundExplorers.View {
     ///   </para>
     /// </remarks>
     private void MainGrid_RowEnter(object sender, DataGridViewCellEventArgs e) {
-      // This is the safe way of checking whether we have entered the insertion (new) row:
-      if (e.RowIndex == MainGrid.RowCount - 1) {
-        Controller.OnEnteringInsertionRow();
-        // if (Entities is ImageList) {
-        //   ShowImageOrMessage(null);
-        // }
-        return;
-      }
-      // Not new row
-      Controller.OnEnteringExistingRow(e.RowIndex);
+      // // This is the safe way of checking whether we have entered the insertion (new) row:
+      // if (e.RowIndex == MainGrid.RowCount - 1) {
+      //   Controller.OnEnteringInsertionRow();
+      //   // if (Entities is ImageList) {
+      //   //   ShowImageOrMessage(null);
+      //   // }
+      //   return;
+      // }
+      // // Not new row
+      // Controller.OnEnteringExistingRow(e.RowIndex);
     }
 
     private void MainGrid_RowsRemoved(object sender, DataGridViewRowsRemovedEventArgs e) {
@@ -683,7 +650,7 @@ namespace SoundExplorers.View {
         // There's only the uncommitted new row, which can be discarded.
         return;
       }
-      Controller.UpdateEntityIfRowDataHasChanged(e.RowIndex);
+      Controller.InsertOrUpdateEntityIfRequired(e.RowIndex);
     }
 
     private void OpenTable() {
@@ -759,8 +726,6 @@ namespace SoundExplorers.View {
       MainGrid.RowsRemoved -= MainGrid_RowsRemoved;
       MainGrid.RowValidated -= MainGrid_RowValidated;
       if (Controller.IsParentTableToBeShown) {
-        // A read-only related grid for the parent table is to be shown
-        // above the main grid.
         PopulateParentGrid();
       }
       MainGrid.DataSource = Controller.MainTable?.DefaultView;

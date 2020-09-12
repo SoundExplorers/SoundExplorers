@@ -64,6 +64,10 @@ namespace SoundExplorers.Controller {
       _imageSplitterDistanceOption ?? (_imageSplitterDistanceOption =
         new Option($"{MainTable?.TableName}.ImageSplitterDistance"));
 
+    /// <summary>
+    ///   Gets whether a read-only related grid for a parent table is to be shown
+    ///   above the main grid.
+    /// </summary>
     public bool IsParentTableToBeShown => ParentTable != null;
 
     /// <summary>
@@ -74,7 +78,6 @@ namespace SoundExplorers.Controller {
 
     [NotNull] private Type MainListType { get; }
     [CanBeNull] public DataTable MainTable => MainList?.Table;
-    [CanBeNull] private IDictionary<string, object> OldFieldValues { get; set; }
 
     /// <summary>
     ///   Gets or sets the list of entities represented in the parent table, if any.
@@ -92,9 +95,9 @@ namespace SoundExplorers.Controller {
     public void DeleteEntity(int rowIndex) {
       try {
         MainList?.DeleteEntity(rowIndex);
-        View.OnDatabaseUpdated();
+        View.OnRowUpdated();
       } catch (Exception exception) {
-        View.OnDatabaseUpdateError(exception);
+        View.OnRowError(exception);
       }
     }
 
@@ -153,19 +156,17 @@ namespace SoundExplorers.Controller {
     }
 
     /// <summary>
-    ///   An existing row on the main grid has been entered.
-    ///   So its current data will be conserved for comparison,
-    ///   in case the row is to be edited.
+    ///   If the specified table row is new or its data has changed,
+    ///   inserts (if new) or updates corresponding the entity
+    ///   on the database with the table row data.
     /// </summary>
-    public void OnEnteringExistingRow(int rowIndex) {
-      OldFieldValues = View.GetFieldValues(rowIndex);
-    }
-
-    /// <summary>
-    ///   The insertion ('new') row on the main grid has been entered.
-    /// </summary>
-    public void OnEnteringInsertionRow() {
-      OldFieldValues = null;
+    public void InsertOrUpdateEntityIfRequired(int rowIndex) {
+      try {
+        MainList?.InsertOrUpdateEntityIfRequired(rowIndex);
+        View.OnRowUpdated();
+      } catch (Exception exception) {
+        View.OnRowError(exception);
+      }
     }
 
     /// <summary>
@@ -232,52 +233,6 @@ namespace SoundExplorers.Controller {
       // } else {
       //   Process.Start(newsletter.Path);
       // }
-    }
-
-    /// <summary>
-    ///   Updates the entity at the specified row index
-    ///   with the data in the corresponding table row.
-    /// </summary>
-    private void UpdateEntity(int rowIndex) {
-      try {
-        MainList?.UpdateEntity(rowIndex);
-        View.OnDatabaseUpdated();
-      } catch (Exception exception) {
-        View.OnDatabaseUpdateError(exception);
-      }
-    }
-
-    /// <summary>
-    ///   If there have been any changes to the data in the specified row,
-    ///   updates the corresponding entity, saving the changes to the database.
-    /// </summary>
-    public void UpdateEntityIfRowDataHasChanged(int rowIndex) {
-      var newFieldValues = View.GetFieldValues(rowIndex);
-      if (OldFieldValues == null) {
-        throw new NullReferenceException(nameof(OldFieldValues));
-      }
-      var isUpdateRequired = false;
-      foreach (var newKvp in newFieldValues) {
-        var column = Columns[newKvp.Key] ?? throw new NullReferenceException("column");
-        var newValue = newKvp.Value;
-        var oldValue = OldFieldValues[newKvp.Key];
-        if (!newValue.Equals(oldValue)) {
-          if (column.DataType != typeof(DateTime)
-              || column.DataType == typeof(DateTime) &&
-              (DateTime)newValue != DateTime.Parse("01 Jan 1900")) {
-            isUpdateRequired = true;
-          }
-        }
-        if (newValue == DBNull.Value) {
-          if (column.DataType == typeof(DateTime)) {
-            View.SetFieldValue(column.DisplayName, rowIndex,
-              DateTime.Parse("01 Jan 1900"));
-          }
-        }
-      }
-      if (isUpdateRequired) {
-        UpdateEntity(rowIndex);
-      }
     }
   }
 }

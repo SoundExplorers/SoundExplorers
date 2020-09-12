@@ -54,6 +54,16 @@ namespace SoundExplorers.Model {
     IList GetChildren(int rowIndex);
 
     /// <summary>
+    ///   If the specified table row is new or its data has changed,
+    ///   inserts (if new) or updates corresponding the entity
+    ///   on the database with the table row data.
+    /// </summary>
+    /// <param name="rowIndex">
+    ///   Zero-based row index.
+    /// </param>
+    void InsertOrUpdateEntityIfRequired(int rowIndex);
+
+    /// <summary>
     ///   Populates the list and table.
     /// </summary>
     /// <param name="list">
@@ -62,14 +72,5 @@ namespace SoundExplorers.Model {
     ///   will be fetched from the database.
     /// </param>
     void Populate(IList list = null);
-
-    /// <summary>
-    ///   Updates the entity at the specified row index
-    ///   with the data in the corresponding table row.
-    /// </summary>
-    /// <param name="rowIndex">
-    ///   Zero-based row index.
-    /// </param>
-    void UpdateEntity(int rowIndex);
   }
 }

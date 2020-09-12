@@ -19,12 +19,8 @@ namespace SoundExplorers.Controller {
     [NotNull]
     IDictionary<string, object> GetFieldValues(int rowIndex);
 
-    void OnDatabaseUpdated();
-    void OnDatabaseUpdateError([NotNull] Exception exception);
     void OnRowError([NotNull] RowErrorEventArgs e);
-
-    void OnRowUpdated([NotNull] string databaseUpdateMessage,
-      string mediaTagsUpdateErrorMessage = null);
+    void OnRowUpdated();
 
     void SetCurrentRowFieldValue([NotNull] string columnName, [NotNull] object newValue);
 
