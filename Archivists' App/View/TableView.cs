@@ -758,6 +758,11 @@ namespace SoundExplorers.View {
       MainGrid.RowEnter -= MainGrid_RowEnter;
       MainGrid.RowsRemoved -= MainGrid_RowsRemoved;
       MainGrid.RowValidated -= MainGrid_RowValidated;
+      if (Controller.IsParentTableToBeShown) {
+        // A read-only related grid for the parent table is to be shown
+        // above the main grid.
+        PopulateParentGrid();
+      }
       MainGrid.DataSource = Controller.MainTable?.DefaultView;
       foreach (DataGridViewColumn column in MainGrid.Columns) {
         ConfigureCellStyle(column);
