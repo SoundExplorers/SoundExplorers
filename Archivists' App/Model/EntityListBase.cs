@@ -24,17 +24,12 @@ namespace SoundExplorers.Model {
     /// <summary>
     ///   Base constructor for derived entity list classes.
     /// </summary>
-    /// <param name="isParentList">
-    ///   True if this is a (read-only) parent list.
-    ///   False if this is the (updatable) main (and maybe only) list.
-    /// </param>
     /// <param name="parentListType">
     ///   The type of (read-only) parent list (IEntityList)
     ///   required when this is the (updatable) main list.
     ///   Null if a parent list is not required when this is the main list.
     /// </param>
-    protected EntityListBase(bool isParentList = false, Type parentListType = null) {
-      IsParentList = isParentList;
+    protected EntityListBase(Type parentListType = null) {
       if (parentListType != null) {
         ParentListType = parentListType.GetInterfaces().Contains(typeof(IEntityList))
           ? parentListType
@@ -47,11 +42,9 @@ namespace SoundExplorers.Model {
     }
 
     /// <summary>
-    ///   True if this is a (read-only) parent list.
-    ///   False if this is the (updatable) main (and maybe only) list.
+    ///   Gets or sets the session to be used for accessing the database.
+    ///   The setter should only be needed for testing.
     /// </summary>
-    protected bool IsParentList { get; }
-
     [NotNull]
     internal SessionBase Session {
       get => _session ?? (_session = Global.Session);
@@ -63,6 +56,12 @@ namespace SoundExplorers.Model {
     ///   the list of entities.
     /// </summary>
     public EntityColumnList Columns => _columns ?? (_columns = CreateColumns());
+
+    /// <summary>
+    ///   True if this is a (read-only) parent list.
+    ///   False (the default) if this is the (updatable) main (and maybe only) list.
+    /// </summary>
+    public bool IsParentList { get; set; }
 
     /// <summary>
     ///   Gets the type of parent list (IEntityList) required when this is the main list.
@@ -93,6 +92,15 @@ namespace SoundExplorers.Model {
       }
       RemoveAt(rowIndex);
     }
+
+    /// <summary>
+    ///   Returns a list of the child entities of the entity at the specified row index
+    ///   that are to populate the main list if this is the parent list.
+    /// </summary>
+    /// <param name="rowIndex">
+    ///   Zero-based row index.
+    /// </param>
+    public abstract IList GetChildren(int rowIndex);
 
     /// <summary>
     ///   Populates the list and table.

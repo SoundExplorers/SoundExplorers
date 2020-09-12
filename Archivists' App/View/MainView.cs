@@ -94,7 +94,7 @@ namespace SoundExplorers.View {
 
     [NotNull]
     private TableView CreateTableView() {
-      return TableView.Create(SelectTableView.Controller.TableName);
+      return TableView.Create(SelectTableView.Controller.SelectedEntityListType);
     }
 
     private void CutToolStripMenuItem_Click(object sender, EventArgs e) {
@@ -145,8 +145,8 @@ namespace SoundExplorers.View {
       Controller.IsStatusBarVisible = StatusStrip.Visible;
       Controller.IsToolBarVisible = ToolStrip.Visible;
       Controller.TableName = MdiChildren.Any()
-        ? TableView.Controller.TableName
-        : SelectTableView.Controller.TableName;
+        ? TableView.Controller.MainTable?.TableName
+        : SelectTableView.Controller.SelectedTableName;
       // Explicitly closing all the MIDI child forms
       // fixes a problem where, 
       // if multiple child forms were open and maximized

@@ -1,10 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.IO;
 using JetBrains.Annotations;
-using SoundExplorers.Common;
-using SoundExplorers.Data;
 using SoundExplorers.Model;
 
 namespace SoundExplorers.Controller {
@@ -22,13 +19,13 @@ namespace SoundExplorers.Controller {
     /// <param name="view">
     ///   The table editor view to be shown.
     /// </param>
-    /// <param name="tableName">
-    ///   The name of the table whose data is to be displayed.
+    /// <param name="mainListType">
+    ///   The type of entity list whose data is to be displayed.
     /// </param>
     public TableController([NotNull] ITableView view,
-      [NotNull] string tableName) {
+      [NotNull] Type mainListType) {
       View = view;
-      TableName = tableName;
+      MainListType = mainListType;
       View.SetController(this);
     }
 
@@ -36,15 +33,9 @@ namespace SoundExplorers.Controller {
     ///   Gets metadata about the database columns
     ///   represented by the Entity's field properties.
     /// </summary>
-    private EntityColumnList Columns => Entities?.Columns ??
-                                         throw new NullReferenceException(
-                                           nameof(Columns));
-
-    /// <summary>
-    ///   The entity list representing the table whose data is shown in the table editor.
-    /// </summary>
-    [CanBeNull]
-    private IEntityList Entities { get; set; }
+    private EntityColumnList Columns => MainList?.Columns ??
+                                        throw new NullReferenceException(
+                                          nameof(Columns));
 
     /// <summary>
     ///   User option for the position of the split between the
@@ -57,7 +48,7 @@ namespace SoundExplorers.Controller {
 
     private Option GridSplitterDistanceOption =>
       _gridSplitterDistanceOption ?? (_gridSplitterDistanceOption =
-        new Option($"{TableName}.GridSplitterDistance"));
+        new Option($"{MainTable?.TableName}.GridSplitterDistance"));
 
     /// <summary>
     ///   User option for the position of the split between the
@@ -71,71 +62,28 @@ namespace SoundExplorers.Controller {
 
     private Option ImageSplitterDistanceOption =>
       _imageSplitterDistanceOption ?? (_imageSplitterDistanceOption =
-        new Option($"{TableName}.ImageSplitterDistance"));
+        new Option($"{MainTable?.TableName}.ImageSplitterDistance"));
 
-    public bool IsParentTableToBeShown => ParentTableName != null;
+    public bool IsParentTableToBeShown => ParentTable != null;
+
+    /// <summary>
+    ///   Gets or set the list of entities represented in the main table.
+    /// </summary>
+    [CanBeNull]
+    private IEntityList MainList { get; set; }
+
+    [NotNull] private Type MainListType { get; }
+    [CanBeNull] public DataTable MainTable => MainList?.Table;
     [CanBeNull] private IDictionary<string, object> OldFieldValues { get; set; }
 
     /// <summary>
-    ///   Gets the list of entities representing the main table's
-    ///   parent table, if specified.
+    ///   Gets or sets the list of entities represented in the parent table, if any.
     /// </summary>
     [CanBeNull]
-    private IEntityList ParentList => Entities?.ParentList;
+    private IEntityList ParentList { get; set; }
 
-    [CanBeNull] public string ParentTableName => ParentList?.Table.TableName;
-    [CanBeNull] public DataTable Table => Entities?.Table;
-    [NotNull] public string TableName { get; }
+    [CanBeNull] public DataTable ParentTable => ParentList?.Table;
     [NotNull] private ITableView View { get; }
-
-    /// <summary>
-    ///   If the main grid represents Pieces or Credits,
-    ///   we need to conserve the current state of the
-    ///   Piece and its credits.
-    ///   This information will be required when
-    ///   saving any changes to the current Piece or Credit
-    ///   to the metadata tags of the Piece's audio file.
-    /// </summary>
-    private void ConservePieceIfRequired(int rowIndex) {
-      // switch (Entities) {
-      //   case CreditList _: {
-      //     var parentPiece = GetPiece();
-      //     if (parentPiece != null) {
-      //       var credits = (
-      //         from Credit credit in (CreditList)Entities
-      //         where credit.Date == parentPiece.Date
-      //               && credit.Location == parentPiece.Location
-      //               && credit.Set == parentPiece.Set
-      //               && credit.Piece == parentPiece.PieceNo
-      //         select credit).ToList();
-      //       parentPiece.Credits = new CreditList(true);
-      //       foreach (var credit in credits) {
-      //         parentPiece.Credits.Add(credit);
-      //       }
-      //       parentPiece.Original = parentPiece.Clone();
-      //     }
-      //     // } else if (Entities is ImageList) {
-      //     //   var image = (Image)Entities[e.RowIndex];
-      //     //   ShowImageOrMessage(image.Path);
-      //     break;
-      //   }
-      //   case PieceList pieceList: {
-      //     var piece = (
-      //       from Piece p in pieceList
-      //       where p.Date == (DateTime)View.GetFieldValue(nameof(p.Date), rowIndex)
-      //             && p.Location == View.GetFieldValue(nameof(p.Location), rowIndex)
-      //               .ToString()
-      //             && p.Set == (int)View.GetFieldValue(nameof(p.Set), rowIndex)
-      //             && p.PieceNo == (int)View.GetFieldValue(nameof(p.PieceNo), rowIndex)
-      //       select p).FirstOrDefault();
-      //     if (piece != null) {
-      //       piece.Credits = piece.FetchCredits();
-      //       piece.Original = piece.Clone();
-      //     }
-      //     break;
-      //   }
-      // }
-    }
 
     /// <summary>
     ///   Deletes the entity at the specified row index
@@ -143,7 +91,7 @@ namespace SoundExplorers.Controller {
     /// </summary>
     public void DeleteEntity(int rowIndex) {
       try {
-        Entities?.DeleteEntity(rowIndex);
+        MainList?.DeleteEntity(rowIndex);
         View.OnDatabaseUpdated();
       } catch (Exception exception) {
         View.OnDatabaseUpdateError(exception);
@@ -154,7 +102,7 @@ namespace SoundExplorers.Controller {
     ///   Returns whether the specified column references another entity.
     /// </summary>
     public bool DoesColumnReferenceAnotherEntity([NotNull] string columnName) {
-      return !string.IsNullOrEmpty(Columns[columnName].ReferencedColumnDisplayName);
+      return !string.IsNullOrEmpty(Columns[columnName]?.ReferencedColumnDisplayName);
     }
 
     /// <summary>
@@ -170,307 +118,63 @@ namespace SoundExplorers.Controller {
       // var dummy = new AudioFile(path);
     }
 
-    private void Entities_RowError(object sender, RowErrorEventArgs e) {
-      View.OnRowError(e);
-    }
-
-    private void Entities_RowUpdated(object sender, RowUpdatedEventArgs e) {
-      View.OnRowUpdated(e.Message);
-      //string databaseUpdateMessage = e.Message;
-      //string mediaTagsUpdateErrorMessage = null;
-      // if (e.Entity is IMediaEntity mediaEntity) {
-      //   try {
-      //     string updateTagsMessage = mediaEntity.UpdateTags();
-      //     if (!string.IsNullOrEmpty(updateTagsMessage)) {
-      //       databaseUpdateMessage += ". " + updateTagsMessage;
-      //     }
-      //   } catch (ApplicationException ex) {
-      //     mediaTagsUpdateErrorMessage = ex.Message;
-      //   }
-      // }
-      //View.OnRowUpdated(databaseUpdateMessage, mediaTagsUpdateErrorMessage);
-    }
-
     public void FetchData() {
-      // Entities = TableName == nameof(ArtistInImage)
-      //   ? new ArtistInImageList()
-      //   : Factory<IEntityList>.Create(TableName);
-      Entities = EntityListFactory<IEntityList>.Create(TableName);
-      Entities.Populate();
+      MainList = EntityListFactory.Create(MainListType);
+      if (MainList.ParentListType != null) {
+        ParentList = EntityListFactory.Create(MainList.ParentListType);
+        ParentList.IsParentList = true;
+        ParentList.Populate();
+        if (ParentList.Table.Rows.Count > 0) {
+          MainList.Populate(ParentList.GetChildren(0));
+        }
+      } else {
+        MainList.Populate();
+      }
       // Entities.RowError += Entities_RowError;
       // Entities.RowUpdated += Entities_RowUpdated;
     }
 
-    /// <summary>
-    ///   Returns the path of the specified medium file of the current Piece
-    ///   if the file exists.
-    /// </summary>
-    /// <param name="medium">
-    ///   The required medium.
-    /// </param>
-    /// <exception cref="ApplicationException">
-    ///   A suitable Piece is not selected
-    ///   or the file is not specified or does not exist.
-    /// </exception>
-    /// <exception cref="ArgumentOutOfRangeException">
-    ///   The specified medium is not supported.
-    /// </exception>
-    private string GetMediumPath(Medium medium) {
-      return null;
-      // var piece = GetPiece();
-      // string indefiniteArticle;
-      // string path;
-      // switch (medium) {
-      //   case Medium.Audio:
-      //     indefiniteArticle = "An";
-      //     path = piece.AudioPath;
-      //     break;
-      //   case Medium.Video:
-      //     indefiniteArticle = "A";
-      //     path = piece.VideoPath;
-      //     break;
-      //   default:
-      //     throw new ArgumentOutOfRangeException(
-      //       nameof(medium),
-      //       medium,
-      //       "Medium " + medium + " is not supported.");
-      // } //End of switch (medium)
-      // if (string.IsNullOrEmpty(path)) {
-      //   throw new ApplicationException(
-      //     indefiniteArticle + " " + medium.ToString().ToLower()
-      //     + " file has not been specified for the Piece.");
-      // }
-      // if (!File.Exists(path)) {
-      //   throw new ApplicationException(
-      //     medium + " file \"" + path + "\" cannot be found.");
-      // }
-      // return path;
-    }
-
-    /// <summary>
-    ///   Returns the Newsletter to be shown.
-    /// </summary>
-    /// <returns>
-    ///   The Newsletter to be shown.
-    /// </returns>
-    /// <exception cref="ApplicationException">
-    ///   A suitable Newsletter to show is not associated with the selected row.
-    /// </exception>
-    private Newsletter GetNewsletterToShow() {
-      return null;
-      // // if (Entities is ArtistInImageList) {
-      // //   if (Controller.ParentList.Count > 0) {
-      // //     var image =
-      // //       (Image)Controller.ParentList[ParentCurrentRow.Index];
-      // //     return image.FetchNewsletter();
-      // //   }
-      // //   throw new ApplicationException(
-      // //     "You cannot show the newsletter for an Image's Performance because "
-      // //     + "no Images are listed in the ArtistInImageList window.");
-      // // }
-      // if (Entities is CreditList) {
-      //   if (ParentList?.Count > 0) {
-      //     var piece =
-      //       (Piece)ParentList[View.ParentCurrentIndex];
-      //     return piece.FetchNewsletter();
-      //   }
-      //   throw new ApplicationException(
-      //     "You cannot show a Piece's newsletter because "
-      //     + "no Pieces are listed in the Credit window.");
-      // }
-      // // if (Entities is ImageList) {
-      // //   if (MainCurrentRow.IsNewRow) {
-      // //     throw new ApplicationException(
-      // //       "You must add the new Image before you can show its Performance's newsletter.");
-      // //   }
-      // //   if (MainGrid.IsCurrentCellInEditMode) {
-      // //     throw new ApplicationException(
-      // //       "While you are editing the Image, "
-      // //       + "you cannot show its Performance's newsletter.");
-      // //   }
-      // //   var image =
-      // //     (Image)Entities[MainCurrentRow.Index];
-      // //   if (image.Location != MainCurrentRow.Cells["Location"].Value.ToString()
-      // //       || image.Date != (DateTime)MainCurrentRow.Cells["Date"].Value) {
-      // //     throw new ApplicationException(
-      // //       "You must save or cancel changes to the Image "
-      // //       + "before you can show its Performance's newsletter.");
-      // //   }
-      // //   return image.FetchNewsletter();
-      // // }
-      // if (Entities is NewsletterList) {
-      //   if (!View.IsThereACurrentMainEntity) {
-      //     throw new ApplicationException(
-      //       "You must add the new Newsletter before you can show it.");
-      //   }
-      //   if (View.IsEditing) {
-      //     throw new ApplicationException(
-      //       "You cannot show the Newsletter while you are editing it.");
-      //   }
-      //   var newsletter = (Newsletter)Entities[View.MainCurrentIndex];
-      //   if (newsletter.Path !=
-      //       View.GetCurrentRowFieldValue(nameof(newsletter.Path)).ToString()) {
-      //     throw new ApplicationException(
-      //       "You must save or cancel changes to the Newsletter before you can show it.");
-      //   }
-      //   return newsletter;
-      // }
-      // if (Entities is PieceList) {
-      //   if (ParentList?.Count > 0) {
-      //     var set =
-      //       (Set)ParentList[View.ParentCurrentIndex];
-      //     return set.FetchNewsletter();
-      //   }
-      //   throw new ApplicationException(
-      //     "You cannot show a Set's newsletter because "
-      //     + "no Sets are listed in the Piece window.");
-      // }
-      // if (Entities is PerformanceList) {
-      //   if (!View.IsThereACurrentMainEntity) {
-      //     throw new ApplicationException(
-      //       "You must add the new Performance before you can show its newsletter.");
-      //   }
-      //   if (View.IsEditing) {
-      //     throw new ApplicationException(
-      //       "You cannot show the Performance's newsletter "
-      //       + "while you are editing the Performance.");
-      //   }
-      //   var performance = (Performance)Entities[View.MainCurrentIndex];
-      //   if (performance.Newsletter !=
-      //       (DateTime)View.GetCurrentRowFieldValue(nameof(performance.Newsletter))) {
-      //     throw new ApplicationException(
-      //       "You must save or cancel changes to the Performance "
-      //       + "before you can show its newsletter.");
-      //   }
-      //   return performance.FetchNewsletter();
-      // }
-      // if (Entities is SetList) {
-      //   if (ParentList?.Count > 0) {
-      //     var performance =
-      //       (Performance)ParentList[View.ParentCurrentIndex];
-      //     return performance.FetchNewsletter();
-      //   }
-      //   throw new ApplicationException(
-      //     "You cannot show a Performance's newsletter because "
-      //     + "no Performances are listed in the Set window.");
-      // }
-      // throw new ApplicationException(
-      //   "Newsletters are not associated with the " + TableName + " table."
-      //   + Environment.NewLine
-      //   + "To show a newsletter, first select a row in a "
-      //   + "Credit, Newsletter, "
-      //   + "Performance, Piece or Set table window.");
-    }
-
-    [NotNull]
-    private IDictionary<string, object> GetOldKeyFieldValues() {
-      throw new NotImplementedException();
-      // if (OldFieldValues == null) {
-      //   throw new NullReferenceException(nameof(OldFieldValues));
-      // }
-      // return (
-      //   from kvp in OldFieldValues
-      //   where Columns[kvp.Key].IsInPrimaryKey
-      //   select kvp).ToDictionary(
-      //   kvp => kvp.Key,
-      //   kvp => kvp.Value);
-    }
-
-    /// <summary>
-    ///   Returns the Piece to be played.
-    /// </summary>
-    /// <returns>
-    ///   The Piece to be played.
-    /// </returns>
-    /// <exception cref="ApplicationException">
-    ///   A suitable Piece to play is not selected.
-    /// </exception>
-    private Piece GetPiece() {
-      return null;
-      // switch (Entities) {
-      //   case CreditList _ when ParentList?.Count > 0:
-      //     return (Piece)ParentList[View.ParentCurrentIndex];
-      //   case CreditList _:
-      //     throw new ApplicationException(
-      //       "You cannot play a Piece because no Pieces are listed in the Credit window.");
-      //   case PieceList _ when !View.IsThereACurrentMainEntity:
-      //     throw new ApplicationException(
-      //       "You must add the new Piece before you can play it.");
-      //   case PieceList _ when View.IsEditing:
-      //     throw new ApplicationException(
-      //       "You cannot play the Piece while you are editing it.");
-      //   // Because this is the detail grid in a master-detail relationship
-      //   // the index of the Piece in the grid is probably different
-      //   // from its index in the entity list,
-      //   // which will contain all the Pieces of all the Performances in the parent grid.
-      //   // So we need to find it the hard way.
-      //   case PieceList pieceList: {
-      //     var piece = (
-      //       from Piece p in pieceList
-      //       where p.Date == (DateTime)View.GetCurrentRowFieldValue(nameof(p.Date))
-      //             && p.Location ==
-      //             View.GetCurrentRowFieldValue(nameof(p.Location)).ToString()
-      //             && p.Set == (int)View.GetCurrentRowFieldValue(nameof(p.Set))
-      //             && p.PieceNo == (int)View.GetCurrentRowFieldValue(nameof(p.PieceNo))
-      //       select p).FirstOrDefault();
-      //     if (piece == null) {
-      //       // Piece not found.
-      //       // As Date, Location and Set are invisible
-      //       // (because common to the parent Set row),
-      //       // PieceNo, AudioPath or VideoPath must have been 
-      //       // changed without yet updating the database.
-      //       throw new ApplicationException(
-      //         "You must save or cancel changes to the Piece before you can play it.");
-      //     }
-      //     return piece;
-      //   }
-      //   default:
-      //     throw new ApplicationException(
-      //       "Media files are not associated with the " + TableName + " table."
-      //       + Environment.NewLine
-      //       + "To play a piece, first select a row in a Credit or Piece table window.");
-      // }
-    }
-
     [NotNull]
     internal string GetReferencedColumnName([NotNull] string columnName) {
-      return Columns[columnName].ReferencedColumnDisplayName ??
+      return Columns[columnName]?.ReferencedColumnDisplayName ??
              throw new NullReferenceException("ReferencedParentColumnDisplayName");
     }
 
     [NotNull]
+    internal Type GetReferencedEntityListType([NotNull] string columnName) {
+      return MainList?.Columns[columnName]?.ReferencedEntityListType ??
+             throw new NullReferenceException("ReferencedEntityListType");
+    }
+
+    [NotNull]
     internal string GetReferencedTableName([NotNull] string columnName) {
-      return Entities?.Columns[columnName].ReferencedTableName ??
+      return MainList?.Columns[columnName]?.ReferencedTableName ??
              throw new NullReferenceException("ReferencedTableName");
     }
 
     /// <summary>
-    ///   Returns whether the string field in the specified column
-    ///   and with the specified new value is changing
-    ///   to a new non-null non-empty string
-    /// </summary>
-    private bool IsNewString([NotNull] string columnName, [CanBeNull] string newString) {
-      if (string.IsNullOrEmpty(newString)) {
-        return false;
-      }
-      return newString != OldFieldValues?[columnName].ToString();
-    }
-
-    /// <summary>
-    ///   An existing row on the table editor has been entered.
+    ///   An existing row on the main grid has been entered.
     ///   So its current data will be conserved for comparison,
     ///   in case the row is to be edited.
     /// </summary>
     public void OnEnteringExistingRow(int rowIndex) {
       OldFieldValues = View.GetFieldValues(rowIndex);
-      ConservePieceIfRequired(rowIndex);
     }
 
     /// <summary>
-    ///   The insertion ('new') row on the table editor has been entered.
+    ///   The insertion ('new') row on the main grid has been entered.
     /// </summary>
     public void OnEnteringInsertionRow() {
       OldFieldValues = null;
+    }
+
+    /// <summary>
+    ///   An existing row on the parent grid has been entered.
+    ///   So the main grid will be populated with the required
+    ///   child entities of the entity at the specified row index.
+    /// </summary>
+    public void OnEnteringParentRow(int rowIndex) {
+      MainList?.Populate(ParentList?.GetChildren(rowIndex));
     }
 
     /// <summary>
@@ -536,7 +240,7 @@ namespace SoundExplorers.Controller {
     /// </summary>
     private void UpdateEntity(int rowIndex) {
       try {
-        Entities?.UpdateEntity(rowIndex);
+        MainList?.UpdateEntity(rowIndex);
         View.OnDatabaseUpdated();
       } catch (Exception exception) {
         View.OnDatabaseUpdateError(exception);
@@ -554,7 +258,7 @@ namespace SoundExplorers.Controller {
       }
       var isUpdateRequired = false;
       foreach (var newKvp in newFieldValues) {
-        var column = Columns[newKvp.Key];
+        var column = Columns[newKvp.Key] ?? throw new NullReferenceException("column");
         var newValue = newKvp.Value;
         var oldValue = OldFieldValues[newKvp.Key];
         if (!newValue.Equals(oldValue)) {
@@ -574,56 +278,6 @@ namespace SoundExplorers.Controller {
       if (isUpdateRequired) {
         UpdateEntity(rowIndex);
       }
-    }
-
-    private void UpdateDefaultFolder([NotNull] string columnName,
-      [NotNull] FileInfo file) {
-      // switch (columnName) {
-      //   case "AudioPath": // Piece.AudioPath
-      //     Piece.DefaultAudioFolder = file.Directory;
-      //     break;
-      //   case "Path":
-      //     // if (Entities is ImageList) { // Image.Path
-      //     //   Image.DefaultFolder = file.Directory;
-      //     // } else if (Entities is NewsletterList) { // Newsletter.Path
-      //     if (Entities is NewsletterList) { // Newsletter.Path
-      //       Newsletter.DefaultFolder = file.Directory;
-      //     } else {
-      //       throw new NotSupportedException(
-      //         TableName + ".Path is not supported.");
-      //     }
-      //     break;
-      //   case "VideoPath": // Piece.VideoPath
-      //     Piece.DefaultVideoFolder = file.Directory;
-      //     break;
-      // } //End of switch
-    }
-
-    /// <summary>
-    ///   Updates the default folder for the specified path if required.
-    /// </summary>
-    /// <exception cref="ApplicationException">
-    ///   Invalid path.
-    /// </exception>
-    public void UpdateDefaultFolderIfRequired([NotNull] string columnName,
-      [NotNull] string newPath) {
-      // if (!IsNewString(columnName, newPath)) {
-      //   return;
-      // }
-      // FileInfo file;
-      // try {
-      //   file = new FileInfo(newPath);
-      // } catch (ArgumentException ex) {
-      //   throw new ApplicationException("Invalid path.", ex);
-      // }
-      // if (file.Exists) {
-      //   UpdateDefaultFolder(columnName, file);
-      // }
-    }
-
-    private enum Medium {
-      Audio,
-      Video
     }
   }
 }

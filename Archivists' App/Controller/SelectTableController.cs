@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using JetBrains.Annotations;
+using SoundExplorers.Data;
 using SoundExplorers.Model;
 
 namespace SoundExplorers.Controller {
@@ -9,7 +10,6 @@ namespace SoundExplorers.Controller {
   /// </summary>
   [UsedImplicitly]
   public class SelectTableController {
-    private SortedDictionary<string, Type> _entityListTypes;
 
     /// <summary>
     ///   Initialises a new instance of the <see cref="TableController" /> class.
@@ -23,18 +23,31 @@ namespace SoundExplorers.Controller {
     /// </param>
     public SelectTableController([NotNull] IView<SelectTableController> view,
       [NotNull] string tableName) {
-      TableName = tableName;
+      EntityListTypeDictionary = CreateEntityListTypeDictionary();
+      SelectedEntityListType = EntityListTypeDictionary[tableName];
       view.SetController(this);
     }
 
-    [NotNull]
-    public SortedDictionary<string, Type> EntityListTypes {
-      get => _entityListTypes ?? (_entityListTypes = EntityListFactory<IEntityListOld>.Types);
-      // The setter is for testing.
-      // ReSharper disable once UnusedMember.Global
-      set => _entityListTypes = value;
-    }
+    [NotNull] public SortedDictionary<string, Type> EntityListTypeDictionary { get; }
 
-    [NotNull] public string TableName { get; set; }
+    [NotNull] public Type SelectedEntityListType { get; set; }
+    [NotNull] public string SelectedTableName { get; set; }
+
+    /// <summary>
+    ///   Creates a sorted dictionary of Entity or EntityList types,
+    ///   with the Entity name as the key
+    ///   and the type as the value.
+    /// </summary>
+    /// <returns>
+    ///   The sorted dictionary created.
+    /// </returns>
+    [NotNull]
+    private static SortedDictionary<string, Type> CreateEntityListTypeDictionary() {
+      return new SortedDictionary<string, Type> {
+        {string.Empty, null},
+        {nameof(Event), typeof(EventList)},
+        {nameof(Set), typeof(SetList)}
+      };
+    }
   }
 }

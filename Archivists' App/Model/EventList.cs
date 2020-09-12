@@ -1,9 +1,14 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using SoundExplorers.Data;
 
 namespace SoundExplorers.Model {
   public class EventList : EntityListBase<Event> {
+    public override IList GetChildren(int rowIndex) {
+      return (IList)this[rowIndex].Sets.Values;
+    }
+
     protected override Event CreateBackupEntity(Event @event) {
       return new Event {
         Date = @event.Date, Location = @event.Location, Series = @event.Series,
@@ -15,13 +20,13 @@ namespace SoundExplorers.Model {
       return new EntityColumnList {
         new EntityColumn(nameof(Event.Date), typeof(DateTime)),
         new EntityColumn(nameof(Event.Location), typeof(string),
-          nameof(Location), nameof(Location.Name)),
+          typeof(Location), nameof(Location.Name)),
         new EntityColumn(nameof(Event.Series), typeof(string),
-          nameof(Series), nameof(Series.Name)),
+          typeof(Series), nameof(Series.Name)),
         new EntityColumn(nameof(Event.Newsletter), typeof(DateTime),
-          nameof(Newsletter), nameof(Newsletter.Date)),
+          typeof(Newsletter), nameof(Newsletter.Date)),
         new EntityColumn(nameof(Event.EventType), typeof(string),
-          nameof(EventType), nameof(EventType.Name)),
+          typeof(EventType), nameof(EventType.Name)),
         new EntityColumn(nameof(Event.Notes), typeof(string))
       };
     }

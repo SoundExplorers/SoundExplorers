@@ -7,16 +7,16 @@ namespace SoundExplorers.Model {
   /// </summary>
   public class EntityColumn {
     public EntityColumn([NotNull] string displayName, [NotNull] Type dataType,
-      string referencedTableName = null, string referencedColumnDisplayName = null) {
+      Type referencedEntityListType = null, string referencedColumnDisplayName = null) {
       DisplayName = displayName ?? throw new ArgumentNullException(nameof(displayName));
       DataType = dataType ?? throw new ArgumentNullException(nameof(dataType));
-      if (referencedTableName != null && referencedColumnDisplayName == null ||
-          referencedTableName == null && referencedColumnDisplayName != null) {
+      if (referencedEntityListType != null && referencedColumnDisplayName == null ||
+          referencedEntityListType == null && referencedColumnDisplayName != null) {
         throw new InvalidOperationException(
-          $"Both or neither of {nameof(referencedTableName)} and " 
+          $"Both or neither of {nameof(referencedEntityListType)} and " 
           + $"{nameof(referencedColumnDisplayName)} must be specified.");
       }
-      ReferencedTableName = referencedTableName;
+      ReferencedEntityListType = referencedEntityListType;
       ReferencedColumnDisplayName = referencedColumnDisplayName;
     }
 
@@ -40,10 +40,18 @@ namespace SoundExplorers.Model {
     public string ReferencedColumnDisplayName { get; }
 
     /// <summary>
-    ///   Gets the name of the referenced table.
-    ///   Null if the column does not reference a column on another table.
+    ///   Gets the type of the referenced entity list.
+    ///   Null if the column does not reference a column on another entity list.
     /// </summary>
     [CanBeNull]
-    public string ReferencedTableName { get; }
+    public Type ReferencedEntityListType { get; }
+
+    /// <summary>
+    ///   Gets the name of the referenced entity list's main table.
+    ///   Null if the column does not reference a column on another entity list.
+    /// </summary>
+    [CanBeNull]
+    public string ReferencedTableName =>
+      ReferencedEntityListType?.Name.Replace("List", string.Empty);
   } //End of class
 } //End of namespace

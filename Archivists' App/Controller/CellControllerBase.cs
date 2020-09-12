@@ -10,6 +10,6 @@ namespace SoundExplorers.Controller {
 
     [NotNull] protected string ColumnName { get; }
     [NotNull] protected TableController TableController { get; }
-    [NotNull] public string TableName => TableController.TableName;
+    [CanBeNull] public string TableName => TableController.MainTable?.TableName;
   }
 }

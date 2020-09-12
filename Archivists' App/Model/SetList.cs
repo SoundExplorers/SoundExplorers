@@ -1,10 +1,15 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using SoundExplorers.Data;
 
 namespace SoundExplorers.Model {
   public class SetList : EntityListBase<Set> {
-    public SetList(bool isParentList = false) : base(isParentList, typeof(EventList)) { }
+    public SetList() : base(typeof(EventList)) { }
+
+    public override IList GetChildren(int rowIndex) {
+      return (IList)this[rowIndex].Pieces.Values;
+    }
 
     protected override Set CreateBackupEntity(Set set) {
       return new Set
@@ -15,9 +20,9 @@ namespace SoundExplorers.Model {
       var result = new EntityColumnList {
         new EntityColumn(nameof(Set.SetNo), typeof(int)),
         new EntityColumn(nameof(Set.Act), typeof(string),
-          nameof(Act), nameof(Act.Name)),
+          typeof(Act), nameof(Act.Name)),
         new EntityColumn(nameof(Set.Genre), typeof(string),
-          nameof(Genre), nameof(Genre.Name)),
+          typeof(Genre), nameof(Genre.Name)),
         new EntityColumn(nameof(Set.Notes), typeof(string))
       };
       if (IsParentList) {

@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using System;
+using System.Data;
 using JetBrains.Annotations;
 using SoundExplorers.Model;
 
@@ -9,6 +10,7 @@ namespace SoundExplorers.Controller {
   [UsedImplicitly]
   public class ComboBoxCellController : CellControllerBase {
     private string _referencedColumnName;
+    private Type _referencedEntityListType;
     private string _referencedTableName;
 
     /// <summary>
@@ -36,6 +38,13 @@ namespace SoundExplorers.Controller {
                                               ColumnName));
 
     [NotNull]
+    private Type ReferencedEntityListType => _referencedEntityListType ??
+                                             (_referencedEntityListType =
+                                               TableController
+                                                 .GetReferencedEntityListType(
+                                                   ColumnName));
+
+    [NotNull]
     public string ReferencedTableName => _referencedTableName ??
                                          (_referencedTableName =
                                            TableController.GetReferencedTableName(
@@ -43,8 +52,8 @@ namespace SoundExplorers.Controller {
 
     [NotNull]
     public DataTable FetchReferencedTable() {
-      var entityList = EntityListFactory<IEntityListOld>.Create(ReferencedTableName);
-      entityList.Fetch();
+      var entityList = EntityListFactory.Create(ReferencedEntityListType);
+      entityList.Populate();
       return entityList.Table;
     }
   }

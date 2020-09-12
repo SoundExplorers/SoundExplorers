@@ -16,6 +16,12 @@ namespace SoundExplorers.Model {
     EntityColumnList Columns { get; }
 
     /// <summary>
+    ///   True if this is a (read-only) parent list.
+    ///   False (the default) if this is the (updatable) main (and maybe only) list.
+    /// </summary>
+    bool IsParentList { get; set; }
+
+    /// <summary>
     ///   Gets the type of parent list (IEntityList) required when this is the main list.
     ///   Null if a parent list is not required when this is the main list.
     /// </summary>
@@ -36,6 +42,16 @@ namespace SoundExplorers.Model {
     ///   Zero-based row index.
     /// </param>
     void DeleteEntity(int rowIndex);
+
+    /// <summary>
+    ///   Returns a list of the child entities of the entity at the specified row index
+    ///   that are to populate the main list if this is the parent list.
+    /// </summary>
+    /// <param name="rowIndex">
+    ///   Zero-based row index.
+    /// </param>
+    [CanBeNull]
+    IList GetChildren(int rowIndex);
 
     /// <summary>
     ///   Populates the list and table.

@@ -169,16 +169,16 @@ namespace SoundExplorers.View {
     ///   returning the view instance created.
     ///   The parameter is passed to the controller's constructor.
     /// </summary>
-    /// <param name="tableName">
-    ///   The name of the table whose data is to be displayed.
+    /// <param name="entityListType">
+    ///   The type of entity list whose data is to be displayed.
     /// </param>
     [NotNull]
-    public static TableView Create([NotNull] string tableName) {
-      return (TableView)ViewFactory.Create<TableView, TableController>(tableName);
+    public static TableView Create([NotNull] Type entityListType) {
+      return (TableView)ViewFactory.Create<TableView, TableController>(entityListType);
       // TableView result;
       // try {
       //   result = new TableView();
-      //   var dummy = new TableController(result, tableName); 
+      //   var dummy = new TableController(result, entityListType); 
       // } catch (TargetInvocationException ex) {
       //   throw ex.InnerException ?? ex;
       // }
@@ -514,89 +514,6 @@ namespace SoundExplorers.View {
 
     /// <summary>
     ///   Handles the main grid's
-    ///   <see cref="DataGridView.CellEndEdit" /> event,
-    ///   which occurs when edit mode stops for the currently selected cell.
-    /// </summary>
-    /// <param name="sender">Event sender.</param>
-    /// <param name="e">Event arguments.</param>
-    /// <remarks>
-    ///   If a path cell has been changed
-    ///   and the new path specifies a file that exists,
-    ///   the default for the initial folder of the Open dialogue that may be
-    ///   shown for subsequent updates of cells in the same column
-    ///   will be set to the folder of the new path.
-    ///   (When the Open dialogue is subsequently shown,
-    ///   if the cell being edited initially contains
-    ///   a path that includes a specific folder that exists,
-    ///   the initial folder for the Open dialogue
-    ///   will be set to that folder.
-    ///   Otherwise the initial folder for the Open dialogue
-    ///   will be set to this column-specific default folder.)
-    ///   <para>
-    ///     If an image path specifies a valid image,
-    ///     the image will be shown below the main grid.
-    ///   </para>
-    ///   <para>
-    ///     If an image path does not specifies a valid image,
-    ///     a Missing Image label containing an appropriate message will be displayed.
-    ///   </para>
-    /// </remarks>
-    private void MainGrid_CellEndEdit(object sender, DataGridViewCellEventArgs e) {
-      //Debug.WriteLine("MainGrid_CellEndEdit");
-      var pathCell = MainGrid.CurrentCell as PathCell;
-      if (pathCell?.Path == null) {
-        return;
-      }
-      var column = pathCell.OwningColumn;
-      //Debug.WriteLine("MainGrid_CellEndEdit " + column.Name);
-      // if (Entities is ImageList) { // Image.Path
-      //   // We need to have a go at showing the image or message
-      //   // even if nothing has changed.
-      //   // This allows for:
-      //   //
-      //   // a) the message being temporarily hidden while editing
-      //   //    (see MainGrid_CellBeginEdit)
-      //   //
-      //   // and
-      //   //
-      //   // b) a new image being shown as a result of
-      //   //    a path being dropped on the cell
-      //   //    but the user then cancelling the update of the row.
-      //   ShowImageOrMessage(pathCell.Path);
-      // }
-      try {
-        Controller.UpdateDefaultFolderIfRequired(column.Name, pathCell.Path);
-      } catch (ApplicationException ex) {
-        MessageBox.Show(
-          this,
-          ex.Message,
-          Application.ProductName,
-          MessageBoxButtons.OK,
-          MessageBoxIcon.Warning);
-      }
-    }
-
-    //private void MainGrid_CellEnter(object sender, DataGridViewCellEventArgs e) {
-    //    // This debug proves that, when the grid is bound to a second or subsequent list,
-    //    // the type of each cell, which determines the cell editor to be used,
-    //    // is always DataGridViewTextBoxCell,
-    //    // irrespective of what the column's CellTemplate,
-    //    // as shown by the column's CellType property,
-    //    // has been set.
-    //    //var cell = MainGrid.CurrentCell;
-    //DataGridViewColumn column = cell.OwningColumn;
-    //    //Debug.WriteLine("MainGrid_CellEnter  " + column.Name);
-    //    //Debug.WriteLine("cell.ValueType = " + cell.ValueType.Name);
-    //    //Debug.WriteLine("column.CellType = " + column.CellType.Name);
-    //    //Debug.WriteLine("cell.GetType = " + cell.GetType().Name);
-    //    //Debug.WriteLine(string.Empty);
-    //}
-
-    //private void MainGrid_CellValidated(object sender, DataGridViewCellEventArgs e) {
-    //}
-
-    /// <summary>
-    ///   Handles the main grid's
     ///   <see cref="DataGridView.DataError" /> event,
     ///   which occurs when an external data-parsing or validation operation throws an exception.
     /// </summary>
@@ -797,21 +714,9 @@ namespace SoundExplorers.View {
     /// </summary>
     /// <param name="sender">Event sender.</param>
     /// <param name="e">Event arguments.</param>
-    /// <remarks>
-    ///   If the row represents an Image whose Path
-    ///   specifies a valid image file,
-    ///   the image will be shown below the main grid.
-    ///   If the row represents an Image whose Path
-    ///   does not specifies a valid image file,
-    ///   a Missing Image label containing an appropriate message will be displayed.
-    /// </remarks>
     private void ParentGrid_RowEnter(object sender, DataGridViewCellEventArgs e) {
       ParentRowChanged = true;
-      // if (Controller.ParentList is ImageList
-      //     && e.RowIndex < Controller.ParentList.Count) {
-      //   var image = (Image)Controller.ParentList[e.RowIndex];
-      //   ShowImageOrMessage(image.Path);
-      // }
+      Controller.OnEnteringParentRow(e.RowIndex);
     }
 
     public void Paste() {
@@ -835,9 +740,9 @@ namespace SoundExplorers.View {
 
     private void PopulateGrid() {
       Controller.FetchData();
-      Text = Controller.TableName;
+      Text = Controller.MainTable?.TableName;
       MainGrid.CellBeginEdit -= MainGrid_CellBeginEdit;
-      MainGrid.CellEndEdit -= MainGrid_CellEndEdit;
+      //MainGrid.CellEndEdit -= MainGrid_CellEndEdit;
       //MainGrid.CellEnter -= new DataGridViewCellEventHandler(MainGrid_CellEnter);
       //MainGrid.CellStateChanged -= new DataGridViewCellStateChangedEventHandler(Grid_CellStateChanged);
       //MainGrid.CellValidated -= new DataGridViewCellEventHandler(MainGrid_CellValidated);
@@ -853,21 +758,12 @@ namespace SoundExplorers.View {
       MainGrid.RowEnter -= MainGrid_RowEnter;
       MainGrid.RowsRemoved -= MainGrid_RowsRemoved;
       MainGrid.RowValidated -= MainGrid_RowValidated;
-      if (Controller.IsParentTableToBeShown) {
-        // A read-only related grid for the parent table is to be shown
-        // above the main grid.
-        PopulateParentGrid();
-        MainGrid.DataSource = new BindingSource(
-          ParentGrid.DataSource,
-          Controller.DataSet?.Relations[0].RelationName);
-      } else { // No parent grid
-        MainGrid.DataSource = Controller.Table?.DefaultView;
-      }
+      MainGrid.DataSource = Controller.MainTable?.DefaultView;
       foreach (DataGridViewColumn column in MainGrid.Columns) {
         ConfigureCellStyle(column);
       } // End of foreach
       MainGrid.CellBeginEdit += MainGrid_CellBeginEdit;
-      MainGrid.CellEndEdit += MainGrid_CellEndEdit;
+      //MainGrid.CellEndEdit += MainGrid_CellEndEdit;
       //MainGrid.CellEnter += new DataGridViewCellEventHandler(MainGrid_CellEnter);
       //MainGrid.CellStateChanged += new DataGridViewCellStateChangedEventHandler(Grid_CellStateChanged);
       //MainGrid.CellValidated += new DataGridViewCellEventHandler(MainGrid_CellValidated);
@@ -908,9 +804,7 @@ namespace SoundExplorers.View {
       //ParentGrid.LostFocus -= new EventHandler(Control_LostFocus);
       ParentGrid.MouseDown -= Grid_MouseDown;
       ParentGrid.RowEnter -= ParentGrid_RowEnter;
-      ParentGrid.DataSource = new BindingSource(
-        Controller.DataSet,
-        Controller.ParentTableName);
+      ParentGrid.DataSource = Controller.ParentTable?.DefaultView;
       foreach (DataGridViewColumn column in ParentGrid.Columns) {
         if (column.ValueType == typeof(DateTime)) {
           column.DefaultCellStyle.Format = "dd MMM yyyy";
@@ -988,7 +882,7 @@ namespace SoundExplorers.View {
         // They can complain if they observe the problem.
         Debug.WriteLine("RowErrorTimer_Tick ArgumentOutOfRangeException");
         try {
-          Debug.WriteLine("TableName = " + Controller.TableName);
+          Debug.WriteLine("TableName = " + Controller.MainTable?.TableName);
           Debug.WriteLine("RowErrorEventArgs.ColumnIndex = " +
                           RowErrorEventArgs.ColumnIndex);
           Debug.WriteLine("RowErrorEventArgs.RowIndex = " + RowErrorEventArgs.RowIndex);
@@ -1027,71 +921,6 @@ namespace SoundExplorers.View {
           MessageBoxIcon.Error);
       }
     }
-
-    // /// <summary>
-    // ///   Shows the specified image below the main grid
-    // ///   if the specified path is that of an existing image file.
-    // ///   Otherwise shows an appropriate message.
-    // /// </summary>
-    // /// <param name="path">
-    // ///   The path of the image to show.
-    // ///   Null to show an invitation to drag instead of an image.
-    // /// </param>
-    // /// <remarks>
-    // ///   For efficiency,
-    // ///   nothing already shown will be changed
-    // ///   unless it does not correspond to what is required.
-    // /// </remarks>
-    // private void ShowImageOrMessage(string path) {
-    //   const string notSpecifiedMessage =
-    //     "You may drag an image file here.";
-    //   string invalidImageMessage =
-    //     "The file is not an image." + Environment.NewLine
-    //                                 + notSpecifiedMessage;
-    //   string notFoundMessage =
-    //     "The image file cannot be found." + Environment.NewLine
-    //                                       + notSpecifiedMessage;
-    //   var isRefreshRequired = false;
-    //   if (!string.IsNullOrEmpty(path)
-    //       && File.Exists(path)) {
-    //     if (FittedPictureBox1.Visible) {
-    //       if (FittedPictureBox1.ImageLocation != path) {
-    //         isRefreshRequired = true;
-    //       }
-    //     } else { // File exists but picture not shown
-    //       isRefreshRequired = true;
-    //     }
-    //   } else { // Not an existing file
-    //     if (MissingImageLabel.Visible) {
-    //       if (string.IsNullOrEmpty(path)
-    //           && MissingImageLabel.Text != notSpecifiedMessage) {
-    //         isRefreshRequired = true;
-    //       } else if (MissingImageLabel.Text != notFoundMessage) {
-    //         isRefreshRequired = true;
-    //       }
-    //     } else { // Not an existing file but picture shown
-    //       isRefreshRequired = true;
-    //     }
-    //   }
-    //   if (!isRefreshRequired) {
-    //     return;
-    //   }
-    //   if (!string.IsNullOrEmpty(path)
-    //       && File.Exists(path)) {
-    //     try {
-    //       FittedPictureBox1.Load(path);
-    //       FittedPictureBox1.Visible = true;
-    //     } catch (ApplicationException) {
-    //       MissingImageLabel.Text = invalidImageMessage;
-    //       FittedPictureBox1.Visible = false;
-    //     }
-    //   } else { // Not an existing file
-    //     MissingImageLabel.Text =
-    //       string.IsNullOrEmpty(path) ? notSpecifiedMessage : notFoundMessage;
-    //     FittedPictureBox1.Visible = false;
-    //   }
-    //   MissingImageLabel.Visible = !FittedPictureBox1.Visible;
-    // }
 
     /// <summary>
     ///   Handle's a SplitContainer's GotFocus event
