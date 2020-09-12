@@ -49,6 +49,7 @@ namespace SoundExplorers.Model {
     [NotNull]
     internal SessionBase Session {
       get => _session ?? (_session = Global.Session);
+      // ReSharper disable once UnusedMember.Global
       set => _session = value;
     }
 
@@ -134,12 +135,14 @@ namespace SoundExplorers.Model {
     ///   A database update error occured.
     /// </exception>
     public void InsertOrUpdateEntityIfRequired(int rowIndex) {
-      var backupEntity = CreateBackupEntity(this[rowIndex]);
+      TEntity backupEntity = null;
       TEntity newEntity = null;
       bool isNewRow = rowIndex == Count;
       if (isNewRow) {
         newEntity = CreateEntity(); 
         Add(newEntity);
+      } else {
+        backupEntity = CreateBackupEntity(this[rowIndex]);
       }
       try {
         UpdateEntityAtRow(rowIndex);
@@ -147,7 +150,11 @@ namespace SoundExplorers.Model {
           Session.Persist(newEntity);
         }
       } catch (Exception exception) {
-        RestoreEntityAndRow(backupEntity, rowIndex);
+        if (isNewRow) {
+          Remove(newEntity);
+        } else {
+          RestoreEntityAndRow(backupEntity, rowIndex);
+        }
         throw ConvertException(exception);
       }
     }
