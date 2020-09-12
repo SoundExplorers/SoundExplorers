@@ -8,9 +8,6 @@ using JetBrains.Annotations;
 using SoundExplorers.Common;
 using SoundExplorers.Controller;
 
-// using Image = SoundExplorers.Data.Image;
-// using ImageList = SoundExplorers.Data.ImageList;
-
 namespace SoundExplorers.View {
   /// <summary>
   ///   Table editor MDI child window of the main window.

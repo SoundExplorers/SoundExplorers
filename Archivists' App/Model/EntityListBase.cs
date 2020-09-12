@@ -135,11 +135,12 @@ namespace SoundExplorers.Model {
     ///   A database update error occured.
     /// </exception>
     public void InsertOrUpdateEntityIfRequired(int rowIndex) {
+      var rowItemValues = ConserveRowItemValues(rowIndex);
       TEntity backupEntity = null;
       TEntity newEntity = null;
       bool isNewRow = rowIndex == Count;
       if (isNewRow) {
-        newEntity = CreateEntity(); 
+        newEntity = CreateEntity();
         Add(newEntity);
       } else {
         backupEntity = CreateBackupEntity(this[rowIndex]);
@@ -195,6 +196,16 @@ namespace SoundExplorers.Model {
         return new ApplicationException(exception.Message, exception);
       }
       return exception;
+    }
+
+    [NotNull]
+    private IEnumerable<object> ConserveRowItemValues(int rowIndex) {
+      var row = Table.Rows[rowIndex];
+      var result = new List<object>(Columns.Count);
+      for (var i = 0; i < Columns.Count; i++) {
+        result.Add(row[i]);
+      }
+      return result;
     }
 
     [NotNull]
