@@ -53,6 +53,9 @@
         <Compile Include="AboutForm.cs">
           <SubType>Form</SubType>
         </Compile>
+        <Compile Include="AboutForm.Designer.cs">
+          <DependentUpon>AboutForm.cs</DependentUpon>
+        </Compile>
         <Compile Include="CalendarCell.cs" />
         <Compile Include="CalendarEditingControl.cs">
           <SubType>Component</SubType>
@@ -84,6 +87,9 @@
         <Compile Include="SizeableFormOptions.cs" />
         <Compile Include="SplashForm.cs">
           <SubType>Form</SubType>
+        </Compile>
+        <Compile Include="SplashForm.Designer.cs">
+          <DependentUpon>SplashForm.cs</DependentUpon>
         </Compile>
         <Compile Include="SplashFormBase.cs">
           <SubType>Form</SubType>
