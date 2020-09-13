@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--Database configuration parameters-->
+<DatabaseConfig>
+  <!--Database folder path. Example: C:\Folder\Subfolder-->
+  <DatabaseFolderPath>E:\Simon\OneDrive\Documents\Software\Sound Explorers Audio Archive\Database</DatabaseFolderPath>
+</DatabaseConfig>

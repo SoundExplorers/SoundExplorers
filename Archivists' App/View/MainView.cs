@@ -37,7 +37,7 @@ namespace SoundExplorers.View {
       } catch (Exception ex) {
         MessageBox.Show(
           SplashManager.SplashForm,
-          ex.ToString(),
+          ex is ApplicationException ? ex.Message : ex.ToString(),
           Application.ProductName,
           MessageBoxButtons.OK,
           MessageBoxIcon.Error);

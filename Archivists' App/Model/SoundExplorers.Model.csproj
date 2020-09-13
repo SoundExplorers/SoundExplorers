@@ -41,12 +41,14 @@
         <Reference Include="System.Data" />
         <Reference Include="System.Data.Linq" />
         <Reference Include="System.Xml" />
+        <Reference Include="System.Xml.Linq" />
         <Reference Include="VelocityDb, Version=9.1.1.0, Culture=neutral, PublicKeyToken=f050dff7995aa24a">
           <HintPath>..\packages\VelocityDB.9.1.2\lib\net45\VelocityDb.dll</HintPath>
           <Private>True</Private>
         </Reference>
     </ItemGroup>
     <ItemGroup>
+        <Compile Include="DatabaseConfig.cs" />
         <Compile Include="DatabaseConnection.cs" />
         <Compile Include="EntityColumn.cs" />
         <Compile Include="EntityColumnList.cs" />

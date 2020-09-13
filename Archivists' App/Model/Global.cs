@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Reflection;
 using JetBrains.Annotations;
 using SoundExplorers.Data;
@@ -8,7 +9,7 @@ using VelocityDb.Session;
 namespace SoundExplorers.Model {
   public static class Global {
     public static SessionBase Session { get; set; }
-    
+
     /// <summary>
     ///   Creates an instance of the specified entity list type.
     /// </summary>
@@ -39,6 +40,29 @@ namespace SoundExplorers.Model {
         {nameof(Event), typeof(EventList)},
         {nameof(Set), typeof(SetList)}
       };
+    }
+
+    public static Exception CreateFileException(
+      Exception exception,
+      string pathDescription,
+      string path) {
+      switch (exception) {
+        case IOException _:
+        case UnauthorizedAccessException _:
+          return new ApplicationException(
+            $"{pathDescription}:{Environment.NewLine}{exception.Message}");
+        case NotSupportedException _:
+          return new ApplicationException(
+            pathDescription + " \""
+                            + path
+                            + "\" is not a properly formatted file path.");
+        default:
+          return exception;
+      }
+    }
+
+    public static string GetApplicationFolderPath() {
+      return Path.GetDirectoryName(Assembly.GetEntryAssembly()?.Location);
     }
   }
 }

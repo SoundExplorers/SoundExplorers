@@ -23,7 +23,10 @@ namespace SoundExplorers.Data {
     ///   The instance of the schema that is referenced by default by entities.
     /// </summary>
     [NotNull]
-    public static Schema Instance => _instance ?? (_instance = new Schema());
+    public static Schema Instance {
+      get => _instance ?? (_instance = new Schema());
+      set => _instance = value;
+    }
 
     /// <summary>
     ///   Enumerates the entity types persisted on the database

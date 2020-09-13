@@ -573,7 +573,7 @@
             this.MainMenuStrip = this.MenuStrip;
             this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "MainView";
-            this.Text = "Sound Explorers Archive";
+            this.Text = "Sound Explorers Audio Archive";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainView_FormClosed);
             this.VisibleChanged += new System.EventHandler(this.MainView_VisibleChanged);
             this.MenuStrip.ResumeLayout(false);

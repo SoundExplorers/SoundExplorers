@@ -70,7 +70,7 @@ namespace SoundExplorers.View {
       this.ForeColor = System.Drawing.SystemColors.ControlText;
       this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
       this.Name = "SplashForm";
-      this.Text = "Batch Scheduler";
+      this.Text = "Sound Explorers Audio Archive";
       this.SplashPanel.ResumeLayout(false);
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
       this.ResumeLayout(false);
