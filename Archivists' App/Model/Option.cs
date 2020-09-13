@@ -40,6 +40,7 @@ namespace SoundExplorers.Model {
     public Option(string name, object defaultValue = null) {
       DefaultValue = defaultValue;
       var temp = new UserOption {UserId = Environment.UserName, OptionName = name};
+      Session.BeginUpdate();
       UserOption = QueryHelper.Find<UserOption>(temp.SimpleKey, Session);
       if (UserOption == null) {
         UserOption = temp;
@@ -49,6 +50,7 @@ namespace SoundExplorers.Model {
           UserOption.OptionValue = string.Empty;
         }
       }
+      Session.Commit();
     }
 
     // ReSharper disable once MemberCanBePrivate.Global
@@ -163,6 +165,7 @@ namespace SoundExplorers.Model {
         if (value == UserOption.OptionValue) {
           return;
         }
+        Session.BeginUpdate();
         if (!string.IsNullOrEmpty(value)) {
           UserOption.OptionValue = value;
           if (!UserOption.IsPersistent) {
@@ -172,6 +175,7 @@ namespace SoundExplorers.Model {
           Session.Unpersist(UserOption);
           UserOption.OptionValue = value;
         }
+        Session.Commit();
       }
     }
   } //End of class
