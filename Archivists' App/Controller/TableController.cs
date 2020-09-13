@@ -123,9 +123,9 @@ namespace SoundExplorers.Controller {
     }
 
     public void FetchData() {
-      MainList = EntityListFactory.Create(MainListType);
+      MainList = Global.CreateEntityList(MainListType);
       if (MainList.ParentListType != null) {
-        ParentList = EntityListFactory.Create(MainList.ParentListType);
+        ParentList = Global.CreateEntityList(MainList.ParentListType);
         ParentList.IsParentList = true;
         ParentList.Populate();
         if (ParentList.Table.Rows.Count > 0) {

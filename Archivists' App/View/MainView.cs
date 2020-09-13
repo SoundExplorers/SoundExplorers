@@ -26,6 +26,8 @@ namespace SoundExplorers.View {
     public void SetController(MainController controller) {
       Controller = controller;
       try {
+        SplashManager.Status = "Connecting to database...";
+        Controller.ConnectToDatabase();
         SplashManager.Status = "Positioning window...";
         SizeableFormOptions = SizeableFormOptions.Create(this);
         SplashManager.Status = "Getting options...";

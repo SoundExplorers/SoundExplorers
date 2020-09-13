@@ -29,7 +29,7 @@ namespace SoundExplorers.Data {
     ///   Enumerates the entity types persisted on the database
     /// </summary>
     [NotNull]
-    public IEnumerable<Type> EntityTypes =>
+    private IEnumerable<Type> EntityTypes =>
       _entityTypes ?? (_entityTypes = CreateEntityTypes());
 
     /// <summary>
