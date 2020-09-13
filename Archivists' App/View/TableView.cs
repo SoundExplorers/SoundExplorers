@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Data;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
@@ -34,35 +32,10 @@ namespace SoundExplorers.View {
                                               throw new NullReferenceException(
                                                 nameof(MainGrid.CurrentRow));
 
-    private DataGridViewRow ParentCurrentRow => ParentGrid.CurrentRow ??
-                                                throw new NullReferenceException(
-                                                  nameof(ParentGrid.CurrentRow));
-
     private bool ParentRowChanged { get; set; }
-    private RowErrorEventArgs RowErrorEventArgs { get; set; }
+    private RowErrorException RowErrorException { get; set; }
     private SizeableFormOptions SizeableFormOptions { get; set; }
     private bool UpdateCancelled { get; set; }
-
-    public object GetCurrentRowFieldValue(string columnName) {
-      return MainCurrentRow.Cells[columnName].Value;
-    }
-
-    public object GetFieldValue(string columnName, int rowIndex) {
-      return MainGrid.Rows[rowIndex].Cells[columnName].Value;
-    }
-
-    public IDictionary<string, object> GetFieldValues(int rowIndex) {
-      var result = new Dictionary<string, object>();
-      for (var columnIndex = 0; columnIndex < MainGrid.ColumnCount; columnIndex++) {
-        result.Add(MainGrid.Columns[columnIndex].Name,
-          MainGrid.Rows[rowIndex].Cells[columnIndex].Value);
-      }
-      return result;
-    }
-
-    public bool IsEditing => MainGrid.IsCurrentCellInEditMode;
-    public bool IsThereACurrentMainEntity => !MainCurrentRow.IsNewRow;
-    public int MainCurrentIndex => MainCurrentRow.Index;
 
     /// <summary>
     ///   Occurs when there is an error on
@@ -70,8 +43,8 @@ namespace SoundExplorers.View {
     ///   corresponding to a row in the main grid.
     /// </summary>
     /// <param name="e">Error details.</param>
-    public void OnRowError(RowErrorEventArgs e) {
-      RowErrorEventArgs = e;
+    public void OnRowError(RowErrorException e) {
+      RowErrorException = e;
       UpdateCancelled = true;
       RowErrorTimer.Start();
     }
@@ -86,14 +59,8 @@ namespace SoundExplorers.View {
       MainGrid.Focus();
     }
 
-    public int ParentCurrentIndex => ParentCurrentRow.Index;
-
     public void SetCurrentRowFieldValue(string columnName, object newValue) {
       MainCurrentRow.Cells[columnName].Value = newValue;
-    }
-
-    public void SetFieldValue(string columnName, int rowIndex, object newValue) {
-      MainGrid.Rows[rowIndex].Cells[columnName].Value = newValue;
     }
 
     public void SetController(TableController controller) {
@@ -836,8 +803,8 @@ namespace SoundExplorers.View {
       // Focus the error row and cell.
       try {
         MainGrid.CurrentCell = MainGrid.Rows[
-          RowErrorEventArgs.RowIndex].Cells[
-          RowErrorEventArgs.ColumnIndex];
+          RowErrorException.RowIndex].Cells[
+          RowErrorException.ColumnIndex];
       } catch (ArgumentOutOfRangeException) {
         // Hopefully this is fixed now
         // (by comparing strings instead of objects in MainGrid_RowValidated)
@@ -851,8 +818,8 @@ namespace SoundExplorers.View {
         try {
           Debug.WriteLine("TableName = " + Controller.MainTable?.TableName);
           Debug.WriteLine("RowErrorEventArgs.ColumnIndex = " +
-                          RowErrorEventArgs.ColumnIndex);
-          Debug.WriteLine("RowErrorEventArgs.RowIndex = " + RowErrorEventArgs.RowIndex);
+                          RowErrorException.ColumnIndex);
+          Debug.WriteLine("RowErrorEventArgs.RowIndex = " + RowErrorException.RowIndex);
           Debug.WriteLine("MainGrid.CurrentCell.ColumnIndex = " +
                           MainGrid.CurrentCell.ColumnIndex);
           Debug.WriteLine("MainCurrentRow.Index = " + MainCurrentRow.Index);
@@ -872,21 +839,13 @@ namespace SoundExplorers.View {
         return;
       }
       UpdateCancelled = false;
-      Controller.RestoreRejectedValues(RowErrorEventArgs.RejectedValues);
-      if (RowErrorEventArgs.Exception is ApplicationException
-          || RowErrorEventArgs.Exception is DataException) {
-        MessageBox.Show(
-          RowErrorEventArgs.Exception.Message,
-          Application.ProductName,
-          MessageBoxButtons.OK,
-          MessageBoxIcon.Error);
-      } else {
-        MessageBox.Show(
-          RowErrorEventArgs.Exception.ToString(),
-          Application.ProductName,
-          MessageBoxButtons.OK,
-          MessageBoxIcon.Error);
-      }
+      Controller.RestoreRejectedValues(RowErrorException.RejectedValues);
+      MessageBox.Show(
+        this,
+        RowErrorException.Message,
+        Application.ProductName,
+        MessageBoxButtons.OK,
+        MessageBoxIcon.Error);
     }
 
     /// <summary>

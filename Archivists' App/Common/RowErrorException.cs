@@ -1,17 +1,18 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 
 namespace SoundExplorers.Common {
   /// <summary>
-  ///   Provides data for a RowError event
-  ///   that is raised when there is an error on
+  ///   Raised when there is an error on
   ///   attempting to insert, update or delete a <see cref="DataRow" />.
   /// </summary>
-  public class RowErrorEventArgs : EventArgs {
+  public class RowErrorException : ApplicationException {
     /// <summary>
     ///   Initialises an instance of the
     ///   <see cref="RowErrorEventArgs" /> class.
     /// </summary>
+    /// <param name="message">Error message.</param>
     /// <param name="rowIndex">
     ///   The index of the <see cref="DataRow" /> whose
     ///   insertion, update or deletion failed.
@@ -27,19 +28,19 @@ namespace SoundExplorers.Common {
     ///   An array of the values of the row's fields
     ///   as at just before the change was rejected.
     /// </param>
-    /// <param name="exception">
+    /// <param name="innerException">
     ///   An <see cref="Exception" /> that provides
     ///   error diagnostics.
     /// </param>
-    public RowErrorEventArgs(
+    public RowErrorException(
+      string message,
       int rowIndex,
       int columnIndex,
-      object[] rejectedValues,
-      Exception exception) {
+      IList<object> rejectedValues,
+      Exception innerException) : base(message, innerException) {
       RowIndex = rowIndex;
       ColumnIndex = columnIndex;
       RejectedValues = rejectedValues;
-      Exception = exception;
     }
 
     /// <summary>
@@ -52,37 +53,17 @@ namespace SoundExplorers.Common {
     public int ColumnIndex { get; }
 
     /// <summary>
-    ///   Gets an <see cref="Exception" /> that provides
-    ///   error diagnostics.
-    /// </summary>
-    /// <remarks>
-    ///   This is a modified version of the <see cref="Exception" />
-    ///   that was thrown on
-    ///   attempting to insert, update or delete the row.
-    ///   Where the SQL error message has been replaced
-    ///   with a more meaningful error message,
-    ///   this will be an <see cref="ApplicationException" />.
-    ///   Where the SQL error message is passed on unmodified,
-    ///   this will be a <see cref="DataException" />.
-    ///   In the unlikely event of any other type of
-    ///   <see cref="Exception" /> than an SQL exception having been thrown,
-    ///   the <see cref="Exception" />,
-    ///   this will be that <see cref="Exception" /> unchanged.
-    /// </remarks>
-    public Exception Exception { get; }
-
-    /// <summary>
     ///   Gets an array of the values of the row's fields
     ///   as at just before the change was rejected.
     ///   If the user had tried to delete the row,
     ///   All the values will be DBNull.
     /// </summary>
-    public object[] RejectedValues { get; }
+    public IList<object> RejectedValues { get; }
 
     /// <summary>
     ///   Gets the index of the <see cref="DataRow" /> whose
     ///   insertion, update or deletion failed.
     /// </summary>
     public int RowIndex { get; }
-  } //End of class
-} //End of namespace
+  }
+}

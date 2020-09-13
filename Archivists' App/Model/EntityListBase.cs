@@ -6,6 +6,7 @@ using System.Data.Linq;
 using System.Linq;
 using System.Reflection;
 using JetBrains.Annotations;
+using SoundExplorers.Common;
 using SoundExplorers.Data;
 using VelocityDb.Session;
 
@@ -87,10 +88,11 @@ namespace SoundExplorers.Model {
     ///   A database update error occured.
     /// </exception>
     public void DeleteEntity(int rowIndex) {
+      var rowItemValues = BackupRowItemValues(rowIndex);
       try {
         Session.Unpersist(this[rowIndex]);
       } catch (Exception exception) {
-        throw ConvertException(exception);
+        throw CreateRowErrorException(exception, rowIndex, rowItemValues);
       }
       RemoveAt(rowIndex);
     }
@@ -135,7 +137,7 @@ namespace SoundExplorers.Model {
     ///   A database update error occured.
     /// </exception>
     public void InsertOrUpdateEntityIfRequired(int rowIndex) {
-      var rowItemValues = ConserveRowItemValues(rowIndex);
+      var rowItemValues = BackupRowItemValues(rowIndex);
       TEntity backupEntity = null;
       TEntity newEntity = null;
       bool isNewRow = rowIndex == Count;
@@ -156,7 +158,7 @@ namespace SoundExplorers.Model {
         } else {
           RestoreEntityAndRow(backupEntity, rowIndex);
         }
-        throw ConvertException(exception);
+        throw CreateRowErrorException(exception, rowIndex, rowItemValues);
       }
     }
 
@@ -164,6 +166,16 @@ namespace SoundExplorers.Model {
       foreach (var entity in this) {
         Table.Rows.Add(CreateRowFromEntity(entity));
       }
+    }
+
+    [NotNull]
+    private IList<object> BackupRowItemValues(int rowIndex) {
+      var row = Table.Rows[rowIndex];
+      var result = new List<object>(Columns.Count);
+      for (var i = 0; i < Columns.Count; i++) {
+        result.Add(row[i]);
+      }
+      return result;
     }
 
     [NotNull]
@@ -191,21 +203,16 @@ namespace SoundExplorers.Model {
     }
 
     [NotNull]
-    private static Exception ConvertException([NotNull] Exception exception) {
-      if (exception is DataException || exception is DuplicateKeyException) {
-        return new ApplicationException(exception.Message, exception);
-      }
-      return exception;
-    }
-
-    [NotNull]
-    private IEnumerable<object> ConserveRowItemValues(int rowIndex) {
-      var row = Table.Rows[rowIndex];
-      var result = new List<object>(Columns.Count);
-      for (var i = 0; i < Columns.Count; i++) {
-        result.Add(row[i]);
-      }
-      return result;
+    private static RowErrorException CreateRowErrorException(
+      [NotNull] Exception exception, int rowIndex,
+      [NotNull] IList<object> rowItemValues) {
+      string message =
+        exception is ApplicationException || exception is DataException ||
+        exception is DuplicateKeyException
+          ? exception.Message
+          : exception.ToString();
+      return new RowErrorException(message, rowIndex, 0, rowItemValues,
+        exception);
     }
 
     [NotNull]
