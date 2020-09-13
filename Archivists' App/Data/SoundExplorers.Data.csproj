@@ -112,11 +112,5 @@
     <None Include="Entity Relationship Diagram.cd" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Common\SoundExplorers.Common.csproj">
-      <Project>{24f52a9c-6679-4029-abfd-7eaa964cc945}</Project>
-      <Name>SoundExplorers.Common</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

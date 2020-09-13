@@ -10,7 +10,7 @@ namespace SoundExplorers.Common {
   public class RowErrorException : ApplicationException {
     /// <summary>
     ///   Initialises an instance of the
-    ///   <see cref="RowErrorEventArgs" /> class.
+    ///   <see cref="RowErrorException" /> class.
     /// </summary>
     /// <param name="message">Error message.</param>
     /// <param name="rowIndex">
@@ -53,7 +53,7 @@ namespace SoundExplorers.Common {
     public int ColumnIndex { get; }
 
     /// <summary>
-    ///   Gets an array of the values of the row's fields
+    ///   Gets a list of the values of the row's fields
     ///   as at just before the change was rejected.
     ///   If the user had tried to delete the row,
     ///   All the values will be DBNull.
