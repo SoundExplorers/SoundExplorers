@@ -40,14 +40,14 @@ namespace SoundExplorers.View {
       // 
       this.productNameLabel.Dock = System.Windows.Forms.DockStyle.Top;
       this.productNameLabel.Font = new System.Drawing.Font(
-        "Old English Text MT", 27.75F, System.Drawing.FontStyle.Regular,
+        "Old English Text MT", 24.00F, System.Drawing.FontStyle.Regular,
         System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.productNameLabel.ForeColor = System.Drawing.Color.Gold;
       this.productNameLabel.Location = new System.Drawing.Point(0, 0);
       this.productNameLabel.Name = "productNameLabel";
       this.productNameLabel.Size = new System.Drawing.Size(484, 71);
       this.productNameLabel.TabIndex = 4;
-      this.productNameLabel.Text = "Sound Explorers Archive";
+      this.productNameLabel.Text = "Sound Explorers Audio Archive";
       this.productNameLabel.TextAlign =
         System.Drawing.ContentAlignment.MiddleCenter;
       // 

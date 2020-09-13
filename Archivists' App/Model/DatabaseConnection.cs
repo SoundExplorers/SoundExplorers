@@ -1,18 +1,18 @@
 ﻿using System;
 using System.IO;
-using JetBrains.Annotations;
 using SoundExplorers.Data;
 using VelocityDb.Session;
 
 namespace SoundExplorers.Model {
   public class DatabaseConnection {
     private const int ExpectedVersion = 1;
+    private DatabaseConfig DatabaseConfig { get; set; }
 
     public void Open() {
-      var databaseConfig = new DatabaseConfig();
-      databaseConfig.Load();
-      CreateDatabaseFolderIfRequired(databaseConfig);
-      var session = new SessionNoServer(databaseConfig.DatabaseFolderPath);
+      DatabaseConfig = new DatabaseConfig();
+      DatabaseConfig.Load();
+      CreateDatabaseFolderIfRequired();
+      var session = new SessionNoServer(DatabaseConfig.DatabaseFolderPath);
       session.BeginUpdate();
       var schema = Schema.Find(QueryHelper.Instance, session) ?? new Schema();
       if (schema.Version < ExpectedVersion) {
@@ -26,26 +26,28 @@ namespace SoundExplorers.Model {
       Schema.Instance = schema;
     }
 
-    private static void CreateDatabaseFolderIfRequired(
-      [NotNull] DatabaseConfig databaseConfig) {
+    private void CreateDatabaseFolderIfRequired() {
       try {
-        if (!Directory.Exists(databaseConfig.DatabaseFolderPath)) {
-          Directory.CreateDirectory(databaseConfig.DatabaseFolderPath);
+        if (!Directory.Exists(DatabaseConfig.DatabaseFolderPath)) {
+          Directory.CreateDirectory(DatabaseConfig.DatabaseFolderPath);
         }
       } catch (Exception exception) {
         throw Global.CreateFileException(exception,
-          $"As specified in {databaseConfig.ConfigFilePath},"
+          $"As specified in {DatabaseConfig.ConfigFilePath},"
           + $"{Environment.NewLine} database folder path",
-          databaseConfig.DatabaseFolderPath);
+          DatabaseConfig.DatabaseFolderPath);
       }
-      CopyLicenceToDatabaseFolderIfRequired(databaseConfig.DatabaseFolderPath);
+      CopyLicenceToDatabaseFolderIfRequired();
     }
 
-    private static void CopyLicenceToDatabaseFolderIfRequired(
-      [NotNull] string databaseFolderPath) {
+    private void CopyLicenceToDatabaseFolderIfRequired() {
+      var destinationPath =
+        $"{DatabaseConfig.DatabaseFolderPath}{Path.DirectorySeparatorChar}4.odb";
+      if (File.Exists(destinationPath)) {
+        return;
+      }
       var sourcePath =
         $"{Global.GetApplicationFolderPath()}{Path.DirectorySeparatorChar}4.odb";
-      var destinationPath = $"{databaseFolderPath}{Path.DirectorySeparatorChar}4.odb";
       try {
         File.Copy(sourcePath, destinationPath);
       } catch (Exception exception) {
