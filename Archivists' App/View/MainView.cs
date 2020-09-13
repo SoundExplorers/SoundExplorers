@@ -13,24 +13,12 @@ namespace SoundExplorers.View {
     public MainView() {
       SplashManager.Status = "Building window...";
       InitializeComponent();
-      try {
-        StatusLabel.Text = string.Empty;
-        SplashManager.Status = "Positioning window...";
-        SizeableFormOptions = SizeableFormOptions.Create(this);
-      } catch (Exception ex) {
-        MessageBox.Show(
-          SplashManager.SplashForm,
-          ex.ToString(),
-          Application.ProductName,
-          MessageBoxButtons.OK,
-          MessageBoxIcon.Error);
-        Environment.Exit(0);
-      }
+      StatusLabel.Text = string.Empty;
     }
 
     private MainController Controller { get; set; }
     private SelectTableView SelectTableView { get; set; }
-    private SizeableFormOptions SizeableFormOptions { get; }
+    private SizeableFormOptions SizeableFormOptions { get; set; }
 
     private TableView TableView => ActiveMdiChild as TableView ??
                                    throw new NullReferenceException(nameof(TableView));
@@ -38,6 +26,8 @@ namespace SoundExplorers.View {
     public void SetController(MainController controller) {
       Controller = controller;
       try {
+        SplashManager.Status = "Positioning window...";
+        SizeableFormOptions = SizeableFormOptions.Create(this);
         SplashManager.Status = "Getting options...";
         StatusStrip.Visible = Controller.IsStatusBarVisible;
         SelectTableView = CreateSelectTableView();

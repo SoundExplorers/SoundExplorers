@@ -26,8 +26,6 @@ namespace SoundExplorers.Model {
     ///   and the default integer value will be zero.
     /// </param>
     /// <remarks>
-    ///   The <see cref="Name" /> property will be set to the value of the
-    ///   <paramref name="name" /> parameter.
     ///   The <see cref="StringValue" /> property will be set to
     ///   the current value of the <b>OptionValue</b> field of the
     ///   <b>UserOption</b> record, if found.
@@ -53,13 +51,19 @@ namespace SoundExplorers.Model {
       }
     }
 
+    // ReSharper disable once MemberCanBePrivate.Global
     internal QueryHelper QueryHelper {
       get => _queryHelper ?? (_queryHelper = QueryHelper.Instance);
+      // The setter is for testing.
+      // ReSharper disable once UnusedMember.Global
       set => _queryHelper = value;
     }
 
+    // ReSharper disable once MemberCanBePrivate.Global
     internal SessionBase Session {
       get => _session ?? (_session = Global.Session);
+      // The setter is for testing.
+      // ReSharper disable once UnusedMember.Global
       set => _session = value;
     }
 
@@ -133,16 +137,6 @@ namespace SoundExplorers.Model {
       }
       set => StringValue = value.ToString();
     }
-
-    /// <summary>
-    ///   Gets the name that identifies the option relative to the current user.
-    /// </summary>
-    /// <remarks>
-    ///   This is specified via the constructor.
-    ///   It represents value to which the <b>OptionName</b> field of the
-    ///   <b>UserOption</b> record on the database will be set.
-    /// </remarks>
-    public string Name => UserOption.OptionName;
 
     /// <summary>
     ///   Gets or sets the current value of the option as a string.
