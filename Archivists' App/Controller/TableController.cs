@@ -134,8 +134,6 @@ namespace SoundExplorers.Controller {
       } else {
         MainList.Populate();
       }
-      // Entities.RowError += Entities_RowError;
-      // Entities.RowUpdated += Entities_RowUpdated;
     }
 
     [NotNull]

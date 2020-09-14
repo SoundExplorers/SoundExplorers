@@ -11,8 +11,8 @@ namespace SoundExplorers.Model {
     public void Open() {
       DatabaseConfig = new DatabaseConfig();
       DatabaseConfig.Load();
-      CreateDatabaseFolderIfRequired();
-      CopyLicenceToDatabaseFolderIfRequired();
+      CheckDatabaseFolderExists();
+      CopyLicenceToDatabaseFolderIfAbsent();
       var session = new SessionNoServer(DatabaseConfig.DatabaseFolderPath);
       session.BeginUpdate();
       var schema = Schema.Find(QueryHelper.Instance, session) ?? new Schema();
@@ -28,20 +28,17 @@ namespace SoundExplorers.Model {
       Schema.Instance = schema;
     }
 
-    private void CreateDatabaseFolderIfRequired() {
-      try {
-        if (!Directory.Exists(DatabaseConfig.DatabaseFolderPath)) {
-          Directory.CreateDirectory(DatabaseConfig.DatabaseFolderPath);
-        }
-      } catch (Exception exception) {
-        throw Global.CreateFileException(exception,
-          $"As specified in {DatabaseConfig.ConfigFilePath},"
-          + $"{Environment.NewLine} database folder path",
-          DatabaseConfig.DatabaseFolderPath);
+    private void CheckDatabaseFolderExists() {
+      if (!Directory.Exists(DatabaseConfig.DatabaseFolderPath)) {
+        throw new ApplicationException(
+          $"Database folder '{DatabaseConfig.DatabaseFolderPath}' cannot be found."
+          + $"{Environment.NewLine}{Environment.NewLine}"
+          + "The folder's path is specified in database configuration file "
+          + $"'{DatabaseConfig.ConfigFilePath}'.");
       }
     }
 
-    private void CopyLicenceToDatabaseFolderIfRequired() {
+    private void CopyLicenceToDatabaseFolderIfAbsent() {
       var destinationPath =
         $"{DatabaseConfig.DatabaseFolderPath}{Path.DirectorySeparatorChar}4.odb";
       if (File.Exists(destinationPath)) {
