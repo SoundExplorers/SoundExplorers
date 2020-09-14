@@ -124,13 +124,9 @@ namespace SoundExplorers.Model {
       if (list != null) {
         AddRange((IList<TEntity>)list);
       } else {
-        try {
-          Session.BeginRead();
-          AddRange(Session.AllObjects<TEntity>());
-          Session.Commit();
-        } catch (Exception exception) {
-          throw ConvertToApplicationException(exception);
-        }
+        Session.BeginRead();
+        AddRange(Session.AllObjects<TEntity>());
+        Session.Commit();
       }
       Table.Clear();
       AddRowsToTable();
@@ -189,13 +185,6 @@ namespace SoundExplorers.Model {
         result.Add(row[i]);
       }
       return result;
-    }
-
-    [NotNull]
-    private static Exception ConvertToApplicationException([NotNull] Exception exception) {
-      return exception is ApplicationException
-        ? exception
-        : new ApplicationException(CreateExceptionMessage(exception), exception);
     }
 
     [NotNull]

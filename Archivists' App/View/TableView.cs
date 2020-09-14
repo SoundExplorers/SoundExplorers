@@ -672,10 +672,10 @@ namespace SoundExplorers.View {
     private void PopulateGrid() {
       try {
         Controller.FetchData();
-      } catch (ApplicationException exception) {
+      } catch (Exception exception) {
         MessageBox.Show(
           this,
-          exception.Message,
+          exception.ToString(),
           Application.ProductName,
           MessageBoxButtons.OK,
           MessageBoxIcon.Error);
