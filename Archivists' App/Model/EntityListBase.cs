@@ -90,7 +90,9 @@ namespace SoundExplorers.Model {
     public void DeleteEntity(int rowIndex) {
       var rowItemValues = BackupRowItemValues(rowIndex);
       try {
+        Session.BeginUpdate();
         Session.Unpersist(this[rowIndex]);
+        Session.Commit();
       } catch (Exception exception) {
         throw CreateRowErrorException(exception, rowIndex, rowItemValues);
       }
@@ -119,7 +121,13 @@ namespace SoundExplorers.Model {
       if (list != null) {
         AddRange((IList<TEntity>)list);
       } else {
-        AddRange(Session.AllObjects<TEntity>());
+        try {
+          Session.BeginRead();
+          AddRange(Session.AllObjects<TEntity>());
+          Session.Commit();
+        } catch (Exception exception) {
+          throw CreateRowErrorException(exception, rowIndex, rowItemValues);
+        }
       }
       Table.Clear();
       AddRowsToTable();
@@ -148,10 +156,12 @@ namespace SoundExplorers.Model {
         backupEntity = CreateBackupEntity(this[rowIndex]);
       }
       try {
+        Session.BeginUpdate();
         UpdateEntityAtRow(rowIndex);
         if (isNewRow) {
           Session.Persist(newEntity);
         }
+        Session.Commit();
       } catch (Exception exception) {
         if (isNewRow) {
           Remove(newEntity);
