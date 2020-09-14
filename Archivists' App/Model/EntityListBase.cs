@@ -116,6 +116,9 @@ namespace SoundExplorers.Model {
     ///   If null, all entities of the class's entity type
     ///   will be fetched from the database.
     /// </param>
+    /// <exception cref="ApplicationException">
+    ///   Database access error.
+    /// </exception>
     public void Populate(IList list = null) {
       Clear();
       if (list != null) {
@@ -126,7 +129,7 @@ namespace SoundExplorers.Model {
           AddRange(Session.AllObjects<TEntity>());
           Session.Commit();
         } catch (Exception exception) {
-          throw ConvertException(exception);
+          throw ConvertToApplicationException(exception);
         }
       }
       Table.Clear();
@@ -189,7 +192,7 @@ namespace SoundExplorers.Model {
     }
 
     [NotNull]
-    private static Exception ConvertException([NotNull] Exception exception) {
+    private static Exception ConvertToApplicationException([NotNull] Exception exception) {
       return exception is ApplicationException
         ? exception
         : new ApplicationException(CreateExceptionMessage(exception), exception);
