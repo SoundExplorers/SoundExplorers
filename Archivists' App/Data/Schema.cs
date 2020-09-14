@@ -43,12 +43,13 @@ namespace SoundExplorers.Data {
       _relations ?? (_relations = CreateRelations());
 
     /// <summary>
-    ///   The schema version.
+    ///   Gets or sets the schema version.
+    ///   Zero initially.
     ///   Not the same as the application version.
     /// </summary>
     public int Version {
       get => _version;
-      private set {
+      set {
         UpdateNonIndexField();
         _version = value;
       }
@@ -67,7 +68,6 @@ namespace SoundExplorers.Data {
         typeof(Series),
         typeof(Piece),
         typeof(Role),
-        typeof(Schema),
         typeof(Set),
         typeof(UserOption),
       };
@@ -105,17 +105,23 @@ namespace SoundExplorers.Data {
     }
 
     /// <summary>
-    ///   Upgrades the schema on the database.
-    ///   The entity types are registered so that a VelocityDB licence file
-    ///   ('license database') will not have to be included in the database.
+    ///   Registers the entity types on the database,
+    ///   so that a VelocityDB licence file ('license database')
+    ///   (supposedly) will not have to be included in the database.
+    ///   TODO RegisterClass does not actually remove the need for a license file.
+    ///   Doing the registration in a separate initial commit does not help.
+    ///   Maybe it will work with the installed application.
+    ///   Requires further investigation.
     /// </summary>
-    /// <param name="newVersion">New schema version number</param>
     /// <param name="session">Database session</param>
-    public void Upgrade(int newVersion, [NotNull] SessionBase session) {
+    public void RegisterEntityTypes([NotNull] SessionBase session) {
+      // The Schema class itself needs to be kept out of
+      // the list of entity types, as that is also used for
+      // populating the Select Table dialog.
+      session.RegisterClass(typeof(Schema));
       foreach (var entityType in EntityTypes) {
         session.RegisterClass(entityType);
       }
-      Version = newVersion;
     }
   }
 }

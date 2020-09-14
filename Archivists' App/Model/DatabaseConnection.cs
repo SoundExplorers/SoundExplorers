@@ -12,11 +12,13 @@ namespace SoundExplorers.Model {
       DatabaseConfig = new DatabaseConfig();
       DatabaseConfig.Load();
       CreateDatabaseFolderIfRequired();
+      CopyLicenceToDatabaseFolderIfRequired();
       var session = new SessionNoServer(DatabaseConfig.DatabaseFolderPath);
       session.BeginUpdate();
       var schema = Schema.Find(QueryHelper.Instance, session) ?? new Schema();
       if (schema.Version < ExpectedVersion) {
-        schema.Upgrade(ExpectedVersion, session);
+        schema.RegisterEntityTypes(session);
+        schema.Version = ExpectedVersion;
       }
       if (!schema.IsPersistent) {
         session.Persist(schema);
@@ -37,7 +39,6 @@ namespace SoundExplorers.Model {
           + $"{Environment.NewLine} database folder path",
           DatabaseConfig.DatabaseFolderPath);
       }
-      CopyLicenceToDatabaseFolderIfRequired();
     }
 
     private void CopyLicenceToDatabaseFolderIfRequired() {
