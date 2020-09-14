@@ -41,7 +41,7 @@ namespace SoundExplorers.View {
     }
 
     private void OKButton_Click(object sender, EventArgs e) {
-      Controller.SelectedEntityListType = (Type)tableComboBox.SelectedItem;
+      Controller.SelectedEntityListType = (Type)tableComboBox.SelectedValue;
       Controller.SelectedTableName = tableComboBox.Text;
       DialogResult = DialogResult.OK;
     }
