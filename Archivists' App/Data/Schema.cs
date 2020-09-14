@@ -14,8 +14,8 @@ namespace SoundExplorers.Data {
   ///   So it inherits from OptimizedPersistable instead of EntityBase.
   /// </remarks>
   public class Schema : OptimizedPersistable {
-    private IEnumerable<Type> _entityTypes;
     private static Schema _instance;
+    private IEnumerable<Type> _entityTypes;
     private IEnumerable<RelationInfo> _relations;
     private int _version;
 
@@ -69,7 +69,7 @@ namespace SoundExplorers.Data {
         typeof(Piece),
         typeof(Role),
         typeof(Set),
-        typeof(UserOption),
+        typeof(UserOption)
       };
       return list.ToArray();
     }
@@ -107,13 +107,19 @@ namespace SoundExplorers.Data {
     /// <summary>
     ///   Registers the entity types on the database,
     ///   so that a VelocityDB licence file ('license database')
-    ///   (supposedly) will not have to be included in the database.
-    ///   TODO RegisterClass does not actually remove the need for a license file.
-    ///   Doing the registration in a separate initial commit does not help.
-    ///   Maybe it will work with the installed application.
-    ///   Requires further investigation.
+    ///   will not have to be included in the user's database.
     /// </summary>
     /// <param name="session">Database session</param>
+    /// <remarks>
+    ///   How this will work, according to VelocityDB User Guide:
+    ///   Application Deployment and VelocityDB license check
+    ///   Normally you need to deploy the license database, 4.odb, but if you are publishing your
+    ///   application as open source or your database files in a publicly accessible directory then do not
+    ///   include 4.odb since that would enable unlicensed usage of VelocityDB. Instead register all your
+    ///   persistent classes prior to deployment and deploy database 1.odb which then contains your entire
+    ///   database schema. VelocityDB may do a license check whenever database schema is added to or is
+    ///   updated.
+    /// </remarks>
     public void RegisterEntityTypes([NotNull] SessionBase session) {
       // The Schema class itself needs to be kept out of
       // the list of entity types, as that is also used for

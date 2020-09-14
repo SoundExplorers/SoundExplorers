@@ -31,7 +31,8 @@ namespace SoundExplorers.Tests.Data {
       schema = new Schema();
       Assert.AreEqual(0, schema.Version, "Version after creating Schema");
       Session.BeginUpdate();
-      schema.RegisterEntityTypes(1, Session);
+      schema.RegisterEntityTypes(Session);
+      schema.Version = 1;
       Session.Persist(schema);
       schema = Schema.Find(QueryHelper, Session);
       Session.Commit();
