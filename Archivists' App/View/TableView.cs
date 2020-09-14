@@ -670,7 +670,17 @@ namespace SoundExplorers.View {
     }
 
     private void PopulateGrid() {
-      Controller.FetchData();
+      try {
+        Controller.FetchData();
+      } catch (ApplicationException exception) {
+        MessageBox.Show(
+          this,
+          exception.Message,
+          Application.ProductName,
+          MessageBoxButtons.OK,
+          MessageBoxIcon.Error);
+        Environment.Exit(0);
+      }
       Text = Controller.MainTable?.TableName;
       MainGrid.CellBeginEdit -= MainGrid_CellBeginEdit;
       //MainGrid.CellEndEdit -= MainGrid_CellEndEdit;

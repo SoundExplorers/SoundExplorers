@@ -126,7 +126,7 @@ namespace SoundExplorers.Model {
           AddRange(Session.AllObjects<TEntity>());
           Session.Commit();
         } catch (Exception exception) {
-          throw CreateRowErrorException(exception, rowIndex, rowItemValues);
+          throw ConvertException(exception);
         }
       }
       Table.Clear();
@@ -189,6 +189,13 @@ namespace SoundExplorers.Model {
     }
 
     [NotNull]
+    private static Exception ConvertException([NotNull] Exception exception) {
+      return exception is ApplicationException
+        ? exception
+        : new ApplicationException(CreateExceptionMessage(exception), exception);
+    }
+
+    [NotNull]
     protected abstract TEntity CreateBackupEntity([NotNull] TEntity entity);
 
     [NotNull]
@@ -200,6 +207,15 @@ namespace SoundExplorers.Model {
       } catch (TargetInvocationException ex) {
         throw ex.InnerException ?? ex;
       }
+    }
+
+    private static string CreateExceptionMessage(Exception exception) {
+      string message =
+        exception is ApplicationException || exception is DataException ||
+        exception is DuplicateKeyException
+          ? exception.Message
+          : exception.ToString();
+      return message;
     }
 
     [NotNull]
@@ -216,12 +232,8 @@ namespace SoundExplorers.Model {
     private static RowErrorException CreateRowErrorException(
       [NotNull] Exception exception, int rowIndex,
       [NotNull] IList<object> rowItemValues) {
-      string message =
-        exception is ApplicationException || exception is DataException ||
-        exception is DuplicateKeyException
-          ? exception.Message
-          : exception.ToString();
-      return new RowErrorException(message, rowIndex, 0, rowItemValues,
+      return new RowErrorException(CreateExceptionMessage(exception), rowIndex, 0,
+        rowItemValues,
         exception);
     }
 
