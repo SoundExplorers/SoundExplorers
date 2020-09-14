@@ -26,11 +26,6 @@ namespace SoundExplorers {
       Application.SetCompatibleTextRenderingDefault(false);
       SplashManager.Show(typeof(SplashForm));
       Application.Run(MainView.Create());
-
-      // Stop the application and all the threads in suspended state,
-      // in the event that global exception handling has taken place.
-      // See Rahul Modi's comments in the Stack Overflow article cited above.
-      Environment.Exit(-1);
     }
 
     private static void Application_ThreadException
@@ -56,6 +51,9 @@ namespace SoundExplorers {
       // Do logging of exception details
       MessageBox.Show(ex.ToString(), ex.TargetSite.ToString(),
         MessageBoxButtons.OK, MessageBoxIcon.Error);
+      // Stop the application and any threads in suspended state.
+      // See Rahul Modi's comments in the Stack Overflow article cited above.
+      Environment.Exit(-1);
     }
   } //End of class
 } //End of namespace
