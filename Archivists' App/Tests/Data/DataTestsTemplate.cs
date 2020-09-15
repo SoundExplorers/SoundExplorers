@@ -8,7 +8,7 @@ namespace SoundExplorers.Tests.Data {
     public void Setup() {
       QueryHelper = new QueryHelper();
       DatabaseFolderPath = TestSession.CreateDatabaseFolder();
-      TestDataFactory = new TestDataFactory(QueryHelper);
+      TestData = new TestData(QueryHelper);
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
         session.Commit();
@@ -26,11 +26,11 @@ namespace SoundExplorers.Tests.Data {
     private string DatabaseFolderPath { get; set; }
     private QueryHelper QueryHelper { get; set; }
     private TestSession Session { get; set; }
-    private TestDataFactory TestDataFactory { get; set; }
+    private TestData TestData { get; set; }
 
     [Test]
     public void A010_Initial() {
-      Assert.IsTrue(QueryHelper != null && TestDataFactory != null,
+      Assert.IsTrue(QueryHelper != null && TestData != null,
         "Dummy test");
     }
   }

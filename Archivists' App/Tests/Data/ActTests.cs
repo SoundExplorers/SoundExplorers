@@ -11,7 +11,7 @@ namespace SoundExplorers.Tests.Data {
     public void Setup() {
       QueryHelper = new QueryHelper();
       DatabaseFolderPath = TestSession.CreateDatabaseFolder();
-      TestDataFactory = new TestDataFactory(QueryHelper);
+      Data = new TestData(QueryHelper);
       Location1 = new Location {
         QueryHelper = QueryHelper,
         Name = Location1Name
@@ -40,14 +40,16 @@ namespace SoundExplorers.Tests.Data {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
         session.Persist(Location1);
-        Event1.EventType = TestDataFactory.CreateEventTypePersisted(session);
+        Data.AddEventTypesPersisted(1, session);
+        Event1.EventType = Data.EventTypes[0];
         Event1.Location = Location1;
         session.Persist(Event1);
         session.Persist(Act1);
         session.Persist(Act2);
         Event1.Sets.Add(Set1);
         Event1.Sets.Add(Set2);
-        Set1.Genre = TestDataFactory.CreateGenrePersisted(session);
+        Data.AddGenresPersisted(1, session);
+        Set1.Genre = Data.Genres[0];
         Set2.Genre = Set1.Genre;
         session.Persist(Set1);
         session.Persist(Set2);
@@ -70,7 +72,7 @@ namespace SoundExplorers.Tests.Data {
     private const int Set2SetNo = 2;
     private string DatabaseFolderPath { get; set; }
     private QueryHelper QueryHelper { get; set; }
-    private TestDataFactory TestDataFactory { get; set; }
+    private TestData Data { get; set; }
     private Act Act1 { get; set; }
     private Act Act2 { get; set; }
     private Event Event1 { get; set; }

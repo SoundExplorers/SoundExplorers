@@ -86,7 +86,7 @@
         <Compile Include="Data\ActTests.cs" />
         <Compile Include="Data\ArtistTests.cs" />
         <Compile Include="Data\CreditTests.cs" />
-        <Compile Include="Data\TestDataFactory.cs" />
+        <Compile Include="Data\TestData.cs" />
         <Compile Include="Data\DataTestsTemplate.cs" />
         <Compile Include="Data\Daughter.cs" />
         <Compile Include="Data\EntityBaseTests.cs" />

@@ -8,7 +8,7 @@ namespace SoundExplorers.Tests.Data {
     [SetUp]
     public void Setup() {
       DatabaseFolderPath = TestSession.CreateDatabaseFolder();
-      TestDataFactory = new TestDataFactory(new QueryHelper());
+      Data = new TestData(new QueryHelper());
     }
 
     [TearDown]
@@ -17,7 +17,7 @@ namespace SoundExplorers.Tests.Data {
     }
 
     private string DatabaseFolderPath { get; set; }
-    private TestDataFactory TestDataFactory { get; set; }
+    private TestData Data { get; set; }
 
     [Test]
     public void T010_Equality() {
@@ -72,10 +72,11 @@ namespace SoundExplorers.Tests.Data {
         session.BeginUpdate();
         session.Persist(location1);
         session.Persist(location2);
+        Data.AddEventTypesPersisted(1, session);
         event1 = new Event {
           Date = DateTime.Today,
           Location = location1,
-          EventType = TestDataFactory.CreateEventTypePersisted(session)
+          EventType = Data.EventTypes[0]
         };
         event2 = new Event {
           Date = event1.Date, Location = location2, EventType = event1.EventType
@@ -92,10 +93,11 @@ namespace SoundExplorers.Tests.Data {
         event6 = new Event {
           Date = event5.Date, Location = location2, EventType = event1.EventType
         };
+        Data.AddGenresPersisted(1, session);
         set1 = new Set {
           SetNo = 1,
           Event = event1,
-          Genre = TestDataFactory.CreateGenrePersisted(session)
+          Genre = Data.Genres[0]
         };
         set2 = new Set {SetNo = 1, Event = event2, Genre = set1.Genre};
         session.Commit();
