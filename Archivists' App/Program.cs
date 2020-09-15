@@ -1,5 +1,8 @@
 ﻿using System;
+#if DEBUG
+#else // Release build
 using System.Threading;
+#endif
 using System.Windows.Forms;
 using SoundExplorers.View;
 
@@ -17,15 +20,21 @@ namespace SoundExplorers {
       // https://stackoverflow.com/questions/8148156/winforms-global-exception-handling
 #if DEBUG
 #else // Release build
-      // Add handler to handle the exception raised by main threads
-      Application.ThreadException += Application_ThreadException;
-      // Add handler to handle the exception raised by additional threads
-      AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+      AddGlobalExceptionHandlers();
 #endif
       Application.EnableVisualStyles();
       Application.SetCompatibleTextRenderingDefault(false);
       SplashManager.Show(typeof(SplashForm));
       Application.Run(MainView.Create());
+    }
+
+#if DEBUG
+#else // Release build
+    private static void AddGlobalExceptionHandlers() {
+      // Add handler to handle the exception raised by main threads
+      Application.ThreadException += Application_ThreadException;
+      // Add handler to handle the exception raised by additional threads
+      AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
     }
 
     private static void Application_ThreadException
@@ -55,5 +64,6 @@ namespace SoundExplorers {
       // See Rahul Modi's comments in the Stack Overflow article cited above.
       Environment.Exit(-1);
     }
+#endif
   } //End of class
 } //End of namespace

@@ -9,7 +9,6 @@ namespace SoundExplorers.Controller {
   /// </summary>
   [UsedImplicitly]
   public class SelectTableController {
-
     /// <summary>
     ///   Initialises a new instance of the <see cref="TableController" /> class.
     /// </summary>
@@ -18,18 +17,23 @@ namespace SoundExplorers.Controller {
     /// </param>
     /// <param name="initiallySelectedTableName">
     ///   The name of the table that is to be initially selected.
-    ///   An empty string for no table to be initially selected.
+    ///   If an empty string or an unsupported table name,
+    ///   for no table to be initially selected.
     /// </param>
     public SelectTableController([NotNull] IView<SelectTableController> view,
       [NotNull] string initiallySelectedTableName) {
       EntityListTypeDictionary = Global.CreateEntityListTypeDictionary();
-      SelectedEntityListType = EntityListTypeDictionary[initiallySelectedTableName];
-      SelectedTableName = initiallySelectedTableName;
+      if (EntityListTypeDictionary.ContainsKey(initiallySelectedTableName)) {
+        SelectedEntityListType = EntityListTypeDictionary[initiallySelectedTableName];
+        SelectedTableName = initiallySelectedTableName;
+      } else {
+        SelectedEntityListType = EntityListTypeDictionary[string.Empty];
+        SelectedTableName = string.Empty;
+      }
       view.SetController(this);
     }
 
     [NotNull] public SortedDictionary<string, Type> EntityListTypeDictionary { get; }
-
     [NotNull] public Type SelectedEntityListType { get; set; }
     [NotNull] public string SelectedTableName { get; set; }
   }
