@@ -156,7 +156,7 @@ namespace SoundExplorers.Model {
       }
       try {
         Session.BeginUpdate();
-        UpdateEntityAtRow(rowIndex);
+        UpdateEntityAtRow(Table.Rows[rowIndex], this[rowIndex]);
         if (isNewRow) {
           Session.Persist(newEntity);
         }
@@ -253,6 +253,7 @@ namespace SoundExplorers.Model {
     protected abstract void RestoreEntityPropertiesFromBackup(
       [NotNull] TEntity backupEntity, [NotNull] TEntity entityToRestore);
 
-    protected abstract void UpdateEntityAtRow(int rowIndex);
+    protected abstract void UpdateEntityAtRow([NotNull] DataRow row,
+      [NotNull] TEntity entity);
   }
 }

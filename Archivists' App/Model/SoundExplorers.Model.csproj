@@ -54,10 +54,16 @@
         <Compile Include="EntityColumnList.cs" />
         <Compile Include="EntityListBase.cs" />
         <Compile Include="EventList.cs" />
+        <Compile Include="EventTypeList.cs" />
         <Compile Include="Global.cs" />
         <Compile Include="IEntityList.cs" />
+        <Compile Include="LocationList.cs" />
+        <Compile Include="NamedEntityList.cs" />
+        <Compile Include="NewsletterList.cs" />
+        <Compile Include="NotablyNamedEntityList.cs" />
         <Compile Include="Option.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
+        <Compile Include="SeriesList.cs" />
         <Compile Include="SetList.cs" />
     </ItemGroup>
     <ItemGroup>

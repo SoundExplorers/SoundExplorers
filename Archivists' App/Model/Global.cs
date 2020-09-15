@@ -38,6 +38,10 @@ namespace SoundExplorers.Model {
       return new SortedDictionary<string, Type> {
         {string.Empty, null},
         {nameof(Event), typeof(EventList)},
+        {nameof(EventType), typeof(EventTypeList)},
+        {nameof(Location), typeof(LocationList)},
+        {nameof(Newsletter), typeof(NewsletterList)},
+        {nameof(Series), typeof(SeriesList)},
         {nameof(Set), typeof(SetList)}
       };
     }

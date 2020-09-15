@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using SoundExplorers.Data;
 
 namespace SoundExplorers.Model {
@@ -9,10 +10,11 @@ namespace SoundExplorers.Model {
       return (IList)this[rowIndex].Sets.Values;
     }
 
-    protected override Event CreateBackupEntity(Event @event) {
+    protected override Event CreateBackupEntity(Event location) {
       return new Event {
-        Date = @event.Date, Location = @event.Location, Series = @event.Series,
-        Newsletter = @event.Newsletter, EventType = @event.EventType, Notes = @event.Notes
+        Date = location.Date, Location = location.Location, Series = location.Series,
+        Newsletter = location.Newsletter, EventType = location.EventType,
+        Notes = location.Notes
       };
     }
 
@@ -49,15 +51,13 @@ namespace SoundExplorers.Model {
       eventToRestore.Notes = backupEvent.Notes;
     }
 
-    protected override void UpdateEntityAtRow(int rowIndex) {
-      var row = Table.Rows[rowIndex];
+    protected override void UpdateEntityAtRow(DataRow row, Event @event) {
       var newDate = (DateTime)row[nameof(Event.Date)];
       var newLocationName = row[nameof(Event.Location)].ToString();
       var newSeriesName = row[nameof(Event.Series)].ToString();
       var newNewsletterDate = (DateTime)row[nameof(Event.Newsletter)];
       var newEventTypeName = row[nameof(Event.EventType)].ToString();
       var newNotes = row[nameof(Event.Notes)].ToString();
-      var @event = this[rowIndex];
       if (newDate != @event.Date) {
         @event.Date = newDate;
       }

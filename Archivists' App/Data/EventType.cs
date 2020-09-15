@@ -8,7 +8,7 @@ namespace SoundExplorers.Data {
   ///   An entity representing a type of Events.
   ///   A performance or rehearsal, for example.
   /// </summary>
-  public class EventType : EntityBase {
+  public class EventType : EntityBase, INamed {
     public EventType() : base(typeof(EventType), nameof(Name), null) {
       Events = new SortedChildList<Event>(this);
     }

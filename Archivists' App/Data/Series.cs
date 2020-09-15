@@ -8,7 +8,7 @@ namespace SoundExplorers.Data {
   ///   An entity representing a series of Events.
   ///   A festival, for example.
   /// </summary>
-  public class Series : EntityBase {
+  public class Series : EntityBase, INotablyNamed {
     private string _notes;
 
     public Series() : base(typeof(Series), nameof(Name), null) {

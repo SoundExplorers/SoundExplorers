@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using SoundExplorers.Data;
 
 namespace SoundExplorers.Model {
@@ -11,9 +12,11 @@ namespace SoundExplorers.Model {
       return (IList)this[rowIndex].Pieces.Values;
     }
 
-    protected override Set CreateBackupEntity(Set set) {
-      return new Set
-        {SetNo = set.SetNo, Act = set.Act, Genre = set.Genre, Notes = set.Notes};
+    protected override Set CreateBackupEntity(Set location) {
+      return new Set {
+        SetNo = location.SetNo, Act = location.Act, Genre = location.Genre,
+        Notes = location.Notes
+      };
     }
 
     protected override EntityColumnList CreateColumns() {
@@ -51,13 +54,11 @@ namespace SoundExplorers.Model {
       setToRestore.Notes = backupSet.Notes;
     }
 
-    protected override void UpdateEntityAtRow(int rowIndex) {
-      var row = Table.Rows[rowIndex];
+    protected override void UpdateEntityAtRow(DataRow row, Set set) {
       var newSetNo = (int)row[nameof(Set.SetNo)];
       var newActName = row[nameof(Set.Act)].ToString();
       var newGenreName = row[nameof(Set.Genre)].ToString();
       var newNotes = row[nameof(Set.Notes)].ToString();
-      var set = this[rowIndex];
       if (newSetNo != set.SetNo) {
         set.SetNo = newSetNo;
       }

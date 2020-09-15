@@ -9,7 +9,7 @@ namespace SoundExplorers.Data {
   ///   Typically a music venue, but could, for example,
   ///   be an outdoor location.
   /// </summary>
-  public class Location : EntityBase {
+  public class Location : EntityBase, INotablyNamed {
     private string _notes;
 
     public Location() : base(typeof(Location), nameof(Name), null) {
