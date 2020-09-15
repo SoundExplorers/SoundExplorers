@@ -12,11 +12,11 @@ namespace SoundExplorers.Model {
       DatabaseConfig = new DatabaseConfig();
       DatabaseConfig.Load();
       CheckDatabaseFolderExists();
-      CopyLicenceToDatabaseFolderIfAbsent();
       var session = new SessionNoServer(DatabaseConfig.DatabaseFolderPath);
       session.BeginUpdate();
       var schema = Schema.Find(QueryHelper.Instance, session) ?? new Schema();
       if (schema.Version < ExpectedVersion) {
+        CopyLicenceToDatabaseFolderIfAbsent();
         schema.RegisterEntityTypes(session);
         schema.Version = ExpectedVersion;
       }
@@ -33,7 +33,18 @@ namespace SoundExplorers.Model {
         throw new ApplicationException(
           $"Database folder '{DatabaseConfig.DatabaseFolderPath}' cannot be found."
           + $"{Environment.NewLine}{Environment.NewLine}"
-          + "The folder's path is specified in database configuration file "
+          + "Please specify the folder's path in database configuration file "
+          + $"'{DatabaseConfig.ConfigFilePath}'.");
+      }
+    }
+
+    private void CheckLicenceFileExists() {
+      if (!File.Exists(DatabaseConfig.VelocityDbLicenceFilePath)) {
+        throw new ApplicationException(
+          $"VelocityDB licence file '{DatabaseConfig.VelocityDbLicenceFilePath}' " 
+          +"cannot be found."
+          + $"{Environment.NewLine}{Environment.NewLine}"
+          + "Please specify the file's path in database configuration file "
           + $"'{DatabaseConfig.ConfigFilePath}'.");
       }
     }
@@ -44,8 +55,8 @@ namespace SoundExplorers.Model {
       if (File.Exists(destinationPath)) {
         return;
       }
-      var sourcePath =
-        $"{Global.GetApplicationFolderPath()}{Path.DirectorySeparatorChar}4.odb";
+      CheckLicenceFileExists();
+      string sourcePath = DatabaseConfig.VelocityDbLicenceFilePath;
       try {
         File.Copy(sourcePath, destinationPath);
       } catch (Exception exception) {

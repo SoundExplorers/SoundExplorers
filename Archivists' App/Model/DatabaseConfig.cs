@@ -4,6 +4,7 @@ using System.IO;
 using System.Reflection;
 using System.Xml;
 using System.Xml.Linq;
+using JetBrains.Annotations;
 
 namespace SoundExplorers.Model {
   /// <summary>
@@ -38,6 +39,10 @@ namespace SoundExplorers.Model {
 
     [Description(@"Database folder path. Example: C:\Folder\Subfolder")]
     public string DatabaseFolderPath { get; private set; }
+
+    [Description(
+      "Path of the licence file for the VelocityDB object-oriented database management system.")]
+    public string VelocityDbLicenceFilePath { get; private set; }
 
     public void Load() {
       if (File.Exists(ConfigFilePath)) {
@@ -78,7 +83,7 @@ namespace SoundExplorers.Model {
       }
     }
 
-    private string GetPropertyDescription(string name) {
+    private string GetPropertyDescription([NotNull] string name) {
       return
         GetType().GetProperty(name)?
           .GetCustomAttribute<DescriptionAttribute>().Description;
@@ -98,7 +103,7 @@ namespace SoundExplorers.Model {
       }
     }
 
-    private void SetParameterPropertyValue(PropertyInfo property) {
+    private void SetParameterPropertyValue([NotNull] PropertyInfo property) {
       var element = Data.Element(property.Name);
       if (element == null) {
         throw new ApplicationException(
@@ -121,11 +126,12 @@ namespace SoundExplorers.Model {
 
     private void WriteParametersToXml() {
       WriteCommentedElement(nameof(DatabaseFolderPath), DatabaseFolderPath);
+      WriteCommentedElement(nameof(VelocityDbLicenceFilePath), "For developer use only");
     }
 
     private void WriteCommentedElement(
-      string name,
-      string value) {
+      [NotNull] string name,
+      [NotNull] string value) {
       XmlWriter.WriteComment(GetPropertyDescription(name));
       XmlWriter.WriteElementString(name, value);
     }
