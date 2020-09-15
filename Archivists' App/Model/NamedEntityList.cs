@@ -7,13 +7,13 @@ namespace SoundExplorers.Model {
     where TEntity : EntityBase, INamed, new() {
     protected override TEntity CreateBackupEntity(TEntity entity) {
       return new TEntity {
-        Name = entity.Name,
+        Name = entity.Name
       };
     }
 
     protected override EntityColumnList CreateColumns() {
       return new EntityColumnList {
-        new EntityColumn(nameof(INamed.Name), typeof(string)),
+        new EntityColumn(nameof(INamed.Name), typeof(string))
       };
     }
 

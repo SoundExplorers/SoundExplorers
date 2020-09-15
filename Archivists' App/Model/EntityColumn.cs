@@ -13,7 +13,7 @@ namespace SoundExplorers.Model {
       if (referencedEntityListType != null && referencedColumnDisplayName == null ||
           referencedEntityListType == null && referencedColumnDisplayName != null) {
         throw new InvalidOperationException(
-          $"Both or neither of {nameof(referencedEntityListType)} and " 
+          $"Both or neither of {nameof(referencedEntityListType)} and "
           + $"{nameof(referencedColumnDisplayName)} must be specified.");
       }
       ReferencedEntityListType = referencedEntityListType;

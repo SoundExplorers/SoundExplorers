@@ -14,6 +14,25 @@ namespace SoundExplorers.Model {
   /// </remarks>
   public class EntityColumnList : List<EntityColumn> {
     /// <summary>
+    ///   Returns the entity column with the specified display name (case-insensitive),
+    ///   if found, otherwise returns a null reference.
+    /// </summary>
+    /// <param name="displayName">
+    ///   The display name of the column (case-insensitive).
+    /// </param>
+    /// <returns>
+    ///   The entity column with the specified display name (case-insensitive),
+    ///   if found, otherwise a null reference.
+    /// </returns>
+    [CanBeNull]
+    public EntityColumn this[string displayName] =>
+    (
+      from EntityColumn entityColumn in this
+      where string.Compare(entityColumn.DisplayName, displayName,
+        StringComparison.OrdinalIgnoreCase) == 0
+      select entityColumn).FirstOrDefault();
+
+    /// <summary>
     ///   Add the specified entity column to the list,
     ///   provided its display name is unique in the list.
     /// </summary>
@@ -50,24 +69,5 @@ namespace SoundExplorers.Model {
         where entityColumn.DisplayName == displayName
         select entityColumn).Any();
     }
-
-    /// <summary>
-    ///   Returns the entity column with the specified display name (case-insensitive),
-    ///   if found, otherwise returns a null reference.
-    /// </summary>
-    /// <param name="displayName">
-    ///   The display name of the column (case-insensitive).
-    /// </param>
-    /// <returns>
-    ///   The entity column with the specified display name (case-insensitive),
-    ///   if found, otherwise a null reference.
-    /// </returns>
-    [CanBeNull]
-    public EntityColumn this[string displayName] =>
-    (
-      from EntityColumn entityColumn in this
-      where string.Compare(entityColumn.DisplayName, displayName,
-        StringComparison.OrdinalIgnoreCase) == 0
-      select entityColumn).FirstOrDefault();
   } //End of class
 } //End of namespace
