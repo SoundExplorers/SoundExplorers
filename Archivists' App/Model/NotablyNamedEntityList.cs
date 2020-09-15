@@ -30,8 +30,8 @@ namespace SoundExplorers.Model {
     }
 
     protected override void UpdateEntityAtRow(DataRow row, TEntity entity) {
-      var newName = row[nameof(Location.Name)].ToString();
-      var newNotes = row[nameof(Location.Notes)].ToString();
+      var newName = row[nameof(INotablyNamed.Name)].ToString();
+      var newNotes = row[nameof(INotablyNamed.Notes)].ToString();
       if (newName != entity.Name) {
         entity.Name = newName;
       }

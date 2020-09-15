@@ -13,7 +13,7 @@ namespace SoundExplorers.Model {
 
     protected override EntityColumnList CreateColumns() {
       return new EntityColumnList {
-        new EntityColumn(nameof(Location.Name), typeof(string)),
+        new EntityColumn(nameof(INamed.Name), typeof(string)),
       };
     }
 
