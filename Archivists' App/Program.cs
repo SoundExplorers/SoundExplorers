@@ -1,8 +1,8 @@
-﻿using System;
-#if DEBUG
+﻿#if DEBUG
 #else // Release build
 using System.Threading;
 #endif
+using System;
 using System.Windows.Forms;
 using SoundExplorers.View;
 
@@ -16,8 +16,7 @@ namespace SoundExplorers {
     /// </summary>
     [STAThread]
     private static void Main() {
-      // For the global exception handling code, see Rahul Modi's answer in
-      // https://stackoverflow.com/questions/8148156/winforms-global-exception-handling
+      // Global exception handling code for release build only.
 #if DEBUG
 #else // Release build
       AddGlobalExceptionHandlers();
@@ -37,32 +36,31 @@ namespace SoundExplorers {
       AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
     }
 
+    /// <summary>
+    ///   All exceptions thrown by the main thread are handled over this method.
+    /// </summary>
     private static void Application_ThreadException
       (object sender, ThreadExceptionEventArgs e) {
-      // All exceptions thrown by the main thread are handled over this method
       ShowExceptionDetails(e.Exception);
     }
 
+    /// <summary>
+    ///   All exceptions thrown by additional threads are handled in this method.
+    /// </summary>
     private static void CurrentDomain_UnhandledException
       (object sender, UnhandledExceptionEventArgs e) {
-      // All exceptions thrown by additional threads are handled in this method
       ShowExceptionDetails(e.ExceptionObject as Exception);
-      // Suspend the current thread for now to stop the exception from throwing.
-      // The suppressed compiler warning is that Thread.Suspend is obsolete,
-      // but I don't see the alternative in this case:  see Rahul Modi's 
-      // comments in the Stack Overflow article cited in Main.
-#pragma warning disable 618
-      Thread.CurrentThread.Suspend();
-#pragma warning restore 618
     }
 
+    /// <summary>
+    ///   Logs exception details and terminates the application.
+    /// </summary>
     private static void ShowExceptionDetails(Exception ex) {
-      // Do logging of exception details
-      MessageBox.Show(ex.ToString(), ex.TargetSite.ToString(),
+      MessageBox.Show(ex.ToString(),
+        $"{Application.ProductName} - Terminal Error - "
+        + "Press Ctrl+C to copy the diagnostics to the clipboard",
         MessageBoxButtons.OK, MessageBoxIcon.Error);
-      // Stop the application and any threads in suspended state.
-      // See Rahul Modi's comments in the Stack Overflow article cited above.
-      Environment.Exit(-1);
+      Environment.Exit(0);
     }
 #endif
   } //End of class
