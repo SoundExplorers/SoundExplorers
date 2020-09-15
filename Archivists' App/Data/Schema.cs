@@ -68,6 +68,7 @@ namespace SoundExplorers.Data {
         typeof(Series),
         typeof(Piece),
         typeof(Role),
+        typeof(Schema),
         typeof(Set),
         typeof(UserOption)
       };
@@ -121,10 +122,6 @@ namespace SoundExplorers.Data {
     ///   updated.
     /// </remarks>
     public void RegisterEntityTypes([NotNull] SessionBase session) {
-      // The Schema class itself needs to be kept out of
-      // the list of entity types, as that is also used for
-      // populating the Select Table dialog.
-      session.RegisterClass(typeof(Schema));
       foreach (var entityType in EntityTypes) {
         session.RegisterClass(entityType);
       }
