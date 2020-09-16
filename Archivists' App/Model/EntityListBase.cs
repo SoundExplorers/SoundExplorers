@@ -231,7 +231,7 @@ namespace SoundExplorers.Model {
 
     [NotNull]
     private DataTable CreateEmptyTableWithColumns() {
-      var result = new DataTable(nameof(TEntity));
+      var result = new DataTable(typeof(TEntity).Name);
       foreach (var column in Columns) {
         result.Columns.Add(column.DisplayName, column.DataType);
       }

@@ -1,9 +1,12 @@
-﻿using NUnit.Framework;
+﻿using JetBrains.Annotations;
+using NUnit.Framework;
 using SoundExplorers.Data;
+using SoundExplorers.Model;
+using SoundExplorers.Tests.Data;
 
-namespace SoundExplorers.Tests.Data {
+namespace SoundExplorers.Tests.Model {
   [TestFixture]
-  public class DataTestsTemplate {
+  public class NamedEntityListTests {
     [SetUp]
     public void Setup() {
       QueryHelper = new QueryHelper();
@@ -30,8 +33,16 @@ namespace SoundExplorers.Tests.Data {
 
     [Test]
     public void A010_Initial() {
-      Assert.IsTrue(QueryHelper != null && Data != null,
-        "Dummy test");
+      Initial<EventTypeList>("EventType");
+    }
+
+    private static void Initial<TEntityList>([NotNull] string tableName)
+      where TEntityList : IEntityList, new() {
+      var list = new TEntityList();
+      Assert.AreEqual(1, list.Columns.Count, "Columns.Count");
+      Assert.IsFalse(list.IsParentList, "IsParentList");
+      Assert.IsNull(list.ParentListType, "ParentListType");
+      Assert.AreEqual(tableName, list.Table.TableName, "TableName");
     }
   }
 }
