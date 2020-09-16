@@ -88,6 +88,7 @@
     <Compile Include="Artist.cs" />
     <Compile Include="Credit.cs" />
     <Compile Include="EntityBase.cs" />
+    <Compile Include="EntityComparer.cs" />
     <Compile Include="Event.cs" />
     <Compile Include="EventType.cs" />
     <Compile Include="Genre.cs" />

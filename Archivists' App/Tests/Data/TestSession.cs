@@ -1,12 +1,21 @@
 ﻿using System;
 using System.IO;
 using JetBrains.Annotations;
+using SoundExplorers.Data;
 using VelocityDb.Session;
 
 namespace SoundExplorers.Tests.Data {
-  internal class TestSession : SessionNoServer, IDisposable {
+  internal class TestSession : SessionNoServer {
     private const string DatabaseParentFolderPath = "C:\\Simon\\Databases";
+
+    public TestSession() : base(CreateDatabaseFolder()) {
+      BeginUpdate();
+      new Schema().RegisterEntityTypes(this);
+      Commit();
+    }
+
     public TestSession(string databaseFolderPath) : base(databaseFolderPath) { }
+    [NotNull] private string DatabaseFolderPath => SystemDirectory;
 
     private static void CopyLicenceToDatabaseFolder(string databaseFolderPath) {
       File.Copy(
@@ -20,6 +29,10 @@ namespace SoundExplorers.Tests.Data {
       Directory.CreateDirectory(databaseFolderPath);
       CopyLicenceToDatabaseFolder(databaseFolderPath);
       return databaseFolderPath;
+    }
+
+    public void DeleteDatabaseFolderIfExists() {
+      DeleteFolderIfExists(DatabaseFolderPath);
     }
 
     public static void DeleteFolderIfExists([NotNull] string folderPath) {

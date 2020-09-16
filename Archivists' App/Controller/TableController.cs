@@ -161,7 +161,7 @@ namespace SoundExplorers.Controller {
     /// </summary>
     public void InsertOrUpdateEntityIfRequired(int rowIndex) {
       try {
-        MainList?.InsertOrUpdateEntityIfRequired(rowIndex);
+        MainList?.AddOrUpdateEntityIfRequired(rowIndex);
         View.OnRowUpdated();
       } catch (RowErrorException exception) {
         View.OnRowError(exception);
@@ -205,7 +205,10 @@ namespace SoundExplorers.Controller {
     ///   So put the reject new values back into the grid row.
     ///   The user can then either modify or cancel the change.
     /// </summary>
-    public void RestoreRejectedValues([NotNull] IList<object> rejectedValues) {
+    public void RestoreRejectedValues([CanBeNull] IList<object> rejectedValues) {
+      if (rejectedValues == null) {
+        return;
+      }
       for (var columnIndex = 0; columnIndex < Columns?.Count; columnIndex++) {
         var rejectedValue = rejectedValues[columnIndex];
         // All the rejected values will be DBNull if the user had tried to delete the row.

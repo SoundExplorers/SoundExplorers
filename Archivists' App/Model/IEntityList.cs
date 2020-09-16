@@ -2,12 +2,13 @@
 using System.Collections;
 using System.Data;
 using JetBrains.Annotations;
+using VelocityDb.Session;
 
 namespace SoundExplorers.Model {
   /// <summary>
   ///   Interface for a list of entities that populates a DataTable.
   /// </summary>
-  public interface IEntityList {
+  public interface IEntityList : IList {
     /// <summary>
     ///   Gets metadata for the columns of the Table that represents
     ///   the list of entities.
@@ -29,10 +30,27 @@ namespace SoundExplorers.Model {
     Type ParentListType { get; }
 
     /// <summary>
+    ///   Gets or sets the session to be used for accessing the database.
+    ///   The setter should only be needed for testing.
+    /// </summary>
+    [NotNull]
+    SessionBase Session { get; set; }
+
+    /// <summary>
     ///   Gets the data table representing the list of entities.
     /// </summary>
     [NotNull]
     DataTable Table { get; }
+
+    /// <summary>
+    ///   If the specified table row is new or its data has changed,
+    ///   adds (if new) or updates the corresponding the entity
+    ///   to/on the database with the table row data.
+    /// </summary>
+    /// <param name="rowIndex">
+    ///   Zero-based row index.
+    /// </param>
+    void AddOrUpdateEntityIfRequired(int rowIndex);
 
     /// <summary>
     ///   Deletes the entity at the specified row index
@@ -54,17 +72,7 @@ namespace SoundExplorers.Model {
     IList GetChildren(int rowIndex);
 
     /// <summary>
-    ///   If the specified table row is new or its data has changed,
-    ///   inserts (if new) or updates corresponding the entity
-    ///   on the database with the table row data.
-    /// </summary>
-    /// <param name="rowIndex">
-    ///   Zero-based row index.
-    /// </param>
-    void InsertOrUpdateEntityIfRequired(int rowIndex);
-
-    /// <summary>
-    ///   Populates the list and table.
+    ///   Populates and sorts the list and table.
     /// </summary>
     /// <param name="list">
     ///   Optionally specifies the required list of entities.
