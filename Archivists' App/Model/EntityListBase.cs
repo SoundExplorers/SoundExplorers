@@ -44,6 +44,9 @@ namespace SoundExplorers.Model {
       EntityComparer = new EntityComparer<TEntity>();
     }
 
+    private EntityComparer<TEntity> EntityComparer { get; }
+    private IList<object> OriginalRowItemValues { get; set; }
+
     /// <summary>
     ///   Gets or sets the session to be used for accessing the database.
     ///   The setter should only be needed for testing.
@@ -76,9 +79,6 @@ namespace SoundExplorers.Model {
     ///   Gets the data table representing the list of entities.
     /// </summary>
     public DataTable Table => _table ?? (_table = CreateEmptyTableWithColumns());
-
-    private EntityComparer<TEntity> EntityComparer { get; }
-    private IList<object> OriginalRowItemValues { get; set; }
 
     public void BackupRow(int rowIndex) {
       OriginalRowItemValues = BackupRowItemValues(rowIndex);
@@ -208,15 +208,6 @@ namespace SoundExplorers.Model {
       }
     }
 
-    private static string CreateExceptionMessage(Exception exception) {
-      string message =
-        exception is ApplicationException || exception is DataException ||
-        exception is DuplicateKeyException
-          ? exception.Message
-          : exception.ToString();
-      return message;
-    }
-
     [NotNull]
     private DataRow CreateRowFromEntity([NotNull] TEntity entity) {
       var result = Table.NewRow();
@@ -231,7 +222,10 @@ namespace SoundExplorers.Model {
     private static RowErrorException CreateRowErrorException(
       [NotNull] Exception exception, int rowIndex,
       [CanBeNull] IList<object> rowItemValues) {
-      return new RowErrorException(CreateExceptionMessage(exception), rowIndex, 0,
+      if (!IsDatabaseUpdateError(exception)) {
+        throw exception; // Terminal error
+      }
+      return new RowErrorException(exception.Message, rowIndex, 0,
         rowItemValues,
         exception);
     }
@@ -247,6 +241,17 @@ namespace SoundExplorers.Model {
 
     [NotNull]
     protected abstract IList<object> GetRowItemValuesFromEntity([NotNull] TEntity entity);
+
+    /// <summary>
+    ///   Returns whether the specified exception indicates that,
+    ///   for an anticipated reason, a requested database update could not be done,
+    ///   in which case the exception's message will need to be shown to the user to
+    ///   explain the error that cause the update to be disallowed.
+    ///   If false, the exception should be treated as a terminal error.
+    /// </summary>
+    private static bool IsDatabaseUpdateError(Exception exception) {
+      return exception is DataException || exception is DuplicateKeyException;
+    }
 
     private void RestoreEntityAndRow([NotNull] TEntity backupEntity, int rowIndex) {
       var entity = this[rowIndex];
