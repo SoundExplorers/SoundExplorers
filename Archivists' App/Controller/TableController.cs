@@ -150,8 +150,8 @@ namespace SoundExplorers.Controller {
       try {
         MainList?.InsertOrUpdateEntityIfRequired(rowIndex);
         View.OnRowUpdated();
-      } catch (RowErrorException exception) {
-        View.OnRowError(exception);
+      } catch (DatabaseUpdateErrorException exception) {
+        View.OnDatabaseUpdateError(exception);
       }
     }
     
@@ -183,8 +183,8 @@ namespace SoundExplorers.Controller {
       try {
         MainList?.DeleteEntity(rowIndex);
         View.OnRowUpdated();
-      } catch (RowErrorException exception) {
-        View.OnRowError(exception);
+      } catch (DatabaseUpdateErrorException exception) {
+        View.OnDatabaseUpdateError(exception);
       }
     }
 

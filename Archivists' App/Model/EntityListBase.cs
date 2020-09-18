@@ -91,7 +91,7 @@ namespace SoundExplorers.Model {
     /// <param name="rowIndex">
     ///   Zero-based row index.
     /// </param>
-    /// <exception cref="ApplicationException">
+    /// <exception cref="DatabaseUpdateErrorException">
     ///   A database update error occured.
     /// </exception>
     public void DeleteEntity(int rowIndex) {
@@ -121,7 +121,7 @@ namespace SoundExplorers.Model {
     /// <param name="rowIndex">
     ///   Zero-based row index.
     /// </param>
-    /// <exception cref="ApplicationException">
+    /// <exception cref="DatabaseUpdateErrorException">
     ///   A database update error occured.
     /// </exception>
     public void InsertOrUpdateEntityIfRequired(int rowIndex) {
@@ -219,13 +219,13 @@ namespace SoundExplorers.Model {
     }
 
     [NotNull]
-    private static RowErrorException CreateRowErrorException(
+    private static DatabaseUpdateErrorException CreateRowErrorException(
       [NotNull] Exception exception, int rowIndex,
       [CanBeNull] IList<object> rowItemValues) {
       if (!IsDatabaseUpdateError(exception)) {
         throw exception; // Terminal error
       }
-      return new RowErrorException(exception.Message, rowIndex, 0,
+      return new DatabaseUpdateErrorException(exception.Message, rowIndex, 0,
         rowItemValues,
         exception);
     }

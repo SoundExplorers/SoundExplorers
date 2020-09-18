@@ -7,10 +7,10 @@ namespace SoundExplorers.Common {
   ///   Raised when there is an error on
   ///   attempting to insert, update or delete a <see cref="DataRow" />.
   /// </summary>
-  public class RowErrorException : ApplicationException {
+  public class DatabaseUpdateErrorException : ApplicationException {
     /// <summary>
     ///   Initialises an instance of the
-    ///   <see cref="RowErrorException" /> class.
+    ///   <see cref="DatabaseUpdateErrorException" /> class.
     /// </summary>
     /// <param name="message">Error message.</param>
     /// <param name="rowIndex">
@@ -32,7 +32,7 @@ namespace SoundExplorers.Common {
     ///   An <see cref="Exception" /> that provides
     ///   error diagnostics.
     /// </param>
-    public RowErrorException(
+    public DatabaseUpdateErrorException(
       string message,
       int rowIndex,
       int columnIndex,

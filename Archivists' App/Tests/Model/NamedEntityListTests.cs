@@ -110,7 +110,7 @@ namespace SoundExplorers.Tests.Model {
       try {
         list.DeleteEntity(1);
         Assert.Fail("DeleteEntity should have thrown RowErrorException.");
-      } catch (RowErrorException exception) {
+      } catch (DatabaseUpdateErrorException exception) {
         Assert.IsTrue(
           exception.Message.Contains("cannot be deleted because it is referenced by"),
           "Message");

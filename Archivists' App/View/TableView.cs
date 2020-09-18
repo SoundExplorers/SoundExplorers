@@ -33,7 +33,7 @@ namespace SoundExplorers.View {
                                                 nameof(MainGrid.CurrentRow));
 
     private bool ParentRowChanged { get; set; }
-    private RowErrorException RowErrorException { get; set; }
+    private DatabaseUpdateErrorException DatabaseUpdateErrorException { get; set; }
     private SizeableFormOptions SizeableFormOptions { get; set; }
     private bool UpdateCancelled { get; set; }
 
@@ -43,8 +43,8 @@ namespace SoundExplorers.View {
     ///   corresponding to a row in the main grid.
     /// </summary>
     /// <param name="e">Error details.</param>
-    public void OnRowError(RowErrorException e) {
-      RowErrorException = e;
+    public void OnDatabaseUpdateError(DatabaseUpdateErrorException e) {
+      DatabaseUpdateErrorException = e;
       UpdateCancelled = true;
       RowErrorTimer.Start();
     }
@@ -803,8 +803,8 @@ namespace SoundExplorers.View {
       // Focus the error row and cell.
       try {
         MainGrid.CurrentCell = MainGrid.Rows[
-          RowErrorException.RowIndex].Cells[
-          RowErrorException.ColumnIndex];
+          DatabaseUpdateErrorException.RowIndex].Cells[
+          DatabaseUpdateErrorException.ColumnIndex];
       } catch (ArgumentOutOfRangeException) {
         // Hopefully this is fixed now
         // (by comparing strings instead of objects in MainGrid_RowValidated)
@@ -818,8 +818,8 @@ namespace SoundExplorers.View {
         try {
           Debug.WriteLine("TableName = " + Controller.MainTable?.TableName);
           Debug.WriteLine("RowErrorEventArgs.ColumnIndex = " +
-                          RowErrorException.ColumnIndex);
-          Debug.WriteLine("RowErrorEventArgs.RowIndex = " + RowErrorException.RowIndex);
+                          DatabaseUpdateErrorException.ColumnIndex);
+          Debug.WriteLine("RowErrorEventArgs.RowIndex = " + DatabaseUpdateErrorException.RowIndex);
           Debug.WriteLine("MainGrid.CurrentCell.ColumnIndex = " +
                           MainGrid.CurrentCell.ColumnIndex);
           Debug.WriteLine("MainCurrentRow.Index = " + MainCurrentRow.Index);
@@ -839,10 +839,10 @@ namespace SoundExplorers.View {
         return;
       }
       UpdateCancelled = false;
-      Controller.RestoreRejectedValues(RowErrorException.RejectedValues);
+      Controller.RestoreRejectedValues(DatabaseUpdateErrorException.RejectedValues);
       MessageBox.Show(
         this,
-        RowErrorException.Message,
+        DatabaseUpdateErrorException.Message,
         Application.ProductName,
         MessageBoxButtons.OK,
         MessageBoxIcon.Error);
