@@ -146,7 +146,16 @@ namespace SoundExplorers.Controller {
     ///   inserts (if new) or updates corresponding the entity
     ///   on the database with the table row data.
     /// </summary>
-    public void InsertOrUpdateEntityIfRequired(int rowIndex) {
+    public void OnMainGridRowValidated(int rowIndex) {
+      // This check is only necessary because the grid's Validated event
+      // gets raised even when nothing has changed.
+      // The case checked for is when the user leaves the insertion 
+      // row for an existing row without having made any changes.
+      // But why is the grid's Validated event raised when the user
+      // has committed no changes?
+      if (rowIndex >= MainList?.Table.Rows.Count) {
+        return;
+      }
       try {
         MainList?.InsertOrUpdateEntityIfRequired(rowIndex);
         View.OnRowUpdated();
@@ -155,7 +164,7 @@ namespace SoundExplorers.Controller {
       }
     }
     
-    public void OnEnteringExistingMainRow(int rowIndex) {
+    public void OnEnteringExistingMainGridRow(int rowIndex) {
       if (MainList?.Count == 0) {
         return;
       }
@@ -167,7 +176,7 @@ namespace SoundExplorers.Controller {
     ///   So the main grid will be populated with the required
     ///   child entities of the entity at the specified row index.
     /// </summary>
-    public void OnEnteringParentRow(int rowIndex) {
+    public void OnEnteringParentGridRow(int rowIndex) {
       MainList?.Populate(ParentList?.GetChildren(rowIndex));
     }
 
@@ -175,8 +184,8 @@ namespace SoundExplorers.Controller {
     ///   Deletes the entity at the specified row index
     ///   from the database and removes it from the list.
     /// </summary>
-    public void OnRowRemoved(int rowIndex) {
-      // TODO This count check should not be required
+    public void OnMainGridRowRemoved(int rowIndex) {
+      // Why is this count check required?
       if (MainList?.Count == 0) {
         return;
       }

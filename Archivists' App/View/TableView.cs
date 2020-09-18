@@ -589,7 +589,7 @@ namespace SoundExplorers.View {
         return;
       }
       // Not new row
-      Controller.OnEnteringExistingMainRow(e.RowIndex);
+      Controller.OnEnteringExistingMainGridRow(e.RowIndex);
     }
 
     private void MainGrid_RowsRemoved(object sender, DataGridViewRowsRemovedEventArgs e) {
@@ -598,7 +598,7 @@ namespace SoundExplorers.View {
       if (UpdateCancelled) {
         return;
       }
-      Controller.OnRowRemoved(e.RowIndex);
+      Controller.OnMainGridRowRemoved(e.RowIndex);
     }
 
     private void MainGrid_RowValidated(object sender, DataGridViewCellEventArgs e) {
@@ -614,7 +614,7 @@ namespace SoundExplorers.View {
         // There's only the uncommitted new row, which can be discarded.
         return;
       }
-      Controller.InsertOrUpdateEntityIfRequired(e.RowIndex);
+      Controller.OnMainGridRowValidated(e.RowIndex);
     }
 
     private void OpenTable() {
@@ -647,7 +647,7 @@ namespace SoundExplorers.View {
     /// <param name="e">Event arguments.</param>
     private void ParentGrid_RowEnter(object sender, DataGridViewCellEventArgs e) {
       ParentRowChanged = true;
-      Controller.OnEnteringParentRow(e.RowIndex);
+      Controller.OnEnteringParentGridRow(e.RowIndex);
     }
 
     public void Paste() {

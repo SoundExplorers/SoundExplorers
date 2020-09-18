@@ -95,11 +95,12 @@ namespace SoundExplorers.Model {
     ///   A database update error occured.
     /// </exception>
     public void DeleteEntity(int rowIndex) {
+      Session.BeginUpdate();
       try {
-        Session.BeginUpdate();
         Session.Unpersist(this[rowIndex]);
         Session.Commit();
       } catch (Exception exception) {
+        Session.Abort();
         throw CreateRowErrorException(exception, rowIndex, OriginalRowItemValues);
       }
     }
@@ -134,14 +135,15 @@ namespace SoundExplorers.Model {
       } else {
         oldEntity = CreateBackupEntity(this[rowIndex]);
       }
+      Session.BeginUpdate();
       try {
-        Session.BeginUpdate();
         UpdateEntityAtRow(Table.Rows[rowIndex], this[rowIndex]);
         if (isNewRow) {
           Session.Persist(newEntity);
         }
         Session.Commit();
       } catch (Exception exception) {
+        Session.Abort();
         IList<object> newRowItemValues = null;
         if (isNewRow) {
           Remove(newEntity);
