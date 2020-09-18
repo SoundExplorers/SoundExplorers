@@ -163,9 +163,6 @@ namespace SoundExplorers.Model {
     ///   If null, all entities of the class's entity type
     ///   will be fetched from the database.
     /// </param>
-    /// <exception cref="ApplicationException">
-    ///   Database access error.
-    /// </exception>
     public void Populate(IList list = null) {
       Clear();
       if (list != null) {
