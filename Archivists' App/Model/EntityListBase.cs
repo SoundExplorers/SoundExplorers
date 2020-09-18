@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
@@ -78,45 +78,10 @@ namespace SoundExplorers.Model {
     public DataTable Table => _table ?? (_table = CreateEmptyTableWithColumns());
 
     private EntityComparer<TEntity> EntityComparer { get; }
+    private IList<object> OriginalRowItemValues { get; set; }
 
-    /// <summary>
-    ///   If the specified table row is new or its data has changed,
-    ///   adds (if new) or updates the corresponding the entity
-    ///   to/on the database with the table row data.
-    /// </summary>
-    /// <param name="rowIndex">
-    ///   Zero-based row index.
-    /// </param>
-    /// <exception cref="ApplicationException">
-    ///   A database update error occured.
-    /// </exception>
-    public void AddOrUpdateEntityIfRequired(int rowIndex) {
-      TEntity newEntity = null;
-      TEntity oldEntity = null;
-      IList<object> oldRowItemValues = null;
-      bool isNewRow = rowIndex == Count;
-      if (isNewRow) {
-        newEntity = CreateEntity();
-        Add(newEntity);
-      } else {
-        oldRowItemValues = BackupRowItemValues(rowIndex);
-        oldEntity = CreateBackupEntity(this[rowIndex]);
-      }
-      try {
-        Session.BeginUpdate();
-        UpdateEntityAtRow(Table.Rows[rowIndex], this[rowIndex]);
-        if (isNewRow) {
-          Session.Persist(newEntity);
-        }
-        Session.Commit();
-      } catch (Exception exception) {
-        if (isNewRow) {
-          Remove(newEntity);
-        } else {
-          RestoreEntityAndRow(oldEntity, rowIndex);
-        }
-        throw CreateRowErrorException(exception, rowIndex, oldRowItemValues);
-      }
+    public void BackupRow(int rowIndex) {
+      OriginalRowItemValues = BackupRowItemValues(rowIndex);
     }
 
     /// <summary>
@@ -130,15 +95,13 @@ namespace SoundExplorers.Model {
     ///   A database update error occured.
     /// </exception>
     public void DeleteEntity(int rowIndex) {
-      var rowItemValues = BackupRowItemValues(rowIndex);
       try {
         Session.BeginUpdate();
         Session.Unpersist(this[rowIndex]);
         Session.Commit();
       } catch (Exception exception) {
-        throw CreateRowErrorException(exception, rowIndex, rowItemValues);
+        throw CreateRowErrorException(exception, rowIndex, OriginalRowItemValues);
       }
-      RemoveAt(rowIndex);
     }
 
     /// <summary>
@@ -149,6 +112,46 @@ namespace SoundExplorers.Model {
     ///   Zero-based row index.
     /// </param>
     public abstract IList GetChildren(int rowIndex);
+
+    /// <summary>
+    ///   If the specified table row is new or its data has changed,
+    ///   inserts (if new) or updates the corresponding the entity
+    ///   on the database with the table row data.
+    /// </summary>
+    /// <param name="rowIndex">
+    ///   Zero-based row index.
+    /// </param>
+    /// <exception cref="ApplicationException">
+    ///   A database update error occured.
+    /// </exception>
+    public void InsertOrUpdateEntityIfRequired(int rowIndex) {
+      TEntity newEntity = null;
+      TEntity oldEntity = null;
+      bool isNewRow = rowIndex == Count;
+      if (isNewRow) {
+        newEntity = CreateEntity();
+        Add(newEntity);
+      } else {
+        oldEntity = CreateBackupEntity(this[rowIndex]);
+      }
+      try {
+        Session.BeginUpdate();
+        UpdateEntityAtRow(Table.Rows[rowIndex], this[rowIndex]);
+        if (isNewRow) {
+          Session.Persist(newEntity);
+        }
+        Session.Commit();
+      } catch (Exception exception) {
+        IList<object> newRowItemValues = null;
+        if (isNewRow) {
+          Remove(newEntity);
+        } else {
+          newRowItemValues = BackupRowItemValues(rowIndex);
+          RestoreEntityAndRow(oldEntity, rowIndex);
+        }
+        throw CreateRowErrorException(exception, rowIndex, newRowItemValues);
+      }
+    }
 
     /// <summary>
     ///   Populates and sorts the list and table.
@@ -169,8 +172,8 @@ namespace SoundExplorers.Model {
         Session.BeginRead();
         AddRange(Session.AllObjects<TEntity>());
         Session.Commit();
+        Sort(EntityComparer);
       }
-      Sort(EntityComparer);
       Table.Clear();
       AddRowsToTable();
     }

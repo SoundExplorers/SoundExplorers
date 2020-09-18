@@ -90,19 +90,6 @@ namespace SoundExplorers.Controller {
     [NotNull] private ITableView View { get; }
 
     /// <summary>
-    ///   Deletes the entity at the specified row index
-    ///   from the database and removes it from the list.
-    /// </summary>
-    public void DeleteEntity(int rowIndex) {
-      try {
-        MainList?.DeleteEntity(rowIndex);
-        View.OnRowUpdated();
-      } catch (RowErrorException exception) {
-        View.OnRowError(exception);
-      }
-    }
-
-    /// <summary>
     ///   Returns whether the specified column references another entity.
     /// </summary>
     public bool DoesColumnReferenceAnotherEntity([NotNull] string columnName) {
@@ -161,11 +148,18 @@ namespace SoundExplorers.Controller {
     /// </summary>
     public void InsertOrUpdateEntityIfRequired(int rowIndex) {
       try {
-        MainList?.AddOrUpdateEntityIfRequired(rowIndex);
+        MainList?.InsertOrUpdateEntityIfRequired(rowIndex);
         View.OnRowUpdated();
       } catch (RowErrorException exception) {
         View.OnRowError(exception);
       }
+    }
+    
+    public void OnEnteringExistingMainRow(int rowIndex) {
+      if (MainList?.Count == 0) {
+        return;
+      }
+      MainList?.BackupRow(rowIndex);
     }
 
     /// <summary>
@@ -175,6 +169,23 @@ namespace SoundExplorers.Controller {
     /// </summary>
     public void OnEnteringParentRow(int rowIndex) {
       MainList?.Populate(ParentList?.GetChildren(rowIndex));
+    }
+
+    /// <summary>
+    ///   Deletes the entity at the specified row index
+    ///   from the database and removes it from the list.
+    /// </summary>
+    public void OnRowRemoved(int rowIndex) {
+      // TODO This count check should not be required
+      if (MainList?.Count == 0) {
+        return;
+      }
+      try {
+        MainList?.DeleteEntity(rowIndex);
+        View.OnRowUpdated();
+      } catch (RowErrorException exception) {
+        View.OnRowError(exception);
+      }
     }
 
     /// <summary>

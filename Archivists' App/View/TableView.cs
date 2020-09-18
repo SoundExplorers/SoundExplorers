@@ -580,16 +580,16 @@ namespace SoundExplorers.View {
     ///   </para>
     /// </remarks>
     private void MainGrid_RowEnter(object sender, DataGridViewCellEventArgs e) {
-      // // This is the safe way of checking whether we have entered the insertion (new) row:
-      // if (e.RowIndex == MainGrid.RowCount - 1) {
-      //   Controller.OnEnteringInsertionRow();
-      //   // if (Entities is ImageList) {
-      //   //   ShowImageOrMessage(null);
-      //   // }
-      //   return;
-      // }
-      // // Not new row
-      // Controller.OnEnteringExistingRow(e.RowIndex);
+      // This is the safe way of checking whether we have entered the insertion (new) row:
+      if (e.RowIndex == MainGrid.RowCount - 1) {
+        // Controller.OnEnteringInsertionRow();
+        // // if (Entities is ImageList) {
+        // //   ShowImageOrMessage(null);
+        // // }
+        return;
+      }
+      // Not new row
+      Controller.OnEnteringExistingMainRow(e.RowIndex);
     }
 
     private void MainGrid_RowsRemoved(object sender, DataGridViewRowsRemovedEventArgs e) {
@@ -598,7 +598,7 @@ namespace SoundExplorers.View {
       if (UpdateCancelled) {
         return;
       }
-      Controller.DeleteEntity(e.RowIndex);
+      Controller.OnRowRemoved(e.RowIndex);
     }
 
     private void MainGrid_RowValidated(object sender, DataGridViewCellEventArgs e) {

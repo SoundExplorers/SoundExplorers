@@ -42,15 +42,7 @@ namespace SoundExplorers.Model {
     [NotNull]
     DataTable Table { get; }
 
-    /// <summary>
-    ///   If the specified table row is new or its data has changed,
-    ///   adds (if new) or updates the corresponding the entity
-    ///   to/on the database with the table row data.
-    /// </summary>
-    /// <param name="rowIndex">
-    ///   Zero-based row index.
-    /// </param>
-    void AddOrUpdateEntityIfRequired(int rowIndex);
+    void BackupRow(int rowIndex);
 
     /// <summary>
     ///   Deletes the entity at the specified row index
@@ -70,6 +62,16 @@ namespace SoundExplorers.Model {
     /// </param>
     [CanBeNull]
     IList GetChildren(int rowIndex);
+
+    /// <summary>
+    ///   If the specified table row is new or its data has changed,
+    ///   inserts (if new) or updates the corresponding the entity
+    ///   on the database with the table row data.
+    /// </summary>
+    /// <param name="rowIndex">
+    ///   Zero-based row index.
+    /// </param>
+    void InsertOrUpdateEntityIfRequired(int rowIndex);
 
     /// <summary>
     ///   Populates and sorts the list and table.
