@@ -185,7 +185,9 @@ namespace SoundExplorers.Controller {
     ///   from the database and removes it from the list.
     /// </summary>
     public void OnMainGridRowRemoved(int rowIndex) {
-      // Why is this count check required?
+      // The main grid's Row Removed event is raised on opening the table editor
+      // when there are no rows yet to fetch from the database.  Why?
+      // Otherwise this count check would not be required.
       if (MainList?.Count == 0) {
         return;
       }

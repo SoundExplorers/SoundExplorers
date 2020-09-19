@@ -670,8 +670,8 @@ namespace SoundExplorers.View {
     }
 
     private void PopulateGrid() {
-      Controller.FetchData();
-      Text = Controller.MainTable?.TableName;
+      // Controller.FetchData();
+      // Text = Controller.MainTable?.TableName;
       MainGrid.CellBeginEdit -= MainGrid_CellBeginEdit;
       //MainGrid.CellEndEdit -= MainGrid_CellEndEdit;
       //MainGrid.CellEnter -= new DataGridViewCellEventHandler(MainGrid_CellEnter);
@@ -689,6 +689,8 @@ namespace SoundExplorers.View {
       MainGrid.RowEnter -= MainGrid_RowEnter;
       MainGrid.RowsRemoved -= MainGrid_RowsRemoved;
       MainGrid.RowValidated -= MainGrid_RowValidated;
+      Controller.FetchData();
+      Text = Controller.MainTable?.TableName;
       if (Controller.IsParentTableToBeShown) {
         PopulateParentGrid();
       }
