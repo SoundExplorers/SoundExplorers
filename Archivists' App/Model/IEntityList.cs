@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections;
-using System.Data;
+using System.ComponentModel;
 using JetBrains.Annotations;
 using VelocityDb.Session;
 
@@ -9,6 +9,12 @@ namespace SoundExplorers.Model {
   ///   Interface for a list of entities that populates a DataTable.
   /// </summary>
   public interface IEntityList : IList {
+    /// <summary>
+    ///   Gets the binding list representing the list of entities.
+    /// </summary>
+    [CanBeNull]
+    IBindingList BindingList { get; }
+
     /// <summary>
     ///   Gets metadata for the columns of the Table that represents
     ///   the list of entities.
@@ -29,29 +35,14 @@ namespace SoundExplorers.Model {
     [CanBeNull]
     Type ParentListType { get; }
 
+    [NotNull] string TableName { get; }
+
     /// <summary>
     ///   Gets or sets the session to be used for accessing the database.
     ///   The setter should only be needed for testing.
     /// </summary>
     [NotNull]
     SessionBase Session { get; set; }
-
-    /// <summary>
-    ///   Gets the data table representing the list of entities.
-    /// </summary>
-    [NotNull]
-    DataTable Table { get; }
-
-    void BackupRow(int rowIndex);
-
-    /// <summary>
-    ///   Deletes the entity at the specified row index
-    ///   from the database and removes it from the list.
-    /// </summary>
-    /// <param name="rowIndex">
-    ///   Zero-based row index.
-    /// </param>
-    void DeleteEntity(int rowIndex);
 
     /// <summary>
     ///   Returns a list of the child entities of the entity at the specified row index
@@ -62,16 +53,6 @@ namespace SoundExplorers.Model {
     /// </param>
     [CanBeNull]
     IList GetChildren(int rowIndex);
-
-    /// <summary>
-    ///   If the specified table row is new or its data has changed,
-    ///   inserts (if new) or updates the corresponding the entity
-    ///   on the database with the table row data.
-    /// </summary>
-    /// <param name="rowIndex">
-    ///   Zero-based row index.
-    /// </param>
-    void InsertOrUpdateEntityIfRequired(int rowIndex);
 
     /// <summary>
     ///   Populates and sorts the list and table.

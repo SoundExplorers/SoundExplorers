@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Data.Linq;
 using System.Linq;
@@ -21,7 +22,6 @@ namespace SoundExplorers.Model {
     where TEntity : EntityBase {
     private EntityColumnList _columns;
     private SessionBase _session;
-    private DataTable _table;
 
     /// <summary>
     ///   Base constructor for derived entity list classes.
@@ -44,8 +44,13 @@ namespace SoundExplorers.Model {
       EntityComparer = new EntityComparer<TEntity>();
     }
 
+    private IList<TEntity> BackupList { get; set; }
     private EntityComparer<TEntity> EntityComparer { get; }
-    private IList<object> OriginalRowItemValues { get; set; }
+
+    /// <summary>
+    ///   Gets the binding list representing the list of entities.
+    /// </summary>
+    public IBindingList BindingList { get; private set; }
 
     /// <summary>
     ///   Gets or sets the session to be used for accessing the database.
@@ -75,14 +80,7 @@ namespace SoundExplorers.Model {
     /// </summary>
     public Type ParentListType { get; }
 
-    /// <summary>
-    ///   Gets the data table representing the list of entities.
-    /// </summary>
-    public DataTable Table => _table ?? (_table = CreateEmptyTableWithColumns());
-
-    public void BackupRow(int rowIndex) {
-      OriginalRowItemValues = BackupRowItemValues(rowIndex);
-    }
+    public string TableName => typeof(TEntity).Name;
 
     /// <summary>
     ///   Deletes the entity at the specified row index
@@ -101,7 +99,7 @@ namespace SoundExplorers.Model {
         Session.Commit();
       } catch (Exception exception) {
         Session.Abort();
-        throw CreateRowErrorException(exception, rowIndex, OriginalRowItemValues);
+        //throw CreateRowErrorException(exception, rowIndex, OriginalRowItemValues);
       }
     }
 
@@ -137,21 +135,21 @@ namespace SoundExplorers.Model {
       }
       Session.BeginUpdate();
       try {
-        UpdateEntityAtRow(Table.Rows[rowIndex], this[rowIndex]);
+        //UpdateEntityAtRow(BindingList.Rows[rowIndex], this[rowIndex]);
         if (isNewRow) {
           Session.Persist(newEntity);
         }
         Session.Commit();
       } catch (Exception exception) {
         Session.Abort();
-        IList<object> newRowItemValues = null;
+        //IList<object> newRowItemValues = null;
         if (isNewRow) {
           Remove(newEntity);
         } else {
-          newRowItemValues = BackupRowItemValues(rowIndex);
+          //newRowItemValues = BackupRowItemValues(rowIndex);
           RestoreEntityAndRow(oldEntity, rowIndex);
         }
-        throw CreateRowErrorException(exception, rowIndex, newRowItemValues);
+        //throw CreateRowErrorException(exception, rowIndex, newRowItemValues);
       }
     }
 
@@ -173,23 +171,52 @@ namespace SoundExplorers.Model {
         Session.Commit();
         Sort(EntityComparer);
       }
-      Table.Clear();
-      AddRowsToTable();
+      BackupList = CreateBackupList();
+      if (BindingList != null) {
+        BindingList.ListChanged -= BindingListOnListChanged;
+      }
+      BindingList = new BindingList<TEntity>(this);
+      BindingList.ListChanged += BindingListOnListChanged;
     }
 
-    private void AddRowsToTable() {
-      foreach (var entity in this) {
-        Table.Rows.Add(CreateRowFromEntity(entity));
+    private void BindingListOnListChanged(object sender, ListChangedEventArgs e) {
+      var entity = this[e.NewIndex];
+      switch (e.ListChangedType) {
+        case ListChangedType.ItemAdded:
+          Session.BeginUpdate();
+          try {
+            Session.Persist(entity);
+            Session.Commit();
+          } catch (Exception exception) {
+            Session.Abort();
+            RemoveAt(e.NewIndex);
+            throw CreateRowErrorException(exception, e.NewIndex);
+          }
+          BackupList.Insert(e.NewIndex, entity);
+          break;
+        case ListChangedType.ItemChanged:
+          // TODO: ListChangedType.ItemChanged
+          break;
+        case ListChangedType.ItemDeleted:
+          Session.BeginUpdate();
+          try {
+            Session.Unpersist(entity);
+            Session.Commit();
+          } catch (Exception exception) {
+            Session.Abort();
+            Insert(e.NewIndex, BackupList[e.NewIndex]);
+            throw CreateRowErrorException(exception, e.NewIndex);
+          }
+          BackupList.RemoveAt(e.NewIndex);
+          break;
+        default:
+          throw new NotSupportedException(e.ListChangedType.ToString());
       }
     }
 
-    [NotNull]
-    private IList<object> BackupRowItemValues(int rowIndex) {
-      var row = Table.Rows[rowIndex];
-      var result = new List<object>(Columns.Count);
-      for (var i = 0; i < Columns.Count; i++) {
-        result.Add(row[i]);
-      }
+    private IList<TEntity> CreateBackupList() {
+      var result = new List<TEntity>();
+      result.AddRange(this);
       return result;
     }
 
@@ -208,34 +235,15 @@ namespace SoundExplorers.Model {
     }
 
     [NotNull]
-    private DataRow CreateRowFromEntity([NotNull] TEntity entity) {
-      var result = Table.NewRow();
-      var values = GetRowItemValuesFromEntity(entity);
-      for (var i = 0; i < values.Count; i++) {
-        result[i] = values[i];
-      }
-      return result;
-    }
-
-    [NotNull]
     private static DatabaseUpdateErrorException CreateRowErrorException(
       [NotNull] Exception exception, int rowIndex,
-      [CanBeNull] IList<object> rowItemValues) {
+      IList<object> rowItemValues = null) {
       if (!IsDatabaseUpdateError(exception)) {
         throw exception; // Terminal error
       }
       return new DatabaseUpdateErrorException(exception.Message, rowIndex, 0,
         rowItemValues,
         exception);
-    }
-
-    [NotNull]
-    private DataTable CreateEmptyTableWithColumns() {
-      var result = new DataTable(typeof(TEntity).Name);
-      foreach (var column in Columns) {
-        result.Columns.Add(column.DisplayName, column.DataType);
-      }
-      return result;
     }
 
     [NotNull]
@@ -256,9 +264,9 @@ namespace SoundExplorers.Model {
       var entity = this[rowIndex];
       RestoreEntityPropertiesFromBackup(backupEntity, entity);
       var values = GetRowItemValuesFromEntity(entity);
-      for (var i = 0; i < values.Count; i++) {
-        Table.Rows[rowIndex][i] = values[i];
-      }
+      // for (var i = 0; i < values.Count; i++) {
+      //   BindingList.Rows[rowIndex][i] = values[i];
+      // }
     }
 
     protected abstract void RestoreEntityPropertiesFromBackup(

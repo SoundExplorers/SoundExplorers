@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Data;
+using System.ComponentModel;
 using JetBrains.Annotations;
 using SoundExplorers.Model;
 
@@ -51,10 +51,10 @@ namespace SoundExplorers.Controller {
                                              ColumnName));
 
     [NotNull]
-    public DataTable FetchReferencedTable() {
+    public IBindingList FetchReferencedBindingList() {
       var entityList = Global.CreateEntityList(ReferencedEntityListType);
       entityList.Populate();
-      return entityList.Table;
+      return entityList.BindingList ?? throw new NullReferenceException("BindingList");
     }
   }
 }

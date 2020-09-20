@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Data;
+using System.ComponentModel;
 using JetBrains.Annotations;
 using SoundExplorers.Common;
 using SoundExplorers.Model;
@@ -49,7 +49,7 @@ namespace SoundExplorers.Controller {
 
     private Option GridSplitterDistanceOption =>
       _gridSplitterDistanceOption ?? (_gridSplitterDistanceOption =
-        new Option($"{MainTable?.TableName}.GridSplitterDistance"));
+        new Option($"{MainList?.TableName}.GridSplitterDistance"));
 
     /// <summary>
     ///   User option for the position of the split between the
@@ -63,13 +63,16 @@ namespace SoundExplorers.Controller {
 
     private Option ImageSplitterDistanceOption =>
       _imageSplitterDistanceOption ?? (_imageSplitterDistanceOption =
-        new Option($"{MainTable?.TableName}.ImageSplitterDistance"));
+        new Option($"{MainList?.TableName}.ImageSplitterDistance"));
 
     /// <summary>
     ///   Gets whether a read-only related grid for a parent table is to be shown
     ///   above the main grid.
     /// </summary>
-    public bool IsParentTableToBeShown => ParentTable != null;
+    public bool IsParentTableToBeShown => ParentList?.BindingList != null;
+    
+    [CanBeNull]
+    public IBindingList MainBindingList => MainList?.BindingList;
 
     /// <summary>
     ///   Gets or set the list of entities represented in the main table.
@@ -78,7 +81,12 @@ namespace SoundExplorers.Controller {
     private IEntityList MainList { get; set; }
 
     [NotNull] private Type MainListType { get; }
-    [CanBeNull] public DataTable MainTable => MainList?.Table;
+    
+    [CanBeNull]
+    public string MainTableName => MainList?.TableName;
+    
+    [CanBeNull]
+    public IBindingList ParentBindingList => ParentList?.BindingList;
 
     /// <summary>
     ///   Gets or sets the list of entities represented in the parent table, if any.
@@ -86,7 +94,6 @@ namespace SoundExplorers.Controller {
     [CanBeNull]
     private IEntityList ParentList { get; set; }
 
-    [CanBeNull] public DataTable ParentTable => ParentList?.Table;
     [NotNull] private ITableView View { get; }
 
     /// <summary>
@@ -115,7 +122,7 @@ namespace SoundExplorers.Controller {
         ParentList = Global.CreateEntityList(MainList.ParentListType);
         ParentList.IsParentList = true;
         ParentList.Populate();
-        if (ParentList.Table.Rows.Count > 0) {
+        if (ParentList.BindingList?.Count > 0) {
           MainList.Populate(ParentList.GetChildren(0));
         }
       } else {
@@ -153,22 +160,20 @@ namespace SoundExplorers.Controller {
       // row for an existing row without having made any changes.
       // But why is the grid's Validated event raised when the user
       // has committed no changes?
-      if (rowIndex >= MainList?.Table.Rows.Count) {
+      if (rowIndex >= MainList?.BindingList?.Count) {
         return;
       }
       try {
-        MainList?.InsertOrUpdateEntityIfRequired(rowIndex);
+        //MainList?.InsertOrUpdateEntityIfRequired(rowIndex);
         View.OnRowUpdated();
       } catch (DatabaseUpdateErrorException exception) {
         View.OnDatabaseUpdateError(exception);
       }
     }
-    
+
     public void OnEnteringExistingMainGridRow(int rowIndex) {
-      if (MainList?.Count == 0) {
-        return;
-      }
-      MainList?.BackupRow(rowIndex);
+      if (MainList?.Count == 0) { }
+      //MainList?.BackupRow(rowIndex);
     }
 
     /// <summary>
@@ -192,7 +197,7 @@ namespace SoundExplorers.Controller {
         return;
       }
       try {
-        MainList?.DeleteEntity(rowIndex);
+        //MainList?.DeleteEntity(rowIndex);
         View.OnRowUpdated();
       } catch (DatabaseUpdateErrorException exception) {
         View.OnDatabaseUpdateError(exception);

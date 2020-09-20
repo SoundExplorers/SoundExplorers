@@ -690,11 +690,11 @@ namespace SoundExplorers.View {
       MainGrid.RowsRemoved -= MainGrid_RowsRemoved;
       MainGrid.RowValidated -= MainGrid_RowValidated;
       Controller.FetchData();
-      Text = Controller.MainTable?.TableName;
+      Text = Controller.MainTableName;
       if (Controller.IsParentTableToBeShown) {
         PopulateParentGrid();
       }
-      MainGrid.DataSource = Controller.MainTable?.DefaultView;
+      MainGrid.DataSource = Controller.MainBindingList;
       foreach (DataGridViewColumn column in MainGrid.Columns) {
         ConfigureCellStyle(column);
       } // End of foreach
@@ -740,7 +740,7 @@ namespace SoundExplorers.View {
       //ParentGrid.LostFocus -= new EventHandler(Control_LostFocus);
       ParentGrid.MouseDown -= Grid_MouseDown;
       ParentGrid.RowEnter -= ParentGrid_RowEnter;
-      ParentGrid.DataSource = Controller.ParentTable?.DefaultView;
+      ParentGrid.DataSource = Controller.ParentBindingList;
       foreach (DataGridViewColumn column in ParentGrid.Columns) {
         if (column.ValueType == typeof(DateTime)) {
           column.DefaultCellStyle.Format = "dd MMM yyyy";
@@ -818,7 +818,7 @@ namespace SoundExplorers.View {
         // They can complain if they observe the problem.
         Debug.WriteLine("RowErrorTimer_Tick ArgumentOutOfRangeException");
         try {
-          Debug.WriteLine("TableName = " + Controller.MainTable?.TableName);
+          Debug.WriteLine("TableName = " + Controller.MainTableName);
           Debug.WriteLine("RowErrorEventArgs.ColumnIndex = " +
                           DatabaseUpdateErrorException.ColumnIndex);
           Debug.WriteLine("RowErrorEventArgs.RowIndex = " + DatabaseUpdateErrorException.RowIndex);

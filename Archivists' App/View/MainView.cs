@@ -137,7 +137,7 @@ namespace SoundExplorers.View {
       Controller.IsStatusBarVisible = StatusStrip.Visible;
       Controller.IsToolBarVisible = ToolStrip.Visible;
       Controller.TableName = MdiChildren.Any()
-        ? TableView.Controller.MainTable?.TableName
+        ? TableView.Controller.MainTableName
         : SelectTableView.Controller.SelectedTableName;
       // Explicitly closing all the MIDI child forms
       // fixes a problem where, 

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
+using System.ComponentModel;
 using System.Windows.Forms;
 using JetBrains.Annotations;
 using SoundExplorers.Controller;
@@ -77,7 +77,7 @@ namespace SoundExplorers.View {
     }
 
     private void FetchListData(object initialFormattedValue) {
-      var referencedTable = Controller.FetchReferencedTable();
+      var referencedBindingList = Controller.FetchReferencedBindingList();
       // string parentColumnName = null;
       // object parentColumnValue = null;
       // if (Column.TableName == "Image"
@@ -94,16 +94,16 @@ namespace SoundExplorers.View {
       //     Factory<IEntityList>.Create(Column.ReferencedTableName);
       // }
       if (ValueType == typeof(string)) {
-        ComboBox.DataSource = referencedTable.DefaultView;
+        ComboBox.DataSource = referencedBindingList;
         ComboBox.DisplayMember = Controller.ReferencedColumnName;
         ComboBox.ValueMember = Controller.ReferencedColumnName;
         ComboBox.SelectedIndex =
           ComboBox.FindStringExact(initialFormattedValue.ToString());
       } else { // DateTime
-        if (referencedTable.Rows.Count > 0) {
+        if (referencedBindingList.Count > 0) {
           PopulateDateDropDownList(
             initialFormattedValue.ToString(),
-            referencedTable);
+            referencedBindingList);
         } else {
           ComboBox.DataSource = null;
           ThrowNoAvailableReferencesException();
@@ -119,7 +119,7 @@ namespace SoundExplorers.View {
     /// <param name="initialFormattedDate">
     ///   The formatted date to be initially selected in the drop-down list of dates.
     /// </param>
-    /// <param name="referencedTable">
+    /// <param name="referencedBindingList">
     ///   The referenced table that will be used to populate the date list.
     /// </param>
     /// <remarks>
@@ -131,38 +131,40 @@ namespace SoundExplorers.View {
     ///   will be initially selected.
     /// </remarks>
     private void PopulateDateDropDownList(
-      string initialFormattedDate, DataTable referencedTable) {
+      string initialFormattedDate, IBindingList referencedBindingList) {
       var dictionary =
-        new Dictionary<string, DateTime>(referencedTable.Rows.Count);
-      foreach (DataRow row in referencedTable.Rows) {
-        dictionary.Add(
-          ((DateTime)row[Controller.ReferencedColumnName]).ToString(
-            OwningColumn.DefaultCellStyle.Format),
-          (DateTime)row[Controller.ReferencedColumnName]);
-      } //End of foreach
+        new Dictionary<string, DateTime>(referencedBindingList.Count);
+      // TODO Populate date dropdown list.
+      // Some of this should be in the controller.
+      // foreach (var row in referencedBindingList) {
+      //   dictionary.Add(
+      //     ((DateTime)row[Controller.ReferencedColumnName]).ToString(
+      //       OwningColumn.DefaultCellStyle.Format),
+      //     (DateTime)row[Controller.ReferencedColumnName]);
+      // } //End of foreach
       ComboBox.DataSource =
         new BindingSource(dictionary, null);
       ComboBox.DisplayMember = "Key";
       ComboBox.ValueMember = "Value";
       ComboBox.SelectedIndex = ComboBox.FindStringExact(initialFormattedDate);
       if (ComboBox.SelectedIndex == -1) {
-        var firstDate =
-          (DateTime)referencedTable.Rows[0][
-            Controller.ReferencedColumnName];
-        if (firstDate == DateTime.Parse("01 Jan 1900")) {
-          ComboBox.SelectedIndex = 0;
-          if (string.IsNullOrEmpty(Value.ToString())) {
-            Value = firstDate;
-          }
-        } else {
-          var lastDate =
-            (DateTime)referencedTable.Rows[referencedTable.Rows.Count - 1][
-              Controller.ReferencedColumnName];
-          ComboBox.SelectedIndex = referencedTable.Rows.Count - 1;
-          if (string.IsNullOrEmpty(Value.ToString())) {
-            Value = lastDate;
-          }
-        }
+        // var firstDate =
+        //   (DateTime)referencedBindingList.Rows[0][
+        //     Controller.ReferencedColumnName];
+        // if (firstDate == DateTime.Parse("01 Jan 1900")) {
+        //   ComboBox.SelectedIndex = 0;
+        //   if (string.IsNullOrEmpty(Value.ToString())) {
+        //     Value = firstDate;
+        //   }
+        // } else {
+        //   var lastDate =
+        //     (DateTime)referencedBindingList.Rows[referencedBindingList.Rows.Count - 1][
+        //       Controller.ReferencedColumnName];
+        //   ComboBox.SelectedIndex = referencedBindingList.Count - 1;
+        //   if (string.IsNullOrEmpty(Value.ToString())) {
+        //     Value = lastDate;
+        //   }
+        // }
       }
     }
 
