@@ -2,24 +2,24 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
-using System.Data.Linq;
 using System.Linq;
-using System.Reflection;
 using JetBrains.Annotations;
-using SoundExplorers.Common;
 using SoundExplorers.Data;
 using VelocityDb.Session;
 
 namespace SoundExplorers.Model {
   /// <summary>
-  ///   Base class for a list of entities that populates a DataTable.
+  ///   Base class for a list of entities that populates a binding list.
   /// </summary>
   /// <typeparam name="TEntity">
-  ///   Entity type
+  ///   Entity type parameter
   /// </typeparam>
-  public abstract class EntityListBase<TEntity> : List<TEntity>, IEntityList
-    where TEntity : EntityBase {
+  /// <typeparam name="TBindingItem">
+  ///   Binding list item type parameter
+  /// </typeparam>
+  public abstract class EntityListBase<TEntity, TBindingItem> : List<TEntity>, IEntityList
+    where TEntity : IEntity
+    where TBindingItem : EntityBindingItemBase<TEntity> {
     private EntityColumnList _columns;
     private SessionBase _session;
 
@@ -44,7 +44,6 @@ namespace SoundExplorers.Model {
       EntityComparer = new EntityComparer<TEntity>();
     }
 
-    private IList<TEntity> BackupList { get; set; }
     private EntityComparer<TEntity> EntityComparer { get; }
 
     /// <summary>
@@ -83,27 +82,6 @@ namespace SoundExplorers.Model {
     public string TableName => typeof(TEntity).Name;
 
     /// <summary>
-    ///   Deletes the entity at the specified row index
-    ///   from the database and removes it from the list.
-    /// </summary>
-    /// <param name="rowIndex">
-    ///   Zero-based row index.
-    /// </param>
-    /// <exception cref="DatabaseUpdateErrorException">
-    ///   A database update error occured.
-    /// </exception>
-    public void DeleteEntity(int rowIndex) {
-      Session.BeginUpdate();
-      try {
-        Session.Unpersist(this[rowIndex]);
-        Session.Commit();
-      } catch (Exception exception) {
-        Session.Abort();
-        //throw CreateRowErrorException(exception, rowIndex, OriginalRowItemValues);
-      }
-    }
-
-    /// <summary>
     ///   Returns a list of the child entities of the entity at the specified row index
     ///   that are to populate the main list if this is the parent list.
     /// </summary>
@@ -111,47 +89,6 @@ namespace SoundExplorers.Model {
     ///   Zero-based row index.
     /// </param>
     public abstract IList GetChildren(int rowIndex);
-
-    /// <summary>
-    ///   If the specified table row is new or its data has changed,
-    ///   inserts (if new) or updates the corresponding the entity
-    ///   on the database with the table row data.
-    /// </summary>
-    /// <param name="rowIndex">
-    ///   Zero-based row index.
-    /// </param>
-    /// <exception cref="DatabaseUpdateErrorException">
-    ///   A database update error occured.
-    /// </exception>
-    public void InsertOrUpdateEntityIfRequired(int rowIndex) {
-      TEntity newEntity = null;
-      TEntity oldEntity = null;
-      bool isNewRow = rowIndex == Count;
-      if (isNewRow) {
-        newEntity = CreateEntity();
-        Add(newEntity);
-      } else {
-        oldEntity = CreateBackupEntity(this[rowIndex]);
-      }
-      Session.BeginUpdate();
-      try {
-        //UpdateEntityAtRow(BindingList.Rows[rowIndex], this[rowIndex]);
-        if (isNewRow) {
-          Session.Persist(newEntity);
-        }
-        Session.Commit();
-      } catch (Exception exception) {
-        Session.Abort();
-        //IList<object> newRowItemValues = null;
-        if (isNewRow) {
-          Remove(newEntity);
-        } else {
-          //newRowItemValues = BackupRowItemValues(rowIndex);
-          RestoreEntityAndRow(oldEntity, rowIndex);
-        }
-        //throw CreateRowErrorException(exception, rowIndex, newRowItemValues);
-      }
-    }
 
     /// <summary>
     ///   Populates and sorts the list and table.
@@ -171,108 +108,26 @@ namespace SoundExplorers.Model {
         Session.Commit();
         Sort(EntityComparer);
       }
-      BackupList = CreateBackupList();
-      if (BindingList != null) {
-        BindingList.ListChanged -= BindingListOnListChanged;
-      }
-      BindingList = new BindingList<TEntity>(this);
-      BindingList.ListChanged += BindingListOnListChanged;
+      BindingList = CreateBindingList();
     }
 
-    private void BindingListOnListChanged(object sender, ListChangedEventArgs e) {
-      var entity = this[e.NewIndex];
-      switch (e.ListChangedType) {
-        case ListChangedType.ItemAdded:
-          Session.BeginUpdate();
-          try {
-            Session.Persist(entity);
-            Session.Commit();
-          } catch (Exception exception) {
-            Session.Abort();
-            RemoveAt(e.NewIndex);
-            throw CreateRowErrorException(exception, e.NewIndex);
-          }
-          BackupList.Insert(e.NewIndex, entity);
-          break;
-        case ListChangedType.ItemChanged:
-          // TODO: ListChangedType.ItemChanged
-          break;
-        case ListChangedType.ItemDeleted:
-          Session.BeginUpdate();
-          try {
-            Session.Unpersist(entity);
-            Session.Commit();
-          } catch (Exception exception) {
-            Session.Abort();
-            Insert(e.NewIndex, BackupList[e.NewIndex]);
-            throw CreateRowErrorException(exception, e.NewIndex);
-          }
-          BackupList.RemoveAt(e.NewIndex);
-          break;
-        default:
-          throw new NotSupportedException(e.ListChangedType.ToString());
-      }
-    }
-
-    private IList<TEntity> CreateBackupList() {
-      var result = new List<TEntity>();
-      result.AddRange(this);
-      return result;
+    private EntityBindingList<TEntity, TBindingItem> CreateBindingList() {
+      var list = (
+        from entity in this
+        select CreateBindingItem(entity)
+      ).ToList();
+      return new EntityBindingList<TEntity, TBindingItem>(list, this);
     }
 
     [NotNull]
-    protected abstract TEntity CreateBackupEntity([NotNull] TEntity entity);
+    protected abstract TBindingItem CreateBindingItem([NotNull] TEntity entity);
+
+    [NotNull]
+    internal TBindingItem CreateBindingItem(int rowIndex) {
+      return CreateBindingItem(this[rowIndex]);
+    }
 
     [NotNull]
     protected abstract EntityColumnList CreateColumns();
-
-    private static TEntity CreateEntity() {
-      try {
-        return (TEntity)Activator.CreateInstance(typeof(TEntity));
-      } catch (TargetInvocationException ex) {
-        throw ex.InnerException ?? ex;
-      }
-    }
-
-    [NotNull]
-    private static DatabaseUpdateErrorException CreateRowErrorException(
-      [NotNull] Exception exception, int rowIndex,
-      IList<object> rowItemValues = null) {
-      if (!IsDatabaseUpdateError(exception)) {
-        throw exception; // Terminal error
-      }
-      return new DatabaseUpdateErrorException(exception.Message, rowIndex, 0,
-        rowItemValues,
-        exception);
-    }
-
-    [NotNull]
-    protected abstract IList<object> GetRowItemValuesFromEntity([NotNull] TEntity entity);
-
-    /// <summary>
-    ///   Returns whether the specified exception indicates that,
-    ///   for an anticipated reason, a requested database update could not be done,
-    ///   in which case the exception's message will need to be shown to the user to
-    ///   explain the error that cause the update to be disallowed.
-    ///   If false, the exception should be treated as a terminal error.
-    /// </summary>
-    private static bool IsDatabaseUpdateError(Exception exception) {
-      return exception is DataException || exception is DuplicateKeyException;
-    }
-
-    private void RestoreEntityAndRow([NotNull] TEntity backupEntity, int rowIndex) {
-      var entity = this[rowIndex];
-      RestoreEntityPropertiesFromBackup(backupEntity, entity);
-      var values = GetRowItemValuesFromEntity(entity);
-      // for (var i = 0; i < values.Count; i++) {
-      //   BindingList.Rows[rowIndex][i] = values[i];
-      // }
-    }
-
-    protected abstract void RestoreEntityPropertiesFromBackup(
-      [NotNull] TEntity backupEntity, [NotNull] TEntity entityToRestore);
-
-    protected abstract void UpdateEntityAtRow([NotNull] DataRow row,
-      [NotNull] TEntity entity);
   }
 }

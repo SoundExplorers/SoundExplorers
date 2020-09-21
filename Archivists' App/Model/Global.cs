@@ -37,12 +37,12 @@ namespace SoundExplorers.Model {
     public static SortedDictionary<string, Type> CreateEntityListTypeDictionary() {
       return new SortedDictionary<string, Type> {
         {string.Empty, null},
-        {nameof(Event), typeof(EventList)},
+        //{nameof(Event), typeof(EventList)},
         {nameof(EventType), typeof(EventTypeList)},
-        {nameof(Location), typeof(LocationList)},
-        {nameof(Newsletter), typeof(NewsletterList)},
-        {nameof(Series), typeof(SeriesList)},
-        {nameof(Set), typeof(SetList)}
+        // {nameof(Location), typeof(LocationList)},
+        // {nameof(Newsletter), typeof(NewsletterList)},
+        // {nameof(Series), typeof(SeriesList)},
+        // {nameof(Set), typeof(SetList)}
       };
     }
 
