@@ -145,13 +145,12 @@ namespace SoundExplorers.Controller {
     }
 
     public void OnMainGridRowEntered(int rowIndex) {
-      Debug.WriteLine($"{nameof(OnMainGridRowEntered)}:  Any row entered");
-      if (MainList?.Count == 0) { }
-      //MainList?.BackupRow(rowIndex);
+      Debug.WriteLine($"{nameof(OnMainGridRowEntered)}:  Any row entered (after ItemAdded if insertion row)");
+      MainList?.OnRowLeft(rowIndex);
     }
 
     public void OnMainGridRowLeft(int eRowIndex) {
-      Debug.WriteLine($"{nameof(OnMainGridRowLeft)}:  Any row left");
+      Debug.WriteLine($"{nameof(OnMainGridRowLeft)}:  Any row left, before final ItemChanged");
     }
 
     /// <summary>
@@ -181,7 +180,7 @@ namespace SoundExplorers.Controller {
     ///   on the database with the table row data.
     /// </summary>
     public void OnMainGridRowValidated(int rowIndex) {
-      Debug.WriteLine($"{nameof(OnMainGridRowValidated)}:  Any row left");
+      Debug.WriteLine($"{nameof(OnMainGridRowValidated)}:  Any row left, after final ItemChanged");
       // This check is only necessary because the grid's Validated event
       // gets raised even when nothing has changed.
       // The case checked for is when the user leaves the insertion 
@@ -192,7 +191,7 @@ namespace SoundExplorers.Controller {
         return;
       }
       try {
-        //MainList?.InsertOrUpdateEntityIfRequired(rowIndex);
+        //MainList?.OnRowLeft(rowIndex);
         View.OnRowUpdated();
       } catch (DatabaseUpdateErrorException exception) {
         View.OnDatabaseUpdateError(exception);

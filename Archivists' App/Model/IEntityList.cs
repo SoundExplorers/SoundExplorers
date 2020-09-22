@@ -35,8 +35,6 @@ namespace SoundExplorers.Model {
     [CanBeNull]
     Type ParentListType { get; }
 
-    [NotNull] string TableName { get; }
-
     /// <summary>
     ///   Gets or sets the session to be used for accessing the database.
     ///   The setter should only be needed for testing.
@@ -44,15 +42,30 @@ namespace SoundExplorers.Model {
     [NotNull]
     SessionBase Session { get; set; }
 
+    [NotNull] string TableName { get; }
+
     /// <summary>
-    ///   Returns a list of the child entities of the entity at the specified row index
-    ///   that are to populate the main list if this is the parent list.
+    ///   Derived classes that are identifying parents should
+    ///   return a list of the child entities of the entity at the specified row index
+    ///   that are to populate the main list when this is the parent list.
     /// </summary>
     /// <param name="rowIndex">
     ///   Zero-based row index.
     /// </param>
     [CanBeNull]
     IList GetChildren(int rowIndex);
+    
+    void OnRowEntered(int rowIndex);
+
+    /// <summary>
+    ///   If the specified table row is new or its data has changed,
+    ///   inserts (if new) or updates the corresponding the entity
+    ///   on the database with the table row data.
+    /// </summary>
+    /// <param name="rowIndex">
+    ///   Zero-based row index.
+    /// </param>
+    void OnRowLeft(int rowIndex);
 
     /// <summary>
     ///   Populates and sorts the list and table.

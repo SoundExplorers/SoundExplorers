@@ -6,6 +6,7 @@ using System.Data;
 using System.Data.Linq;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using JetBrains.Annotations;
 using SoundExplorers.Common;
 using SoundExplorers.Data;
@@ -56,16 +57,6 @@ namespace SoundExplorers.Model {
     public IBindingList BindingList { get; private set; }
 
     /// <summary>
-    ///   Gets or sets the session to be used for accessing the database.
-    ///   The setter should only be needed for testing.
-    /// </summary>
-    public SessionBase Session {
-      get => _session ?? (_session = Global.Session);
-      // ReSharper disable once UnusedMember.Global
-      set => _session = value;
-    }
-
-    /// <summary>
     ///   Gets metadata for the columns of the Table that represents
     ///   the list of entities.
     /// </summary>
@@ -83,16 +74,69 @@ namespace SoundExplorers.Model {
     /// </summary>
     public Type ParentListType { get; }
 
+    /// <summary>
+    ///   Gets or sets the session to be used for accessing the database.
+    ///   The setter should only be needed for testing.
+    /// </summary>
+    public SessionBase Session {
+      get => _session ?? (_session = Global.Session);
+      // ReSharper disable once UnusedMember.Global
+      set => _session = value;
+    }
+
     public string TableName => typeof(TEntity).Name;
 
+    private bool IsNewRow => NewEntity != null; 
+    private TEntity NewEntity { get; set; }
+    private TEntity OldEntity { get; set; }
+
     /// <summary>
-    ///   Returns a list of the child entities of the entity at the specified row index
-    ///   that are to populate the main list if this is the parent list.
+    ///   Derived classes that are identifying parents should
+    ///   return a list of the child entities of the entity at the specified row index
+    ///   that are to populate the main list when this is the parent list.
     /// </summary>
     /// <param name="rowIndex">
     ///   Zero-based row index.
     /// </param>
-    public abstract IList GetChildren(int rowIndex);
+    [NotNull] public abstract IList GetChildren(int rowIndex);
+
+    public void OnRowEntered(int rowIndex) {
+      if (!IsNewRow) {
+        OldEntity = CreateBackupEntity(this[rowIndex]);
+      }
+    }
+
+    /// <summary>
+    ///   If the specified table row is new or its data has changed,
+    ///   inserts (if new) or updates the corresponding the entity
+    ///   on the database with the table row data.
+    /// </summary>
+    /// <param name="rowIndex">
+    ///   Zero-based row index.
+    /// </param>
+    /// <exception cref="DatabaseUpdateErrorException">
+    ///   A database update error occured.
+    /// </exception>
+    public void OnRowLeft(int rowIndex) {
+      Session.BeginUpdate();
+      try {
+        UpdateEntityAtRow(Table.Rows[rowIndex], this[rowIndex]);
+        if (isNewRow) {
+          Session.Persist(newEntity);
+        }
+        Session.Commit();
+      } catch (Exception exception) {
+        Session.Abort();
+        IList<object> newRowItemValues = null;
+        if (isNewRow) {
+          Remove(newEntity);
+        } else {
+          newRowItemValues = BackupRowItemValues(rowIndex);
+          RestoreEntityAndRow(oldEntity, rowIndex);
+        }
+        throw CreateRowErrorException(exception, rowIndex, newRowItemValues);
+      }
+    }
 
     /// <summary>
     ///   Populates and sorts the list and table.
@@ -121,9 +165,9 @@ namespace SoundExplorers.Model {
 
     private void BindingListOnListChanged(object sender, ListChangedEventArgs e) {
       switch (e.ListChangedType) {
-        case ListChangedType.ItemAdded:
+        case ListChangedType.ItemAdded: // Insertion row entered
           Debug.WriteLine("ListChangedType.ItemAdded: Insertion row entered");
-          // var newEntity = this[e.NewIndex].CreateEntity();
+          NewEntity = CreateEntity();
           // Session.BeginUpdate();
           // try {
           //   Session.Persist(newEntity);
@@ -136,12 +180,12 @@ namespace SoundExplorers.Model {
           // }
           // Owner.Insert(e.NewIndex, newEntity);
           break;
-        case ListChangedType.ItemChanged:
-          // TODO: ListChangedType.ItemChanged
+        case ListChangedType.ItemChanged: // Cell edit completed or cancelled
           Debug.WriteLine("ListChangedType.ItemChanged:  Cell edit completed or cancelled");
           break;
-        case ListChangedType.ItemDeleted:
+        case ListChangedType.ItemDeleted: // Insertion row left without saving data
           Debug.WriteLine("ListChangedType.ItemDeleted:  Insertion row left without saving data");
+          NewEntity = default;
           // var deletedEntity = Owner[e.NewIndex];
           // Session.BeginUpdate();
           // try {
@@ -160,6 +204,9 @@ namespace SoundExplorers.Model {
           throw new NotSupportedException(e.ListChangedType.ToString());
       }
     }
+
+    [NotNull]
+    protected abstract TEntity CreateBackupEntity([NotNull] TEntity entity);
 
     [NotNull]
     private static DatabaseUpdateErrorException CreateDatabaseUpdateErrorException(
@@ -198,5 +245,13 @@ namespace SoundExplorers.Model {
 
     [NotNull]
     protected abstract EntityColumnList CreateColumns();
+
+    private static TEntity CreateEntity() {
+      try {
+        return (TEntity)Activator.CreateInstance(typeof(TEntity));
+      } catch (TargetInvocationException ex) {
+        throw ex.InnerException ?? ex;
+      }
+    }
   }
 }
