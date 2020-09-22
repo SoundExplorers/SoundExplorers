@@ -58,7 +58,7 @@ namespace SoundExplorers.View {
 
     private void SelectTableView_Load(object sender, EventArgs e) {
       PopulateTableComboBox();
-      tableComboBox.SelectedItem = Controller.SelectedEntityListType;
+      tableComboBox.SelectedValue = Controller.SelectedEntityListType;
     }
   } //End of class
 } //End of namespace
