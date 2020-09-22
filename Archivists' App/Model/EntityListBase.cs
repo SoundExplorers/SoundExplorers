@@ -122,7 +122,7 @@ namespace SoundExplorers.Model {
     private void BindingListOnListChanged(object sender, ListChangedEventArgs e) {
       switch (e.ListChangedType) {
         case ListChangedType.ItemAdded:
-          Debug.WriteLine("ListChangedType.ItemAdded");
+          Debug.WriteLine("ListChangedType.ItemAdded: Insertion row entered");
           // var newEntity = this[e.NewIndex].CreateEntity();
           // Session.BeginUpdate();
           // try {
@@ -138,10 +138,10 @@ namespace SoundExplorers.Model {
           break;
         case ListChangedType.ItemChanged:
           // TODO: ListChangedType.ItemChanged
-          Debug.WriteLine("ListChangedType.ItemChanged");
+          Debug.WriteLine("ListChangedType.ItemChanged:  Cell edit completed or cancelled");
           break;
         case ListChangedType.ItemDeleted:
-          Debug.WriteLine("ListChangedType.ItemDeleted");
+          Debug.WriteLine("ListChangedType.ItemDeleted:  Insertion row left without saving data");
           // var deletedEntity = Owner[e.NewIndex];
           // Session.BeginUpdate();
           // try {

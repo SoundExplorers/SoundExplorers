@@ -150,6 +150,19 @@ namespace SoundExplorers.View {
       }
     }
 
+    private void AfterPopulateGridTimer_Tick(object sender, EventArgs e) {
+      AfterPopulateGridTimer.Stop();
+      // This makes the insertion row current initially. It triggers MainGrid_RowEnter
+      MainGrid.CurrentCell = MainGrid.Rows[MainGrid.Rows.Count -1].Cells[0];
+      if (Controller.IsParentTableToBeShown) {
+        // A read-only related grid for the parent table is to be shown
+        // above the main grid.
+        ParentGrid.Focus();
+      } else { // No parent grid
+        MainGrid.Focus();
+      }
+    }
+
     private void ConfigureCellStyle([NotNull] DataGridViewColumn column) {
       if (column.ValueType == typeof(string)) {
         // Interpret blanking a cell as an empty string, not NULL.
@@ -720,22 +733,16 @@ namespace SoundExplorers.View {
       MainGrid.RowLeave += MainGrid_RowLeave;
       MainGrid.RowsRemoved += MainGrid_RowsRemoved;
       MainGrid.RowValidated += MainGrid_RowValidated;
-      //if (MainGrid.RowCount > 0) {
-        // Not reliable because top left cell could be hidden.
-        //MainGrid.CurrentCell = MainGrid.Rows[0].Cells[0]; // Triggers MainGrid_RowEnter
-        MainGrid_RowEnter(this, new DataGridViewCellEventArgs(0, 0));
-      //}
+      // //if (MainGrid.RowCount > 0) {
+      //   // Not reliable because top left cell could be hidden.
+      //   //MainGrid.CurrentCell = MainGrid.Rows[0].Cells[0]; // Triggers MainGrid_RowEnter
+      //   MainGrid_RowEnter(this, new DataGridViewCellEventArgs(0, 0));
+      // //}
       // Has to be done when visible.
       // So can't be done when called from constructor.
       if (Visible) {
         MainGrid.AutoResizeColumns();
-        if (Controller.IsParentTableToBeShown) {
-          // A read-only related grid for the parent table is to be shown
-          // above the main grid.
-          ParentGrid.Focus();
-        } else { // No parent grid
-          MainGrid.Focus();
-        }
+        AfterPopulateGridTimer.Start();
       }
     }
 

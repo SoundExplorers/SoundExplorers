@@ -24,6 +24,7 @@
         /// </summary>
         private void InitializeComponent() {
             this.components = new System.ComponentModel.Container();
+            this.AfterPopulateGridTimer = new System.Windows.Forms.Timer(this.components);
             this.FocusTimer = new System.Windows.Forms.Timer(this.components);
             this.RowErrorTimer = new System.Windows.Forms.Timer(this.components);
             this.ImageSplitContainer = new System.Windows.Forms.SplitContainer();
@@ -44,6 +45,11 @@
             ((System.ComponentModel.ISupportInitialize)(this.MainGrid)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.FittedPictureBox1)).BeginInit();
             this.SuspendLayout();
+            // 
+            // AfterPopulateGridTimer
+            // 
+            this.AfterPopulateGridTimer.Interval = 1;
+            this.AfterPopulateGridTimer.Tick += new System.EventHandler(this.AfterPopulateGridTimer_Tick);
             // 
             // FocusTimer
             // 
@@ -179,6 +185,7 @@
 
         #endregion
 
+        private System.Windows.Forms.Timer AfterPopulateGridTimer;
         private System.Windows.Forms.Timer FocusTimer;
         private System.Windows.Forms.Timer RowErrorTimer;
         private System.Windows.Forms.SplitContainer ImageSplitContainer;

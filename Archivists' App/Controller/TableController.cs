@@ -71,9 +71,8 @@ namespace SoundExplorers.Controller {
     ///   above the main grid.
     /// </summary>
     public bool IsParentTableToBeShown => ParentList?.BindingList != null;
-    
-    [CanBeNull]
-    public IBindingList MainBindingList => MainList?.BindingList;
+
+    [CanBeNull] public IBindingList MainBindingList => MainList?.BindingList;
 
     /// <summary>
     ///   Gets or set the list of entities represented in the main table.
@@ -82,12 +81,8 @@ namespace SoundExplorers.Controller {
     private IEntityList MainList { get; set; }
 
     [NotNull] private Type MainListType { get; }
-    
-    [CanBeNull]
-    public string MainTableName => MainList?.TableName;
-    
-    [CanBeNull]
-    public IBindingList ParentBindingList => ParentList?.BindingList;
+    [CanBeNull] public string MainTableName => MainList?.TableName;
+    [CanBeNull] public IBindingList ParentBindingList => ParentList?.BindingList;
 
     /// <summary>
     ///   Gets or sets the list of entities represented in the parent table, if any.
@@ -150,13 +145,13 @@ namespace SoundExplorers.Controller {
     }
 
     public void OnMainGridRowEntered(int rowIndex) {
-      Debug.WriteLine(nameof(OnMainGridRowEntered));
+      Debug.WriteLine($"{nameof(OnMainGridRowEntered)}:  Any row entered");
       if (MainList?.Count == 0) { }
       //MainList?.BackupRow(rowIndex);
     }
 
     public void OnMainGridRowLeft(int eRowIndex) {
-      Debug.WriteLine(nameof(OnMainGridRowLeft));
+      Debug.WriteLine($"{nameof(OnMainGridRowLeft)}:  Any row left");
     }
 
     /// <summary>
@@ -164,7 +159,8 @@ namespace SoundExplorers.Controller {
     ///   from the database and removes it from the list.
     /// </summary>
     public void OnMainGridRowRemoved(int rowIndex) {
-      Debug.WriteLine(nameof(OnMainGridRowRemoved));
+      Debug.WriteLine(
+        $"{nameof(OnMainGridRowRemoved)}:  3 times on opening an empty table; existing row removed");
       // The main grid's Row Removed event is raised on opening the table editor
       // when there are no rows yet to fetch from the database.  Why?
       // Otherwise this count check would not be required.
@@ -185,7 +181,7 @@ namespace SoundExplorers.Controller {
     ///   on the database with the table row data.
     /// </summary>
     public void OnMainGridRowValidated(int rowIndex) {
-      Debug.WriteLine(nameof(OnMainGridRowValidated));
+      Debug.WriteLine($"{nameof(OnMainGridRowValidated)}:  Any row left");
       // This check is only necessary because the grid's Validated event
       // gets raised even when nothing has changed.
       // The case checked for is when the user leaves the insertion 
