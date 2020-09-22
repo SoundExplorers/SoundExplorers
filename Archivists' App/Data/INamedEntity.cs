@@ -1,5 +1,5 @@
 ﻿namespace SoundExplorers.Data {
-  public interface INamed {
+  public interface INamedEntity : IEntity {
     string Name { get; set; }
   }
 }

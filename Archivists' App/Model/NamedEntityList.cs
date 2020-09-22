@@ -2,15 +2,15 @@
 
 namespace SoundExplorers.Model {
   public abstract class
-    NamedEntityList<TEntity> : EntityListBase<TEntity, NamedBindingItem<TEntity>>
-    where TEntity : EntityBase, INamed, new() {
-    protected override NamedBindingItem<TEntity> CreateBindingItem(TEntity entity) {
-      return new NamedBindingItem<TEntity> {Name = entity.Name};
+    NamedEntityList<TEntity> : EntityListBase<TEntity, NamedBindingItem>
+    where TEntity : INamedEntity {
+    protected override NamedBindingItem CreateBindingItem(TEntity entity) {
+      return new NamedBindingItem {Name = entity.Name};
     }
 
     protected override EntityColumnList CreateColumns() {
       return new EntityColumnList {
-        new EntityColumn(nameof(INamed.Name), typeof(string))
+        new EntityColumn(nameof(INamedEntity.Name), typeof(string))
       };
     }
   }

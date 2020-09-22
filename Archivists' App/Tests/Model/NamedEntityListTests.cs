@@ -61,11 +61,11 @@ namespace SoundExplorers.Tests.Model {
     //   list.Table.Rows.Add(name1);
     //   list.InsertOrUpdateEntityIfRequired(0);
     //   Assert.AreEqual(1, list.Count, "Entity count after 1st add");
-    //   Assert.AreEqual(name1, ((INamed)list[0]).Name, "1st entity Name after 1st add");
+    //   Assert.AreEqual(name1, ((INamedEntity)list[0]).Name, "1st entity Name after 1st add");
     //   list.Table.Rows.Add(name2);
     //   list.InsertOrUpdateEntityIfRequired(1);
     //   Assert.AreEqual(2, list.Count, "Entity count after 2nd add");
-    //   Assert.AreEqual(name2, ((INamed)list[1]).Name, "2nd entity Name after 2nd add");
+    //   Assert.AreEqual(name2, ((INamedEntity)list[1]).Name, "2nd entity Name after 2nd add");
     //   list.Populate();
     //   Assert.AreEqual(2, list.Table.Rows.Count, "Row count after populate");
     //   // After being refreshed by Populate, the table should now be sorted into Name order.
@@ -73,11 +73,11 @@ namespace SoundExplorers.Tests.Model {
     //   Assert.AreEqual(name1, list.Table.Rows[1]["Name"], "2nd row Name after populate");
     //   list.Table.Rows[0]["Name"] = name3;
     //   list.InsertOrUpdateEntityIfRequired(0);
-    //   Assert.AreEqual(name3, ((INamed)list[0]).Name, "1st entity Name after update");
+    //   Assert.AreEqual(name3, ((INamedEntity)list[0]).Name, "1st entity Name after update");
     //   list.DeleteEntity(0);
     //   list.Populate();
     //   Assert.AreEqual(1, list.Count, "Entity count after delete and repopulate");
-    //   Assert.AreEqual(name1, ((INamed)list[0]).Name,
+    //   Assert.AreEqual(name1, ((INamedEntity)list[0]).Name,
     //     "1st entity Name after delete and repopulate");
     //   Assert.AreEqual(1, list.Table.Rows.Count, "Row count after delete and repopulate");
     //   Assert.AreEqual(name1, list.Table.Rows[0]["Name"],
@@ -95,7 +95,7 @@ namespace SoundExplorers.Tests.Model {
     //
     // private void ErrorOnDelete<TEntityList>([NotNull] IList entities)
     //   where TEntityList : IEntityList, new() {
-    //   string name = ((INamed)entities[1]).Name;
+    //   string name = ((INamedEntity)entities[1]).Name;
     //   var list = new TEntityList {Session = Session};
     //   list.Populate(entities);
     //   list.BackupRow(1);

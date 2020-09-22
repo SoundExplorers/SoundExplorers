@@ -5,7 +5,7 @@ using System.Data;
 namespace SoundExplorers.Common {
   /// <summary>
   ///   Raised when there is an error on
-  ///   attempting to insert, update or delete a <see cref="DataRow" />.
+  ///   attempting to insert, update or delete an entity on the database.
   /// </summary>
   public class DatabaseUpdateErrorException : ApplicationException {
     /// <summary>

@@ -1,12 +1,13 @@
-﻿using SoundExplorers.Data;
+﻿namespace SoundExplorers.Model {
+  public class NamedBindingItem : BindingItemBase {
+    private string _name;
 
-namespace SoundExplorers.Model {
-  public class NamedBindingItem<TEntity> : EntityBindingItemBase<TEntity>
-    where TEntity : IEntity, INamed, new() {
-    public string Name { get; set; }
-
-    public override TEntity CreateEntity() {
-      return new TEntity {Name = Name};
+    public string Name {
+      get => _name;
+      set {
+        _name = value;
+        OnPropertyChanged(nameof(Name));
+      }
     }
   }
 }

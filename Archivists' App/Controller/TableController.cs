@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using JetBrains.Annotations;
 using SoundExplorers.Common;
 using SoundExplorers.Model;
@@ -148,12 +149,43 @@ namespace SoundExplorers.Controller {
              throw new NullReferenceException("ReferencedTableName");
     }
 
+    public void OnMainGridRowEntered(int rowIndex) {
+      Debug.WriteLine(nameof(OnMainGridRowEntered));
+      if (MainList?.Count == 0) { }
+      //MainList?.BackupRow(rowIndex);
+    }
+
+    public void OnMainGridRowLeft(int eRowIndex) {
+      Debug.WriteLine(nameof(OnMainGridRowLeft));
+    }
+
+    /// <summary>
+    ///   Deletes the entity at the specified row index
+    ///   from the database and removes it from the list.
+    /// </summary>
+    public void OnMainGridRowRemoved(int rowIndex) {
+      Debug.WriteLine(nameof(OnMainGridRowRemoved));
+      // The main grid's Row Removed event is raised on opening the table editor
+      // when there are no rows yet to fetch from the database.  Why?
+      // Otherwise this count check would not be required.
+      if (MainList?.Count == 0) {
+        return;
+      }
+      try {
+        //MainList?.DeleteEntity(rowIndex);
+        View.OnRowUpdated();
+      } catch (DatabaseUpdateErrorException exception) {
+        View.OnDatabaseUpdateError(exception);
+      }
+    }
+
     /// <summary>
     ///   If the specified table row is new or its data has changed,
     ///   inserts (if new) or updates corresponding the entity
     ///   on the database with the table row data.
     /// </summary>
     public void OnMainGridRowValidated(int rowIndex) {
+      Debug.WriteLine(nameof(OnMainGridRowValidated));
       // This check is only necessary because the grid's Validated event
       // gets raised even when nothing has changed.
       // The case checked for is when the user leaves the insertion 
@@ -171,37 +203,13 @@ namespace SoundExplorers.Controller {
       }
     }
 
-    public void OnEnteringExistingMainGridRow(int rowIndex) {
-      if (MainList?.Count == 0) { }
-      //MainList?.BackupRow(rowIndex);
-    }
-
     /// <summary>
     ///   An existing row on the parent grid has been entered.
     ///   So the main grid will be populated with the required
     ///   child entities of the entity at the specified row index.
     /// </summary>
-    public void OnEnteringParentGridRow(int rowIndex) {
+    public void OnParentGridRowEntered(int rowIndex) {
       MainList?.Populate(ParentList?.GetChildren(rowIndex));
-    }
-
-    /// <summary>
-    ///   Deletes the entity at the specified row index
-    ///   from the database and removes it from the list.
-    /// </summary>
-    public void OnMainGridRowRemoved(int rowIndex) {
-      // The main grid's Row Removed event is raised on opening the table editor
-      // when there are no rows yet to fetch from the database.  Why?
-      // Otherwise this count check would not be required.
-      if (MainList?.Count == 0) {
-        return;
-      }
-      try {
-        //MainList?.DeleteEntity(rowIndex);
-        View.OnRowUpdated();
-      } catch (DatabaseUpdateErrorException exception) {
-        View.OnDatabaseUpdateError(exception);
-      }
     }
 
     /// <summary>

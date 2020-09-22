@@ -2,8 +2,12 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Data;
+using System.Data.Linq;
+using System.Diagnostics;
 using System.Linq;
 using JetBrains.Annotations;
+using SoundExplorers.Common;
 using SoundExplorers.Data;
 using VelocityDb.Session;
 
@@ -19,7 +23,7 @@ namespace SoundExplorers.Model {
   /// </typeparam>
   public abstract class EntityListBase<TEntity, TBindingItem> : List<TEntity>, IEntityList
     where TEntity : IEntity
-    where TBindingItem : EntityBindingItemBase<TEntity> {
+    where TBindingItem : BindingItemBase {
     private EntityColumnList _columns;
     private SessionBase _session;
 
@@ -108,24 +112,89 @@ namespace SoundExplorers.Model {
         Session.Commit();
         Sort(EntityComparer);
       }
+      if (BindingList != null) {
+        BindingList.ListChanged -= BindingListOnListChanged;
+      }
       BindingList = CreateBindingList();
+      BindingList.ListChanged += BindingListOnListChanged;
     }
 
-    private EntityBindingList<TEntity, TBindingItem> CreateBindingList() {
+    private void BindingListOnListChanged(object sender, ListChangedEventArgs e) {
+      switch (e.ListChangedType) {
+        case ListChangedType.ItemAdded:
+          Debug.WriteLine("ListChangedType.ItemAdded");
+          // var newEntity = this[e.NewIndex].CreateEntity();
+          // Session.BeginUpdate();
+          // try {
+          //   Session.Persist(newEntity);
+          //   Session.Commit();
+          // } catch (Exception exception) {
+          //   Session.Abort();
+          //   IsFixing = false;
+          //   RemoveItem(e.NewIndex);
+          //   throw CreateDatabaseUpdateErrorException(exception, e.NewIndex);
+          // }
+          // Owner.Insert(e.NewIndex, newEntity);
+          break;
+        case ListChangedType.ItemChanged:
+          // TODO: ListChangedType.ItemChanged
+          Debug.WriteLine("ListChangedType.ItemChanged");
+          break;
+        case ListChangedType.ItemDeleted:
+          Debug.WriteLine("ListChangedType.ItemDeleted");
+          // var deletedEntity = Owner[e.NewIndex];
+          // Session.BeginUpdate();
+          // try {
+          //   Session.Unpersist(deletedEntity);
+          //   Session.Commit();
+          // } catch (Exception exception) {
+          //   Session.Abort();
+          //   IsFixing = true;
+          //   InsertItem(e.NewIndex, Owner.CreateBindingItem(e.NewIndex));
+          //   throw CreateDatabaseUpdateErrorException(exception, e.NewIndex);
+          // }
+          // Owner.RemoveAt(e.NewIndex);
+          break;
+        default:
+          Debug.WriteLine("ListChangedType default");
+          throw new NotSupportedException(e.ListChangedType.ToString());
+      }
+    }
+
+    [NotNull]
+    private static DatabaseUpdateErrorException CreateDatabaseUpdateErrorException(
+      [NotNull] Exception exception, int rowIndex,
+      IList<object> rowItemValues = null) {
+      if (!IsDatabaseUpdateError(exception)) {
+        throw exception; // Terminal error
+      }
+      return new DatabaseUpdateErrorException(exception.Message, rowIndex, 0,
+        rowItemValues,
+        exception);
+    }
+
+    /// <summary>
+    ///   Returns whether the specified exception indicates that,
+    ///   for an anticipated reason, a requested database update could not be done,
+    ///   in which case the exception's message will need to be shown to the user to
+    ///   explain the error that cause the update to be disallowed.
+    ///   If false, the exception should be treated as a terminal error.
+    /// </summary>
+    private static bool IsDatabaseUpdateError(Exception exception) {
+      return exception is DataException || exception is DuplicateKeyException;
+    }
+
+    [NotNull]
+    private BindingList<TBindingItem> CreateBindingList() {
       var list = (
         from entity in this
         select CreateBindingItem(entity)
       ).ToList();
-      return new EntityBindingList<TEntity, TBindingItem>(list, this);
+      return new BindingList<TBindingItem>(list);
     }
 
     [NotNull]
     protected abstract TBindingItem CreateBindingItem([NotNull] TEntity entity);
-
-    [NotNull]
-    internal TBindingItem CreateBindingItem(int rowIndex) {
-      return CreateBindingItem(this[rowIndex]);
-    }
 
     [NotNull]
     protected abstract EntityColumnList CreateColumns();

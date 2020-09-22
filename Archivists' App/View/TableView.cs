@@ -581,15 +581,19 @@ namespace SoundExplorers.View {
     /// </remarks>
     private void MainGrid_RowEnter(object sender, DataGridViewCellEventArgs e) {
       // This is the safe way of checking whether we have entered the insertion (new) row:
-      if (e.RowIndex == MainGrid.RowCount - 1) {
-        // Controller.OnEnteringInsertionRow();
-        // // if (Entities is ImageList) {
-        // //   ShowImageOrMessage(null);
-        // // }
-        return;
-      }
-      // Not new row
-      Controller.OnEnteringExistingMainGridRow(e.RowIndex);
+      // if (e.RowIndex == MainGrid.RowCount - 1) {
+      //   // Controller.OnEnteringInsertionRow();
+      //   // // if (Entities is ImageList) {
+      //   // //   ShowImageOrMessage(null);
+      //   // // }
+      //   return;
+      // }
+      // // Not new row
+      Controller.OnMainGridRowEntered(e.RowIndex);
+    }
+
+    private void MainGrid_RowLeave(object sender, DataGridViewCellEventArgs e) {
+      Controller.OnMainGridRowLeft(e.RowIndex);
     }
 
     private void MainGrid_RowsRemoved(object sender, DataGridViewRowsRemovedEventArgs e) {
@@ -610,10 +614,10 @@ namespace SoundExplorers.View {
       if (UpdateCancelled) {
         return;
       }
-      if (MainGrid.RowCount == 1) {
-        // There's only the uncommitted new row, which can be discarded.
-        return;
-      }
+      // if (MainGrid.RowCount == 1) {
+      //   // There's only the uncommitted new row, which can be discarded.
+      //   return;
+      // }
       Controller.OnMainGridRowValidated(e.RowIndex);
     }
 
@@ -647,7 +651,7 @@ namespace SoundExplorers.View {
     /// <param name="e">Event arguments.</param>
     private void ParentGrid_RowEnter(object sender, DataGridViewCellEventArgs e) {
       ParentRowChanged = true;
-      Controller.OnEnteringParentGridRow(e.RowIndex);
+      Controller.OnParentGridRowEntered(e.RowIndex);
     }
 
     public void Paste() {
@@ -687,6 +691,7 @@ namespace SoundExplorers.View {
       MainGrid.MouseDown -= Grid_MouseDown;
       //MainGrid.RowStateChanged
       MainGrid.RowEnter -= MainGrid_RowEnter;
+      MainGrid.RowLeave -= MainGrid_RowLeave;
       MainGrid.RowsRemoved -= MainGrid_RowsRemoved;
       MainGrid.RowValidated -= MainGrid_RowValidated;
       Controller.FetchData();
@@ -712,13 +717,14 @@ namespace SoundExplorers.View {
       //MainGrid.LostFocus += new EventHandler(Control_LostFocus);
       MainGrid.MouseDown += Grid_MouseDown;
       MainGrid.RowEnter += MainGrid_RowEnter;
+      MainGrid.RowLeave += MainGrid_RowLeave;
       MainGrid.RowsRemoved += MainGrid_RowsRemoved;
       MainGrid.RowValidated += MainGrid_RowValidated;
-      if (MainGrid.RowCount > 0) {
+      //if (MainGrid.RowCount > 0) {
         // Not reliable because top left cell could be hidden.
         //MainGrid.CurrentCell = MainGrid.Rows[0].Cells[0]; // Triggers MainGrid_RowEnter
         MainGrid_RowEnter(this, new DataGridViewCellEventArgs(0, 0));
-      }
+      //}
       // Has to be done when visible.
       // So can't be done when called from constructor.
       if (Visible) {
