@@ -25,8 +25,8 @@
         private void InitializeComponent() {
             this.components = new System.ComponentModel.Container();
             this.AfterPopulateTimer = new System.Windows.Forms.Timer(this.components);
+            this.DatabaseUpdateErrorTimer = new System.Windows.Forms.Timer(this.components);
             this.FocusTimer = new System.Windows.Forms.Timer(this.components);
-            this.RowErrorTimer = new System.Windows.Forms.Timer(this.components);
             this.ImageSplitContainer = new System.Windows.Forms.SplitContainer();
             this.GridSplitContainer = new System.Windows.Forms.SplitContainer();
             this.ParentGrid = new System.Windows.Forms.DataGridView();
@@ -51,15 +51,15 @@
             this.AfterPopulateTimer.Interval = 1;
             this.AfterPopulateTimer.Tick += new System.EventHandler(this.AfterPopulateTimer_Tick);
             // 
+            // DatabaseUpdateErrorTimer
+            // 
+            this.DatabaseUpdateErrorTimer.Interval = 1;
+            this.DatabaseUpdateErrorTimer.Tick += new System.EventHandler(this.DatabaseUpdateErrorTimer_Tick);
+            // 
             // FocusTimer
             // 
             this.FocusTimer.Interval = 1;
             this.FocusTimer.Tick += new System.EventHandler(this.FocusTimer_Tick);
-            // 
-            // RowErrorTimer
-            // 
-            this.RowErrorTimer.Interval = 1;
-            this.RowErrorTimer.Tick += new System.EventHandler(this.RowErrorTimer_Tick);
             // 
             // ImageSplitContainer
             // 
@@ -186,8 +186,8 @@
         #endregion
 
         private System.Windows.Forms.Timer AfterPopulateTimer;
+        private System.Windows.Forms.Timer DatabaseUpdateErrorTimer;
         private System.Windows.Forms.Timer FocusTimer;
-        private System.Windows.Forms.Timer RowErrorTimer;
         private System.Windows.Forms.SplitContainer ImageSplitContainer;
         private System.Windows.Forms.SplitContainer GridSplitContainer;
         private System.Windows.Forms.DataGridView ParentGrid;

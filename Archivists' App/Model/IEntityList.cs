@@ -12,7 +12,6 @@ namespace SoundExplorers.Model {
     /// <summary>
     ///   Gets the binding list representing the list of entities.
     /// </summary>
-    [CanBeNull]
     IBindingList BindingList { get; }
 
     /// <summary>

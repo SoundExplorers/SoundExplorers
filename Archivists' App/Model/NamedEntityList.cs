@@ -1,4 +1,5 @@
-﻿using SoundExplorers.Data;
+﻿using System;
+using SoundExplorers.Data;
 
 namespace SoundExplorers.Model {
   public abstract class
@@ -41,6 +42,19 @@ namespace SoundExplorers.Model {
 
     protected override void UpdateEntity(NamedBindingItem bindingItem, TEntity entity) {
       entity.Name = bindingItem.Name;
+    }
+
+    protected override void UpdateEntityProperty(string propertyName, object newValue,
+      TEntity entity) {
+      switch (propertyName) {
+        case nameof(entity.Name):
+          entity.Name = newValue?.ToString();
+          break;
+        default:
+          throw new ArgumentException(
+            $"{nameof(propertyName)} '{propertyName}' is not supported.",
+            nameof(propertyName));
+      }
     }
   }
 }

@@ -143,35 +143,11 @@ namespace SoundExplorers.Model {
     ///   A database update error occured.
     /// </exception>
     public void OnRowValidated(int rowIndex) {
-      if (!HasRowBeenEdited) {
+      if (!(IsNewRow && HasRowBeenEdited)) {
         IsNewRow = false;
         return;
       }
-      var bindingItem = BindingList != null
-        ? (TBindingItem)BindingList[rowIndex]
-        : throw new NullReferenceException(nameof(BindingList));
-      var entity = IsNewRow ? CreateEntity() : this[rowIndex];
-      var backupEntity = IsNewRow ? new TEntity() : CreateBackupEntity(entity);
-      Session.BeginUpdate();
-      try {
-        UpdateEntity(bindingItem, entity);
-        if (IsNewRow) {
-          Session.Persist(entity);
-          Add(entity);
-        }
-      } catch (Exception exception) {
-        BindingItemToFix = bindingItem;
-        if (IsNewRow) {
-          BackupBindingItemToRestoreFrom = null;
-        } else {
-          RestoreEntityPropertiesFromBackup(backupEntity, entity);
-          BackupBindingItemToRestoreFrom = BackupBindingItem;
-        }
-        throw CreateDatabaseUpdateErrorException(exception, rowIndex);
-      } finally {
-        Session.Commit();
-        IsNewRow = false;
-      }
+      AddNewEntity(rowIndex);
     }
 
     /// <summary>
@@ -212,6 +188,25 @@ namespace SoundExplorers.Model {
       HasRowBeenEdited = false;
     }
 
+    private void AddNewEntity(int rowIndex) {
+      var bindingItem = (TBindingItem)BindingList[rowIndex];
+      var entity = CreateEntity();
+      var backupEntity =new TEntity();
+      Session.BeginUpdate();
+      try {
+        UpdateEntity(bindingItem, entity);
+        Session.Persist(entity);
+        Add(entity);
+      } catch (Exception exception) {
+        BindingItemToFix = bindingItem;
+        BackupBindingItemToRestoreFrom = null;
+        throw CreateDatabaseUpdateErrorException(exception, rowIndex);
+      } finally {
+        Session.Commit();
+        IsNewRow = false;
+      }
+    }
+
     protected abstract void RestoreBindingItemPropertiesFromBackup(
       [NotNull] TBindingItem backupBindingItem,
       [NotNull] TBindingItem bindingItemToRestore);
@@ -222,10 +217,14 @@ namespace SoundExplorers.Model {
           Debug.WriteLine("ListChangedType.ItemAdded: Insertion row entered");
           IsNewRow = true;
           break;
-        case ListChangedType.ItemChanged: // Cell edit completed or cancelled
+        case ListChangedType.ItemChanged: // Cell edit completed 
           Debug.WriteLine(
-            "ListChangedType.ItemChanged:  Cell edit completed or cancelled");
+            $"ListChangedType.ItemChanged:  {e.PropertyDescriptor.Name} = '{e.PropertyDescriptor.GetValue(BindingList[e.NewIndex])}', cell edit completed or cancelled");
           HasRowBeenEdited = true;
+          if (!IsNewRow) {
+            UpdateExistingEntityProperty(e.NewIndex, e.PropertyDescriptor.Name,
+              e.PropertyDescriptor.GetValue(BindingList[e.NewIndex]));
+          }
           break;
         case ListChangedType.ItemDeleted: // Insertion row left without saving data
           Debug.WriteLine(
@@ -258,12 +257,14 @@ namespace SoundExplorers.Model {
       [NotNull] TEntity entity);
 
     [NotNull]
-    private static DatabaseUpdateErrorException CreateDatabaseUpdateErrorException(
-      [NotNull] Exception exception, int rowIndex) {
+    private DatabaseUpdateErrorException CreateDatabaseUpdateErrorException(
+      [NotNull] Exception exception, int rowIndex, string propertyName = null) {
       if (!IsDatabaseUpdateError(exception)) {
         throw exception; // Terminal error
       }
-      return new DatabaseUpdateErrorException(exception.Message, rowIndex, 0, exception);
+      int columnIndex = propertyName != null ? Columns.IndexOf(Columns[propertyName]) : 0;
+      return new DatabaseUpdateErrorException(exception.Message, rowIndex, columnIndex,
+        exception);
     }
 
     /// <summary>
@@ -305,5 +306,26 @@ namespace SoundExplorers.Model {
 
     protected abstract void UpdateEntity([NotNull] TBindingItem bindingItem,
       [NotNull] TEntity entity);
+
+    protected abstract void UpdateEntityProperty([NotNull] string propertyName,
+      [CanBeNull] object newValue, [NotNull] TEntity entity);
+
+    private void UpdateExistingEntityProperty(int rowIndex, [NotNull] string propertyName,
+      [CanBeNull] object newValue) {
+      var bindingItem = (TBindingItem)BindingList[rowIndex];
+      var entity = this[rowIndex];
+      var backupEntity = CreateBackupEntity(entity);
+      Session.BeginUpdate();
+      try {
+        UpdateEntityProperty(propertyName, newValue, entity);
+      } catch (Exception exception) {
+        BindingItemToFix = bindingItem;
+        RestoreEntityPropertiesFromBackup(backupEntity, entity);
+        BackupBindingItemToRestoreFrom = BackupBindingItem;
+        throw CreateDatabaseUpdateErrorException(exception, rowIndex, propertyName);
+      } finally {
+        Session.Commit();
+      }
+    }
   }
 }

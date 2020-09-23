@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using JetBrains.Annotations;
@@ -45,7 +46,7 @@ namespace SoundExplorers.View {
     public void OnDatabaseUpdateError(DatabaseUpdateErrorException e) {
       DatabaseUpdateErrorException = e;
       UpdateCancelled = true;
-      RowErrorTimer.Start();
+      DatabaseUpdateErrorTimer.Start();
     }
 
     /// <summary>
@@ -177,6 +178,36 @@ namespace SoundExplorers.View {
         column.CellTemplate = new CalendarCell();
       } else if (column.Name.EndsWith("Path")) {
         column.CellTemplate = PathCell.Create(Controller, column.Name);
+      }
+    }
+
+    /// <summary>
+    ///   Handle's the row error Timer's Tick event.
+    /// </summary>
+    /// <param name="sender">Event sender.</param>
+    /// <param name="e">Event arguments.</param>
+    /// <remarks>
+    ///   Having to use a Timer in order for
+    ///   making the error row the current row to work.
+    /// </remarks>
+    private void DatabaseUpdateErrorTimer_Tick(object sender, EventArgs e) {
+      DatabaseUpdateErrorTimer.Stop();
+      //Debug.WriteLine("DatabaseUpdateErrorTimer_Tick");
+      MainGrid.CancelEdit();
+      // Focus the error row and cell.
+      MainGrid.CurrentCell = MainGrid.Rows[
+        DatabaseUpdateErrorException.RowIndex].Cells[
+        DatabaseUpdateErrorException.ColumnIndex];
+      UpdateCancelled = false;
+      MessageBox.Show(
+        this,
+        DatabaseUpdateErrorException.Message,
+        Application.ProductName,
+        MessageBoxButtons.OK,
+        MessageBoxIcon.Error);
+      Controller.RestoreOriginalRowValues();
+      if (Controller.WasLastDatabaseUpdateErrorOnInsertion) {
+        MakeInsertionRowCurrent();
       }
     }
 
@@ -474,23 +505,20 @@ namespace SoundExplorers.View {
     ///   that event is EntityList.RowError and is handled by Entities_RowError.
     /// </remarks>
     private void MainGrid_DataError(object sender, DataGridViewDataErrorEventArgs e) {
-      //Debug.WriteLine("MainGrid_DataError");
-      //Debug.WriteLine("Context = " + e.Context.ToString());
+      // Debug.WriteLine("MainGrid_DataError");
+      // Debug.WriteLine("Context = " + e.Context.ToString());
       //Debug.WriteLine("RowIndex = " + e.ColumnIndex.ToString());
       //Debug.WriteLine("RowIndex = " + e.RowIndex.ToString());
-      //MainGrid.CurrentCell = MainGrid.Rows[e.RowIndex].Cells[e.ColumnIndex];
-      //Refresh();
-      MainGrid.CancelEdit();
-      MessageBox.Show(
-        this,
-        e.Exception is ApplicationException
-          ? e.Exception.Message
-          : e.Exception.ToString(),
-        Application.ProductName,
-        MessageBoxButtons.OK,
-        MessageBoxIcon.Error);
-      e.Cancel = true; // This does not seem to make any difference.
-      //e.Cancel = false;
+      if (e.Exception is DatabaseUpdateErrorException exception) {
+        DatabaseUpdateErrorException = exception;
+        // For unknown reason, the way I've got the error handling set up,
+        // this event gets raise twice if there's a cell edit error,
+        // the second time with a null exception.
+        // It does not seem to do any harm, so long as it is trapped.
+      } else if (e.Exception != null) {
+        throw e.Exception;
+      }
+      DatabaseUpdateErrorTimer.Start();
     }
 
     /// <summary>
@@ -610,9 +638,10 @@ namespace SoundExplorers.View {
     private void MainGrid_RowsRemoved(object sender, DataGridViewRowsRemovedEventArgs e) {
       //Debug.WriteLine("MainGrid_RowsRemoved");
       //Debug.WriteLine(MainGrid.Rows[e.RowIndex].Cells[0].Value);
-      if (UpdateCancelled) {
-        return;
-      }
+      // Is UpdateCancelled still relevant?
+      // if (UpdateCancelled) {
+      //   return;
+      // }
       Controller.OnMainGridRowRemoved(e.RowIndex);
     }
 
@@ -622,11 +651,8 @@ namespace SoundExplorers.View {
       if (ParentRowChanged) {
         ParentRowChanged = false;
       }
-      if (UpdateCancelled) {
-        return;
-      }
-      // if (MainGrid.RowCount == 1) {
-      //   // There's only the uncommitted new row, which can be discarded.
+      // Is UpdateCancelled still relevant?
+      // if (UpdateCancelled) {
       //   return;
       // }
       Controller.OnMainGridRowValidated(e.RowIndex);
@@ -808,36 +834,6 @@ namespace SoundExplorers.View {
         FocusedGrid = MainGrid;
       }
       base.Refresh();
-    }
-
-    /// <summary>
-    ///   Handle's the row error Timer's Tick event.
-    /// </summary>
-    /// <param name="sender">Event sender.</param>
-    /// <param name="e">Event arguments.</param>
-    /// <remarks>
-    ///   Having to use a Timer in order for
-    ///   making the error row the current row to work.
-    /// </remarks>
-    private void RowErrorTimer_Tick(object sender, EventArgs e) {
-      RowErrorTimer.Stop();
-      //Debug.WriteLine("RowErrorTimer_Tick");
-      MainGrid.CancelEdit();
-      // Focus the error row and cell.
-      MainGrid.CurrentCell = MainGrid.Rows[
-        DatabaseUpdateErrorException.RowIndex].Cells[
-        DatabaseUpdateErrorException.ColumnIndex];
-      UpdateCancelled = false;
-      MessageBox.Show(
-        this,
-        DatabaseUpdateErrorException.Message,
-        Application.ProductName,
-        MessageBoxButtons.OK,
-        MessageBoxIcon.Error);
-      Controller.RestoreOriginalRowValues();
-      if (Controller.WasLastDatabaseUpdateErrorOnInsertion) {
-        MakeInsertionRowCurrent();
-      }
     }
 
     /// <summary>
