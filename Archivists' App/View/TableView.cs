@@ -149,6 +149,18 @@ namespace SoundExplorers.View {
       }
     }
 
+    private void AfterPopulateTimer_Tick(object sender, EventArgs e) {
+      AfterPopulateTimer.Stop();
+      MakeInsertionRowCurrent();
+      if (Controller.IsParentTableToBeShown) {
+        // A read-only related grid for the parent table is to be shown
+        // above the main grid.
+        ParentGrid.Focus();
+      } else { // No parent grid
+        MainGrid.Focus();
+      }
+    }
+
     private void ConfigureCellStyle([NotNull] DataGridViewColumn column) {
       if (column.ValueType == typeof(string)) {
         // Interpret blanking a cell as an empty string, not NULL.
@@ -620,17 +632,14 @@ namespace SoundExplorers.View {
       Controller.OnMainGridRowValidated(e.RowIndex);
     }
 
-    private void MakeInsertionRowCurrentTimer_Tick(object sender, EventArgs e) {
-      MakeInsertionRowCurrentTimer.Stop();
-      // This makes the insertion row current initially. It triggers MainGrid_RowEnter
+    /// <summary>
+    ///   Makes the insertion row of the main grid current.
+    /// </summary>
+    /// <remarks>
+    ///   This triggers MainGrid_RowEnter.
+    /// </remarks>
+    private void MakeInsertionRowCurrent() {
       MainGrid.CurrentCell = MainGrid.Rows[MainGrid.Rows.Count - 1].Cells[0];
-      if (Controller.IsParentTableToBeShown) {
-        // A read-only related grid for the parent table is to be shown
-        // above the main grid.
-        ParentGrid.Focus();
-      } else { // No parent grid
-        MainGrid.Focus();
-      }
     }
 
     private void OpenTable() {
@@ -741,7 +750,7 @@ namespace SoundExplorers.View {
       // So can't be done when called from constructor.
       if (Visible) {
         MainGrid.AutoResizeColumns();
-        MakeInsertionRowCurrentTimer.Start();
+        AfterPopulateTimer.Start();
       }
     }
 
@@ -827,7 +836,7 @@ namespace SoundExplorers.View {
         MessageBoxIcon.Error);
       Controller.RestoreOriginalRowValues();
       if (Controller.WasLastDatabaseUpdateErrorOnInsertion) {
-        MakeInsertionRowCurrentTimer.Start();
+        MakeInsertionRowCurrent();
       }
     }
 
