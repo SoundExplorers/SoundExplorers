@@ -261,7 +261,7 @@ namespace SoundExplorers.Data {
         throw new DuplicateKeyException(
           this,
           $"{EntityType.Name}'s {SimpleKeyName} cannot be changed to " +
-          $"{newSimpleKey} because another {EntityType.Name} " +
+          $"'{newSimpleKey}' because another {EntityType.Name} " +
           $"with the that {SimpleKeyName} has already been persisted.");
       }
     }

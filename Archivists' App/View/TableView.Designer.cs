@@ -24,8 +24,8 @@
         /// </summary>
         private void InitializeComponent() {
             this.components = new System.ComponentModel.Container();
-            this.AfterPopulateGridTimer = new System.Windows.Forms.Timer(this.components);
             this.FocusTimer = new System.Windows.Forms.Timer(this.components);
+            this.MakeInsertionRowCurrentTimer = new System.Windows.Forms.Timer(this.components);
             this.RowErrorTimer = new System.Windows.Forms.Timer(this.components);
             this.ImageSplitContainer = new System.Windows.Forms.SplitContainer();
             this.GridSplitContainer = new System.Windows.Forms.SplitContainer();
@@ -46,15 +46,15 @@
             ((System.ComponentModel.ISupportInitialize)(this.FittedPictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
-            // AfterPopulateGridTimer
-            // 
-            this.AfterPopulateGridTimer.Interval = 1;
-            this.AfterPopulateGridTimer.Tick += new System.EventHandler(this.AfterPopulateGridTimer_Tick);
-            // 
             // FocusTimer
             // 
             this.FocusTimer.Interval = 1;
             this.FocusTimer.Tick += new System.EventHandler(this.FocusTimer_Tick);
+            // 
+            // MakeInsertionRowCurrentTimer
+            // 
+            this.MakeInsertionRowCurrentTimer.Interval = 1;
+            this.MakeInsertionRowCurrentTimer.Tick += new System.EventHandler(this.MakeInsertionRowCurrentTimer_Tick);
             // 
             // RowErrorTimer
             // 
@@ -185,8 +185,8 @@
 
         #endregion
 
-        private System.Windows.Forms.Timer AfterPopulateGridTimer;
         private System.Windows.Forms.Timer FocusTimer;
+        private System.Windows.Forms.Timer MakeInsertionRowCurrentTimer;
         private System.Windows.Forms.Timer RowErrorTimer;
         private System.Windows.Forms.SplitContainer ImageSplitContainer;
         private System.Windows.Forms.SplitContainer GridSplitContainer;

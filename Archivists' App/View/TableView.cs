@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using JetBrains.Annotations;
@@ -147,19 +146,6 @@ namespace SoundExplorers.View {
             pathEditingControl.Cut();
             break;
         }
-      }
-    }
-
-    private void AfterPopulateGridTimer_Tick(object sender, EventArgs e) {
-      AfterPopulateGridTimer.Stop();
-      // This makes the insertion row current initially. It triggers MainGrid_RowEnter
-      MainGrid.CurrentCell = MainGrid.Rows[MainGrid.Rows.Count -1].Cells[0];
-      if (Controller.IsParentTableToBeShown) {
-        // A read-only related grid for the parent table is to be shown
-        // above the main grid.
-        ParentGrid.Focus();
-      } else { // No parent grid
-        MainGrid.Focus();
       }
     }
 
@@ -602,7 +588,7 @@ namespace SoundExplorers.View {
       //   return;
       // }
       // // Not new row
-      Controller.OnMainGridRowEntered(e.RowIndex);
+      Controller.OnMainGridRowEnter(e.RowIndex);
     }
 
     private void MainGrid_RowLeave(object sender, DataGridViewCellEventArgs e) {
@@ -632,6 +618,19 @@ namespace SoundExplorers.View {
       //   return;
       // }
       Controller.OnMainGridRowValidated(e.RowIndex);
+    }
+
+    private void MakeInsertionRowCurrentTimer_Tick(object sender, EventArgs e) {
+      MakeInsertionRowCurrentTimer.Stop();
+      // This makes the insertion row current initially. It triggers MainGrid_RowEnter
+      MainGrid.CurrentCell = MainGrid.Rows[MainGrid.Rows.Count - 1].Cells[0];
+      if (Controller.IsParentTableToBeShown) {
+        // A read-only related grid for the parent table is to be shown
+        // above the main grid.
+        ParentGrid.Focus();
+      } else { // No parent grid
+        MainGrid.Focus();
+      }
     }
 
     private void OpenTable() {
@@ -742,7 +741,7 @@ namespace SoundExplorers.View {
       // So can't be done when called from constructor.
       if (Visible) {
         MainGrid.AutoResizeColumns();
-        AfterPopulateGridTimer.Start();
+        MakeInsertionRowCurrentTimer.Start();
       }
     }
 
@@ -816,51 +815,20 @@ namespace SoundExplorers.View {
       //Debug.WriteLine("RowErrorTimer_Tick");
       MainGrid.CancelEdit();
       // Focus the error row and cell.
-      try {
-        MainGrid.CurrentCell = MainGrid.Rows[
-          DatabaseUpdateErrorException.RowIndex].Cells[
-          DatabaseUpdateErrorException.ColumnIndex];
-      } catch (ArgumentOutOfRangeException) {
-        // Hopefully this is fixed now
-        // (by comparing strings instead of objects in MainGrid_RowValidated)
-        // but we shall see.
-        // I got this to happen once and can't replicate it.
-        // Better to just leave the focus where it is
-        // with no error message
-        // than let the program annoy the users with a weird message.
-        // They can complain if they observe the problem.
-        Debug.WriteLine("RowErrorTimer_Tick ArgumentOutOfRangeException");
-        try {
-          Debug.WriteLine("TableName = " + Controller.MainTableName);
-          Debug.WriteLine("RowErrorEventArgs.ColumnIndex = " +
-                          DatabaseUpdateErrorException.ColumnIndex);
-          Debug.WriteLine("RowErrorEventArgs.RowIndex = " + DatabaseUpdateErrorException.RowIndex);
-          Debug.WriteLine("MainGrid.CurrentCell.ColumnIndex = " +
-                          MainGrid.CurrentCell.ColumnIndex);
-          Debug.WriteLine("MainCurrentRow.Index = " + MainCurrentRow.Index);
-          Debug.WriteLine("MainGrid.ColumnCount = " + MainGrid.ColumnCount);
-          Debug.WriteLine("MainGrid.RowCount = " + MainGrid.RowCount);
-          //Debug.WriteLine("Entities.Count = " + Entities.Count);
-          // ReSharper disable once EmptyGeneralCatchClause
-        } catch { }
-        // Leave the breakpoint on Debug.Assert.
-        // That way, if I hit the problem again,
-        // I'll see the diagnostics.
-        Debug.Assert(true);
-        // ???
-        // Fairly sure this should work.
-        // Otherwise it just seems to show an unneeded error message.
-        UpdateCancelled = false;
-        return;
-      }
+      MainGrid.CurrentCell = MainGrid.Rows[
+        DatabaseUpdateErrorException.RowIndex].Cells[
+        DatabaseUpdateErrorException.ColumnIndex];
       UpdateCancelled = false;
-      Controller.RestoreRejectedValues(DatabaseUpdateErrorException.RejectedValues);
       MessageBox.Show(
         this,
         DatabaseUpdateErrorException.Message,
         Application.ProductName,
         MessageBoxButtons.OK,
         MessageBoxIcon.Error);
+      Controller.RestoreOriginalRowValues();
+      if (Controller.WasLastDatabaseUpdateErrorOnInsertion) {
+        MakeInsertionRowCurrentTimer.Start();
+      }
     }
 
     /// <summary>

@@ -44,6 +44,8 @@ namespace SoundExplorers.Model {
 
     [NotNull] string TableName { get; }
 
+    bool WasLastDatabaseUpdateErrorOnInsertion { get; }
+
     /// <summary>
     ///   Derived classes that are identifying parents should
     ///   return a list of the child entities of the entity at the specified row index
@@ -55,7 +57,13 @@ namespace SoundExplorers.Model {
     [CanBeNull]
     IList GetChildren(int rowIndex);
     
-    void OnRowEntered(int rowIndex);
+    /// <summary>
+    ///   This is called when any row has been entered.
+    /// </summary>
+    /// <param name="rowIndex">
+    ///   Zero-based row index.
+    /// </param>
+    void OnRowEnter(int rowIndex);
 
     /// <summary>
     ///   If the specified table row is new or its data has changed,
@@ -65,7 +73,7 @@ namespace SoundExplorers.Model {
     /// <param name="rowIndex">
     ///   Zero-based row index.
     /// </param>
-    void OnRowLeft(int rowIndex);
+    void OnRowValidated(int rowIndex);
 
     /// <summary>
     ///   Populates and sorts the list and table.
@@ -76,5 +84,7 @@ namespace SoundExplorers.Model {
     ///   will be fetched from the database.
     /// </param>
     void Populate(IList list = null);
+
+    void RestoreOriginalValues();
   }
 }

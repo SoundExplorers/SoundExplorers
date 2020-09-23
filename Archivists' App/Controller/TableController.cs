@@ -83,6 +83,7 @@ namespace SoundExplorers.Controller {
     [NotNull] private Type MainListType { get; }
     [CanBeNull] public string MainTableName => MainList?.TableName;
     [CanBeNull] public IBindingList ParentBindingList => ParentList?.BindingList;
+    public bool WasLastDatabaseUpdateErrorOnInsertion { get; private set; }
 
     /// <summary>
     ///   Gets or sets the list of entities represented in the parent table, if any.
@@ -144,12 +145,12 @@ namespace SoundExplorers.Controller {
              throw new NullReferenceException("ReferencedTableName");
     }
 
-    public void OnMainGridRowEntered(int rowIndex) {
-      Debug.WriteLine($"{nameof(OnMainGridRowEntered)}:  Any row entered (after ItemAdded if insertion row)");
-      MainList?.OnRowLeft(rowIndex);
+    public void OnMainGridRowEnter(int rowIndex) {
+      Debug.WriteLine($"{nameof(OnMainGridRowEnter)}:  Any row entered (after ItemAdded if insertion row)");
+      MainList?.OnRowEnter(rowIndex);
     }
 
-    public void OnMainGridRowLeft(int eRowIndex) {
+    public void OnMainGridRowLeft(int rowIndex) {
       Debug.WriteLine($"{nameof(OnMainGridRowLeft)}:  Any row left, before final ItemChanged");
     }
 
@@ -181,17 +182,17 @@ namespace SoundExplorers.Controller {
     /// </summary>
     public void OnMainGridRowValidated(int rowIndex) {
       Debug.WriteLine($"{nameof(OnMainGridRowValidated)}:  Any row left, after final ItemChanged");
-      // This check is only necessary because the grid's Validated event
-      // gets raised even when nothing has changed.
-      // The case checked for is when the user leaves the insertion 
-      // row for an existing row without having made any changes.
-      // But why is the grid's Validated event raised when the user
-      // has committed no changes?
-      if (rowIndex >= MainList?.BindingList?.Count) {
-        return;
-      }
+      // // This check is only necessary because the grid's Validated event
+      // // gets raised even when nothing has changed.
+      // // The case checked for is when the user leaves the insertion 
+      // // row for an existing row without having made any changes.
+      // // But why is the grid's Validated event raised when the user
+      // // has committed no changes?
+      // if (rowIndex >= MainList?.BindingList?.Count) {
+      //   return;
+      // }
       try {
-        //MainList?.OnRowLeft(rowIndex);
+        MainList?.OnRowValidated(rowIndex);
         View.OnRowUpdated();
       } catch (DatabaseUpdateErrorException exception) {
         View.OnDatabaseUpdateError(exception);
@@ -229,23 +230,22 @@ namespace SoundExplorers.Controller {
       //Process.Start(GetMediumPath(Medium.Video));
     }
 
-    /// <summary>
-    ///   The error row's values will have been restored to their
-    ///   originals when the change was rejected.
-    ///   So put the reject new values back into the grid row.
-    ///   The user can then either modify or cancel the change.
-    /// </summary>
-    public void RestoreRejectedValues([CanBeNull] IList<object> rejectedValues) {
-      if (rejectedValues == null) {
-        return;
+    public void RestoreOriginalRowValues() {
+      if (MainList == null) {
+        throw new NullReferenceException(nameof(MainList));
       }
-      for (var columnIndex = 0; columnIndex < Columns?.Count; columnIndex++) {
-        var rejectedValue = rejectedValues[columnIndex];
-        // All the rejected values will be DBNull if the user had tried to delete the row.
-        if (rejectedValue != DBNull.Value) {
-          View.SetCurrentRowFieldValue(Columns[columnIndex].DisplayName, rejectedValue);
-        }
-      } //End of for
+      MainList.RestoreOriginalValues();
+      WasLastDatabaseUpdateErrorOnInsertion = MainList.WasLastDatabaseUpdateErrorOnInsertion;
+      // if (rejectedValues == null) {
+      //   return;
+      // }
+      // for (var columnIndex = 0; columnIndex < Columns?.Count; columnIndex++) {
+      //   var rejectedValue = rejectedValues[columnIndex];
+      //   // All the rejected values will be DBNull if the user had tried to delete the row.
+      //   if (rejectedValue != DBNull.Value) {
+      //     View.SetCurrentRowFieldValue(Columns[columnIndex].DisplayName, rejectedValue);
+      //   }
+      // } //End of for
     }
 
     /// <summary>

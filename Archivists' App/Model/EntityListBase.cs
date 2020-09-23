@@ -23,8 +23,8 @@ namespace SoundExplorers.Model {
   ///   Binding list item type parameter
   /// </typeparam>
   public abstract class EntityListBase<TEntity, TBindingItem> : List<TEntity>, IEntityList
-    where TEntity : IEntity
-    where TBindingItem : BindingItemBase {
+    where TEntity : IEntity, new()
+    where TBindingItem : BindingItemBase, new() {
     private EntityColumnList _columns;
     private SessionBase _session;
 
@@ -49,7 +49,13 @@ namespace SoundExplorers.Model {
       EntityComparer = new EntityComparer<TEntity>();
     }
 
+    private TBindingItem BackupBindingItem { get; set; }
+    private TBindingItem BackupBindingItemToRestoreFrom { get; set; }
+    private TBindingItem BindingItemToFix { get; set; }
     private EntityComparer<TEntity> EntityComparer { get; }
+    private bool HasRowBeenEdited { get; set; }
+    private bool IsExistingEntityUpdateError => BackupBindingItemToRestoreFrom != null;
+    private bool IsNewRow { get; set; }
 
     /// <summary>
     ///   Gets the binding list representing the list of entities.
@@ -85,10 +91,7 @@ namespace SoundExplorers.Model {
     }
 
     public string TableName => typeof(TEntity).Name;
-
-    private bool IsNewRow => NewEntity != null; 
-    private TEntity NewEntity { get; set; }
-    private TEntity OldEntity { get; set; }
+    public bool WasLastDatabaseUpdateErrorOnInsertion { get; private set; }
 
     /// <summary>
     ///   Derived classes that are identifying parents should
@@ -98,12 +101,28 @@ namespace SoundExplorers.Model {
     /// <param name="rowIndex">
     ///   Zero-based row index.
     /// </param>
-    [NotNull] public abstract IList GetChildren(int rowIndex);
+    [NotNull]
+    public abstract IList GetChildren(int rowIndex);
 
-    public void OnRowEntered(int rowIndex) {
-      if (!IsNewRow) {
-        OldEntity = CreateBackupEntity(this[rowIndex]);
-      }
+    /// <summary>
+    ///   This is called when any row has been entered.
+    /// </summary>
+    /// <param name="rowIndex">
+    ///   Zero-based row index.
+    /// </param>
+    /// <remarks>
+    ///   This is called when the grid's RowEnter event is raised.
+    ///   If the row is the insertion row,
+    ///   this will be called after the ItemAdded ListChangedType
+    ///   of the BindingList's ListChanged event.
+    /// </remarks>
+    public void OnRowEnter(int rowIndex) {
+      HasRowBeenEdited = false;
+      BackupBindingItem = !IsNewRow
+        ? BindingList != null
+          ? CreateBackupBindingItem((TBindingItem)BindingList[rowIndex])
+          : throw new NullReferenceException(nameof(BindingList))
+        : new TBindingItem();
     }
 
     /// <summary>
@@ -114,27 +133,44 @@ namespace SoundExplorers.Model {
     /// <param name="rowIndex">
     ///   Zero-based row index.
     /// </param>
+    /// <remarks>
+    ///   Though this is called when the grid's RowValidated event is raised,
+    ///   that actually happens even if the user did no edits,
+    ///   when any row left but after the final ItemChanged ListChangedType
+    ///   of the BindingList's ListChanged event.
+    /// </remarks>
     /// <exception cref="DatabaseUpdateErrorException">
     ///   A database update error occured.
     /// </exception>
-    public void OnRowLeft(int rowIndex) {
+    public void OnRowValidated(int rowIndex) {
+      if (!HasRowBeenEdited) {
+        IsNewRow = false;
+        return;
+      }
+      var bindingItem = BindingList != null
+        ? (TBindingItem)BindingList[rowIndex]
+        : throw new NullReferenceException(nameof(BindingList));
+      var entity = IsNewRow ? CreateEntity() : this[rowIndex];
+      var backupEntity = IsNewRow ? new TEntity() : CreateBackupEntity(entity);
       Session.BeginUpdate();
       try {
-        UpdateEntityAtRow(Table.Rows[rowIndex], this[rowIndex]);
-        if (isNewRow) {
-          Session.Persist(newEntity);
+        UpdateEntity(bindingItem, entity);
+        if (IsNewRow) {
+          Session.Persist(entity);
+          Add(entity);
         }
-        Session.Commit();
       } catch (Exception exception) {
-        Session.Abort();
-        IList<object> newRowItemValues = null;
-        if (isNewRow) {
-          Remove(newEntity);
+        BindingItemToFix = bindingItem;
+        if (IsNewRow) {
+          BackupBindingItemToRestoreFrom = null;
         } else {
-          newRowItemValues = BackupRowItemValues(rowIndex);
-          RestoreEntityAndRow(oldEntity, rowIndex);
+          RestoreEntityPropertiesFromBackup(backupEntity, entity);
+          BackupBindingItemToRestoreFrom = BackupBindingItem;
         }
-        throw CreateRowErrorException(exception, rowIndex, newRowItemValues);
+        throw CreateDatabaseUpdateErrorException(exception, rowIndex);
+      } finally {
+        Session.Commit();
+        IsNewRow = false;
       }
     }
 
@@ -163,29 +199,37 @@ namespace SoundExplorers.Model {
       BindingList.ListChanged += BindingListOnListChanged;
     }
 
+    public void RestoreOriginalValues() {
+      if (IsExistingEntityUpdateError) {
+        RestoreBindingItemPropertiesFromBackup(BackupBindingItemToRestoreFrom,
+          BindingItemToFix);
+      } else {
+        BindingList?.Remove(BindingItemToFix);
+      }
+      WasLastDatabaseUpdateErrorOnInsertion = !IsExistingEntityUpdateError;
+      BackupBindingItemToRestoreFrom = null;
+      BindingItemToFix = null;
+      HasRowBeenEdited = false;
+    }
+
+    protected abstract void RestoreBindingItemPropertiesFromBackup(
+      [NotNull] TBindingItem backupBindingItem,
+      [NotNull] TBindingItem bindingItemToRestore);
+
     private void BindingListOnListChanged(object sender, ListChangedEventArgs e) {
       switch (e.ListChangedType) {
         case ListChangedType.ItemAdded: // Insertion row entered
           Debug.WriteLine("ListChangedType.ItemAdded: Insertion row entered");
-          NewEntity = CreateEntity();
-          // Session.BeginUpdate();
-          // try {
-          //   Session.Persist(newEntity);
-          //   Session.Commit();
-          // } catch (Exception exception) {
-          //   Session.Abort();
-          //   IsFixing = false;
-          //   RemoveItem(e.NewIndex);
-          //   throw CreateDatabaseUpdateErrorException(exception, e.NewIndex);
-          // }
-          // Owner.Insert(e.NewIndex, newEntity);
+          IsNewRow = true;
           break;
         case ListChangedType.ItemChanged: // Cell edit completed or cancelled
-          Debug.WriteLine("ListChangedType.ItemChanged:  Cell edit completed or cancelled");
+          Debug.WriteLine(
+            "ListChangedType.ItemChanged:  Cell edit completed or cancelled");
+          HasRowBeenEdited = true;
           break;
         case ListChangedType.ItemDeleted: // Insertion row left without saving data
-          Debug.WriteLine("ListChangedType.ItemDeleted:  Insertion row left without saving data");
-          NewEntity = default;
+          Debug.WriteLine(
+            "ListChangedType.ItemDeleted:  Insertion row left without saving data");
           // var deletedEntity = Owner[e.NewIndex];
           // Session.BeginUpdate();
           // try {
@@ -206,18 +250,20 @@ namespace SoundExplorers.Model {
     }
 
     [NotNull]
-    protected abstract TEntity CreateBackupEntity([NotNull] TEntity entity);
+    protected abstract TBindingItem CreateBackupBindingItem(
+      [NotNull] TBindingItem bindingItem);
+
+    [NotNull]
+    protected abstract TEntity CreateBackupEntity(
+      [NotNull] TEntity entity);
 
     [NotNull]
     private static DatabaseUpdateErrorException CreateDatabaseUpdateErrorException(
-      [NotNull] Exception exception, int rowIndex,
-      IList<object> rowItemValues = null) {
+      [NotNull] Exception exception, int rowIndex) {
       if (!IsDatabaseUpdateError(exception)) {
         throw exception; // Terminal error
       }
-      return new DatabaseUpdateErrorException(exception.Message, rowIndex, 0,
-        rowItemValues,
-        exception);
+      return new DatabaseUpdateErrorException(exception.Message, rowIndex, 0, exception);
     }
 
     /// <summary>
@@ -253,5 +299,11 @@ namespace SoundExplorers.Model {
         throw ex.InnerException ?? ex;
       }
     }
+
+    protected abstract void RestoreEntityPropertiesFromBackup(
+      [NotNull] TEntity backupEntity, [NotNull] TEntity entityToRestore);
+
+    protected abstract void UpdateEntity([NotNull] TBindingItem bindingItem,
+      [NotNull] TEntity entity);
   }
 }

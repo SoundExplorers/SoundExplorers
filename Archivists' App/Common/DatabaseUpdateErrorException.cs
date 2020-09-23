@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Data;
 
 namespace SoundExplorers.Common {
   /// <summary>
@@ -14,19 +12,15 @@ namespace SoundExplorers.Common {
     /// </summary>
     /// <param name="message">Error message.</param>
     /// <param name="rowIndex">
-    ///   The index of the <see cref="DataRow" /> whose
+    ///   The index of the row whose
     ///   insertion, update or deletion failed.
     /// </param>
     /// <param name="columnIndex">
-    ///   The index of the <see cref="DataColumn" />
-    ///   whose field value in the <see cref="DataRow" />
+    ///   The index of the column
+    ///   whose field value in the row
     ///   caused the
     ///   insertion, update or deletion to fail.
     ///   Zero if the failure cannot be attributed to a specific field value.
-    /// </param>
-    /// <param name="rejectedValues">
-    ///   An array of the values of the row's fields
-    ///   as at just before the change was rejected.
     /// </param>
     /// <param name="innerException">
     ///   An <see cref="Exception" /> that provides
@@ -36,16 +30,14 @@ namespace SoundExplorers.Common {
       string message,
       int rowIndex,
       int columnIndex,
-      IList<object> rejectedValues,
       Exception innerException) : base(message, innerException) {
       RowIndex = rowIndex;
       ColumnIndex = columnIndex;
-      RejectedValues = rejectedValues;
     }
 
     /// <summary>
-    ///   Gets the index of the <see cref="DataColumn" />
-    ///   whose field value in the <see cref="DataRow" />
+    ///   Gets the index of the column
+    ///   whose field value in the row
     ///   caused the
     ///   insertion, update or deletion to fail.
     ///   Zero if the failure cannot be attributed to a specific field value.
@@ -53,15 +45,7 @@ namespace SoundExplorers.Common {
     public int ColumnIndex { get; }
 
     /// <summary>
-    ///   Gets a list of the values of the row's fields
-    ///   as at just before the change was rejected.
-    ///   If the user had tried to delete the row,
-    ///   All the values will be DBNull.
-    /// </summary>
-    public IList<object> RejectedValues { get; }
-
-    /// <summary>
-    ///   Gets the index of the <see cref="DataRow" /> whose
+    ///   Gets the index of the whose
     ///   insertion, update or deletion failed.
     /// </summary>
     public int RowIndex { get; }

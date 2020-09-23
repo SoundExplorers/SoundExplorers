@@ -59,11 +59,11 @@ namespace SoundExplorers.Tests.Model {
     //   const string name3 = "Rehearsal";
     //   var list = new TEntityList {Session = Session};
     //   list.Table.Rows.Add(name1);
-    //   list.OnRowLeft(0);
+    //   list.OnRowValidated(0);
     //   Assert.AreEqual(1, list.Count, "Entity count after 1st add");
     //   Assert.AreEqual(name1, ((INamedEntity)list[0]).Name, "1st entity Name after 1st add");
     //   list.Table.Rows.Add(name2);
-    //   list.OnRowLeft(1);
+    //   list.OnRowValidated(1);
     //   Assert.AreEqual(2, list.Count, "Entity count after 2nd add");
     //   Assert.AreEqual(name2, ((INamedEntity)list[1]).Name, "2nd entity Name after 2nd add");
     //   list.Populate();
@@ -72,7 +72,7 @@ namespace SoundExplorers.Tests.Model {
     //   Assert.AreEqual(name2, list.Table.Rows[0]["Name"], "1st row Name after populate");
     //   Assert.AreEqual(name1, list.Table.Rows[1]["Name"], "2nd row Name after populate");
     //   list.Table.Rows[0]["Name"] = name3;
-    //   list.OnRowLeft(0);
+    //   list.OnRowValidated(0);
     //   Assert.AreEqual(name3, ((INamedEntity)list[0]).Name, "1st entity Name after update");
     //   list.DeleteEntity(0);
     //   list.Populate();
@@ -125,12 +125,12 @@ namespace SoundExplorers.Tests.Model {
     //   const string name2 = "Rehearsal";
     //   var list = new TEntityList {Session = Session};
     //   list.Table.Rows.Add(name1);
-    //   list.OnRowLeft(0);
+    //   list.OnRowValidated(0);
     //   list.Table.Rows.Add(name2);
-    //   list.OnRowLeft(1);
+    //   list.OnRowValidated(1);
     //   list.Table.Rows[1]["Name"] = name1;
     //   try {
-    //     list.OnRowLeft(1);
+    //     list.OnRowValidated(1);
     //   } catch (Exception e) {
     //     Console.WriteLine(e);
     //     throw;
