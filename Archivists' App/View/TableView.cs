@@ -203,7 +203,7 @@ namespace SoundExplorers.View {
     /// <param name="e">Event arguments.</param>
     /// <remarks>
     ///   Having to use a Timer in order for
-    ///   making the error row the current row to work.
+    ///   focusing the error row and cell.
     /// </remarks>
     private void DatabaseUpdateErrorTimer_Tick(object sender, EventArgs e) {
       DatabaseUpdateErrorTimer.Stop();
