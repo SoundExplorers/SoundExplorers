@@ -321,7 +321,7 @@ namespace SoundExplorers.Model {
       LastDatabaseChangeAction = ChangeAction.Delete;
       Session.BeginUpdate();
       try {
-        throw new ConstraintException("Test error message");
+        //throw new ConstraintException("Test error message");
         Session.Unpersist(this[rowIndex]);
         RemoveAt(rowIndex);
       } catch (Exception exception) {
