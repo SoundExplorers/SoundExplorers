@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using JetBrains.Annotations;
@@ -146,12 +145,9 @@ namespace SoundExplorers.Controller {
     }
 
     public void OnMainGridRowEnter(int rowIndex) {
-      Debug.WriteLine($"{nameof(OnMainGridRowEnter)}:  Any row entered (after ItemAdded if insertion row)");
+      Debug.WriteLine(
+        $"{nameof(OnMainGridRowEnter)}:  Any row entered (after ItemAdded if insertion row)");
       MainList?.OnRowEnter(rowIndex);
-    }
-
-    public void OnMainGridRowLeft(int rowIndex) {
-      Debug.WriteLine($"{nameof(OnMainGridRowLeft)}:  Any row left, before final ItemChanged");
     }
 
     /// <summary>
@@ -176,21 +172,12 @@ namespace SoundExplorers.Controller {
     }
 
     /// <summary>
-    ///   If the specified table row is new or its data has changed,
-    ///   inserts (if new) or updates corresponding the entity
-    ///   on the database with the table row data.
+    ///   If the specified table row is new,
+    ///   inserts an entity on the database with the table row data.
     /// </summary>
     public void OnMainGridRowValidated(int rowIndex) {
-      Debug.WriteLine($"{nameof(OnMainGridRowValidated)}:  Any row left, after final ItemChanged");
-      // // This check is only necessary because the grid's Validated event
-      // // gets raised even when nothing has changed.
-      // // The case checked for is when the user leaves the insertion 
-      // // row for an existing row without having made any changes.
-      // // But why is the grid's Validated event raised when the user
-      // // has committed no changes?
-      // if (rowIndex >= MainList?.BindingList?.Count) {
-      //   return;
-      // }
+      Debug.WriteLine(
+        $"{nameof(OnMainGridRowValidated)}:  Any row left, after final ItemChanged");
       try {
         MainList?.OnRowValidated(rowIndex);
         View.OnRowUpdated();
@@ -235,7 +222,8 @@ namespace SoundExplorers.Controller {
         throw new NullReferenceException(nameof(MainList));
       }
       MainList.RestoreOriginalValues();
-      WasLastDatabaseUpdateErrorOnInsertion = MainList.WasLastDatabaseUpdateErrorOnInsertion;
+      WasLastDatabaseUpdateErrorOnInsertion =
+        MainList.WasLastDatabaseUpdateErrorOnInsertion;
       // if (rejectedValues == null) {
       //   return;
       // }

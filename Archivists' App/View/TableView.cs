@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using JetBrains.Annotations;
@@ -34,8 +33,9 @@ namespace SoundExplorers.View {
 
     private bool ParentRowChanged { get; set; }
     private DatabaseUpdateErrorException DatabaseUpdateErrorException { get; set; }
+
     private SizeableFormOptions SizeableFormOptions { get; set; }
-    private bool UpdateCancelled { get; set; }
+    //private bool UpdateCancelled { get; set; }
 
     /// <summary>
     ///   Occurs when there is an error on
@@ -45,7 +45,7 @@ namespace SoundExplorers.View {
     /// <param name="e">Error details.</param>
     public void OnDatabaseUpdateError(DatabaseUpdateErrorException e) {
       DatabaseUpdateErrorException = e;
-      UpdateCancelled = true;
+      //UpdateCancelled = true;
       DatabaseUpdateErrorTimer.Start();
     }
 
@@ -198,7 +198,7 @@ namespace SoundExplorers.View {
       MainGrid.CurrentCell = MainGrid.Rows[
         DatabaseUpdateErrorException.RowIndex].Cells[
         DatabaseUpdateErrorException.ColumnIndex];
-      UpdateCancelled = false;
+      //UpdateCancelled = false;
       MessageBox.Show(
         this,
         DatabaseUpdateErrorException.Message,
@@ -493,16 +493,12 @@ namespace SoundExplorers.View {
     /// <param name="sender">Event sender.</param>
     /// <param name="e">Event arguments.</param>
     /// <remarks>
-    ///   So far, this event has only been raised when
-    ///   a referenced table contains no rows that
+    ///   The event is raised when there is an error on
+    ///   attempting to update a main grid cell representing a property of an existing entity.
+    ///   TODO Need to check ComboBoxCell.ThrowNoAvailableReferencesException.
+    ///   The event is also raised raised when a referenced table contains no rows that
     ///   can be made available for selection in a ComboBox cell's drop-down list:
     ///   see ComboBoxCell.ThrowNoAvailableReferencesException.
-    ///   In this application at least, this is NOT
-    ///   the event that is raised when there is an error on
-    ///   attempting to insert, update or delete a database table row
-    ///   corresponding to a row in the main grid
-    ///   (even though the DataGridView.DataError documentation says that might happen):
-    ///   that event is EntityList.RowError and is handled by Entities_RowError.
     /// </remarks>
     private void MainGrid_DataError(object sender, DataGridViewDataErrorEventArgs e) {
       // Debug.WriteLine("MainGrid_DataError");
@@ -631,10 +627,6 @@ namespace SoundExplorers.View {
       Controller.OnMainGridRowEnter(e.RowIndex);
     }
 
-    private void MainGrid_RowLeave(object sender, DataGridViewCellEventArgs e) {
-      Controller.OnMainGridRowLeft(e.RowIndex);
-    }
-
     private void MainGrid_RowsRemoved(object sender, DataGridViewRowsRemovedEventArgs e) {
       //Debug.WriteLine("MainGrid_RowsRemoved");
       //Debug.WriteLine(MainGrid.Rows[e.RowIndex].Cells[0].Value);
@@ -738,7 +730,7 @@ namespace SoundExplorers.View {
       MainGrid.MouseDown -= Grid_MouseDown;
       //MainGrid.RowStateChanged
       MainGrid.RowEnter -= MainGrid_RowEnter;
-      MainGrid.RowLeave -= MainGrid_RowLeave;
+      //MainGrid.RowLeave -= MainGrid_RowLeave;
       MainGrid.RowsRemoved -= MainGrid_RowsRemoved;
       MainGrid.RowValidated -= MainGrid_RowValidated;
       Controller.FetchData();
@@ -764,7 +756,7 @@ namespace SoundExplorers.View {
       //MainGrid.LostFocus += new EventHandler(Control_LostFocus);
       MainGrid.MouseDown += Grid_MouseDown;
       MainGrid.RowEnter += MainGrid_RowEnter;
-      MainGrid.RowLeave += MainGrid_RowLeave;
+      //MainGrid.RowLeave += MainGrid_RowLeave;
       MainGrid.RowsRemoved += MainGrid_RowsRemoved;
       MainGrid.RowValidated += MainGrid_RowValidated;
       // //if (MainGrid.RowCount > 0) {

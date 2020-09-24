@@ -126,9 +126,9 @@ namespace SoundExplorers.Model {
     }
 
     /// <summary>
-    ///   If the specified table row is new or its data has changed,
-    ///   inserts (if new) or updates the corresponding the entity
-    ///   on the database with the table row data.
+    ///   If the specified grid row is new,
+    ///   adds a new entity to the list with the row data and
+    ///   saves the entity to the database.
     /// </summary>
     /// <param name="rowIndex">
     ///   Zero-based row index.
@@ -188,10 +188,47 @@ namespace SoundExplorers.Model {
       HasRowBeenEdited = false;
     }
 
+    [NotNull]
+    protected abstract TBindingItem CreateBackupBindingItem(
+      [NotNull] TBindingItem bindingItem);
+
+    [NotNull]
+    protected abstract TEntity CreateBackupEntity(
+      [NotNull] TEntity entity);
+
+    [NotNull]
+    protected abstract TBindingItem CreateBindingItem([NotNull] TEntity entity);
+
+    [NotNull]
+    protected abstract EntityColumnList CreateColumns();
+
+    protected abstract void RestoreBindingItemPropertiesFromBackup(
+      [NotNull] TBindingItem backupBindingItem,
+      [NotNull] TBindingItem bindingItemToRestore);
+
+    protected abstract void RestoreEntityPropertiesFromBackup(
+      [NotNull] TEntity backupEntity, [NotNull] TEntity entityToRestore);
+
+    protected abstract void UpdateEntity([NotNull] TBindingItem bindingItem,
+      [NotNull] TEntity entity);
+
+    protected abstract void UpdateEntityProperty([NotNull] string propertyName,
+      [CanBeNull] object newValue, [NotNull] TEntity entity);
+
+    /// <summary>
+    ///   Adds a new entity to the list with the data in the specified grid row,
+    ///   which should be the grid's insertion row,
+    ///   and saves the entity to the database.
+    /// </summary>
+    /// <param name="rowIndex">
+    ///   Zero-based row index.
+    /// </param>
+    /// <exception cref="DatabaseUpdateErrorException">
+    ///   A database update error occured.
+    /// </exception>
     private void AddNewEntity(int rowIndex) {
       var bindingItem = (TBindingItem)BindingList[rowIndex];
       var entity = CreateEntity();
-      var backupEntity =new TEntity();
       Session.BeginUpdate();
       try {
         UpdateEntity(bindingItem, entity);
@@ -206,10 +243,6 @@ namespace SoundExplorers.Model {
         IsNewRow = false;
       }
     }
-
-    protected abstract void RestoreBindingItemPropertiesFromBackup(
-      [NotNull] TBindingItem backupBindingItem,
-      [NotNull] TBindingItem bindingItemToRestore);
 
     private void BindingListOnListChanged(object sender, ListChangedEventArgs e) {
       switch (e.ListChangedType) {
@@ -249,14 +282,6 @@ namespace SoundExplorers.Model {
     }
 
     [NotNull]
-    protected abstract TBindingItem CreateBackupBindingItem(
-      [NotNull] TBindingItem bindingItem);
-
-    [NotNull]
-    protected abstract TEntity CreateBackupEntity(
-      [NotNull] TEntity entity);
-
-    [NotNull]
     private DatabaseUpdateErrorException CreateDatabaseUpdateErrorException(
       [NotNull] Exception exception, int rowIndex, string propertyName = null) {
       if (!IsDatabaseUpdateError(exception)) {
@@ -265,6 +290,23 @@ namespace SoundExplorers.Model {
       int columnIndex = propertyName != null ? Columns.IndexOf(Columns[propertyName]) : 0;
       return new DatabaseUpdateErrorException(exception.Message, rowIndex, columnIndex,
         exception);
+    }
+
+    [NotNull]
+    private BindingList<TBindingItem> CreateBindingList() {
+      var list = (
+        from entity in this
+        select CreateBindingItem(entity)
+      ).ToList();
+      return new BindingList<TBindingItem>(list);
+    }
+
+    private static TEntity CreateEntity() {
+      try {
+        return (TEntity)Activator.CreateInstance(typeof(TEntity));
+      } catch (TargetInvocationException ex) {
+        throw ex.InnerException ?? ex;
+      }
     }
 
     /// <summary>
@@ -278,38 +320,6 @@ namespace SoundExplorers.Model {
       return exception is DataException || exception is DuplicateKeyException;
     }
 
-    [NotNull]
-    private BindingList<TBindingItem> CreateBindingList() {
-      var list = (
-        from entity in this
-        select CreateBindingItem(entity)
-      ).ToList();
-      return new BindingList<TBindingItem>(list);
-    }
-
-    [NotNull]
-    protected abstract TBindingItem CreateBindingItem([NotNull] TEntity entity);
-
-    [NotNull]
-    protected abstract EntityColumnList CreateColumns();
-
-    private static TEntity CreateEntity() {
-      try {
-        return (TEntity)Activator.CreateInstance(typeof(TEntity));
-      } catch (TargetInvocationException ex) {
-        throw ex.InnerException ?? ex;
-      }
-    }
-
-    protected abstract void RestoreEntityPropertiesFromBackup(
-      [NotNull] TEntity backupEntity, [NotNull] TEntity entityToRestore);
-
-    protected abstract void UpdateEntity([NotNull] TBindingItem bindingItem,
-      [NotNull] TEntity entity);
-
-    protected abstract void UpdateEntityProperty([NotNull] string propertyName,
-      [CanBeNull] object newValue, [NotNull] TEntity entity);
-
     private void UpdateExistingEntityProperty(int rowIndex, [NotNull] string propertyName,
       [CanBeNull] object newValue) {
       var bindingItem = (TBindingItem)BindingList[rowIndex];
@@ -322,6 +332,7 @@ namespace SoundExplorers.Model {
         BindingItemToFix = bindingItem;
         RestoreEntityPropertiesFromBackup(backupEntity, entity);
         BackupBindingItemToRestoreFrom = BackupBindingItem;
+        // This exception will be passed to the grid's DataError event handler.
         throw CreateDatabaseUpdateErrorException(exception, rowIndex, propertyName);
       } finally {
         Session.Commit();
