@@ -10,6 +10,7 @@ namespace SoundExplorers.Controller {
 
     void OnDatabaseUpdateError([NotNull] DatabaseUpdateErrorException e);
     void OnRowUpdated();
+    void SelectCurrentRowOnly();
     void SetCurrentRowFieldValue([NotNull] string columnName, [NotNull] object newValue);
   }
 }

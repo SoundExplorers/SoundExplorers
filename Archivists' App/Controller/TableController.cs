@@ -91,6 +91,19 @@ namespace SoundExplorers.Controller {
 
     [NotNull] private ITableView View { get; }
 
+    public void AfterShowingDatabaseUpdateErrorMessage() {
+      if (MainList.LastDatabaseChangeAction == ChangeAction.Insert) {
+        MainList.RestoreOriginalValues();
+        View.MakeInsertionRowCurrent();
+      }
+    }
+
+    public void BeforeShowingDatabaseUpdateErrorMessage() {
+      if (MainList.LastDatabaseChangeAction == ChangeAction.Delete) {
+        View.SelectCurrentRowOnly();
+      }
+    }
+
     /// <summary>
     ///   Returns whether the specified column references another entity.
     /// </summary>
@@ -141,23 +154,6 @@ namespace SoundExplorers.Controller {
     internal string GetReferencedTableName([NotNull] string columnName) {
       return MainList?.Columns[columnName]?.ReferencedTableName ??
              throw new NullReferenceException("ReferencedTableName");
-    }
-
-    public void OnDatabaseUpdateErrorMessageShown() {
-      switch (MainList.LastDatabaseChangeAction) {
-        case ChangeAction.Delete:
-          break;
-        case ChangeAction.Insert:
-          MainList.RestoreOriginalValues();
-          View.MakeInsertionRowCurrent();
-          break;
-        case ChangeAction.Update:
-          break;
-        default:
-          throw new NotSupportedException(
-            $"{nameof(MainList.LastDatabaseChangeAction)} " 
-            + $"{MainList.LastDatabaseChangeAction} is not supported.");
-      }
     }
 
     public void OnMainGridRowEnter(int rowIndex) {

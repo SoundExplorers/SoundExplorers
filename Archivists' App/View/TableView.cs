@@ -69,6 +69,11 @@ namespace SoundExplorers.View {
       MainGrid.Focus();
     }
 
+    public void SelectCurrentRowOnly() {
+      MainGrid.ClearSelection();
+      MainCurrentRow.Selected = true;
+    }
+
     public void SetCurrentRowFieldValue(string columnName, object newValue) {
       MainCurrentRow.Cells[columnName].Value = newValue;
     }
@@ -209,13 +214,14 @@ namespace SoundExplorers.View {
         DatabaseUpdateErrorException.RowIndex].Cells[
         DatabaseUpdateErrorException.ColumnIndex];
       //UpdateCancelled = false;
+      Controller.BeforeShowingDatabaseUpdateErrorMessage();
       MessageBox.Show(
         this,
         DatabaseUpdateErrorException.Message,
         Application.ProductName,
         MessageBoxButtons.OK,
         MessageBoxIcon.Error);
-      Controller.OnDatabaseUpdateErrorMessageShown();
+      Controller.AfterShowingDatabaseUpdateErrorMessage();
     }
 
     /// <summary>
