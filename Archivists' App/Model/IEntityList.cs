@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.ComponentModel;
+using System.Data.Linq;
 using JetBrains.Annotations;
 using VelocityDb.Session;
 
@@ -27,6 +28,8 @@ namespace SoundExplorers.Model {
     /// </summary>
     bool IsParentList { get; set; }
 
+    ChangeAction LastDatabaseChangeAction { get; }
+
     /// <summary>
     ///   Gets the type of parent list (IEntityList) required when this is the main list.
     ///   Null if a parent list is not required when this is the main list.
@@ -42,8 +45,6 @@ namespace SoundExplorers.Model {
     SessionBase Session { get; set; }
 
     [NotNull] string TableName { get; }
-
-    bool WasLastDatabaseUpdateErrorOnInsertion { get; }
 
     /// <summary>
     ///   Derived classes that are identifying parents should
@@ -63,6 +64,8 @@ namespace SoundExplorers.Model {
     ///   Zero-based row index.
     /// </param>
     void OnRowEnter(int rowIndex);
+
+    void OnRowRemoved(int rowIndex);
 
     /// <summary>
     ///   If the specified table row is new or its data has changed,

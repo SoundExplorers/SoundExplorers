@@ -38,6 +38,16 @@ namespace SoundExplorers.View {
     //private bool UpdateCancelled { get; set; }
 
     /// <summary>
+    ///   Makes the insertion row of the main grid current.
+    /// </summary>
+    /// <remarks>
+    ///   This triggers MainGrid_RowEnter.
+    /// </remarks>
+    public void MakeInsertionRowCurrent() {
+      MainGrid.CurrentCell = MainGrid.Rows[MainGrid.Rows.Count - 1].Cells[0];
+    }
+
+    /// <summary>
     ///   Occurs when there is an error on
     ///   attempting to insert, update or delete an entity
     ///   corresponding to a row in the main grid.
@@ -205,10 +215,7 @@ namespace SoundExplorers.View {
         Application.ProductName,
         MessageBoxButtons.OK,
         MessageBoxIcon.Error);
-      Controller.RestoreOriginalRowValues();
-      if (Controller.WasLastDatabaseUpdateErrorOnInsertion) {
-        MakeInsertionRowCurrent();
-      }
+      Controller.OnDatabaseUpdateErrorMessageShown();
     }
 
     /// <summary>
@@ -648,16 +655,6 @@ namespace SoundExplorers.View {
       //   return;
       // }
       Controller.OnMainGridRowValidated(e.RowIndex);
-    }
-
-    /// <summary>
-    ///   Makes the insertion row of the main grid current.
-    /// </summary>
-    /// <remarks>
-    ///   This triggers MainGrid_RowEnter.
-    /// </remarks>
-    private void MakeInsertionRowCurrent() {
-      MainGrid.CurrentCell = MainGrid.Rows[MainGrid.Rows.Count - 1].Cells[0];
     }
 
     private void OpenTable() {

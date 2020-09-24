@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using System.Data.Linq;
 using System.Diagnostics;
 using JetBrains.Annotations;
 using SoundExplorers.Common;
@@ -76,13 +77,11 @@ namespace SoundExplorers.Controller {
     /// <summary>
     ///   Gets or set the list of entities represented in the main table.
     /// </summary>
-    [CanBeNull]
     private IEntityList MainList { get; set; }
 
     [NotNull] private Type MainListType { get; }
     [CanBeNull] public string MainTableName => MainList?.TableName;
     [CanBeNull] public IBindingList ParentBindingList => ParentList?.BindingList;
-    public bool WasLastDatabaseUpdateErrorOnInsertion { get; private set; }
 
     /// <summary>
     ///   Gets or sets the list of entities represented in the parent table, if any.
@@ -144,6 +143,23 @@ namespace SoundExplorers.Controller {
              throw new NullReferenceException("ReferencedTableName");
     }
 
+    public void OnDatabaseUpdateErrorMessageShown() {
+      switch (MainList.LastDatabaseChangeAction) {
+        case ChangeAction.Delete:
+          break;
+        case ChangeAction.Insert:
+          MainList.RestoreOriginalValues();
+          View.MakeInsertionRowCurrent();
+          break;
+        case ChangeAction.Update:
+          break;
+        default:
+          throw new NotSupportedException(
+            $"{nameof(MainList.LastDatabaseChangeAction)} " 
+            + $"{MainList.LastDatabaseChangeAction} is not supported.");
+      }
+    }
+
     public void OnMainGridRowEnter(int rowIndex) {
       Debug.WriteLine(
         $"{nameof(OnMainGridRowEnter)}:  Any row entered (after ItemAdded if insertion row)");
@@ -156,15 +172,9 @@ namespace SoundExplorers.Controller {
     /// </summary>
     public void OnMainGridRowRemoved(int rowIndex) {
       Debug.WriteLine(
-        $"{nameof(OnMainGridRowRemoved)}:  3 times on opening an empty table; existing row removed");
-      // The main grid's Row Removed event is raised on opening the table editor
-      // when there are no rows yet to fetch from the database.  Why?
-      // Otherwise this count check would not be required.
-      if (MainList?.Count == 0) {
-        return;
-      }
+        $"{nameof(OnMainGridRowRemoved)}:  2 or 3 times on opening a table before 1st ItemAdded (insertion row entered); existing row removed");
       try {
-        //MainList?.DeleteEntity(rowIndex);
+        MainList?.OnRowRemoved(rowIndex);
         View.OnRowUpdated();
       } catch (DatabaseUpdateErrorException exception) {
         View.OnDatabaseUpdateError(exception);
@@ -177,7 +187,7 @@ namespace SoundExplorers.Controller {
     /// </summary>
     public void OnMainGridRowValidated(int rowIndex) {
       Debug.WriteLine(
-        $"{nameof(OnMainGridRowValidated)}:  Any row left, after final ItemChanged");
+        $"{nameof(OnMainGridRowValidated)}:  Any row left, after final ItemChanged, if any");
       try {
         MainList?.OnRowValidated(rowIndex);
         View.OnRowUpdated();
@@ -215,25 +225,6 @@ namespace SoundExplorers.Controller {
     /// </exception>
     public void PlayVideo() {
       //Process.Start(GetMediumPath(Medium.Video));
-    }
-
-    public void RestoreOriginalRowValues() {
-      if (MainList == null) {
-        throw new NullReferenceException(nameof(MainList));
-      }
-      MainList.RestoreOriginalValues();
-      WasLastDatabaseUpdateErrorOnInsertion =
-        MainList.WasLastDatabaseUpdateErrorOnInsertion;
-      // if (rejectedValues == null) {
-      //   return;
-      // }
-      // for (var columnIndex = 0; columnIndex < Columns?.Count; columnIndex++) {
-      //   var rejectedValue = rejectedValues[columnIndex];
-      //   // All the rejected values will be DBNull if the user had tried to delete the row.
-      //   if (rejectedValue != DBNull.Value) {
-      //     View.SetCurrentRowFieldValue(Columns[columnIndex].DisplayName, rejectedValue);
-      //   }
-      // } //End of for
     }
 
     /// <summary>
