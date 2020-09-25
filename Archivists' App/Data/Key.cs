@@ -1,4 +1,5 @@
-﻿using JetBrains.Annotations;
+﻿using System;
+using JetBrains.Annotations;
 
 namespace SoundExplorers.Data {
   /// <summary>
@@ -63,12 +64,14 @@ namespace SoundExplorers.Data {
       }
       if (IdentifyingParent != null && keyToMatch.IdentifyingParent != null) {
         if (IdentifyingParent.Key.Equals(keyToMatch.IdentifyingParent.Key)) {
-          return SimpleKey == keyToMatch.SimpleKey;
+          return string.Compare(SimpleKey, keyToMatch.SimpleKey,
+            StringComparison.OrdinalIgnoreCase) == 0;
         }
         return false;
       }
       if (IdentifyingParent == null && keyToMatch.IdentifyingParent == null) {
-        return SimpleKey == keyToMatch.SimpleKey;
+        return string.Compare(SimpleKey, keyToMatch.SimpleKey,
+          StringComparison.OrdinalIgnoreCase) == 0;
       }
       return false;
     }
@@ -113,10 +116,12 @@ namespace SoundExplorers.Data {
         if (key1.IdentifyingParent.Key > key2.IdentifyingParent.Key) {
           return false;
         }
-        return string.CompareOrdinal(key1.SimpleKey, key2.SimpleKey) < 0;
+        return string.Compare(key1.SimpleKey, key2.SimpleKey,
+          StringComparison.OrdinalIgnoreCase) < 0;
       }
       if (key1.IdentifyingParent == null && key2.IdentifyingParent == null) {
-        return string.CompareOrdinal(key1.SimpleKey, key2.SimpleKey) < 0;
+        return string.Compare(key1.SimpleKey, key2.SimpleKey,
+          StringComparison.OrdinalIgnoreCase) < 0;
       }
       return key1.IdentifyingParent == null && key2.IdentifyingParent != null;
     }
