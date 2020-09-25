@@ -135,7 +135,9 @@ namespace SoundExplorers.Model {
         $"{nameof(OnRowRemoved)}: IsInsertionRowCurrent = {IsInsertionRowCurrent}; BindingList.Count = {BindingList.Count}");
       // For unknown reason, the grid's RowRemoved event is raised 2 or 3 times
       // while data is being loaded into the grid.
-      if (IsDataLoadComplete) {
+      // Also, the grid row might have been removed because of an insertion error,
+      // in which case the entity will not have been persisted (rowIndex == Count).
+      if (IsDataLoadComplete & rowIndex < Count) {
         DeleteEntity(rowIndex);
       }
     }
@@ -190,7 +192,12 @@ namespace SoundExplorers.Model {
       BindingList.ListChanged += BindingListOnListChanged;
     }
 
-    public void RestoreOriginalValues() {
+    public void RemoveCurrentBindingItem() {
+      BindingList?.Remove(BindingItemToFix);
+      BindingItemToFix = null;
+    }
+
+    public void RestoreCurrentBindingItemOriginalValues() {
       RestoreBindingItemPropertiesFromBackup(BackupBindingItemToRestoreFrom,
         BindingItemToFix);
       BackupBindingItemToRestoreFrom = null;

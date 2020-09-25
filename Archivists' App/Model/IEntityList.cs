@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.ComponentModel;
-using System.Data.Linq;
 using JetBrains.Annotations;
 using VelocityDb.Session;
 
@@ -56,7 +55,7 @@ namespace SoundExplorers.Model {
     /// </param>
     [CanBeNull]
     IList GetChildren(int rowIndex);
-    
+
     /// <summary>
     ///   This is called when any row has been entered.
     /// </summary>
@@ -87,6 +86,7 @@ namespace SoundExplorers.Model {
     /// </param>
     void Populate(IList list = null);
 
-    void RestoreOriginalValues();
+    void RemoveCurrentBindingItem();
+    void RestoreCurrentBindingItemOriginalValues();
   }
 }

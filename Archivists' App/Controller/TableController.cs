@@ -135,10 +135,11 @@ namespace SoundExplorers.Controller {
         case ChangeAction.Delete:
           break;
         case ChangeAction.Insert:
+          MainList.RemoveCurrentBindingItem();
           View.MakeMainGridInsertionRowCurrent();
           break;
         case ChangeAction.Update:
-          MainList.RestoreOriginalValues();
+          MainList.RestoreCurrentBindingItemOriginalValues();
           break;
         default:
           throw new NotSupportedException(
@@ -146,15 +147,6 @@ namespace SoundExplorers.Controller {
             + $"'{MainList.LastDatabaseUpdateErrorException.ChangeAction}' " 
             + "is not supported.");
       }
-      // switch (MainList.LastDatabaseUpdateErrorException.ChangeAction) {
-      //   case ChangeAction.Insert:
-      //   case ChangeAction.Update:
-      //     MainList.RestoreOriginalValues();
-      //     break;
-      // }
-      // if (MainList.LastDatabaseUpdateErrorException.ChangeAction == ChangeAction.Insert) {
-      //   View.MakeMainGridInsertionRowCurrent();
-      // }
     }
 
     [NotNull]

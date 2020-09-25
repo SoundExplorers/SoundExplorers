@@ -740,11 +740,6 @@ namespace SoundExplorers.View {
       //MainGrid.RowLeave += MainGrid_RowLeave;
       MainGrid.RowsRemoved += MainGrid_RowsRemoved;
       MainGrid.RowValidated += MainGrid_RowValidated;
-      // //if (MainGrid.RowCount > 0) {
-      //   // Not reliable because top left cell could be hidden.
-      //   //MainGrid.CurrentCell = MainGrid.Rows[0].Cells[0]; // Triggers MainGrid_RowEnter
-      //   MainGrid_RowEnter(this, new DataGridViewCellEventArgs(0, 0));
-      // //}
       // Has to be done when visible.
       // So can't be done when called from constructor.
       if (Visible) {
@@ -912,13 +907,6 @@ namespace SoundExplorers.View {
       }
     }
 
-    //private void TableView_FormClosing(object sender, FormClosingEventArgs e) {
-    //    //if (MainCurrentRow.IsNewRow) {
-    //    //    Debug.WriteLine("New row");
-    //    //}
-    //    //MainGrid.RowValidated -= new DataGridViewCellEventHandler(MainGrid_RowValidated);
-    //}
-
     /// <summary>
     ///   Handles the <see cref="Form" />'s
     ///   <see cref="Control.KeyDown" /> event to:
@@ -974,28 +962,6 @@ namespace SoundExplorers.View {
         //    break;
       } //End of switch
     }
-
-    ///// <summary>
-    ///// Handles the <see cref="Form"/>'s 
-    ///// <see cref="Control.KeyUp"/> event.
-    ///// </summary>
-    ///// <param name="sender">Event sender.</param>
-    ///// <param name="e">Event arguments.</param>
-    ///// <remarks>
-    ///// In order for this event handler to be triggered,
-    ///// the <see cref="Form"/>'s <see cref="Form.KeyPreview"/> 
-    ///// property must be set to <b>True</b>.
-    ///// </remarks>
-    //private void TableView_KeyUp(object sender, KeyEventArgs e) {
-    //    switch (e.KeyCode) {
-    //    case Keys.LWin:
-    //        LWinIsDown = false;
-    //        break;
-    //    case Keys.RWin:
-    //        RWinIsDown = false;
-    //        break;
-    //    }//End of switch
-    //}
 
     private void TableView_Load(object sender, EventArgs e) {
       // Has to be done here rather than in constructor
