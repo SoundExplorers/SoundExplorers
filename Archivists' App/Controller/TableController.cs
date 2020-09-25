@@ -3,7 +3,6 @@ using System.ComponentModel;
 using System.Data.Linq;
 using System.Diagnostics;
 using JetBrains.Annotations;
-using SoundExplorers.Common;
 using SoundExplorers.Model;
 
 namespace SoundExplorers.Controller {
@@ -91,19 +90,6 @@ namespace SoundExplorers.Controller {
 
     [NotNull] private ITableView View { get; }
 
-    public void AfterShowingDatabaseUpdateErrorMessage() {
-      if (MainList.LastDatabaseChangeAction == ChangeAction.Insert) {
-        MainList.RestoreOriginalValues();
-        View.MakeInsertionRowCurrent();
-      }
-    }
-
-    public void BeforeShowingDatabaseUpdateErrorMessage() {
-      if (MainList.LastDatabaseChangeAction == ChangeAction.Delete) {
-        View.SelectCurrentRowOnly();
-      }
-    }
-
     /// <summary>
     ///   Returns whether the specified column references another entity.
     /// </summary>
@@ -138,6 +124,25 @@ namespace SoundExplorers.Controller {
       }
     }
 
+    public void ShowDatabaseUpdateError() {
+      View.FocusMainGridCell(MainList.LastDatabaseUpdateErrorException.RowIndex,
+        MainList.LastDatabaseUpdateErrorException.ColumnIndex);
+      if (MainList.LastDatabaseUpdateErrorException.ChangeAction == ChangeAction.Delete) {
+        View.SelectCurrentRowOnly();
+      }
+      View.ShowErrorMessage(MainList.LastDatabaseUpdateErrorException.Message);
+      // ReSharper disable once SwitchStatementMissingSomeEnumCasesNoDefault
+      switch (MainList.LastDatabaseUpdateErrorException.ChangeAction) {
+        case ChangeAction.Insert:
+        case ChangeAction.Update:
+          MainList.RestoreOriginalValues();
+          break;
+      }
+      if (MainList.LastDatabaseUpdateErrorException.ChangeAction == ChangeAction.Insert) {
+        View.MakeMainGridInsertionRowCurrent();
+      }
+    }
+
     [NotNull]
     internal string GetReferencedColumnName([NotNull] string columnName) {
       return Columns[columnName]?.ReferencedColumnDisplayName ??
@@ -156,6 +161,19 @@ namespace SoundExplorers.Controller {
              throw new NullReferenceException("ReferencedTableName");
     }
 
+    public void OnMainGridDataError([CanBeNull] Exception exception) {
+      if (exception is DatabaseUpdateErrorException databaseUpdateErrorException) {
+        MainList.LastDatabaseUpdateErrorException = databaseUpdateErrorException;
+        // For unknown reason, the way I've got the error handling set up,
+        // this event gets raise twice if there's a cell edit error,
+        // the second time with a null exception.
+        // It does not seem to do any harm, so long as it is trapped.
+      } else if (exception != null) {
+        throw exception;
+      }
+      View.StartDatabaseUpdateErrorTimer();
+    }
+
     public void OnMainGridRowEnter(int rowIndex) {
       Debug.WriteLine(
         $"{nameof(OnMainGridRowEnter)}:  Any row entered (after ItemAdded if insertion row)");
@@ -172,8 +190,8 @@ namespace SoundExplorers.Controller {
       try {
         MainList?.OnRowRemoved(rowIndex);
         View.OnRowUpdated();
-      } catch (DatabaseUpdateErrorException exception) {
-        View.OnDatabaseUpdateError(exception);
+      } catch (DatabaseUpdateErrorException) {
+        View.StartDatabaseUpdateErrorTimer();
       }
     }
 
@@ -187,8 +205,8 @@ namespace SoundExplorers.Controller {
       try {
         MainList?.OnRowValidated(rowIndex);
         View.OnRowUpdated();
-      } catch (DatabaseUpdateErrorException exception) {
-        View.OnDatabaseUpdateError(exception);
+      } catch (DatabaseUpdateErrorException) {
+        View.StartDatabaseUpdateErrorTimer();
       }
     }
 

@@ -8,7 +8,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using JetBrains.Annotations;
-using SoundExplorers.Common;
 using SoundExplorers.Data;
 using VelocityDb.Session;
 
@@ -55,7 +54,8 @@ namespace SoundExplorers.Model {
     private EntityComparer<TEntity> EntityComparer { get; }
     private bool HasRowBeenEdited { get; set; }
     private bool IsDataLoadComplete { get; set; }
-    
+    private ChangeAction LastDatabaseChangeAction { get; set; }
+
     /// <summary>
     ///   Gets whether the current grid row is the insertion row,
     ///   which is for adding new entities and is located at the bottom of the grid.
@@ -79,7 +79,8 @@ namespace SoundExplorers.Model {
     ///   False (the default) if this is the (updatable) main (and maybe only) list.
     /// </summary>
     public bool IsParentList { get; set; }
-    public ChangeAction LastDatabaseChangeAction { get; private set; }
+
+    public DatabaseUpdateErrorException LastDatabaseUpdateErrorException { get; set; }
 
     /// <summary>
     ///   Gets the type of parent list (IEntityList) required when this is the main list.
@@ -130,7 +131,8 @@ namespace SoundExplorers.Model {
     }
 
     public void OnRowRemoved(int rowIndex) {
-      Debug.WriteLine($"{nameof(OnRowRemoved)}: IsInsertionRowCurrent = {IsInsertionRowCurrent}; BindingList.Count = {BindingList.Count}");
+      Debug.WriteLine(
+        $"{nameof(OnRowRemoved)}: IsInsertionRowCurrent = {IsInsertionRowCurrent}; BindingList.Count = {BindingList.Count}");
       // For unknown reason, the grid's RowRemoved event is raised 2 or 3 times
       // while data is being loaded into the grid.
       if (IsDataLoadComplete) {
@@ -286,8 +288,9 @@ namespace SoundExplorers.Model {
         throw exception; // Terminal error
       }
       int columnIndex = propertyName != null ? Columns.IndexOf(Columns[propertyName]) : 0;
-      return new DatabaseUpdateErrorException(exception.Message, rowIndex, columnIndex,
-        exception);
+      LastDatabaseUpdateErrorException = new DatabaseUpdateErrorException(
+        LastDatabaseChangeAction, exception.Message, rowIndex, columnIndex, exception);
+      return LastDatabaseUpdateErrorException;
     }
 
     [NotNull]

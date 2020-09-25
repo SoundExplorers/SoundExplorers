@@ -28,7 +28,7 @@ namespace SoundExplorers.Model {
     /// </summary>
     bool IsParentList { get; set; }
 
-    ChangeAction LastDatabaseChangeAction { get; }
+    DatabaseUpdateErrorException LastDatabaseUpdateErrorException { get; set; }
 
     /// <summary>
     ///   Gets the type of parent list (IEntityList) required when this is the main list.

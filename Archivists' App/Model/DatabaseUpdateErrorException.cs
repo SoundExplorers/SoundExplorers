@@ -1,6 +1,7 @@
 ﻿using System;
+using System.Data.Linq;
 
-namespace SoundExplorers.Common {
+namespace SoundExplorers.Model {
   /// <summary>
   ///   Raised when there is an error on
   ///   attempting to insert, update or delete an entity on the database.
@@ -12,28 +13,33 @@ namespace SoundExplorers.Common {
     /// </summary>
     /// <param name="message">Error message.</param>
     /// <param name="rowIndex">
-    ///   The index of the row whose
-    ///   insertion, update or deletion failed.
+    ///   The index of the row whose insertion, update or deletion failed.
     /// </param>
     /// <param name="columnIndex">
-    ///   The index of the column
-    ///   whose field value in the row
-    ///   caused the
-    ///   insertion, update or deletion to fail.
+    ///   The index of the column whose field value in the row
+    ///   caused the insertion, update or deletion to fail.
     ///   Zero if the failure cannot be attributed to a specific field value.
+    /// </param>
+    /// <param name="changeAction">
+    ///   The type of database change action that caused the error:
+    ///   deletion, insertion or update;
     /// </param>
     /// <param name="innerException">
     ///   An <see cref="Exception" /> that provides
     ///   error diagnostics.
     /// </param>
     public DatabaseUpdateErrorException(
+      ChangeAction changeAction,
       string message,
       int rowIndex,
       int columnIndex,
       Exception innerException) : base(message, innerException) {
+      ChangeAction = changeAction;
       RowIndex = rowIndex;
       ColumnIndex = columnIndex;
     }
+
+    public ChangeAction ChangeAction { get; }
 
     /// <summary>
     ///   Gets the index of the column

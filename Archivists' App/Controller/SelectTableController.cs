@@ -27,14 +27,14 @@ namespace SoundExplorers.Controller {
         SelectedEntityListType = EntityListTypeDictionary[initiallySelectedTableName];
         SelectedTableName = initiallySelectedTableName;
       } else {
-        SelectedEntityListType = EntityListTypeDictionary[string.Empty];
+        SelectedEntityListType = null;
         SelectedTableName = string.Empty;
       }
       view.SetController(this);
     }
 
     [NotNull] public SortedDictionary<string, Type> EntityListTypeDictionary { get; }
-    [NotNull] public Type SelectedEntityListType { get; set; }
+    [CanBeNull] public Type SelectedEntityListType { get; set; }
     [NotNull] public string SelectedTableName { get; set; }
   }
 }

@@ -51,6 +51,7 @@
         <Compile Include="BindingItemBase.cs" />
         <Compile Include="DatabaseConfig.cs" />
         <Compile Include="DatabaseConnection.cs" />
+        <Compile Include="DatabaseUpdateErrorException.cs" />
         <Compile Include="EntityColumn.cs" />
         <Compile Include="EntityColumnList.cs" />
         <Compile Include="EntityListBase.cs" />

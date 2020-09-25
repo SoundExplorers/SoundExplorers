@@ -2,7 +2,6 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 using JetBrains.Annotations;
-using SoundExplorers.Common;
 using SoundExplorers.Controller;
 
 namespace SoundExplorers.View {
@@ -32,31 +31,23 @@ namespace SoundExplorers.View {
                                                 nameof(MainGrid.CurrentRow));
 
     private bool ParentRowChanged { get; set; }
-    private DatabaseUpdateErrorException DatabaseUpdateErrorException { get; set; }
 
     private SizeableFormOptions SizeableFormOptions { get; set; }
     //private bool UpdateCancelled { get; set; }
+
+    public void FocusMainGridCell(int rowIndex, int columnIndex) {
+      // This triggers MainGrid_RowEnter.
+      MainGrid.CurrentCell = MainGrid.Rows[rowIndex].Cells[columnIndex];
+    }
 
     /// <summary>
     ///   Makes the insertion row of the main grid current.
     /// </summary>
     /// <remarks>
-    ///   This triggers MainGrid_RowEnter.
     /// </remarks>
-    public void MakeInsertionRowCurrent() {
+    public void MakeMainGridInsertionRowCurrent() {
+      // This triggers MainGrid_RowEnter.
       MainGrid.CurrentCell = MainGrid.Rows[MainGrid.Rows.Count - 1].Cells[0];
-    }
-
-    /// <summary>
-    ///   Occurs when there is an error on
-    ///   attempting to insert, update or delete an entity
-    ///   corresponding to a row in the main grid.
-    /// </summary>
-    /// <param name="e">Error details.</param>
-    public void OnDatabaseUpdateError(DatabaseUpdateErrorException e) {
-      DatabaseUpdateErrorException = e;
-      //UpdateCancelled = true;
-      DatabaseUpdateErrorTimer.Start();
     }
 
     /// <summary>
@@ -74,8 +65,17 @@ namespace SoundExplorers.View {
       MainCurrentRow.Selected = true;
     }
 
-    public void SetCurrentRowFieldValue(string columnName, object newValue) {
-      MainCurrentRow.Cells[columnName].Value = newValue;
+    public void ShowErrorMessage(string text) {
+      MessageBox.Show(
+        this,
+        text,
+        Application.ProductName,
+        MessageBoxButtons.OK,
+        MessageBoxIcon.Error);
+    }
+
+    public void StartDatabaseUpdateErrorTimer() {
+      DatabaseUpdateErrorTimer.Start();
     }
 
     public void SetController(TableController controller) {
@@ -119,7 +119,7 @@ namespace SoundExplorers.View {
     ///   The type of entity list whose data is to be displayed.
     /// </param>
     [NotNull]
-    public static TableView Create([NotNull] Type entityListType) {
+    public static TableView Create([CanBeNull] Type entityListType) {
       return (TableView)ViewFactory.Create<TableView, TableController>(entityListType);
       // TableView result;
       // try {
@@ -167,7 +167,7 @@ namespace SoundExplorers.View {
 
     private void AfterPopulateTimer_Tick(object sender, EventArgs e) {
       AfterPopulateTimer.Stop();
-      MakeInsertionRowCurrent();
+      MakeMainGridInsertionRowCurrent();
       if (Controller.IsParentTableToBeShown) {
         // A read-only related grid for the parent table is to be shown
         // above the main grid.
@@ -208,19 +208,7 @@ namespace SoundExplorers.View {
       DatabaseUpdateErrorTimer.Stop();
       //Debug.WriteLine("DatabaseUpdateErrorTimer_Tick");
       MainGrid.CancelEdit();
-      // Focus the error row and cell.
-      MainGrid.CurrentCell = MainGrid.Rows[
-        DatabaseUpdateErrorException.RowIndex].Cells[
-        DatabaseUpdateErrorException.ColumnIndex];
-      //UpdateCancelled = false;
-      Controller.BeforeShowingDatabaseUpdateErrorMessage();
-      MessageBox.Show(
-        this,
-        DatabaseUpdateErrorException.Message,
-        Application.ProductName,
-        MessageBoxButtons.OK,
-        MessageBoxIcon.Error);
-      Controller.AfterShowingDatabaseUpdateErrorMessage();
+      Controller.ShowDatabaseUpdateError();
     }
 
     /// <summary>
@@ -517,16 +505,7 @@ namespace SoundExplorers.View {
       // Debug.WriteLine("Context = " + e.Context.ToString());
       //Debug.WriteLine("RowIndex = " + e.ColumnIndex.ToString());
       //Debug.WriteLine("RowIndex = " + e.RowIndex.ToString());
-      if (e.Exception is DatabaseUpdateErrorException exception) {
-        DatabaseUpdateErrorException = exception;
-        // For unknown reason, the way I've got the error handling set up,
-        // this event gets raise twice if there's a cell edit error,
-        // the second time with a null exception.
-        // It does not seem to do any harm, so long as it is trapped.
-      } else if (e.Exception != null) {
-        throw e.Exception;
-      }
-      DatabaseUpdateErrorTimer.Start();
+      Controller.OnMainGridDataError(e.Exception);
     }
 
     /// <summary>
