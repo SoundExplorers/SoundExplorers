@@ -131,16 +131,30 @@ namespace SoundExplorers.Controller {
         View.SelectCurrentRowOnly();
       }
       View.ShowErrorMessage(MainList.LastDatabaseUpdateErrorException.Message);
-      // ReSharper disable once SwitchStatementMissingSomeEnumCasesNoDefault
       switch (MainList.LastDatabaseUpdateErrorException.ChangeAction) {
+        case ChangeAction.Delete:
+          break;
         case ChangeAction.Insert:
+          View.MakeMainGridInsertionRowCurrent();
+          break;
         case ChangeAction.Update:
           MainList.RestoreOriginalValues();
           break;
+        default:
+          throw new NotSupportedException(
+            $"{nameof(ChangeAction)} " 
+            + $"'{MainList.LastDatabaseUpdateErrorException.ChangeAction}' " 
+            + "is not supported.");
       }
-      if (MainList.LastDatabaseUpdateErrorException.ChangeAction == ChangeAction.Insert) {
-        View.MakeMainGridInsertionRowCurrent();
-      }
+      // switch (MainList.LastDatabaseUpdateErrorException.ChangeAction) {
+      //   case ChangeAction.Insert:
+      //   case ChangeAction.Update:
+      //     MainList.RestoreOriginalValues();
+      //     break;
+      // }
+      // if (MainList.LastDatabaseUpdateErrorException.ChangeAction == ChangeAction.Insert) {
+      //   View.MakeMainGridInsertionRowCurrent();
+      // }
     }
 
     [NotNull]
