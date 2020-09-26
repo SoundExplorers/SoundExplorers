@@ -194,7 +194,7 @@ namespace SoundExplorers.Controller {
       Debug.WriteLine(
         $"{nameof(OnMainGridRowRemoved)}:  2 or 3 times on opening a table before 1st ItemAdded (insertion row entered); existing row removed");
       try {
-        MainList?.OnRowRemoved(rowIndex);
+        MainList?.DeleteEntityIfFound(rowIndex);
         View.OnRowUpdated();
       } catch (DatabaseUpdateErrorException) {
         View.StartDatabaseUpdateErrorTimer();
@@ -209,7 +209,7 @@ namespace SoundExplorers.Controller {
       Debug.WriteLine(
         $"{nameof(OnMainGridRowValidated)}:  Any row left, after final ItemChanged, if any");
       try {
-        MainList?.OnRowValidated(rowIndex);
+        MainList?.InsertEntityIfNew(rowIndex);
         View.OnRowUpdated();
       } catch (DatabaseUpdateErrorException) {
         View.StartDatabaseUpdateErrorTimer();

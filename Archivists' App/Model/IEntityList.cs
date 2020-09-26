@@ -45,6 +45,18 @@ namespace SoundExplorers.Model {
 
     [NotNull] string TableName { get; }
 
+    void DeleteEntityIfFound(int rowIndex);
+    
+    /// <summary>
+    ///   If the specified table row is new or its data has changed,
+    ///   inserts (if new) or updates the corresponding the entity
+    ///   on the database with the table row data.
+    /// </summary>
+    /// <param name="rowIndex">
+    ///   Zero-based row index.
+    /// </param>
+    void InsertEntityIfNew(int rowIndex);
+
     /// <summary>
     ///   Derived classes that are identifying parents should
     ///   return a list of the child entities of the entity at the specified row index
@@ -63,18 +75,6 @@ namespace SoundExplorers.Model {
     ///   Zero-based row index.
     /// </param>
     void OnRowEnter(int rowIndex);
-
-    void OnRowRemoved(int rowIndex);
-
-    /// <summary>
-    ///   If the specified table row is new or its data has changed,
-    ///   inserts (if new) or updates the corresponding the entity
-    ///   on the database with the table row data.
-    /// </summary>
-    /// <param name="rowIndex">
-    ///   Zero-based row index.
-    /// </param>
-    void OnRowValidated(int rowIndex);
 
     /// <summary>
     ///   Populates and sorts the list and table.

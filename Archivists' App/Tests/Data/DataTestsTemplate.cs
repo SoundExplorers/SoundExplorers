@@ -8,23 +8,17 @@ namespace SoundExplorers.Tests.Data {
     public void Setup() {
       QueryHelper = new QueryHelper();
       Data = new TestData(QueryHelper);
-      DatabaseFolderPath = TestSession.CreateDatabaseFolder();
-      using (var session = new TestSession(DatabaseFolderPath)) {
-        session.BeginUpdate();
-        session.Commit();
-      }
-      Session = new TestSession(DatabaseFolderPath);
-      Session.BeginRead();
+      Session = new TestSession();
+      Session.BeginUpdate();
       Session.Commit();
     }
 
     [TearDown]
     public void TearDown() {
-      TestSession.DeleteFolderIfExists(DatabaseFolderPath);
+      Session.DeleteDatabaseFolderIfExists();
     }
 
     private TestData Data { get; set; }
-    private string DatabaseFolderPath { get; set; }
     private QueryHelper QueryHelper { get; set; }
     private TestSession Session { get; set; }
 

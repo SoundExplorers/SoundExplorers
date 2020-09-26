@@ -100,6 +100,43 @@ namespace SoundExplorers.Model {
 
     public string TableName => typeof(TEntity).Name;
 
+    public void DeleteEntityIfFound(int rowIndex) {
+      Debug.WriteLine(
+        $"{nameof(DeleteEntityIfFound)}: IsInsertionRowCurrent = {IsInsertionRowCurrent}; BindingList.Count = {BindingList.Count}");
+      // For unknown reason, the grid's RowRemoved event is raised 2 or 3 times
+      // while data is being loaded into the grid.
+      // Also, the grid row might have been removed because of an insertion error,
+      // in which case the entity will not have been persisted (rowIndex == Count).
+      if (IsDataLoadComplete & rowIndex < Count) {
+        DeleteEntity(rowIndex);
+      }
+    }
+
+    /// <summary>
+    ///   If the specified grid row is new,
+    ///   adds a new entity to the list with the row data and
+    ///   saves the entity to the database.
+    /// </summary>
+    /// <param name="rowIndex">
+    ///   Zero-based row index.
+    /// </param>
+    /// <remarks>
+    ///   Though this is called when the grid's RowValidated event is raised,
+    ///   that actually happens even if the user did no edits,
+    ///   when any row left but after the final ItemChanged ListChangedType,
+    ///   if any, of the BindingList's ListChanged event.
+    /// </remarks>
+    /// <exception cref="DatabaseUpdateErrorException">
+    ///   A database update error occured.
+    /// </exception>
+    public void InsertEntityIfNew(int rowIndex) {
+      if (!(IsInsertionRowCurrent && HasRowBeenEdited)) {
+        IsInsertionRowCurrent = false;
+        return;
+      }
+      AddNewEntity(rowIndex);
+    }
+
     /// <summary>
     ///   Derived classes that are identifying parents should
     ///   return a list of the child entities of the entity at the specified row index
@@ -128,43 +165,6 @@ namespace SoundExplorers.Model {
       BackupBindingItem = !IsInsertionRowCurrent
         ? CreateBackupBindingItem((TBindingItem)BindingList[rowIndex])
         : new TBindingItem();
-    }
-
-    public void OnRowRemoved(int rowIndex) {
-      Debug.WriteLine(
-        $"{nameof(OnRowRemoved)}: IsInsertionRowCurrent = {IsInsertionRowCurrent}; BindingList.Count = {BindingList.Count}");
-      // For unknown reason, the grid's RowRemoved event is raised 2 or 3 times
-      // while data is being loaded into the grid.
-      // Also, the grid row might have been removed because of an insertion error,
-      // in which case the entity will not have been persisted (rowIndex == Count).
-      if (IsDataLoadComplete & rowIndex < Count) {
-        DeleteEntity(rowIndex);
-      }
-    }
-
-    /// <summary>
-    ///   If the specified grid row is new,
-    ///   adds a new entity to the list with the row data and
-    ///   saves the entity to the database.
-    /// </summary>
-    /// <param name="rowIndex">
-    ///   Zero-based row index.
-    /// </param>
-    /// <remarks>
-    ///   Though this is called when the grid's RowValidated event is raised,
-    ///   that actually happens even if the user did no edits,
-    ///   when any row left but after the final ItemChanged ListChangedType,
-    ///   if any, of the BindingList's ListChanged event.
-    /// </remarks>
-    /// <exception cref="DatabaseUpdateErrorException">
-    ///   A database update error occured.
-    /// </exception>
-    public void OnRowValidated(int rowIndex) {
-      if (!(IsInsertionRowCurrent && HasRowBeenEdited)) {
-        IsInsertionRowCurrent = false;
-        return;
-      }
-      AddNewEntity(rowIndex);
     }
 
     /// <summary>
