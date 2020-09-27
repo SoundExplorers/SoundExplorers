@@ -20,6 +20,14 @@ namespace SoundExplorers.Model {
     /// </summary>
     [NotNull]
     EntityColumnList Columns { get; }
+    /// <summary>
+    ///   For unknown reason, the grid's RowRemoved event is raised 2 or 3 times
+    ///   while data is being loaded into the grid.
+    ///   So this indicates whether the data has been completely loaded
+    ///   and that it the RowRemoved event may indicate that
+    ///   an entity deletion is required.
+    /// </summary>
+    bool IsDataLoadComplete { get; }
 
     /// <summary>
     ///   True if this is a (read-only) parent list.
@@ -45,7 +53,14 @@ namespace SoundExplorers.Model {
 
     [NotNull] string TableName { get; }
 
-    void DeleteEntityIfFound(int rowIndex);
+    /// <summary>
+    ///   Deletes the entity at the specified row index
+    ///   from the database and removes it from the list.
+    /// </summary>
+    /// <param name="rowIndex">
+    ///   Zero-based row index.
+    /// </param>
+    void DeleteEntity(int rowIndex);
     
     /// <summary>
     ///   If the specified table row is new or its data has changed,

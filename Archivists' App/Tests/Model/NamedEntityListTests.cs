@@ -57,6 +57,7 @@ namespace SoundExplorers.Tests.Model {
       const string name3 = "Rehearsal";
       var list = new TEntityList {Session = Session};
       list.Populate(); // Creates an empty BindingList
+      // Create and save a new item on the insertion row.
       var item1 = (NamedBindingItem)list.BindingList.AddNew();
       Assert.IsNotNull(item1, "item1");
       item1.Name = name1;
@@ -64,6 +65,7 @@ namespace SoundExplorers.Tests.Model {
       Assert.AreEqual(1, list.Count, "Entity count after 1st add");
       var entity1 = (INamedEntity)list[0];
       Assert.AreEqual(name1, entity1.Name, "1st entity Name after 1st add");
+      // Create and save a second new item on the insertion row.
       var item2 = (NamedBindingItem)list.BindingList.AddNew();
       Assert.IsNotNull(item2, "item2");
       item2.Name = name2;
@@ -71,6 +73,7 @@ namespace SoundExplorers.Tests.Model {
       Assert.AreEqual(2, list.Count, "Entity count after 2nd add");
       var entity2 = (INamedEntity)list[1];
       Assert.AreEqual(name2, entity2.Name, "2nd entity Name after 2nd add");
+      // Refresh the grid from the saved entities on the database
       list.Populate();
       Assert.AreEqual(2, list.BindingList.Count, "BindingList.Count after Populate");
       // After being refreshed by Populate, the table should now be sorted into Name order.
@@ -78,11 +81,12 @@ namespace SoundExplorers.Tests.Model {
       item2 = (NamedBindingItem)list.BindingList[1];
       Assert.AreEqual(name2, item1.Name, "1st item Name after populate");
       Assert.AreEqual(name1, item2.Name, "2nd item Name after populate");
+      // Rename the first item
       item1.Name = name3;
       entity1 = (INamedEntity)list[0];
       Assert.AreEqual(name3, entity1.Name, "1st entity Name after update");
-      list.DeleteEntityIfFound(0);
-      list.Populate();
+      list.DeleteEntity(0);  // And delete it
+      list.Populate(); // And refresh the grid from the database again.
       Assert.AreEqual(1, list.Count, "Entity count after delete and repopulate");
       entity1 = (INamedEntity)list[0];
       Assert.AreEqual(name1, entity1.Name, "1st entity Name after delete and repopulate");
@@ -107,18 +111,10 @@ namespace SoundExplorers.Tests.Model {
       where TEntityList : IEntityList, new() {
       var list = new TEntityList {Session = Session};
       list.Populate(entities);
-      list.BindingList.AddNew(); // Grid's insertion row
-      // When the data has been fully loaded on Populate,
-      // the grid's insertion row is automatically entered.
-      // Due to an eccentricity of the data load
-      // (see comment in EntityListBase.DeleteEntityIfFound),
-      // this needs to to be known to have occured before
-      // deletions can be done.
-      list.OnRowEnter(2);
       try {
-        list.DeleteEntityIfFound(1);
+        list.DeleteEntity(1);
         Assert.Fail(
-          "DeleteEntityIfFound should have thrown DatabaseUpdateErrorException.");
+          "DeleteEntity should have thrown DatabaseUpdateErrorException.");
       } catch (DatabaseUpdateErrorException exception) {
         Assert.AreEqual(ChangeAction.Delete, exception.ChangeAction, "ChangeAction");
         Assert.IsTrue(
@@ -126,6 +122,43 @@ namespace SoundExplorers.Tests.Model {
           "Message");
         Assert.AreEqual(1, exception.RowIndex, "RowIndex");
         Assert.IsInstanceOf(typeof(ConstraintException), exception.InnerException,
+          "InnerException");
+        Assert.AreSame(exception, list.LastDatabaseUpdateErrorException,
+          "LastDatabaseUpdateErrorException");
+      }
+    }
+
+    [Test]
+    public void ErrorOnInsert() {
+      ErrorOnInsert<EventTypeList>();
+    }
+
+    private void ErrorOnInsert<TEntityList>()
+      where TEntityList : IEntityList, new() {
+      const string name = "Performance";
+      var list = new TEntityList {Session = Session};
+      list.Populate(); // Creates an empty BindingList
+      var item1 = (NamedBindingItem)list.BindingList.AddNew();
+      Assert.IsNotNull(item1, "item1");
+      item1.Name = name;
+      list.InsertEntityIfNew(0);
+      var item2 = (NamedBindingItem)list.BindingList.AddNew();
+      Assert.IsNotNull(item2, "item2");
+      item2.Name = name;
+      try {
+        list.InsertEntityIfNew(1);
+        Assert.Fail(
+          "Duplicate name should have thrown DatabaseUpdateErrorException.");
+      } catch (DatabaseUpdateErrorException exception) {
+        Assert.AreEqual(ChangeAction.Insert, exception.ChangeAction, "ChangeAction");
+        Assert.IsTrue(
+          exception.Message.Contains(
+            $"cannot be persisted because another {list.TableName} "
+            + "with the same key already persists."),
+          "Message");
+        Assert.AreEqual(1, exception.RowIndex, "RowIndex");
+        Assert.AreEqual(0, exception.ColumnIndex, "ColumnIndex");
+        Assert.IsInstanceOf(typeof(DuplicateKeyException), exception.InnerException,
           "InnerException");
         Assert.AreSame(exception, list.LastDatabaseUpdateErrorException,
           "LastDatabaseUpdateErrorException");
@@ -160,7 +193,7 @@ namespace SoundExplorers.Tests.Model {
         Assert.IsTrue(
           exception.Message.Contains(
             $"because another {list.TableName} "
-            + "with the that Name has already been persisted."),
+            + "with that Name has already been persisted."),
           "Message");
         Assert.AreEqual(1, exception.RowIndex, "RowIndex");
         Assert.AreEqual(0, exception.ColumnIndex, "ColumnIndex");

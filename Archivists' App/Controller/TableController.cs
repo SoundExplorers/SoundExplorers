@@ -193,11 +193,17 @@ namespace SoundExplorers.Controller {
     public void OnMainGridRowRemoved(int rowIndex) {
       Debug.WriteLine(
         $"{nameof(OnMainGridRowRemoved)}:  2 or 3 times on opening a table before 1st ItemAdded (insertion row entered); existing row removed");
-      try {
-        MainList?.DeleteEntityIfFound(rowIndex);
-        View.OnRowUpdated();
-      } catch (DatabaseUpdateErrorException) {
-        View.StartDatabaseUpdateErrorTimer();
+      // For unknown reason, the grid's RowRemoved event is raised 2 or 3 times
+      // while data is being loaded into the grid.
+      // Also, the grid row might have been removed because of an insertion error,
+      // in which case the entity will not have been persisted (rowIndex == Count).
+      if (MainList.IsDataLoadComplete && rowIndex < MainList.Count) {
+        try {
+          MainList.DeleteEntity(rowIndex);
+          View.OnRowUpdated();
+        } catch (DatabaseUpdateErrorException) {
+          View.StartDatabaseUpdateErrorTimer();
+        }
       }
     }
 

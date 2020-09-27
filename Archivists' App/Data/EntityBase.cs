@@ -262,7 +262,7 @@ namespace SoundExplorers.Data {
           this,
           $"{EntityType.Name}'s {SimpleKeyName} cannot be changed to " +
           $"'{newSimpleKey}' because another {EntityType.Name} " +
-          $"with the that {SimpleKeyName} has already been persisted.");
+          $"with that {SimpleKeyName} has already been persisted.");
       }
     }
 

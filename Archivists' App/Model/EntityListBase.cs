@@ -53,7 +53,6 @@ namespace SoundExplorers.Model {
     private TBindingItem BindingItemToFix { get; set; }
     private EntityComparer<TEntity> EntityComparer { get; }
     private bool HasRowBeenEdited { get; set; }
-    private bool IsDataLoadComplete { get; set; }
     private ChangeAction LastDatabaseChangeAction { get; set; }
 
     /// <summary>
@@ -73,6 +72,15 @@ namespace SoundExplorers.Model {
     ///   the list of entities.
     /// </summary>
     public EntityColumnList Columns => _columns ?? (_columns = CreateColumns());
+
+    /// <summary>
+    ///   For unknown reason, the grid's RowRemoved event is raised 2 or 3 times
+    ///   while data is being loaded into the grid.
+    ///   So this indicates whether the data has been completely loaded
+    ///   and that it the RowRemoved event may indicate that
+    ///   an entity deletion is required.
+    /// </summary>
+    public bool IsDataLoadComplete { get; private set; }
 
     /// <summary>
     ///   True if this is a (read-only) parent list.
@@ -100,15 +108,30 @@ namespace SoundExplorers.Model {
 
     public string TableName => typeof(TEntity).Name;
 
-    public void DeleteEntityIfFound(int rowIndex) {
+    /// <summary>
+    ///   Deletes the entity at the specified row index
+    ///   from the database and removes it from the list.
+    /// </summary>
+    /// <param name="rowIndex">
+    ///   Zero-based row index.
+    /// </param>
+    /// <exception cref="DatabaseUpdateErrorException">
+    ///   A database update error occured.
+    /// </exception>
+    public void DeleteEntity(int rowIndex) {
       Debug.WriteLine(
-        $"{nameof(DeleteEntityIfFound)}: IsInsertionRowCurrent = {IsInsertionRowCurrent}; BindingList.Count = {BindingList.Count}");
-      // For unknown reason, the grid's RowRemoved event is raised 2 or 3 times
-      // while data is being loaded into the grid.
-      // Also, the grid row might have been removed because of an insertion error,
-      // in which case the entity will not have been persisted (rowIndex == Count).
-      if (IsDataLoadComplete & rowIndex < Count) {
-        DeleteEntity(rowIndex);
+        $"{nameof(DeleteEntity)}: IsInsertionRowCurrent = {IsInsertionRowCurrent}; BindingList.Count = {BindingList.Count}");
+      LastDatabaseChangeAction = ChangeAction.Delete;
+      Session.BeginUpdate();
+      try {
+        //throw new ConstraintException("Test error message");
+        Session.Unpersist(this[rowIndex]);
+        RemoveAt(rowIndex);
+      } catch (Exception exception) {
+        BindingList.Insert(rowIndex, BackupBindingItem);
+        throw CreateDatabaseUpdateErrorException(exception, rowIndex);
+      } finally {
+        Session.Commit();
       }
     }
 
@@ -314,31 +337,6 @@ namespace SoundExplorers.Model {
         return (TEntity)Activator.CreateInstance(typeof(TEntity));
       } catch (TargetInvocationException ex) {
         throw ex.InnerException ?? ex;
-      }
-    }
-
-    /// <summary>
-    ///   Deletes the entity at the specified row index
-    ///   from the database and removes it from the list.
-    /// </summary>
-    /// <param name="rowIndex">
-    ///   Zero-based row index.
-    /// </param>
-    /// <exception cref="DatabaseUpdateErrorException">
-    ///   A database update error occured.
-    /// </exception>
-    private void DeleteEntity(int rowIndex) {
-      LastDatabaseChangeAction = ChangeAction.Delete;
-      Session.BeginUpdate();
-      try {
-        //throw new ConstraintException("Test error message");
-        Session.Unpersist(this[rowIndex]);
-        RemoveAt(rowIndex);
-      } catch (Exception exception) {
-        BindingList.Insert(rowIndex, BackupBindingItem);
-        throw CreateDatabaseUpdateErrorException(exception, rowIndex);
-      } finally {
-        Session.Commit();
       }
     }
 
