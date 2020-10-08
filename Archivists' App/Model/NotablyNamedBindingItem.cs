@@ -1,4 +1,7 @@
-﻿namespace SoundExplorers.Model {
+﻿using JetBrains.Annotations;
+
+namespace SoundExplorers.Model {
+  [NoReorder]
   public class NotablyNamedBindingItem : BindingItemBase {
     private string _name;
     private string _notes;

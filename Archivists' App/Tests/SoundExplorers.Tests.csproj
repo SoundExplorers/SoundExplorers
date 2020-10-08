@@ -110,6 +110,7 @@
         <Compile Include="Data\TestSession.cs" />
         <Compile Include="Data\UserOptionTests.cs" />
         <Compile Include="Model\NamedEntityListTests.cs" />
+        <Compile Include="Model\TestEditor.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
     </ItemGroup>
     <ItemGroup>

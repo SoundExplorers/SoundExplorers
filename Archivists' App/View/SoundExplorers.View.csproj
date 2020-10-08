@@ -67,6 +67,7 @@
         <Compile Include="FittedPictureBox.cs">
           <SubType>Component</SubType>
         </Compile>
+        <Compile Include="IMessageUpdater.cs" />
         <Compile Include="MainView.cs">
           <SubType>Form</SubType>
         </Compile>

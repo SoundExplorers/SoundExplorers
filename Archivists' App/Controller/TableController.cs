@@ -1,7 +1,6 @@
 using System;
 using System.ComponentModel;
 using System.Data.Linq;
-using System.Diagnostics;
 using JetBrains.Annotations;
 using SoundExplorers.Model;
 
@@ -181,8 +180,8 @@ namespace SoundExplorers.Controller {
     }
 
     public void OnMainGridRowEnter(int rowIndex) {
-      Debug.WriteLine(
-        $"{nameof(OnMainGridRowEnter)}:  Any row entered (after ItemAdded if insertion row)");
+      // Debug.WriteLine(
+      //   $"{nameof(OnMainGridRowEnter)}:  Any row entered (after ItemAdded if insertion row)");
       MainList?.OnRowEnter(rowIndex);
     }
 
@@ -191,8 +190,8 @@ namespace SoundExplorers.Controller {
     ///   from the database and removes it from the list.
     /// </summary>
     public void OnMainGridRowRemoved(int rowIndex) {
-      Debug.WriteLine(
-        $"{nameof(OnMainGridRowRemoved)}:  2 or 3 times on opening a table before 1st ItemAdded (insertion row entered); existing row removed");
+      // Debug.WriteLine(
+      //   $"{nameof(OnMainGridRowRemoved)}:  2 or 3 times on opening a table before 1st ItemAdded (insertion row entered); existing row removed");
       // For unknown reason, the grid's RowRemoved event is raised 2 or 3 times
       // while data is being loaded into the grid.
       // Also, the grid row might have been removed because of an insertion error,
@@ -212,8 +211,8 @@ namespace SoundExplorers.Controller {
     ///   inserts an entity on the database with the table row data.
     /// </summary>
     public void OnMainGridRowValidated(int rowIndex) {
-      Debug.WriteLine(
-        $"{nameof(OnMainGridRowValidated)}:  Any row left, after final ItemChanged, if any");
+      // Debug.WriteLine(
+      //   $"{nameof(OnMainGridRowValidated)}:  Any row left, after final ItemChanged, if any");
       try {
         MainList?.InsertEntityIfNew(rowIndex);
         View.OnRowUpdated();

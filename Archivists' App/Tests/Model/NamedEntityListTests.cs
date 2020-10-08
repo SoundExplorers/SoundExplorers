@@ -57,17 +57,14 @@ namespace SoundExplorers.Tests.Model {
       const string name3 = "Rehearsal";
       var list = new TEntityList {Session = Session};
       list.Populate(); // Creates an empty BindingList
-      // Create and save a new item on the insertion row.
-      var item1 = (NamedBindingItem)list.BindingList.AddNew();
-      Assert.IsNotNull(item1, "item1");
+      var editor = new TestEditor<NamedBindingItem>(list.BindingList);
+      var item1 = editor.AddNew();
       item1.Name = name1;
       list.InsertEntityIfNew(0);
       Assert.AreEqual(1, list.Count, "Entity count after 1st add");
       var entity1 = (INamedEntity)list[0];
       Assert.AreEqual(name1, entity1.Name, "1st entity Name after 1st add");
-      // Create and save a second new item on the insertion row.
-      var item2 = (NamedBindingItem)list.BindingList.AddNew();
-      Assert.IsNotNull(item2, "item2");
+      var item2 = editor.AddNew();
       item2.Name = name2;
       list.InsertEntityIfNew(1);
       Assert.AreEqual(2, list.Count, "Entity count after 2nd add");
@@ -75,25 +72,24 @@ namespace SoundExplorers.Tests.Model {
       Assert.AreEqual(name2, entity2.Name, "2nd entity Name after 2nd add");
       // Refresh the grid from the saved entities on the database
       list.Populate();
-      Assert.AreEqual(2, list.BindingList.Count, "BindingList.Count after Populate");
+      editor = new TestEditor<NamedBindingItem>(list.BindingList);
+      Assert.AreEqual(2, editor.Count, "BindingList.Count after Populate");
       // After being refreshed by Populate, the table should now be sorted into Name order.
-      item1 = (NamedBindingItem)list.BindingList[0];
-      item2 = (NamedBindingItem)list.BindingList[1];
-      Assert.AreEqual(name2, item1.Name, "1st item Name after populate");
-      Assert.AreEqual(name1, item2.Name, "2nd item Name after populate");
+      Assert.AreEqual(name2, editor[0].Name, "1st item Name after populate");
+      Assert.AreEqual(name1, editor[1].Name, "2nd item Name after populate");
       // Rename the first item
-      item1.Name = name3;
+      editor[0].Name = name3;
       entity1 = (INamedEntity)list[0];
       Assert.AreEqual(name3, entity1.Name, "1st entity Name after update");
       list.DeleteEntity(0);  // And delete it
       list.Populate(); // And refresh the grid from the database again.
+      editor = new TestEditor<NamedBindingItem>(list.BindingList);
       Assert.AreEqual(1, list.Count, "Entity count after delete and repopulate");
       entity1 = (INamedEntity)list[0];
       Assert.AreEqual(name1, entity1.Name, "1st entity Name after delete and repopulate");
-      Assert.AreEqual(1, list.BindingList.Count,
+      Assert.AreEqual(1, editor.Count,
         "BindingList.Count after delete and repopulate");
-      item1 = (NamedBindingItem)list.BindingList[0];
-      Assert.AreEqual(name1, item1.Name, "1st item Name after delete and repopulate");
+      Assert.AreEqual(name1, editor[0].Name, "1st item Name after delete and repopulate");
     }
 
     [Test]
@@ -138,12 +134,11 @@ namespace SoundExplorers.Tests.Model {
       const string name = "Performance";
       var list = new TEntityList {Session = Session};
       list.Populate(); // Creates an empty BindingList
-      var item1 = (NamedBindingItem)list.BindingList.AddNew();
-      Assert.IsNotNull(item1, "item1");
+      var editor = new TestEditor<NamedBindingItem>(list.BindingList);
+      var item1 = editor.AddNew();
       item1.Name = name;
       list.InsertEntityIfNew(0);
-      var item2 = (NamedBindingItem)list.BindingList.AddNew();
-      Assert.IsNotNull(item2, "item2");
+      var item2 = editor.AddNew();
       item2.Name = name;
       try {
         list.InsertEntityIfNew(1);
@@ -176,12 +171,11 @@ namespace SoundExplorers.Tests.Model {
       const string name2 = "Rehearsal";
       var list = new TEntityList {Session = Session};
       list.Populate(); // Creates an empty BindingList
-      var item1 = (NamedBindingItem)list.BindingList.AddNew();
-      Assert.IsNotNull(item1, "item1");
+      var editor = new TestEditor<NamedBindingItem>(list.BindingList);
+      var item1 = editor.AddNew();
       item1.Name = name1;
       list.InsertEntityIfNew(0);
-      var item2 = (NamedBindingItem)list.BindingList.AddNew();
-      Assert.IsNotNull(item2, "item2");
+      var item2 = editor.AddNew();
       item2.Name = name2;
       list.InsertEntityIfNew(1);
       try {

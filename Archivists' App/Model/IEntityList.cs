@@ -63,9 +63,9 @@ namespace SoundExplorers.Model {
     void DeleteEntity(int rowIndex);
     
     /// <summary>
-    ///   If the specified table row is new or its data has changed,
-    ///   inserts (if new) or updates the corresponding the entity
-    ///   on the database with the table row data.
+    ///   If the specified grid row is new,
+    ///   adds a new entity to the list with the row data and
+    ///   saves the entity to the database.
     /// </summary>
     /// <param name="rowIndex">
     ///   Zero-based row index.

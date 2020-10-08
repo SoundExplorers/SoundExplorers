@@ -16,6 +16,8 @@ namespace SoundExplorers.Model {
   ///   on the grid.  Resharper's code cleanup can sometimes change that order.
   ///   It has not done that so far in derived classes.  If it does, a workaround
   ///   will need to be found.
+  ///   Hopefully marking the derived classes with <see cref="NoReorderAttribute"/>
+  ///   will ensure the order does not change. 
   /// </remarks>
   public abstract class BindingItemBase : INotifyPropertyChanged {
     public event PropertyChangedEventHandler PropertyChanged;

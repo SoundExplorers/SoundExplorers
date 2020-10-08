@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Data.Linq;
-using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using JetBrains.Annotations;
@@ -119,8 +118,8 @@ namespace SoundExplorers.Model {
     ///   A database update error occured.
     /// </exception>
     public void DeleteEntity(int rowIndex) {
-      Debug.WriteLine(
-        $"{nameof(DeleteEntity)}: IsInsertionRowCurrent = {IsInsertionRowCurrent}; BindingList.Count = {BindingList.Count}");
+      // Debug.WriteLine(
+      //   $"{nameof(DeleteEntity)}: IsInsertionRowCurrent = {IsInsertionRowCurrent}; BindingList.Count = {BindingList.Count}");
       LastDatabaseChangeAction = ChangeAction.Delete;
       Session.BeginUpdate();
       try {
@@ -288,13 +287,13 @@ namespace SoundExplorers.Model {
     private void BindingListOnListChanged(object sender, ListChangedEventArgs e) {
       switch (e.ListChangedType) {
         case ListChangedType.ItemAdded: // Insertion row entered
-          Debug.WriteLine("ListChangedType.ItemAdded: Insertion row entered");
+          // Debug.WriteLine("ListChangedType.ItemAdded: Insertion row entered");
           IsDataLoadComplete = true;
           IsInsertionRowCurrent = true;
           break;
         case ListChangedType.ItemChanged: // Cell edit completed 
-          Debug.WriteLine(
-            $"ListChangedType.ItemChanged:  {e.PropertyDescriptor.Name} = '{e.PropertyDescriptor.GetValue(BindingList[e.NewIndex])}', cell edit completed or cancelled");
+          // Debug.WriteLine(
+          //   $"ListChangedType.ItemChanged:  {e.PropertyDescriptor.Name} = '{e.PropertyDescriptor.GetValue(BindingList[e.NewIndex])}', cell edit completed or cancelled");
           HasRowBeenEdited = true;
           if (!IsInsertionRowCurrent) {
             UpdateExistingEntityProperty(e.NewIndex, e.PropertyDescriptor.Name,
@@ -302,11 +301,11 @@ namespace SoundExplorers.Model {
           }
           break;
         case ListChangedType.ItemDeleted: // Insertion row left without saving data
-          Debug.WriteLine(
-            "ListChangedType.ItemDeleted:  Insertion row left without saving data");
+          // Debug.WriteLine(
+          //   "ListChangedType.ItemDeleted:  Insertion row left without saving data");
           break;
         default:
-          Debug.WriteLine("ListChangedType default");
+          // Debug.WriteLine("ListChangedType default");
           throw new NotSupportedException(e.ListChangedType.ToString());
       }
     }
