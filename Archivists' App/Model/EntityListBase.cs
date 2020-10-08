@@ -67,7 +67,7 @@ namespace SoundExplorers.Model {
     public IBindingList BindingList { get; private set; }
 
     /// <summary>
-    ///   Gets metadata for the columns of the Table that represents
+    ///   Gets metadata for the columns of the editor grid that represents
     ///   the list of entities.
     /// </summary>
     public EntityColumnList Columns => _columns ?? (_columns = CreateColumns());

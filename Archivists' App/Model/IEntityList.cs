@@ -15,11 +15,12 @@ namespace SoundExplorers.Model {
     IBindingList BindingList { get; }
 
     /// <summary>
-    ///   Gets metadata for the columns of the Table that represents
+    ///   Gets metadata for the columns of the editor grid that represents
     ///   the list of entities.
     /// </summary>
     [NotNull]
     EntityColumnList Columns { get; }
+
     /// <summary>
     ///   For unknown reason, the grid's RowRemoved event is raised 2 or 3 times
     ///   while data is being loaded into the grid.
@@ -61,7 +62,7 @@ namespace SoundExplorers.Model {
     ///   Zero-based row index.
     /// </param>
     void DeleteEntity(int rowIndex);
-    
+
     /// <summary>
     ///   If the specified grid row is new,
     ///   adds a new entity to the list with the row data and
