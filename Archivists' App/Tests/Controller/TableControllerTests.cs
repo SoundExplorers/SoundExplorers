@@ -105,10 +105,15 @@ namespace SoundExplorers.Tests.Controller {
     public void ErrorOnDelete() {
       var editor = new TestEditor<NotablyNamedBindingItem>();
       Session.BeginUpdate();
-      Data.AddEventTypesPersisted(1, Session);
-      Data.AddLocationsPersisted(2, Session);
-      Data.AddEventsPersisted(3, Session, location: Data.Locations[1], eventType: Data.EventTypes[0]);
-      Session.Commit();
+      try {
+        Data.AddEventTypesPersisted(1, Session);
+        Data.AddLocationsPersisted(2, Session);
+        Data.AddEventsPersisted(3, Session, location: Data.Locations[1]);
+        Session.Commit();
+      } catch {
+        Session.Abort();
+        throw;
+      }
       // The second Location cannot be deleted because it is a parent of 3 child Events.
       Controller = new TestTableController(View, typeof(LocationList), Session);
       Controller.CreateEntityListData(typeof(LocationList), (IList)Data.Locations);

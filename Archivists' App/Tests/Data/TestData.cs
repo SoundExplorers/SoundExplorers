@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Security.Cryptography;
 using System.Text;
 using JetBrains.Annotations;
@@ -143,7 +142,7 @@ namespace SoundExplorers.Tests.Data {
     [NotNull]
     private EventType GetDefaultEventType([NotNull] SessionBase session) {
       if (EventTypes.Count == 0) {
-        AddEventTypesPersisted(1, session);
+        throw new InvalidOperationException("An EventType must be added first.");
       }
       return EventTypes[0];
     }
@@ -151,7 +150,7 @@ namespace SoundExplorers.Tests.Data {
     [NotNull]
     private Location GetDefaultLocation([NotNull] SessionBase session) {
       if (Locations.Count == 0) {
-        AddLocationsPersisted(1, session);
+        throw new InvalidOperationException("A Location must be added first.");
       }
       return Locations[0];
     }
