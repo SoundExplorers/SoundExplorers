@@ -39,7 +39,6 @@ namespace SoundExplorers.Tests.Model {
       Assert.IsNull(list.ParentListType, "ParentListType");
       Assert.AreEqual(1, list.Columns.Count, "Columns.Count");
       Assert.AreEqual("Name", list.Columns[0].DisplayName, "Columns[0].DisplayName");
-      Assert.AreEqual(typeof(string), list.Columns[0].DataType, "Columns[0].DataType");
       list.Session = Session;
       list.Populate();
       Assert.IsEmpty(list.BindingList, "BindingList initially");
@@ -83,7 +82,7 @@ namespace SoundExplorers.Tests.Model {
       editor[0].Name = name3;
       entity1 = (INamedEntity)list[0];
       Assert.AreEqual(name3, entity1.Name, "1st entity Name after update");
-      list.DeleteEntity(0);  // And delete it
+      list.DeleteEntity(0); // And delete it
       list.Populate(); // And refresh the grid from the database again.
       editor.SetBindingList(list.BindingList);
       Assert.AreEqual(1, list.Count, "Entity count after delete and repopulate");
@@ -97,6 +96,7 @@ namespace SoundExplorers.Tests.Model {
     public void ErrorOnDelete() {
       Session.BeginUpdate();
       Data.AddEventTypesPersisted(2, Session);
+      Data.AddLocationsPersisted(1, Session);
       Data.AddEventsPersisted(3, Session, eventType: Data.EventTypes[1]);
       Session.Commit();
       // The second EventType cannot be deleted

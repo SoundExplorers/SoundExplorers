@@ -6,10 +6,9 @@ namespace SoundExplorers.Model {
   ///   Entity column metadata.
   /// </summary>
   public class EntityColumn {
-    public EntityColumn([NotNull] string displayName, [NotNull] Type dataType,
+    public EntityColumn([NotNull] string displayName,
       Type referencedEntityListType = null, string referencedColumnDisplayName = null) {
       DisplayName = displayName ?? throw new ArgumentNullException(nameof(displayName));
-      DataType = dataType ?? throw new ArgumentNullException(nameof(dataType));
       if (referencedEntityListType != null && referencedColumnDisplayName == null ||
           referencedEntityListType == null && referencedColumnDisplayName != null) {
         throw new InvalidOperationException(
@@ -19,12 +18,6 @@ namespace SoundExplorers.Model {
       ReferencedEntityListType = referencedEntityListType;
       ReferencedColumnDisplayName = referencedColumnDisplayName;
     }
-
-    /// <summary>
-    ///   Gets the type of data stored in the column.
-    /// </summary>
-    [NotNull]
-    public Type DataType { get; }
 
     /// <summary>
     ///   Gets the display name to be used for reporting.

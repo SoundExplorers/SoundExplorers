@@ -29,8 +29,8 @@ namespace SoundExplorers.Model {
 
     protected override EntityColumnList CreateColumns() {
       return new EntityColumnList {
-        new EntityColumn(nameof(Newsletter.Date), typeof(DateTime)),
-        new EntityColumn(nameof(Newsletter.Url), typeof(Uri))
+        new EntityColumn(nameof(Newsletter.Date)),
+        new EntityColumn(nameof(Newsletter.Url))
       };
     }
 

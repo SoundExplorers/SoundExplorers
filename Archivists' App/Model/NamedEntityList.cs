@@ -25,7 +25,7 @@ namespace SoundExplorers.Model {
 
     protected override EntityColumnList CreateColumns() {
       return new EntityColumnList {
-        new EntityColumn(nameof(INamedEntity.Name), typeof(string))
+        new EntityColumn(nameof(INamedEntity.Name))
       };
     }
 
