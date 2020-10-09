@@ -23,7 +23,6 @@ namespace SoundExplorers.Tests.Controller {
     }
 
     private TestTableController Controller { get; set; }
-
     private TestData Data { get; set; }
     private QueryHelper QueryHelper { get; set; }
     private TestSession Session { get; set; }
@@ -99,6 +98,13 @@ namespace SoundExplorers.Tests.Controller {
         "editor.Count after error message shown for duplicate insert");
       Assert.AreEqual(1, View.MakeMainGridInsertionRowCurrentCount,
         "MakeMainGridInsertionRowCurrentCount after error message shown for duplicate insert");
+      // Delete the second item
+      Controller.OnMainGridRowEnter(1);
+      Controller.OnMainGridRowRemoved(1);
+      Assert.AreEqual(3, View.OnRowInsertedOrDeletedCount, "OnRowInsertedOrDeletedCount after delete");
+      Controller.FetchData(); // Refresh grid
+      editor.SetBindingList(Controller.MainBindingList);
+      Assert.AreEqual(1, editor.Count, "editor.Count after FetchData #3");
     }
 
     [Test]
@@ -108,7 +114,7 @@ namespace SoundExplorers.Tests.Controller {
       try {
         Data.AddEventTypesPersisted(1, Session);
         Data.AddLocationsPersisted(2, Session);
-        Data.AddEventsPersisted(3, Session, location: Data.Locations[1]);
+        Data.AddEventsPersisted(3, Session, Data.Locations[1]);
         Session.Commit();
       } catch {
         Session.Abort();
@@ -126,6 +132,10 @@ namespace SoundExplorers.Tests.Controller {
         "ShowErrorMessageCount after error message shown for disallowed delete");
       Assert.AreEqual(1, View.SelectCurrentRowOnlyCount,
         "SelectCurrentRowOnlyCount after error message shown for disallowed delete");
+      Controller.OnMainGridRowEnter(1);
+      Controller.TestUnsupportedLastChangeAction = true;
+      Assert.Throws<NotSupportedException>(() => Controller.OnMainGridRowRemoved(1),
+        "Unsupported last change action");
     }
   }
 }

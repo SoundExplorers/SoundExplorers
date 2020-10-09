@@ -50,6 +50,9 @@ namespace SoundExplorers.Controller {
       _gridSplitterDistanceOption ?? (_gridSplitterDistanceOption =
         new Option($"{MainList?.TableName}.GridSplitterDistance"));
 
+    protected virtual ChangeAction LastChangeAction =>
+      MainList.LastDatabaseUpdateErrorException.ChangeAction;
+
     /// <summary>
     ///   User option for the position of the split between the
     ///   image data (above) and the image (below) in the image table editor.
@@ -126,11 +129,11 @@ namespace SoundExplorers.Controller {
     public void ShowDatabaseUpdateError() {
       View.FocusMainGridCell(MainList.LastDatabaseUpdateErrorException.RowIndex,
         MainList.LastDatabaseUpdateErrorException.ColumnIndex);
-      if (MainList.LastDatabaseUpdateErrorException.ChangeAction == ChangeAction.Delete) {
+      if (LastChangeAction == ChangeAction.Delete) {
         View.SelectCurrentRowOnly();
       }
       View.ShowErrorMessage(MainList.LastDatabaseUpdateErrorException.Message);
-      switch (MainList.LastDatabaseUpdateErrorException.ChangeAction) {
+      switch (LastChangeAction) {
         case ChangeAction.Delete:
           break;
         case ChangeAction.Insert:
@@ -142,9 +145,7 @@ namespace SoundExplorers.Controller {
           break;
         default:
           throw new NotSupportedException(
-            $"{nameof(ChangeAction)} "
-            + $"'{MainList.LastDatabaseUpdateErrorException.ChangeAction}' "
-            + "is not supported.");
+            $"{nameof(ChangeAction)} '{LastChangeAction}' is not supported.");
       }
     }
 

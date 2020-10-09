@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Data.Linq;
 using JetBrains.Annotations;
 using SoundExplorers.Controller;
 using SoundExplorers.Model;
@@ -14,6 +15,12 @@ namespace SoundExplorers.Tests.Controller {
     }
 
     private SessionBase Session { get; }
+
+    protected override ChangeAction LastChangeAction => TestUnsupportedLastChangeAction
+      ? ChangeAction.None
+      : base.LastChangeAction;
+
+    public bool TestUnsupportedLastChangeAction { get; set; }
 
     public void CreateEntityListData([NotNull] Type entityListType,
       [NotNull] IList list) {
