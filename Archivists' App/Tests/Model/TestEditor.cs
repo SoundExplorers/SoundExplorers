@@ -5,11 +5,11 @@ using SoundExplorers.Model;
 
 namespace SoundExplorers.Tests.Model {
   public class TestEditor<TBindingItem> where TBindingItem : BindingItemBase {
-    public TestEditor(IBindingList bindingList) {
-      BindingList = (BindingList<TBindingItem>)bindingList;
+    public TestEditor(IBindingList bindingList = null) {
+      SetBindingList(bindingList);
     }
 
-    private BindingList<TBindingItem> BindingList { get; }
+    private BindingList<TBindingItem> BindingList { get; set; }
     [NotNull] public TBindingItem this[int index] => BindingList[index];
     public int Count => BindingList.Count;
 
@@ -19,6 +19,10 @@ namespace SoundExplorers.Tests.Model {
     [NotNull]
     public TBindingItem AddNew() {
       return BindingList.AddNew() ?? throw new NullReferenceException();
+    }
+
+    public void SetBindingList(IBindingList bindingList) {
+      BindingList = (BindingList<TBindingItem>)bindingList;
     }
   }
 }

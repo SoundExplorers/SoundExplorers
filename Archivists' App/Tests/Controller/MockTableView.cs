@@ -4,8 +4,8 @@ namespace SoundExplorers.Tests.Controller {
   public class MockTableView : ITableView {
     public TableController Controller { get; private set; }
     public int FocusMainGridCellCount { get; private set; }
-    public int FocusMainGridCellLastColumnIndex { get; private set; }
-    public int FocusMainGridCellLastRowIndex { get; private set; }
+    public int FocusMainGridCellColumnIndex { get; private set; }
+    public int FocusMainGridCellRowIndex { get; private set; }
     public int MakeMainGridInsertionRowCurrentCount { get; private set; }
     public int OnRowUpdatedCount { get; private set; }
     public int SelectCurrentRowOnlyCount { get; private set; }
@@ -18,8 +18,8 @@ namespace SoundExplorers.Tests.Controller {
 
     public void FocusMainGridCell(int rowIndex, int columnIndex) {
       FocusMainGridCellCount++;
-      FocusMainGridCellLastColumnIndex = columnIndex;
-      FocusMainGridCellLastRowIndex = rowIndex;
+      FocusMainGridCellColumnIndex = columnIndex;
+      FocusMainGridCellRowIndex = rowIndex;
     }
 
     public void MakeMainGridInsertionRowCurrent() {

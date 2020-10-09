@@ -85,6 +85,7 @@
     <ItemGroup>
         <Compile Include="Controller\MockTableView.cs" />
         <Compile Include="Controller\TableControllerTests.cs" />
+        <Compile Include="Controller\TestTableController.cs" />
         <Compile Include="Data\ActTests.cs" />
         <Compile Include="Data\ArtistTests.cs" />
         <Compile Include="Data\CreditTests.cs" />

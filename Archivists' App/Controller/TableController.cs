@@ -75,7 +75,7 @@ namespace SoundExplorers.Controller {
     /// <summary>
     ///   Gets or set the list of entities represented in the main table.
     /// </summary>
-    private IEntityList MainList { get; set; }
+    protected IEntityList MainList { get; private set; }
 
     [NotNull] private Type MainListType { get; }
     [CanBeNull] public string MainTableName => MainList?.TableName;
@@ -110,9 +110,9 @@ namespace SoundExplorers.Controller {
     }
 
     public void FetchData() {
-      MainList = Global.CreateEntityList(MainListType);
+      MainList = CreateEntityList(MainListType);
       if (MainList.ParentListType != null) {
-        ParentList = Global.CreateEntityList(MainList.ParentListType);
+        ParentList = CreateEntityList(MainList.ParentListType);
         ParentList.IsParentList = true;
         ParentList.Populate();
         if (ParentList.BindingList?.Count > 0) {
@@ -142,10 +142,15 @@ namespace SoundExplorers.Controller {
           break;
         default:
           throw new NotSupportedException(
-            $"{nameof(ChangeAction)} " 
-            + $"'{MainList.LastDatabaseUpdateErrorException.ChangeAction}' " 
+            $"{nameof(ChangeAction)} "
+            + $"'{MainList.LastDatabaseUpdateErrorException.ChangeAction}' "
             + "is not supported.");
       }
+    }
+
+    [NotNull]
+    protected virtual IEntityList CreateEntityList([NotNull] Type type) {
+      return Global.CreateEntityList(type);
     }
 
     [NotNull]
@@ -173,7 +178,9 @@ namespace SoundExplorers.Controller {
         // this event gets raise twice if there's a cell edit error,
         // the second time with a null exception.
         // It does not seem to do any harm, so long as it is trapped.
-      } else if (exception != null) {
+      } else if (exception == null) {
+        return;
+      } else {
         throw exception;
       }
       View.StartDatabaseUpdateErrorTimer();
