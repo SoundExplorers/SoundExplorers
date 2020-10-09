@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections;
 using NUnit.Framework;
+using SoundExplorers.Data;
 using SoundExplorers.Model;
 using SoundExplorers.Tests.Data;
 using SoundExplorers.Tests.Model;
@@ -9,8 +11,8 @@ namespace SoundExplorers.Tests.Controller {
   public class TableControllerTests {
     [SetUp]
     public void Setup() {
-      // QueryHelper = new QueryHelper();
-      // Data = new TestData(QueryHelper);
+      QueryHelper = new QueryHelper();
+      Data = new TestData(QueryHelper);
       Session = new TestSession();
       View = new MockTableView();
     }
@@ -22,13 +24,13 @@ namespace SoundExplorers.Tests.Controller {
 
     private TestTableController Controller { get; set; }
 
-    // private TestData Data { get; set; }
-    // private QueryHelper QueryHelper { get; set; }
+    private TestData Data { get; set; }
+    private QueryHelper QueryHelper { get; set; }
     private TestSession Session { get; set; }
     private MockTableView View { get; set; }
 
     [Test]
-    public void TheTest() {
+    public void Edit() {
       const string name1 = "Auntie";
       const string name2 = "Uncle";
       var editor = new TestEditor<NotablyNamedBindingItem>();
@@ -45,7 +47,7 @@ namespace SoundExplorers.Tests.Controller {
       editor[1].Name = name2;
       editor[1].Notes = "Bob";
       Controller.OnMainGridRowValidated(1);
-      Assert.AreEqual(2, View.OnRowUpdatedCount, "OnRowUpdatedCount");
+      Assert.AreEqual(2, View.OnRowInsertedOrDeletedCount, "OnRowInsertedOrDeletedCount");
       Controller.FetchData(); // Refresh grid
       editor.SetBindingList(Controller.MainBindingList);
       Assert.AreEqual(2, editor.Count, "editor.Count after FetchData #2");
@@ -56,13 +58,10 @@ namespace SoundExplorers.Tests.Controller {
         Assert.Fail(
           "Rename should have thrown DatabaseUpdateErrorException.");
       } catch (DatabaseUpdateErrorException exception) {
+        Assert.AreEqual(name1, editor[1].Name,
+          "Still duplicate name before error message shown for duplicate rename");
         Controller.OnMainGridDataError(exception);
       }
-      Assert.AreEqual(1, View.StartDatabaseUpdateErrorTimerCount,
-        "StartDatabaseUpdateErrorTimerCount after rename to duplicate");
-      Assert.AreEqual(name1, editor[1].Name,
-        "Still duplicate name before error message shown for duplicate rename");
-      Controller.ShowDatabaseUpdateError();
       Assert.AreEqual(1, View.FocusMainGridCellCount,
         "FocusMainGridCellCount after error message shown for duplicate rename");
       Assert.AreEqual(0, View.FocusMainGridCellColumnIndex,
@@ -82,26 +81,46 @@ namespace SoundExplorers.Tests.Controller {
       Assert.AreEqual(1, View.ShowErrorMessageCount,
         "ShowErrorMessageCount after null error");
       // Check that an exception of an unsupported type rethrown
-      Assert.Throws<InvalidOperationException>(() =>
-        Controller.OnMainGridDataError(new InvalidOperationException()));
+      Assert.Throws<InvalidOperationException>(
+        () => Controller.OnMainGridDataError(new InvalidOperationException()),
+        "Unsupported exception type");
       // Disallow insert with duplicate name
       editor.AddNew();
       Controller.OnMainGridRowEnter(2); // Go to insertion row
       editor[2].Name = name1;
-      Controller.OnMainGridRowValidated(2);
-      Assert.AreEqual(2, View.OnRowUpdatedCount,
-        "OnRowUpdatedCount unchanged after duplicate insert");
-      Assert.AreEqual(2, View.StartDatabaseUpdateErrorTimerCount,
-        "StartDatabaseUpdateErrorTimerCount after duplicate insert");
+      Assert.AreEqual(2, View.OnRowInsertedOrDeletedCount,
+        "OnRowInsertedOrDeletedCount unchanged after duplicate insert");
       Assert.AreEqual(3, editor.Count,
         "editor.Count before error message shown for duplicate insert");
-      Controller.ShowDatabaseUpdateError();
+      Controller.OnMainGridRowValidated(2);
       Assert.AreEqual(2, View.ShowErrorMessageCount,
         "ShowErrorMessageCount after error message shown for duplicate insert");
       Assert.AreEqual(2, editor.Count,
         "editor.Count after error message shown for duplicate insert");
       Assert.AreEqual(1, View.MakeMainGridInsertionRowCurrentCount,
         "MakeMainGridInsertionRowCurrentCount after error message shown for duplicate insert");
+    }
+
+    [Test]
+    public void ErrorOnDelete() {
+      var editor = new TestEditor<NotablyNamedBindingItem>();
+      Session.BeginUpdate();
+      Data.AddEventTypesPersisted(1, Session);
+      Data.AddLocationsPersisted(2, Session);
+      Data.AddEventsPersisted(3, Session, location: Data.Locations[1], eventType: Data.EventTypes[0]);
+      Session.Commit();
+      // The second Location cannot be deleted because it is a parent of 3 child Events.
+      Controller = new TestTableController(View, typeof(LocationList), Session);
+      Controller.CreateEntityListData(typeof(LocationList), (IList)Data.Locations);
+      Controller.FetchData(); // Populate grid
+      editor.SetBindingList(Controller.MainBindingList);
+      editor.AddNew(); // Show data load is complete.  Otherwise delete won't work.
+      Controller.OnMainGridRowEnter(1);
+      Controller.OnMainGridRowRemoved(1);
+      Assert.AreEqual(1, View.ShowErrorMessageCount,
+        "ShowErrorMessageCount after error message shown for disallowed delete");
+      Assert.AreEqual(1, View.SelectCurrentRowOnlyCount,
+        "SelectCurrentRowOnlyCount after error message shown for disallowed delete");
     }
   }
 }

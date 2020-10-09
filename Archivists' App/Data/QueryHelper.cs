@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -83,6 +84,14 @@ namespace SoundExplorers.Data {
         AllObjectsGenericMethod.MakeGenericMethod(entityType);
       var entities = (IEnumerable)allObjectsConstructedMethod.Invoke(session,
         new object[] {true, true});
+      // IEnumerable entities;
+      // try {
+      //   entities = (IEnumerable)allObjectsConstructedMethod.Invoke(session,
+      //     new object[] {true, true});
+      // } catch (Exception exception) {
+      //   Debug.WriteLine(exception);
+      //   throw;
+      // }
       return (from EntityBase e in entities
         where string.Compare(e.SimpleKey, simpleKey,
           StringComparison.OrdinalIgnoreCase) == 0 && !e.Oid.Equals(oid)

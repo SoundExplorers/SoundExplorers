@@ -46,11 +46,11 @@ namespace SoundExplorers.Tests.Model {
     }
 
     [Test]
-    public void EditTable() {
-      EditTable<EventTypeList>();
+    public void Edit() {
+      Edit<EventTypeList>();
     }
 
-    private void EditTable<TEntityList>()
+    private void Edit<TEntityList>()
       where TEntityList : IEntityList, new() {
       const string name1 = "Performance";
       const string name2 = "Interview";
@@ -73,10 +73,12 @@ namespace SoundExplorers.Tests.Model {
       // Refresh the grid from the saved entities on the database
       list.Populate();
       editor.SetBindingList(list.BindingList);
-      Assert.AreEqual(2, editor.Count, "BindingList.Count after Populate");
+      Assert.AreEqual(2, editor.Count, "editor.Count after Populate");
       // After being refreshed by Populate, the table should now be sorted into Name order.
       Assert.AreEqual(name2, editor[0].Name, "1st item Name after populate");
       Assert.AreEqual(name1, editor[1].Name, "2nd item Name after populate");
+      list.InsertEntityIfNew(0); // Should have no effect
+      Assert.AreEqual(2, editor.Count, "editor.Count going to existing row");
       // Rename the first item
       editor[0].Name = name3;
       entity1 = (INamedEntity)list[0];
@@ -87,8 +89,7 @@ namespace SoundExplorers.Tests.Model {
       Assert.AreEqual(1, list.Count, "Entity count after delete and repopulate");
       entity1 = (INamedEntity)list[0];
       Assert.AreEqual(name1, entity1.Name, "1st entity Name after delete and repopulate");
-      Assert.AreEqual(1, editor.Count,
-        "BindingList.Count after delete and repopulate");
+      Assert.AreEqual(1, editor.Count, "editor.Count after delete and repopulate");
       Assert.AreEqual(name1, editor[0].Name, "1st item Name after delete and repopulate");
     }
 

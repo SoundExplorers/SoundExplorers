@@ -2,14 +2,13 @@
 
 namespace SoundExplorers.Tests.Controller {
   public class MockTableView : ITableView {
-    public TableController Controller { get; private set; }
+    private TableController Controller { get; set; }
     public int FocusMainGridCellCount { get; private set; }
     public int FocusMainGridCellColumnIndex { get; private set; }
     public int FocusMainGridCellRowIndex { get; private set; }
     public int MakeMainGridInsertionRowCurrentCount { get; private set; }
-    public int OnRowUpdatedCount { get; private set; }
+    public int OnRowInsertedOrDeletedCount { get; private set; }
     public int SelectCurrentRowOnlyCount { get; private set; }
-    public int StartDatabaseUpdateErrorTimerCount { get; private set; }
     public int ShowErrorMessageCount { get; private set; }
 
     public void SetController(TableController controller) {
@@ -26,20 +25,20 @@ namespace SoundExplorers.Tests.Controller {
       MakeMainGridInsertionRowCurrentCount++;
     }
 
-    public void OnRowUpdated() {
-      OnRowUpdatedCount++;
+    public void OnRowInsertedOrDeleted() {
+      OnRowInsertedOrDeletedCount++;
     }
 
     public void SelectCurrentRowOnly() {
       SelectCurrentRowOnlyCount++;
     }
 
-    public void StartDatabaseUpdateErrorTimer() {
-      StartDatabaseUpdateErrorTimerCount++;
-    }
-
     public void ShowErrorMessage(string text) {
       ShowErrorMessageCount++;
+    }
+
+    public void StartDatabaseUpdateErrorTimer() {
+      Controller.ShowDatabaseUpdateError();
     }
   }
 }

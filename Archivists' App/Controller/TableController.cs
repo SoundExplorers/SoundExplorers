@@ -75,7 +75,7 @@ namespace SoundExplorers.Controller {
     /// <summary>
     ///   Gets or set the list of entities represented in the main table.
     /// </summary>
-    protected IEntityList MainList { get; private set; }
+    private IEntityList MainList { get; set; }
 
     [NotNull] private Type MainListType { get; }
     [CanBeNull] public string MainTableName => MainList?.TableName;
@@ -206,7 +206,7 @@ namespace SoundExplorers.Controller {
       if (MainList.IsDataLoadComplete && rowIndex < MainList.Count) {
         try {
           MainList.DeleteEntity(rowIndex);
-          View.OnRowUpdated();
+          View.OnRowInsertedOrDeleted();
         } catch (DatabaseUpdateErrorException) {
           View.StartDatabaseUpdateErrorTimer();
         }
@@ -222,7 +222,7 @@ namespace SoundExplorers.Controller {
       //   $"{nameof(OnMainGridRowValidated)}:  Any row left, after final ItemChanged, if any");
       try {
         MainList?.InsertEntityIfNew(rowIndex);
-        View.OnRowUpdated();
+        View.OnRowInsertedOrDeleted();
       } catch (DatabaseUpdateErrorException) {
         View.StartDatabaseUpdateErrorTimer();
       }

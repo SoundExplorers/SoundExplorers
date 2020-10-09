@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using JetBrains.Annotations;
 using SoundExplorers.Controller;
 using SoundExplorers.Model;
@@ -13,6 +14,12 @@ namespace SoundExplorers.Tests.Controller {
     }
 
     private SessionBase Session { get; }
+
+    public void CreateEntityListData([NotNull] Type entityListType,
+      [NotNull] IList list) {
+      var entityList = CreateEntityList(entityListType);
+      entityList.Populate(list);
+    }
 
     protected override IEntityList CreateEntityList(Type type) {
       var result = base.CreateEntityList(type);

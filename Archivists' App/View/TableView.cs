@@ -51,11 +51,10 @@ namespace SoundExplorers.View {
     }
 
     /// <summary>
-    ///   Occurs when an entity
-    ///   corresponding to a row in the main grid
-    ///   has been successfully inserted, updated or deleted on the database.
+    ///   Occurs when an entity corresponding to a row in the main grid
+    ///   has been successfully inserted or deleted on the database.
     /// </summary>
-    public void OnRowUpdated() {
+    public void OnRowInsertedOrDeleted() {
       MainGrid.AutoResizeColumns();
       MainGrid.Focus();
     }
