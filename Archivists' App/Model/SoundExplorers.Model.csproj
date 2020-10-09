@@ -61,10 +61,13 @@
         <Compile Include="LocationList.cs" />
         <Compile Include="NamedBindingItem.cs" />
         <Compile Include="NamedEntityList.cs" />
+        <Compile Include="NewsletterBindingItem.cs" />
+        <Compile Include="NewsletterList.cs" />
         <Compile Include="NotablyNamedBindingItem.cs" />
         <Compile Include="NotablyNamedEntityList.cs" />
         <Compile Include="Option.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
+        <Compile Include="SeriesList.cs" />
     </ItemGroup>
     <ItemGroup>
       <ProjectReference Include="..\Common\SoundExplorers.Common.csproj">
