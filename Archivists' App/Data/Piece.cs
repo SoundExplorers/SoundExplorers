@@ -12,11 +12,11 @@ namespace SoundExplorers.Data {
   ///   recording is archived.
   /// </summary>
   public class Piece : EntityBase {
-    private Uri _audioUrl;
+    private string _audioUrl;
     private string _notes;
     private int _pieceNo;
     private string _title;
-    private Uri _videoUrl;
+    private string _videoUrl;
 
     public Piece() : base(typeof(Piece), nameof(PieceNo), typeof(Set)) {
       Credits = new SortedChildList<Credit>(this);
@@ -27,7 +27,7 @@ namespace SoundExplorers.Data {
     ///   Must be unique if specified.
     /// </summary>
     [CanBeNull]
-    public Uri AudioUrl {
+    public string AudioUrl {
       get => _audioUrl;
       set {
         CheckCanChangeAudioUrl(_audioUrl, value);
@@ -81,7 +81,7 @@ namespace SoundExplorers.Data {
     ///   Must be unique if specified.
     /// </summary>
     [CanBeNull]
-    public Uri VideoUrl {
+    public string VideoUrl {
       get => _videoUrl;
       set {
         CheckCanChangeVideoUrl(_videoUrl, value);
@@ -90,10 +90,16 @@ namespace SoundExplorers.Data {
       }
     }
 
-    private void CheckCanChangeAudioUrl([CanBeNull] Uri oldAudioUrl,
-      [CanBeNull] Uri newAudioUrl) {
+    private void CheckCanChangeAudioUrl([CanBeNull] string oldAudioUrl,
+      [CanBeNull] string newAudioUrl) {
       if (newAudioUrl == null) {
         return;
+      }
+      try {
+        var dummy = new Uri(newAudioUrl, UriKind.Absolute);
+      } catch (UriFormatException) {
+        throw new FormatException(
+          $"Piece '{Key}': invalid AudioUrl format '{newAudioUrl}'.");
       }
       if (IsPersistent && Session != null && newAudioUrl != oldAudioUrl) {
         // If there's no session, which means we cannot check for a duplicate,
@@ -110,10 +116,16 @@ namespace SoundExplorers.Data {
       }
     }
 
-    private void CheckCanChangeVideoUrl([CanBeNull] Uri oldVideoUrl,
-      [CanBeNull] Uri newVideoUrl) {
+    private void CheckCanChangeVideoUrl([CanBeNull] string oldVideoUrl,
+      [CanBeNull] string newVideoUrl) {
       if (newVideoUrl == null) {
         return;
+      }
+      try {
+        var dummy = new Uri(newVideoUrl, UriKind.Absolute);
+      } catch (UriFormatException) {
+        throw new FormatException(
+          $"Piece '{Key}': invalid VideoUrl format '{newVideoUrl}'.");
       }
       if (IsPersistent && Session != null && newVideoUrl != oldVideoUrl) {
         // If there's no session, which means we cannot check for a duplicate,
@@ -158,7 +170,7 @@ namespace SoundExplorers.Data {
     }
 
     [CanBeNull]
-    private Piece FindDuplicateAudioUrl([NotNull] Uri audioUrl,
+    private Piece FindDuplicateAudioUrl([NotNull] string audioUrl,
       [NotNull] SessionBase session) {
       return QueryHelper.Find<Piece>(
         piece => piece.AudioUrl != null && piece.AudioUrl.Equals(audioUrl) &&
@@ -167,7 +179,7 @@ namespace SoundExplorers.Data {
     }
 
     [CanBeNull]
-    private Piece FindDuplicateVideoUrl([NotNull] Uri videoUrl,
+    private Piece FindDuplicateVideoUrl([NotNull] string videoUrl,
       [NotNull] SessionBase session) {
       return QueryHelper.Find<Piece>(
         piece => piece.VideoUrl != null && piece.VideoUrl.Equals(videoUrl) &&

@@ -136,14 +136,11 @@ namespace SoundExplorers.Tests.Data {
     private Location Location1 { get; set; }
     private Piece Piece1 { get; set; }
 
-    private static Uri Piece1AudioUrl =>
-      new Uri(
-        "https://archive.org/details/geometry_dash_1.9/Geometry+Dash+OST/BaseAfterBase.mp3",
-        UriKind.Absolute);
+    private static string Piece1AudioUrl =>
+      "https://archive.org/details/geometry_dash_1.9/Geometry+Dash+OST/BaseAfterBase.mp3";
 
-    private static Uri Piece1VideoUrl =>
-      new Uri("https://archive.org/details/nikopivx/niko-pivx-xoxo-hd.mp4",
-        UriKind.Absolute);
+    private static string Piece1VideoUrl =>
+      "https://archive.org/details/nikopivx/niko-pivx-xoxo-hd.mp4";
 
     private Piece Piece1AtSet2 { get; set; }
     private Piece Piece2 { get; set; }
@@ -190,10 +187,8 @@ namespace SoundExplorers.Tests.Data {
 
     [Test]
     public void ChangeAudioUrl() {
-      var newAudioUrl =
-        new Uri(
-          "https://soundcloud.com/simonor/peter-daly-simon-ororke-tippabo?in=simonor/sets/peter-daly-and-simon-ororke",
-          UriKind.Absolute);
+      const string newAudioUrl =
+        "https://soundcloud.com/simonor/peter-daly-simon-ororke-tippabo?in=simonor/sets/peter-daly-and-simon-ororke";
       Session.BeginUpdate();
       Assert.DoesNotThrow(() => Piece1.AudioUrl = newAudioUrl);
       Session.Commit();
@@ -213,10 +208,7 @@ namespace SoundExplorers.Tests.Data {
 
     [Test]
     public void ChangeVideoUrl() {
-      var newVideoUrl =
-        new Uri(
-          "https://www.youtube.com/watch?v=dPIaEWd8zf4",
-          UriKind.Absolute);
+      const string newVideoUrl = "https://www.youtube.com/watch?v=dPIaEWd8zf4";
       Session.BeginUpdate();
       Assert.DoesNotThrow(() => Piece1.VideoUrl = newVideoUrl);
       Session.Commit();
