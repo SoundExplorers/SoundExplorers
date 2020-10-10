@@ -132,16 +132,16 @@ namespace SoundExplorers.Tests.Data {
     private static DateTime Newsletter1Date =>
       DateTime.Parse(Newsletter1SimpleKey);
 
-    private static Uri Newsletter1Url => new Uri(
-      "https://archive.org/details/simpsons-lat.375923", UriKind.Absolute);
+    private static string Newsletter1Url =>
+      "https://archive.org/details/simpsons-lat.375923";
 
     private Newsletter Newsletter2 { get; set; }
 
     private static DateTime Newsletter2Date =>
       DateTime.Parse(Newsletter2SimpleKey);
 
-    private static Uri Newsletter2Url =>
-      new Uri("https://archive.org/details/policy_20191010", UriKind.Absolute);
+    private static string Newsletter2Url =>
+      "https://archive.org/details/BDChaurasiasHumanAnatomyVolume1MedicosTimes";
 
     private Series Series1 { get; set; }
     private Series Series2 { get; set; }

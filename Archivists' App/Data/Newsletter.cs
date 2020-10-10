@@ -12,9 +12,10 @@ namespace SoundExplorers.Data {
   /// </summary>
   public class Newsletter : EntityBase {
     private DateTime _date;
-    private Uri _url;
+    private string _url;
 
     public Newsletter() : base(typeof(Newsletter), nameof(Date), null) {
+      _date = InitialDate;
       Events = new SortedChildList<Event>(this);
     }
 
@@ -25,13 +26,13 @@ namespace SoundExplorers.Data {
     public DateTime Date {
       get => _date;
       set {
-        if (value == DateTime.MinValue) {
+        if (value <= InitialDate) {
           throw new NoNullAllowedException(
-            "A valid Newsletter Date has not been specified.");
+            $"Newsletter Date must be later than {InitialDate:yyyy/mm/dd}.");
         }
         UpdateNonIndexField();
-        _date = value;
-        SimpleKey = $"{Date:yyyy/MM/dd}";
+        _date = value.Date;
+        SimpleKey = $"{_date:yyyy/MM/dd}";
       }
     }
 
@@ -41,7 +42,7 @@ namespace SoundExplorers.Data {
     ///   The URL where the newsletter is archived.
     ///   Must be specified and unique.
     /// </summary>
-    public Uri Url {
+    public string Url {
       get => _url;
       set {
         CheckCanChangeUrl(_url, value);
@@ -50,11 +51,17 @@ namespace SoundExplorers.Data {
       }
     }
 
-    private void CheckCanChangeUrl([CanBeNull] Uri oldUrl,
-      [CanBeNull] Uri newUrl) {
+    private void CheckCanChangeUrl([CanBeNull] string oldUrl,
+      [CanBeNull] string newUrl) {
       if (newUrl == null) {
         throw new NoNullAllowedException(
-          $"A valid URL has not been specified for Newsletter {SimpleKey}.");
+          $"A valid URL has not been specified for Newsletter '{SimpleKey}'.");
+      }
+      try {
+        var dummy = new Uri(newUrl, UriKind.Absolute);
+      } catch (UriFormatException) {
+        throw new FormatException(
+          $"Newsletter '{SimpleKey}': invalid URL format '{newUrl}'.");
       }
       if (IsPersistent && Session != null && newUrl != oldUrl) {
         // If there's no session, which means we cannot check for a duplicate,
@@ -64,7 +71,7 @@ namespace SoundExplorers.Data {
         if (duplicate != null) {
           throw new DuplicateKeyException(
             this,
-            $"The URL of Newsletter '{SimpleKey}' cannot be changed to " +
+            $"The URL of Newsletter '{SimpleKey}' cannot be set to " +
             $"'{newUrl}'. Newsletter {duplicate.SimpleKey} " +
             "has already been persisted with that URL.");
         }
@@ -90,7 +97,7 @@ namespace SoundExplorers.Data {
     }
 
     [CanBeNull]
-    private Newsletter FindDuplicateUrl([NotNull] Uri url,
+    private Newsletter FindDuplicateUrl([NotNull] string url,
       [NotNull] SessionBase session) {
       return QueryHelper.Find<Newsletter>(
         newsletter => newsletter.Url.Equals(url) && !newsletter.Oid.Equals(Oid),

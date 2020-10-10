@@ -23,7 +23,11 @@ namespace SoundExplorers.Data {
     private IDictionary<Type, EntityBase> _parents;
     private QueryHelper _queryHelper;
     private Schema _schema;
-    [CanBeNull] private string _simpleKey;
+    private string _simpleKey;
+
+    static EntityBase() {
+      InitialDate = DateTime.Parse("1900/01/01");
+    }
 
     /// <summary>
     ///   Creates an instance of an entity.
@@ -82,6 +86,13 @@ namespace SoundExplorers.Data {
     internal Type EntityType { get; }
 
     [CanBeNull] private Type IdentifyingParentType { get; }
+
+    /// <summary>
+    ///   A hopefully safely old date, suitable for initialising Date fields
+    ///   because it is compatible with calendar controls.
+    /// </summary>
+    public static DateTime InitialDate { get; }
+
     private bool IsAddingToOrRemovingFromIdentifyingParent { get; set; }
     private bool IsTopLevel => Parents.Count == 0;
 
@@ -260,7 +271,7 @@ namespace SoundExplorers.Data {
         Session) != null) {
         throw new DuplicateKeyException(
           this,
-          $"{EntityType.Name}'s {SimpleKeyName} cannot be changed to " +
+          $"{EntityType.Name}'s {SimpleKeyName} cannot be set to " +
           $"'{newSimpleKey}' because another {EntityType.Name} " +
           $"with that {SimpleKeyName} has already been persisted.");
       }

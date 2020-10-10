@@ -117,7 +117,7 @@ namespace SoundExplorers.Tests.Data {
           QueryHelper = QueryHelper,
           Date = date,
           Url = new Uri($"https:///{GenerateUniqueName(8)}.com/{GenerateUniqueName(6)}",
-            UriKind.Absolute)
+            UriKind.Absolute).ToString()
         };
         session.Persist(newsletter);
         Newsletters.Add(newsletter);

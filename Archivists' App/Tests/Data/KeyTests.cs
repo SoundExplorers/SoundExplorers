@@ -21,7 +21,7 @@ namespace SoundExplorers.Tests.Data {
 
     [Test]
     public void ConvertToString() {
-      const string dateString = "1800/12/25";
+      const string dateString = "1900/12/25";
       const string locationName = "Fred's";
       const int setNo = 1;
       var event1 = new Event();
@@ -30,10 +30,10 @@ namespace SoundExplorers.Tests.Data {
       event1.Date = DateTime.Parse(dateString);
       Assert.AreEqual(event1.Key.ToString(), dateString, "SimpleKey only");
       event1.Location = new Location {Name = locationName};
-      Assert.AreEqual(event1.Key.ToString(), "1800/12/25 | Fred's",
+      Assert.AreEqual(event1.Key.ToString(), "1900/12/25 | Fred's",
         "SimpleKey and Identifying Parent");
       var set1 = new Set {SetNo = setNo, Event = event1};
-      Assert.AreEqual(set1.Key.ToString(), "01 | 1800/12/25 | Fred's", "set1");
+      Assert.AreEqual(set1.Key.ToString(), "01 | 1900/12/25 | Fred's", "set1");
     }
 
     [Test]

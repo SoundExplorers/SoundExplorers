@@ -33,7 +33,6 @@ namespace SoundExplorers.View {
     private bool ParentRowChanged { get; set; }
 
     private SizeableFormOptions SizeableFormOptions { get; set; }
-    //private bool UpdateCancelled { get; set; }
 
     public void FocusMainGridCell(int rowIndex, int columnIndex) {
       // This triggers MainGrid_RowEnter.
@@ -504,6 +503,7 @@ namespace SoundExplorers.View {
       // Debug.WriteLine("Context = " + e.Context.ToString());
       //Debug.WriteLine("RowIndex = " + e.ColumnIndex.ToString());
       //Debug.WriteLine("RowIndex = " + e.RowIndex.ToString());
+      //MainGrid.CancelEdit(); ???
       Controller.OnMainGridDataError(e.Exception);
     }
 
@@ -620,10 +620,6 @@ namespace SoundExplorers.View {
     private void MainGrid_RowsRemoved(object sender, DataGridViewRowsRemovedEventArgs e) {
       //Debug.WriteLine("MainGrid_RowsRemoved");
       //Debug.WriteLine(MainGrid.Rows[e.RowIndex].Cells[0].Value);
-      // Is UpdateCancelled still relevant?
-      // if (UpdateCancelled) {
-      //   return;
-      // }
       Controller.OnMainGridRowRemoved(e.RowIndex);
     }
 
@@ -633,10 +629,6 @@ namespace SoundExplorers.View {
       if (ParentRowChanged) {
         ParentRowChanged = false;
       }
-      // Is UpdateCancelled still relevant?
-      // if (UpdateCancelled) {
-      //   return;
-      // }
       Controller.OnMainGridRowValidated(e.RowIndex);
     }
 

@@ -27,16 +27,15 @@ namespace SoundExplorers.View {
       // Set the value of the editing control to the current cell value.
       base.InitializeEditingControl(rowIndex, initialFormattedValue,
         dataGridViewCellStyle);
-      var ctl =
-        DataGridView.EditingControl as CalendarEditingControl;
+      var editingControl = (CalendarEditingControl)DataGridView.EditingControl;
       // Use the default row value when Value property is null
       // or, more to the point in this case, empty.
       if (Value == null
           || Value == DBNull.Value) {
-        ctl.Value = DateTime.Now;
-        Value = ctl.Value;
+        editingControl.Value = DateTime.Now;
+        Value = editingControl.Value;
       } else {
-        ctl.Value = (DateTime)Value;
+        editingControl.Value = (DateTime)Value;
       }
     }
 

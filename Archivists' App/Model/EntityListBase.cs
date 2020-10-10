@@ -183,10 +183,15 @@ namespace SoundExplorers.Model {
     ///   of the BindingList's ListChanged event.
     /// </remarks>
     public void OnRowEnter(int rowIndex) {
+      // Debug.WriteLine(
+      //   $"{nameof(OnRowEnter)}:  Any row entered (after ItemAdded if insertion row)");
       HasRowBeenEdited = false;
-      BackupBindingItem = !IsInsertionRowCurrent
-        ? CreateBackupBindingItem((TBindingItem)BindingList[rowIndex])
-        : new TBindingItem();
+      if (BackupBindingItemToRestoreFrom == null) {
+        // Not forced to reenter row to fix error
+        BackupBindingItem = !IsInsertionRowCurrent
+          ? CreateBackupBindingItem((TBindingItem)BindingList[rowIndex])
+          : new TBindingItem();
+      }
     }
 
     /// <summary>
@@ -347,7 +352,8 @@ namespace SoundExplorers.Model {
     ///   If false, the exception should be treated as a terminal error.
     /// </summary>
     private static bool IsDatabaseUpdateError(Exception exception) {
-      return exception is DataException || exception is DuplicateKeyException;
+      return exception is DataException || exception is DuplicateKeyException ||
+             exception is FormatException;
     }
 
     private void UpdateExistingEntityProperty(int rowIndex, [NotNull] string propertyName,

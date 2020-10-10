@@ -103,7 +103,7 @@ namespace SoundExplorers.Data {
         if (duplicate != null) {
           throw new DuplicateKeyException(
             this,
-            $"The Audio URL of Piece '{Key}' cannot be changed to " +
+            $"The Audio URL of Piece '{Key}' cannot be set to " +
             $"'{newAudioUrl}'. Piece '{duplicate.Key}' " +
             "has already been persisted with that Audio URL.");
         }
@@ -123,7 +123,7 @@ namespace SoundExplorers.Data {
         if (duplicate != null) {
           throw new DuplicateKeyException(
             this,
-            $"The Video URL of Piece '{Key}' cannot be changed to " +
+            $"The Video URL of Piece '{Key}' cannot be set to " +
             $"'{newVideoUrl}'. Piece '{duplicate.Key}' " +
             "has already been persisted with that Video URL.");
         }

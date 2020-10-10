@@ -68,21 +68,16 @@ namespace SoundExplorers.Tests.Data {
     private static DateTime Event2Date => DateTime.Today;
     private Location Location1 { get; set; }
     private Newsletter Newsletter1 { get; set; }
+    private static DateTime Newsletter1Date => DateTime.Parse(Newsletter1SimpleKey);
 
-    private static DateTime Newsletter1Date =>
-      DateTime.Parse(Newsletter1SimpleKey);
-
-    private static Uri Newsletter1Url => new Uri(
-      "https://archive.org/details/simpsons-lat.375923", UriKind.Absolute);
+    private static string Newsletter1Url =>
+      "https://archive.org/details/simpsons-lat.375923";
 
     private Newsletter Newsletter2 { get; set; }
+    private static DateTime Newsletter2Date => DateTime.Parse(Newsletter2SimpleKey);
 
-    private static DateTime Newsletter2Date =>
-      DateTime.Parse(Newsletter2SimpleKey);
-
-    private static Uri Newsletter2Url => new Uri(
-      "https://archive.org/details/BDChaurasiasHumanAnatomyVolume1MedicosTimes",
-      UriKind.Absolute);
+    private static string Newsletter2Url =>
+      "https://archive.org/details/BDChaurasiasHumanAnatomyVolume1MedicosTimes";
 
     [Test]
     public void A010_Initial() {
@@ -122,10 +117,8 @@ namespace SoundExplorers.Tests.Data {
 
     [Test]
     public void ChangeUrl() {
-      var newUrl =
-        new Uri(
-          "https://docs.microsoft.com/en-us/dotnet/api/system.tuple?view=netcore-3.1",
-          UriKind.Absolute);
+      const string newUrl =
+        "https://docs.microsoft.com/en-us/dotnet/api/system.tuple?view=netcore-3.1";
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
         Newsletter1 =
@@ -164,10 +157,8 @@ namespace SoundExplorers.Tests.Data {
     [Test]
     public void DisallowPersistDuplicateDate() {
       var date = DateTime.Parse("2020/08/19");
-      var url1 = new Uri("https://archive.org/details/jazzpop",
-        UriKind.Absolute);
-      var url2 = new Uri("https://archive.org/details/native_201910",
-        UriKind.Absolute);
+      const string url1 = "https://archive.org/details/jazzpop";
+      const string url2 = "https://archive.org/details/native_201910";
       var original = new Newsletter {
         QueryHelper = QueryHelper,
         Date = date,
@@ -190,8 +181,7 @@ namespace SoundExplorers.Tests.Data {
     public void DisallowPersistDuplicateUrl() {
       var date1 = DateTime.Parse("2020/08/18");
       var date2 = DateTime.Parse("2020/08/19");
-      var url = new Uri("https://archive.org/details/jazzpop",
-        UriKind.Absolute);
+      const string url = "https://archive.org/details/jazzpop";
       var original = new Newsletter {
         QueryHelper = QueryHelper,
         Date = date1,
@@ -212,8 +202,7 @@ namespace SoundExplorers.Tests.Data {
 
     [Test]
     public void DisallowPersistUnspecifiedDate() {
-      var url = new Uri("https://archive.org/details/jazzpop",
-        UriKind.Absolute);
+      const string url = "https://archive.org/details/jazzpop";
       var noDate = new Newsletter {
         QueryHelper = QueryHelper,
         Url = url
@@ -241,8 +230,7 @@ namespace SoundExplorers.Tests.Data {
 
     [Test]
     public void DisallowSetInvalidUrl() {
-      Assert.Throws<UriFormatException>(() =>
-        Newsletter2.Url = new Uri("Invalid URL"));
+      Assert.Throws<FormatException>(() => Newsletter2.Url = "Invalid URL");
     }
 
     [Test]

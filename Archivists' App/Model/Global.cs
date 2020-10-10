@@ -39,8 +39,8 @@ namespace SoundExplorers.Model {
         //{nameof(Event), typeof(EventList)},
         {nameof(EventType), typeof(EventTypeList)},
         {nameof(Location), typeof(LocationList)},
-        // {nameof(Newsletter), typeof(NewsletterList)},
-        // {nameof(Series), typeof(SeriesList)},
+        {nameof(Newsletter), typeof(NewsletterList)},
+        {nameof(Series), typeof(SeriesList)},
         // {nameof(Set), typeof(SetList)}
       };
     }

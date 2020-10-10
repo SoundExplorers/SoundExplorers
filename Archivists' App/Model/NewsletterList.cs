@@ -7,6 +7,8 @@ namespace SoundExplorers.Model {
   public class NewsletterList : EntityListBase<Newsletter, NewsletterBindingItem> {
     protected override NewsletterBindingItem CreateBackupBindingItem(
       NewsletterBindingItem bindingItem) {
+      // Debug.WriteLine(
+      //   $"{nameof(NewsletterList)}.{nameof(CreateBackupBindingItem)}: Url = {bindingItem.Url}");
       return new NewsletterBindingItem {
         Date = bindingItem.Date,
         Url = bindingItem.Url
@@ -67,7 +69,7 @@ namespace SoundExplorers.Model {
           break;
         case nameof(newsletter.Url):
           newsletter.Url = newValue != null
-            ? (Uri)newValue
+            ? newValue.ToString()
             : throw new NullReferenceException(nameof(newsletter.Url));
           break;
         default:

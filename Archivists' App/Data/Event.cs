@@ -17,19 +17,20 @@ namespace SoundExplorers.Data {
     private Series _series;
 
     public Event() : base(typeof(Event), nameof(Date), typeof(Location)) {
+      _date = InitialDate;
       Sets = new SortedChildList<Set>(this);
     }
 
     public DateTime Date {
       get => _date;
       set {
-        if (value == DateTime.MinValue) {
+        if (value <= InitialDate) {
           throw new NoNullAllowedException(
-            "A valid Event Date has not been specified.");
+            $"Event Date must be later than {InitialDate:yyyy/mm/dd}.");
         }
         UpdateNonIndexField();
-        _date = value;
-        SimpleKey = $"{Date:yyyy/MM/dd}";
+        _date = value.Date;
+        SimpleKey = $"{_date:yyyy/MM/dd}";
       }
     }
 
