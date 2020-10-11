@@ -101,9 +101,6 @@ namespace SoundExplorers.View {
           Clipboard.SetText(textBox.SelectedText);
           break;
         }
-        case PathEditingControl pathEditingControl:
-          pathEditingControl.Copy();
-          break;
       }
     }
 
@@ -156,9 +153,6 @@ namespace SoundExplorers.View {
             Clipboard.SetText(textBox.SelectedText);
             textBox.SelectedText = string.Empty;
             break;
-          case PathEditingControl pathEditingControl:
-            pathEditingControl.Cut();
-            break;
         }
       }
     }
@@ -206,34 +200,6 @@ namespace SoundExplorers.View {
       //Debug.WriteLine("DatabaseUpdateErrorTimer_Tick");
       MainGrid.CancelEdit();
       Controller.ShowDatabaseUpdateError();
-    }
-
-    /// <summary>
-    ///   Updates the specified path cell with
-    ///   the file path in the specified drop data,
-    ///   focusing the main grid
-    ///   and making the updated path cell the current cell.
-    /// </summary>
-    /// <param name="fileDropData">
-    ///   A drag-and-drop operation's drop data containing a file path.
-    /// </param>
-    /// <param name="pathCell">The path cell to be updated.</param>
-    private void DropPathOnCell(IDataObject fileDropData, PathCell pathCell) {
-      var paths = fileDropData.GetData(DataFormats.FileDrop) as string[];
-      if (paths == null
-          || paths.Length == 0) {
-        return;
-      }
-      if (FocusedGrid != MainGrid) {
-        FocusGrid(MainGrid);
-      }
-      MainGrid.CurrentCell = pathCell;
-      // Do the update between BeginEdit and EndEdit
-      // to ensure that the appropriate event handlers are invoked.
-      pathCell.Value = paths[0];
-      MainGrid.BeginEdit(true);
-      //pathCell.Value = paths[0];
-      //MainGrid.EndEdit();
     }
 
     /// <summary>
@@ -433,11 +399,6 @@ namespace SoundExplorers.View {
         var cell = GetCellAtClientCoOrdinates(e.X, e.Y);
         if (cell != null) { // Cell found
           grid.CurrentCell = cell;
-          if (cell is PathCell pathCell && pathCell.FileExists) {
-            // This is a path cell that contains the path of an existing file
-            var data = new DataObject(DataFormats.FileDrop, new[] {pathCell.Path});
-            grid.DoDragDrop(data, DragDropEffects.Copy | DragDropEffects.None);
-          }
         }
       }
     }
@@ -504,66 +465,6 @@ namespace SoundExplorers.View {
       //Debug.WriteLine("RowIndex = " + e.RowIndex.ToString());
       //MainGrid.CancelEdit(); ???
       Controller.OnMainGridDataError(e.Exception);
-    }
-
-    /// <summary>
-    ///   Handles the main grid's
-    ///   <see cref="Control.DragDrop" /> event
-    ///   to drop a file path on a path cell,
-    ///   focusing the main grid
-    ///   and making the updated path cell the current cell.
-    /// </summary>
-    /// <param name="sender">Event sender.</param>
-    /// <param name="e">Event arguments.</param>
-    /// <remarks>
-    ///   To save confusion,
-    ///   this will not work while the main grid
-    ///   is in edit mode.
-    /// </remarks>
-    private void MainGrid_DragDrop(object sender, DragEventArgs e) {
-      if (MainGrid.IsCurrentCellInEditMode) {
-        return;
-      }
-      if (!e.Data.GetDataPresent(DataFormats.FileDrop)) {
-        return;
-      }
-      // Find the path cell, if any, that is being dropped onto.
-      var clientCoOrdinates = MainGrid.PointToClient(new Point(e.X, e.Y));
-      if (GetCellAtClientCoOrdinates(
-        clientCoOrdinates.X, clientCoOrdinates.Y) is PathCell pathCell) {
-        // Dropping onto a path cell
-        DropPathOnCell(
-          e.Data,
-          pathCell);
-      }
-    }
-
-    /// <summary>
-    ///   Handles the main grid's
-    ///   <see cref="Control.DragOver" /> event
-    ///   to show that a file path can be dropped on a path cell.
-    /// </summary>
-    /// <param name="sender">Event sender.</param>
-    /// <param name="e">Event arguments.</param>
-    /// <remarks>
-    ///   To save confusion,
-    ///   path dropping is not supported while the main grid is in edit mode.
-    /// </remarks>
-    private void MainGrid_DragOver(object sender, DragEventArgs e) {
-      if (MainGrid.IsCurrentCellInEditMode) {
-        e.Effect = DragDropEffects.None;
-        return;
-      }
-      if (!e.Data.GetDataPresent(DataFormats.FileDrop)) {
-        e.Effect = DragDropEffects.None;
-        return;
-      }
-      // Find the cell, if any, that the mouse is over.
-      var clientCoOrdinates = MainGrid.PointToClient(new Point(e.X, e.Y));
-      e.Effect = GetCellAtClientCoOrdinates(
-        clientCoOrdinates.X, clientCoOrdinates.Y) is PathCell
-        ? DragDropEffects.Copy
-        : DragDropEffects.None;
     }
 
     /// <summary>
@@ -676,8 +577,6 @@ namespace SoundExplorers.View {
         } else { // The cell is already being edited
           if (MainGrid.EditingControl is TextBox textBox) {
             textBox.SelectedText = Clipboard.GetText();
-          } else if (MainGrid.EditingControl is PathEditingControl pathEditingControl) {
-            pathEditingControl.Paste();
           }
         }
       }
@@ -693,8 +592,6 @@ namespace SoundExplorers.View {
       //MainGrid.CellValidated -= new DataGridViewCellEventHandler(MainGrid_CellValidated);
       MainGrid.Click -= Grid_Click;
       MainGrid.DataError -= MainGrid_DataError;
-      MainGrid.DragDrop -= MainGrid_DragDrop;
-      MainGrid.DragOver -= MainGrid_DragOver;
       //MainGrid.GotFocus -= new EventHandler(Control_GotFocus);
       MainGrid.KeyDown -= MainGrid_KeyDown;
       //MainGrid.LostFocus -= new EventHandler(Control_LostFocus);
@@ -720,8 +617,6 @@ namespace SoundExplorers.View {
       //MainGrid.CellValidated += new DataGridViewCellEventHandler(MainGrid_CellValidated);
       MainGrid.Click += Grid_Click;
       MainGrid.DataError += MainGrid_DataError;
-      MainGrid.DragDrop += MainGrid_DragDrop;
-      MainGrid.DragOver += MainGrid_DragOver;
       //MainGrid.GotFocus += new EventHandler(Control_GotFocus);
       MainGrid.KeyDown += MainGrid_KeyDown;
       //MainGrid.LostFocus += new EventHandler(Control_LostFocus);
@@ -749,14 +644,6 @@ namespace SoundExplorers.View {
       foreach (DataGridViewColumn column in ParentGrid.Columns) {
         if (column.ValueType == typeof(DateTime)) {
           column.DefaultCellStyle.Format = "dd MMM yyyy";
-        }
-        if (column.Name.EndsWith("Path")) {
-          // Although we don't edit cells in the parent grid,
-          // we still need to make the cell a PathCell,
-          // as this is expected when playing media etc.
-          //var entityColumn = Controller.ParentList?.Columns[column.Index];
-          //var pathCell = new PathCell {Column = entityColumn};
-          column.CellTemplate = PathCell.Create(Controller, column.Name);
         }
       } // End of foreach
       // Has to be done when visible.

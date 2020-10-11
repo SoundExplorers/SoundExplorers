@@ -28,7 +28,6 @@ namespace SoundExplorers.Controller {
 
     [NotNull]
     public DirectoryInfo GetDefaultFolder() {
-      // TODO Implement URLs instead of paths
       throw new NotSupportedException();
       // DirectoryInfo result = null;
       // switch (ColumnName) {
