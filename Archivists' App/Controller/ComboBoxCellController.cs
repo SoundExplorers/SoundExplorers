@@ -32,23 +32,21 @@ namespace SoundExplorers.Controller {
     }
 
     [NotNull]
-    public string ReferencedColumnName => _referencedColumnName ??
-                                          (_referencedColumnName =
-                                            TableController.GetReferencedColumnName(
-                                              ColumnName));
+    public string ReferencedColumnName =>
+      _referencedColumnName ?? (_referencedColumnName =
+        TableController.Columns[ColumnName]?.ReferencedColumnName ??
+        throw new NullReferenceException(nameof(EntityColumn.ReferencedColumnName)));
 
     [NotNull]
-    private Type ReferencedEntityListType => _referencedEntityListType ??
-                                             (_referencedEntityListType =
-                                               TableController
-                                                 .GetReferencedEntityListType(
-                                                   ColumnName));
+    private Type ReferencedEntityListType =>
+      _referencedEntityListType ?? (_referencedEntityListType =
+        TableController.Columns[ColumnName]?.ReferencedEntityListType ??
+        throw new NullReferenceException(nameof(EntityColumn.ReferencedEntityListType)));
 
     [NotNull]
-    public string ReferencedTableName => _referencedTableName ??
-                                         (_referencedTableName =
-                                           TableController.GetReferencedTableName(
-                                             ColumnName));
+    public string ReferencedTableName => _referencedTableName ?? (_referencedTableName =
+      TableController.Columns[ColumnName]?.ReferencedTableName ??
+      throw new NullReferenceException(nameof(EntityColumn.ReferencedTableName)));
 
     [NotNull]
     public IBindingList FetchReferencedBindingList() {

@@ -33,9 +33,9 @@ namespace SoundExplorers.Controller {
     ///   Gets metadata about the database columns
     ///   represented by the Entity's field properties.
     /// </summary>
-    private EntityColumnList Columns => MainList?.Columns ??
-                                        throw new NullReferenceException(
-                                          nameof(Columns));
+    internal EntityColumnList Columns => MainList?.Columns ??
+                                       throw new NullReferenceException(
+                                         nameof(Columns));
 
     /// <summary>
     ///   User option for the position of the split between the
@@ -156,24 +156,6 @@ namespace SoundExplorers.Controller {
 
     [CanBeNull] public string GetColumnDisplayName([NotNull] string columnName) {
       return Columns[columnName]?.DisplayName;
-    }
-
-    [NotNull]
-    internal string GetReferencedColumnName([NotNull] string columnName) {
-      return Columns[columnName]?.ReferencedColumnName ??
-             throw new NullReferenceException(nameof(EntityColumn.ReferencedColumnName));
-    }
-
-    [NotNull]
-    internal Type GetReferencedEntityListType([NotNull] string columnName) {
-      return MainList?.Columns[columnName]?.ReferencedEntityListType ??
-             throw new NullReferenceException(nameof(EntityColumn.ReferencedEntityListType));
-    }
-
-    [NotNull]
-    internal string GetReferencedTableName([NotNull] string columnName) {
-      return MainList?.Columns[columnName]?.ReferencedTableName ??
-             throw new NullReferenceException(nameof(EntityColumn.ReferencedTableName));
     }
 
     public void OnMainGridDataError([CanBeNull] Exception exception) {
