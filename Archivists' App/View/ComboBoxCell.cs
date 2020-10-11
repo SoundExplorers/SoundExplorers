@@ -12,19 +12,20 @@ namespace SoundExplorers.View {
   /// <remarks>
   ///   The cell displays dates in ordinary text box cells,
   ///   but when the user edits a cell, a ComboBox control appears.
+  ///   TODO: Check that DataGridViewComboBoxEditingControl works in place of ComboBoxEditingControl.
   /// </remarks>
   internal class ComboBoxCell : DataGridViewTextBoxCell, IView<ComboBoxCellController> {
     /// <summary>
     ///   Gets the cell's combo box.
     /// </summary>
-    private ComboBoxEditingControl ComboBox =>
-      DataGridView.EditingControl as ComboBoxEditingControl;
+    private DataGridViewComboBoxEditingControl ComboBox =>
+      DataGridView.EditingControl as DataGridViewComboBoxEditingControl;
 
     private ComboBoxCellController Controller => (ComboBoxCellController)Tag;
 
     public override Type EditType =>
       // Return the type of the editing control that ComboBoxCell uses.
-      typeof(ComboBoxEditingControl);
+      typeof(DataGridViewComboBoxEditingControl);
 
     public void SetController(ComboBoxCellController controller) {
       Tag = controller;
