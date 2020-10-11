@@ -1,5 +1,4 @@
 using System;
-using System.Drawing;
 using System.Windows.Forms;
 using JetBrains.Annotations;
 using SoundExplorers.Controller;
@@ -31,7 +30,6 @@ namespace SoundExplorers.View {
                                                 nameof(MainGrid.CurrentRow));
 
     private bool ParentRowChanged { get; set; }
-
     private SizeableFormOptions SizeableFormOptions { get; set; }
 
     public void FocusMainGridCell(int rowIndex, int columnIndex) {
@@ -381,7 +379,6 @@ namespace SoundExplorers.View {
     ///     But it did not work, possibly because it
     ///     puts the cell into edit mode and also,
     ///     when dragged, selects multiple rows.
-    ///     But what if Dan's Mac mouse does not have two buttons?
     ///     Perhaps we could initiate a drag-and-drop operation
     ///     on Control + mouse button 1.
     ///   </para>
@@ -438,8 +435,8 @@ namespace SoundExplorers.View {
     ///   be dragged onto the label will not apply, as dragging and dropping is disabled
     ///   while the Path cell is being edited.
     /// </remarks>
-    private void
-      MainGrid_CellBeginEdit(object sender, DataGridViewCellCancelEventArgs e) {
+    private void MainGrid_CellBeginEdit(
+      object sender, DataGridViewCellCancelEventArgs e) {
       MissingImageLabel.Visible = false;
     }
 
@@ -470,7 +467,7 @@ namespace SoundExplorers.View {
     /// <summary>
     ///   Handles the main grid's
     ///   <see cref="Control.KeyDown" /> event to:
-    ///   delete any selected rows on Backspace (Delete on Mac keyboard).
+    ///   delete any selected rows on Backspace.
     /// </summary>
     /// <param name="sender">Event sender.</param>
     /// <param name="e">Event arguments.</param>
@@ -811,32 +808,6 @@ namespace SoundExplorers.View {
             FocusGrid(FocusedGrid == ParentGrid ? MainGrid : ParentGrid);
           }
           break;
-        // Tried command (⌘) key on a Mac keyboard + Enter
-        // to do same as Control+Enter,
-        // i.e to complete the edit of the current cell if being edited.
-        // But the Enter key cannot be trapped.
-        // ⌘+Enter ends the edit and goes to next row anyway,
-        // which is OK.
-        // (Command (⌘) key on a Mac keyboard does the same 
-        // as Windows/Start key on a Windows keyboard.)
-        //case Keys.LWin:
-        //    Debug.WriteLine(e.KeyCode);
-        //    LWinIsDown = true;
-        //    break;
-        //case Keys.RWin:
-        //    Debug.WriteLine(e.KeyCode);
-        //    RWinIsDown = true;
-        //    break;
-        //case Keys.Enter:
-        //    Debug.WriteLine(e.KeyCode);
-        //    if (LWinIsDown
-        //    || RWinIsDown) {
-        //        if (MainGrid.CurrentCell.IsInEditMode) {
-        //            e.SuppressKeyPress = true;
-        //            MainGrid.EndEdit();
-        //        }
-        //    }
-        //    break;
       } //End of switch
     }
 
