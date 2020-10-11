@@ -7,8 +7,6 @@ namespace SoundExplorers.Model {
   public class NewsletterList : EntityListBase<Newsletter, NewsletterBindingItem> {
     protected override NewsletterBindingItem CreateBackupBindingItem(
       NewsletterBindingItem bindingItem) {
-      // Debug.WriteLine(
-      //   $"{nameof(NewsletterList)}.{nameof(CreateBackupBindingItem)}: Url = {bindingItem.Url}");
       return new NewsletterBindingItem {
         Date = bindingItem.Date,
         Url = bindingItem.Url

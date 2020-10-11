@@ -1,6 +1,5 @@
 ﻿using System;
 using JetBrains.Annotations;
-using SoundExplorers.Data;
 
 namespace SoundExplorers.Model {
   [NoReorder]
@@ -9,7 +8,7 @@ namespace SoundExplorers.Model {
     private string _url;
 
     public NewsletterBindingItem() {
-      Date = EntityBase.InitialDate;
+      Date = DateTime.Today;
     }
 
     public DateTime Date {
