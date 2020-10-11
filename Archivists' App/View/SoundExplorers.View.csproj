@@ -104,6 +104,7 @@
         <Compile Include="TableView.Designer.cs">
           <DependentUpon>TableView.cs</DependentUpon>
         </Compile>
+        <Compile Include="TextBoxCell.cs" />
         <EmbeddedResource Include="AboutForm.resx">
           <DependentUpon>AboutForm.cs</DependentUpon>
         </EmbeddedResource>
