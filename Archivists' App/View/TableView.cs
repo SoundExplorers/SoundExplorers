@@ -175,23 +175,17 @@ namespace SoundExplorers.View {
       }
     }
 
-    private void ConfigureCellStyle([NotNull] DataGridViewColumn column) {
-      if (column.ValueType == typeof(string)) {
-        column.CellTemplate = new TextBoxCell();
-        // // Interpret blanking a cell as an empty string, not NULL.
-        // // This only works when updating, not inserting.
-        // // When inserting, do something like this in the SQL:
-        // //  coalesce(@Comments, '')
-        // column.DefaultCellStyle.DataSourceNullValue = string.Empty;
-      } else if (column.ValueType == typeof(DateTime)) {
+    private void ConfigureColumn([NotNull] DataGridViewColumn column) {
+      column.HeaderText = Controller.GetColumnDisplayName(column.Name) ?? column.Name;
+      if (column.ValueType == typeof(DateTime)) {
         column.DefaultCellStyle.Format = "dd MMM yyyy";
       }
       if (Controller.DoesColumnReferenceAnotherEntity(column.Name)) {
         column.CellTemplate = ComboBoxCell.Create(Controller, column.Name);
       } else if (column.ValueType == typeof(DateTime)) {
         column.CellTemplate = new CalendarCell();
-      } else if (column.Name.EndsWith("Path")) {
-        column.CellTemplate = PathCell.Create(Controller, column.Name);
+      } else if (column.ValueType == typeof(string)) {
+        column.CellTemplate = new TextBoxCell();
       }
     }
 
@@ -713,7 +707,7 @@ namespace SoundExplorers.View {
       }
       MainGrid.DataSource = Controller.MainBindingList;
       foreach (DataGridViewColumn column in MainGrid.Columns) {
-        ConfigureCellStyle(column);
+        ConfigureColumn(column);
       } // End of foreach
       MainGrid.CellBeginEdit += MainGrid_CellBeginEdit;
       //MainGrid.CellEndEdit += MainGrid_CellEndEdit;

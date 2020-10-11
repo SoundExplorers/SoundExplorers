@@ -96,7 +96,7 @@ namespace SoundExplorers.Controller {
     ///   Returns whether the specified column references another entity.
     /// </summary>
     public bool DoesColumnReferenceAnotherEntity([NotNull] string columnName) {
-      return !string.IsNullOrEmpty(Columns[columnName]?.ReferencedColumnDisplayName);
+      return !string.IsNullOrEmpty(Columns[columnName]?.ReferencedColumnName);
     }
 
     /// <summary>
@@ -154,22 +154,26 @@ namespace SoundExplorers.Controller {
       return Global.CreateEntityList(type);
     }
 
+    [CanBeNull] public string GetColumnDisplayName([NotNull] string columnName) {
+      return Columns[columnName]?.DisplayName;
+    }
+
     [NotNull]
     internal string GetReferencedColumnName([NotNull] string columnName) {
-      return Columns[columnName]?.ReferencedColumnDisplayName ??
-             throw new NullReferenceException("ReferencedParentColumnDisplayName");
+      return Columns[columnName]?.ReferencedColumnName ??
+             throw new NullReferenceException(nameof(EntityColumn.ReferencedColumnName));
     }
 
     [NotNull]
     internal Type GetReferencedEntityListType([NotNull] string columnName) {
       return MainList?.Columns[columnName]?.ReferencedEntityListType ??
-             throw new NullReferenceException("ReferencedEntityListType");
+             throw new NullReferenceException(nameof(EntityColumn.ReferencedEntityListType));
     }
 
     [NotNull]
     internal string GetReferencedTableName([NotNull] string columnName) {
       return MainList?.Columns[columnName]?.ReferencedTableName ??
-             throw new NullReferenceException("ReferencedTableName");
+             throw new NullReferenceException(nameof(EntityColumn.ReferencedTableName));
     }
 
     public void OnMainGridDataError([CanBeNull] Exception exception) {

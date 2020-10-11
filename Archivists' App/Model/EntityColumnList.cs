@@ -10,7 +10,7 @@ namespace SoundExplorers.Model {
   /// </summary>
   /// <remarks>
   ///   A keyed list of entity columns with
-  ///   <see cref="EntityColumn.DisplayName" /> as the key.
+  ///   <see cref="EntityColumn.Name" /> as the key.
   /// </remarks>
   public class EntityColumnList : List<EntityColumn> {
     /// <summary>
@@ -28,7 +28,7 @@ namespace SoundExplorers.Model {
     public EntityColumn this[string displayName] =>
     (
       from EntityColumn entityColumn in this
-      where string.Compare(entityColumn.DisplayName, displayName,
+      where string.Compare(entityColumn.Name, displayName,
         StringComparison.OrdinalIgnoreCase) == 0
       select entityColumn).FirstOrDefault();
 
@@ -44,9 +44,9 @@ namespace SoundExplorers.Model {
     ///   of the same display name.
     /// </exception>
     public new void Add(EntityColumn entityColumn) {
-      if (ContainsKey(entityColumn.DisplayName)) {
+      if (ContainsKey(entityColumn.Name)) {
         throw new ArgumentException(
-          $"The list already contains an entity column named {entityColumn.DisplayName}.",
+          $"The list already contains an entity column named {entityColumn.Name}.",
           nameof(entityColumn));
       }
       base.Add(entityColumn);
@@ -66,7 +66,7 @@ namespace SoundExplorers.Model {
     private bool ContainsKey(string displayName) {
       return (
         from EntityColumn entityColumn in this
-        where entityColumn.DisplayName == displayName
+        where entityColumn.Name == displayName
         select entityColumn).Any();
     }
   } //End of class

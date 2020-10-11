@@ -30,7 +30,7 @@ namespace SoundExplorers.Model {
     protected override EntityColumnList CreateColumns() {
       return new EntityColumnList {
         new EntityColumn(nameof(Newsletter.Date)),
-        new EntityColumn(nameof(Newsletter.Url))
+        new EntityColumn(nameof(Newsletter.Url)) {DisplayName = "URL"}
       };
     }
 

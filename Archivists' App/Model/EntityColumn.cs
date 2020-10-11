@@ -6,31 +6,38 @@ namespace SoundExplorers.Model {
   ///   Entity column metadata.
   /// </summary>
   public class EntityColumn {
-    public EntityColumn([NotNull] string displayName,
-      Type referencedEntityListType = null, string referencedColumnDisplayName = null) {
-      DisplayName = displayName ?? throw new ArgumentNullException(nameof(displayName));
-      if (referencedEntityListType != null && referencedColumnDisplayName == null ||
-          referencedEntityListType == null && referencedColumnDisplayName != null) {
+    public EntityColumn([NotNull] string name,
+      Type referencedEntityListType = null, string referencedColumnName = null) {
+      Name = name ?? throw new ArgumentNullException(nameof(name));
+      if (referencedEntityListType != null && referencedColumnName == null ||
+          referencedEntityListType == null && referencedColumnName != null) {
         throw new InvalidOperationException(
           $"Both or neither of {nameof(referencedEntityListType)} and "
-          + $"{nameof(referencedColumnDisplayName)} must be specified.");
+          + $"{nameof(referencedColumnName)} must be specified.");
       }
       ReferencedEntityListType = referencedEntityListType;
-      ReferencedColumnDisplayName = referencedColumnDisplayName;
+      ReferencedColumnName = referencedColumnName;
     }
 
     /// <summary>
     ///   Gets the display name to be used for reporting.
+    ///   If null, <see cref="Name"/> should be used.
     /// </summary>
-    [NotNull]
-    public string DisplayName { get; }
+    [CanBeNull]
+    public string DisplayName { get; set; }
 
     /// <summary>
-    ///   Gets the display name of the corresponding column on the referenced table.
+    ///   Gets the column's property name.
+    /// </summary>
+    [NotNull]
+    public string Name { get; }
+
+    /// <summary>
+    ///   Gets the name of the corresponding column on the referenced table.
     ///   Null if the column does not reference a column on another table.
     /// </summary>
     [CanBeNull]
-    public string ReferencedColumnDisplayName { get; }
+    public string ReferencedColumnName { get; }
 
     /// <summary>
     ///   Gets the type of the referenced entity list.
