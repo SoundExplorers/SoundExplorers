@@ -175,7 +175,11 @@ namespace SoundExplorers.View {
       }
     }
 
-    private void ConfigureColumn([NotNull] DataGridViewColumn column) {
+    private void ConfigureMainGridColumn([NotNull] DataGridViewColumn column) {
+      // Making every column explicitly not sortable prevents the program
+      // from crashing if F3 in pressed while the grid is focused.
+      // TODO Check whether F3 crashes program when PARENT grid is focused.
+      column.SortMode = DataGridViewColumnSortMode.NotSortable;
       column.HeaderText = Controller.GetColumnDisplayName(column.Name) ?? column.Name;
       if (column.ValueType == typeof(DateTime)) {
         column.DefaultCellStyle.Format = "dd MMM yyyy";
@@ -707,7 +711,7 @@ namespace SoundExplorers.View {
       }
       MainGrid.DataSource = Controller.MainBindingList;
       foreach (DataGridViewColumn column in MainGrid.Columns) {
-        ConfigureColumn(column);
+        ConfigureMainGridColumn(column);
       } // End of foreach
       MainGrid.CellBeginEdit += MainGrid_CellBeginEdit;
       //MainGrid.CellEndEdit += MainGrid_CellEndEdit;
