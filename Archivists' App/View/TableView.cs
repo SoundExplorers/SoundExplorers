@@ -190,6 +190,15 @@ namespace SoundExplorers.View {
         column.CellTemplate = new CalendarCell();
       } else if (column.ValueType == typeof(string)) {
         column.CellTemplate = new TextBoxCell();
+        // Interpret blanking a cell as an empty string, not null.
+        // Null is not a problem for the object-oriented database to handle.
+        // But this fixes an error where,
+        // when a text cell was edited to blank
+        // and then Tab was pressed to proceed to the next cell,
+        // which happened to be the first cell of the insertion row,
+        // if that is relevant,
+        // the program would crash with a NullReferenceException.
+        column.DefaultCellStyle.DataSourceNullValue = string.Empty;
       }
     }
 
