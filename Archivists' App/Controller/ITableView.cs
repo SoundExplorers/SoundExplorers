@@ -2,6 +2,7 @@
 
 namespace SoundExplorers.Controller {
   public interface ITableView : IView<TableController> {
+    void BeginEditCurrentCell([CanBeNull]object initialValue);
     void FocusMainGridCell(int rowIndex, int columnIndex);
     void MakeMainGridInsertionRowCurrent();
 

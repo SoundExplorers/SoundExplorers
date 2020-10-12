@@ -322,8 +322,12 @@ namespace SoundExplorers.Model {
         throw exception; // Terminal error
       }
       int columnIndex = propertyName != null ? Columns.IndexOf(Columns[propertyName]) : 0;
+      var errorValue = propertyName != null
+        ? BindingItemToFix?.GetPropertyValue(propertyName)
+        : null;
       LastDatabaseUpdateErrorException = new DatabaseUpdateErrorException(
-        LastDatabaseChangeAction, exception.Message, rowIndex, columnIndex, exception);
+        LastDatabaseChangeAction, exception.Message, rowIndex, columnIndex, errorValue,
+        exception);
       return LastDatabaseUpdateErrorException;
     }
 

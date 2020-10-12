@@ -34,8 +34,8 @@ namespace SoundExplorers.Controller {
     ///   represented by the Entity's field properties.
     /// </summary>
     internal EntityColumnList Columns => MainList?.Columns ??
-                                       throw new NullReferenceException(
-                                         nameof(Columns));
+                                         throw new NullReferenceException(
+                                           nameof(Columns));
 
     /// <summary>
     ///   User option for the position of the split between the
@@ -142,6 +142,7 @@ namespace SoundExplorers.Controller {
           break;
         case ChangeAction.Update:
           MainList.RestoreCurrentBindingItemOriginalValues();
+          View.BeginEditCurrentCell(MainList.LastDatabaseUpdateErrorException.ErrorValue);
           break;
         default:
           throw new NotSupportedException(
@@ -154,7 +155,8 @@ namespace SoundExplorers.Controller {
       return Global.CreateEntityList(type);
     }
 
-    [CanBeNull] public string GetColumnDisplayName([NotNull] string columnName) {
+    [CanBeNull]
+    public string GetColumnDisplayName([NotNull] string columnName) {
       return Columns[columnName]?.DisplayName;
     }
 
@@ -171,6 +173,7 @@ namespace SoundExplorers.Controller {
         throw exception;
       }
       View.StartDatabaseUpdateErrorTimer();
+      //View.ShowErrorMessage(MainList.LastDatabaseUpdateErrorException.Message);
     }
 
     public void OnMainGridRowEnter(int rowIndex) {

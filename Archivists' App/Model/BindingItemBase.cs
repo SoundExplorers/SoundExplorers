@@ -28,6 +28,10 @@ namespace SoundExplorers.Model {
   public abstract class BindingItemBase : INotifyPropertyChanged {
     public event PropertyChangedEventHandler PropertyChanged;
 
+    [CanBeNull]
+    internal object GetPropertyValue([NotNull] string propertyName) {
+    } 
+
     [NotifyPropertyChangedInvocator]
     protected void OnPropertyChanged(
       [CallerMemberName] string propertyName = null) {

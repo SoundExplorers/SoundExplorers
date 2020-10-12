@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Windows.Forms;
 using JetBrains.Annotations;
 using SoundExplorers.Controller;
@@ -31,6 +32,14 @@ namespace SoundExplorers.View {
 
     private bool ParentRowChanged { get; set; }
     private SizeableFormOptions SizeableFormOptions { get; set; }
+
+    public void BeginEditCurrentCell(object initialValue) {
+      MainGrid.BeginEdit(true);
+      if (MainGrid.EditingControl is TextBox textBox) {
+        textBox.Text = initialValue?.ToString();
+        textBox.SelectAll();
+      }
+    }
 
     public void FocusMainGridCell(int rowIndex, int columnIndex) {
       // This triggers MainGrid_RowEnter.
@@ -456,12 +465,12 @@ namespace SoundExplorers.View {
     ///   see ComboBoxCell.ThrowNoAvailableReferencesException.
     /// </remarks>
     private void MainGrid_DataError(object sender, DataGridViewDataErrorEventArgs e) {
-      // Debug.WriteLine("MainGrid_DataError");
+      Debug.WriteLine("MainGrid_DataError");
       // Debug.WriteLine("Context = " + e.Context.ToString());
       //Debug.WriteLine("RowIndex = " + e.ColumnIndex.ToString());
       //Debug.WriteLine("RowIndex = " + e.RowIndex.ToString());
-      //MainGrid.CancelEdit(); ???
       Controller.OnMainGridDataError(e.Exception);
+      //e.Cancel = true;
     }
 
     /// <summary>
