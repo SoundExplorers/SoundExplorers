@@ -6,10 +6,11 @@ namespace SoundExplorers.View {
   ///   TextBox cell of a DataGridView.
   /// </summary>
   /// <remarks>
-  ///   The cell's entire contents are selected on beginning edit or Ctrl+A or F2.
+  ///   The cell's entire contents are selected on beginning edit
+  ///   or, when editing, Ctrl+A or F2.
   ///   For unknown reason, the initial text selection works if the cell edit was started
   ///   with a mouse click but not if started with the F2 key.
-  ///   As a partial workaround, the select all is triggered if F2 is pressed again.
+  ///   This is fixed by handling F2 in <see cref="TableView.MainGridOnKeyDown"/>.
   /// </remarks>
   public class TextBoxCell : DataGridViewTextBoxCell {
     public override Type EditType => typeof(DataGridViewTextBoxEditingControl);

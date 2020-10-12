@@ -49,17 +49,17 @@
             // AfterPopulateTimer
             // 
             this.AfterPopulateTimer.Interval = 1;
-            this.AfterPopulateTimer.Tick += new System.EventHandler(this.AfterPopulateTimer_Tick);
+            this.AfterPopulateTimer.Tick += new System.EventHandler(this.AfterPopulateTimerOnTick);
             // 
             // DatabaseUpdateErrorTimer
             // 
             this.DatabaseUpdateErrorTimer.Interval = 1;
-            this.DatabaseUpdateErrorTimer.Tick += new System.EventHandler(this.DatabaseUpdateErrorTimer_Tick);
+            this.DatabaseUpdateErrorTimer.Tick += new System.EventHandler(this.DatabaseUpdateErrorTimerOnTick);
             // 
             // FocusTimer
             // 
             this.FocusTimer.Interval = 1;
-            this.FocusTimer.Tick += new System.EventHandler(this.FocusTimer_Tick);
+            this.FocusTimer.Tick += new System.EventHandler(this.FocusTimerOnTick);
             // 
             // ImageSplitContainer
             // 
@@ -135,8 +135,8 @@
             this.MissingImageLabel.TabIndex = 1;
             this.MissingImageLabel.Text = "You may drag an image file here.";
             this.MissingImageLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.MissingImageLabel.DragDrop += new System.Windows.Forms.DragEventHandler(this.FittedPictureBox1_DragDrop);
-            this.MissingImageLabel.DragOver += new System.Windows.Forms.DragEventHandler(this.FittedPictureBox1_DragOver);
+            this.MissingImageLabel.DragDrop += new System.Windows.Forms.DragEventHandler(this.FittedPictureBox1OnDragDrop);
+            this.MissingImageLabel.DragOver += new System.Windows.Forms.DragEventHandler(this.FittedPictureBox1OnDragOver);
             // 
             // FittedPictureBox1
             // 
@@ -146,9 +146,9 @@
             this.FittedPictureBox1.Size = new System.Drawing.Size(379, 96);
             this.FittedPictureBox1.TabIndex = 0;
             this.FittedPictureBox1.TabStop = false;
-            this.FittedPictureBox1.DragDrop += new System.Windows.Forms.DragEventHandler(this.FittedPictureBox1_DragDrop);
-            this.FittedPictureBox1.DragOver += new System.Windows.Forms.DragEventHandler(this.FittedPictureBox1_DragOver);
-            this.FittedPictureBox1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.FittedPictureBox1_MouseDown);
+            this.FittedPictureBox1.DragDrop += new System.Windows.Forms.DragEventHandler(this.FittedPictureBox1OnDragDrop);
+            this.FittedPictureBox1.DragOver += new System.Windows.Forms.DragEventHandler(this.FittedPictureBox1OnDragOver);
+            this.FittedPictureBox1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.FittedPictureBox1OnMouseDown);
             // 
             // TableView
             // 
@@ -162,12 +162,12 @@
             this.Name = "TableView";
             this.ShowIcon = false;
             this.Text = "TableView";
-            this.Activated += new System.EventHandler(this.TableView_Activated);
-            this.Deactivate += new System.EventHandler(this.TableView_Deactivate);
-            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.TableView_FormClosed);
-            this.Load += new System.EventHandler(this.TableView_Load);
-            this.VisibleChanged += new System.EventHandler(this.TableView_VisibleChanged);
-            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TableView_KeyDown);
+            this.Activated += new System.EventHandler(this.TableViewOnActivated);
+            this.Deactivate += new System.EventHandler(this.TableViewOnDeactivate);
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.TableViewOnFormClosed);
+            this.Load += new System.EventHandler(this.TableViewOnLoad);
+            this.VisibleChanged += new System.EventHandler(this.TableViewOnVisibleChanged);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TableViewOnKeyDown);
             this.ImageSplitContainer.Panel1.ResumeLayout(false);
             this.ImageSplitContainer.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.ImageSplitContainer)).EndInit();

@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics;
 using System.Windows.Forms;
 using JetBrains.Annotations;
 using SoundExplorers.Controller;
@@ -19,8 +18,8 @@ namespace SoundExplorers.View {
       // But is does exist and is required in order to 
       // allow anything to be dropped on to the PictureBox.
       FittedPictureBox1.AllowDrop = true;
-      GridSplitContainer.GotFocus += SplitContainer_GotFocus;
-      ImageSplitContainer.GotFocus += SplitContainer_GotFocus;
+      GridSplitContainer.GotFocus += SplitContainerOnGotFocus;
+      ImageSplitContainer.GotFocus += SplitContainerOnGotFocus;
     }
 
     public TableController Controller { get; private set; }
@@ -42,7 +41,7 @@ namespace SoundExplorers.View {
     }
 
     public void FocusMainGridCell(int rowIndex, int columnIndex) {
-      // This triggers MainGrid_RowEnter.
+      // This triggers MainGridOnRowEnter.
       MainGrid.CurrentCell = MainGrid.Rows[rowIndex].Cells[columnIndex];
     }
 
@@ -52,7 +51,7 @@ namespace SoundExplorers.View {
     /// <remarks>
     /// </remarks>
     public void MakeMainGridInsertionRowCurrent() {
-      // This triggers MainGrid_RowEnter.
+      // This triggers MainGridOnRowEnter.
       MainGrid.CurrentCell = MainGrid.Rows[MainGrid.Rows.Count - 1].Cells[0];
     }
 
@@ -164,7 +163,7 @@ namespace SoundExplorers.View {
       }
     }
 
-    private void AfterPopulateTimer_Tick(object sender, EventArgs e) {
+    private void AfterPopulateTimerOnTick(object sender, EventArgs e) {
       AfterPopulateTimer.Stop();
       MakeMainGridInsertionRowCurrent();
       if (Controller.IsParentTableToBeShown) {
@@ -202,9 +201,9 @@ namespace SoundExplorers.View {
     /// <remarks>
     ///   Have to use a Timer in order for focusing the error row and cell to work.
     /// </remarks>
-    private void DatabaseUpdateErrorTimer_Tick(object sender, EventArgs e) {
+    private void DatabaseUpdateErrorTimerOnTick(object sender, EventArgs e) {
       DatabaseUpdateErrorTimer.Stop();
-      //Debug.WriteLine("DatabaseUpdateErrorTimer_Tick");
+      //Debug.WriteLine("DatabaseUpdateErrorTimerOnTick");
       MainGrid.CancelEdit();
       Controller.ShowDatabaseUpdateError();
     }
@@ -226,7 +225,7 @@ namespace SoundExplorers.View {
     ///   this will not work while the main grid
     ///   is in edit mode.
     /// </remarks>
-    private void FittedPictureBox1_DragDrop(object sender, DragEventArgs e) {
+    private void FittedPictureBox1OnDragDrop(object sender, DragEventArgs e) {
       // if (Controller.Entities is ImageList
       //     && !MainGrid.IsCurrentCellInEditMode
       //     && e.Data.GetDataPresent(DataFormats.FileDrop)) {
@@ -252,7 +251,7 @@ namespace SoundExplorers.View {
     ///   To save confusion,
     ///   path dropping is not supported while the main grid is in edit mode.
     /// </remarks>
-    private void FittedPictureBox1_DragOver(object sender, DragEventArgs e) {
+    private void FittedPictureBox1OnDragOver(object sender, DragEventArgs e) {
       // if (Entities is ImageList
       //     && !MainGrid.IsCurrentCellInEditMode
       //     && e.Data.GetDataPresent(DataFormats.FileDrop)) {
@@ -271,7 +270,7 @@ namespace SoundExplorers.View {
     /// </summary>
     /// <param name="sender">Event sender.</param>
     /// <param name="e">Event arguments.</param>
-    private void FittedPictureBox1_MouseDown(object sender, MouseEventArgs e) {
+    private void FittedPictureBox1OnMouseDown(object sender, MouseEventArgs e) {
       var data = new DataObject(
         DataFormats.FileDrop,
         new[] {FittedPictureBox1.ImageLocation});
@@ -305,7 +304,7 @@ namespace SoundExplorers.View {
       // By trial an error,
       // I found that this complicated rigmarole was required to
       // properly shift the focus programatically, 
-      // i.e. in TableView_KeyDown to implement doing it with the F6 key.
+      // i.e. in TableViewOnKeyDown to implement doing it with the F6 key.
       var unfocusedGrid =
         grid == MainGrid ? ParentGrid : MainGrid;
       unfocusedGrid.Enabled = false;
@@ -329,7 +328,7 @@ namespace SoundExplorers.View {
     ///   the split container gets focused.
     ///   Refocusing in this Timer fixes the problem.
     /// </remarks>
-    private void FocusTimer_Tick(object sender, EventArgs e) {
+    private void FocusTimerOnTick(object sender, EventArgs e) {
       FocusTimer.Stop();
       FocusGrid(FocusedGrid ?? ParentGrid);
     }
@@ -357,7 +356,7 @@ namespace SoundExplorers.View {
       return null;
     }
 
-    private void Grid_Click(object sender, EventArgs e) {
+    private void GridOnClick(object sender, EventArgs e) {
       var grid = sender as DataGridView;
       if (grid != FocusedGrid) {
         FocusGrid(grid);
@@ -392,7 +391,7 @@ namespace SoundExplorers.View {
     ///     on Control + mouse button 1.
     ///   </para>
     /// </remarks>
-    private void Grid_MouseDown(object sender, MouseEventArgs e) {
+    private void GridOnMouseDown(object sender, MouseEventArgs e) {
       var grid = (DataGridView)sender;
       if (MainGrid.IsCurrentCellInEditMode) {
         return;
@@ -444,7 +443,7 @@ namespace SoundExplorers.View {
     ///   be dragged onto the label will not apply, as dragging and dropping is disabled
     ///   while the Path cell is being edited.
     /// </remarks>
-    private void MainGrid_CellBeginEdit(
+    private void MainGridOnCellBeginEdit(
       object sender, DataGridViewCellCancelEventArgs e) {
       MissingImageLabel.Visible = false;
     }
@@ -464,28 +463,32 @@ namespace SoundExplorers.View {
     ///   can be made available for selection in a ComboBox cell's drop-down list:
     ///   see ComboBoxCell.ThrowNoAvailableReferencesException.
     /// </remarks>
-    private void MainGrid_DataError(object sender, DataGridViewDataErrorEventArgs e) {
-      Debug.WriteLine("MainGrid_DataError");
+    private void MainGridOnDataError(object sender, DataGridViewDataErrorEventArgs e) {
+      //Debug.WriteLine("MainGridOnDataError");
       // Debug.WriteLine("Context = " + e.Context.ToString());
       //Debug.WriteLine("RowIndex = " + e.ColumnIndex.ToString());
       //Debug.WriteLine("RowIndex = " + e.RowIndex.ToString());
       Controller.OnMainGridDataError(e.Exception);
-      //e.Cancel = true;
     }
 
     /// <summary>
     ///   Handles the main grid's
     ///   <see cref="Control.KeyDown" /> event to:
-    ///   delete any selected rows on Backspace.
+    ///   begin editing the current cell with, if a text cell, all contents selected.
     /// </summary>
     /// <param name="sender">Event sender.</param>
     /// <param name="e">Event arguments.</param>
-    private void MainGrid_KeyDown(object sender, KeyEventArgs e) {
+    /// <remarks>
+    ///   When a text cell edit is started with a mouse click,
+    ///   selecting all contents of the cell is done by
+    ///   <see cref="TextBoxCell.InitializeEditingControl"/>.
+    /// </remarks>
+    private void MainGridOnKeyDown(object sender, KeyEventArgs e) {
       switch (e.KeyData) {
-        case Keys.Back:
-          foreach (DataGridViewRow selectedRow in MainGrid.SelectedRows) {
-            MainGrid.Rows.Remove(selectedRow);
-          } //End of foreach
+        case Keys.F2:
+          if (MainGrid.CurrentCell != null) {
+            MainGrid.BeginEdit(true);
+          }
           break;
       } //End of switch
     }
@@ -510,7 +513,7 @@ namespace SoundExplorers.View {
     ///     a Missing Image label containing an appropriate message will be displayed.
     ///   </para>
     /// </remarks>
-    private void MainGrid_RowEnter(object sender, DataGridViewCellEventArgs e) {
+    private void MainGridOnRowEnter(object sender, DataGridViewCellEventArgs e) {
       // This is the safe way of checking whether we have entered the insertion (new) row:
       // if (e.RowIndex == MainGrid.RowCount - 1) {
       //   // Controller.OnEnteringInsertionRow();
@@ -523,14 +526,14 @@ namespace SoundExplorers.View {
       Controller.OnMainGridRowEnter(e.RowIndex);
     }
 
-    private void MainGrid_RowsRemoved(object sender, DataGridViewRowsRemovedEventArgs e) {
-      //Debug.WriteLine("MainGrid_RowsRemoved");
+    private void MainGridOnRowsRemoved(object sender, DataGridViewRowsRemovedEventArgs e) {
+      //Debug.WriteLine("MainGridOnRowsRemoved");
       //Debug.WriteLine(MainGrid.Rows[e.RowIndex].Cells[0].Value);
       Controller.OnMainGridRowRemoved(e.RowIndex);
     }
 
-    private void MainGrid_RowValidated(object sender, DataGridViewCellEventArgs e) {
-      //Debug.WriteLine("MainGrid_RowValidated");
+    private void MainGridOnRowValidated(object sender, DataGridViewCellEventArgs e) {
+      //Debug.WriteLine("MainGridOnRowValidated");
       //Debug.WriteLine(MainGrid.Rows[e.RowIndex].Cells[0].Value);
       if (ParentRowChanged) {
         ParentRowChanged = false;
@@ -556,7 +559,7 @@ namespace SoundExplorers.View {
     ///   just before the row becomes current.  So it is too early
     ///   to work:  I tried.
     /// </remarks>
-    private void ParentGrid_CurrentCellChanged(object sender, EventArgs e) {
+    private void ParentGridOnCurrentCellChanged(object sender, EventArgs e) {
       MainGrid.AutoResizeColumns();
     }
 
@@ -566,7 +569,7 @@ namespace SoundExplorers.View {
     /// </summary>
     /// <param name="sender">Event sender.</param>
     /// <param name="e">Event arguments.</param>
-    private void ParentGrid_RowEnter(object sender, DataGridViewCellEventArgs e) {
+    private void ParentGridOnRowEnter(object sender, DataGridViewCellEventArgs e) {
       ParentRowChanged = true;
       Controller.OnParentGridRowEntered(e.RowIndex);
     }
@@ -591,22 +594,22 @@ namespace SoundExplorers.View {
     private void PopulateGrid() {
       // Controller.FetchData();
       // Text = Controller.MainTable?.TableName;
-      MainGrid.CellBeginEdit -= MainGrid_CellBeginEdit;
-      //MainGrid.CellEndEdit -= MainGrid_CellEndEdit;
-      //MainGrid.CellEnter -= new DataGridViewCellEventHandler(MainGrid_CellEnter);
-      //MainGrid.CellStateChanged -= new DataGridViewCellStateChangedEventHandler(Grid_CellStateChanged);
-      //MainGrid.CellValidated -= new DataGridViewCellEventHandler(MainGrid_CellValidated);
-      MainGrid.Click -= Grid_Click;
-      MainGrid.DataError -= MainGrid_DataError;
-      //MainGrid.GotFocus -= new EventHandler(Control_GotFocus);
-      MainGrid.KeyDown -= MainGrid_KeyDown;
-      //MainGrid.LostFocus -= new EventHandler(Control_LostFocus);
-      MainGrid.MouseDown -= Grid_MouseDown;
+      MainGrid.CellBeginEdit -= MainGridOnCellBeginEdit;
+      //MainGrid.CellEndEdit -= MainGridOnCellEndEdit;
+      //MainGrid.CellEnter -= new DataGridViewCellEventHandler(MainGridOnCellEnter);
+      //MainGrid.CellStateChanged -= new DataGridViewCellStateChangedEventHandler(GridOnCellStateChanged);
+      //MainGrid.CellValidated -= new DataGridViewCellEventHandler(MainGridOnCellValidated);
+      MainGrid.Click -= GridOnClick;
+      MainGrid.DataError -= MainGridOnDataError;
+      //MainGrid.GotFocus -= new EventHandler(ControlOnGotFocus);
+      MainGrid.KeyDown -= MainGridOnKeyDown;
+      //MainGrid.LostFocus -= new EventHandler(ControlOnLostFocus);
+      MainGrid.MouseDown -= GridOnMouseDown;
       //MainGrid.RowStateChanged
-      MainGrid.RowEnter -= MainGrid_RowEnter;
-      //MainGrid.RowLeave -= MainGrid_RowLeave;
-      MainGrid.RowsRemoved -= MainGrid_RowsRemoved;
-      MainGrid.RowValidated -= MainGrid_RowValidated;
+      MainGrid.RowEnter -= MainGridOnRowEnter;
+      //MainGrid.RowLeave -= MainGridOnRowLeave;
+      MainGrid.RowsRemoved -= MainGridOnRowsRemoved;
+      MainGrid.RowValidated -= MainGridOnRowValidated;
       Controller.FetchData();
       Text = Controller.MainTableName;
       if (Controller.IsParentTableToBeShown) {
@@ -616,21 +619,21 @@ namespace SoundExplorers.View {
       foreach (DataGridViewColumn column in MainGrid.Columns) {
         ConfigureMainGridColumn(column);
       } // End of foreach
-      MainGrid.CellBeginEdit += MainGrid_CellBeginEdit;
-      //MainGrid.CellEndEdit += MainGrid_CellEndEdit;
-      //MainGrid.CellEnter += new DataGridViewCellEventHandler(MainGrid_CellEnter);
-      //MainGrid.CellStateChanged += new DataGridViewCellStateChangedEventHandler(Grid_CellStateChanged);
-      //MainGrid.CellValidated += new DataGridViewCellEventHandler(MainGrid_CellValidated);
-      MainGrid.Click += Grid_Click;
-      MainGrid.DataError += MainGrid_DataError;
-      //MainGrid.GotFocus += new EventHandler(Control_GotFocus);
-      MainGrid.KeyDown += MainGrid_KeyDown;
-      //MainGrid.LostFocus += new EventHandler(Control_LostFocus);
-      MainGrid.MouseDown += Grid_MouseDown;
-      MainGrid.RowEnter += MainGrid_RowEnter;
-      //MainGrid.RowLeave += MainGrid_RowLeave;
-      MainGrid.RowsRemoved += MainGrid_RowsRemoved;
-      MainGrid.RowValidated += MainGrid_RowValidated;
+      MainGrid.CellBeginEdit += MainGridOnCellBeginEdit;
+      //MainGrid.CellEndEdit += MainGridOnCellEndEdit;
+      //MainGrid.CellEnter += new DataGridViewCellEventHandler(MainGridOnCellEnter);
+      //MainGrid.CellStateChanged += new DataGridViewCellStateChangedEventHandler(GridOnCellStateChanged);
+      //MainGrid.CellValidated += new DataGridViewCellEventHandler(MainGridOnCellValidated);
+      MainGrid.Click += GridOnClick;
+      MainGrid.DataError += MainGridOnDataError;
+      //MainGrid.GotFocus += new EventHandler(ControlOnGotFocus);
+      MainGrid.KeyDown += MainGridOnKeyDown;
+      //MainGrid.LostFocus += new EventHandler(ControlOnLostFocus);
+      MainGrid.MouseDown += GridOnMouseDown;
+      MainGrid.RowEnter += MainGridOnRowEnter;
+      //MainGrid.RowLeave += MainGridOnRowLeave;
+      MainGrid.RowsRemoved += MainGridOnRowsRemoved;
+      MainGrid.RowValidated += MainGridOnRowValidated;
       // Has to be done when visible.
       // So can't be done when called from constructor.
       if (Visible) {
@@ -640,12 +643,12 @@ namespace SoundExplorers.View {
     }
 
     private void PopulateParentGrid() {
-      ParentGrid.Click -= Grid_Click;
-      ParentGrid.CurrentCellChanged -= ParentGrid_CurrentCellChanged;
-      //ParentGrid.GotFocus -= new EventHandler(Control_GotFocus);
-      //ParentGrid.LostFocus -= new EventHandler(Control_LostFocus);
-      ParentGrid.MouseDown -= Grid_MouseDown;
-      ParentGrid.RowEnter -= ParentGrid_RowEnter;
+      ParentGrid.Click -= GridOnClick;
+      ParentGrid.CurrentCellChanged -= ParentGridOnCurrentCellChanged;
+      //ParentGrid.GotFocus -= new EventHandler(ControlOnGotFocus);
+      //ParentGrid.LostFocus -= new EventHandler(ControlOnLostFocus);
+      ParentGrid.MouseDown -= GridOnMouseDown;
+      ParentGrid.RowEnter -= ParentGridOnRowEnter;
       ParentGrid.DataSource = Controller.ParentBindingList;
       foreach (DataGridViewColumn column in ParentGrid.Columns) {
         if (column.ValueType == typeof(DateTime)) {
@@ -657,15 +660,15 @@ namespace SoundExplorers.View {
       if (Visible) {
         ParentGrid.AutoResizeColumns();
       }
-      ParentGrid.Click += Grid_Click;
-      ParentGrid.CurrentCellChanged += ParentGrid_CurrentCellChanged;
-      //ParentGrid.GotFocus += new EventHandler(Control_GotFocus);
-      //ParentGrid.LostFocus += new EventHandler(Control_LostFocus);
-      ParentGrid.MouseDown += Grid_MouseDown;
-      ParentGrid.RowEnter += ParentGrid_RowEnter;
+      ParentGrid.Click += GridOnClick;
+      ParentGrid.CurrentCellChanged += ParentGridOnCurrentCellChanged;
+      //ParentGrid.GotFocus += new EventHandler(ControlOnGotFocus);
+      //ParentGrid.LostFocus += new EventHandler(ControlOnLostFocus);
+      ParentGrid.MouseDown += GridOnMouseDown;
+      ParentGrid.RowEnter += ParentGridOnRowEnter;
       if (ParentGrid.RowCount > 0) {
         ParentGrid.CurrentCell =
-          ParentGrid.Rows[0].Cells[0]; // Triggers ParentGrid_RowEnter
+          ParentGrid.Rows[0].Cells[0]; // Triggers ParentGridOnRowEnter
       }
     }
 
@@ -701,7 +704,7 @@ namespace SoundExplorers.View {
     ///   In any case, we want focus to return to the current
     ///   grid after the user has grabbed the splitter.
     /// </remarks>
-    private void SplitContainer_GotFocus(object sender, EventArgs e) {
+    private void SplitContainerOnGotFocus(object sender, EventArgs e) {
       FocusTimer.Start();
     }
 
@@ -733,10 +736,10 @@ namespace SoundExplorers.View {
     /// <param name="e">Event arguments.</param>
     /// <remarks>
     ///   This is necessary because of the
-    ///   workaround implemented in TableView_Deactivate.
+    ///   workaround implemented in TableViewOnDeactivate.
     /// </remarks>
-    private void TableView_Activated(object sender, EventArgs e) {
-      //Debug.WriteLine("TableView_Activated: " + this.Text);
+    private void TableViewOnActivated(object sender, EventArgs e) {
+      //Debug.WriteLine("TableViewOnActivated: " + this.Text);
       MainGrid.Enabled = true;
       if (Controller.IsParentTableToBeShown) {
         // A read-only related grid for the parent table is shown
@@ -764,8 +767,8 @@ namespace SoundExplorers.View {
     ///   To be safe, disable the grid even if there aren't date columns:
     ///   maybe there are other data types that would cause similar problems.
     /// </remarks>
-    private void TableView_Deactivate(object sender, EventArgs e) {
-      //Debug.WriteLine("TableView_Deactivate: " + this.Text);
+    private void TableViewOnDeactivate(object sender, EventArgs e) {
+      //Debug.WriteLine("TableViewOnDeactivate: " + this.Text);
       MainGrid.Enabled = false;
       if (Controller.IsParentTableToBeShown) {
         // A read-only related grid for the parent table is shown
@@ -774,8 +777,8 @@ namespace SoundExplorers.View {
       }
     }
 
-    private void TableView_FormClosed(object sender, FormClosedEventArgs e) {
-      //MainGrid.RowValidated -= new DataGridViewCellEventHandler(MainGrid_RowValidated);
+    private void TableViewOnFormClosed(object sender, FormClosedEventArgs e) {
+      //MainGrid.RowValidated -= new DataGridViewCellEventHandler(MainGridOnRowValidated);
       //MainGrid.ReadOnly = true;
       //Refresh();
       SizeableFormOptions.Save();
@@ -803,7 +806,7 @@ namespace SoundExplorers.View {
     ///   the <see cref="Form" />'s <see cref="Form.KeyPreview" />
     ///   property must be set to <b>True</b>.
     /// </remarks>
-    private void TableView_KeyDown(object sender, KeyEventArgs e) {
+    private void TableViewOnKeyDown(object sender, KeyEventArgs e) {
       //switch (e.KeyCode) {
       //case Keys.Enter:
       //    Debug.WriteLine(e.KeyCode);
@@ -820,7 +823,7 @@ namespace SoundExplorers.View {
       } //End of switch
     }
 
-    private void TableView_Load(object sender, EventArgs e) {
+    private void TableViewOnLoad(object sender, EventArgs e) {
       // Has to be done here rather than in constructor
       // in order to tell that this is an MDI child form.
       SizeableFormOptions = SizeableFormOptions.Create(this);
@@ -830,9 +833,9 @@ namespace SoundExplorers.View {
       OpenTable();
     }
 
-    private void TableView_VisibleChanged(object sender, EventArgs e) {
+    private void TableViewOnVisibleChanged(object sender, EventArgs e) {
       if (Visible) {
-        //Debug.WriteLine("TableView_VisibleChanged: " + this.Text);
+        //Debug.WriteLine("TableViewOnVisibleChanged: " + this.Text);
         MainGrid.AutoResizeColumns();
         ImageSplitContainer.Panel2Collapsed = true;
         // We need to work out whether we need the image panel
@@ -861,7 +864,7 @@ namespace SoundExplorers.View {
           // A read-only related grid for the parent table is shown
           // above the main grid.
           GridSplitContainer.Panel1Collapsed = false;
-          // Does not work if done in TableView_Load.
+          // Does not work if done in TableViewOnLoad.
           GridSplitContainer.SplitterDistance = Controller.GridSplitterDistance;
           ParentGrid.AutoResizeColumns();
         } else {
