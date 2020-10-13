@@ -272,7 +272,7 @@ namespace SoundExplorers.Data {
           this,
           $"The {EntityType.Name}'s {SimpleKeyName} cannot be set to " +
           $"'{newSimpleKey}' because another {EntityType.Name} " +
-          $"with that {SimpleKeyName} has already been persisted.");
+          $"with that {SimpleKeyName} already exists.");
       }
     }
 
@@ -280,7 +280,7 @@ namespace SoundExplorers.Data {
       if (string.IsNullOrWhiteSpace(SimpleKey)) {
         throw new NoNullAllowedException(
           $"A {SimpleKeyName} has not yet been specified. " +
-          $"So the {EntityType.Name} cannot be persisted.");
+          $"So the {EntityType.Name} cannot be added.");
       }
       foreach (var parentKeyValuePair in Parents) {
         var parentType = parentKeyValuePair.Key;
@@ -288,7 +288,7 @@ namespace SoundExplorers.Data {
         if (parent == null && ParentRelations[parentType].IsMandatory) {
           throw new ConstraintException(
             $"{EntityType.Name} '{Key}' " +
-            $"cannot be persisted because its {parentType.Name} "
+            $"cannot be added because its {parentType.Name} "
             + "has not been specified.");
         }
       }
@@ -298,7 +298,7 @@ namespace SoundExplorers.Data {
         throw new DuplicateKeyException(
           this,
           $"{EntityType.Name} '{Key}' " +
-          $"cannot be persisted because another {EntityType.Name} "
+          $"cannot be added because another {EntityType.Name} "
           + "with the same key already persists.");
       }
     }
@@ -483,7 +483,7 @@ namespace SoundExplorers.Data {
       } catch (NullReferenceException ex) {
         throw new InvalidOperationException(
           $"{EntityType.Name} '{SimpleKey}' cannot be updated outside a session " +
-          "because it has already been persisted.", ex);
+          "because it already exists.", ex);
       }
     }
   }

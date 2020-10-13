@@ -149,7 +149,7 @@ namespace SoundExplorers.Tests.Model {
         Assert.AreEqual(ChangeAction.Insert, exception.ChangeAction, "ChangeAction");
         Assert.IsTrue(
           exception.Message.Contains(
-            $"cannot be persisted because another {list.TableName} "
+            $"cannot be added because another {list.TableName} "
             + "with the same key already persists."),
           "Message");
         Assert.AreEqual(1, exception.RowIndex, "RowIndex");
@@ -188,7 +188,7 @@ namespace SoundExplorers.Tests.Model {
         Assert.IsTrue(
           exception.Message.Contains(
             $"because another {list.TableName} "
-            + "with that Name has already been persisted."),
+            + "with that Name already exists."),
           "Message");
         Assert.AreEqual(1, exception.RowIndex, "RowIndex");
         Assert.AreEqual(0, exception.ColumnIndex, "ColumnIndex");

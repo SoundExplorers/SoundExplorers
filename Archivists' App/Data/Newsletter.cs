@@ -73,7 +73,7 @@ namespace SoundExplorers.Data {
             this,
             $"URL cannot be set to " +
             $"'{newUrl}'. Newsletter {duplicate.SimpleKey} " +
-            "has already been persisted with that URL.");
+            "already exists with that URL.");
         }
       }
     }
@@ -82,15 +82,15 @@ namespace SoundExplorers.Data {
       base.CheckCanPersist(session);
       if (string.IsNullOrWhiteSpace(Url)) {
         throw new NoNullAllowedException(
-          "Newsletter cannot be persisted because a URL has not been specified.");
+          "Newsletter cannot be added because a URL has not been specified.");
       }
       var urlDuplicate = FindDuplicateUrl(Url, session);
       if (urlDuplicate != null) {
         throw new DuplicateKeyException(
           this,
-          $"Newsletter cannot be persisted because Newsletter " +
+          $"Newsletter cannot be added because Newsletter " +
           $"'{urlDuplicate.SimpleKey}' " +
-          $"has already been persisted with the same URL '{Url}'.");
+          $"already exists with the same URL '{Url}'.");
       }
     }
 

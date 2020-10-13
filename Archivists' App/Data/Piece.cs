@@ -111,7 +111,7 @@ namespace SoundExplorers.Data {
             this,
             $"The Audio URL of Piece '{Key}' cannot be set to " +
             $"'{newAudioUrl}'. Piece '{duplicate.Key}' " +
-            "has already been persisted with that Audio URL.");
+            "already exists with that Audio URL.");
         }
       }
     }
@@ -137,7 +137,7 @@ namespace SoundExplorers.Data {
             this,
             $"The Video URL of Piece '{Key}' cannot be set to " +
             $"'{newVideoUrl}'. Piece '{duplicate.Key}' " +
-            "has already been persisted with that Video URL.");
+            "already exists with that Video URL.");
         }
       }
     }
@@ -150,9 +150,9 @@ namespace SoundExplorers.Data {
         if (duplicate != null) {
           throw new DuplicateKeyException(
             this,
-            "Piece cannot be persisted because Piece " +
+            "Piece cannot be added because Piece " +
             $"'{duplicate.Key}' " +
-            $"has already been persisted with the same Audio URL '{AudioUrl}'.");
+            $"already exists with the same Audio URL '{AudioUrl}'.");
         }
       }
       if (!string.IsNullOrWhiteSpace(VideoUrl)) {
@@ -160,9 +160,9 @@ namespace SoundExplorers.Data {
         if (duplicate != null) {
           throw new DuplicateKeyException(
             this,
-            "Piece cannot be persisted because Piece " +
+            "Piece cannot be added because Piece " +
             $"'{duplicate.Key}' " +
-            $"has already been persisted with the same Video URL '{VideoUrl}'.");
+            $"already exists with the same Video URL '{VideoUrl}'.");
         }
       }
     }
