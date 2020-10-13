@@ -59,7 +59,7 @@ namespace SoundExplorers.Model {
     ///   which is for adding new entities and is located at the bottom of the grid.
     /// </summary>
     private bool IsInsertionRowCurrent { get; set; }
-    
+
     private TEntity NewEntity { get; set; }
 
     /// <summary>
@@ -223,7 +223,7 @@ namespace SoundExplorers.Model {
 
     public void RemoveCurrentBindingItem() {
       BindingList?.Remove(BindingItemToFix);
-      BindingItemToFix = null;
+      //BindingItemToFix = null;
     }
 
     public void RestoreCurrentBindingItemOriginalValues() {
@@ -305,11 +305,16 @@ namespace SoundExplorers.Model {
               LastDatabaseChangeAction = ChangeAction.Insert;
             }
           }
-          var newValue = e.PropertyDescriptor.GetValue(BindingList[e.NewIndex]); 
           if (IsInsertionRowCurrent) {
-            UpdateNewEntityProperty(e.NewIndex, e.PropertyDescriptor.Name, newValue);
+            // Even though only a single property has been changed on the grid,
+            // update all entity properties in case there are default values on the grid
+            // that don't correspond to entity defaults.
+            // The only examples anticipated are Newsletter.Date and Event.Date,
+            // which default to today on the grid.
+            UpdateNewEntity(e.NewIndex, e.PropertyDescriptor.Name);
           } else {
-            UpdateExistingEntityProperty(e.NewIndex, e.PropertyDescriptor.Name, newValue);
+            UpdateExistingEntityProperty(e.NewIndex, e.PropertyDescriptor.Name,
+              e.PropertyDescriptor.GetValue(BindingList[e.NewIndex]));
           }
           break;
         case ListChangedType.ItemDeleted: // Insertion row left without saving data
@@ -347,7 +352,7 @@ namespace SoundExplorers.Model {
       return new BindingList<TBindingItem>(list);
     }
 
-    private static TEntity CreateEntity() {
+    protected virtual TEntity CreateEntity() {
       try {
         return (TEntity)Activator.CreateInstance(typeof(TEntity));
       } catch (TargetInvocationException ex) {
@@ -387,12 +392,15 @@ namespace SoundExplorers.Model {
       }
     }
 
-    private void UpdateNewEntityProperty(int rowIndex, [NotNull] string propertyName,
-      [CanBeNull] object newValue) {
+    /// <summary>
+    /// TODO: Remove UpdateNewEntity propertyName parameter once PropertyConstraintException has been implemented.
+    /// </summary>
+    private void UpdateNewEntity(int rowIndex, [NotNull] string propertyName) {
+      var bindingItem = (TBindingItem)BindingList[rowIndex];
       try {
-        UpdateEntityProperty(propertyName, newValue, NewEntity);
+        UpdateEntity(bindingItem, NewEntity);
       } catch (Exception exception) {
-        BindingItemToFix = (TBindingItem)BindingList[rowIndex];
+        BindingItemToFix = bindingItem;
         // This exception will be passed to the grid's DataError event handler.
         throw CreateDatabaseUpdateErrorException(exception, rowIndex, propertyName);
       }

@@ -523,14 +523,12 @@ namespace SoundExplorers.View {
     /// </remarks>
     private void MainGridOnRowEnter(object sender, DataGridViewCellEventArgs e) {
       // This is the safe way of checking whether we have entered the insertion (new) row:
-      // if (e.RowIndex == MainGrid.RowCount - 1) {
+      //if (e.RowIndex == MainGrid.RowCount - 1) {
       //   // Controller.OnEnteringInsertionRow();
       //   // // if (Entities is ImageList) {
       //   // //   ShowImageOrMessage(null);
       //   // // }
-      //   return;
-      // }
-      // // Not new row
+      //}
       Controller.OnMainGridRowEnter(e.RowIndex);
     }
 
