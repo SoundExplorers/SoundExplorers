@@ -15,10 +15,17 @@ namespace SoundExplorers.View {
   ///     http://msdn.microsoft.com/en-us/library/7tas5c80.aspx.
   ///   </para>
   /// </remarks>
-  internal class CalendarCell : DataGridViewTextBoxCell {
+  internal class CalendarCell : DataGridViewTextBoxCell, ICanRestoreErrorValue {
     public override Type EditType =>
       // Return the type of the editing control that CalendarCell uses.
       typeof(CalendarEditingControl);
+
+    public void RestoreErrorValue(object errorValue) {
+      if (errorValue is DateTime dateTime) {
+        var dateTimePicker = (DateTimePicker)DataGridView.EditingControl;
+        dateTimePicker.Value = dateTime.Date;
+      }
+    }
 
     public override void InitializeEditingControl(
       int rowIndex,
@@ -27,23 +34,16 @@ namespace SoundExplorers.View {
       // Set the value of the editing control to the current cell value.
       base.InitializeEditingControl(rowIndex, initialFormattedValue,
         dataGridViewCellStyle);
-      var editingControl = (CalendarEditingControl)DataGridView.EditingControl;
+      var dateTimePicker = (DateTimePicker)DataGridView.EditingControl;
       // Use the default row value when Value property is null
       // or, more to the point in this case, empty.
       if (Value == null
           || Value == DBNull.Value) {
-        editingControl.Value = DateTime.Now;
-        Value = editingControl.Value;
+        dateTimePicker.Value = DateTime.Now;
+        Value = dateTimePicker.Value;
       } else {
-        editingControl.Value = (DateTime)Value;
+        dateTimePicker.Value = (DateTime)Value;
       }
     }
-
-    //public override Type ValueType {
-    //    get {
-    //        // Return the type of the value that CalendarCell contains.
-    //        return typeof(DateTime);
-    //    }
-    //}
   } //End of class
 } //End of namespace

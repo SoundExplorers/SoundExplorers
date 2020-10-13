@@ -15,10 +15,6 @@ namespace SoundExplorers.Tests.Controller {
       Controller = controller;
     }
 
-    public void BeginEditCurrentCell(object initialValue) {
-      throw new System.NotImplementedException();
-    }
-
     public void FocusMainGridCell(int rowIndex, int columnIndex) {
       FocusMainGridCellCount++;
       FocusMainGridCellColumnIndex = columnIndex;
@@ -31,6 +27,10 @@ namespace SoundExplorers.Tests.Controller {
 
     public void OnRowInsertedOrDeleted() {
       OnRowInsertedOrDeletedCount++;
+    }
+
+    public void ResumeEditCurrentCell(object errorValue) {
+      throw new System.NotImplementedException();
     }
 
     public void SelectCurrentRowOnly() {

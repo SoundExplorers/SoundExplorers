@@ -32,14 +32,6 @@ namespace SoundExplorers.View {
     private bool ParentRowChanged { get; set; }
     private SizeableFormOptions SizeableFormOptions { get; set; }
 
-    public void BeginEditCurrentCell(object initialValue) {
-      MainGrid.BeginEdit(true);
-      if (MainGrid.EditingControl is TextBox textBox) {
-        textBox.Text = initialValue?.ToString();
-        textBox.SelectAll();
-      }
-    }
-
     public void FocusMainGridCell(int rowIndex, int columnIndex) {
       // This triggers MainGridOnRowEnter.
       MainGrid.CurrentCell = MainGrid.Rows[rowIndex].Cells[columnIndex];
@@ -62,6 +54,13 @@ namespace SoundExplorers.View {
     public void OnRowInsertedOrDeleted() {
       MainGrid.AutoResizeColumns();
       MainGrid.Focus();
+    }
+
+    public void ResumeEditCurrentCell(object errorValue) {
+      MainGrid.BeginEdit(true);
+      if (MainGrid.CurrentCell is ICanRestoreErrorValue canRestoreErrorValue) {
+        canRestoreErrorValue.RestoreErrorValue(errorValue);
+      }
     }
 
     public void SelectCurrentRowOnly() {

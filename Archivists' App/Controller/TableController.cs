@@ -142,7 +142,7 @@ namespace SoundExplorers.Controller {
           break;
         case ChangeAction.Update:
           MainList.RestoreCurrentBindingItemOriginalValues();
-          View.BeginEditCurrentCell(MainList.LastDatabaseUpdateErrorException.ErrorValue);
+          View.ResumeEditCurrentCell(MainList.LastDatabaseUpdateErrorException.ErrorValue);
           break;
         default:
           throw new NotSupportedException(
