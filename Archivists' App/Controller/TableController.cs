@@ -96,7 +96,7 @@ namespace SoundExplorers.Controller {
     ///   Returns whether the specified column references another entity.
     /// </summary>
     public bool DoesColumnReferenceAnotherEntity([NotNull] string columnName) {
-      return !string.IsNullOrEmpty(Columns[columnName]?.ReferencedColumnName);
+      return !string.IsNullOrWhiteSpace(Columns[columnName]?.ReferencedColumnName);
     }
 
     /// <summary>
@@ -137,8 +137,10 @@ namespace SoundExplorers.Controller {
         case ChangeAction.Delete:
           break;
         case ChangeAction.Insert:
-          MainList.RemoveCurrentBindingItem();
-          View.MakeMainGridInsertionRowCurrent();
+          // TODO: New row should still be insertion row on error.
+          //MainList.RemoveCurrentBindingItem();
+          View.ResumeEditCurrentCell(MainList.LastDatabaseUpdateErrorException.ErrorValue);
+          //View.MakeMainGridInsertionRowCurrent();
           break;
         case ChangeAction.Update:
           MainList.RestoreCurrentBindingItemOriginalValues();
@@ -173,7 +175,6 @@ namespace SoundExplorers.Controller {
         throw exception;
       }
       View.StartDatabaseUpdateErrorTimer();
-      //View.ShowErrorMessage(MainList.LastDatabaseUpdateErrorException.Message);
     }
 
     public void OnMainGridRowEnter(int rowIndex) {
@@ -257,7 +258,7 @@ namespace SoundExplorers.Controller {
     /// </exception>
     public void ShowNewsletter() {
       // var newsletter = GetNewsletterToShow();
-      // if (string.IsNullOrEmpty(newsletter.Path)) { } else if (!File.Exists(
+      // if (string.IsNullOrWhiteSpace(newsletter.Path)) { } else if (!File.Exists(
       //   newsletter.Path)) {
       //   throw new ApplicationException("Newsletter file \"" + newsletter.Path
       //     + "\", specified by the Path of the "

@@ -59,6 +59,8 @@ namespace SoundExplorers.Model {
     ///   which is for adding new entities and is located at the bottom of the grid.
     /// </summary>
     private bool IsInsertionRowCurrent { get; set; }
+    
+    private TEntity NewEntity { get; set; }
 
     /// <summary>
     ///   Gets the binding list representing the list of entities
@@ -271,18 +273,15 @@ namespace SoundExplorers.Model {
     ///   A database update error occured.
     /// </exception>
     private void AddNewEntity(int rowIndex) {
-      LastDatabaseChangeAction = ChangeAction.Insert;
-      var bindingItem = (TBindingItem)BindingList[rowIndex];
-      var entity = CreateEntity();
       Session.BeginUpdate();
       try {
-        UpdateEntity(bindingItem, entity);
-        Session.Persist(entity);
-        Add(entity);
+        Session.Persist(NewEntity);
+        Add(NewEntity);
       } catch (Exception exception) {
-        BindingItemToFix = bindingItem;
+        BindingItemToFix = (TBindingItem)BindingList[rowIndex];
         BackupBindingItemToRestoreFrom = null;
-        throw CreateDatabaseUpdateErrorException(exception, rowIndex);
+        // TODO: Persistence (and other data) exceptions must be PropertyConstraintException to provide error property name  
+        throw CreateDatabaseUpdateErrorException(exception, rowIndex, "Date");
       } finally {
         Session.Commit();
         IsInsertionRowCurrent = false;
@@ -299,10 +298,18 @@ namespace SoundExplorers.Model {
         case ListChangedType.ItemChanged: // Cell edit completed 
           // Debug.WriteLine(
           //   $"ListChangedType.ItemChanged:  {e.PropertyDescriptor.Name} = '{e.PropertyDescriptor.GetValue(BindingList[e.NewIndex])}', cell edit completed or cancelled");
-          HasRowBeenEdited = true;
-          if (!IsInsertionRowCurrent) {
-            UpdateExistingEntityProperty(e.NewIndex, e.PropertyDescriptor.Name,
-              e.PropertyDescriptor.GetValue(BindingList[e.NewIndex]));
+          if (!HasRowBeenEdited) {
+            HasRowBeenEdited = true;
+            if (IsInsertionRowCurrent) {
+              NewEntity = CreateEntity();
+              LastDatabaseChangeAction = ChangeAction.Insert;
+            }
+          }
+          var newValue = e.PropertyDescriptor.GetValue(BindingList[e.NewIndex]); 
+          if (IsInsertionRowCurrent) {
+            UpdateNewEntityProperty(e.NewIndex, e.PropertyDescriptor.Name, newValue);
+          } else {
+            UpdateExistingEntityProperty(e.NewIndex, e.PropertyDescriptor.Name, newValue);
           }
           break;
         case ListChangedType.ItemDeleted: // Insertion row left without saving data
@@ -377,6 +384,17 @@ namespace SoundExplorers.Model {
         throw CreateDatabaseUpdateErrorException(exception, rowIndex, propertyName);
       } finally {
         Session.Commit();
+      }
+    }
+
+    private void UpdateNewEntityProperty(int rowIndex, [NotNull] string propertyName,
+      [CanBeNull] object newValue) {
+      try {
+        UpdateEntityProperty(propertyName, newValue, NewEntity);
+      } catch (Exception exception) {
+        BindingItemToFix = (TBindingItem)BindingList[rowIndex];
+        // This exception will be passed to the grid's DataError event handler.
+        throw CreateDatabaseUpdateErrorException(exception, rowIndex, propertyName);
       }
     }
   }
