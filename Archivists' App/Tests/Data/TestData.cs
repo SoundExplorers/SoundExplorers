@@ -60,8 +60,8 @@ namespace SoundExplorers.Tests.Data {
         var @event = new Event {
           QueryHelper = QueryHelper,
           Date = date,
-          Location = location ?? GetDefaultLocation(session),
-          EventType = eventType ?? GetDefaultEventType(session),
+          Location = location ?? GetDefaultLocation(),
+          EventType = eventType ?? GetDefaultEventType(),
           Notes = GenerateUniqueName(16)
         };
         session.Persist(@event);
@@ -140,7 +140,7 @@ namespace SoundExplorers.Tests.Data {
     }
 
     [NotNull]
-    private EventType GetDefaultEventType([NotNull] SessionBase session) {
+    private EventType GetDefaultEventType() {
       if (EventTypes.Count == 0) {
         throw new InvalidOperationException("An EventType must be added first.");
       }
@@ -148,7 +148,7 @@ namespace SoundExplorers.Tests.Data {
     }
 
     [NotNull]
-    private Location GetDefaultLocation([NotNull] SessionBase session) {
+    private Location GetDefaultLocation() {
       if (Locations.Count == 0) {
         throw new InvalidOperationException("A Location must be added first.");
       }

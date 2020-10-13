@@ -1,3 +1,4 @@
+using System;
 using System.Reflection;
 using System.Windows.Forms;
 
@@ -6,7 +7,7 @@ namespace SoundExplorers.View {
   ///   About <see cref="Form" />.
   /// </summary>
   public partial class AboutForm : Form {
-    private static readonly Assembly _entryAssembly =
+    private static readonly Assembly EntryAssembly =
       Assembly.GetEntryAssembly();
 
     /// <summary>
@@ -17,10 +18,14 @@ namespace SoundExplorers.View {
       // Required for Windows Form Designer support.
       InitializeComponent();
       // Add any constructor code after InitializeComponent call.
-      Text = "About " + Application.ProductName;
       CopyrightLabel.Text = AssemblyCopyright;
       VersionLabel.Text = "Version " + Application.ProductVersion;
       ProductNameLabel.Text = Application.ProductName;
+      Load += OnLoad;
+    }
+
+    private void OnLoad(object sender, EventArgs e) {
+      Text = "About " + Application.ProductName;
     }
 
     /// <summary>
@@ -30,7 +35,7 @@ namespace SoundExplorers.View {
     public static string AssemblyCompany {
       get {
         var assemblyCompanyAttribute =
-          (AssemblyCompanyAttribute)_entryAssembly.GetCustomAttributes(
+          (AssemblyCompanyAttribute)EntryAssembly.GetCustomAttributes(
             typeof(AssemblyCompanyAttribute), false)[0];
         return assemblyCompanyAttribute.Company;
       }
@@ -43,7 +48,7 @@ namespace SoundExplorers.View {
     public static string AssemblyCopyright {
       get {
         var assemblyCopyrightAttribute =
-          (AssemblyCopyrightAttribute)_entryAssembly.GetCustomAttributes(
+          (AssemblyCopyrightAttribute)EntryAssembly.GetCustomAttributes(
             typeof(AssemblyCopyrightAttribute), false)[0];
         return assemblyCopyrightAttribute.Copyright;
       }

@@ -1,8 +1,7 @@
 // Written by Simon O'Rorke, February 2005.
 
-using System.ComponentModel;
+using System;
 using System.Windows.Forms;
-using SoundExplorers.Controller;
 
 namespace SoundExplorers.View {
 	/// <summary>
@@ -73,7 +72,7 @@ namespace SoundExplorers.View {
 		/// <summary>
 		///   Required designer variable.
 		/// </summary>
-		private readonly Container components = null;
+		private System.ComponentModel.IContainer components;
 
     private string _status = "";
 
@@ -99,7 +98,6 @@ namespace SoundExplorers.View {
       // Required for Windows Form Designer support
       InitializeComponent();
       // Add any constructor code after InitializeComponent call
-      Text = Application.ProductName;
       // If the main thread attempts to show a message box
       // over a splash window in a separate thread without
       // cross threading, as happens in the current version of
@@ -112,6 +110,11 @@ namespace SoundExplorers.View {
       // will not get thrown when the invoking application
       // is run from within the Visual Studio IDE.
       CheckForIllegalCrossThreadCalls = false;
+      Load += OnLoad;
+    }
+
+    private void OnLoad(object sender, EventArgs e) {
+	    Text = Application.ProductName;
     }
 
     /// <summary>
@@ -124,12 +127,12 @@ namespace SoundExplorers.View {
     /// </param>
     public void SetMessage(string status) {
       _status = status;
-      changeStatusText();
+      ChangeStatusText();
     }
 
-    private void changeStatusText() {
+    private void ChangeStatusText() {
       if (InvokeRequired) {
-        Invoke(new MethodInvoker(changeStatusText));
+        Invoke(new MethodInvoker(ChangeStatusText));
         return;
       }
       StatusLabel.Text = _status;
@@ -154,6 +157,7 @@ namespace SoundExplorers.View {
     ///   the contents of this method with the code editor.
     /// </summary>
     private void InitializeComponent() {
+	    this.components = new System.ComponentModel.Container();
       this.SplashPanel = new System.Windows.Forms.Panel();
       this.StatusLabel = new System.Windows.Forms.Label();
       this.SplashPanel.SuspendLayout();

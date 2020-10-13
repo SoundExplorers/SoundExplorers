@@ -12,7 +12,7 @@ namespace SoundExplorers.View {
   /// </summary>
   internal class FittedPictureBox : PictureBox {
     private string _imageLocation;
-    private Bitmap Original;
+    private Bitmap _original;
 
     /// <summary>
     ///   Gets or sets the path of the image that is to be displayed
@@ -27,12 +27,12 @@ namespace SoundExplorers.View {
       set {
         _imageLocation = value;
         try {
-          Original = new Bitmap(_imageLocation);
+          _original = new Bitmap(_imageLocation);
         } catch (ArgumentException) {
           throw new ApplicationException(
             "\"" + _imageLocation + "\" is not an image file.");
         }
-        Image = ResizeImage(Original);
+        Image = ResizeImage(_original);
       }
     }
 
@@ -60,7 +60,7 @@ namespace SoundExplorers.View {
     protected override void OnResize(EventArgs e) {
       base.OnResize(e);
       if (Image != null) {
-        Image = ResizeImage(Original);
+        Image = ResizeImage(_original);
       }
     }
 
