@@ -223,7 +223,7 @@ namespace SoundExplorers.Model {
 
     public void RemoveCurrentBindingItem() {
       BindingList?.Remove(BindingItemToFix);
-      //BindingItemToFix = null;
+      BindingItemToFix = null;
     }
 
     public void RestoreCurrentBindingItemOriginalValues() {
@@ -352,7 +352,7 @@ namespace SoundExplorers.Model {
       return new BindingList<TBindingItem>(list);
     }
 
-    protected virtual TEntity CreateEntity() {
+    private static TEntity CreateEntity() {
       try {
         return (TEntity)Activator.CreateInstance(typeof(TEntity));
       } catch (TargetInvocationException ex) {
