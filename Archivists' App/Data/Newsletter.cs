@@ -53,7 +53,7 @@ namespace SoundExplorers.Data {
 
     private void CheckCanChangeUrl([CanBeNull] string oldUrl,
       [CanBeNull] string newUrl) {
-      if (newUrl == null) {
+      if (string.IsNullOrWhiteSpace(newUrl)) {
         throw new NoNullAllowedException(
           $"A valid URL has not been specified for Newsletter '{SimpleKey}'.");
       }
@@ -61,7 +61,7 @@ namespace SoundExplorers.Data {
         var dummy = new Uri(newUrl, UriKind.Absolute);
       } catch (UriFormatException) {
         throw new FormatException(
-          $"Newsletter '{SimpleKey}': invalid URL format '{newUrl}'.");
+          $"Invalid URL format: '{newUrl}'.");
       }
       if (IsPersistent && Session != null && newUrl != oldUrl) {
         // If there's no session, which means we cannot check for a duplicate,
@@ -71,7 +71,7 @@ namespace SoundExplorers.Data {
         if (duplicate != null) {
           throw new DuplicateKeyException(
             this,
-            $"The URL of Newsletter '{SimpleKey}' cannot be set to " +
+            $"URL cannot be set to " +
             $"'{newUrl}'. Newsletter {duplicate.SimpleKey} " +
             "has already been persisted with that URL.");
         }
@@ -80,17 +80,15 @@ namespace SoundExplorers.Data {
 
     protected override void CheckCanPersist(SessionBase session) {
       base.CheckCanPersist(session);
-      if (Url == null) {
+      if (string.IsNullOrWhiteSpace(Url)) {
         throw new NoNullAllowedException(
-          $"Newsletter '{SimpleKey}' " +
-          "cannot be persisted because a URL has not been specified.");
+          "Newsletter cannot be persisted because a URL has not been specified.");
       }
       var urlDuplicate = FindDuplicateUrl(Url, session);
       if (urlDuplicate != null) {
         throw new DuplicateKeyException(
           this,
-          $"Newsletter '{SimpleKey}' " +
-          "cannot be persisted because Newsletter " +
+          $"Newsletter cannot be persisted because Newsletter " +
           $"'{urlDuplicate.SimpleKey}' " +
           $"has already been persisted with the same URL '{Url}'.");
       }

@@ -154,7 +154,7 @@ namespace SoundExplorers.View {
         //     Controller.ReferencedColumnName];
         // if (firstDate == DateTime.Parse("01 Jan 1900")) {
         //   ComboBox.SelectedIndex = 0;
-        //   if (string.IsNullOrEmpty(Value.ToString())) {
+        //   if (string.IsNullOrWhiteSpace(Value.ToString())) {
         //     Value = firstDate;
         //   }
         // } else {
@@ -162,7 +162,7 @@ namespace SoundExplorers.View {
         //     (DateTime)referencedBindingList.Rows[referencedBindingList.Rows.Count - 1][
         //       Controller.ReferencedColumnName];
         //   ComboBox.SelectedIndex = referencedBindingList.Count - 1;
-        //   if (string.IsNullOrEmpty(Value.ToString())) {
+        //   if (string.IsNullOrWhiteSpace(Value.ToString())) {
         //     Value = lastDate;
         //   }
         // }

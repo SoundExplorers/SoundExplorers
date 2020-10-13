@@ -247,10 +247,9 @@ namespace SoundExplorers.Data {
 
     private void CheckCanChangeSimpleKey(
       [CanBeNull] string oldSimpleKey, [CanBeNull] string newSimpleKey) {
-      if (newSimpleKey == null) {
+      if (string.IsNullOrWhiteSpace(newSimpleKey)) {
         throw new NoNullAllowedException(
-          $"A null reference has been specified as the {SimpleKeyName} " +
-          $"for {EntityType.Name} '{Key}'. " +
+          $"A null reference has been specified as the {SimpleKeyName}. " +
           $"Null {SimpleKeyName}s are not supported.");
       }
       if (newSimpleKey == oldSimpleKey) {
@@ -271,14 +270,14 @@ namespace SoundExplorers.Data {
         Session) != null) {
         throw new DuplicateKeyException(
           this,
-          $"{EntityType.Name}'s {SimpleKeyName} cannot be set to " +
+          $"The {EntityType.Name}'s {SimpleKeyName} cannot be set to " +
           $"'{newSimpleKey}' because another {EntityType.Name} " +
           $"with that {SimpleKeyName} has already been persisted.");
       }
     }
 
     protected virtual void CheckCanPersist([NotNull] SessionBase session) {
-      if (SimpleKey == null) {
+      if (string.IsNullOrWhiteSpace(SimpleKey)) {
         throw new NoNullAllowedException(
           $"A {SimpleKeyName} has not yet been specified. " +
           $"So the {EntityType.Name} cannot be persisted.");

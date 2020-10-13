@@ -166,7 +166,7 @@ namespace SoundExplorers.Model {
           return;
         }
         Session.BeginUpdate();
-        if (!string.IsNullOrEmpty(value)) {
+        if (!string.IsNullOrWhiteSpace(value)) {
           UserOption.OptionValue = value;
           if (!UserOption.IsPersistent) {
             Session.Persist(UserOption);

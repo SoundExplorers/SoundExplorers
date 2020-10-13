@@ -81,13 +81,13 @@ namespace SoundExplorers.Data {
     private static string MakeName([CanBeNull] string forename,
       [CanBeNull] string surname) {
       string result;
-      if (forename != null) {
-        if (surname != null) {
+      if (!string.IsNullOrWhiteSpace(forename)) {
+        if (!string.IsNullOrWhiteSpace(surname)) {
           result = forename.Trim() + " " + surname.Trim();
         } else {
           result = forename.Trim();
         }
-      } else if (surname != null) {
+      } else if (!string.IsNullOrWhiteSpace(surname)) {
         result = surname.Trim();
       } else {
         // A NoNullAllowedException will be thrown when Name is set to null.

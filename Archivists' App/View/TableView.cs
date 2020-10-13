@@ -98,7 +98,7 @@ namespace SoundExplorers.View {
         // (the only grid that can be edited)
         // and is already being edited.
         case TextBox textBox: {
-          if (string.IsNullOrEmpty(textBox.SelectedText)) {
+          if (string.IsNullOrWhiteSpace(textBox.SelectedText)) {
             // Clipboard.SetText throws an exception
             // if passed an empty string.
             return;
@@ -150,7 +150,7 @@ namespace SoundExplorers.View {
       } else {
         switch (MainGrid.EditingControl) {
           // The cell is already being edited
-          case TextBox textBox when string.IsNullOrEmpty(textBox.SelectedText):
+          case TextBox textBox when string.IsNullOrWhiteSpace(textBox.SelectedText):
             // Clipboard.SetText throws an exception
             // if passed an empty string.
             return;

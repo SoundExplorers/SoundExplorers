@@ -92,7 +92,7 @@ namespace SoundExplorers.Data {
 
     private void CheckCanChangeAudioUrl([CanBeNull] string oldAudioUrl,
       [CanBeNull] string newAudioUrl) {
-      if (newAudioUrl == null) {
+      if (string.IsNullOrWhiteSpace(newAudioUrl)) {
         return;
       }
       try {
@@ -118,14 +118,14 @@ namespace SoundExplorers.Data {
 
     private void CheckCanChangeVideoUrl([CanBeNull] string oldVideoUrl,
       [CanBeNull] string newVideoUrl) {
-      if (newVideoUrl == null) {
+      if (string.IsNullOrWhiteSpace(newVideoUrl)) {
         return;
       }
       try {
         var dummy = new Uri(newVideoUrl, UriKind.Absolute);
       } catch (UriFormatException) {
         throw new FormatException(
-          $"Piece '{Key}': invalid VideoUrl format '{newVideoUrl}'.");
+          $"Invalid VideoUrl format: '{newVideoUrl}'.");
       }
       if (IsPersistent && Session != null && newVideoUrl != oldVideoUrl) {
         // If there's no session, which means we cannot check for a duplicate,
@@ -145,24 +145,22 @@ namespace SoundExplorers.Data {
     protected override void CheckCanPersist(SessionBase session) {
       base.CheckCanPersist(session);
       Piece duplicate;
-      if (AudioUrl != null) {
+      if (!string.IsNullOrWhiteSpace(AudioUrl)) {
         duplicate = FindDuplicateAudioUrl(AudioUrl, session);
         if (duplicate != null) {
           throw new DuplicateKeyException(
             this,
-            $"Piece '{Key}' " +
-            "cannot be persisted because Piece " +
+            "Piece cannot be persisted because Piece " +
             $"'{duplicate.Key}' " +
             $"has already been persisted with the same Audio URL '{AudioUrl}'.");
         }
       }
-      if (VideoUrl != null) {
+      if (!string.IsNullOrWhiteSpace(VideoUrl)) {
         duplicate = FindDuplicateVideoUrl(VideoUrl, session);
         if (duplicate != null) {
           throw new DuplicateKeyException(
             this,
-            $"Piece '{Key}' " +
-            "cannot be persisted because Piece " +
+            "Piece cannot be persisted because Piece " +
             $"'{duplicate.Key}' " +
             $"has already been persisted with the same Video URL '{VideoUrl}'.");
         }

@@ -17,7 +17,7 @@ namespace SoundExplorers.Data {
     public string OptionName {
       get => _optionName;
       set {
-        if (string.IsNullOrEmpty(value)) {
+        if (string.IsNullOrWhiteSpace(value)) {
           throw new NoNullAllowedException($"{nameof(OptionName)} may not be blank.");
         }
         UpdateNonIndexField();
@@ -38,7 +38,7 @@ namespace SoundExplorers.Data {
     public string UserId {
       get => _userId;
       set {
-        if (string.IsNullOrEmpty(value)) {
+        if (string.IsNullOrWhiteSpace(value)) {
           throw new NoNullAllowedException($"{nameof(UserId)} may not be blank.");
         }
         UpdateNonIndexField();
