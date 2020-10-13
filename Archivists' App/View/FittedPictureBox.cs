@@ -90,11 +90,9 @@ namespace SoundExplorers.View {
       var sourceY = 0;
       var destX = 0;
       var destY = 0;
-      float nPercent = 0;
-      float nPercentW = 0;
-      float nPercentH = 0;
-      nPercentW = ClientSize.Width / (float)sourceWidth;
-      nPercentH = ClientSize.Height / (float)sourceHeight;
+      float nPercent;
+      float nPercentW = ClientSize.Width / (float)sourceWidth;
+      float nPercentH = ClientSize.Height / (float)sourceHeight;
       if (nPercentH < nPercentW) {
         nPercent = nPercentH;
         destX = Convert.ToInt16((ClientSize.Width -
