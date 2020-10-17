@@ -69,6 +69,8 @@ namespace SoundExplorers.Tests.Controller {
         "FocusMainGridCellRowIndex after error message shown for duplicate rename");
       Assert.AreEqual(name2, editor[1].Name,
         "Original name restored after error message shown for duplicate rename");
+      Assert.AreEqual(1, View.ResumeEditCurrentCellCount,
+        "ResumeEditCurrentCellCount after error message shown for duplicate rename");
       Assert.AreEqual(1, View.ShowErrorMessageCount,
         "ShowErrorMessageCount after error message shown for duplicate rename");
       // For unknown reason, the the error handling is set up,

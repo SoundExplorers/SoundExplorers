@@ -8,6 +8,7 @@ namespace SoundExplorers.Tests.Controller {
     public int FocusMainGridCellRowIndex { get; private set; }
     public int MakeMainGridInsertionRowCurrentCount { get; private set; }
     public int OnRowInsertedOrDeletedCount { get; private set; }
+    public int ResumeEditCurrentCellCount { get; private set; }
     public int SelectCurrentRowOnlyCount { get; private set; }
     public int ShowErrorMessageCount { get; private set; }
 
@@ -30,7 +31,7 @@ namespace SoundExplorers.Tests.Controller {
     }
 
     public void ResumeEditCurrentCell(object errorValue) {
-      throw new System.NotImplementedException();
+      ResumeEditCurrentCellCount++;
     }
 
     public void SelectCurrentRowOnly() {
