@@ -51,6 +51,7 @@ namespace SoundExplorers.Model {
     private TBindingItem BackupBindingItemToRestoreFrom { get; set; }
     private TBindingItem BindingItemToFix { get; set; }
     private EntityComparer<TEntity> EntityComparer { get; }
+    private TBindingItem ErrorBindingItem { get; set; }
     private bool HasRowBeenEdited { get; set; }
     private ChangeAction LastDatabaseChangeAction { get; set; }
 
@@ -60,6 +61,7 @@ namespace SoundExplorers.Model {
     /// </summary>
     private bool IsInsertionRowCurrent { get; set; }
 
+    private TBindingItem NewBindingItem { get; set; }
     private TEntity NewEntity { get; set; }
 
     /// <summary>
@@ -110,6 +112,31 @@ namespace SoundExplorers.Model {
     public string TableName => typeof(TEntity).Name;
 
     /// <summary>
+    ///   If the specified grid row is new,
+    ///   adds a new entity to the list with the row data and
+    ///   saves the entity to the database.
+    /// </summary>
+    /// <param name="rowIndex">
+    ///   Zero-based row index.
+    /// </param>
+    /// <remarks>
+    ///   Though this is called when the grid's RowValidated event is raised,
+    ///   that actually happens even if the user did no edits,
+    ///   when any row left but after the final ItemChanged ListChangedType,
+    ///   if any, of the BindingList's ListChanged event.
+    /// </remarks>
+    /// <exception cref="DatabaseUpdateErrorException">
+    ///   A database update error occured.
+    /// </exception>
+    public void AddEntityIfNew(int rowIndex) {
+      if (!(IsInsertionRowCurrent && HasRowBeenEdited)) {
+        IsInsertionRowCurrent = false;
+        return;
+      }
+      AddNewEntity(rowIndex);
+    }
+
+    /// <summary>
     ///   Deletes the entity at the specified row index
     ///   from the database and removes it from the list.
     /// </summary>
@@ -137,31 +164,6 @@ namespace SoundExplorers.Model {
     }
 
     /// <summary>
-    ///   If the specified grid row is new,
-    ///   adds a new entity to the list with the row data and
-    ///   saves the entity to the database.
-    /// </summary>
-    /// <param name="rowIndex">
-    ///   Zero-based row index.
-    /// </param>
-    /// <remarks>
-    ///   Though this is called when the grid's RowValidated event is raised,
-    ///   that actually happens even if the user did no edits,
-    ///   when any row left but after the final ItemChanged ListChangedType,
-    ///   if any, of the BindingList's ListChanged event.
-    /// </remarks>
-    /// <exception cref="DatabaseUpdateErrorException">
-    ///   A database update error occured.
-    /// </exception>
-    public void InsertEntityIfNew(int rowIndex) {
-      if (!(IsInsertionRowCurrent && HasRowBeenEdited)) {
-        IsInsertionRowCurrent = false;
-        return;
-      }
-      AddNewEntity(rowIndex);
-    }
-
-    /// <summary>
     ///   Derived classes that are identifying parents should
     ///   return a list of the child entities of the entity at the specified row index
     ///   that are to populate the main list when this is the parent list.
@@ -171,6 +173,10 @@ namespace SoundExplorers.Model {
     /// </param>
     [NotNull]
     public abstract IList GetChildren(int rowIndex);
+
+    public IList<object> GetErrorValues() {
+      return ErrorBindingItem.GetPropertyValues();
+    }
 
     /// <summary>
     ///   This is called when any row has been entered.
@@ -227,6 +233,7 @@ namespace SoundExplorers.Model {
     }
 
     public void RestoreCurrentBindingItemOriginalValues() {
+      ErrorBindingItem = CreateBackupBindingItem(BindingItemToFix);
       RestoreBindingItemPropertiesFromBackup(BackupBindingItemToRestoreFrom,
         BindingItemToFix);
       BackupBindingItemToRestoreFrom = null;
@@ -273,19 +280,38 @@ namespace SoundExplorers.Model {
     ///   A database update error occured.
     /// </exception>
     private void AddNewEntity(int rowIndex) {
+      LastDatabaseChangeAction = ChangeAction.Insert;
+      var bindingItem = (TBindingItem)BindingList[rowIndex];
+      var entity = CreateEntity();
       Session.BeginUpdate();
       try {
-        Session.Persist(NewEntity);
-        Add(NewEntity);
+        UpdateEntity(bindingItem, entity);
+        Session.Persist(entity);
+        Add(entity);
       } catch (Exception exception) {
-        BindingItemToFix = (TBindingItem)BindingList[rowIndex];
+        BindingItemToFix = bindingItem;
         BackupBindingItemToRestoreFrom = null;
-        // TODO: Persistence (and other data) exceptions must be PropertyConstraintException to provide error property name  
-        throw CreateDatabaseUpdateErrorException(exception, rowIndex, "Date");
+        throw CreateDatabaseUpdateErrorException(exception, rowIndex);
       } finally {
         Session.Commit();
         IsInsertionRowCurrent = false;
       }
+      // Session.BeginUpdate();
+      // try {
+      //   Session.Persist(NewEntity);
+      //   Add(NewEntity);
+      // } catch (Exception exception) {
+      //   ErrorBindingItem = NewBindingItem;
+      //   BackupBindingItemToRestoreFrom = null;
+      //   // RemoveCurrentBindingItem(); 
+      //   // TODO: Persistence (and other data) exceptions must be PropertyConstraintException to provide error property name  
+      //   throw CreateDatabaseUpdateErrorException(exception, rowIndex, "Date");
+      // } finally {
+      //   Session.Commit();
+      //   IsInsertionRowCurrent = false;
+      // }
+      // NewBindingItem = null;
+      // NewEntity = default;
     }
 
     private void BindingListOnListChanged(object sender, ListChangedEventArgs e) {
@@ -298,24 +324,30 @@ namespace SoundExplorers.Model {
         case ListChangedType.ItemChanged: // Cell edit completed 
           // Debug.WriteLine(
           //   $"ListChangedType.ItemChanged:  {e.PropertyDescriptor.Name} = '{e.PropertyDescriptor.GetValue(BindingList[e.NewIndex])}', cell edit completed or cancelled");
-          if (!HasRowBeenEdited) {
-            HasRowBeenEdited = true;
-            if (IsInsertionRowCurrent) {
-              NewEntity = CreateEntity();
-              LastDatabaseChangeAction = ChangeAction.Insert;
-            }
-          }
-          if (IsInsertionRowCurrent) {
-            // Even though only a single property has been changed on the grid,
-            // update all entity properties in case there are default values on the grid
-            // that don't correspond to entity defaults.
-            // The only examples anticipated are Newsletter.Date and Event.Date,
-            // which default to today on the grid.
-            UpdateNewEntity(e.NewIndex, e.PropertyDescriptor.Name);
-          } else {
+          HasRowBeenEdited = true;
+          if (!IsInsertionRowCurrent) {
             UpdateExistingEntityProperty(e.NewIndex, e.PropertyDescriptor.Name,
               e.PropertyDescriptor.GetValue(BindingList[e.NewIndex]));
           }
+          // if (!HasRowBeenEdited) {
+          //   HasRowBeenEdited = true;
+          //   if (IsInsertionRowCurrent) {
+          //     NewBindingItem = (TBindingItem)BindingList[e.NewIndex];
+          //     NewEntity = CreateEntity();
+          //     LastDatabaseChangeAction = ChangeAction.Insert;
+          //   }
+          // }
+          // if (IsInsertionRowCurrent) {
+          //   // Even though only a single property has been changed on the grid,
+          //   // update all entity properties in case there are default values on the grid
+          //   // that don't correspond to entity defaults.
+          //   // The only examples anticipated are Newsletter.Date and Event.Date,
+          //   // which default to today on the grid.
+          //   UpdateNewEntity(e.NewIndex, e.PropertyDescriptor.Name);
+          // } else {
+          //   UpdateExistingEntityProperty(e.NewIndex, e.PropertyDescriptor.Name,
+          //     e.PropertyDescriptor.GetValue(BindingList[e.NewIndex]));
+          // }
           break;
         case ListChangedType.ItemDeleted: // Insertion row left without saving data
           // Debug.WriteLine(
@@ -335,7 +367,7 @@ namespace SoundExplorers.Model {
       }
       int columnIndex = propertyName != null ? Columns.IndexOf(Columns[propertyName]) : 0;
       var errorValue = propertyName != null
-        ? BindingItemToFix?.GetPropertyValue(propertyName)
+        ? ErrorBindingItem?.GetPropertyValue(propertyName)
         : null;
       LastDatabaseUpdateErrorException = new DatabaseUpdateErrorException(
         LastDatabaseChangeAction, exception.Message, rowIndex, columnIndex, errorValue,
@@ -393,14 +425,14 @@ namespace SoundExplorers.Model {
     }
 
     /// <summary>
-    /// TODO: Remove UpdateNewEntity propertyName parameter once PropertyConstraintException has been implemented.
+    ///   TODO: Remove UpdateNewEntity propertyName parameter once PropertyConstraintException has been
+    ///   implemented.
     /// </summary>
     private void UpdateNewEntity(int rowIndex, [NotNull] string propertyName) {
-      var bindingItem = (TBindingItem)BindingList[rowIndex];
       try {
-        UpdateEntity(bindingItem, NewEntity);
+        UpdateEntity(NewBindingItem, NewEntity);
       } catch (Exception exception) {
-        BindingItemToFix = bindingItem;
+        ErrorBindingItem = NewBindingItem;
         // This exception will be passed to the grid's DataError event handler.
         throw CreateDatabaseUpdateErrorException(exception, rowIndex, propertyName);
       }
