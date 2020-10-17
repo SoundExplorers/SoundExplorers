@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using JetBrains.Annotations;
@@ -35,6 +36,13 @@ namespace SoundExplorers.Model {
         from property in GetType().GetProperties()
         where property.Name == propertyName
         select property).First().GetValue(this);
+    }
+
+    [NotNull]
+    internal IList<object> GetPropertyValues() {
+      return (
+        from property in GetType().GetProperties()
+        select property.GetValue(this)).ToList();
     }
 
     [NotifyPropertyChangedInvocator]

@@ -212,7 +212,7 @@ namespace SoundExplorers.Controller {
       // Debug.WriteLine(
       //   $"{nameof(OnMainGridRowValidated)}:  Any row left, after final ItemChanged, if any");
       try {
-        MainList?.InsertEntityIfNew(rowIndex);
+        MainList?.AddEntityIfNew(rowIndex);
         View.OnRowInsertedOrDeleted();
       } catch (DatabaseUpdateErrorException) {
         View.StartDatabaseUpdateErrorTimer();

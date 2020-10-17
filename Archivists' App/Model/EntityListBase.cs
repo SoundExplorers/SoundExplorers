@@ -61,9 +61,6 @@ namespace SoundExplorers.Model {
     /// </summary>
     private bool IsInsertionRowCurrent { get; set; }
 
-    private TBindingItem NewBindingItem { get; set; }
-    private TEntity NewEntity { get; set; }
-
     /// <summary>
     ///   Gets the binding list representing the list of entities
     ///   and bound to the grid.
@@ -421,20 +418,6 @@ namespace SoundExplorers.Model {
         throw CreateDatabaseUpdateErrorException(exception, rowIndex, propertyName);
       } finally {
         Session.Commit();
-      }
-    }
-
-    /// <summary>
-    ///   TODO: Remove UpdateNewEntity propertyName parameter once PropertyConstraintException has been
-    ///   implemented.
-    /// </summary>
-    private void UpdateNewEntity(int rowIndex, [NotNull] string propertyName) {
-      try {
-        UpdateEntity(NewBindingItem, NewEntity);
-      } catch (Exception exception) {
-        ErrorBindingItem = NewBindingItem;
-        // This exception will be passed to the grid's DataError event handler.
-        throw CreateDatabaseUpdateErrorException(exception, rowIndex, propertyName);
       }
     }
   }

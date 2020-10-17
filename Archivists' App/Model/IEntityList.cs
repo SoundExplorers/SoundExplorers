@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
 using JetBrains.Annotations;
 using VelocityDb.Session;
@@ -55,15 +56,6 @@ namespace SoundExplorers.Model {
     [NotNull] string TableName { get; }
 
     /// <summary>
-    ///   Deletes the entity at the specified row index
-    ///   from the database and removes it from the list.
-    /// </summary>
-    /// <param name="rowIndex">
-    ///   Zero-based row index.
-    /// </param>
-    void DeleteEntity(int rowIndex);
-
-    /// <summary>
     ///   If the specified grid row is new,
     ///   adds a new entity to the list with the row data and
     ///   saves the entity to the database.
@@ -71,7 +63,16 @@ namespace SoundExplorers.Model {
     /// <param name="rowIndex">
     ///   Zero-based row index.
     /// </param>
-    void InsertEntityIfNew(int rowIndex);
+    void AddEntityIfNew(int rowIndex);
+
+    /// <summary>
+    ///   Deletes the entity at the specified row index
+    ///   from the database and removes it from the list.
+    /// </summary>
+    /// <param name="rowIndex">
+    ///   Zero-based row index.
+    /// </param>
+    void DeleteEntity(int rowIndex);
 
     /// <summary>
     ///   Derived classes that are identifying parents should
@@ -83,6 +84,8 @@ namespace SoundExplorers.Model {
     /// </param>
     [CanBeNull]
     IList GetChildren(int rowIndex);
+    
+    [NotNull] IList<object> GetErrorValues();
 
     /// <summary>
     ///   This is called when any row has been entered.
