@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Data;
-using System.Data.Linq;
 using NUnit.Framework;
 using SoundExplorers.Data;
 
@@ -217,7 +216,7 @@ namespace SoundExplorers.Tests.Data {
     [Test]
     public void DisallowChangeAudioUrlToDuplicate() {
       Session.BeginUpdate();
-      Assert.Throws<DuplicateKeyException>(() =>
+      Assert.Throws<PropertyConstraintException>(() =>
         Piece2.AudioUrl = Piece1AudioUrl);
       Session.Commit();
     }
@@ -226,7 +225,7 @@ namespace SoundExplorers.Tests.Data {
     public void DisallowChangePieceNoToDuplicate() {
       Session.BeginUpdate();
       Piece2.PieceNo = Piece2PieceNo;
-      Assert.Throws<DuplicateKeyException>(() =>
+      Assert.Throws<ConstraintException>(() =>
         Piece2.PieceNo = Piece1PieceNo);
       Session.Commit();
     }
@@ -234,7 +233,7 @@ namespace SoundExplorers.Tests.Data {
     [Test]
     public void DisallowChangePieceNoToZero() {
       Session.BeginUpdate();
-      Assert.Throws<NoNullAllowedException>(() =>
+      Assert.Throws<PropertyConstraintException>(() =>
         Piece2.PieceNo = 0);
       Session.Commit();
     }
@@ -242,7 +241,7 @@ namespace SoundExplorers.Tests.Data {
     [Test]
     public void DisallowChangeVideoUrlToDuplicate() {
       Session.BeginUpdate();
-      Assert.Throws<DuplicateKeyException>(() =>
+      Assert.Throws<PropertyConstraintException>(() =>
         Piece2.VideoUrl = Piece1VideoUrl);
       Session.Commit();
     }
@@ -256,7 +255,7 @@ namespace SoundExplorers.Tests.Data {
       };
       Session.BeginUpdate();
       duplicate.Set = Set1;
-      Assert.Throws<DuplicateKeyException>(() => Session.Persist(duplicate));
+      Assert.Throws<PropertyConstraintException>(() => Session.Persist(duplicate));
       Session.Abort();
     }
 
@@ -269,7 +268,7 @@ namespace SoundExplorers.Tests.Data {
       };
       Session.BeginUpdate();
       duplicate.Set = Set1;
-      Assert.Throws<DuplicateKeyException>(() => Session.Persist(duplicate));
+      Assert.Throws<PropertyConstraintException>(() => Session.Persist(duplicate));
       Session.Abort();
     }
 
@@ -280,7 +279,7 @@ namespace SoundExplorers.Tests.Data {
       };
       Session.BeginUpdate();
       noPieceNo.Set = Set1;
-      Assert.Throws<NoNullAllowedException>(() => Session.Persist(noPieceNo));
+      Assert.Throws<PropertyConstraintException>(() => Session.Persist(noPieceNo));
       Session.Abort();
     }
 
@@ -298,7 +297,7 @@ namespace SoundExplorers.Tests.Data {
         PieceNo = Piece1PieceNo
       };
       Session.BeginUpdate();
-      Assert.Throws<DuplicateKeyException>(() => duplicate.Set = Set1);
+      Assert.Throws<ConstraintException>(() => duplicate.Set = Set1);
       Session.Commit();
     }
 

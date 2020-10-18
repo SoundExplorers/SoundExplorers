@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Linq;
 using System.IO;
 using System.Linq;
 using JetBrains.Annotations;
@@ -161,15 +160,16 @@ namespace SoundExplorers.Data {
             $"for {EntityType.Name} '{Key}'.");
         }
         if (value == null) {
-          throw new NoNullAllowedException(
+          throw new PropertyConstraintException(
             "A null reference has been specified as the " +
-            $"{IdentifyingParentType.Name} for {EntityType.Name} '{Key}'.");
+            $"{IdentifyingParentType.Name} for {EntityType.Name} '{Key}'.",
+            IdentifyingParentType?.Name);
         }
         if (value.EntityType != IdentifyingParentType) {
-          throw new ConstraintException(
+          throw new PropertyConstraintException(
             $"A {value.EntityType.Name} has been specified as the " +
             $"IdentifyingParent for {EntityType.Name} '{Key}'. " +
-            $"A {IdentifyingParentType.Name} is expected'.");
+            $"A {IdentifyingParentType.Name} is expected'.", IdentifyingParentType?.Name);
         }
         var newKey = new Key(SimpleKey, value);
         value.CheckForDuplicateChild(EntityType, newKey);
@@ -231,7 +231,7 @@ namespace SoundExplorers.Data {
 
     private void CheckCanAddChild([NotNull] EntityBase child) {
       if (child == null) {
-        throw new NoNullAllowedException(
+        throw new ConstraintException(
           "A null reference has been specified. " +
           $"So addition to {EntityType.Name} '{Key}' is not supported.");
       }
@@ -248,9 +248,9 @@ namespace SoundExplorers.Data {
     private void CheckCanChangeSimpleKey(
       [CanBeNull] string oldSimpleKey, [CanBeNull] string newSimpleKey) {
       if (string.IsNullOrWhiteSpace(newSimpleKey)) {
-        throw new NoNullAllowedException(
+        throw new PropertyConstraintException(
           $"A null reference has been specified as the {SimpleKeyName}. " +
-          $"Null {SimpleKeyName}s are not supported.");
+          $"Null {SimpleKeyName}s are not supported.", SimpleKeyName);
       }
       if (newSimpleKey == oldSimpleKey) {
         return;
@@ -268,50 +268,48 @@ namespace SoundExplorers.Data {
       // an InvalidOperationException.
       if (QueryHelper.FindDuplicateSimpleKey(EntityType, Oid, newSimpleKey,
         Session) != null) {
-        throw new DuplicateKeyException(
-          this,
+        throw new PropertyConstraintException(
           $"The {EntityType.Name}'s {SimpleKeyName} cannot be set to " +
           $"'{newSimpleKey}' because another {EntityType.Name} " +
-          $"with that {SimpleKeyName} already exists.");
+          $"with that {SimpleKeyName} already exists.", SimpleKeyName);
       }
     }
 
     protected virtual void CheckCanPersist([NotNull] SessionBase session) {
       if (string.IsNullOrWhiteSpace(SimpleKey)) {
-        throw new NoNullAllowedException(
+        throw new PropertyConstraintException(
           $"A {SimpleKeyName} has not yet been specified. " +
-          $"So the {EntityType.Name} cannot be added.");
+          $"So the {EntityType.Name} cannot be added.", SimpleKeyName);
       }
       foreach (var parentKeyValuePair in Parents) {
         var parentType = parentKeyValuePair.Key;
         var parent = parentKeyValuePair.Value;
         if (parent == null && ParentRelations[parentType].IsMandatory) {
-          throw new ConstraintException(
+          throw new PropertyConstraintException(
             $"{EntityType.Name} '{Key}' " +
             $"cannot be added because its {parentType.Name} "
-            + "has not been specified.");
+            + "has not been specified.", parentType.Name);
         }
       }
       if (IsTopLevel &&
           QueryHelper.FindDuplicateSimpleKey(EntityType, Oid, SimpleKey,
             session) != null) {
-        throw new DuplicateKeyException(
-          this,
+        throw new PropertyConstraintException(
           $"{EntityType.Name} '{Key}' " +
           $"cannot be added because another {EntityType.Name} "
-          + "with the same key already persists.");
+          + "with the same key already persists.", SimpleKeyName);
       }
     }
 
     private void CheckCanRemoveChild(
       [NotNull] EntityBase child, bool isReplacingOrUnpersisting) {
       if (child == null) {
-        throw new NoNullAllowedException(
+        throw new ConstraintException(
           "A null reference has been specified. " +
           $"So removal from {EntityType.Name} '{Key}' is not supported.");
       }
       if (!ChildrenOfType[child.EntityType].Contains(child.Key)) {
-        throw new KeyNotFoundException(
+        throw new ConstraintException(
           $"{child.EntityType.Name} '{child.Key}' " +
           $"cannot be removed from {EntityType.Name} '{Key}', " +
           $"because it does not belong to {EntityType.Name} " +
@@ -330,8 +328,7 @@ namespace SoundExplorers.Data {
       [NotNull] Key keyToCheck) {
       if (ChildrenOfType[childEntityType]
         .Contains(keyToCheck)) {
-        throw new DuplicateKeyException(
-          keyToCheck,
+        throw new ConstraintException(
           $"{childEntityType.Name} '{keyToCheck}' " +
           $"cannot be added to {EntityType.Name} '{Key}', " +
           $"because a {childEntityType.Name} with that Key " +

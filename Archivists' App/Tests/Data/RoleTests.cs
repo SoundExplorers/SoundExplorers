@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Data;
-using System.Data.Linq;
 using NUnit.Framework;
 using SoundExplorers.Data;
 
@@ -134,7 +133,7 @@ namespace SoundExplorers.Tests.Data {
         Name = "drums" // Tests that comparison is case-insensitive.
       };
       Session.BeginUpdate();
-      Assert.Throws<DuplicateKeyException>(() => Session.Persist(duplicate));
+      Assert.Throws<PropertyConstraintException>(() => Session.Persist(duplicate));
       Session.Commit();
     }
 

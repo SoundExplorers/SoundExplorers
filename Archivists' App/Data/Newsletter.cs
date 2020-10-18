@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Data;
-using System.Data.Linq;
 using System.Diagnostics.CodeAnalysis;
 using JetBrains.Annotations;
 using VelocityDb.Session;
@@ -22,13 +21,14 @@ namespace SoundExplorers.Data {
     /// <summary>
     ///   The newsletter's publication date (email send date).
     /// </summary>
-    /// <exception cref="NoNullAllowedException"></exception>
+    /// <exception cref="PropertyConstraintException"></exception>
     public DateTime Date {
       get => _date;
       set {
         if (value <= InitialDate) {
-          throw new NoNullAllowedException(
-            $"Newsletter Date must be later than {InitialDate:yyyy/mm/dd}.");
+          throw new PropertyConstraintException(
+            $"Newsletter Date must be later than {InitialDate:yyyy/mm/dd}.",
+            nameof(Date));
         }
         UpdateNonIndexField();
         _date = value.Date;
@@ -54,14 +54,15 @@ namespace SoundExplorers.Data {
     private void CheckCanChangeUrl([CanBeNull] string oldUrl,
       [CanBeNull] string newUrl) {
       if (string.IsNullOrWhiteSpace(newUrl)) {
-        throw new NoNullAllowedException(
-          $"A valid URL has not been specified for Newsletter '{SimpleKey}'.");
+        throw new PropertyConstraintException(
+          $"A valid URL has not been specified for Newsletter '{SimpleKey}'.",
+          nameof(Url));
       }
       try {
         var dummy = new Uri(newUrl, UriKind.Absolute);
       } catch (UriFormatException) {
-        throw new FormatException(
-          $"Invalid URL format: '{newUrl}'.");
+        throw new PropertyConstraintException(
+          $"Invalid URL format: '{newUrl}'.", nameof(Url));
       }
       if (IsPersistent && Session != null && newUrl != oldUrl) {
         // If there's no session, which means we cannot check for a duplicate,
@@ -69,11 +70,10 @@ namespace SoundExplorers.Data {
         // an InvalidOperationException anyway.
         var duplicate = FindDuplicateUrl(newUrl, Session);
         if (duplicate != null) {
-          throw new DuplicateKeyException(
-            this,
-            $"URL cannot be set to " +
+          throw new PropertyConstraintException(
+            "URL cannot be set to " +
             $"'{newUrl}'. Newsletter {duplicate.SimpleKey} " +
-            "already exists with that URL.");
+            "already exists with that URL.", nameof(Url));
         }
       }
     }
@@ -81,16 +81,16 @@ namespace SoundExplorers.Data {
     protected override void CheckCanPersist(SessionBase session) {
       base.CheckCanPersist(session);
       if (string.IsNullOrWhiteSpace(Url)) {
-        throw new NoNullAllowedException(
-          "Newsletter cannot be added because a URL has not been specified.");
+        throw new PropertyConstraintException(
+          "Newsletter cannot be added because a URL has not been specified.",
+          nameof(Url));
       }
       var urlDuplicate = FindDuplicateUrl(Url, session);
       if (urlDuplicate != null) {
-        throw new DuplicateKeyException(
-          this,
-          $"Newsletter cannot be added because Newsletter " +
+        throw new PropertyConstraintException(
+          "Newsletter cannot be added because Newsletter " +
           $"'{urlDuplicate.SimpleKey}' " +
-          $"already exists with the same URL '{Url}'.");
+          $"already exists with the same URL '{Url}'.", nameof(Url));
       }
     }
 

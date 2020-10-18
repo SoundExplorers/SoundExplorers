@@ -118,7 +118,7 @@ namespace SoundExplorers.Tests.Model {
           exception.Message.Contains("cannot be deleted because it is referenced by"),
           "Message");
         Assert.AreEqual(1, exception.RowIndex, "RowIndex");
-        Assert.IsInstanceOf(typeof(ConstraintException), exception.InnerException,
+        Assert.IsInstanceOf(typeof(PropertyConstraintException), exception.InnerException,
           "InnerException");
         Assert.AreSame(exception, list.LastDatabaseUpdateErrorException,
           "LastDatabaseUpdateErrorException");
@@ -154,7 +154,7 @@ namespace SoundExplorers.Tests.Model {
           "Message");
         Assert.AreEqual(1, exception.RowIndex, "RowIndex");
         Assert.AreEqual(0, exception.ColumnIndex, "ColumnIndex");
-        Assert.IsInstanceOf(typeof(DuplicateKeyException), exception.InnerException,
+        Assert.IsInstanceOf(typeof(PropertyConstraintException), exception.InnerException,
           "InnerException");
         Assert.AreSame(exception, list.LastDatabaseUpdateErrorException,
           "LastDatabaseUpdateErrorException");
@@ -192,7 +192,7 @@ namespace SoundExplorers.Tests.Model {
           "Message");
         Assert.AreEqual(1, exception.RowIndex, "RowIndex");
         Assert.AreEqual(0, exception.ColumnIndex, "ColumnIndex");
-        Assert.IsInstanceOf(typeof(DuplicateKeyException), exception.InnerException,
+        Assert.IsInstanceOf(typeof(PropertyConstraintException), exception.InnerException,
           "InnerException");
         Assert.AreSame(exception, list.LastDatabaseUpdateErrorException,
           "LastDatabaseUpdateErrorException");

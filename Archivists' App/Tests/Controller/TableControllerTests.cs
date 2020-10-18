@@ -103,7 +103,8 @@ namespace SoundExplorers.Tests.Controller {
       // Delete the second item
       Controller.OnMainGridRowEnter(1);
       Controller.OnMainGridRowRemoved(1);
-      Assert.AreEqual(3, View.OnRowInsertedOrDeletedCount, "OnRowInsertedOrDeletedCount after delete");
+      Assert.AreEqual(3, View.OnRowInsertedOrDeletedCount,
+        "OnRowInsertedOrDeletedCount after delete");
       Controller.FetchData(); // Refresh grid
       editor.SetBindingList(Controller.MainBindingList);
       Assert.AreEqual(1, editor.Count, "editor.Count after FetchData #3");

@@ -1,5 +1,4 @@
 ﻿using System.Data;
-using System.Data.Linq;
 using NUnit.Framework;
 using SoundExplorers.Data;
 
@@ -52,13 +51,14 @@ namespace SoundExplorers.Tests.Data {
 
     [Test]
     public void DisallowBlankKeyPropertyValues() {
-      Assert.Throws<NoNullAllowedException>(() => UserOption1.UserId = null,
+      Assert.Throws<PropertyConstraintException>(() => UserOption1.UserId = null,
         "UserOption1.UserId = null");
-      Assert.Throws<NoNullAllowedException>(() => UserOption1.UserId = string.Empty,
+      Assert.Throws<PropertyConstraintException>(() => UserOption1.UserId = string.Empty,
         "UserOption1.UserId = Empty");
-      Assert.Throws<NoNullAllowedException>(() => UserOption1.OptionName = null,
+      Assert.Throws<PropertyConstraintException>(() => UserOption1.OptionName = null,
         "UserOption1.OptionName = null");
-      Assert.Throws<NoNullAllowedException>(() => UserOption1.OptionName = string.Empty,
+      Assert.Throws<PropertyConstraintException>(
+        () => UserOption1.OptionName = string.Empty,
         "UserOption1.OptionName = Empty");
     }
 
@@ -71,7 +71,7 @@ namespace SoundExplorers.Tests.Data {
       };
       Session.BeginUpdate();
       Session.Persist(userOption2);
-      Assert.Throws<DuplicateKeyException>(() =>
+      Assert.Throws<PropertyConstraintException>(() =>
         userOption2.OptionName = UserOption1OptionName);
       Session.Commit();
     }
@@ -86,7 +86,7 @@ namespace SoundExplorers.Tests.Data {
         OptionName = "chalkorcheese"
       };
       Session.BeginUpdate();
-      Assert.Throws<DuplicateKeyException>(() => Session.Persist(duplicate));
+      Assert.Throws<PropertyConstraintException>(() => Session.Persist(duplicate));
       Session.Commit();
     }
   }

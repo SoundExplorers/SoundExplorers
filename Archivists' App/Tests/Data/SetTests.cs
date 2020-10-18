@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Data;
-using System.Data.Linq;
 using NUnit.Framework;
 using SoundExplorers.Data;
 
@@ -198,7 +197,7 @@ namespace SoundExplorers.Tests.Data {
     [Test]
     public void DisallowChangeEventToNull() {
       Session.BeginUpdate();
-      Assert.Throws<NoNullAllowedException>(() => Set2.Event = null);
+      Assert.Throws<PropertyConstraintException>(() => Set2.Event = null);
       Session.Commit();
     }
 
@@ -213,14 +212,14 @@ namespace SoundExplorers.Tests.Data {
     public void DisallowChangeSetNoToDuplicate() {
       Session.BeginUpdate();
       Set2.SetNo = Set2SetNo;
-      Assert.Throws<DuplicateKeyException>(() => Set2.SetNo = Set1SetNo);
+      Assert.Throws<ConstraintException>(() => Set2.SetNo = Set1SetNo);
       Session.Commit();
     }
 
     [Test]
     public void DisallowChangeSetNoToZero() {
       Session.BeginUpdate();
-      Assert.Throws<NoNullAllowedException>(() => Set2.SetNo = 0);
+      Assert.Throws<PropertyConstraintException>(() => Set2.SetNo = 0);
       Session.Commit();
     }
 
@@ -231,7 +230,7 @@ namespace SoundExplorers.Tests.Data {
       };
       Session.BeginUpdate();
       noSetNo.Event = Event1;
-      Assert.Throws<NoNullAllowedException>(() => Session.Persist(noSetNo));
+      Assert.Throws<PropertyConstraintException>(() => Session.Persist(noSetNo));
       Session.Abort();
     }
 
@@ -249,7 +248,7 @@ namespace SoundExplorers.Tests.Data {
         SetNo = Set1SetNo
       };
       Session.BeginUpdate();
-      Assert.Throws<DuplicateKeyException>(() => duplicate.Event = Event1);
+      Assert.Throws<ConstraintException>(() => duplicate.Event = Event1);
       Session.Commit();
     }
 

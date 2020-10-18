@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Data.Linq;
 using NUnit.Framework;
 using SoundExplorers.Data;
 
@@ -415,15 +413,15 @@ namespace SoundExplorers.Tests.Data {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
         Daughter1 = QueryHelper.Read<Daughter>(Daughter1Name, session);
-        Assert.Throws<NoNullAllowedException>(() =>
+        Assert.Throws<PropertyConstraintException>(() =>
           // ReSharper disable once AssignNullToNotNullAttribute
           Daughter1.Name = null, "Disallow set SimpleKey to null");
         var namelessSon = new Son(QueryHelper);
-        Assert.Throws<NoNullAllowedException>(() =>
+        Assert.Throws<PropertyConstraintException>(() =>
             // ReSharper disable once AssignNullToNotNullAttribute
             namelessSon.Name = null,
           "Disallow set (initially null) SimpleKey to null");
-        Assert.Throws<NoNullAllowedException>(() =>
+        Assert.Throws<PropertyConstraintException>(() =>
             session.Persist(namelessSon),
           "Disallow persist entity with null SimpleKey");
         session.Commit();
@@ -435,10 +433,10 @@ namespace SoundExplorers.Tests.Data {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
         var duplicateMother = new Mother(QueryHelper) {Name = Mother1Name};
-        Assert.Throws<DuplicateKeyException>(() =>
+        Assert.Throws<PropertyConstraintException>(() =>
           session.Persist(duplicateMother), "Duplicate Mother");
         var duplicateFather = new Father(QueryHelper) {Name = Father1Name};
-        Assert.Throws<DuplicateKeyException>(() =>
+        Assert.Throws<PropertyConstraintException>(() =>
           session.Persist(duplicateFather), "Duplicate Father");
         session.Commit();
       }
@@ -449,7 +447,7 @@ namespace SoundExplorers.Tests.Data {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
         var motherlessDaughter = new Daughter(QueryHelper) {Name = "Carol"};
-        Assert.Throws<ConstraintException>(() =>
+        Assert.Throws<PropertyConstraintException>(() =>
           session.Persist(motherlessDaughter));
         session.Commit();
       }
@@ -462,7 +460,7 @@ namespace SoundExplorers.Tests.Data {
         Father1 = QueryHelper.Read<Father>(Father1Name, session);
         var duplicateDaughter2 = new Daughter(QueryHelper)
           {Name = Daughter2Name};
-        Assert.Throws<DuplicateKeyException>(() =>
+        Assert.Throws<ConstraintException>(() =>
           Father1.Daughters.Add(duplicateDaughter2));
         session.Commit();
       }
@@ -487,7 +485,7 @@ namespace SoundExplorers.Tests.Data {
         Father1 = QueryHelper.Read<Father>(Father1Name, session);
         Son1 = QueryHelper.Read<Son>(Son1Name, session);
         Father1.Sons.Remove(Son1);
-        Assert.Throws<KeyNotFoundException>(() =>
+        Assert.Throws<ConstraintException>(() =>
           Father1.Sons.Remove(Son1));
         session.Commit();
       }
@@ -498,7 +496,7 @@ namespace SoundExplorers.Tests.Data {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
         Father1 = QueryHelper.Read<Father>(Father1Name, session);
-        Assert.Throws<NoNullAllowedException>(() =>
+        Assert.Throws<ConstraintException>(() =>
           // Cannot use [Children].Add, as it is an ambiguous reference 
           // when a null parameter is specified.
           // ReSharper disable once AssignNullToNotNullAttribute
@@ -512,7 +510,7 @@ namespace SoundExplorers.Tests.Data {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
         Father1 = QueryHelper.Read<Father>(Father1Name, session);
-        Assert.Throws<NoNullAllowedException>(() =>
+        Assert.Throws<ConstraintException>(() =>
           // Cannot use [Children].Add, as it is an ambiguous reference 
           // when a null parameter is specified.
           // ReSharper disable once AssignNullToNotNullAttribute

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -127,7 +127,7 @@ namespace SoundExplorers.Data {
             $"'{identifyingParent.Key}' ");
         }
         writer.Write("cannot be found");
-        return new KeyNotFoundException(writer.ToString(), innerException);
+        return new ConstraintException(writer.ToString(), innerException);
       }
     }
 

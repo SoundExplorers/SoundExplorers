@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Data;
-using System.Data.Linq;
 using NUnit.Framework;
 using SoundExplorers.Data;
 
@@ -135,7 +134,7 @@ namespace SoundExplorers.Tests.Data {
         Newsletter2 =
           QueryHelper.Read<Newsletter>(Newsletter2SimpleKey, session);
         Newsletter2.Date = Newsletter2Date;
-        Assert.Throws<DuplicateKeyException>(() =>
+        Assert.Throws<PropertyConstraintException>(() =>
           Newsletter2.Date = Newsletter1Date);
         session.Commit();
       }
@@ -148,7 +147,7 @@ namespace SoundExplorers.Tests.Data {
         Newsletter2 =
           QueryHelper.Read<Newsletter>(Newsletter2SimpleKey, session);
         Newsletter2.Url = Newsletter2Url;
-        Assert.Throws<DuplicateKeyException>(() =>
+        Assert.Throws<PropertyConstraintException>(() =>
           Newsletter2.Url = Newsletter1Url);
         session.Commit();
       }
@@ -172,7 +171,7 @@ namespace SoundExplorers.Tests.Data {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
         session.Persist(original);
-        Assert.Throws<DuplicateKeyException>(() => session.Persist(duplicate));
+        Assert.Throws<PropertyConstraintException>(() => session.Persist(duplicate));
         session.Commit();
       }
     }
@@ -195,7 +194,7 @@ namespace SoundExplorers.Tests.Data {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
         session.Persist(original);
-        Assert.Throws<DuplicateKeyException>(() => session.Persist(duplicate));
+        Assert.Throws<PropertyConstraintException>(() => session.Persist(duplicate));
         session.Commit();
       }
     }
@@ -209,7 +208,7 @@ namespace SoundExplorers.Tests.Data {
       };
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
-        Assert.Throws<NoNullAllowedException>(() => session.Persist(noDate));
+        Assert.Throws<PropertyConstraintException>(() => session.Persist(noDate));
         session.Commit();
       }
     }
@@ -223,25 +222,25 @@ namespace SoundExplorers.Tests.Data {
       };
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
-        Assert.Throws<NoNullAllowedException>(() => session.Persist(noUrl));
+        Assert.Throws<PropertyConstraintException>(() => session.Persist(noUrl));
         session.Commit();
       }
     }
 
     [Test]
     public void DisallowSetInvalidUrl() {
-      Assert.Throws<FormatException>(() => Newsletter2.Url = "Invalid URL");
+      Assert.Throws<PropertyConstraintException>(() => Newsletter2.Url = "Invalid URL");
     }
 
     [Test]
     public void DisallowSetMinimumDate() {
-      Assert.Throws<NoNullAllowedException>(() =>
+      Assert.Throws<PropertyConstraintException>(() =>
         Newsletter2.Date = DateTime.MinValue);
     }
 
     [Test]
     public void DisallowSetNullUrl() {
-      Assert.Throws<NoNullAllowedException>(() => Newsletter2.Url = null);
+      Assert.Throws<PropertyConstraintException>(() => Newsletter2.Url = null);
     }
 
     [Test]

@@ -66,7 +66,7 @@ namespace SoundExplorers.Data {
       get => _setNo;
       set {
         if (value == 0) {
-          throw new NoNullAllowedException("SetNo '00' is not valid.");
+          throw new PropertyConstraintException("SetNo '00' is not valid.");
         }
         UpdateNonIndexField();
         _setNo = value;

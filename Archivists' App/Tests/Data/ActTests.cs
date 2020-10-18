@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Data;
-using System.Data.Linq;
 using NUnit.Framework;
 using SoundExplorers.Data;
 
@@ -107,7 +106,7 @@ namespace SoundExplorers.Tests.Data {
         Act2 =
           QueryHelper.Read<Act>(Act2Name, session);
         Act2.Name = Act2Name;
-        Assert.Throws<DuplicateKeyException>(() => Act2.Name = Act1Name);
+        Assert.Throws<PropertyConstraintException>(() => Act2.Name = Act1Name);
         session.Commit();
       }
     }
@@ -117,7 +116,7 @@ namespace SoundExplorers.Tests.Data {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
         Act1 = QueryHelper.Read<Act>(Act1Name, session);
-        Assert.Throws<NoNullAllowedException>(() => Act1.Name = null);
+        Assert.Throws<PropertyConstraintException>(() => Act1.Name = null);
         session.Commit();
       }
     }
@@ -130,7 +129,7 @@ namespace SoundExplorers.Tests.Data {
       };
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
-        Assert.Throws<DuplicateKeyException>(() => session.Persist(duplicate));
+        Assert.Throws<PropertyConstraintException>(() => session.Persist(duplicate));
         session.Commit();
       }
     }
@@ -142,7 +141,7 @@ namespace SoundExplorers.Tests.Data {
       };
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
-        Assert.Throws<NoNullAllowedException>(() => session.Persist(noName));
+        Assert.Throws<PropertyConstraintException>(() => session.Persist(noName));
         session.Commit();
       }
     }

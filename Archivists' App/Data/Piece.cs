@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Data;
-using System.Data.Linq;
 using System.Diagnostics.CodeAnalysis;
 using JetBrains.Annotations;
 using VelocityDb.Session;
@@ -51,7 +50,8 @@ namespace SoundExplorers.Data {
       get => _pieceNo;
       set {
         if (value == 0) {
-          throw new NoNullAllowedException("PieceNo '00' is not valid.");
+          throw new PropertyConstraintException("PieceNo '00' is not valid.",
+            nameof(PieceNo));
         }
         UpdateNonIndexField();
         _pieceNo = value;
@@ -98,8 +98,8 @@ namespace SoundExplorers.Data {
       try {
         var dummy = new Uri(newAudioUrl, UriKind.Absolute);
       } catch (UriFormatException) {
-        throw new FormatException(
-          $"Piece '{Key}': invalid AudioUrl format '{newAudioUrl}'.");
+        throw new PropertyConstraintException(
+          $"Invalid AudioUrl format '{newAudioUrl}'.", nameof(AudioUrl));
       }
       if (IsPersistent && Session != null && newAudioUrl != oldAudioUrl) {
         // If there's no session, which means we cannot check for a duplicate,
@@ -107,11 +107,10 @@ namespace SoundExplorers.Data {
         // an InvalidOperationException anyway.
         var duplicate = FindDuplicateAudioUrl(newAudioUrl, Session);
         if (duplicate != null) {
-          throw new DuplicateKeyException(
-            this,
-            $"The Audio URL of Piece '{Key}' cannot be set to " +
+          throw new PropertyConstraintException(
+            "Audio URL cannot be set to " +
             $"'{newAudioUrl}'. Piece '{duplicate.Key}' " +
-            "already exists with that Audio URL.");
+            "already exists with that Audio URL.", nameof(AudioUrl));
         }
       }
     }
@@ -124,8 +123,8 @@ namespace SoundExplorers.Data {
       try {
         var dummy = new Uri(newVideoUrl, UriKind.Absolute);
       } catch (UriFormatException) {
-        throw new FormatException(
-          $"Invalid VideoUrl format: '{newVideoUrl}'.");
+        throw new PropertyConstraintException(
+          $"Invalid VideoUrl format: '{newVideoUrl}'.", nameof(VideoUrl));
       }
       if (IsPersistent && Session != null && newVideoUrl != oldVideoUrl) {
         // If there's no session, which means we cannot check for a duplicate,
@@ -133,11 +132,10 @@ namespace SoundExplorers.Data {
         // an InvalidOperationException anyway.
         var duplicate = FindDuplicateVideoUrl(newVideoUrl, Session);
         if (duplicate != null) {
-          throw new DuplicateKeyException(
-            this,
-            $"The Video URL of Piece '{Key}' cannot be set to " +
+          throw new PropertyConstraintException(
+            "Video URL cannot be set to " +
             $"'{newVideoUrl}'. Piece '{duplicate.Key}' " +
-            "already exists with that Video URL.");
+            "already exists with that Video URL.", nameof(VideoUrl));
         }
       }
     }
@@ -148,21 +146,19 @@ namespace SoundExplorers.Data {
       if (!string.IsNullOrWhiteSpace(AudioUrl)) {
         duplicate = FindDuplicateAudioUrl(AudioUrl, session);
         if (duplicate != null) {
-          throw new DuplicateKeyException(
-            this,
+          throw new PropertyConstraintException(
             "Piece cannot be added because Piece " +
             $"'{duplicate.Key}' " +
-            $"already exists with the same Audio URL '{AudioUrl}'.");
+            $"already exists with the same Audio URL '{AudioUrl}'.", nameof(AudioUrl));
         }
       }
       if (!string.IsNullOrWhiteSpace(VideoUrl)) {
         duplicate = FindDuplicateVideoUrl(VideoUrl, session);
         if (duplicate != null) {
-          throw new DuplicateKeyException(
-            this,
+          throw new PropertyConstraintException(
             "Piece cannot be added because Piece " +
             $"'{duplicate.Key}' " +
-            $"already exists with the same Video URL '{VideoUrl}'.");
+            $"already exists with the same Video URL '{VideoUrl}'.", nameof(VideoUrl));
         }
       }
     }

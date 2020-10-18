@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Data;
 using NUnit.Framework;
 using SoundExplorers.Data;
 using VelocityDb;
@@ -114,7 +114,7 @@ namespace SoundExplorers.Tests.Data {
         session.BeginRead();
         Data.EventTypes[0] =
           QueryHelper.Read<EventType>(Data.EventTypes[0].Name, session);
-        Assert.Throws<KeyNotFoundException>(() =>
+        Assert.Throws<ConstraintException>(() =>
           QueryHelper.Read<Event>(Event1SimpleKey, Data.EventTypes[0], session));
         session.Commit();
       }

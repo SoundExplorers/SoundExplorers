@@ -40,7 +40,7 @@ namespace SoundExplorers.Tests.Data {
       Assert.Throws<ConstraintException>(
         () => xenia.Mother = mother,
         "IdentifyingParentType has not been specified");
-      Assert.Throws<ConstraintException>(
+      Assert.Throws<PropertyConstraintException>(
         () => yvette.Mother = mother,
         "Value's type is not IdentifyingParentType");
       zoe.Mother = mother;

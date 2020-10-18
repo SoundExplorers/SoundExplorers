@@ -18,7 +18,8 @@ namespace SoundExplorers.Data {
       get => _optionName;
       set {
         if (string.IsNullOrWhiteSpace(value)) {
-          throw new NoNullAllowedException($"{nameof(OptionName)} may not be blank.");
+          throw new PropertyConstraintException($"{nameof(OptionName)} may not be blank.",
+            nameof(OptionName));
         }
         UpdateNonIndexField();
         SetSimpleKey(UserId, value);
@@ -39,7 +40,8 @@ namespace SoundExplorers.Data {
       get => _userId;
       set {
         if (string.IsNullOrWhiteSpace(value)) {
-          throw new NoNullAllowedException($"{nameof(UserId)} may not be blank.");
+          throw new PropertyConstraintException($"{nameof(UserId)} may not be blank.",
+            nameof(UserId));
         }
         UpdateNonIndexField();
         SetSimpleKey(value, OptionName);

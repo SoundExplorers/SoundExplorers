@@ -90,7 +90,7 @@ namespace SoundExplorers.Data {
       } else if (!string.IsNullOrWhiteSpace(surname)) {
         result = surname.Trim();
       } else {
-        // A NoNullAllowedException will be thrown when Name is set to null.
+        // A PropertyConstraintException will be thrown when Name is set to null.
         // But here it is for completeness!
         result = null;
       }

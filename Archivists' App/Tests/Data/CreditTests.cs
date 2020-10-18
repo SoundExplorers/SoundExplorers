@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Data;
-using System.Data.Linq;
 using NUnit.Framework;
 using SoundExplorers.Data;
 
@@ -225,7 +224,7 @@ namespace SoundExplorers.Tests.Data {
     public void DisallowChangeCreditNoToDuplicate() {
       Session.BeginUpdate();
       Credit2.CreditNo = Credit2CreditNo;
-      Assert.Throws<DuplicateKeyException>(() =>
+      Assert.Throws<ConstraintException>(() =>
         Credit2.CreditNo = Credit1CreditNo);
       Session.Commit();
     }
@@ -233,7 +232,7 @@ namespace SoundExplorers.Tests.Data {
     [Test]
     public void DisallowChangeCreditNoToZero() {
       Session.BeginUpdate();
-      Assert.Throws<NoNullAllowedException>(() =>
+      Assert.Throws<PropertyConstraintException>(() =>
         Credit2.CreditNo = 0);
       Session.Commit();
     }
@@ -245,7 +244,7 @@ namespace SoundExplorers.Tests.Data {
       };
       Session.BeginUpdate();
       noCreditNo.Piece = Piece1;
-      Assert.Throws<NoNullAllowedException>(() => Session.Persist(noCreditNo));
+      Assert.Throws<PropertyConstraintException>(() => Session.Persist(noCreditNo));
       Session.Abort();
     }
 
@@ -256,7 +255,7 @@ namespace SoundExplorers.Tests.Data {
         CreditNo = Credit1CreditNo
       };
       Session.BeginUpdate();
-      Assert.Throws<DuplicateKeyException>(() => duplicate.Piece = Piece1);
+      Assert.Throws<ConstraintException>(() => duplicate.Piece = Piece1);
       Session.Commit();
     }
 

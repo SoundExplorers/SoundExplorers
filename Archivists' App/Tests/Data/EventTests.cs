@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Data;
-using System.Data.Linq;
 using NUnit.Framework;
 using SoundExplorers.Data;
 
@@ -274,7 +273,7 @@ namespace SoundExplorers.Tests.Data {
         Event2 =
           QueryHelper.Read<Event>(Event2SimpleKey, Location1, session);
         Event2.Date = Event2Date;
-        Assert.Throws<DuplicateKeyException>(() => Event2.Date = Event1Date);
+        Assert.Throws<ConstraintException>(() => Event2.Date = Event1Date);
         session.Commit();
       }
     }
@@ -284,7 +283,7 @@ namespace SoundExplorers.Tests.Data {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
         Event2 = QueryHelper.Read<Event>(Event2SimpleKey, Location1, session);
-        Assert.Throws<NoNullAllowedException>(() =>
+        Assert.Throws<PropertyConstraintException>(() =>
           Event2.Date = DateTime.MinValue);
         session.Commit();
       }
@@ -307,7 +306,7 @@ namespace SoundExplorers.Tests.Data {
         session.BeginUpdate();
         Location1 = QueryHelper.Read<Location>(Location1Name, session);
         Event1 = QueryHelper.Read<Event>(Event1SimpleKey, Location1, session);
-        Assert.Throws<NoNullAllowedException>(() => Event1.Location = null);
+        Assert.Throws<PropertyConstraintException>(() => Event1.Location = null);
         session.Commit();
       }
     }
@@ -321,7 +320,7 @@ namespace SoundExplorers.Tests.Data {
         session.BeginUpdate();
         Location1 = QueryHelper.Read<Location>(Location1.SimpleKey, session);
         noDate.Location = Location1;
-        Assert.Throws<NoNullAllowedException>(() => session.Persist(noDate));
+        Assert.Throws<PropertyConstraintException>(() => session.Persist(noDate));
         session.Abort();
       }
     }
@@ -346,7 +345,7 @@ namespace SoundExplorers.Tests.Data {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
         Location1 = QueryHelper.Read<Location>(Location1Name, session);
-        Assert.Throws<DuplicateKeyException>(() =>
+        Assert.Throws<ConstraintException>(() =>
           duplicate.Location = Location1);
         session.Commit();
       }

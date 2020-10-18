@@ -27,7 +27,7 @@ namespace SoundExplorers.Data {
       get => _creditNo;
       set {
         if (value == 0) {
-          throw new NoNullAllowedException("CreditNo '00' is not valid.");
+          throw new PropertyConstraintException("CreditNo '00' is not valid.");
         }
         UpdateNonIndexField();
         _creditNo = value;

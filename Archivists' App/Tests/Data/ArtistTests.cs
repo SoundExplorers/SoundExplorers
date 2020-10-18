@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Data;
-using System.Data.Linq;
 using NUnit.Framework;
 using SoundExplorers.Data;
 
@@ -165,7 +164,7 @@ namespace SoundExplorers.Tests.Data {
         Surname = ClarissaName
       };
       Session.BeginUpdate();
-      Assert.Throws<DuplicateKeyException>(() => Session.Persist(duplicate));
+      Assert.Throws<PropertyConstraintException>(() => Session.Persist(duplicate));
       Session.Commit();
     }
 
@@ -180,7 +179,7 @@ namespace SoundExplorers.Tests.Data {
     [Test]
     public void DisallowSetNameToNull() {
       var nameless = new Artist();
-      Assert.Throws<NoNullAllowedException>(() => nameless.Forename = null);
+      Assert.Throws<PropertyConstraintException>(() => nameless.Forename = null);
     }
 
     [Test]

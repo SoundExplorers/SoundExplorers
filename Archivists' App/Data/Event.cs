@@ -25,8 +25,8 @@ namespace SoundExplorers.Data {
       get => _date;
       set {
         if (value <= InitialDate) {
-          throw new NoNullAllowedException(
-            $"Event Date must be later than {InitialDate:yyyy/mm/dd}.");
+          throw new PropertyConstraintException(
+            $"Event Date must be later than {InitialDate:yyyy/mm/dd}.", nameof(Date));
         }
         UpdateNonIndexField();
         _date = value.Date;

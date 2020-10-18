@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Data;
-using System.Data.Linq;
 using NUnit.Framework;
 using SoundExplorers.Data;
 
@@ -91,7 +90,7 @@ namespace SoundExplorers.Tests.Data {
         Location2 =
           QueryHelper.Read<Location>(Location2Name, session);
         Location2.Name = Location2Name;
-        Assert.Throws<DuplicateKeyException>(() =>
+        Assert.Throws<PropertyConstraintException>(() =>
           Location2.Name = Location1Name);
         session.Commit();
       }
@@ -105,7 +104,7 @@ namespace SoundExplorers.Tests.Data {
       };
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
-        Assert.Throws<DuplicateKeyException>(() => session.Persist(duplicate));
+        Assert.Throws<PropertyConstraintException>(() => session.Persist(duplicate));
         session.Commit();
       }
     }
@@ -117,7 +116,7 @@ namespace SoundExplorers.Tests.Data {
       };
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
-        Assert.Throws<NoNullAllowedException>(() => session.Persist(noName));
+        Assert.Throws<PropertyConstraintException>(() => session.Persist(noName));
         session.Commit();
       }
     }
@@ -140,7 +139,7 @@ namespace SoundExplorers.Tests.Data {
       var nullName = new Location {
         QueryHelper = QueryHelper
       };
-      Assert.Throws<NoNullAllowedException>(() => nullName.Name = null);
+      Assert.Throws<PropertyConstraintException>(() => nullName.Name = null);
     }
 
     [Test]
