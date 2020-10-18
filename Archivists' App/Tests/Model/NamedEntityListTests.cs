@@ -118,7 +118,7 @@ namespace SoundExplorers.Tests.Model {
           exception.Message.Contains("cannot be deleted because it is referenced by"),
           "Message");
         Assert.AreEqual(1, exception.RowIndex, "RowIndex");
-        Assert.IsInstanceOf(typeof(PropertyConstraintException), exception.InnerException,
+        Assert.IsInstanceOf(typeof(ConstraintException), exception.InnerException,
           "InnerException");
         Assert.AreSame(exception, list.LastDatabaseUpdateErrorException,
           "LastDatabaseUpdateErrorException");

@@ -301,7 +301,6 @@ namespace SoundExplorers.Model {
       //   ErrorBindingItem = NewBindingItem;
       //   BackupBindingItemToRestoreFrom = null;
       //   // RemoveCurrentBindingItem(); 
-      //   // TODO: Persistence (and other data) exceptions must be PropertyConstraintException to provide error property name  
       //   throw CreateDatabaseUpdateErrorException(exception, rowIndex, "Date");
       // } finally {
       //   Session.Commit();
@@ -358,10 +357,14 @@ namespace SoundExplorers.Model {
 
     [NotNull]
     private DatabaseUpdateErrorException CreateDatabaseUpdateErrorException(
-      [NotNull] Exception exception, int rowIndex, string propertyName = null) {
+      [NotNull] Exception exception, int rowIndex) {
       if (!IsDatabaseUpdateError(exception)) {
         throw exception; // Terminal error
       }
+      string propertyName =
+        exception is PropertyConstraintException propertyConstraintException
+          ? propertyConstraintException.PropertyName
+          : null; 
       int columnIndex = propertyName != null ? Columns.IndexOf(Columns[propertyName]) : 0;
       var errorValue = propertyName != null
         ? ErrorBindingItem?.GetPropertyValue(propertyName)
@@ -397,8 +400,7 @@ namespace SoundExplorers.Model {
     ///   If false, the exception should be treated as a terminal error.
     /// </summary>
     private static bool IsDatabaseUpdateError(Exception exception) {
-      return exception is DataException || exception is DuplicateKeyException ||
-             exception is FormatException;
+      return exception is ConstraintException;
     }
 
     private void UpdateExistingEntityProperty(int rowIndex, [NotNull] string propertyName,
@@ -415,7 +417,7 @@ namespace SoundExplorers.Model {
         RestoreEntityPropertiesFromBackup(backupEntity, entity);
         BackupBindingItemToRestoreFrom = BackupBindingItem;
         // This exception will be passed to the grid's DataError event handler.
-        throw CreateDatabaseUpdateErrorException(exception, rowIndex, propertyName);
+        throw CreateDatabaseUpdateErrorException(exception, rowIndex);
       } finally {
         Session.Commit();
       }

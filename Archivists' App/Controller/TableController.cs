@@ -137,7 +137,6 @@ namespace SoundExplorers.Controller {
         case ChangeAction.Delete:
           break;
         case ChangeAction.Insert:
-          // TODO: New row should still be insertion row on error.
           MainList.RemoveCurrentBindingItem();
           //View.ResumeEditCurrentCell(MainList.LastDatabaseUpdateErrorException.ErrorValue);
           View.MakeMainGridInsertionRowCurrent();
