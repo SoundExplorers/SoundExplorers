@@ -38,7 +38,8 @@ namespace SoundExplorers.Model {
     ///   or cancel the add.
     ///   Either way, we temporarily have a grid row that's neither the insertion row
     ///   not bound to an entity.  So it needs special housekeeping to make
-    ///   sure it does not stay on the grid when no longer needed.
+    ///   sure an entity gets persisted if the error is fixed
+    ///   or the row gets removed from the grid when if the insertion is cancelled.
     /// </summary>
     bool IsFixingNewRow { get; set; }
 
