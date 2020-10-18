@@ -138,12 +138,25 @@ namespace SoundExplorers.Controller {
           break;
         case ChangeAction.Insert:
           MainList.RemoveCurrentBindingItem();
-          //View.ResumeEditCurrentCell(MainList.LastDatabaseUpdateErrorException.ErrorValue);
           View.MakeMainGridInsertionRowCurrent();
+          var insertionRowErrorValues = MainList.GetErrorValues();
+          for (var i = 0; i < MainList.Columns.Count; i++) {
+            View.FocusMainGridCell(MainList.LastDatabaseUpdateErrorException.RowIndex, i);
+            View.EditMainGridCurrentCell();
+            View.RestoreMainGridCurrentRowCellErrorValue(i, insertionRowErrorValues[i]);
+          }
+          View.FocusMainGridCell(MainList.LastDatabaseUpdateErrorException.RowIndex,
+            MainList.LastDatabaseUpdateErrorException.ColumnIndex);
+          View.EditMainGridCurrentCell();
+          MainList.IsFixingNewRow = true;
           break;
         case ChangeAction.Update:
           MainList.RestoreCurrentBindingItemOriginalValues();
-          View.ResumeEditCurrentCell(MainList.LastDatabaseUpdateErrorException.ErrorValue);
+          View.EditMainGridCurrentCell();
+          View.RestoreMainGridCurrentRowCellErrorValue(
+            MainList.LastDatabaseUpdateErrorException.ColumnIndex,
+            MainList.GetErrorValues()[
+              MainList.LastDatabaseUpdateErrorException.ColumnIndex]);
           break;
         default:
           throw new NotSupportedException(
@@ -196,7 +209,7 @@ namespace SoundExplorers.Controller {
       if (MainList.IsDataLoadComplete && rowIndex < MainList.Count) {
         try {
           MainList.DeleteEntity(rowIndex);
-          View.OnRowInsertedOrDeleted();
+          View.OnRowAddedOrDeleted();
         } catch (DatabaseUpdateErrorException) {
           View.StartDatabaseUpdateErrorTimer();
         }
@@ -212,7 +225,7 @@ namespace SoundExplorers.Controller {
       //   $"{nameof(OnMainGridRowValidated)}:  Any row left, after final ItemChanged, if any");
       try {
         MainList?.AddEntityIfNew(rowIndex);
-        View.OnRowInsertedOrDeleted();
+        View.OnRowAddedOrDeleted();
       } catch (DatabaseUpdateErrorException) {
         View.StartDatabaseUpdateErrorTimer();
       }

@@ -2,6 +2,7 @@
 
 namespace SoundExplorers.Controller {
   public interface ITableView : IView<TableController> {
+    void EditMainGridCurrentCell();
     void FocusMainGridCell(int rowIndex, int columnIndex);
     void MakeMainGridInsertionRowCurrent();
 
@@ -9,15 +10,10 @@ namespace SoundExplorers.Controller {
     ///   Occurs when an entity corresponding to a row in the main grid
     ///   has been successfully inserted or deleted on the database.
     /// </summary>
-    void OnRowInsertedOrDeleted();
+    void OnRowAddedOrDeleted();
 
-    /// <summary>
-    ///   Resumes editing the current cell,
-    ///   with the cell initially repopulated with the specified error value.
-    ///   This will allow the user to correct the error value or,
-    ///   by cancelling the edit, restore the original value.
-    /// </summary>
-    void ResumeEditCurrentCell([CanBeNull] object errorValue);
+    void RestoreMainGridCurrentRowCellErrorValue(int columnIndex,
+      [CanBeNull] object errorValue);
 
     void SelectCurrentRowOnly();
     void StartDatabaseUpdateErrorTimer();

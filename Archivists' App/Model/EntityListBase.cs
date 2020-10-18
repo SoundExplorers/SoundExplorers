@@ -83,6 +83,17 @@ namespace SoundExplorers.Model {
     public bool IsDataLoadComplete { get; private set; }
 
     /// <summary>
+    ///   If there's an error on adding a new entity,
+    ///   the data to be fixed will be in a row before the insertion row
+    ///   to allow the user to either fix the error and try the add again
+    ///   or cancel the add.
+    ///   Either way, we temporarily have a grid row that's neither the insertion row
+    ///   not bound to an entity.  So it needs special housekeeping to make
+    ///   sure it does not stay on the grid when no longer needed.
+    /// </summary>
+    public bool IsFixingNewRow { get; set; }
+
+    /// <summary>
     ///   True if this is a (read-only) parent list.
     ///   False (the default) if this is the (updatable) main (and maybe only) list.
     /// </summary>
@@ -126,11 +137,16 @@ namespace SoundExplorers.Model {
     ///   A database update error occured.
     /// </exception>
     public void AddEntityIfNew(int rowIndex) {
-      if (!(IsInsertionRowCurrent && HasRowBeenEdited)) {
-        IsInsertionRowCurrent = false;
+      if (!HasRowBeenEdited) {
+        if (IsFixingNewRow) {
+          BindingList.RemoveAt(rowIndex);
+          IsFixingNewRow = false;
+        }
         return;
       }
-      AddNewEntity(rowIndex);
+      if (IsInsertionRowCurrent || IsFixingNewRow) {
+        AddNewEntity(rowIndex);
+      }
     }
 
     /// <summary>
@@ -285,29 +301,14 @@ namespace SoundExplorers.Model {
         UpdateEntity(bindingItem, entity);
         Session.Persist(entity);
         Add(entity);
+        IsFixingNewRow = false;
       } catch (Exception exception) {
-        BindingItemToFix = bindingItem;
-        BackupBindingItemToRestoreFrom = null;
+        ErrorBindingItem = bindingItem;
         throw CreateDatabaseUpdateErrorException(exception, rowIndex);
       } finally {
         Session.Commit();
         IsInsertionRowCurrent = false;
       }
-      // Session.BeginUpdate();
-      // try {
-      //   Session.Persist(NewEntity);
-      //   Add(NewEntity);
-      // } catch (Exception exception) {
-      //   ErrorBindingItem = NewBindingItem;
-      //   BackupBindingItemToRestoreFrom = null;
-      //   // RemoveCurrentBindingItem(); 
-      //   throw CreateDatabaseUpdateErrorException(exception, rowIndex, "Date");
-      // } finally {
-      //   Session.Commit();
-      //   IsInsertionRowCurrent = false;
-      // }
-      // NewBindingItem = null;
-      // NewEntity = default;
     }
 
     private void BindingListOnListChanged(object sender, ListChangedEventArgs e) {
@@ -321,29 +322,10 @@ namespace SoundExplorers.Model {
           // Debug.WriteLine(
           //   $"ListChangedType.ItemChanged:  {e.PropertyDescriptor.Name} = '{e.PropertyDescriptor.GetValue(BindingList[e.NewIndex])}', cell edit completed or cancelled");
           HasRowBeenEdited = true;
-          if (!IsInsertionRowCurrent) {
+          if (!IsInsertionRowCurrent && !IsFixingNewRow) {
             UpdateExistingEntityProperty(e.NewIndex, e.PropertyDescriptor.Name,
               e.PropertyDescriptor.GetValue(BindingList[e.NewIndex]));
           }
-          // if (!HasRowBeenEdited) {
-          //   HasRowBeenEdited = true;
-          //   if (IsInsertionRowCurrent) {
-          //     NewBindingItem = (TBindingItem)BindingList[e.NewIndex];
-          //     NewEntity = CreateEntity();
-          //     LastDatabaseChangeAction = ChangeAction.Insert;
-          //   }
-          // }
-          // if (IsInsertionRowCurrent) {
-          //   // Even though only a single property has been changed on the grid,
-          //   // update all entity properties in case there are default values on the grid
-          //   // that don't correspond to entity defaults.
-          //   // The only examples anticipated are Newsletter.Date and Event.Date,
-          //   // which default to today on the grid.
-          //   UpdateNewEntity(e.NewIndex, e.PropertyDescriptor.Name);
-          // } else {
-          //   UpdateExistingEntityProperty(e.NewIndex, e.PropertyDescriptor.Name,
-          //     e.PropertyDescriptor.GetValue(BindingList[e.NewIndex]));
-          // }
           break;
         case ListChangedType.ItemDeleted: // Insertion row left without saving data
           // Debug.WriteLine(
@@ -364,10 +346,10 @@ namespace SoundExplorers.Model {
       string propertyName =
         exception is PropertyConstraintException propertyConstraintException
           ? propertyConstraintException.PropertyName
-          : null; 
+          : null;
       int columnIndex = propertyName != null ? Columns.IndexOf(Columns[propertyName]) : 0;
       var errorValue = propertyName != null
-        ? ErrorBindingItem?.GetPropertyValue(propertyName)
+        ? ErrorBindingItem?.GetPropertyValues()[columnIndex]
         : null;
       LastDatabaseUpdateErrorException = new DatabaseUpdateErrorException(
         LastDatabaseChangeAction, exception.Message, rowIndex, columnIndex, errorValue,

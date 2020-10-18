@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Windows.Forms;
 using JetBrains.Annotations;
 using SoundExplorers.Controller;
@@ -32,6 +33,10 @@ namespace SoundExplorers.View {
     private bool ParentRowChanged { get; set; }
     private SizeableFormOptions SizeableFormOptions { get; set; }
 
+    public void EditMainGridCurrentCell() {
+      MainGrid.BeginEdit(true);
+    }
+
     public void FocusMainGridCell(int rowIndex, int columnIndex) {
       // This triggers MainGridOnRowEnter.
       MainGrid.CurrentCell = MainGrid.Rows[rowIndex].Cells[columnIndex];
@@ -51,16 +56,13 @@ namespace SoundExplorers.View {
     ///   Occurs when an entity corresponding to a row in the main grid
     ///   has been successfully inserted or deleted on the database.
     /// </summary>
-    public void OnRowInsertedOrDeleted() {
+    public void OnRowAddedOrDeleted() {
       MainGrid.AutoResizeColumns();
       MainGrid.Focus();
     }
 
-    public void ResumeEditCurrentCell(object errorValue) {
-      MainGrid.BeginEdit(true);
-      if (MainGrid.CurrentCell is ICanRestoreErrorValue canRestoreErrorValue) {
-        canRestoreErrorValue.RestoreErrorValue(errorValue);
-      }
+    public void RestoreMainGridCurrentRowCellErrorValue(int columnIndex, object errorValue) {
+      ((ICanRestoreErrorValue)MainCurrentRow.Cells[columnIndex]).RestoreErrorValue(errorValue);
     }
 
     public void SelectCurrentRowOnly() {
@@ -532,6 +534,10 @@ namespace SoundExplorers.View {
       Controller.OnMainGridRowEnter(e.RowIndex);
     }
 
+    private void MainGridOnRowLeave(object sender, DataGridViewCellEventArgs e) {
+      Debug.WriteLine("MainGridOnRowLeave");
+    }
+
     private void MainGridOnRowsRemoved(object sender, DataGridViewRowsRemovedEventArgs e) {
       //Debug.WriteLine("MainGridOnRowsRemoved");
       //Debug.WriteLine(MainGrid.Rows[e.RowIndex].Cells[0].Value);
@@ -539,7 +545,7 @@ namespace SoundExplorers.View {
     }
 
     private void MainGridOnRowValidated(object sender, DataGridViewCellEventArgs e) {
-      //Debug.WriteLine("MainGridOnRowValidated");
+      Debug.WriteLine("MainGridOnRowValidated");
       //Debug.WriteLine(MainGrid.Rows[e.RowIndex].Cells[0].Value);
       if (ParentRowChanged) {
         ParentRowChanged = false;
@@ -613,7 +619,7 @@ namespace SoundExplorers.View {
       MainGrid.MouseDown -= GridOnMouseDown;
       //MainGrid.RowStateChanged
       MainGrid.RowEnter -= MainGridOnRowEnter;
-      //MainGrid.RowLeave -= MainGridOnRowLeave;
+      MainGrid.RowLeave -= MainGridOnRowLeave;
       MainGrid.RowsRemoved -= MainGridOnRowsRemoved;
       MainGrid.RowValidated -= MainGridOnRowValidated;
       Controller.FetchData();
@@ -637,7 +643,7 @@ namespace SoundExplorers.View {
       //MainGrid.LostFocus += new EventHandler(ControlOnLostFocus);
       MainGrid.MouseDown += GridOnMouseDown;
       MainGrid.RowEnter += MainGridOnRowEnter;
-      //MainGrid.RowLeave += MainGridOnRowLeave;
+      MainGrid.RowLeave += MainGridOnRowLeave;
       MainGrid.RowsRemoved += MainGridOnRowsRemoved;
       MainGrid.RowValidated += MainGridOnRowValidated;
       // Has to be done when visible.

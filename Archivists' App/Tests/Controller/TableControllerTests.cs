@@ -46,7 +46,7 @@ namespace SoundExplorers.Tests.Controller {
       editor[1].Name = name2;
       editor[1].Notes = "Bob";
       Controller.OnMainGridRowValidated(1);
-      Assert.AreEqual(2, View.OnRowInsertedOrDeletedCount, "OnRowInsertedOrDeletedCount");
+      Assert.AreEqual(2, View.OnRowAddedOrDeletedCount, "OnRowAddedOrDeletedCount");
       Controller.FetchData(); // Refresh grid
       editor.SetBindingList(Controller.MainBindingList);
       Assert.AreEqual(2, editor.Count, "editor.Count after FetchData #2");
@@ -61,6 +61,8 @@ namespace SoundExplorers.Tests.Controller {
           "Still duplicate name before error message shown for duplicate rename");
         Controller.OnMainGridDataError(exception);
       }
+      Assert.AreEqual(1, View.EditMainGridCurrentCellCount,
+        "EditMainGridCurrentCellCount after error message shown for duplicate rename");
       Assert.AreEqual(1, View.FocusMainGridCellCount,
         "FocusMainGridCellCount after error message shown for duplicate rename");
       Assert.AreEqual(0, View.FocusMainGridCellColumnIndex,
@@ -69,8 +71,8 @@ namespace SoundExplorers.Tests.Controller {
         "FocusMainGridCellRowIndex after error message shown for duplicate rename");
       Assert.AreEqual(name2, editor[1].Name,
         "Original name restored after error message shown for duplicate rename");
-      Assert.AreEqual(1, View.ResumeEditCurrentCellCount,
-        "ResumeEditCurrentCellCount after error message shown for duplicate rename");
+      Assert.AreEqual(1, View.RestoreMainGridCurrentRowCellErrorValueCount,
+        "RestoreMainGridCurrentRowCellErrorValueCount after error message shown for duplicate rename");
       Assert.AreEqual(1, View.ShowErrorMessageCount,
         "ShowErrorMessageCount after error message shown for duplicate rename");
       // For unknown reason, the the error handling is set up,
@@ -89,22 +91,22 @@ namespace SoundExplorers.Tests.Controller {
       editor.AddNew();
       Controller.OnMainGridRowEnter(2); // Go to insertion row
       editor[2].Name = name1;
-      Assert.AreEqual(2, View.OnRowInsertedOrDeletedCount,
-        "OnRowInsertedOrDeletedCount unchanged after duplicate insert");
+      Assert.AreEqual(2, View.OnRowAddedOrDeletedCount,
+        "OnRowAddedOrDeletedCount unchanged after duplicate insert");
       Assert.AreEqual(3, editor.Count,
         "editor.Count before error message shown for duplicate insert");
       Controller.OnMainGridRowValidated(2);
       Assert.AreEqual(2, View.ShowErrorMessageCount,
         "ShowErrorMessageCount after error message shown for duplicate insert");
-      Assert.AreEqual(2, editor.Count,
+      Assert.AreEqual(3, editor.Count,
         "editor.Count after error message shown for duplicate insert");
       Assert.AreEqual(1, View.MakeMainGridInsertionRowCurrentCount,
         "MakeMainGridInsertionRowCurrentCount after error message shown for duplicate insert");
       // Delete the second item
       Controller.OnMainGridRowEnter(1);
       Controller.OnMainGridRowRemoved(1);
-      Assert.AreEqual(3, View.OnRowInsertedOrDeletedCount,
-        "OnRowInsertedOrDeletedCount after delete");
+      Assert.AreEqual(3, View.OnRowAddedOrDeletedCount,
+        "OnRowAddedOrDeletedCount after delete");
       Controller.FetchData(); // Refresh grid
       editor.SetBindingList(Controller.MainBindingList);
       Assert.AreEqual(1, editor.Count, "editor.Count after FetchData #3");

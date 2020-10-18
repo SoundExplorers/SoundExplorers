@@ -30,14 +30,6 @@ namespace SoundExplorers.Model {
   public abstract class BindingItemBase : INotifyPropertyChanged {
     public event PropertyChangedEventHandler PropertyChanged;
 
-    [CanBeNull]
-    internal object GetPropertyValue([NotNull] string propertyName) {
-      return (
-        from property in GetType().GetProperties()
-        where property.Name == propertyName
-        select property).First().GetValue(this);
-    }
-
     [NotNull]
     internal IList<object> GetPropertyValues() {
       return (

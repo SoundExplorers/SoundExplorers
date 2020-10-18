@@ -30,6 +30,17 @@ namespace SoundExplorers.Model {
     ///   an entity deletion is required.
     /// </summary>
     bool IsDataLoadComplete { get; }
+    
+    /// <summary>
+    ///   If there's an error on adding a new entity,
+    ///   the data to be fixed will be in a row before the insertion row
+    ///   to allow the user to either fix the error and try the add again
+    ///   or cancel the add.
+    ///   Either way, we temporarily have a grid row that's neither the insertion row
+    ///   not bound to an entity.  So it needs special housekeeping to make
+    ///   sure it does not stay on the grid when no longer needed.
+    /// </summary>
+    bool IsFixingNewRow { get; set; }
 
     /// <summary>
     ///   True if this is a (read-only) parent list.
