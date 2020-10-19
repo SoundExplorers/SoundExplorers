@@ -5,7 +5,6 @@ using System.ComponentModel;
 using System.Data;
 using System.Data.Linq;
 using System.Linq;
-using System.Reflection;
 using JetBrains.Annotations;
 using SoundExplorers.Data;
 using VelocityDb.Session;
@@ -22,7 +21,7 @@ namespace SoundExplorers.Model {
   /// </typeparam>
   public abstract class EntityListBase<TEntity, TBindingItem> : List<TEntity>, IEntityList
     where TEntity : IEntity, new()
-    where TBindingItem : BindingItemBase, new() {
+    where TBindingItem : BindingItemBase<TBindingItem>, new() {
     private EntityColumnList _columns;
     private SessionBase _session;
 
@@ -211,7 +210,7 @@ namespace SoundExplorers.Model {
       if (BackupBindingItemToRestoreFrom == null) {
         // Not forced to reenter row to fix error
         BackupBindingItem = !IsInsertionRowCurrent
-          ? CreateBackupBindingItem((TBindingItem)BindingList[rowIndex])
+          ? ((TBindingItem)BindingList[rowIndex]).CreateBackup()
           : new TBindingItem();
       }
     }
@@ -247,17 +246,12 @@ namespace SoundExplorers.Model {
     }
 
     public void RestoreCurrentBindingItemOriginalValues() {
-      ErrorBindingItem = CreateBackupBindingItem(BindingItemToFix);
-      RestoreBindingItemPropertiesFromBackup(BackupBindingItemToRestoreFrom,
-        BindingItemToFix);
+      ErrorBindingItem = BindingItemToFix.CreateBackup();
+      BindingItemToFix.RestorePropertyValuesFrom(BackupBindingItemToRestoreFrom);
       BackupBindingItemToRestoreFrom = null;
       BindingItemToFix = null;
       HasRowBeenEdited = false;
     }
-
-    [NotNull]
-    protected abstract TBindingItem CreateBackupBindingItem(
-      [NotNull] TBindingItem bindingItem);
 
     [NotNull]
     protected abstract TEntity CreateBackupEntity(
@@ -269,15 +263,10 @@ namespace SoundExplorers.Model {
     [NotNull]
     protected abstract EntityColumnList CreateColumns();
 
-    protected abstract void RestoreBindingItemPropertiesFromBackup(
-      [NotNull] TBindingItem backupBindingItem,
-      [NotNull] TBindingItem bindingItemToRestore);
+    [NotNull] protected abstract TEntity CreateEntity([NotNull] TBindingItem bindingItem);
 
     protected abstract void RestoreEntityPropertiesFromBackup(
       [NotNull] TEntity backupEntity, [NotNull] TEntity entityToRestore);
-
-    protected abstract void UpdateEntity([NotNull] TBindingItem bindingItem,
-      [NotNull] TEntity entity);
 
     protected abstract void UpdateEntityProperty([NotNull] string propertyName,
       [CanBeNull] object newValue, [NotNull] TEntity entity);
@@ -296,10 +285,9 @@ namespace SoundExplorers.Model {
     private void AddNewEntity(int rowIndex) {
       LastDatabaseChangeAction = ChangeAction.Insert;
       var bindingItem = (TBindingItem)BindingList[rowIndex];
-      var entity = CreateEntity();
       Session.BeginUpdate();
       try {
-        UpdateEntity(bindingItem, entity);
+        var entity = CreateEntity(bindingItem);
         Session.Persist(entity);
         Add(entity);
         IsFixingNewRow = false;
@@ -361,14 +349,6 @@ namespace SoundExplorers.Model {
         select CreateBindingItem(entity)
       ).ToList();
       return new BindingList<TBindingItem>(list);
-    }
-
-    private static TEntity CreateEntity() {
-      try {
-        return (TEntity)Activator.CreateInstance(typeof(TEntity));
-      } catch (TargetInvocationException ex) {
-        throw ex.InnerException ?? ex;
-      }
     }
 
     /// <summary>

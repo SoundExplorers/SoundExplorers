@@ -27,8 +27,17 @@ namespace SoundExplorers.Model {
   ///   Other derived classes are expected to be just as simple.
   ///   So the <see cref="NoReorderAttribute" /> is a safety feature.
   /// </remarks>
-  public abstract class BindingItemBase : INotifyPropertyChanged {
+  public abstract class BindingItemBase<TBindingItem> : INotifyPropertyChanged
+    where TBindingItem : BindingItemBase<TBindingItem>, new() {
     public event PropertyChangedEventHandler PropertyChanged;
+
+    
+    [NotNull]
+    internal TBindingItem CreateBackup() {
+      var result = new TBindingItem();
+      result.RestorePropertyValuesFrom((TBindingItem)this);
+      return result;
+    }
 
     [NotNull]
     internal IList<object> GetPropertyValues() {
@@ -41,6 +50,14 @@ namespace SoundExplorers.Model {
     protected void OnPropertyChanged(
       [CallerMemberName] string propertyName = null) {
       PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+
+    internal void RestorePropertyValuesFrom([NotNull] TBindingItem backup) {
+      var backupPropertyValues = backup.GetPropertyValues();
+      var properties = GetType().GetProperties().ToList();
+      for (var i = 0; i < properties.Count; i++) {
+        properties[i].SetValue(this, backupPropertyValues[i]);
+      }
     }
   }
 }

@@ -4,7 +4,7 @@ using JetBrains.Annotations;
 using SoundExplorers.Model;
 
 namespace SoundExplorers.Tests.Model {
-  public class TestEditor<TBindingItem> where TBindingItem : BindingItemBase {
+  public class TestEditor<TBindingItem> where TBindingItem : BindingItemBase<TBindingItem>, new() {
     public TestEditor(IBindingList bindingList = null) {
       SetBindingList(bindingList);
     }

@@ -5,12 +5,6 @@ namespace SoundExplorers.Model {
   public abstract class
     NamedEntityList<TEntity> : EntityListBase<TEntity, NamedBindingItem>
     where TEntity : INamedEntity, new() {
-    protected override NamedBindingItem CreateBackupBindingItem(
-      NamedBindingItem bindingItem) {
-      return new NamedBindingItem {
-        Name = bindingItem.Name
-      };
-    }
 
     protected override TEntity CreateBackupEntity(
       TEntity entity) {
@@ -29,19 +23,15 @@ namespace SoundExplorers.Model {
       };
     }
 
-    protected override void RestoreBindingItemPropertiesFromBackup(
-      NamedBindingItem backupBindingItem,
-      NamedBindingItem bindingItemToRestore) {
-      bindingItemToRestore.Name = backupBindingItem.Name;
+    protected override TEntity CreateEntity(NamedBindingItem bindingItem) {
+      return new TEntity {
+        Name = bindingItem.Name
+      };
     }
 
     protected override void RestoreEntityPropertiesFromBackup(TEntity backupEntity,
       TEntity entityToRestore) {
       entityToRestore.Name = backupEntity.Name;
-    }
-
-    protected override void UpdateEntity(NamedBindingItem bindingItem, TEntity entity) {
-      entity.Name = bindingItem.Name;
     }
 
     protected override void UpdateEntityProperty(string propertyName, object newValue,

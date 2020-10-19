@@ -2,7 +2,7 @@
 
 namespace SoundExplorers.Model {
   [NoReorder]
-  public class NotablyNamedBindingItem : BindingItemBase {
+  public class NotablyNamedBindingItem : BindingItemBase<NotablyNamedBindingItem> {
     private string _name;
     private string _notes;
 

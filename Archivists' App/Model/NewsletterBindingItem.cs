@@ -3,7 +3,7 @@ using JetBrains.Annotations;
 
 namespace SoundExplorers.Model {
   [NoReorder]
-  public class NewsletterBindingItem : BindingItemBase {
+  public class NewsletterBindingItem : BindingItemBase<NewsletterBindingItem> {
     private DateTime _date;
     private string _url;
 

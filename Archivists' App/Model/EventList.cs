@@ -1,43 +1,49 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Data;
 using SoundExplorers.Data;
 
 namespace SoundExplorers.Model {
-  public class EventList : EntityListBase<Event> {
+  public class EventList : EntityListBase<Event, EventBindingItem> {
     public override IList GetChildren(int rowIndex) {
       return (IList)this[rowIndex].Sets.Values;
     }
 
-    protected override Event CreateBackupEntity(Event location) {
+    protected override Event CreateBackupEntity(Event @event) {
       return new Event {
-        Date = location.Date, Location = location.Location, Series = location.Series,
-        Newsletter = location.Newsletter, EventType = location.EventType,
-        Notes = location.Notes
+        Date = @event.Date, Location = @event.Location, Series = @event.Series,
+        Newsletter = @event.Newsletter, EventType = @event.EventType,
+        Notes = @event.Notes
+      };
+    }
+
+    protected override EventBindingItem CreateBindingItem(Event @event) {
+      return new EventBindingItem {
+        Date = @event.Date, Location = @event.Location, Series = @event.Series,
+        Newsletter = @event.Newsletter, EventType = @event.EventType, Notes = @event.Notes
       };
     }
 
     protected override EntityColumnList CreateColumns() {
       return new EntityColumnList {
-        new EntityColumn(nameof(Event.Date), typeof(DateTime)),
-        new EntityColumn(nameof(Event.Location), typeof(string),
+        new EntityColumn(nameof(Event.Date)),
+        new EntityColumn(nameof(Event.Location),
           typeof(Location), nameof(Location.Name)),
-        new EntityColumn(nameof(Event.Series), typeof(string),
+        new EntityColumn(nameof(Event.Series),
           typeof(Series), nameof(Series.Name)),
-        new EntityColumn(nameof(Event.Newsletter), typeof(DateTime),
+        new EntityColumn(nameof(Event.Newsletter),
           typeof(Newsletter), nameof(Newsletter.Date)),
-        new EntityColumn(nameof(Event.EventType), typeof(string),
+        new EntityColumn(nameof(Event.EventType),
           typeof(EventType), nameof(EventType.Name)),
-        new EntityColumn(nameof(Event.Notes), typeof(string))
+        new EntityColumn(nameof(Event.Notes))
       };
     }
 
-    protected override IList<object> GetRowItemValuesFromEntity(Event @event) {
-      return new List<object> {
-        @event.Date, @event.Location.Name, @event.Series?.Name,
-        @event.Newsletter?.Date ?? DateTime.Parse("1 Jan 1900"), @event.EventType.Name,
-        @event.Notes
+    protected override Event CreateEntity(EventBindingItem bindingItem) {
+      return new Event {
+        Date = bindingItem.Date, Location = bindingItem.Location,
+        Series = bindingItem.Series,
+        Newsletter = bindingItem.Newsletter, EventType = bindingItem.EventType,
+        Notes = bindingItem.Notes
       };
     }
 
@@ -51,37 +57,32 @@ namespace SoundExplorers.Model {
       eventToRestore.Notes = backupEvent.Notes;
     }
 
-    protected override void UpdateEntityAtRow(DataRow row, Event @event) {
-      var newDate = (DateTime)row[nameof(Event.Date)];
-      var newLocationName = row[nameof(Event.Location)].ToString();
-      var newSeriesName = row[nameof(Event.Series)].ToString();
-      var newNewsletterDate = (DateTime)row[nameof(Event.Newsletter)];
-      var newEventTypeName = row[nameof(Event.EventType)].ToString();
-      var newNotes = row[nameof(Event.Notes)].ToString();
-      if (newDate != @event.Date) {
-        @event.Date = newDate;
-      }
-      if (newLocationName != @event.Location.Name) {
-        @event.Location = QueryHelper.Read<Location>(newLocationName, Session);
-      }
-      if (newSeriesName != @event.Series?.Name) {
-        @event.Series = !string.IsNullOrEmpty(newSeriesName)
-          ? QueryHelper.Read<Series>(newSeriesName, Session)
-          : null;
-      }
-      if ((newNewsletterDate == DateTime.MinValue ||
-           newNewsletterDate == DateTime.Parse("1 Jan 1900")) &&
-          @event.Newsletter != null) {
-        @event.Newsletter = null;
-      } else if (newNewsletterDate != @event.Newsletter?.Date) {
-        @event.Newsletter =
-          QueryHelper.Read<Newsletter>($"{newNewsletterDate:yyyy/MM/dd}", Session);
-      }
-      if (newEventTypeName != @event.EventType.Name) {
-        @event.EventType = QueryHelper.Read<EventType>(newEventTypeName, Session);
-      }
-      if (newNotes != @event.Notes) {
-        @event.Notes = newNotes;
+    protected override void UpdateEntityProperty(string propertyName, object newValue,
+      Event @event) {
+      switch (propertyName) {
+        case nameof(@event.Date):
+          @event.Date = (DateTime?)newValue ??
+                        throw new NullReferenceException(nameof(@event.Date));
+          break;
+        case nameof(@event.Location):
+          @event.Location = newValue as Location;
+          break;
+        case nameof(@event.Series):
+          @event.Series = newValue as Series;
+          break;
+        case nameof(@event.Newsletter):
+          @event.Newsletter = newValue as Newsletter;
+          break;
+        case nameof(@event.EventType):
+          @event.EventType = newValue as EventType;
+          break;
+        case nameof(@event.Notes):
+          @event.Notes = newValue?.ToString();
+          break;
+        default:
+          throw new ArgumentException(
+            $"{nameof(propertyName)} '{propertyName}' is not supported.",
+            nameof(propertyName));
       }
     }
   }
