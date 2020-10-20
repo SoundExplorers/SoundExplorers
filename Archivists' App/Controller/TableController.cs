@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using System.Data;
 using System.Data.Linq;
 using JetBrains.Annotations;
 using SoundExplorers.Model;
@@ -177,16 +178,18 @@ namespace SoundExplorers.Controller {
     public void OnMainGridDataError([CanBeNull] Exception exception) {
       if (exception is DatabaseUpdateErrorException databaseUpdateErrorException) {
         MainList.LastDatabaseUpdateErrorException = databaseUpdateErrorException;
+        View.StartDatabaseUpdateErrorTimer();
         // For unknown reason, the way I've got the error handling set up,
         // this event gets raise twice if there's a cell edit error,
         // the second time with a null exception.
         // It does not seem to do any harm, so long as it is trapped.
+      } else if (exception is ObjectNotFoundException) {
+        View.ShowErrorMessage(exception.Message);
       } else if (exception == null) {
         return;
       } else {
         throw exception;
       }
-      View.StartDatabaseUpdateErrorTimer();
     }
 
     public void OnMainGridRowEnter(int rowIndex) {

@@ -27,13 +27,13 @@ namespace SoundExplorers.Model {
       return new EntityColumnList {
         new EntityColumn(nameof(Event.Date)),
         new EntityColumn(nameof(Event.Location),
-          typeof(Location), nameof(Location.Name)),
+          typeof(LocationList), nameof(Location.Name)),
         new EntityColumn(nameof(Event.Series),
-          typeof(Series), nameof(Series.Name)),
+          typeof(SeriesList), nameof(Series.Name)),
         new EntityColumn(nameof(Event.Newsletter),
-          typeof(Newsletter), nameof(Newsletter.Date)),
+          typeof(NewsletterList), nameof(Newsletter.Date)),
         new EntityColumn(nameof(Event.EventType),
-          typeof(EventType), nameof(EventType.Name)),
+          typeof(EventTypeList), nameof(EventType.Name)),
         new EntityColumn(nameof(Event.Notes))
       };
     }

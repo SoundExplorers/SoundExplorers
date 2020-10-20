@@ -39,6 +39,7 @@
         <Reference Include="System" />
         <Reference Include="System.Core" />
         <Reference Include="System.Data" />
+        <Reference Include="System.Data.Entity" />
         <Reference Include="System.Data.Linq" />
         <Reference Include="System.Xml" />
     </ItemGroup>
@@ -61,6 +62,10 @@
       <ProjectReference Include="..\Common\SoundExplorers.Common.csproj">
         <Project>{24f52a9c-6679-4029-abfd-7eaa964cc945}</Project>
         <Name>SoundExplorers.Common</Name>
+      </ProjectReference>
+      <ProjectReference Include="..\Data\SoundExplorers.Data.csproj">
+        <Project>{eb9dd1ae-4445-45c2-bd75-b27cf5a87642}</Project>
+        <Name>SoundExplorers.Data</Name>
       </ProjectReference>
       <ProjectReference Include="..\Model\SoundExplorers.Model.csproj">
         <Project>{f49e2374-ef0d-46a3-ad01-6f52a5826473}</Project>

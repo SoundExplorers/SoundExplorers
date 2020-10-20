@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Data;
 using JetBrains.Annotations;
+using SoundExplorers.Data;
 using SoundExplorers.Model;
 
 namespace SoundExplorers.Controller {
@@ -32,7 +35,7 @@ namespace SoundExplorers.Controller {
     }
 
     [NotNull]
-    public string ReferencedColumnName =>
+    private string ReferencedColumnName =>
       _referencedColumnName ?? (_referencedColumnName =
         TableController.Columns[ColumnName]?.ReferencedColumnName ??
         throw new NullReferenceException(nameof(EntityColumn.ReferencedColumnName)));
@@ -44,15 +47,35 @@ namespace SoundExplorers.Controller {
         throw new NullReferenceException(nameof(EntityColumn.ReferencedEntityListType)));
 
     [NotNull]
-    public string ReferencedTableName => _referencedTableName ?? (_referencedTableName =
+    private string ReferencedTableName => _referencedTableName ?? (_referencedTableName =
       TableController.Columns[ColumnName]?.ReferencedTableName ??
       throw new NullReferenceException(nameof(EntityColumn.ReferencedTableName)));
 
     [NotNull]
-    public IBindingList FetchReferencedBindingList() {
+    public IBindingList FetchBindingList([CanBeNull] string format) {
       var entityList = Global.CreateEntityList(ReferencedEntityListType);
       entityList.Populate();
-      return entityList.BindingList ?? throw new NullReferenceException("BindingList");
+      if (entityList.Count == 0) {
+        throw new ObjectNotFoundException(CreateNoAvailableReferencesErrorMessage());
+      }
+      var result = new BindingList<KeyValuePair<string, object>>();
+      // The only non-string key expected, which therefore needs to be converted
+      // to a formatted string is Newsletter.Date.
+      bool isDateKey = !string.IsNullOrWhiteSpace(format);
+      foreach (IEntity entity in entityList) {
+        string key = isDateKey
+          ? ((Newsletter)entity).Date.ToString(format)
+          : entity.SimpleKey;
+        result.Add(new KeyValuePair<string, object>(key, entity));
+      }
+      return result;
+    }
+
+    private string CreateNoAvailableReferencesErrorMessage() {
+      return $"There are no {ReferencedTableName} {ReferencedColumnName}s " +
+             "to choose between. You need to add at least one row to the " +
+             $"{ReferencedTableName} table before you can select a " + 
+             $"{ReferencedTableName} for a {TableName}.";
     }
   }
 }

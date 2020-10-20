@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using JetBrains.Annotations;
 
 namespace SoundExplorers.Model {
@@ -9,6 +10,14 @@ namespace SoundExplorers.Model {
     public EntityColumn([NotNull] string name,
       Type referencedEntityListType = null, string referencedColumnName = null) {
       Name = name ?? throw new ArgumentNullException(nameof(name));
+      if (referencedEntityListType != null && 
+          !referencedEntityListType.GetInterfaces().Contains(typeof(IEntityList))) {
+        throw new ArgumentException(
+          $"The Type specified by {nameof(referencedEntityListType)} " + 
+          $"'{referencedEntityListType}' is invalid. If specified, it must " + 
+          $"implement the {nameof(IEntityList)} interface.", 
+          nameof(referencedEntityListType));
+      }
       if (referencedEntityListType != null && referencedColumnName == null ||
           referencedEntityListType == null && referencedColumnName != null) {
         throw new InvalidOperationException(
