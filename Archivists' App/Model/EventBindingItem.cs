@@ -7,13 +7,14 @@ namespace SoundExplorers.Model {
   public class EventBindingItem : BindingItemBase<EventBindingItem> {
     private DateTime _date;
     private string _location;
-    private Series _series;
-    private Newsletter _newsletter;
-    private EventType _eventType;
+    private string _series;
+    private DateTime _newsletter;
+    private string _eventType;
     private string _notes;
 
     public EventBindingItem() {
       Date = DateTime.Today;
+      Newsletter = EntityBase.InitialDate;
     }
 
     public DateTime Date {
@@ -32,7 +33,7 @@ namespace SoundExplorers.Model {
       }
     }
 
-    public Series Series {
+    public string Series {
       get => _series;
       set {
         _series = value;
@@ -40,7 +41,7 @@ namespace SoundExplorers.Model {
       }
     }
 
-    public Newsletter Newsletter {
+    public DateTime Newsletter {
       get => _newsletter;
       set {
         _newsletter = value;
@@ -48,7 +49,7 @@ namespace SoundExplorers.Model {
       }
     }
 
-    public EventType EventType {
+    public string EventType {
       get => _eventType;
       set {
         _eventType = value;

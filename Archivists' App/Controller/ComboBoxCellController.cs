@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using JetBrains.Annotations;
 using SoundExplorers.Data;
@@ -79,13 +78,9 @@ namespace SoundExplorers.Controller {
         : ((IEntity)value).SimpleKey;
     }
 
-    public void OnSelectedIndexChanged(int rowIndex, [NotNull] object selectedItem) {
-      var kvp = (KeyValuePair<string, IEntity>)selectedItem; 
-      Debug.WriteLine(
-        "ComboBoxCellController.OnSelectedIndexChanged: " + 
-        $"row {rowIndex}, column {ColumnName} = " + 
-        $"{kvp.Key}");
-      TableController.SetParent(rowIndex, ColumnName, kvp.Value);
+    public void OnSelectedIndexChanged(int rowIndex, [CanBeNull] object selectedItem) {
+      var entity = ((KeyValuePair<string, IEntity>?)selectedItem)?.Value;
+      TableController.SetParent(rowIndex, ColumnName, entity);
     }
 
     private string CreateNoAvailableReferencesErrorMessage() {

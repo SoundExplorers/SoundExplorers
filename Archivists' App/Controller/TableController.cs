@@ -128,7 +128,7 @@ namespace SoundExplorers.Controller {
     }
 
     public void SetParent(int rowIndex, [NotNull] string columnName,
-      [NotNull] IEntity entity) {
+      [CanBeNull] IEntity entity) {
       ((IBindingItem)MainList.BindingList[rowIndex]).SetParent(columnName, entity);
     }
 
@@ -204,21 +204,6 @@ namespace SoundExplorers.Controller {
     }
 
     /// <summary>
-    ///   If the specified table row is new,
-    ///   inserts an entity on the database with the table row data.
-    /// </summary>
-    public void OnMainGridRowLeave(int rowIndex) {
-      // Debug.WriteLine(
-      //   $"{nameof(OnMainGridRowValidated)}:  Any row left, after final ItemChanged, if any");
-      try {
-        MainList?.AddEntityIfNew(rowIndex);
-        View.OnRowAddedOrDeleted();
-      } catch (DatabaseUpdateErrorException) {
-        View.StartDatabaseUpdateErrorTimer();
-      }
-    }
-
-    /// <summary>
     ///   Deletes the entity at the specified row index
     ///   from the database and removes it from the list.
     /// </summary>
@@ -236,6 +221,21 @@ namespace SoundExplorers.Controller {
         } catch (DatabaseUpdateErrorException) {
           View.StartDatabaseUpdateErrorTimer();
         }
+      }
+    }
+
+    /// <summary>
+    ///   If the specified table row is new,
+    ///   inserts an entity on the database with the table row data.
+    /// </summary>
+    public void OnMainGridRowValidated(int rowIndex) {
+      // Debug.WriteLine(
+      //   $"{nameof(OnMainGridRowValidated)}:  Any row left, after final ItemChanged, if any");
+      try {
+        MainList?.AddEntityIfNew(rowIndex);
+        View.OnRowAddedOrDeleted();
+      } catch (DatabaseUpdateErrorException) {
+        View.StartDatabaseUpdateErrorTimer();
       }
     }
 

@@ -75,7 +75,7 @@ namespace SoundExplorers.View {
       ShowMessage(text, MessageBoxIcon.Error);
     }
 
-    private void ShowMessage([NotNull] string text, [NotNull] MessageBoxIcon icon) {
+    private void ShowMessage([NotNull] string text, MessageBoxIcon icon) {
       MessageBox.Show(
         this, text, Application.ProductName, MessageBoxButtons.OK, icon);
     }
@@ -541,10 +541,6 @@ namespace SoundExplorers.View {
 
     private void MainGridOnRowLeave(object sender, DataGridViewCellEventArgs e) {
       //Debug.WriteLine("MainGridOnRowLeave");
-      if (ParentRowChanged) {
-        ParentRowChanged = false;
-      }
-      Controller.OnMainGridRowLeave(e.RowIndex);
     }
 
     private void
@@ -554,13 +550,12 @@ namespace SoundExplorers.View {
       Controller.OnMainGridRowRemoved(e.RowIndex);
     }
 
-    /// <summary>
-    ///   The main grid's RowValidated event and RowLeave seem to
-    ///   always get raised together.  So, as nothing will actually have been
-    ///   validated in this case, I'm putting the processing in RowLeave's handler.
-    /// </summary>
     private void MainGridOnRowValidated(object sender, DataGridViewCellEventArgs e) {
       //Debug.WriteLine("MainGridOnRowValidated");
+      if (ParentRowChanged) {
+        ParentRowChanged = false;
+      }
+      Controller.OnMainGridRowValidated(e.RowIndex);
     }
 
     private void OpenTable() {

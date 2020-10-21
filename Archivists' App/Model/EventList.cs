@@ -18,8 +18,9 @@ namespace SoundExplorers.Model {
 
     protected override EventBindingItem CreateBindingItem(Event @event) {
       return new EventBindingItem {
-        Date = @event.Date, Location = @event.Location.Name, Series = @event.Series,
-        Newsletter = @event.Newsletter, EventType = @event.EventType, Notes = @event.Notes
+        Date = @event.Date, Location = @event.Location.Name, Series = @event.Series.Name,
+        Newsletter = @event.Newsletter.Date, EventType = @event.EventType.Name, 
+        Notes = @event.Notes
       };
     }
 
