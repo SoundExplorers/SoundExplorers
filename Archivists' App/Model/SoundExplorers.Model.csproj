@@ -60,6 +60,7 @@
         <Compile Include="EventList.cs" />
         <Compile Include="EventTypeList.cs" />
         <Compile Include="Global.cs" />
+        <Compile Include="IBindingItem.cs" />
         <Compile Include="IEntityList.cs" />
         <Compile Include="LocationList.cs" />
         <Compile Include="NamedBindingItem.cs" />

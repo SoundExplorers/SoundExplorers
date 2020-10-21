@@ -47,6 +47,10 @@ namespace SoundExplorers.Tests.Controller {
       ShowErrorMessageCount++;
     }
 
+    public void ShowWarningMessage(string text) {
+      throw new System.NotImplementedException();
+    }
+
     public void StartDatabaseUpdateErrorTimer() {
       Controller.ShowDatabaseUpdateError();
     }

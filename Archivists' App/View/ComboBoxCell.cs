@@ -12,22 +12,24 @@ namespace SoundExplorers.View {
   ///   but when the user edits a cell, a ComboBox control appears.
   ///   TODO: Check that DataGridViewComboBoxEditingControl works in place of ComboBoxEditingControl.
   /// </remarks>
-  internal class ComboBoxCell : DataGridViewTextBoxCell, IView<ComboBoxCellController>, ICanRestoreErrorValue {
+  internal class ComboBoxCell : DataGridViewTextBoxCell, IView<ComboBoxCellController>,
+    ICanRestoreErrorValue {
+    /// <summary>
+    ///   Gets the type of the editing control that the ComboBoxCell is to use.
+    /// </summary>
+    public override Type EditType => typeof(DataGridViewComboBoxEditingControl);
+    // public override Type EditType => typeof(ComboBoxEditingControl);
+
     /// <summary>
     ///   Gets the cell's combo box.
     /// </summary>
-    private DataGridViewComboBoxEditingControl ComboBox =>
-      DataGridView.EditingControl as DataGridViewComboBoxEditingControl;
+    private ComboBox ComboBox => (ComboBox)DataGridView.EditingControl;
 
     private ComboBoxCellController Controller => (ComboBoxCellController)Tag;
 
-    public override Type EditType =>
-      // Return the type of the editing control that ComboBoxCell uses.
-      typeof(DataGridViewComboBoxEditingControl);
-
     public void RestoreErrorValue(object errorValue) {
-      ComboBox.SelectedIndex =
-        ComboBox.FindStringExact(errorValue?.ToString());
+      ComboBox.SelectedIndex = ComboBox.FindStringExact(
+        ComboBoxCellController.GetKey(errorValue, OwningColumn.DefaultCellStyle.Format));
     }
 
     public void SetController(ComboBoxCellController controller) {
@@ -77,49 +79,23 @@ namespace SoundExplorers.View {
       // Set the value of the editing control to the current cell value.
       base.InitializeEditingControl(rowIndex, initialFormattedValue,
         dataGridViewCellStyle);
-      FetchListData(initialFormattedValue);
-    }
-
-    private void FetchListData(object initialFormattedValue) {
-      var bindingList =
-        Controller.FetchBindingList(OwningColumn.DefaultCellStyle.Format);
-      ComboBox.DataSource = bindingList;
+      ComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+      
+      ComboBox.Items.AddRange(
+        Controller.FetchItems(OwningColumn.DefaultCellStyle.Format));
+      //ComboBox.DataSource = Controller.FetchBindingList(OwningColumn.DefaultCellStyle.Format);
       ComboBox.DisplayMember = "Key";
       ComboBox.ValueMember = "Value";
       ComboBox.SelectedIndex =
         ComboBox.FindStringExact(initialFormattedValue.ToString());
-      // string parentColumnName = null;
-      // object parentColumnValue = null;
-      // if (Column.TableName == "Image"
-      //     && Column.ColumnName == "Date") {
-      //   parentColumnName = "Location";
-      //   parentColumnValue = OwningRow.Cells[parentColumnName].Value; // Location
-      //   referencedEntities = Factory<IEntityList>.Create(
-      //     Column.ReferencedTableName, // Table name:  Performance in this case
-      //     // Constructor arguments
-      //     null, // parentListType
-      //     parentColumnValue); // location
-      // } else {
-      //   referencedEntities =
-      //     Factory<IEntityList>.Create(Column.ReferencedTableName);
-      // }
-      // if (ValueType == typeof(string)) {
-      //   ComboBox.DataSource = bindingList;
-      //   ComboBox.DisplayMember = Controller.ReferencedColumnName;
-      //   ComboBox.ValueMember = Controller.ReferencedColumnName;
-      //   ComboBox.SelectedIndex =
-      //     ComboBox.FindStringExact(initialFormattedValue.ToString());
-      // } else { // DateTime
-      //   if (bindingList.Count > 0) {
-      //     PopulateDateDropDownList(
-      //       initialFormattedValue.ToString(),
-      //       bindingList);
-      //   } else {
-      //     ComboBox.DataSource = null;
-      //     ThrowNoAvailableReferencesException();
-      //     //ThrowNoAvailableReferencesException(parentColumnName, parentColumnValue);
-      //   }
-      // }
+      ComboBox.SelectedIndexChanged += ComboBoxOnSelectedIndexChanged;
+    }
+
+    private void ComboBoxOnSelectedIndexChanged(object sender, EventArgs e) {
+      DataGridView.CurrentCell.Value = ComboBox.Text;
+      Controller.OnSelectedIndexChanged(RowIndex, ComboBox.SelectedItem);
+      // For unknown reason, SelectedValue is always null. So this does not work:
+      //Controller.OnSelectedIndexChanged(RowIndex, ComboBox.SelectedValue);
     }
 
     // /// <summary>

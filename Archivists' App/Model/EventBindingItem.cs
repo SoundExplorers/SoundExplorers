@@ -6,7 +6,7 @@ namespace SoundExplorers.Model {
   [NoReorder]
   public class EventBindingItem : BindingItemBase<EventBindingItem> {
     private DateTime _date;
-    private Location _location;
+    private string _location;
     private Series _series;
     private Newsletter _newsletter;
     private EventType _eventType;
@@ -24,7 +24,7 @@ namespace SoundExplorers.Model {
       }
     }
 
-    public Location Location {
+    public string Location {
       get => _location;
       set {
         _location = value;

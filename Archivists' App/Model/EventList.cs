@@ -18,7 +18,7 @@ namespace SoundExplorers.Model {
 
     protected override EventBindingItem CreateBindingItem(Event @event) {
       return new EventBindingItem {
-        Date = @event.Date, Location = @event.Location, Series = @event.Series,
+        Date = @event.Date, Location = @event.Location.Name, Series = @event.Series,
         Newsletter = @event.Newsletter, EventType = @event.EventType, Notes = @event.Notes
       };
     }
@@ -40,9 +40,11 @@ namespace SoundExplorers.Model {
 
     protected override Event CreateEntity(EventBindingItem bindingItem) {
       return new Event {
-        Date = bindingItem.Date, Location = bindingItem.Location,
-        Series = bindingItem.Series,
-        Newsletter = bindingItem.Newsletter, EventType = bindingItem.EventType,
+        Date = bindingItem.Date, 
+        Location = bindingItem.GetParent<Location>(),
+        Series = bindingItem.GetParent<Series>(),
+        Newsletter = bindingItem.GetParent<Newsletter>(),
+        EventType = bindingItem.GetParent<EventType>(),
         Notes = bindingItem.Notes
       };
     }

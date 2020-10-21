@@ -40,12 +40,12 @@ namespace SoundExplorers.Tests.Controller {
       Controller.OnMainGridRowEnter(0); // Go to insertion row
       editor[0].Name = name1;
       editor[0].Notes = "Disestablishmentarianism";
-      Controller.OnMainGridRowValidated(0);
+      Controller.OnMainGridRowLeave(0);
       editor.AddNew();
       Controller.OnMainGridRowEnter(1);
       editor[1].Name = name2;
       editor[1].Notes = "Bob";
-      Controller.OnMainGridRowValidated(1);
+      Controller.OnMainGridRowLeave(1);
       Assert.AreEqual(2, View.OnRowAddedOrDeletedCount, "OnRowAddedOrDeletedCount");
       Controller.FetchData(); // Refresh grid
       editor.SetBindingList(Controller.MainBindingList);
@@ -95,7 +95,7 @@ namespace SoundExplorers.Tests.Controller {
         "OnRowAddedOrDeletedCount unchanged after duplicate insert");
       Assert.AreEqual(3, editor.Count,
         "editor.Count before error message shown for duplicate insert");
-      Controller.OnMainGridRowValidated(2);
+      Controller.OnMainGridRowLeave(2);
       Assert.AreEqual(2, View.ShowErrorMessageCount,
         "ShowErrorMessageCount after error message shown for duplicate insert");
       Assert.AreEqual(3, editor.Count,

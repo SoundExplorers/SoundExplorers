@@ -1,8 +1,8 @@
 using System;
 using System.ComponentModel;
-using System.Data;
 using System.Data.Linq;
 using JetBrains.Annotations;
+using SoundExplorers.Data;
 using SoundExplorers.Model;
 
 namespace SoundExplorers.Controller {
@@ -127,6 +127,11 @@ namespace SoundExplorers.Controller {
       }
     }
 
+    public void SetParent(int rowIndex, [NotNull] string columnName,
+      [NotNull] IEntity entity) {
+      ((IBindingItem)MainList.BindingList[rowIndex]).SetParent(columnName, entity);
+    }
+
     public void ShowDatabaseUpdateError() {
       View.FocusMainGridCell(MainList.LastDatabaseUpdateErrorException.RowIndex,
         MainList.LastDatabaseUpdateErrorException.ColumnIndex);
@@ -176,19 +181,19 @@ namespace SoundExplorers.Controller {
     }
 
     public void OnMainGridDataError([CanBeNull] Exception exception) {
-      if (exception is DatabaseUpdateErrorException databaseUpdateErrorException) {
-        MainList.LastDatabaseUpdateErrorException = databaseUpdateErrorException;
-        View.StartDatabaseUpdateErrorTimer();
-        // For unknown reason, the way I've got the error handling set up,
-        // this event gets raise twice if there's a cell edit error,
-        // the second time with a null exception.
-        // It does not seem to do any harm, so long as it is trapped.
-      } else if (exception is ObjectNotFoundException) {
-        View.ShowErrorMessage(exception.Message);
-      } else if (exception == null) {
-        return;
-      } else {
-        throw exception;
+      switch (exception) {
+        case DatabaseUpdateErrorException databaseUpdateErrorException:
+          MainList.LastDatabaseUpdateErrorException = databaseUpdateErrorException;
+          View.StartDatabaseUpdateErrorTimer();
+          break;
+        case null:
+          // For unknown reason, the way I've got the error handling set up,
+          // this event gets raise twice if there's a cell edit error,
+          // the second time with a null exception.
+          // It does not seem to do any harm, so long as it is trapped like this.
+          break;
+        default:
+          throw exception;
       }
     }
 
@@ -196,6 +201,21 @@ namespace SoundExplorers.Controller {
       // Debug.WriteLine(
       //   $"{nameof(OnMainGridRowEnter)}:  Any row entered (after ItemAdded if insertion row)");
       MainList?.OnRowEnter(rowIndex);
+    }
+
+    /// <summary>
+    ///   If the specified table row is new,
+    ///   inserts an entity on the database with the table row data.
+    /// </summary>
+    public void OnMainGridRowLeave(int rowIndex) {
+      // Debug.WriteLine(
+      //   $"{nameof(OnMainGridRowValidated)}:  Any row left, after final ItemChanged, if any");
+      try {
+        MainList?.AddEntityIfNew(rowIndex);
+        View.OnRowAddedOrDeleted();
+      } catch (DatabaseUpdateErrorException) {
+        View.StartDatabaseUpdateErrorTimer();
+      }
     }
 
     /// <summary>
@@ -216,21 +236,6 @@ namespace SoundExplorers.Controller {
         } catch (DatabaseUpdateErrorException) {
           View.StartDatabaseUpdateErrorTimer();
         }
-      }
-    }
-
-    /// <summary>
-    ///   If the specified table row is new,
-    ///   inserts an entity on the database with the table row data.
-    /// </summary>
-    public void OnMainGridRowValidated(int rowIndex) {
-      // Debug.WriteLine(
-      //   $"{nameof(OnMainGridRowValidated)}:  Any row left, after final ItemChanged, if any");
-      try {
-        MainList?.AddEntityIfNew(rowIndex);
-        View.OnRowAddedOrDeleted();
-      } catch (DatabaseUpdateErrorException) {
-        View.StartDatabaseUpdateErrorTimer();
       }
     }
 
@@ -282,6 +287,10 @@ namespace SoundExplorers.Controller {
       // } else {
       //   Process.Start(newsletter.Path);
       // }
+    }
+
+    public void ShowWarningMessage(string message) {
+      View.ShowWarningMessage(message);
     }
   }
 }

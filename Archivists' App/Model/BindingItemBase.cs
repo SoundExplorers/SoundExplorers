@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using JetBrains.Annotations;
+using SoundExplorers.Data;
 
 namespace SoundExplorers.Model {
   /// <summary>
@@ -27,11 +28,35 @@ namespace SoundExplorers.Model {
   ///   Other derived classes are expected to be just as simple.
   ///   So the <see cref="NoReorderAttribute" /> is a safety feature.
   /// </remarks>
-  public abstract class BindingItemBase<TBindingItem> : INotifyPropertyChanged
+  public abstract class BindingItemBase<TBindingItem> : IBindingItem,
+    INotifyPropertyChanged
     where TBindingItem : BindingItemBase<TBindingItem>, new() {
+    protected BindingItemBase() {
+      Parents = new Dictionary<string, IEntity>();
+    }
+
+    private IDictionary<string, IEntity> Parents { get; }
+
+    public void SetParent(string propertyName, IEntity parent) {
+      Parents[propertyName] = parent;
+    }
+
     public event PropertyChangedEventHandler PropertyChanged;
 
-    
+    [NotifyPropertyChangedInvocator]
+    protected void OnPropertyChanged(
+      [CallerMemberName] string propertyName = null) {
+      PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+
+    [CanBeNull]
+    internal TParent GetParent<TParent>()
+      where TParent : EntityBase {
+      return Parents.ContainsKey(nameof(TParent))
+        ? Parents[nameof(TParent)] as TParent
+        : null;
+    }
+
     [NotNull]
     internal TBindingItem CreateBackup() {
       var result = new TBindingItem();
@@ -44,12 +69,6 @@ namespace SoundExplorers.Model {
       return (
         from property in GetType().GetProperties()
         select property.GetValue(this)).ToList();
-    }
-
-    [NotifyPropertyChangedInvocator]
-    protected void OnPropertyChanged(
-      [CallerMemberName] string propertyName = null) {
-      PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 
     internal void RestorePropertyValuesFrom([NotNull] TBindingItem backup) {

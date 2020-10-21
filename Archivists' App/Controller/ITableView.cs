@@ -18,5 +18,6 @@ namespace SoundExplorers.Controller {
     void SelectCurrentRowOnly();
     void StartDatabaseUpdateErrorTimer();
     void ShowErrorMessage([NotNull] string text);
+    void ShowWarningMessage(string text);
   }
 }

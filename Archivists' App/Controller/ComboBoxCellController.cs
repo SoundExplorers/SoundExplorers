@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
+using System.Diagnostics;
+using System.Linq;
 using JetBrains.Annotations;
 using SoundExplorers.Data;
 using SoundExplorers.Model;
@@ -34,6 +34,8 @@ namespace SoundExplorers.Controller {
       view.SetController(this);
     }
 
+    private IEntityList EntityList { get; set; }
+
     [NotNull]
     private string ReferencedColumnName =>
       _referencedColumnName ?? (_referencedColumnName =
@@ -52,29 +54,44 @@ namespace SoundExplorers.Controller {
       throw new NullReferenceException(nameof(EntityColumn.ReferencedTableName)));
 
     [NotNull]
-    public IBindingList FetchBindingList([CanBeNull] string format) {
-      var entityList = Global.CreateEntityList(ReferencedEntityListType);
-      entityList.Populate();
-      if (entityList.Count == 0) {
-        throw new ObjectNotFoundException(CreateNoAvailableReferencesErrorMessage());
+    public object[] FetchItems([CanBeNull] string format) {
+      EntityList = Global.CreateEntityList(ReferencedEntityListType);
+      EntityList.Populate();
+      if (EntityList.Count == 0) {
+        TableController.ShowWarningMessage(CreateNoAvailableReferencesErrorMessage());
       }
-      var result = new BindingList<KeyValuePair<string, object>>();
+      return (from IEntity entity in EntityList
+          select (object)new KeyValuePair<string, IEntity>(GetKey(entity, format), entity)
+        )
+        .ToArray();
+    }
+
+    [CanBeNull]
+    public static string GetKey([CanBeNull] object value, [CanBeNull] string format) {
+      if (value == null) {
+        return null;
+      }
       // The only non-string key expected, which therefore needs to be converted
       // to a formatted string is Newsletter.Date.
       bool isDateKey = !string.IsNullOrWhiteSpace(format);
-      foreach (IEntity entity in entityList) {
-        string key = isDateKey
-          ? ((Newsletter)entity).Date.ToString(format)
-          : entity.SimpleKey;
-        result.Add(new KeyValuePair<string, object>(key, entity));
-      }
-      return result;
+      return isDateKey
+        ? ((Newsletter)value).Date.ToString(format)
+        : ((IEntity)value).SimpleKey;
+    }
+
+    public void OnSelectedIndexChanged(int rowIndex, [NotNull] object selectedItem) {
+      var kvp = (KeyValuePair<string, IEntity>)selectedItem; 
+      Debug.WriteLine(
+        "ComboBoxCellController.OnSelectedIndexChanged: " + 
+        $"row {rowIndex}, column {ColumnName} = " + 
+        $"{kvp.Key}");
+      TableController.SetParent(rowIndex, ColumnName, kvp.Value);
     }
 
     private string CreateNoAvailableReferencesErrorMessage() {
       return $"There are no {ReferencedTableName} {ReferencedColumnName}s " +
              "to choose between. You need to add at least one row to the " +
-             $"{ReferencedTableName} table before you can select a " + 
+             $"{ReferencedTableName} table before you can select a " +
              $"{ReferencedTableName} for a {TableName}.";
     }
   }

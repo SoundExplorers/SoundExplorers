@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics;
 using System.Windows.Forms;
 using JetBrains.Annotations;
 using SoundExplorers.Controller;
@@ -61,8 +60,10 @@ namespace SoundExplorers.View {
       MainGrid.Focus();
     }
 
-    public void RestoreMainGridCurrentRowCellErrorValue(int columnIndex, object errorValue) {
-      ((ICanRestoreErrorValue)MainCurrentRow.Cells[columnIndex]).RestoreErrorValue(errorValue);
+    public void RestoreMainGridCurrentRowCellErrorValue(int columnIndex,
+      object errorValue) {
+      ((ICanRestoreErrorValue)MainCurrentRow.Cells[columnIndex]).RestoreErrorValue(
+        errorValue);
     }
 
     public void SelectCurrentRowOnly() {
@@ -71,12 +72,16 @@ namespace SoundExplorers.View {
     }
 
     public void ShowErrorMessage(string text) {
+      ShowMessage(text, MessageBoxIcon.Error);
+    }
+
+    private void ShowMessage([NotNull] string text, [NotNull] MessageBoxIcon icon) {
       MessageBox.Show(
-        this,
-        text,
-        Application.ProductName,
-        MessageBoxButtons.OK,
-        MessageBoxIcon.Error);
+        this, text, Application.ProductName, MessageBoxButtons.OK, icon);
+    }
+
+    public void ShowWarningMessage(string text) {
+      ShowMessage(text, MessageBoxIcon.Warning);
     }
 
     public void StartDatabaseUpdateErrorTimer() {
@@ -491,7 +496,7 @@ namespace SoundExplorers.View {
     /// <remarks>
     ///   When a text cell edit is started with a mouse click,
     ///   selecting all contents of the cell is done by
-    ///   <see cref="TextBoxCell.InitializeEditingControl"/>.
+    ///   <see cref="TextBoxCell.InitializeEditingControl" />.
     /// </remarks>
     private void MainGridOnKeyDown(object sender, KeyEventArgs e) {
       switch (e.KeyData) {
@@ -535,22 +540,27 @@ namespace SoundExplorers.View {
     }
 
     private void MainGridOnRowLeave(object sender, DataGridViewCellEventArgs e) {
-      Debug.WriteLine("MainGridOnRowLeave");
+      //Debug.WriteLine("MainGridOnRowLeave");
+      if (ParentRowChanged) {
+        ParentRowChanged = false;
+      }
+      Controller.OnMainGridRowLeave(e.RowIndex);
     }
 
-    private void MainGridOnRowsRemoved(object sender, DataGridViewRowsRemovedEventArgs e) {
+    private void
+      MainGridOnRowsRemoved(object sender, DataGridViewRowsRemovedEventArgs e) {
       //Debug.WriteLine("MainGridOnRowsRemoved");
       //Debug.WriteLine(MainGrid.Rows[e.RowIndex].Cells[0].Value);
       Controller.OnMainGridRowRemoved(e.RowIndex);
     }
 
+    /// <summary>
+    ///   The main grid's RowValidated event and RowLeave seem to
+    ///   always get raised together.  So, as nothing will actually have been
+    ///   validated in this case, I'm putting the processing in RowLeave's handler.
+    /// </summary>
     private void MainGridOnRowValidated(object sender, DataGridViewCellEventArgs e) {
-      Debug.WriteLine("MainGridOnRowValidated");
-      //Debug.WriteLine(MainGrid.Rows[e.RowIndex].Cells[0].Value);
-      if (ParentRowChanged) {
-        ParentRowChanged = false;
-      }
-      Controller.OnMainGridRowValidated(e.RowIndex);
+      //Debug.WriteLine("MainGridOnRowValidated");
     }
 
     private void OpenTable() {
