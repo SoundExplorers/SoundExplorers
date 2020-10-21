@@ -405,6 +405,15 @@ namespace SoundExplorers.Data {
         Initialise();
       }
     }
+    
+    /// <summary>
+    ///   From VelocityDB User's Guide:
+    ///   'It is recommended that you make the following override in your
+    ///   OptimizedPersistable subclass for better performance. ...
+    ///   We may make this default but it could break existing code
+    ///   so it is not a trivial change.'
+    /// </summary>
+    public override bool AllowOtherTypesOnSamePage => false;
 
     public override ulong Persist(Placement place, SessionBase session,
       bool persistRefs = true,

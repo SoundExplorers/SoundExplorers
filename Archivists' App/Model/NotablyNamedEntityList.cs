@@ -4,7 +4,7 @@ using SoundExplorers.Data;
 namespace SoundExplorers.Model {
   public abstract class
     NotablyNamedEntityList<TEntity> : EntityListBase<TEntity, NotablyNamedBindingItem>
-    where TEntity : INotablyNamedEntity, new() {
+    where TEntity : EntityBase, INotablyNamedEntity, new() {
     protected override TEntity CreateBackupEntity(
       TEntity entity) {
       return new TEntity {

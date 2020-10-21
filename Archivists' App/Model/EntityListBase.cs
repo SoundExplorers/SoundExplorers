@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Data.Linq;
+using System.Diagnostics;
 using System.Linq;
 using JetBrains.Annotations;
 using SoundExplorers.Data;
@@ -20,7 +21,7 @@ namespace SoundExplorers.Model {
   ///   Binding list item type parameter
   /// </typeparam>
   public abstract class EntityListBase<TEntity, TBindingItem> : List<TEntity>, IEntityList
-    where TEntity : IEntity, new()
+    where TEntity : EntityBase, new()
     where TBindingItem : BindingItemBase<TBindingItem>, new() {
     private EntityColumnList _columns;
     private SessionBase _session;
@@ -138,6 +139,7 @@ namespace SoundExplorers.Model {
     /// </exception>
     public void AddEntityIfNew(int rowIndex) {
       if (!HasRowBeenEdited) {
+        IsInsertionRowCurrent = false;
         if (IsFixingNewRow) {
           BindingList.RemoveAt(rowIndex);
           IsFixingNewRow = false;
@@ -145,6 +147,7 @@ namespace SoundExplorers.Model {
         return;
       }
       if (IsInsertionRowCurrent || IsFixingNewRow) {
+        IsInsertionRowCurrent = false;
         AddNewEntity(rowIndex);
       }
     }
@@ -296,14 +299,13 @@ namespace SoundExplorers.Model {
         throw CreateDatabaseUpdateErrorException(exception, rowIndex);
       } finally {
         Session.Commit();
-        IsInsertionRowCurrent = false;
       }
     }
 
     private void BindingListOnListChanged(object sender, ListChangedEventArgs e) {
       switch (e.ListChangedType) {
         case ListChangedType.ItemAdded: // Insertion row entered
-          // Debug.WriteLine("ListChangedType.ItemAdded: Insertion row entered");
+          //Debug.WriteLine("ListChangedType.ItemAdded: Insertion row entered");
           IsDataLoadComplete = true;
           IsInsertionRowCurrent = true;
           break;
@@ -364,13 +366,19 @@ namespace SoundExplorers.Model {
 
     private void UpdateExistingEntityProperty(int rowIndex, [NotNull] string propertyName,
       [CanBeNull] object newValue) {
+      Debug.WriteLine("EntityListBase.UpdateExistingEntityProperty");
       LastDatabaseChangeAction = ChangeAction.Update;
       var bindingItem = (TBindingItem)BindingList[rowIndex];
       var entity = this[rowIndex];
+      Debug.WriteLine($"Backing up {entity}");
       var backupEntity = CreateBackupEntity(entity);
       Session.BeginUpdate();
       try {
+        Debug.WriteLine($"{entity} PageNumber before update = {entity.PageNumber}");
+        //Debug.WriteLine($"IsPersistent before update = {entity.IsPersistent}");
         UpdateEntityProperty(propertyName, newValue, entity);
+        Debug.WriteLine($"{entity} PageNumber after update = {entity.PageNumber}");
+        //Debug.WriteLine($"IsPersistent after update = {entity.IsPersistent}");
       } catch (Exception exception) {
         BindingItemToFix = bindingItem;
         RestoreEntityPropertiesFromBackup(backupEntity, entity);
