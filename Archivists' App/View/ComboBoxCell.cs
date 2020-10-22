@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Windows.Forms;
 using JetBrains.Annotations;
 using SoundExplorers.Controller;
@@ -79,15 +80,18 @@ namespace SoundExplorers.View {
       // Set the value of the editing control to the current cell value.
       base.InitializeEditingControl(rowIndex, initialFormattedValue,
         dataGridViewCellStyle);
+      Debug.WriteLine(
+        $"ComboBoxCell.InitializeEditingControl: rowIndex = {rowIndex}; initialFormattedValue = {initialFormattedValue}");
       ComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-      
+      ComboBox.Items.Clear();
       ComboBox.Items.AddRange(
         Controller.FetchItems(OwningColumn.DefaultCellStyle.Format));
-      //ComboBox.DataSource = Controller.FetchBindingList(OwningColumn.DefaultCellStyle.Format);
       ComboBox.DisplayMember = "Key";
       ComboBox.ValueMember = "Value";
+      Debug.WriteLine($"Before FindStringExact");
       ComboBox.SelectedIndex =
         ComboBox.FindStringExact(initialFormattedValue.ToString());
+      Debug.WriteLine($"After FindStringExact");
       ComboBox.SelectedIndexChanged += ComboBoxOnSelectedIndexChanged;
     }
 

@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Data.Linq;
-using System.Diagnostics;
 using System.Linq;
 using JetBrains.Annotations;
 using SoundExplorers.Data;
@@ -405,18 +404,16 @@ namespace SoundExplorers.Model {
 
     private void UpdateExistingEntityProperty(int rowIndex, [NotNull] string propertyName,
       [CanBeNull] object newValue) {
-      Debug.WriteLine("EntityListBase.UpdateExistingEntityProperty");
+      //Debug.WriteLine("EntityListBase.UpdateExistingEntityProperty");
       LastDatabaseChangeAction = ChangeAction.Update;
       var bindingItem = (TBindingItem)BindingList[rowIndex];
       var entity = this[rowIndex];
-      Debug.WriteLine($"Backing up {entity}");
+      //Debug.WriteLine($"Backing up {entity}");
       var backupEntity = CreateBackupEntity(entity);
       Session.BeginUpdate();
       try {
-        Debug.WriteLine($"{entity} PageNumber before update = {entity.PageNumber}");
         //Debug.WriteLine($"IsPersistent before update = {entity.IsPersistent}");
         UpdateEntityProperty(propertyName, newValue, entity);
-        Debug.WriteLine($"{entity} PageNumber after update = {entity.PageNumber}");
         //Debug.WriteLine($"IsPersistent after update = {entity.IsPersistent}");
       } catch (Exception exception) {
         BindingItemToFix = bindingItem;

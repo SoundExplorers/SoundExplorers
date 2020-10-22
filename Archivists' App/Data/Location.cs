@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using JetBrains.Annotations;
 
@@ -23,7 +22,7 @@ namespace SoundExplorers.Data {
     public string Name {
       get => SimpleKey;
       set {
-        Debug.WriteLine($"Location.Name setting to '{value}'");
+        //Debug.WriteLine($"Location.Name setting to '{value}'");
         UpdateNonIndexField();
         SimpleKey = value;
       }

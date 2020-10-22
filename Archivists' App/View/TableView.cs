@@ -473,10 +473,6 @@ namespace SoundExplorers.View {
     /// <remarks>
     ///   The event is raised when there is an error on
     ///   attempting to update a main grid cell representing a property of an existing entity.
-    ///   TODO Need to check ComboBoxCell.ThrowNoAvailableReferencesException.
-    ///   The event is also raised raised when a referenced table contains no rows that
-    ///   can be made available for selection in a ComboBox cell's drop-down list:
-    ///   see ComboBoxCell.ThrowNoAvailableReferencesException.
     /// </remarks>
     private void MainGridOnDataError(object sender, DataGridViewDataErrorEventArgs e) {
       //Debug.WriteLine("MainGridOnDataError");
