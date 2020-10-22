@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Windows.Forms;
 using JetBrains.Annotations;
 using SoundExplorers.Controller;
@@ -80,23 +79,24 @@ namespace SoundExplorers.View {
       // Set the value of the editing control to the current cell value.
       base.InitializeEditingControl(rowIndex, initialFormattedValue,
         dataGridViewCellStyle);
-      Debug.WriteLine(
-        $"ComboBoxCell.InitializeEditingControl: rowIndex = {rowIndex}; initialFormattedValue = {initialFormattedValue}");
+      // Debug.WriteLine(
+      //   $"ComboBoxCell.InitializeEditingControl: rowIndex = {rowIndex}; initialFormattedValue = {initialFormattedValue}");
       ComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
       ComboBox.Items.Clear();
       ComboBox.Items.AddRange(
         Controller.FetchItems(OwningColumn.DefaultCellStyle.Format));
       ComboBox.DisplayMember = "Key";
       ComboBox.ValueMember = "Value";
-      Debug.WriteLine($"Before FindStringExact");
       ComboBox.SelectedIndex =
         ComboBox.FindStringExact(initialFormattedValue.ToString());
-      Debug.WriteLine($"After FindStringExact");
       ComboBox.SelectedIndexChanged += ComboBoxOnSelectedIndexChanged;
     }
 
     private void ComboBoxOnSelectedIndexChanged(object sender, EventArgs e) {
-      DataGridView.CurrentCell.Value = ComboBox.Text;
+      // Debug.WriteLine(
+      //   $"ComboBoxCell.ComboBoxOnSelectedIndexChanged: Text = {ComboBox.Text}; SelectedValue = {ComboBox.SelectedValue}");
+      // Makes InitializeEditingControl reenter:
+      //DataGridView.CurrentCell.Value = ComboBox.Text;
       Controller.OnSelectedIndexChanged(RowIndex, ComboBox.SelectedItem);
       // For unknown reason, SelectedValue is always null. So this does not work:
       //Controller.OnSelectedIndexChanged(RowIndex, ComboBox.SelectedValue);
