@@ -59,13 +59,13 @@ namespace SoundExplorers.Tests.Model {
       var editor = new TestEditor<NamedBindingItem>(list.BindingList);
       var item1 = editor.AddNew();
       item1.Name = name1;
-      list.AddEntityIfNew(0);
+      list.OnRowValidated(0);
       Assert.AreEqual(1, list.Count, "Entity count after 1st add");
       var entity1 = (INamedEntity)list[0];
       Assert.AreEqual(name1, entity1.Name, "1st entity Name after 1st add");
       var item2 = editor.AddNew();
       item2.Name = name2;
-      list.AddEntityIfNew(1);
+      list.OnRowValidated(1);
       Assert.AreEqual(2, list.Count, "Entity count after 2nd add");
       var entity2 = (INamedEntity)list[1];
       Assert.AreEqual(name2, entity2.Name, "2nd entity Name after 2nd add");
@@ -76,7 +76,7 @@ namespace SoundExplorers.Tests.Model {
       // After being refreshed by Populate, the table should now be sorted into Name order.
       Assert.AreEqual(name2, editor[0].Name, "1st item Name after populate");
       Assert.AreEqual(name1, editor[1].Name, "2nd item Name after populate");
-      list.AddEntityIfNew(0); // Should have no effect
+      list.OnRowValidated(0); // Should have no effect
       Assert.AreEqual(2, editor.Count, "editor.Count going to existing row");
       // Rename the first item
       editor[0].Name = name3;
@@ -138,11 +138,11 @@ namespace SoundExplorers.Tests.Model {
       var editor = new TestEditor<NamedBindingItem>(list.BindingList);
       var item1 = editor.AddNew();
       item1.Name = name;
-      list.AddEntityIfNew(0);
+      list.OnRowValidated(0);
       var item2 = editor.AddNew();
       item2.Name = name;
       try {
-        list.AddEntityIfNew(1);
+        list.OnRowValidated(1);
         Assert.Fail(
           "Duplicate name should have thrown DatabaseUpdateErrorException.");
       } catch (DatabaseUpdateErrorException exception) {
@@ -175,10 +175,10 @@ namespace SoundExplorers.Tests.Model {
       var editor = new TestEditor<NamedBindingItem>(list.BindingList);
       var item1 = editor.AddNew();
       item1.Name = name1;
-      list.AddEntityIfNew(0);
+      list.OnRowValidated(0);
       var item2 = editor.AddNew();
       item2.Name = name2;
-      list.AddEntityIfNew(1);
+      list.OnRowValidated(1);
       try {
         item2.Name = name1;
         Assert.Fail(

@@ -489,7 +489,7 @@ namespace SoundExplorers.Data {
       } catch (NullReferenceException ex) {
         throw new InvalidOperationException(
           $"{EntityType.Name} '{SimpleKey}' cannot be updated outside a session " +
-          "because it already exists.", ex);
+          "because it already persists.", ex);
       }
     }
   }

@@ -5,7 +5,6 @@ namespace SoundExplorers.Model {
   public abstract class
     NamedEntityList<TEntity> : EntityListBase<TEntity, NamedBindingItem>
     where TEntity : EntityBase, INamedEntity, new() {
-
     protected override TEntity CreateBackupEntity(
       TEntity entity) {
       return new TEntity {

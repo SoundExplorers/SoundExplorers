@@ -68,14 +68,15 @@ namespace SoundExplorers.Model {
     [NotNull] string TableName { get; }
 
     /// <summary>
-    ///   If the specified grid row is new,
-    ///   adds a new entity to the list with the row data and
+    ///   If the specified grid row is new or its data has changed,
+    ///   adds (if new) or updates the corresponding the entity
+    ///   on the database with the row data and
     ///   saves the entity to the database.
     /// </summary>
     /// <param name="rowIndex">
     ///   Zero-based row index.
     /// </param>
-    void AddEntityIfNew(int rowIndex);
+    void OnRowValidated(int rowIndex);
 
     /// <summary>
     ///   Deletes the entity at the specified row index

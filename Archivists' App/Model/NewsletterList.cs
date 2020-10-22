@@ -52,7 +52,7 @@ namespace SoundExplorers.Model {
                             throw new NullReferenceException(nameof(newsletter.Date));
           break;
         case nameof(newsletter.Url):
-          newsletter.Url = newValue?.ToString(); 
+          newsletter.Url = newValue?.ToString();
           break;
         default:
           throw new ArgumentException(

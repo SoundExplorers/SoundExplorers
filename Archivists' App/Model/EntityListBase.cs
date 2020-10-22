@@ -121,38 +121,6 @@ namespace SoundExplorers.Model {
     public string TableName => typeof(TEntity).Name;
 
     /// <summary>
-    ///   If the specified grid row is new,
-    ///   adds a new entity to the list with the row data and
-    ///   saves the entity to the database.
-    /// </summary>
-    /// <param name="rowIndex">
-    ///   Zero-based row index.
-    /// </param>
-    /// <remarks>
-    ///   Though this is called when the grid's RowValidated event is raised,
-    ///   that actually happens even if the user did no edits,
-    ///   when any row left but after the final ItemChanged ListChangedType,
-    ///   if any, of the BindingList's ListChanged event.
-    /// </remarks>
-    /// <exception cref="DatabaseUpdateErrorException">
-    ///   A database update error occured.
-    /// </exception>
-    public void AddEntityIfNew(int rowIndex) {
-      if (!HasRowBeenEdited) {
-        IsInsertionRowCurrent = false;
-        if (IsFixingNewRow) {
-          BindingList.RemoveAt(rowIndex);
-          IsFixingNewRow = false;
-        }
-        return;
-      }
-      if (IsInsertionRowCurrent || IsFixingNewRow) {
-        IsInsertionRowCurrent = false;
-        AddNewEntity(rowIndex);
-      }
-    }
-
-    /// <summary>
     ///   Deletes the entity at the specified row index
     ///   from the database and removes it from the list.
     /// </summary>
@@ -219,6 +187,41 @@ namespace SoundExplorers.Model {
     }
 
     /// <summary>
+    ///   If the specified grid row is new or its data has changed,
+    ///   adds (if new) or updates the corresponding the entity
+    ///   on the database with the row data and
+    ///   saves the entity to the database.
+    /// </summary>
+    /// <param name="rowIndex">
+    ///   Zero-based row index.
+    /// </param>
+    /// <remarks>
+    ///   Though this is called when the grid's RowValidated event is raised,
+    ///   that actually happens even if the user did no edits,
+    ///   when any row left but after the final ItemChanged ListChangedType,
+    ///   if any, of the BindingList's ListChanged event.
+    /// </remarks>
+    /// <exception cref="DatabaseUpdateErrorException">
+    ///   A database update error occured.
+    /// </exception>
+    public void OnRowValidated(int rowIndex) {
+      if (!HasRowBeenEdited) {
+        IsInsertionRowCurrent = false;
+        if (IsFixingNewRow) {
+          BindingList.RemoveAt(rowIndex);
+          IsFixingNewRow = false;
+        }
+        return;
+      }
+      if (IsInsertionRowCurrent || IsFixingNewRow) {
+        IsInsertionRowCurrent = false;
+        AddNewEntity(rowIndex);
+      } else {
+        SaveChangesToExistingEntity(rowIndex);
+      }
+    }
+
+    /// <summary>
     ///   Populates and sorts the list and table.
     /// </summary>
     /// <param name="list">
@@ -266,7 +269,8 @@ namespace SoundExplorers.Model {
     [NotNull]
     protected abstract EntityColumnList CreateColumns();
 
-    [NotNull] protected abstract TEntity CreateEntity([NotNull] TBindingItem bindingItem);
+    [NotNull]
+    protected abstract TEntity CreateEntity([NotNull] TBindingItem bindingItem);
 
     protected abstract void RestoreEntityPropertiesFromBackup(
       [NotNull] TEntity backupEntity, [NotNull] TEntity entityToRestore);
@@ -361,7 +365,42 @@ namespace SoundExplorers.Model {
     ///   If false, the exception should be treated as a terminal error.
     /// </summary>
     private static bool IsDatabaseUpdateError(Exception exception) {
-      return exception is ConstraintException;
+      return exception is ConstraintException; // Includes PropertyConstraintException
+    }
+
+    /// <summary>
+    ///   Saves changes to an existing entity.
+    /// </summary>
+    /// <remarks>
+    ///   For reasons I don't fully understand,
+    ///   even though the individual property values
+    ///   of the entity have already been updated,
+    ///   including calling UpdateNonIndexField for each property,
+    ///   we still have to call UpdateNonIndexField one more time,
+    ///   now that row validation is complete,
+    ///   in order to save the changes to the database.
+    /// </remarks>
+    /// <param name="rowIndex">Zero-based row index</param>
+    /// <exception cref="DatabaseUpdateErrorException">
+    ///   Thrown when a database update error occurs.
+    ///   However, because validation by property has already been done,
+    ///   errors are not expected at this stage.
+    /// </exception>
+    private void SaveChangesToExistingEntity(int rowIndex) {
+      var bindingItem = (TBindingItem)BindingList[rowIndex];
+      var entity = this[rowIndex];
+      var backupEntity = CreateBackupEntity(entity);
+      Session.BeginUpdate();
+      try {
+        entity.UpdateNonIndexField();
+      } catch (Exception exception) {
+        BindingItemToFix = bindingItem;
+        RestoreEntityPropertiesFromBackup(backupEntity, entity);
+        BackupBindingItemToRestoreFrom = BackupBindingItem;
+        throw CreateDatabaseUpdateErrorException(exception, rowIndex);
+      } finally {
+        Session.Commit();
+      }
     }
 
     private void UpdateExistingEntityProperty(int rowIndex, [NotNull] string propertyName,
