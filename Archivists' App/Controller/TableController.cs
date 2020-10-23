@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data.Linq;
 using JetBrains.Annotations;
@@ -127,8 +128,9 @@ namespace SoundExplorers.Controller {
       }
     }
 
-    internal void SetParent(int rowIndex, [NotNull] string columnName,
-      [CanBeNull] IEntity entity) {
+    public void SetParent(int rowIndex, [NotNull] string columnName,
+      [CanBeNull] object selectedItem) {
+      var entity = ((KeyValuePair<string, IEntity>?)selectedItem)?.Value;
       ((IBindingItem)MainList.BindingList[rowIndex]).SetParent(columnName, entity);
     }
 

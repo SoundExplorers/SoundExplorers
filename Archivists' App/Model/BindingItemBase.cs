@@ -52,9 +52,8 @@ namespace SoundExplorers.Model {
     [CanBeNull]
     internal TParent GetParent<TParent>()
       where TParent : EntityBase {
-      return Parents.ContainsKey(typeof(TParent).Name)
-        ? Parents[nameof(TParent)] as TParent
-        : null;
+      string key = typeof(TParent).Name;
+      return Parents.ContainsKey(key) ? Parents[key] as TParent : null;
     }
 
     [NotNull]

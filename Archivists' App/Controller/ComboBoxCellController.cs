@@ -107,16 +107,15 @@ namespace SoundExplorers.Controller {
     ///   But I could not get it to work. 
     ///   </para>
     /// </remarks>
-    public void OnSelectedIndexChanged(int rowIndex, [NotNull] string currentColumnName,
-      [CanBeNull] object selectedItem) {
+    public void OnSelectedIndexChanged(int rowIndex, [CanBeNull] object selectedItem) {
       var entity = ((KeyValuePair<string, IEntity>?)selectedItem)?.Value;
       //Debug.WriteLine("ComboBoxCellController.OnSelectedIndexChanged");
       // Debug.WriteLine(
       //   $"currentColumnName = {currentColumnName}, ColumnName = {ColumnName}, entity = {entity?.GetType().Name} '{entity?.Key}'");
-      if (currentColumnName != ColumnName) {
-        // Debug.WriteLine("Change rejected");
-        return;
-      }
+      // if (currentColumnName != ColumnName) {
+      //   // Debug.WriteLine("Change rejected");
+      //   return;
+      // }
       TableController.SetParent(rowIndex, ColumnName, entity);
     }
 

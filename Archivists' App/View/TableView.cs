@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Windows.Forms;
 using JetBrains.Annotations;
 using SoundExplorers.Controller;
@@ -463,6 +464,27 @@ namespace SoundExplorers.View {
       MissingImageLabel.Visible = false;
     }
 
+    private void MainGridOnCellValueChanged(object sender, DataGridViewCellEventArgs e) {
+      //Debug.WriteLine("MainGridOnCellValueChanged");
+      if (MainGrid.CurrentCell is ComboBoxCell comboBoxCell) {
+        Controller.SetParent(MainCurrentRow.Index, MainGrid.CurrentCell.OwningColumn.Name,
+          comboBoxCell.ComboBox.SelectedItem);
+        MainGrid.Invalidate();
+      }
+    }
+
+    private void MainGridOnCurrentCellDirtyStateChanged(object sender, EventArgs e) {
+      // Debug.WriteLine("MainGridOnCurrentCellDirtyStateChanged");
+      if (MainGrid.IsCurrentCellDirty && MainGrid.CurrentCell is ComboBoxCell) {
+        //Debug.WriteLine("MainGridOnCurrentCellDirtyStateChanged: ComboBoxCell dirty");
+        // This fires the cell value changed handler MainGridOnCellValueChanged.
+        MainGrid.CommitEdit(DataGridViewDataErrorContexts.Commit);
+        // Put the ComboBox cell back into edit mode to really make this behave like
+        // the ComboBox's SelectedIndexChanged event.
+        //MainGrid.BeginEdit(true);  // Check if this is needed
+      }
+    }
+
     /// <summary>
     ///   Handles the main grid's
     ///   <see cref="DataGridView.DataError" /> event,
@@ -608,9 +630,9 @@ namespace SoundExplorers.View {
       //MainGrid.CellEnter -= new DataGridViewCellEventHandler(MainGridOnCellEnter);
       //MainGrid.CellStateChanged -= new DataGridViewCellStateChangedEventHandler(GridOnCellStateChanged);
       //MainGrid.CellValidated -= new DataGridViewCellEventHandler(MainGridOnCellValidated);
-      //MainGrid.CellValueChanged -= MainGridOnCellValueChanged;
+      MainGrid.CellValueChanged -= MainGridOnCellValueChanged;
       MainGrid.Click -= GridOnClick;
-      //MainGrid.CurrentCellDirtyStateChanged -= MainGridOnCurrentCellDirtyStateChanged;
+      MainGrid.CurrentCellDirtyStateChanged -= MainGridOnCurrentCellDirtyStateChanged;
       MainGrid.DataError -= MainGridOnDataError;
       //MainGrid.GotFocus -= new EventHandler(ControlOnGotFocus);
       MainGrid.KeyDown -= MainGridOnKeyDown;
@@ -635,9 +657,9 @@ namespace SoundExplorers.View {
       //MainGrid.CellEnter += new DataGridViewCellEventHandler(MainGridOnCellEnter);
       //MainGrid.CellStateChanged += new DataGridViewCellStateChangedEventHandler(GridOnCellStateChanged);
       //MainGrid.CellValidated += new DataGridViewCellEventHandler(MainGridOnCellValidated);
-      //MainGrid.CellValueChanged += MainGridOnCellValueChanged;
+      MainGrid.CellValueChanged += MainGridOnCellValueChanged;
       MainGrid.Click += GridOnClick;
-      //MainGrid.CurrentCellDirtyStateChanged += MainGridOnCurrentCellDirtyStateChanged;
+      MainGrid.CurrentCellDirtyStateChanged += MainGridOnCurrentCellDirtyStateChanged;
       MainGrid.DataError += MainGridOnDataError;
       //MainGrid.GotFocus += new EventHandler(ControlOnGotFocus);
       MainGrid.KeyDown += MainGridOnKeyDown;

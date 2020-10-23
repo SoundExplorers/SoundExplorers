@@ -388,7 +388,9 @@ namespace SoundExplorers.Model {
     private void SaveChangesToExistingEntity(int rowIndex) {
       var bindingItem = (TBindingItem)BindingList[rowIndex];
       var entity = this[rowIndex];
+      Session.BeginUpdate(); // Commit block needed when there are referenced entities
       var backupEntity = CreateBackupEntity(entity);
+      Session.Commit();
       Session.BeginUpdate();
       try {
         entity.UpdateNonIndexField();
@@ -409,12 +411,13 @@ namespace SoundExplorers.Model {
       var bindingItem = (TBindingItem)BindingList[rowIndex];
       var entity = this[rowIndex];
       //Debug.WriteLine($"Backing up {entity}");
+      Session.BeginUpdate(); // Commit block needed when there are referenced entities
       var backupEntity = CreateBackupEntity(entity);
+      Session.Commit();
       Session.BeginUpdate();
       try {
         //Debug.WriteLine($"IsPersistent before update = {entity.IsPersistent}");
         UpdateEntityProperty(propertyName, newValue, entity);
-        //Debug.WriteLine($"IsPersistent after update = {entity.IsPersistent}");
       } catch (Exception exception) {
         BindingItemToFix = bindingItem;
         RestoreEntityPropertiesFromBackup(backupEntity, entity);

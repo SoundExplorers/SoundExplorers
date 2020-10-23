@@ -23,7 +23,7 @@ namespace SoundExplorers.View {
     /// <summary>
     ///   Gets the cell's combo box.
     /// </summary>
-    private ComboBox ComboBox => (ComboBox)DataGridView.EditingControl;
+    public ComboBox ComboBox => (ComboBox)DataGridView.EditingControl;
 
     private ComboBoxCellController Controller => (ComboBoxCellController)Tag;
 
@@ -79,8 +79,6 @@ namespace SoundExplorers.View {
       // Set the value of the editing control to the current cell value.
       base.InitializeEditingControl(rowIndex, initialFormattedValue,
         dataGridViewCellStyle);
-      // Debug.WriteLine(
-      //   $"ComboBoxCell.InitializeEditingControl: rowIndex = {rowIndex}; initialFormattedValue = {initialFormattedValue}");
       ComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
       ComboBox.Items.Clear();
       ComboBox.Items.AddRange(
@@ -89,17 +87,17 @@ namespace SoundExplorers.View {
       ComboBox.ValueMember = "Value";
       ComboBox.SelectedIndex =
         ComboBox.FindStringExact(initialFormattedValue.ToString());
-      ComboBox.SelectedIndexChanged += ComboBoxOnSelectedIndexChanged;
+      //ComboBox.SelectedIndexChanged += ComboBoxOnSelectedIndexChanged;
     }
 
-    private void ComboBoxOnSelectedIndexChanged(object sender, EventArgs e) {
-      // Debug.WriteLine(
-      //   $"ComboBoxCell.ComboBoxOnSelectedIndexChanged: Text = {ComboBox.Text}; current column = {DataGridView.CurrentCell.OwningColumn.Name}");
-      Controller.OnSelectedIndexChanged(RowIndex,
-        DataGridView.CurrentCell.OwningColumn.Name, ComboBox.SelectedItem);
-      // For unknown reason, SelectedValue is always null. So this does not work:
-      //Controller.OnSelectedIndexChanged(RowIndex, ComboBox.SelectedValue);
-    }
+    // private void ComboBoxOnSelectedIndexChanged(object sender, EventArgs e) {
+    //   // Debug.WriteLine(
+    //   //   $"ComboBoxCell.ComboBoxOnSelectedIndexChanged: Text = {ComboBox.Text}; current column = {DataGridView.CurrentCell.OwningColumn.Name}");
+    //   Controller.OnSelectedIndexChanged(RowIndex,
+    //     DataGridView.CurrentCell.OwningColumn.Name, ComboBox.SelectedItem);
+    //   // For unknown reason, SelectedValue is always null. So this does not work:
+    //   //Controller.OnSelectedIndexChanged(RowIndex, ComboBox.SelectedValue);
+    // }
 
     // /// <summary>
     // ///   Populates the drop-down list of dates with the
