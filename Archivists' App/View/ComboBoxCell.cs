@@ -94,10 +94,9 @@ namespace SoundExplorers.View {
 
     private void ComboBoxOnSelectedIndexChanged(object sender, EventArgs e) {
       // Debug.WriteLine(
-      //   $"ComboBoxCell.ComboBoxOnSelectedIndexChanged: Text = {ComboBox.Text}; SelectedValue = {ComboBox.SelectedValue}");
-      // Makes InitializeEditingControl reenter:
-      //DataGridView.CurrentCell.Value = ComboBox.Text;
-      Controller.OnSelectedIndexChanged(RowIndex, ComboBox.SelectedItem);
+      //   $"ComboBoxCell.ComboBoxOnSelectedIndexChanged: Text = {ComboBox.Text}; current column = {DataGridView.CurrentCell.OwningColumn.Name}");
+      Controller.OnSelectedIndexChanged(RowIndex,
+        DataGridView.CurrentCell.OwningColumn.Name, ComboBox.SelectedItem);
       // For unknown reason, SelectedValue is always null. So this does not work:
       //Controller.OnSelectedIndexChanged(RowIndex, ComboBox.SelectedValue);
     }

@@ -75,11 +75,6 @@ namespace SoundExplorers.View {
       ShowMessage(text, MessageBoxIcon.Error);
     }
 
-    private void ShowMessage([NotNull] string text, MessageBoxIcon icon) {
-      MessageBox.Show(
-        this, text, Application.ProductName, MessageBoxButtons.OK, icon);
-    }
-
     public void ShowWarningMessage(string text) {
       ShowMessage(text, MessageBoxIcon.Warning);
     }
@@ -90,6 +85,11 @@ namespace SoundExplorers.View {
 
     public void SetController(TableController controller) {
       Controller = controller;
+    }
+
+    private void ShowMessage([NotNull] string text, MessageBoxIcon icon) {
+      MessageBox.Show(
+        this, text, Application.ProductName, MessageBoxButtons.OK, icon);
     }
 
     public void Copy() {
@@ -535,10 +535,6 @@ namespace SoundExplorers.View {
       Controller.OnMainGridRowEnter(e.RowIndex);
     }
 
-    private void MainGridOnRowLeave(object sender, DataGridViewCellEventArgs e) {
-      //Debug.WriteLine("MainGridOnRowLeave");
-    }
-
     private void
       MainGridOnRowsRemoved(object sender, DataGridViewRowsRemovedEventArgs e) {
       //Debug.WriteLine("MainGridOnRowsRemoved");
@@ -612,7 +608,9 @@ namespace SoundExplorers.View {
       //MainGrid.CellEnter -= new DataGridViewCellEventHandler(MainGridOnCellEnter);
       //MainGrid.CellStateChanged -= new DataGridViewCellStateChangedEventHandler(GridOnCellStateChanged);
       //MainGrid.CellValidated -= new DataGridViewCellEventHandler(MainGridOnCellValidated);
+      //MainGrid.CellValueChanged -= MainGridOnCellValueChanged;
       MainGrid.Click -= GridOnClick;
+      //MainGrid.CurrentCellDirtyStateChanged -= MainGridOnCurrentCellDirtyStateChanged;
       MainGrid.DataError -= MainGridOnDataError;
       //MainGrid.GotFocus -= new EventHandler(ControlOnGotFocus);
       MainGrid.KeyDown -= MainGridOnKeyDown;
@@ -620,7 +618,7 @@ namespace SoundExplorers.View {
       MainGrid.MouseDown -= GridOnMouseDown;
       //MainGrid.RowStateChanged
       MainGrid.RowEnter -= MainGridOnRowEnter;
-      MainGrid.RowLeave -= MainGridOnRowLeave;
+      //MainGrid.RowLeave -= MainGridOnRowLeave;
       MainGrid.RowsRemoved -= MainGridOnRowsRemoved;
       MainGrid.RowValidated -= MainGridOnRowValidated;
       Controller.FetchData();
@@ -637,14 +635,16 @@ namespace SoundExplorers.View {
       //MainGrid.CellEnter += new DataGridViewCellEventHandler(MainGridOnCellEnter);
       //MainGrid.CellStateChanged += new DataGridViewCellStateChangedEventHandler(GridOnCellStateChanged);
       //MainGrid.CellValidated += new DataGridViewCellEventHandler(MainGridOnCellValidated);
+      //MainGrid.CellValueChanged += MainGridOnCellValueChanged;
       MainGrid.Click += GridOnClick;
+      //MainGrid.CurrentCellDirtyStateChanged += MainGridOnCurrentCellDirtyStateChanged;
       MainGrid.DataError += MainGridOnDataError;
       //MainGrid.GotFocus += new EventHandler(ControlOnGotFocus);
       MainGrid.KeyDown += MainGridOnKeyDown;
       //MainGrid.LostFocus += new EventHandler(ControlOnLostFocus);
       MainGrid.MouseDown += GridOnMouseDown;
       MainGrid.RowEnter += MainGridOnRowEnter;
-      MainGrid.RowLeave += MainGridOnRowLeave;
+      //MainGrid.RowLeave += MainGridOnRowLeave;
       MainGrid.RowsRemoved += MainGridOnRowsRemoved;
       MainGrid.RowValidated += MainGridOnRowValidated;
       // Has to be done when visible.

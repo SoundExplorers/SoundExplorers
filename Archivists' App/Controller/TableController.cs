@@ -127,7 +127,7 @@ namespace SoundExplorers.Controller {
       }
     }
 
-    public void SetParent(int rowIndex, [NotNull] string columnName,
+    internal void SetParent(int rowIndex, [NotNull] string columnName,
       [CanBeNull] IEntity entity) {
       ((IBindingItem)MainList.BindingList[rowIndex]).SetParent(columnName, entity);
     }
