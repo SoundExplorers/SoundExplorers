@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics;
 using System.Windows.Forms;
 using JetBrains.Annotations;
 using SoundExplorers.Controller;
@@ -464,8 +463,12 @@ namespace SoundExplorers.View {
       MissingImageLabel.Visible = false;
     }
 
+    /// <summary>
+    ///   Called when a cell edit is committed in
+    ///   <see cref="MainGridOnCurrentCellDirtyStateChanged"/>, which 
+    ///   emulates a cell ComboBox's SelectedIndexChange event.
+    /// </summary>
     private void MainGridOnCellValueChanged(object sender, DataGridViewCellEventArgs e) {
-      //Debug.WriteLine("MainGridOnCellValueChanged");
       if (MainGrid.CurrentCell is ComboBoxCell comboBoxCell) {
         Controller.SetParent(MainCurrentRow.Index, MainGrid.CurrentCell.OwningColumn.Name,
           comboBoxCell.ComboBox.SelectedItem);
@@ -473,15 +476,24 @@ namespace SoundExplorers.View {
       }
     }
 
+    /// <summary>
+    ///   Emulates a cell ComboBox's SelectedIndexChange event.
+    /// </summary>
+    /// <remarks>
+    ///   A known problem with DataGridViews is that,
+    ///   where there are multiple ComboBox columns,
+    ///   ComboBox events can get spuriously raised against the ComboBoxes
+    ///   in multiple cells of the row that is being edited.
+    ///   So this event handler provides a workaround by
+    ///   emulating a cell ComboBox's SelectedIndexChange event
+    ///   but without the spurious occurrences.
+    ///   The fix is based on the second answer here:
+    ///   https://stackoverflow.com/questions/11141872/event-that-fires-during-datagridviewcomboboxcolumn-selectedindexchanged
+    /// </remarks>
     private void MainGridOnCurrentCellDirtyStateChanged(object sender, EventArgs e) {
-      // Debug.WriteLine("MainGridOnCurrentCellDirtyStateChanged");
       if (MainGrid.IsCurrentCellDirty && MainGrid.CurrentCell is ComboBoxCell) {
-        //Debug.WriteLine("MainGridOnCurrentCellDirtyStateChanged: ComboBoxCell dirty");
         // This fires the cell value changed handler MainGridOnCellValueChanged.
         MainGrid.CommitEdit(DataGridViewDataErrorContexts.Commit);
-        // Put the ComboBox cell back into edit mode to really make this behave like
-        // the ComboBox's SelectedIndexChanged event.
-        //MainGrid.BeginEdit(true);  // Check if this is needed
       }
     }
 

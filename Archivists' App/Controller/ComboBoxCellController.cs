@@ -78,47 +78,6 @@ namespace SoundExplorers.Controller {
         : ((IEntity)value).SimpleKey;
     }
 
-    /// <summary>
-    ///   Called when the SelectedIndexChanged event of the cell's ComboBox is raised.
-    /// </summary>
-    /// <param name="rowIndex">Zero-based row index.</param>
-    /// <param name="currentColumnName">Name of the current column of the editor grid.</param>
-    /// <param name="selectedItem">The ComboBox's selected item.</param>
-    /// <remarks>
-    ///   For unknown reason, ComboBox.SelectedValue is always null in this case.
-    ///   That is why the SelectedItem key value pair, whose Value is the selected entity,
-    ///   has to be specified.
-    ///   <para>
-    ///   A known problem with DataGridViews is that,
-    ///   where there are multiple ComboBox columns,
-    ///   ComboBox events can get spuriously raised against the ComboBoxes
-    ///   in multiple cells of the row that is being edited.
-    ///   Various workarounds have been suggested.
-    ///   Mine is to compare the name of the specified current column of the editor grid
-    ///   with the name of the column in which this ComboBox is known to be located.
-    ///   This is not ideal, as spurious events still get raised.
-    ///   They are just ignored here.
-    ///   But the number of such events is small
-    ///   and should not noticeably impact performance.
-    ///   I tried what looked like the most promising looking fix offered on the web,
-    ///   the second answer here:
-    ///   https://stackoverflow.com/questions/11141872/event-that-fires-during-datagridviewcomboboxcolumn-selectedindexchanged
-    ///   That looks like it should avoid spurious events altogether.
-    ///   But I could not get it to work. 
-    ///   </para>
-    /// </remarks>
-    public void OnSelectedIndexChanged(int rowIndex, [CanBeNull] object selectedItem) {
-      var entity = ((KeyValuePair<string, IEntity>?)selectedItem)?.Value;
-      //Debug.WriteLine("ComboBoxCellController.OnSelectedIndexChanged");
-      // Debug.WriteLine(
-      //   $"currentColumnName = {currentColumnName}, ColumnName = {ColumnName}, entity = {entity?.GetType().Name} '{entity?.Key}'");
-      // if (currentColumnName != ColumnName) {
-      //   // Debug.WriteLine("Change rejected");
-      //   return;
-      // }
-      TableController.SetParent(rowIndex, ColumnName, entity);
-    }
-
     private string CreateNoAvailableReferencesMessage() {
       return $"There are no {ReferencedTableName} {ReferencedColumnName}s " +
              "to choose between. You need to add at least one row to the " +

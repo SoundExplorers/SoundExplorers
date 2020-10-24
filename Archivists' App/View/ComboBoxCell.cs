@@ -87,17 +87,7 @@ namespace SoundExplorers.View {
       ComboBox.ValueMember = "Value";
       ComboBox.SelectedIndex =
         ComboBox.FindStringExact(initialFormattedValue.ToString());
-      //ComboBox.SelectedIndexChanged += ComboBoxOnSelectedIndexChanged;
     }
-
-    // private void ComboBoxOnSelectedIndexChanged(object sender, EventArgs e) {
-    //   // Debug.WriteLine(
-    //   //   $"ComboBoxCell.ComboBoxOnSelectedIndexChanged: Text = {ComboBox.Text}; current column = {DataGridView.CurrentCell.OwningColumn.Name}");
-    //   Controller.OnSelectedIndexChanged(RowIndex,
-    //     DataGridView.CurrentCell.OwningColumn.Name, ComboBox.SelectedItem);
-    //   // For unknown reason, SelectedValue is always null. So this does not work:
-    //   //Controller.OnSelectedIndexChanged(RowIndex, ComboBox.SelectedValue);
-    // }
 
     // /// <summary>
     // ///   Populates the drop-down list of dates with the
