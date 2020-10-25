@@ -1,7 +1,7 @@
 ﻿using JetBrains.Annotations;
 
 namespace SoundExplorers.Controller {
-  public interface ITableView : IView<TableController> {
+  public interface IEditorView : IView<EditorController> {
     void EditMainGridCurrentCell();
     void FocusMainGridCell(int rowIndex, int columnIndex);
     void MakeMainGridInsertionRowCurrent();

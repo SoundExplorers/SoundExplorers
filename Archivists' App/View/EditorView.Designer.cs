@@ -1,5 +1,5 @@
 ﻿namespace SoundExplorers.View {
-    partial class TableView {
+    partial class EditorView {
         /// <summary>
         /// Required designer variable.
         /// </summary>
@@ -150,7 +150,7 @@
             this.FittedPictureBox1.DragOver += new System.Windows.Forms.DragEventHandler(this.FittedPictureBox1OnDragOver);
             this.FittedPictureBox1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.FittedPictureBox1OnMouseDown);
             // 
-            // TableView
+            // EditorView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -159,15 +159,15 @@
             this.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.KeyPreview = true;
             this.Margin = new System.Windows.Forms.Padding(4);
-            this.Name = "TableView";
+            this.Name = "EditorView";
             this.ShowIcon = false;
-            this.Text = "TableView";
-            this.Activated += new System.EventHandler(this.TableViewOnActivated);
-            this.Deactivate += new System.EventHandler(this.TableViewOnDeactivate);
-            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.TableViewOnFormClosed);
-            this.Load += new System.EventHandler(this.TableViewOnLoad);
-            this.VisibleChanged += new System.EventHandler(this.TableViewOnVisibleChanged);
-            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TableViewOnKeyDown);
+            this.Text = "EditorView";
+            this.Activated += new System.EventHandler(this.EditorViewOnActivated);
+            this.Deactivate += new System.EventHandler(this.EditorViewOnDeactivate);
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.EditorViewOnFormClosed);
+            this.Load += new System.EventHandler(this.EditorViewOnLoad);
+            this.VisibleChanged += new System.EventHandler(this.EditorViewOnVisibleChanged);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.EditorViewOnKeyDown);
             this.ImageSplitContainer.Panel1.ResumeLayout(false);
             this.ImageSplitContainer.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.ImageSplitContainer)).EndInit();

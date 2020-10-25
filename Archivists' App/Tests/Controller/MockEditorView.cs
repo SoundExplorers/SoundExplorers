@@ -1,8 +1,8 @@
 ﻿using SoundExplorers.Controller;
 
 namespace SoundExplorers.Tests.Controller {
-  public class MockTableView : ITableView {
-    private TableController Controller { get; set; }
+  public class MockEditorView : IEditorView {
+    private EditorController Controller { get; set; }
     public int EditMainGridCurrentCellCount { get; private set; }
     public int FocusMainGridCellCount { get; private set; }
     public int FocusMainGridCellColumnIndex { get; private set; }
@@ -14,7 +14,7 @@ namespace SoundExplorers.Tests.Controller {
     public int ShowErrorMessageCount { get; private set; }
     public int ShowWarningMessageCount { get; private set; }
 
-    public void SetController(TableController controller) {
+    public void SetController(EditorController controller) {
       Controller = controller;
     }
 

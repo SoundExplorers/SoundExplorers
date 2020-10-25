@@ -21,15 +21,15 @@ namespace SoundExplorers.Controller {
     /// <param name="view">
     ///   The view of the combo box cell to be controlled.
     /// </param>
-    /// <param name="tableController">
+    /// <param name="editorController">
     ///   The controller of the table editor.
     /// </param>
     /// <param name="columnName">
     ///   The name of the column that is edited with the combo box cell.
     /// </param>
     public ComboBoxCellController([NotNull] IView<ComboBoxCellController> view,
-      [NotNull] TableController tableController, [NotNull] string columnName) : base(
-      tableController, columnName) {
+      [NotNull] EditorController editorController, [NotNull] string columnName) : base(
+      editorController, columnName) {
       view.SetController(this);
     }
 
@@ -38,26 +38,26 @@ namespace SoundExplorers.Controller {
     [NotNull]
     private string ReferencedColumnName =>
       _referencedColumnName ?? (_referencedColumnName =
-        TableController.Columns[ColumnName]?.ReferencedColumnName ??
-        throw new NullReferenceException(nameof(EntityColumn.ReferencedColumnName)));
+        EditorController.Columns[ColumnName]?.ReferencedColumnName ??
+        throw new NullReferenceException(nameof(BindingColumn.ReferencedColumnName)));
 
     [NotNull]
     private Type ReferencedEntityListType =>
       _referencedEntityListType ?? (_referencedEntityListType =
-        TableController.Columns[ColumnName]?.ReferencedEntityListType ??
-        throw new NullReferenceException(nameof(EntityColumn.ReferencedEntityListType)));
+        EditorController.Columns[ColumnName]?.ReferencedEntityListType ??
+        throw new NullReferenceException(nameof(BindingColumn.ReferencedEntityListType)));
 
     [NotNull]
     private string ReferencedTableName => _referencedTableName ?? (_referencedTableName =
-      TableController.Columns[ColumnName]?.ReferencedTableName ??
-      throw new NullReferenceException(nameof(EntityColumn.ReferencedTableName)));
+      EditorController.Columns[ColumnName]?.ReferencedTableName ??
+      throw new NullReferenceException(nameof(BindingColumn.ReferencedTableName)));
 
     [NotNull]
     public object[] FetchItems([CanBeNull] string format) {
       EntityList = Global.CreateEntityList(ReferencedEntityListType);
       EntityList.Populate();
       if (EntityList.Count == 0) {
-        TableController.ShowWarningMessage(CreateNoAvailableReferencesMessage());
+        EditorController.ShowWarningMessage(CreateNoAvailableReferencesMessage());
       }
       return (from IEntity entity in EntityList
           select (object)new KeyValuePair<string, IEntity>(GetKey(entity, format), entity)

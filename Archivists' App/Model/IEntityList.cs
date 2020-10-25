@@ -20,7 +20,7 @@ namespace SoundExplorers.Model {
     ///   the list of entities.
     /// </summary>
     [NotNull]
-    EntityColumnList Columns { get; }
+    BindingColumnList Columns { get; }
 
     /// <summary>
     ///   For unknown reason, the grid's RowRemoved event is raised 2 or 3 times

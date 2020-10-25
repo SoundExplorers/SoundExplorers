@@ -20,18 +20,18 @@ namespace SoundExplorers.Model {
       };
     }
 
-    protected override EntityColumnList CreateColumns() {
-      return new EntityColumnList {
-        new EntityColumn(nameof(Event.Date)),
-        new EntityColumn(nameof(Event.Location),
+    protected override BindingColumnList CreateColumns() {
+      return new BindingColumnList {
+        new BindingColumn(nameof(Event.Date)),
+        new BindingColumn(nameof(Event.Location),
           typeof(LocationList), nameof(Location.Name)),
-        new EntityColumn(nameof(Event.Newsletter),
+        new BindingColumn(nameof(Event.Newsletter),
           typeof(NewsletterList), nameof(Newsletter.Date)),
-        new EntityColumn(nameof(Event.EventType),
+        new BindingColumn(nameof(Event.EventType),
           typeof(EventTypeList), nameof(EventType.Name)),
-        new EntityColumn(nameof(Event.Series),
+        new BindingColumn(nameof(Event.Series),
           typeof(SeriesList), nameof(Series.Name)),
-        new EntityColumn(nameof(Event.Notes))
+        new BindingColumn(nameof(Event.Notes))
       };
     }
   }

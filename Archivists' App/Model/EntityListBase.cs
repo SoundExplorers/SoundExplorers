@@ -22,7 +22,7 @@ namespace SoundExplorers.Model {
   public abstract class EntityListBase<TEntity, TBindingItem> : List<TEntity>, IEntityList
     where TEntity : EntityBase, new()
     where TBindingItem : BindingItemBase<TEntity, TBindingItem>, new() {
-    private EntityColumnList _columns;
+    private BindingColumnList _columns;
     private SessionBase _session;
 
     /// <summary>
@@ -71,7 +71,7 @@ namespace SoundExplorers.Model {
     ///   Gets metadata for the columns of the editor grid that represents
     ///   the list of entities.
     /// </summary>
-    public EntityColumnList Columns => _columns ?? (_columns = CreateColumns());
+    public BindingColumnList Columns => _columns ?? (_columns = CreateColumns());
 
     /// <summary>
     ///   For unknown reason, the grid's RowRemoved event is raised 2 or 3 times
@@ -267,7 +267,7 @@ namespace SoundExplorers.Model {
     protected abstract TBindingItem CreateBindingItem([NotNull] TEntity entity);
 
     [NotNull]
-    protected abstract EntityColumnList CreateColumns();
+    protected abstract BindingColumnList CreateColumns();
 
     // protected abstract void RestoreEntityPropertiesFromBackup(
     //   [NotNull] TEntity backupEntity, [NotNull] TEntity entityToRestore);
@@ -322,7 +322,9 @@ namespace SoundExplorers.Model {
     private DatabaseUpdateErrorException CreateDatabaseUpdateErrorException(
       [NotNull] Exception exception, int rowIndex) {
       if (!IsDatabaseUpdateError(exception)) {
-        throw exception; // Terminal error
+        // Terminal error.  In the Release compilation,
+        // the stack trace will be shown by the terminal error handler in Program.cs.
+        throw exception;
       }
       string propertyName =
         exception is PropertyConstraintException propertyConstraintException

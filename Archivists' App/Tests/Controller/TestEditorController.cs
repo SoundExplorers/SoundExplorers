@@ -7,8 +7,8 @@ using SoundExplorers.Model;
 using VelocityDb.Session;
 
 namespace SoundExplorers.Tests.Controller {
-  internal class TestTableController : TableController {
-    public TestTableController([NotNull] ITableView view, [NotNull] Type mainListType,
+  internal class TestEditorController : EditorController {
+    public TestEditorController([NotNull] IEditorView view, [NotNull] Type mainListType,
       [NotNull] SessionBase session) :
       base(view, mainListType) {
       Session = session;

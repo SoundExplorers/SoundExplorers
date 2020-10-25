@@ -11,12 +11,12 @@ namespace SoundExplorers.Controller {
   ///   Controller for the table editor.
   /// </summary>
   [UsedImplicitly]
-  public class TableController {
+  public class EditorController {
     private Option _gridSplitterDistanceOption;
     private Option _imageSplitterDistanceOption;
 
     /// <summary>
-    ///   Initialises a new instance of the <see cref="TableController" /> class.
+    ///   Initialises a new instance of the <see cref="EditorController" /> class.
     /// </summary>
     /// <param name="view">
     ///   The table editor view to be shown.
@@ -24,7 +24,7 @@ namespace SoundExplorers.Controller {
     /// <param name="mainListType">
     ///   The type of entity list whose data is to be displayed.
     /// </param>
-    public TableController([NotNull] ITableView view,
+    public EditorController([NotNull] IEditorView view,
       [NotNull] Type mainListType) {
       View = view;
       MainListType = mainListType;
@@ -35,7 +35,7 @@ namespace SoundExplorers.Controller {
     ///   Gets metadata about the database columns
     ///   represented by the Entity's field properties.
     /// </summary>
-    internal EntityColumnList Columns => MainList?.Columns ??
+    internal BindingColumnList Columns => MainList?.Columns ??
                                          throw new NullReferenceException(
                                            nameof(Columns));
 
@@ -92,7 +92,7 @@ namespace SoundExplorers.Controller {
     [CanBeNull]
     private IEntityList ParentList { get; set; }
 
-    [NotNull] private ITableView View { get; }
+    [NotNull] private IEditorView View { get; }
 
     /// <summary>
     ///   Returns whether the specified column references another entity.
@@ -195,6 +195,8 @@ namespace SoundExplorers.Controller {
           // It does not seem to do any harm, so long as it is trapped like this.
           break;
         default:
+          // Terminal error.  In the Release compilation,
+          // the stack trace will be shown by the terminal error handler in Program.cs.
           throw exception;
       }
     }

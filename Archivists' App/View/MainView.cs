@@ -17,11 +17,11 @@ namespace SoundExplorers.View {
     }
 
     private MainController Controller { get; set; }
-    private SelectTableView SelectTableView { get; set; }
+    private SelectEditorView SelectEditorView { get; set; }
     private SizeableFormOptions SizeableFormOptions { get; set; }
 
-    private TableView TableView => ActiveMdiChild as TableView ??
-                                   throw new NullReferenceException(nameof(TableView));
+    private EditorView EditorView => ActiveMdiChild as EditorView ??
+                                   throw new NullReferenceException(nameof(EditorView));
 
     public void SetController(MainController controller) {
       Controller = controller;
@@ -32,7 +32,7 @@ namespace SoundExplorers.View {
         SizeableFormOptions = SizeableFormOptions.Create(this);
         SplashManager.Status = "Getting options...";
         StatusStrip.Visible = Controller.IsStatusBarVisible;
-        SelectTableView = CreateSelectTableView();
+        SelectEditorView = CreateSelectEditorView();
         ToolStrip.Visible = Controller.IsToolBarVisible;
       } catch (Exception ex) {
         MessageBox.Show(
@@ -65,7 +65,7 @@ namespace SoundExplorers.View {
 
     private void CopyToolStripMenuItem_Click(object sender, EventArgs e) {
       if (MdiChildren.Any()) {
-        TableView.Copy();
+        EditorView.Copy();
       }
     }
 
@@ -80,18 +80,18 @@ namespace SoundExplorers.View {
     }
 
     [NotNull]
-    private SelectTableView CreateSelectTableView() {
-      return SelectTableView.Create(Controller.TableName);
+    private SelectEditorView CreateSelectEditorView() {
+      return SelectEditorView.Create(Controller.TableName);
     }
 
     [NotNull]
-    private TableView CreateTableView() {
-      return TableView.Create(SelectTableView.Controller.SelectedEntityListType);
+    private EditorView CreateEditorView() {
+      return EditorView.Create(SelectEditorView.Controller.SelectedEntityListType);
     }
 
     private void CutToolStripMenuItem_Click(object sender, EventArgs e) {
       if (MdiChildren.Any()) {
-        TableView.Cut();
+        EditorView.Cut();
       }
     }
 
@@ -109,7 +109,7 @@ namespace SoundExplorers.View {
     private void EditAudioFileTagsToolStripMenuItem_Click(object sender, EventArgs e) {
       if (MdiChildren.Any()) {
         try {
-          TableView.Controller.EditAudioFileTags();
+          EditorView.Controller.EditAudioFileTags();
         } catch (ApplicationException ex) {
           MessageBox.Show(
             this,
@@ -137,8 +137,8 @@ namespace SoundExplorers.View {
       Controller.IsStatusBarVisible = StatusStrip.Visible;
       Controller.IsToolBarVisible = ToolStrip.Visible;
       Controller.TableName = MdiChildren.Any()
-        ? TableView.Controller.MainTableName
-        : SelectTableView.Controller.SelectedTableName;
+        ? EditorView.Controller.MainTableName
+        : SelectEditorView.Controller.SelectedTableName;
       // Explicitly closing all the MIDI child forms
       // fixes a problem where, 
       // if multiple child forms were open and maximized
@@ -187,14 +187,14 @@ namespace SoundExplorers.View {
     }
 
     private void NewToolStripMenuItem_Click(object sender, EventArgs e) {
-      SelectTableView.Text = "Select Table for New Editor";
-      if (SelectTableView.ShowDialog(this) == DialogResult.Cancel) {
+      SelectEditorView.Text = "Select Table for New Editor";
+      if (SelectEditorView.ShowDialog(this) == DialogResult.Cancel) {
         return;
       }
       try {
-        var tableView = CreateTableView();
-        tableView.MdiParent = this;
-        tableView.Show();
+        var tditorView = CreateEditorView();
+        tditorView.MdiParent = this;
+        tditorView.Show();
       } catch (ApplicationException ex) {
         MessageBox.Show(
           ex.Message,
@@ -222,8 +222,8 @@ namespace SoundExplorers.View {
         NewToolStripMenuItem_Click(sender, e);
         return;
       }
-      SelectTableView.Text = "Select Table for Current Editor";
-      if (SelectTableView.ShowDialog(this) == DialogResult.Cancel) {
+      SelectEditorView.Text = "Select Table for Current Editor";
+      if (SelectEditorView.ShowDialog(this) == DialogResult.Cancel) {
         return;
       }
       // When the grid is bound to a second or subsequent table,
@@ -239,18 +239,18 @@ namespace SoundExplorers.View {
       // emulate repopulating the existing table form
       // by replacing it with a new table form
       // with the same location and size.
-      //TableView.OpenTable(
+      //EditorView.OpenTable(
       //    SelectTableForm.EntityTypeName);
-      var oldTableView = TableView;
+      var oldEditorView = EditorView;
       try {
-        var newTableView = CreateTableView();
-        newTableView.Location = oldTableView.Location;
-        newTableView.WindowState = oldTableView.WindowState;
-        oldTableView.Close();
-        newTableView.MdiParent = this;
-        newTableView.Show();
-        newTableView.Size = oldTableView.Size;
-        oldTableView.Dispose();
+        var newEditorView = CreateEditorView();
+        newEditorView.Location = oldEditorView.Location;
+        newEditorView.WindowState = oldEditorView.WindowState;
+        oldEditorView.Close();
+        newEditorView.MdiParent = this;
+        newEditorView.Show();
+        newEditorView.Size = oldEditorView.Size;
+        oldEditorView.Dispose();
         // This won't always work, because SizeableFormOptions
         // copies the size and state of an MDI child form
         // from the last active MDI child form, if any,
@@ -260,7 +260,7 @@ namespace SoundExplorers.View {
         // it won't be an MDI child any more.
         //Point oldLocation = oldTableForm.Location;
         //oldTableForm.Close();
-        //TableView newTableForm = new TableView(
+        //EditorView newTableForm = new EditorView(
         //    SelectTableForm.TableName);
         //newTableForm.MdiParent = this;
         //newTableForm.Show();
@@ -289,7 +289,7 @@ namespace SoundExplorers.View {
 
     private void PasteToolStripMenuItem_Click(object sender, EventArgs e) {
       if (MdiChildren.Any()) {
-        TableView.Paste();
+        EditorView.Paste();
       }
     }
 
@@ -307,7 +307,7 @@ namespace SoundExplorers.View {
     private void PlayAudioToolStripMenuItem_Click(object sender, EventArgs e) {
       if (MdiChildren.Any()) {
         try {
-          TableView.Controller.PlayAudio();
+          EditorView.Controller.PlayAudio();
         } catch (ApplicationException ex) {
           MessageBox.Show(
             this,
@@ -340,7 +340,7 @@ namespace SoundExplorers.View {
     private void PlayVideoToolStripMenuItem_Click(object sender, EventArgs e) {
       if (MdiChildren.Any()) {
         try {
-          TableView.Controller.PlayVideo();
+          EditorView.Controller.PlayVideo();
         } catch (ApplicationException ex) {
           MessageBox.Show(
             this,
@@ -361,7 +361,7 @@ namespace SoundExplorers.View {
 
     private void RefreshToolStripMenuItem_Click(object sender, EventArgs e) {
       if (MdiChildren.Any()) {
-        TableView.Refresh();
+        EditorView.Refresh();
       }
     }
 
@@ -378,7 +378,7 @@ namespace SoundExplorers.View {
     private void ShowNewsletterToolStripMenuItem_Click(object sender, EventArgs e) {
       if (MdiChildren.Any()) {
         try {
-          TableView.Controller.ShowNewsletter();
+          EditorView.Controller.ShowNewsletter();
         } catch (ApplicationException exception) {
           MessageBox.Show(
             this,

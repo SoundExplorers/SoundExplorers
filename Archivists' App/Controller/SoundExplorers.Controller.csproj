@@ -46,13 +46,13 @@
     <ItemGroup>
         <Compile Include="CellControllerBase.cs" />
         <Compile Include="ComboBoxCellController.cs" />
-        <Compile Include="ITableView.cs" />
+        <Compile Include="IEditorView.cs" />
         <Compile Include="IView.cs" />
         <Compile Include="MainController.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
-        <Compile Include="SelectTableController.cs" />
+        <Compile Include="SelectEditorController.cs" />
         <Compile Include="SizeableFormOptionsController.cs" />
-        <Compile Include="TableController.cs" />
+        <Compile Include="EditorController.cs" />
         <Compile Include="ViewFactory.cs" />
     </ItemGroup>
     <ItemGroup>

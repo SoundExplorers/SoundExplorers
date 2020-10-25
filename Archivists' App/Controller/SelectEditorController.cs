@@ -5,12 +5,12 @@ using SoundExplorers.Model;
 
 namespace SoundExplorers.Controller {
   /// <summary>
-  ///   Controller for the Select a Table dialog box.
+  ///   Controller for the Select a Table Editor dialog box.
   /// </summary>
   [UsedImplicitly]
-  public class SelectTableController {
+  public class SelectEditorController {
     /// <summary>
-    ///   Initialises a new instance of the <see cref="TableController" /> class.
+    ///   Initialises a new instance of the <see cref="EditorController" /> class.
     /// </summary>
     /// <param name="view">
     ///   The view to be shown.
@@ -20,7 +20,7 @@ namespace SoundExplorers.Controller {
     ///   If an empty string or an unsupported table name,
     ///   for no table to be initially selected.
     /// </param>
-    public SelectTableController([NotNull] IView<SelectTableController> view,
+    public SelectEditorController([NotNull] IView<SelectEditorController> view,
       [NotNull] string initiallySelectedTableName) {
       EntityListTypeDictionary = Global.CreateEntityListTypeDictionary();
       if (EntityListTypeDictionary.ContainsKey(initiallySelectedTableName)) {

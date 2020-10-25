@@ -42,17 +42,17 @@ namespace SoundExplorers.View {
     ///   returning the view instance created.
     ///   The parameters are passed to the controller's constructor.
     /// </summary>
-    /// <param name="tableController">
+    /// <param name="editorController">
     ///   The controller of the table editor.
     /// </param>
     /// <param name="columnName">
     ///   The name of the column that is edited with the combo box cell.
     /// </param>
     [NotNull]
-    public static ComboBoxCell Create([NotNull] TableController tableController,
+    public static ComboBoxCell Create([NotNull] EditorController editorController,
       [NotNull] string columnName) {
       return (ComboBoxCell)ViewFactory.Create<ComboBoxCell, ComboBoxCellController>(
-        tableController, columnName);
+        editorController, columnName);
     }
 
     /// <summary>
@@ -169,7 +169,7 @@ namespace SoundExplorers.View {
     // /// <remarks>
     // ///   When this exception is thrown,
     // ///   the DataGridView.DataError event,
-    // ///   which is handled by TableView.MainGrid_DataError,
+    // ///   which is handled by EditorView.MainGrid_DataError,
     // ///   gets raised.
     // /// </remarks>
     // private void ThrowNoAvailableReferencesException(string parentColumnName = null,

@@ -2,14 +2,14 @@
 
 namespace SoundExplorers.Controller {
   public abstract class CellControllerBase {
-    protected CellControllerBase([NotNull] TableController tableController,
+    protected CellControllerBase([NotNull] EditorController editorController,
       [NotNull] string columnName) {
       ColumnName = columnName;
-      TableController = tableController;
+      EditorController = editorController;
     }
 
     [NotNull] protected string ColumnName { get; }
-    [NotNull] protected TableController TableController { get; }
-    [CanBeNull] public string TableName => TableController.MainTableName;
+    [NotNull] protected EditorController EditorController { get; }
+    [CanBeNull] public string TableName => EditorController.MainTableName;
   }
 }

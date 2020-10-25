@@ -5,26 +5,26 @@ using SoundExplorers.Controller;
 
 namespace SoundExplorers.View {
   /// <summary>
-  ///   Select a Table dialog box.
+  ///   Select a Editor dialog box.
   /// </summary>
-  public partial class SelectTableView : Form, IView<SelectTableController> {
+  public partial class SelectEditorView : Form, IView<SelectEditorController> {
     /// <summary>
     ///   Initialises a new instance of the
-    ///   <see cref="SelectTableView" /> class.
+    ///   <see cref="SelectEditorView" /> class.
     /// </summary>
-    public SelectTableView() {
+    public SelectEditorView() {
       InitializeComponent();
-      Load += SelectTableView_Load;
+      Load += SelectEditorView_Load;
     }
 
-    public SelectTableController Controller { get; private set; }
+    public SelectEditorController Controller { get; private set; }
 
-    public void SetController(SelectTableController controller) {
+    public void SetController(SelectEditorController controller) {
       Controller = controller;
     }
 
     /// <summary>
-    ///   Creates a SelectTableView and its associated controller,
+    ///   Creates a SelectEditorView and its associated controller,
     ///   as per the Model-View-Controller design pattern,
     ///   returning the view instance created.
     ///   The parameter is passed to the controller's constructor.
@@ -35,8 +35,8 @@ namespace SoundExplorers.View {
     /// </param>
     /// <returns></returns>
     [NotNull]
-    public static SelectTableView Create([NotNull] string tableName) {
-      return (SelectTableView)ViewFactory.Create<SelectTableView, SelectTableController>(
+    public static SelectEditorView Create([NotNull] string tableName) {
+      return (SelectEditorView)ViewFactory.Create<SelectEditorView, SelectEditorController>(
         tableName);
     }
 
@@ -47,17 +47,17 @@ namespace SoundExplorers.View {
     }
 
     /// <summary>
-    ///   Populates the Table ComboBox.
+    ///   Populates the Editor ComboBox.
     /// </summary>
-    private void PopulateTableComboBox() {
+    private void PopulateEditorComboBox() {
       tableComboBox.DataSource =
         new BindingSource(Controller.EntityListTypeDictionary, null);
       tableComboBox.DisplayMember = "Key";
       tableComboBox.ValueMember = "Value";
     }
 
-    private void SelectTableView_Load(object sender, EventArgs e) {
-      PopulateTableComboBox();
+    private void SelectEditorView_Load(object sender, EventArgs e) {
+      PopulateEditorComboBox();
       if (Controller.SelectedEntityListType != null) {
         tableComboBox.SelectedValue = Controller.SelectedEntityListType;
       }

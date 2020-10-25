@@ -9,9 +9,9 @@ namespace SoundExplorers.Model {
       return new NamedBindingItem<TEntity> {Name = entity.Name};
     }
 
-    protected override EntityColumnList CreateColumns() {
-      return new EntityColumnList {
-        new EntityColumn(nameof(INamedEntity.Name))
+    protected override BindingColumnList CreateColumns() {
+      return new BindingColumnList {
+        new BindingColumn(nameof(INamedEntity.Name))
       };
     }
   }

@@ -7,11 +7,11 @@ namespace SoundExplorers.View {
   /// <summary>
   ///   Table editor MDI child window of the main window.
   /// </summary>
-  internal partial class TableView : Form, ITableView {
+  internal partial class EditorView : Form, IEditorView {
     /// <summary>
-    ///   Initialises a new instance of the <see cref="TableView" /> class.
+    ///   Initialises a new instance of the <see cref="EditorView" /> class.
     /// </summary>
-    public TableView() {
+    public EditorView() {
       InitializeComponent();
       // A known Visual Studio error is that PictureBox's AllowDrop property
       // appears neither in the designer nor in intellisense.
@@ -22,7 +22,7 @@ namespace SoundExplorers.View {
       ImageSplitContainer.GotFocus += SplitContainerOnGotFocus;
     }
 
-    public TableController Controller { get; private set; }
+    public EditorController Controller { get; private set; }
     private DataGridView FocusedGrid { get; set; }
 
     private DataGridViewRow MainCurrentRow => MainGrid.CurrentRow ??
@@ -83,7 +83,7 @@ namespace SoundExplorers.View {
       DatabaseUpdateErrorTimer.Start();
     }
 
-    public void SetController(TableController controller) {
+    public void SetController(EditorController controller) {
       Controller = controller;
     }
 
@@ -117,7 +117,7 @@ namespace SoundExplorers.View {
     }
 
     /// <summary>
-    ///   Creates a TableView and its associated controller,
+    ///   Creates a EditorView and its associated controller,
     ///   as per the Model-View-Controller design pattern,
     ///   returning the view instance created.
     ///   The parameter is passed to the controller's constructor.
@@ -126,12 +126,12 @@ namespace SoundExplorers.View {
     ///   The type of entity list whose data is to be displayed.
     /// </param>
     [NotNull]
-    public static TableView Create([CanBeNull] Type entityListType) {
-      return (TableView)ViewFactory.Create<TableView, TableController>(entityListType);
-      // TableView result;
+    public static EditorView Create([CanBeNull] Type entityListType) {
+      return (EditorView)ViewFactory.Create<EditorView, EditorController>(entityListType);
+      // EditorView result;
       // try {
-      //   result = new TableView();
-      //   var dummy = new TableController(result, entityListType); 
+      //   result = new EditorView();
+      //   var dummy = new EditorController(result, entityListType); 
       // } catch (TargetInvocationException ex) {
       //   throw ex.InnerException ?? ex;
       // }
@@ -319,7 +319,7 @@ namespace SoundExplorers.View {
       // By trial an error,
       // I found that this complicated rigmarole was required to
       // properly shift the focus programatically, 
-      // i.e. in TableViewOnKeyDown to implement doing it with the F6 key.
+      // i.e. in EditorViewOnKeyDown to implement doing it with the F6 key.
       var unfocusedGrid =
         grid == MainGrid ? ParentGrid : MainGrid;
       unfocusedGrid.Enabled = false;
@@ -783,10 +783,10 @@ namespace SoundExplorers.View {
     /// <param name="e">Event arguments.</param>
     /// <remarks>
     ///   This is necessary because of the
-    ///   workaround implemented in TableViewOnDeactivate.
+    ///   workaround implemented in EditorViewOnDeactivate.
     /// </remarks>
-    private void TableViewOnActivated(object sender, EventArgs e) {
-      //Debug.WriteLine("TableViewOnActivated: " + this.Text);
+    private void EditorViewOnActivated(object sender, EventArgs e) {
+      //Debug.WriteLine("EditorViewOnActivated: " + this.Text);
       MainGrid.Enabled = true;
       if (Controller.IsParentTableToBeShown) {
         // A read-only related grid for the parent table is shown
@@ -814,8 +814,8 @@ namespace SoundExplorers.View {
     ///   To be safe, disable the grid even if there aren't date columns:
     ///   maybe there are other data types that would cause similar problems.
     /// </remarks>
-    private void TableViewOnDeactivate(object sender, EventArgs e) {
-      //Debug.WriteLine("TableViewOnDeactivate: " + this.Text);
+    private void EditorViewOnDeactivate(object sender, EventArgs e) {
+      //Debug.WriteLine("EditorViewOnDeactivate: " + this.Text);
       MainGrid.Enabled = false;
       if (Controller.IsParentTableToBeShown) {
         // A read-only related grid for the parent table is shown
@@ -824,7 +824,7 @@ namespace SoundExplorers.View {
       }
     }
 
-    private void TableViewOnFormClosed(object sender, FormClosedEventArgs e) {
+    private void EditorViewOnFormClosed(object sender, FormClosedEventArgs e) {
       //MainGrid.RowValidated -= new DataGridViewCellEventHandler(MainGridOnRowValidated);
       //MainGrid.ReadOnly = true;
       //Refresh();
@@ -853,7 +853,7 @@ namespace SoundExplorers.View {
     ///   the <see cref="Form" />'s <see cref="Form.KeyPreview" />
     ///   property must be set to <b>True</b>.
     /// </remarks>
-    private void TableViewOnKeyDown(object sender, KeyEventArgs e) {
+    private void EditorViewOnKeyDown(object sender, KeyEventArgs e) {
       //switch (e.KeyCode) {
       //case Keys.Enter:
       //    Debug.WriteLine(e.KeyCode);
@@ -870,7 +870,7 @@ namespace SoundExplorers.View {
       } //End of switch
     }
 
-    private void TableViewOnLoad(object sender, EventArgs e) {
+    private void EditorViewOnLoad(object sender, EventArgs e) {
       // Has to be done here rather than in constructor
       // in order to tell that this is an MDI child form.
       SizeableFormOptions = SizeableFormOptions.Create(this);
@@ -880,9 +880,9 @@ namespace SoundExplorers.View {
       OpenTable();
     }
 
-    private void TableViewOnVisibleChanged(object sender, EventArgs e) {
+    private void EditorViewOnVisibleChanged(object sender, EventArgs e) {
       if (Visible) {
-        //Debug.WriteLine("TableViewOnVisibleChanged: " + this.Text);
+        //Debug.WriteLine("EditorViewOnVisibleChanged: " + this.Text);
         MainGrid.AutoResizeColumns();
         ImageSplitContainer.Panel2Collapsed = true;
         // We need to work out whether we need the image panel
@@ -911,7 +911,7 @@ namespace SoundExplorers.View {
           // A read-only related grid for the parent table is shown
           // above the main grid.
           GridSplitContainer.Panel1Collapsed = false;
-          // Does not work if done in TableViewOnLoad.
+          // Does not work if done in EditorViewOnLoad.
           GridSplitContainer.SplitterDistance = Controller.GridSplitterDistance;
           ParentGrid.AutoResizeColumns();
         } else {

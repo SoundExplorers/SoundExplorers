@@ -8,13 +8,13 @@ using SoundExplorers.Tests.Model;
 
 namespace SoundExplorers.Tests.Controller {
   [TestFixture]
-  public class TableControllerTests {
+  public class EditorControllerTests {
     [SetUp]
     public void Setup() {
       QueryHelper = new QueryHelper();
       Data = new TestData(QueryHelper);
       Session = new TestSession();
-      View = new MockTableView();
+      View = new MockEditorView();
     }
 
     [TearDown]
@@ -22,18 +22,18 @@ namespace SoundExplorers.Tests.Controller {
       Session.DeleteDatabaseFolderIfExists();
     }
 
-    private TestTableController Controller { get; set; }
+    private TestEditorController Controller { get; set; }
     private TestData Data { get; set; }
     private QueryHelper QueryHelper { get; set; }
     private TestSession Session { get; set; }
-    private MockTableView View { get; set; }
+    private MockEditorView View { get; set; }
 
     [Test]
     public void Edit() {
       const string name1 = "Auntie";
       const string name2 = "Uncle";
       var editor = new TestEditor<Location,NotablyNamedBindingItem<Location>>();
-      Controller = new TestTableController(View, typeof(LocationList), Session);
+      Controller = new TestEditorController(View, typeof(LocationList), Session);
       Controller.FetchData(); // The grid will be empty initially
       editor.SetBindingList(Controller.MainBindingList);
       editor.AddNew();
@@ -126,7 +126,7 @@ namespace SoundExplorers.Tests.Controller {
         throw;
       }
       // The second Location cannot be deleted because it is a parent of 3 child Events.
-      Controller = new TestTableController(View, typeof(LocationList), Session);
+      Controller = new TestEditorController(View, typeof(LocationList), Session);
       Controller.CreateEntityListData(typeof(LocationList), (IList)Data.Locations);
       Controller.FetchData(); // Populate grid
       editor.SetBindingList(Controller.MainBindingList);

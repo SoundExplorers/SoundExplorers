@@ -13,10 +13,10 @@ namespace SoundExplorers.Model {
       };
     }
 
-    protected override EntityColumnList CreateColumns() {
-      return new EntityColumnList {
-        new EntityColumn(nameof(Newsletter.Date)),
-        new EntityColumn(nameof(Newsletter.Url)) {DisplayName = "URL"}
+    protected override BindingColumnList CreateColumns() {
+      return new BindingColumnList {
+        new BindingColumn(nameof(Newsletter.Date)),
+        new BindingColumn(nameof(Newsletter.Url)) {DisplayName = "URL"}
       };
     }
 

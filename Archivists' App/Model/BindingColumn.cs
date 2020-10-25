@@ -4,10 +4,10 @@ using JetBrains.Annotations;
 
 namespace SoundExplorers.Model {
   /// <summary>
-  ///   Entity column metadata.
+  ///   Column metadata for a binding list that links entities to a grid.
   /// </summary>
-  public class EntityColumn {
-    public EntityColumn([NotNull] string name,
+  public class BindingColumn {
+    public BindingColumn([NotNull] string name,
       Type referencedEntityListType = null, string referencedColumnName = null) {
       Name = name ?? throw new ArgumentNullException(nameof(name));
       if (referencedEntityListType != null && 
