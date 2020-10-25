@@ -192,9 +192,9 @@ namespace SoundExplorers.View {
         return;
       }
       try {
-        var tditorView = CreateEditorView();
-        tditorView.MdiParent = this;
-        tditorView.Show();
+        var editorView = CreateEditorView();
+        editorView.MdiParent = this;
+        editorView.Show();
       } catch (ApplicationException ex) {
         MessageBox.Show(
           ex.Message,
