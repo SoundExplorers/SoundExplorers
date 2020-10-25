@@ -4,7 +4,7 @@ using SoundExplorers.Data;
 
 namespace SoundExplorers.Model {
   [NoReorder]
-  public class EventBindingItem : BindingItemBase<EventBindingItem> {
+  public class EventBindingItem : BindingItemBase<Event, EventBindingItem> {
     private DateTime _date;
     private string _location;
     private string _series;
@@ -15,6 +15,7 @@ namespace SoundExplorers.Model {
     public EventBindingItem() {
       Date = DateTime.Today;
       Newsletter = EntityBase.InitialDate;
+      // TODO: Default EventBindingItem.EventType to 'Performance'
     }
 
     public DateTime Date {
@@ -33,14 +34,6 @@ namespace SoundExplorers.Model {
       }
     }
 
-    public string Series {
-      get => _series;
-      set {
-        _series = value;
-        OnPropertyChanged(nameof(Series));
-      }
-    }
-
     public DateTime Newsletter {
       get => _newsletter;
       set {
@@ -54,6 +47,14 @@ namespace SoundExplorers.Model {
       set {
         _eventType = value;
         OnPropertyChanged(nameof(EventType));
+      }
+    }
+
+    public string Series {
+      get => _series;
+      set {
+        _series = value;
+        OnPropertyChanged(nameof(Series));
       }
     }
 

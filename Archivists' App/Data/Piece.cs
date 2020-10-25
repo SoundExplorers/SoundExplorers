@@ -99,7 +99,7 @@ namespace SoundExplorers.Data {
         var dummy = new Uri(newAudioUrl, UriKind.Absolute);
       } catch (UriFormatException) {
         throw new PropertyConstraintException(
-          $"Invalid AudioUrl format '{newAudioUrl}'.", nameof(AudioUrl));
+          $"Invalid AudioUrl format: '{newAudioUrl}'.", nameof(AudioUrl));
       }
       if (IsPersistent && Session != null && newAudioUrl != oldAudioUrl) {
         // If there's no session, which means we cannot check for a duplicate,

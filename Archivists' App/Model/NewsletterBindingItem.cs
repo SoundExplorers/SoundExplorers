@@ -1,9 +1,11 @@
 ﻿using System;
 using JetBrains.Annotations;
+using SoundExplorers.Data;
 
 namespace SoundExplorers.Model {
   [NoReorder]
-  public class NewsletterBindingItem : BindingItemBase<NewsletterBindingItem> {
+  public class NewsletterBindingItem 
+    : BindingItemBase<Newsletter, NewsletterBindingItem> {
     private DateTime _date;
     private string _url;
 

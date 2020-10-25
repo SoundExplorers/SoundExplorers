@@ -29,6 +29,7 @@ namespace SoundExplorers.Tests.Data {
       Session.Commit();
       Assert.IsNull(schema, "Schema initially");
       schema = new Schema();
+      Assert.IsFalse(schema.AllowOtherTypesOnSamePage, "AllowOtherTypesOnSamePage");
       Assert.AreEqual(0, schema.Version, "Version after creating Schema");
       Session.BeginUpdate();
       schema.RegisterEntityTypes(Session);
@@ -38,6 +39,13 @@ namespace SoundExplorers.Tests.Data {
       Session.Commit();
       Assert.IsNotNull(schema, "Schema after finding persisted occurence");
       Assert.AreEqual(1, schema.Version, "Version finding persisted occurence");
+    }
+
+    [Test]
+    public void SetInstance() {
+      var schema = new Schema();
+      Schema.Instance = schema;
+      Assert.AreSame(schema, Schema.Instance);
     }
   }
 }

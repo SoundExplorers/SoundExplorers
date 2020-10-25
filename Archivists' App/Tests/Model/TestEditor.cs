@@ -1,10 +1,13 @@
 ﻿using System;
 using System.ComponentModel;
 using JetBrains.Annotations;
+using SoundExplorers.Data;
 using SoundExplorers.Model;
 
 namespace SoundExplorers.Tests.Model {
-  public class TestEditor<TBindingItem> where TBindingItem : BindingItemBase<TBindingItem>, new() {
+  public class TestEditor<TEntity, TBindingItem>
+    where TEntity : EntityBase, new()
+    where TBindingItem : BindingItemBase<TEntity, TBindingItem>, new() {
     public TestEditor(IBindingList bindingList = null) {
       SetBindingList(bindingList);
     }

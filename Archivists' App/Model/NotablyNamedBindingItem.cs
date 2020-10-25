@@ -1,8 +1,11 @@
 ﻿using JetBrains.Annotations;
+using SoundExplorers.Data;
 
 namespace SoundExplorers.Model {
   [NoReorder]
-  public class NotablyNamedBindingItem : BindingItemBase<NotablyNamedBindingItem> {
+  public class NotablyNamedBindingItem<TEntity> 
+    : BindingItemBase<TEntity, NotablyNamedBindingItem<TEntity>>
+    where TEntity : EntityBase, INotablyNamedEntity, new() {
     private string _name;
     private string _notes;
 

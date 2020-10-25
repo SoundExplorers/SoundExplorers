@@ -46,17 +46,18 @@ namespace SoundExplorers.Tests.Model {
 
     [Test]
     public void Edit() {
-      Edit<EventTypeList>();
+      Edit<EventType, EventTypeList>();
     }
 
-    private void Edit<TEntityList>()
+    private void Edit<TEntity, TEntityList>()
+      where TEntity : EntityBase, INamedEntity, new()
       where TEntityList : IEntityList, new() {
       const string name1 = "Performance";
       const string name2 = "Interview";
       const string name3 = "Rehearsal";
       var list = new TEntityList {Session = Session};
       list.Populate(); // Creates an empty BindingList
-      var editor = new TestEditor<NamedBindingItem>(list.BindingList);
+      var editor = new TestEditor<TEntity, NamedBindingItem<TEntity>>(list.BindingList);
       var item1 = editor.AddNew();
       item1.Name = name1;
       list.OnRowValidated(0);
@@ -127,15 +128,16 @@ namespace SoundExplorers.Tests.Model {
 
     [Test]
     public void ErrorOnInsert() {
-      ErrorOnInsert<EventTypeList>();
+      ErrorOnInsert<EventType, EventTypeList>();
     }
 
-    private void ErrorOnInsert<TEntityList>()
+    private void ErrorOnInsert<TEntity, TEntityList>()
+      where TEntity : EntityBase, INamedEntity, new()
       where TEntityList : IEntityList, new() {
       const string name = "Performance";
       var list = new TEntityList {Session = Session};
       list.Populate(); // Creates an empty BindingList
-      var editor = new TestEditor<NamedBindingItem>(list.BindingList);
+      var editor = new TestEditor<TEntity, NamedBindingItem<TEntity>>(list.BindingList);
       var item1 = editor.AddNew();
       item1.Name = name;
       list.OnRowValidated(0);
@@ -163,16 +165,17 @@ namespace SoundExplorers.Tests.Model {
 
     [Test]
     public void ErrorOnUpdate() {
-      ErrorOnUpdate<EventTypeList>();
+      ErrorOnUpdate<EventType, EventTypeList>();
     }
 
-    private void ErrorOnUpdate<TEntityList>()
+    private void ErrorOnUpdate<TEntity, TEntityList>()
+      where TEntity : EntityBase, INamedEntity, new()
       where TEntityList : IEntityList, new() {
       const string name1 = "Performance";
       const string name2 = "Rehearsal";
       var list = new TEntityList {Session = Session};
       list.Populate(); // Creates an empty BindingList
-      var editor = new TestEditor<NamedBindingItem>(list.BindingList);
+      var editor = new TestEditor<TEntity, NamedBindingItem<TEntity>>(list.BindingList);
       var item1 = editor.AddNew();
       item1.Name = name1;
       list.OnRowValidated(0);

@@ -12,6 +12,7 @@ namespace SoundExplorers.Tests.Controller {
     public int RestoreMainGridCurrentRowCellErrorValueCount { get; private set; }
     public int SelectCurrentRowOnlyCount { get; private set; }
     public int ShowErrorMessageCount { get; private set; }
+    public int ShowWarningMessageCount { get; private set; }
 
     public void SetController(TableController controller) {
       Controller = controller;
@@ -48,7 +49,7 @@ namespace SoundExplorers.Tests.Controller {
     }
 
     public void ShowWarningMessage(string text) {
-      throw new System.NotImplementedException();
+      ShowWarningMessageCount++;
     }
 
     public void StartDatabaseUpdateErrorTimer() {

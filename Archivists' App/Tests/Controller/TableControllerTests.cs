@@ -32,7 +32,7 @@ namespace SoundExplorers.Tests.Controller {
     public void Edit() {
       const string name1 = "Auntie";
       const string name2 = "Uncle";
-      var editor = new TestEditor<NotablyNamedBindingItem>();
+      var editor = new TestEditor<Location,NotablyNamedBindingItem<Location>>();
       Controller = new TestTableController(View, typeof(LocationList), Session);
       Controller.FetchData(); // The grid will be empty initially
       editor.SetBindingList(Controller.MainBindingList);
@@ -114,7 +114,7 @@ namespace SoundExplorers.Tests.Controller {
 
     [Test]
     public void ErrorOnDelete() {
-      var editor = new TestEditor<NotablyNamedBindingItem>();
+      var editor = new TestEditor<Location, NotablyNamedBindingItem<Location>>();
       Session.BeginUpdate();
       try {
         Data.AddEventTypesPersisted(1, Session);

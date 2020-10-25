@@ -29,7 +29,13 @@ namespace SoundExplorers.Tests.Data {
     private QueryHelper QueryHelper { get; set; }
 
     [Test]
-    public void T010_DisallowInconsistentIdentifyingParent() {
+    public void A010_Initial() {
+      var entity = new Series();
+      Assert.IsFalse(entity.AllowOtherTypesOnSamePage, "AllowOtherTypesOnSamePage");
+    }
+
+    [Test]
+    public void DisallowInconsistentIdentifyingParent() {
       const string motherName = "Winifred";
       var xenia = new DudDaughter(QueryHelper) {Name = "Xenia"};
       var yvette = new DudDaughter(QueryHelper, typeof(Father))

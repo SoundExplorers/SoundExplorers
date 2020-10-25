@@ -21,7 +21,7 @@ namespace SoundExplorers.Model {
   /// </typeparam>
   public abstract class EntityListBase<TEntity, TBindingItem> : List<TEntity>, IEntityList
     where TEntity : EntityBase, new()
-    where TBindingItem : BindingItemBase<TBindingItem>, new() {
+    where TBindingItem : BindingItemBase<TEntity, TBindingItem>, new() {
     private EntityColumnList _columns;
     private SessionBase _session;
 
@@ -46,6 +46,7 @@ namespace SoundExplorers.Model {
       EntityComparer = new EntityComparer<TEntity>();
     }
 
+    // private TEntity BackupEntity { get; set; }
     private TBindingItem BackupBindingItem { get; set; }
     private TBindingItem BackupBindingItemToRestoreFrom { get; set; }
     private TBindingItem BindingItemToFix { get; set; }
@@ -258,9 +259,9 @@ namespace SoundExplorers.Model {
       HasRowBeenEdited = false;
     }
 
-    [NotNull]
-    protected abstract TEntity CreateBackupEntity(
-      [NotNull] TEntity entity);
+    // [NotNull]
+    // protected abstract TEntity CreateBackupEntity(
+    //   [NotNull] TEntity entity);
 
     [NotNull]
     protected abstract TBindingItem CreateBindingItem([NotNull] TEntity entity);
@@ -268,14 +269,8 @@ namespace SoundExplorers.Model {
     [NotNull]
     protected abstract EntityColumnList CreateColumns();
 
-    [NotNull]
-    protected abstract TEntity CreateEntity([NotNull] TBindingItem bindingItem);
-
-    protected abstract void RestoreEntityPropertiesFromBackup(
-      [NotNull] TEntity backupEntity, [NotNull] TEntity entityToRestore);
-
-    protected abstract void UpdateEntityProperty([NotNull] string propertyName,
-      [CanBeNull] object newValue, [NotNull] TEntity entity);
+    // protected abstract void RestoreEntityPropertiesFromBackup(
+    //   [NotNull] TEntity backupEntity, [NotNull] TEntity entityToRestore);
 
     /// <summary>
     ///   Adds a new entity to the list with the data in the specified grid row,
@@ -293,7 +288,7 @@ namespace SoundExplorers.Model {
       var bindingItem = (TBindingItem)BindingList[rowIndex];
       Session.BeginUpdate();
       try {
-        var entity = CreateEntity(bindingItem);
+        var entity = bindingItem.CreateEntity();
         Session.Persist(entity);
         Add(entity);
         IsFixingNewRow = false;
@@ -317,17 +312,9 @@ namespace SoundExplorers.Model {
           //   $"ListChangedType.ItemChanged:  {e.PropertyDescriptor.Name} = '{e.PropertyDescriptor.GetValue(BindingList[e.NewIndex])}', cell edit completed or cancelled");
           HasRowBeenEdited = true;
           if (!IsInsertionRowCurrent && !IsFixingNewRow) {
-            UpdateExistingEntityProperty(e.NewIndex, e.PropertyDescriptor.Name,
-              e.PropertyDescriptor.GetValue(BindingList[e.NewIndex]));
+            UpdateExistingEntityProperty(e.NewIndex, e.PropertyDescriptor.Name);
           }
           break;
-        case ListChangedType.ItemDeleted: // Insertion row left without saving data
-          // Debug.WriteLine(
-          //   "ListChangedType.ItemDeleted:  Insertion row left without saving data");
-          break;
-        default:
-          // Debug.WriteLine("ListChangedType default");
-          throw new NotSupportedException(e.ListChangedType.ToString());
       }
     }
 
@@ -388,15 +375,15 @@ namespace SoundExplorers.Model {
     private void SaveChangesToExistingEntity(int rowIndex) {
       var bindingItem = (TBindingItem)BindingList[rowIndex];
       var entity = this[rowIndex];
-      Session.BeginUpdate(); // Commit block needed when there are referenced entities
-      var backupEntity = CreateBackupEntity(entity);
-      Session.Commit();
+      // Session.BeginUpdate(); // Commit block needed when there are referenced entities
+      // var backupEntity = CreateBackupEntity(entity);
+      // Session.Commit();
       Session.BeginUpdate();
       try {
         entity.UpdateNonIndexField();
       } catch (Exception exception) {
         BindingItemToFix = bindingItem;
-        RestoreEntityPropertiesFromBackup(backupEntity, entity);
+        BackupBindingItem.CopyPropertyValuesToEntity(entity);
         BackupBindingItemToRestoreFrom = BackupBindingItem;
         throw CreateDatabaseUpdateErrorException(exception, rowIndex);
       } finally {
@@ -404,23 +391,20 @@ namespace SoundExplorers.Model {
       }
     }
 
-    private void UpdateExistingEntityProperty(int rowIndex, [NotNull] string propertyName,
-      [CanBeNull] object newValue) {
+    private void UpdateExistingEntityProperty(int rowIndex, [NotNull] string propertyName) {
       //Debug.WriteLine("EntityListBase.UpdateExistingEntityProperty");
       LastDatabaseChangeAction = ChangeAction.Update;
       var bindingItem = (TBindingItem)BindingList[rowIndex];
       var entity = this[rowIndex];
       //Debug.WriteLine($"Backing up {entity}");
-      Session.BeginUpdate(); // Commit block needed when there are referenced entities
-      var backupEntity = CreateBackupEntity(entity);
-      Session.Commit();
+      var backupBindingItem = CreateBindingItem(entity);
       Session.BeginUpdate();
       try {
         //Debug.WriteLine($"IsPersistent before update = {entity.IsPersistent}");
-        UpdateEntityProperty(propertyName, newValue, entity);
+        bindingItem.UpdateEntityProperty(propertyName, entity);
       } catch (Exception exception) {
         BindingItemToFix = bindingItem;
-        RestoreEntityPropertiesFromBackup(backupEntity, entity);
+        backupBindingItem.CopyPropertyValuesToEntity(entity);
         BackupBindingItemToRestoreFrom = BackupBindingItem;
         // This exception will be passed to the grid's DataError event handler.
         throw CreateDatabaseUpdateErrorException(exception, rowIndex);
