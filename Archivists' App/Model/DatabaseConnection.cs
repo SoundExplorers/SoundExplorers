@@ -6,7 +6,7 @@ using VelocityDb.Session;
 namespace SoundExplorers.Model {
   public class DatabaseConnection {
     private const int ExpectedVersion = 1;
-    protected DatabaseConfig DatabaseConfig { get; private set; }
+    private DatabaseConfig DatabaseConfig { get; set; }
 
     public void Open() {
       DatabaseConfig = CreateDatabaseConfig();

@@ -120,6 +120,8 @@
         <Compile Include="Model\NamedEntityListTests.cs" />
         <Compile Include="Model\NewsletterListTests.cs" />
         <Compile Include="Model\OptionTests.cs" />
+        <Compile Include="Model\TestDatabaseConfig.cs" />
+        <Compile Include="Model\TestDatabaseConnection.cs" />
         <Compile Include="Model\TestEditor.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
     </ItemGroup>

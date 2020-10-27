@@ -26,11 +26,11 @@ namespace SoundExplorers.Model {
     ///   Gets or sets the path of the database configuration file.
     ///   The setter should only be required for testing.
     /// </summary>
-    internal string ConfigFilePath {
+    protected internal string ConfigFilePath {
       get => _configFilePath ??
              Global.GetApplicationFolderPath() +
              Path.DirectorySeparatorChar + "DatabaseConfig.xml";
-      set => _configFilePath = value;
+      protected set => _configFilePath = value;
     }
 
     private XmlWriter XmlWriter { get; set; }

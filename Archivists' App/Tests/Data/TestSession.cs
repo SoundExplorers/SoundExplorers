@@ -40,8 +40,8 @@ namespace SoundExplorers.Tests.Data {
         foreach (string filePath in Directory.GetFiles(folderPath)) {
           File.Delete(filePath);
         }
+        Directory.Delete(folderPath);
       }
-      Directory.Delete(folderPath);
     }
 
     private static string GenerateDatabaseFolderPath() {
