@@ -26,12 +26,10 @@ namespace SoundExplorers.Model {
     ///   Gets or sets the path of the database configuration file.
     ///   The setter should only be required for testing.
     /// </summary>
-    // ReSharper disable once MemberCanBePrivate.Global
     internal string ConfigFilePath {
       get => _configFilePath ??
              Global.GetApplicationFolderPath() +
              Path.DirectorySeparatorChar + "DatabaseConfig.xml";
-      // ReSharper disable once UnusedMember.Global
       set => _configFilePath = value;
     }
 
@@ -51,7 +49,7 @@ namespace SoundExplorers.Model {
           SetParameterPropertyValue(parameterProperty);
         }
       } else {
-        DatabaseFolderPath = DefaultDatabaseFolderPath;
+        DatabaseFolderPath = SetDatabaseFolderPath();
         CreateConfigFile();
         throw new ApplicationException(
           $"Please edit database configuration file '{ConfigFilePath}' "
@@ -101,6 +99,10 @@ namespace SoundExplorers.Model {
         throw Global.CreateFileException(ex, "Database configuration file",
           ConfigFilePath);
       }
+    }
+
+    protected virtual string SetDatabaseFolderPath() {
+      return DefaultDatabaseFolderPath;
     }
 
     private void SetParameterPropertyValue([NotNull] PropertyInfo property) {

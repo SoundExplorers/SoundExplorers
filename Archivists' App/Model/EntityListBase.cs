@@ -367,27 +367,17 @@ namespace SoundExplorers.Model {
     ///   we still have to call UpdateNonIndexField one more time,
     ///   now that row validation is complete,
     ///   in order to save the changes to the database.
+    ///   <para>
+    ///   Because validation by property has already been done,
+    ///   user errors are not expected at this stage.
+    ///   </para>
     /// </remarks>
     /// <param name="rowIndex">Zero-based row index</param>
-    /// <exception cref="DatabaseUpdateErrorException">
-    ///   Thrown when a database update error occurs.
-    ///   However, because validation by property has already been done,
-    ///   errors are not expected at this stage.
-    /// </exception>
     private void SaveChangesToExistingEntity(int rowIndex) {
-      var bindingItem = (TBindingItem)BindingList[rowIndex];
       var entity = this[rowIndex];
-      // Session.BeginUpdate(); // Commit block needed when there are referenced entities
-      // var backupEntity = CreateBackupEntity(entity);
-      // Session.Commit();
       Session.BeginUpdate();
       try {
         entity.UpdateNonIndexField();
-      } catch (Exception exception) {
-        BindingItemToFix = bindingItem;
-        BackupBindingItem.CopyPropertyValuesToEntity(entity);
-        BackupBindingItemToRestoreFrom = BackupBindingItem;
-        throw CreateDatabaseUpdateErrorException(exception, rowIndex);
       } finally {
         Session.Commit();
       }

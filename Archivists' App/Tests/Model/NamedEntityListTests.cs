@@ -33,9 +33,9 @@ namespace SoundExplorers.Tests.Model {
 
     private void A010_Initial<TEntityList>([NotNull] string tableName)
       where TEntityList : IEntityList, new() {
-      var list = new TEntityList();
+      var list = new TEntityList {IsParentList = true};
       Assert.AreEqual(tableName, list.TableName, "TableName");
-      Assert.IsFalse(list.IsParentList, "IsParentList");
+      Assert.IsTrue(list.IsParentList, "IsParentList");
       Assert.IsNull(list.ParentListType, "ParentListType");
       Assert.AreEqual(1, list.Columns.Count, "Columns.Count");
       Assert.AreEqual("Name", list.Columns[0].Name, "Columns[0].Name");

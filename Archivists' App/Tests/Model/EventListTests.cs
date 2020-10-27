@@ -42,6 +42,8 @@ namespace SoundExplorers.Tests.Model {
         "Columns[1].ReferencedEntityListType");
       Assert.AreEqual("Name", List.Columns[1].ReferencedColumnName,
         "Columns[1].ReferencedColumnName");
+      Assert.AreEqual("Location", List.Columns[1].ReferencedTableName,
+        "Columns[1].ReferencedTableName");
       Assert.AreEqual("Newsletter", List.Columns[2].Name, "Columns[2].Name");
       Assert.AreEqual(typeof(NewsletterList), List.Columns[2].ReferencedEntityListType,
         "Columns[2].ReferencedEntityListType");
@@ -72,7 +74,7 @@ namespace SoundExplorers.Tests.Model {
       var eventType = Data.EventTypes[1];
       var series = Data.Series[0];
       const string notes = "My notes";
-      List.Populate();
+      List.Populate(); 
       var editor = new TestEditor<Event, EventBindingItem>(List.BindingList);
       editor[1].Date = date;
       editor[1].SetParent("Location", location);

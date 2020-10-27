@@ -1,5 +1,7 @@
 using System;
 using System.Data;
+using System.Diagnostics.CodeAnalysis;
+using JetBrains.Annotations;
 using SoundExplorers.Data;
 using VelocityDb.Session;
 
@@ -9,8 +11,6 @@ namespace SoundExplorers.Model {
   ///   as held on the UserOption table.
   /// </summary>
   public class Option {
-    private QueryHelper _queryHelper;
-    private SessionBase _session;
 
     /// <summary>
     ///   Initialises a new instance of the Option class,
@@ -37,37 +37,30 @@ namespace SoundExplorers.Model {
     ///   Thrown if
     ///   there is an error on attempting to access the database.
     /// </exception>
-    public Option(string name, object defaultValue = null) {
+    [ExcludeFromCodeCoverage]
+    public Option([NotNull] string name, object defaultValue = null) : this(
+      QueryHelper.Instance, Global.Session, name, defaultValue) { }
+
+    /// <summary>
+    ///   Should only need to be called directly for testing.
+    /// </summary>
+    protected Option([NotNull] QueryHelper queryHelper, [NotNull] SessionBase session,
+      [NotNull] string name, object defaultValue = null) {
+      Session = session;
       DefaultValue = defaultValue;
       var temp = new UserOption {UserId = Environment.UserName, OptionName = name};
       Session.BeginUpdate();
-      UserOption = QueryHelper.Find<UserOption>(temp.SimpleKey, Session);
+      UserOption = queryHelper.Find<UserOption>(temp.SimpleKey, Session);
       if (UserOption == null) {
         UserOption = temp;
-        if (DefaultValue != null && DefaultValue.ToString() != string.Empty) {
-          UserOption.OptionValue = DefaultValue.ToString();
-        } else {
-          UserOption.OptionValue = string.Empty;
-        }
+        UserOption.OptionValue = !string.IsNullOrWhiteSpace(DefaultValue?.ToString())
+          ? DefaultValue.ToString()
+          : string.Empty;
       }
       Session.Commit();
     }
-
-    // ReSharper disable once MemberCanBePrivate.Global
-    internal QueryHelper QueryHelper {
-      get => _queryHelper ?? (_queryHelper = QueryHelper.Instance);
-      // The setter is for testing.
-      // ReSharper disable once UnusedMember.Global
-      set => _queryHelper = value;
-    }
-
-    // ReSharper disable once MemberCanBePrivate.Global
-    internal SessionBase Session {
-      get => _session ?? (_session = Global.Session);
-      // The setter is for testing.
-      // ReSharper disable once UnusedMember.Global
-      set => _session = value;
-    }
+    
+    private SessionBase Session { get; }
 
     /// <summary>
     ///   Gets or sets the entity that represents the
@@ -93,14 +86,8 @@ namespace SoundExplorers.Model {
     /// </remarks>
     public bool BooleanValue {
       get {
-        try {
-          return bool.Parse(StringValue);
-        } catch (FormatException) {
-          if (DefaultValue != null) {
-            return (bool)DefaultValue;
-          }
-          return false;
-        }
+        bool.TryParse(StringValue, out bool result);
+        return result;
       }
       set => StringValue = value.ToString();
     }
@@ -128,14 +115,8 @@ namespace SoundExplorers.Model {
     /// </remarks>
     public int Int32Value {
       get {
-        try {
-          return int.Parse(StringValue);
-        } catch (FormatException) {
-          if (DefaultValue != null) {
-            return (int)DefaultValue;
-          }
-          return 0;
-        }
+        int.TryParse(StringValue, out int result);
+        return result;
       }
       set => StringValue = value.ToString();
     }

@@ -111,9 +111,15 @@
         <Compile Include="Data\TestSchema.cs" />
         <Compile Include="Data\TestSession.cs" />
         <Compile Include="Data\UserOptionTests.cs" />
+        <Compile Include="Model\BindingColumnListTests.cs" />
+        <Compile Include="Model\BindingColumnTests.cs" />
+        <Compile Include="Model\DatabaseConnectionTests.cs" />
+        <Compile Include="Model\EntityListBaseTests.cs" />
         <Compile Include="Model\EventListTests.cs" />
         <Compile Include="Model\LocationListTests.cs" />
         <Compile Include="Model\NamedEntityListTests.cs" />
+        <Compile Include="Model\NewsletterListTests.cs" />
+        <Compile Include="Model\OptionTests.cs" />
         <Compile Include="Model\TestEditor.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
     </ItemGroup>

@@ -6,10 +6,10 @@ using VelocityDb.Session;
 namespace SoundExplorers.Model {
   public class DatabaseConnection {
     private const int ExpectedVersion = 1;
-    private DatabaseConfig DatabaseConfig { get; set; }
+    protected DatabaseConfig DatabaseConfig { get; private set; }
 
     public void Open() {
-      DatabaseConfig = new DatabaseConfig();
+      DatabaseConfig = CreateDatabaseConfig();
       DatabaseConfig.Load();
       CheckDatabaseFolderExists();
       var session = new SessionNoServer(DatabaseConfig.DatabaseFolderPath);
@@ -26,6 +26,10 @@ namespace SoundExplorers.Model {
       session.Commit();
       Global.Session = session;
       Schema.Instance = schema;
+    }
+
+    protected virtual DatabaseConfig CreateDatabaseConfig() {
+      return new DatabaseConfig();
     }
 
     private void CheckDatabaseFolderExists() {
