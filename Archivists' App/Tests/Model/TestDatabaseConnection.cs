@@ -7,6 +7,7 @@ namespace SoundExplorers.Tests.Model {
       [NotNull] string databaseFolderPath) {
       ConfigFilePath = configFilePath;
       DatabaseFolderPath = databaseFolderPath;
+      ExpectedVersion = 66;
     }
 
     [NotNull] private string ConfigFilePath { get; }

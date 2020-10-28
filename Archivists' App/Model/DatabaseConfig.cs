@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Reflection;
 using System.Xml;
@@ -36,11 +37,11 @@ namespace SoundExplorers.Model {
     private XmlWriter XmlWriter { get; set; }
 
     [Description(@"Database folder path. Example: C:\Folder\Subfolder")]
-    public string DatabaseFolderPath { get; private set; }
+    public string DatabaseFolderPath { get; protected set; }
 
     [Description(
       "Path of the licence file for the VelocityDB object-oriented database management system.")]
-    public string VelocityDbLicenceFilePath { get; private set; }
+    public string VelocityDbLicenceFilePath { get; protected set; }
 
     public void Load() {
       if (File.Exists(ConfigFilePath)) {
@@ -101,6 +102,7 @@ namespace SoundExplorers.Model {
       }
     }
 
+    [ExcludeFromCodeCoverage]
     protected virtual string SetDatabaseFolderPath() {
       return DefaultDatabaseFolderPath;
     }
