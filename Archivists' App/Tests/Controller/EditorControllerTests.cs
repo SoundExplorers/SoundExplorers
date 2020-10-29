@@ -105,10 +105,26 @@ namespace SoundExplorers.Tests.Controller {
         "editor.Count after error message shown for duplicate insert");
       Assert.AreEqual(1, View.MakeMainGridInsertionRowCurrentCount,
         "MakeMainGridInsertionRowCurrentCount after error message shown for duplicate insert");
+      // When the insertion error message was shown,
+      // focus was forced back to the error row
+      // in EditorController.ShowDatabaseUpdateError.
+      // That would raise the EditorView.MainGridOnRowEnter event,
+      // which we have to simulate here.
+      Controller.OnMainGridRowEnter(2);
+      // Then the user opted to cancel out of adding the new row
+      // rather than fixing it so that the add would work.
+      // That would raise the EditorView.MainRowValidated event, 
+      // even though nothing has changed.
+      // We have to simulate that here to test to test
+      // that the unwanted new row would get removed from the grid
+      // (if there was a real grid).
+      Controller.OnMainGridRowValidated(2);
+      Assert.AreEqual(3, View.OnRowAddedOrDeletedCount,
+        "OnRowAddedOrDeletedCount after return to error row");
       // Delete the second item
       Controller.OnMainGridRowEnter(1);
       Controller.OnMainGridRowRemoved(1);
-      Assert.AreEqual(3, View.OnRowAddedOrDeletedCount,
+      Assert.AreEqual(4, View.OnRowAddedOrDeletedCount,
         "OnRowAddedOrDeletedCount after delete");
       Controller.FetchData(); // Refresh grid
       editor.SetBindingList(Controller.MainBindingList);

@@ -179,7 +179,7 @@ namespace SoundExplorers.Model {
       //   $"{nameof(OnRowEnter)}:  Any row entered (after ItemAdded if insertion row)");
       HasRowBeenEdited = false;
       if (BackupBindingItemToRestoreFrom == null) {
-        // Not forced to reenter row to fix error
+        // Not forced to reenter row to fix an update error
         BackupBindingItem = !IsInsertionRowCurrent
           ? ((TBindingItem)BindingList[rowIndex]).CreateBackup()
           : new TBindingItem();
@@ -208,6 +208,16 @@ namespace SoundExplorers.Model {
       if (!HasRowBeenEdited) {
         IsInsertionRowCurrent = false;
         if (IsFixingNewRow) {
+          // When an insertion error message was shown,
+          // focus was forced back to the error row
+          // in EditorController.ShowDatabaseUpdateError.
+          // That raised the EditorView.MainGridOnRowEnter event.
+          // Then the user opted to cancel out of adding the new row
+          // rather than fixing it so that the add would work.
+          // That raised the EditorView.MainRowValidated event
+          // even though nothing has changed.
+          // That got us here.
+          // We need to remove the unwanted new row from the grid.
           BindingList.RemoveAt(rowIndex);
           IsFixingNewRow = false;
         }
