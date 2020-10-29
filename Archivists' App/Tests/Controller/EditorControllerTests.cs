@@ -1,5 +1,6 @@
 ﻿using System;
-using System.Collections;
+using System.Collections.Generic;
+using JetBrains.Annotations;
 using NUnit.Framework;
 using SoundExplorers.Data;
 using SoundExplorers.Model;
@@ -32,9 +33,11 @@ namespace SoundExplorers.Tests.Controller {
     public void Edit() {
       const string name1 = "Auntie";
       const string name2 = "Uncle";
-      var editor = new TestEditor<Location,NotablyNamedBindingItem<Location>>();
-      Controller = new TestEditorController(View, typeof(LocationList), Session);
+      var editor = new TestEditor<Location, NotablyNamedBindingItem<Location>>();
+      Controller = CreateTestEditorController(typeof(LocationList));
+      Assert.IsFalse(Controller.IsParentTableToBeShown, "IsParentTableToBeShown");
       Controller.FetchData(); // The grid will be empty initially
+      Assert.AreEqual("Location", Controller.MainTableName, "MainTableName");
       editor.SetBindingList(Controller.MainBindingList);
       editor.AddNew();
       Controller.OnMainGridRowEnter(0); // Go to insertion row
@@ -120,14 +123,12 @@ namespace SoundExplorers.Tests.Controller {
         Data.AddEventTypesPersisted(1, Session);
         Data.AddLocationsPersisted(2, Session);
         Data.AddEventsPersisted(3, Session, Data.Locations[1]);
+      } finally {
         Session.Commit();
-      } catch {
-        Session.Abort();
-        throw;
       }
       // The second Location cannot be deleted because it is a parent of 3 child Events.
-      Controller = new TestEditorController(View, typeof(LocationList), Session);
-      Controller.CreateEntityListData(typeof(LocationList), (IList)Data.Locations);
+      Controller = CreateTestEditorController(typeof(LocationList));
+      //Controller.CreateEntityListData(typeof(LocationList), (IList)Data.Locations);
       Controller.FetchData(); // Populate grid
       editor.SetBindingList(Controller.MainBindingList);
       editor.AddNew(); // Show data load is complete.  Otherwise delete won't work.
@@ -141,6 +142,62 @@ namespace SoundExplorers.Tests.Controller {
       Controller.TestUnsupportedLastChangeAction = true;
       Assert.Throws<NotSupportedException>(() => Controller.OnMainGridRowRemoved(1),
         "Unsupported last change action");
+    }
+
+    [Test]
+    public void GetColumnDisplayName() {
+      Session.BeginUpdate();
+      Data.AddNewslettersPersisted(1, Session);
+      Session.Commit();
+      Controller = CreateTestEditorController(typeof(NewsletterList));
+      Controller.FetchData(); // Populate grid
+      Assert.AreEqual("URL", Controller.GetColumnDisplayName("Url"));
+    }
+
+    [Test]
+    public void GridSplitterDistance() {
+      const int distance = 123;
+      Controller = CreateTestEditorController(typeof(EventList));
+      Controller.GridSplitterDistance = distance;
+      Assert.AreEqual(distance, Controller.GridSplitterDistance);
+    }
+
+    [Test]
+    public void SetParent() {
+      Session.BeginUpdate();
+      try {
+        Data.AddEventTypesPersisted(1, Session);
+        Data.AddLocationsPersisted(1, Session);
+        Data.AddSeriesPersisted(1, Session);
+        Data.AddEventsPersisted(1, Session);
+      } finally {
+        Session.Commit();
+      }
+      Controller = CreateTestEditorController(typeof(EventList));
+      Controller.FetchData(); // Populate grid
+      Assert.IsTrue(Controller.DoesColumnReferenceAnotherEntity("Series"),
+        "DoesColumnReferenceAnotherEntity");
+      var editor = new TestEditor<Event, EventBindingItem>(Controller.MainBindingList);
+      string selectedSeriesName = Data.Series[0].Name;
+      var selectedSeries = Data.Series[0];
+      var selectedItem =
+        new KeyValuePair<string, IEntity>(selectedSeriesName, selectedSeries);
+      Controller.SetParent(0, "Series", selectedItem);
+      editor[0].Series = selectedSeriesName;
+      Assert.AreSame(selectedSeries, ((Event)Controller.GetMainList()[0]).Series,
+        "Series");
+    }
+
+    [Test]
+    public void ShowWarningMessage() {
+      Controller = CreateTestEditorController(typeof(EventList));
+      Controller.ShowWarningMessage("Warning! Warning!");
+      Assert.AreEqual(1, View.ShowWarningMessageCount);
+    }
+
+    [NotNull]
+    private TestEditorController CreateTestEditorController([NotNull] Type mainListType) {
+      return new TestEditorController(View, mainListType, QueryHelper, Session);
     }
   }
 }

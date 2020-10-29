@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data.Linq;
+using System.Diagnostics.CodeAnalysis;
 using JetBrains.Annotations;
 using SoundExplorers.Data;
 using SoundExplorers.Model;
@@ -36,8 +37,8 @@ namespace SoundExplorers.Controller {
     ///   represented by the Entity's field properties.
     /// </summary>
     internal BindingColumnList Columns => MainList?.Columns ??
-                                         throw new NullReferenceException(
-                                           nameof(Columns));
+                                          throw new NullReferenceException(
+                                            nameof(Columns));
 
     /// <summary>
     ///   User option for the position of the split between the
@@ -50,7 +51,7 @@ namespace SoundExplorers.Controller {
 
     private Option GridSplitterDistanceOption =>
       _gridSplitterDistanceOption ?? (_gridSplitterDistanceOption =
-        new Option($"{MainList?.TableName}.GridSplitterDistance"));
+        CreateOption($"{MainList?.TableName}.GridSplitterDistance"));
 
     protected virtual ChangeAction LastChangeAction =>
       MainList.LastDatabaseUpdateErrorException.ChangeAction;
@@ -60,11 +61,13 @@ namespace SoundExplorers.Controller {
     ///   image data (above) and the image (below) in the image table editor.
     /// </summary>
     // ReSharper disable once UnusedMember.Global
+    [ExcludeFromCodeCoverage]
     public int ImageSplitterDistance {
       get => ImageSplitterDistanceOption.Int32Value;
       set => ImageSplitterDistanceOption.Int32Value = value;
     }
 
+    [ExcludeFromCodeCoverage]
     private Option ImageSplitterDistanceOption =>
       _imageSplitterDistanceOption ?? (_imageSplitterDistanceOption =
         new Option($"{MainList?.TableName}.ImageSplitterDistance"));
@@ -80,7 +83,7 @@ namespace SoundExplorers.Controller {
     /// <summary>
     ///   Gets or set the list of entities represented in the main table.
     /// </summary>
-    private IEntityList MainList { get; set; }
+    protected IEntityList MainList { get; private set; }
 
     [NotNull] private Type MainListType { get; }
     [CanBeNull] public string MainTableName => MainList?.TableName;
@@ -109,6 +112,7 @@ namespace SoundExplorers.Controller {
     /// <exception cref="ApplicationException">
     ///   Whatever error might be thrown on attempting to update the tags.
     /// </exception>
+    [ExcludeFromCodeCoverage]
     public void EditAudioFileTags() {
       // string path = GetMediumPath(Medium.Audio);
       // var dummy = new AudioFile(path);
@@ -175,6 +179,12 @@ namespace SoundExplorers.Controller {
     [NotNull]
     protected virtual IEntityList CreateEntityList([NotNull] Type type) {
       return Global.CreateEntityList(type);
+    }
+
+    [ExcludeFromCodeCoverage]
+    [NotNull]
+    protected virtual Option CreateOption([NotNull] string name) {
+      return new Option(name);
     }
 
     [CanBeNull]
@@ -259,6 +269,7 @@ namespace SoundExplorers.Controller {
     /// <exception cref="ApplicationException">
     ///   The audio cannot be played.
     /// </exception>
+    [ExcludeFromCodeCoverage]
     public void PlayAudio() {
       //Process.Start(GetMediumPath(Medium.Audio));
     }
@@ -270,6 +281,7 @@ namespace SoundExplorers.Controller {
     /// <exception cref="ApplicationException">
     ///   The video cannot be played.
     /// </exception>
+    [ExcludeFromCodeCoverage]
     public void PlayVideo() {
       //Process.Start(GetMediumPath(Medium.Video));
     }
@@ -280,6 +292,7 @@ namespace SoundExplorers.Controller {
     /// <exception cref="ApplicationException">
     ///   A newsletter cannot be shown.
     /// </exception>
+    [ExcludeFromCodeCoverage]
     public void ShowNewsletter() {
       // var newsletter = GetNewsletterToShow();
       // if (string.IsNullOrWhiteSpace(newsletter.Path)) { } else if (!File.Exists(
