@@ -259,18 +259,11 @@ namespace SoundExplorers.Model {
       HasRowBeenEdited = false;
     }
 
-    // [NotNull]
-    // protected abstract TEntity CreateBackupEntity(
-    //   [NotNull] TEntity entity);
-
     [NotNull]
     protected abstract TBindingItem CreateBindingItem([NotNull] TEntity entity);
 
     [NotNull]
     protected abstract BindingColumnList CreateColumns();
-
-    // protected abstract void RestoreEntityPropertiesFromBackup(
-    //   [NotNull] TEntity backupEntity, [NotNull] TEntity entityToRestore);
 
     /// <summary>
     ///   Adds a new entity to the list with the data in the specified grid row,

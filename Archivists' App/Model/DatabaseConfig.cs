@@ -9,7 +9,7 @@ using JetBrains.Annotations;
 
 namespace SoundExplorers.Model {
   /// <summary>
-  ///   Database configuration parameters that are specified via an XML file.
+  ///   Database configuration parameter properties that are specified via an XML file.
   /// </summary>
   /// <remarks>
   ///   The code for this class is based on the Parameters class of
@@ -46,8 +46,8 @@ namespace SoundExplorers.Model {
     public void Load() {
       if (File.Exists(ConfigFilePath)) {
         Data = LoadData();
-        foreach (var parameterProperty in GetType().GetProperties()) {
-          SetParameterPropertyValue(parameterProperty);
+        foreach (var property in GetType().GetProperties()) {
+          SetPropertyValue(property);
         }
       } else {
         DatabaseFolderPath = SetDatabaseFolderPath();
@@ -63,7 +63,7 @@ namespace SoundExplorers.Model {
         XmlWriter.WriteComment("Database configuration parameters");
         // Write the root element.
         XmlWriter.WriteStartElement(nameof(DatabaseConfig));
-        WriteParametersToXml();
+        WritePropertiesToXml();
         // Write the close tag for the root element.
         XmlWriter.WriteEndElement();
         XmlWriter.WriteEndDocument();
@@ -71,15 +71,31 @@ namespace SoundExplorers.Model {
       }
     }
 
+    [ExcludeFromCodeCoverage]
+    private Exception CreateDatabaseConfigFileException([NotNull] Exception exception) {
+      return Global.CreateFileException(exception, "Database configuration file",
+        ConfigFilePath);
+    }
+
+    [ExcludeFromCodeCoverage]
     private XmlWriter CreateXmlWriter() {
       try {
         return XmlWriter.Create(
           ConfigFilePath,
           new XmlWriterSettings {Indent = true});
-      } catch (Exception ex) {
-        throw Global.CreateFileException(ex, "Database configuration file",
-          ConfigFilePath);
+      } catch (Exception exception) {
+        throw CreateDatabaseConfigFileException(exception);
       }
+    }
+
+    [ExcludeFromCodeCoverage]
+    private ApplicationException CreateXmlElementValueFormatException(
+      [NotNull] string name, [CanBeNull] string value) {
+      return new ApplicationException(
+        "The " + name + " property value '"
+        + value
+        + "' found in database configuration file "
+        + Path.GetFileName(ConfigFilePath) + " is not properly formatted.");
     }
 
     private string GetPropertyDescription([NotNull] string name) {
@@ -96,9 +112,8 @@ namespace SoundExplorers.Model {
           "The following XML error was found in database configuration file "
           + ConfigFilePath + ":" + Environment.NewLine
           + ex.Message);
-      } catch (Exception ex) {
-        throw Global.CreateFileException(ex, "Database configuration file",
-          ConfigFilePath);
+      } catch (Exception exception) {
+        throw CreateDatabaseConfigFileException(exception);
       }
     }
 
@@ -107,28 +122,30 @@ namespace SoundExplorers.Model {
       return DefaultDatabaseFolderPath;
     }
 
-    private void SetParameterPropertyValue([NotNull] PropertyInfo property) {
+    private void SetPropertyValue([NotNull] PropertyInfo property) {
       var element = Data.Element(property.Name);
       if (element == null) {
         throw new ApplicationException(
           "The " + property.Name + " tag was not found in database configuration file "
           + ConfigFilePath + ".");
       }
+      SetPropertyValueFromXmlElement(property, element);
+    }
+
+    [ExcludeFromCodeCoverage]
+    private void SetPropertyValueFromXmlElement([NotNull] PropertyInfo property,
+      [NotNull] XElement element) {
       try {
         property.SetValue(
           this,
           Convert.ChangeType(
             element.Value.Trim(), property.PropertyType));
       } catch (FormatException) {
-        throw new ApplicationException(
-          "The " + property.Name + " parameter value '"
-          + element.Value
-          + "' found in database configuration file "
-          + Path.GetFileName(ConfigFilePath) + " is not properly formatted.");
+        throw CreateXmlElementValueFormatException(property.Name, element.Value);
       }
     }
 
-    private void WriteParametersToXml() {
+    private void WritePropertiesToXml() {
       WriteCommentedElement(nameof(DatabaseFolderPath), DatabaseFolderPath);
       WriteCommentedElement(nameof(VelocityDbLicenceFilePath), "For developer use only");
     }
