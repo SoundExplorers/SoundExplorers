@@ -180,6 +180,21 @@ namespace SoundExplorers.Tests.Controller {
     }
 
     [Test]
+    public void OnParentGridRowEntered() {
+      Session.BeginUpdate();
+      try {
+        Data.AddEventTypesPersisted(1, Session);
+        Data.AddGenresPersisted(1, Session);
+        Data.AddLocationsPersisted(1, Session);
+        Data.AddEventsPersisted(2, Session);
+        Data.AddSetsPersisted(3, Session, Data.Events[0]);
+        Data.AddSetsPersisted(5, Session, Data.Events[1]);
+      } finally {
+        Session.Commit();
+      }
+    }
+
+    [Test]
     public void SetParent() {
       Session.BeginUpdate();
       try {

@@ -125,7 +125,7 @@ namespace SoundExplorers.Controller {
         ParentList.IsParentList = true;
         ParentList.Populate();
         if (ParentList.BindingList?.Count > 0) {
-          MainList.Populate(ParentList.GetChildren(0));
+          MainList.Populate(ParentList.GetChildrenForMainList(0));
         }
       } else {
         MainList.Populate();
@@ -259,7 +259,7 @@ namespace SoundExplorers.Controller {
     ///   child entities of the entity at the specified row index.
     /// </summary>
     public void OnParentGridRowEntered(int rowIndex) {
-      MainList?.Populate(ParentList?.GetChildren(rowIndex));
+      MainList?.Populate(ParentList?.GetChildrenForMainList(rowIndex));
     }
 
     /// <summary>

@@ -21,7 +21,7 @@ namespace SoundExplorers.Model {
     }
 
     [ExcludeFromCodeCoverage]
-    public override IList GetChildren(int rowIndex) {
+    public override IList GetChildrenForMainList(int rowIndex) {
       throw new NotSupportedException();
     }
   }

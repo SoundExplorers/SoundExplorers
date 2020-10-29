@@ -30,7 +30,7 @@ namespace SoundExplorers.Tests.Model {
 
     private class DudErrorThrowerList : NamedEntityList<DudErrorThrower> {
       [ExcludeFromCodeCoverage]
-      public override IList GetChildren(int rowIndex) {
+      public override IList GetChildrenForMainList(int rowIndex) {
         throw new NotSupportedException();
       }
     }

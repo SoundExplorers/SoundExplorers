@@ -6,7 +6,7 @@ using SoundExplorers.Data;
 namespace SoundExplorers.Model {
   public class SeriesList : NotablyNamedEntityList<Series> {
     [ExcludeFromCodeCoverage]
-    public override IList GetChildren(int rowIndex) {
+    public override IList GetChildrenForMainList(int rowIndex) {
       throw new NotSupportedException();
     }
   }

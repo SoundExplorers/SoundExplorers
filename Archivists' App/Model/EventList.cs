@@ -4,9 +4,7 @@ using SoundExplorers.Data;
 
 namespace SoundExplorers.Model {
   public class EventList : EntityListBase<Event, EventBindingItem> {
-    public EventList() : base(typeof(LocationList)) { }
-
-    public override IList GetChildren(int rowIndex) {
+    public override IList GetChildrenForMainList(int rowIndex) {
       return this[rowIndex].Sets.Values.ToList();
     }
 

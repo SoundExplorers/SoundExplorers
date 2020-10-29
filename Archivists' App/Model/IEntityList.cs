@@ -96,7 +96,7 @@ namespace SoundExplorers.Model {
     ///   Zero-based row index.
     /// </param>
     [CanBeNull]
-    IList GetChildren(int rowIndex);
+    IList GetChildrenForMainList(int rowIndex);
     
     [NotNull] IList<object> GetErrorValues();
 

@@ -96,13 +96,13 @@ namespace SoundExplorers.Tests.Model {
     }
 
     [Test]
-    public void GetChildren() {
+    public void GetChildrenForMainList() {
       Session.BeginUpdate();
       Data.AddGenresPersisted(1, Session);
       Data.AddSetsPersisted(3, Session);
       Session.Commit();
       List.Populate();
-      var children = List.GetChildren(0);
+      var children = List.GetChildrenForMainList(0);
       Assert.AreEqual(3, children?.Count, "Count");
       Assert.IsInstanceOf<Set>(children?[0], "Child type");
     }
