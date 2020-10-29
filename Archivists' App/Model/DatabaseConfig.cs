@@ -77,15 +77,10 @@ namespace SoundExplorers.Model {
         ConfigFilePath);
     }
 
-    [ExcludeFromCodeCoverage]
     private XmlWriter CreateXmlWriter() {
-      try {
-        return XmlWriter.Create(
-          ConfigFilePath,
-          new XmlWriterSettings {Indent = true});
-      } catch (Exception exception) {
-        throw CreateDatabaseConfigFileException(exception);
-      }
+      return DoGetConfigFileObject(() => XmlWriter.Create(
+        ConfigFilePath,
+        new XmlWriterSettings {Indent = true}));
     }
 
     [ExcludeFromCodeCoverage]
@@ -98,6 +93,16 @@ namespace SoundExplorers.Model {
         + Path.GetFileName(ConfigFilePath) + " is not properly formatted.");
     }
 
+    [ExcludeFromCodeCoverage]
+    [NotNull]
+    private TResult DoGetConfigFileObject<TResult>([NotNull] Func<TResult> function) {
+      try {
+        return function.Invoke();
+      } catch (Exception exception) {
+        throw CreateDatabaseConfigFileException(exception);
+      }
+    }
+
     private string GetPropertyDescription([NotNull] string name) {
       return
         GetType().GetProperty(name)?
@@ -105,16 +110,16 @@ namespace SoundExplorers.Model {
     }
 
     private XElement LoadData() {
-      try {
-        return XElement.Load(ConfigFilePath);
-      } catch (XmlException ex) {
-        throw new ApplicationException(
-          "The following XML error was found in database configuration file "
-          + ConfigFilePath + ":" + Environment.NewLine
-          + ex.Message);
-      } catch (Exception exception) {
-        throw CreateDatabaseConfigFileException(exception);
-      }
+      return DoGetConfigFileObject(() => {
+        try {
+          return XElement.Load(ConfigFilePath);
+        } catch (XmlException ex) {
+          throw new ApplicationException(
+            "The following XML error was found in database configuration file "
+            + ConfigFilePath + ":" + Environment.NewLine
+            + ex.Message);
+        }
+      });
     }
 
     [ExcludeFromCodeCoverage]

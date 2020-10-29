@@ -209,7 +209,8 @@ namespace SoundExplorers.Model {
         IsInsertionRowCurrent = false;
         if (IsFixingNewRow) {
           // When an insertion error message was shown,
-          // focus was forced back to the error row
+          // focus was forced back to the error row,
+          // now no longer the insertion row,
           // in EditorController.ShowDatabaseUpdateError.
           // That raised the EditorView.MainGridOnRowEnter event.
           // Then the user opted to cancel out of adding the new row
