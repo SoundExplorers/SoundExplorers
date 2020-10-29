@@ -71,12 +71,6 @@ namespace SoundExplorers.Model {
       }
     }
 
-    [ExcludeFromCodeCoverage]
-    private Exception CreateDatabaseConfigFileException([NotNull] Exception exception) {
-      return Global.CreateFileException(exception, "Database configuration file",
-        ConfigFilePath);
-    }
-
     private XmlWriter CreateXmlWriter() {
       return DoGetConfigFileObject(() => XmlWriter.Create(
         ConfigFilePath,
@@ -99,7 +93,8 @@ namespace SoundExplorers.Model {
       try {
         return function.Invoke();
       } catch (Exception exception) {
-        throw CreateDatabaseConfigFileException(exception);
+        throw Global.CreateFileException(exception, "Database configuration file",
+          ConfigFilePath);
       }
     }
 
