@@ -7,7 +7,7 @@ namespace SoundExplorers.Data {
   /// <summary>
   ///   An entity representing a Set's genre.
   /// </summary>
-  public class Genre : EntityBase {
+  public class Genre : EntityBase, INamedEntity {
     public Genre() : base(typeof(Genre), nameof(Name), null) {
       Sets = new SortedChildList<Set>(this);
     }

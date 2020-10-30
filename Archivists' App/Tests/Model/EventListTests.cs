@@ -34,7 +34,7 @@ namespace SoundExplorers.Tests.Model {
     public void A010_Initial() {
       Assert.AreEqual("Event", List.TableName, "TableName");
       Assert.IsFalse(List.IsParentList, "IsParentList");
-      Assert.AreEqual(typeof(LocationList), List.ParentListType, "ParentListType");
+      Assert.IsNull(List.ParentListType, "ParentListType");
       Assert.AreEqual(6, List.Columns.Count, "Columns.Count");
       Assert.AreEqual("Date", List.Columns[0].Name, "Columns[0].Name");
       Assert.AreEqual("Location", List.Columns[1].Name, "Columns[1].Name");

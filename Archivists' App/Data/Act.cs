@@ -7,7 +7,7 @@ namespace SoundExplorers.Data {
   /// <summary>
   ///   An entity representing an act that has performed at Events.
   /// </summary>
-  public class Act : EntityBase {
+  public class Act : EntityBase, INotablyNamedEntity {
     private string _notes;
 
     public Act() : base(typeof(Act), nameof(Name), null) {

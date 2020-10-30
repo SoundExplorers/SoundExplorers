@@ -192,6 +192,13 @@ namespace SoundExplorers.Tests.Controller {
       } finally {
         Session.Commit();
       }
+      Controller = CreateTestEditorController(typeof(SetList));
+      Controller.FetchData(); // Populate grid
+      Assert.AreEqual(2, Controller.ParentBindingList?.Count, "Parent list count");
+      Assert.AreEqual(3, Controller.MainBindingList?.Count, "Main list count initially");
+      Controller.OnParentGridRowEntered(1);
+      Assert.AreEqual(5, Controller.MainBindingList?.Count,
+        "Main list count when 2nd parent selected");
     }
 
     [Test]

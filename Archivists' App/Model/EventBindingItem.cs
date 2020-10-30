@@ -15,7 +15,7 @@ namespace SoundExplorers.Model {
     public EventBindingItem() {
       Date = DateTime.Today;
       Newsletter = EntityBase.InitialDate;
-      // TODO: Default EventBindingItem.EventType to 'Performance'
+      EventType = "Performance";
     }
 
     public DateTime Date {
