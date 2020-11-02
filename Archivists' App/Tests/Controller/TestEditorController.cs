@@ -35,12 +35,6 @@ namespace SoundExplorers.Tests.Controller {
       return new TestOption(QueryHelper, Session, name);
     }
 
-    // public void CreateEntityListData([NotNull] Type entityListType,
-    //   [NotNull] IList list) {
-    //   var entityList = CreateEntityList(entityListType);
-    //   entityList.Populate(list);
-    // }
-
     public IEntityList GetMainList() {
       return MainList;
     }

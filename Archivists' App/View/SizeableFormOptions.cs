@@ -91,7 +91,7 @@ namespace SoundExplorers.View {
       try {
         result = new SizeableFormOptions(form);
         var dummy =
-          new SizeableFormOptionsController(result, form.Name, !form.IsMdiChild);
+          new SizeableFormOptionsController(result, form.Name);
       } catch (TargetInvocationException ex) {
         throw ex.InnerException ?? ex;
       }

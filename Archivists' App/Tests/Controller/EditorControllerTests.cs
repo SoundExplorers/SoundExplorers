@@ -34,7 +34,7 @@ namespace SoundExplorers.Tests.Controller {
       const string name1 = "Auntie";
       const string name2 = "Uncle";
       var editor = new TestEditor<Location, NotablyNamedBindingItem<Location>>();
-      Controller = CreateTestEditorController(typeof(LocationList));
+      Controller = CreateController(typeof(LocationList));
       Assert.IsFalse(Controller.IsParentTableToBeShown, "IsParentTableToBeShown");
       Controller.FetchData(); // The grid will be empty initially
       Assert.AreEqual("Location", Controller.MainTableName, "MainTableName");
@@ -144,7 +144,7 @@ namespace SoundExplorers.Tests.Controller {
         Session.Commit();
       }
       // The second Location cannot be deleted because it is a parent of 3 child Events.
-      Controller = CreateTestEditorController(typeof(LocationList));
+      Controller = CreateController(typeof(LocationList));
       //Controller.CreateEntityListData(typeof(LocationList), (IList)Data.Locations);
       Controller.FetchData(); // Populate grid
       editor.SetBindingList(Controller.MainBindingList);
@@ -166,7 +166,7 @@ namespace SoundExplorers.Tests.Controller {
       Session.BeginUpdate();
       Data.AddNewslettersPersisted(1, Session);
       Session.Commit();
-      Controller = CreateTestEditorController(typeof(NewsletterList));
+      Controller = CreateController(typeof(NewsletterList));
       Controller.FetchData(); // Populate grid
       Assert.AreEqual("URL", Controller.GetColumnDisplayName("Url"));
     }
@@ -174,7 +174,7 @@ namespace SoundExplorers.Tests.Controller {
     [Test]
     public void GridSplitterDistance() {
       const int distance = 123;
-      Controller = CreateTestEditorController(typeof(EventList));
+      Controller = CreateController(typeof(EventList));
       Controller.GridSplitterDistance = distance;
       Assert.AreEqual(distance, Controller.GridSplitterDistance);
     }
@@ -192,7 +192,7 @@ namespace SoundExplorers.Tests.Controller {
       } finally {
         Session.Commit();
       }
-      Controller = CreateTestEditorController(typeof(SetList));
+      Controller = CreateController(typeof(SetList));
       Controller.FetchData(); // Populate grid
       Assert.AreEqual(2, Controller.ParentBindingList?.Count, "Parent list count");
       Assert.AreEqual(3, Controller.MainBindingList?.Count, "Main list count initially");
@@ -212,7 +212,7 @@ namespace SoundExplorers.Tests.Controller {
       } finally {
         Session.Commit();
       }
-      Controller = CreateTestEditorController(typeof(EventList));
+      Controller = CreateController(typeof(EventList));
       Controller.FetchData(); // Populate grid
       Assert.IsTrue(Controller.DoesColumnReferenceAnotherEntity("Series"),
         "DoesColumnReferenceAnotherEntity");
@@ -229,13 +229,13 @@ namespace SoundExplorers.Tests.Controller {
 
     [Test]
     public void ShowWarningMessage() {
-      Controller = CreateTestEditorController(typeof(EventList));
+      Controller = CreateController(typeof(EventList));
       Controller.ShowWarningMessage("Warning! Warning!");
       Assert.AreEqual(1, View.ShowWarningMessageCount);
     }
 
     [NotNull]
-    private TestEditorController CreateTestEditorController([NotNull] Type mainListType) {
+    private TestEditorController CreateController([NotNull] Type mainListType) {
       return new TestEditorController(View, mainListType, QueryHelper, Session);
     }
   }
