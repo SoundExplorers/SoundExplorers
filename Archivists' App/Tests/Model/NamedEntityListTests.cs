@@ -34,7 +34,7 @@ namespace SoundExplorers.Tests.Model {
     private void A010_Initial<TEntityList>([NotNull] string tableName)
       where TEntityList : IEntityList, new() {
       var list = new TEntityList {IsParentList = true};
-      Assert.AreEqual(tableName, list.TableName, "TableName");
+      Assert.AreEqual(tableName, list.EntityName, "EntityName");
       Assert.IsTrue(list.IsParentList, "IsParentList");
       Assert.IsNull(list.ParentListType, "ParentListType");
       Assert.AreEqual(1, list.Columns.Count, "Columns.Count");
@@ -151,7 +151,7 @@ namespace SoundExplorers.Tests.Model {
         Assert.AreEqual(ChangeAction.Insert, exception.ChangeAction, "ChangeAction");
         Assert.IsTrue(
           exception.Message.Contains(
-            $"cannot be added because another {list.TableName} "
+            $"cannot be added because another {list.EntityName} "
             + "with the same key already persists."),
           "Message");
         Assert.AreEqual(1, exception.RowIndex, "RowIndex");
@@ -190,7 +190,7 @@ namespace SoundExplorers.Tests.Model {
         Assert.AreEqual(ChangeAction.Update, exception.ChangeAction, "ChangeAction");
         Assert.IsTrue(
           exception.Message.Contains(
-            $"because another {list.TableName} "
+            $"because another {list.EntityName} "
             + "with that Name already exists."),
           "Message");
         Assert.AreEqual(1, exception.RowIndex, "RowIndex");

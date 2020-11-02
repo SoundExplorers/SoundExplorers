@@ -9,6 +9,13 @@ using VelocityDb.Session;
 namespace SoundExplorers.Tests.Data {
   public class TestData {
     static TestData() {
+      // ReSharper disable once StringLiteralTypo
+      ActNames = new List<string> {
+        "Miles Davis Quintet", "Art Ensemble of Chicago", "World Saxophone Quartet", 
+        "Duke Ellington’s Jazz Orchestra", "Count Basie Orchestra", "Jazz Messengers", 
+        "Cab Calloway Orchestra", "Mahavishnu Orchestra", "Return to Forever", 
+        "Weather Report"
+      };
       Chars =
         // ReSharper disable once StringLiteralTypo
         ("abcdefghijklmnopqrstuvwxyz" +
@@ -18,7 +25,7 @@ namespace SoundExplorers.Tests.Data {
       };
       GenreNames = new List<string> {
         "Free Improvisation", "Jazz", "Composed", "Ambient", "Dance", "Noise", "Folk",
-        "Rock"
+        "Rock", "Electronic", "Global"
       };
       LocationNames = new List<string> {
         "Athens", "Berlin", "Copenhagen", "Dublin", "Edinburgh", "Frankfurt", "Geneva",
@@ -32,28 +39,47 @@ namespace SoundExplorers.Tests.Data {
 
     public TestData([NotNull] QueryHelper queryHelper) {
       QueryHelper = queryHelper;
+      Acts = new List<Act>();
       Events = new List<Event>();
       EventTypes = new List<EventType>();
       Genres = new List<Genre>();
       Locations = new List<Location>();
       Newsletters = new List<Newsletter>();
+      Pieces = new List<Piece>();
       Series = new List<Series>();
       Sets = new List<Set>();
     }
 
+    public IList<Act> Acts { get; }
     public IList<Event> Events { get; }
     public IList<EventType> EventTypes { get; }
     public IList<Genre> Genres { get; }
     public IList<Location> Locations { get; }
     public IList<Newsletter> Newsletters { get; }
+    public IList<Piece> Pieces { get; }
     public IList<Series> Series { get; }
     public IList<Set> Sets { get; }
+    private static IList<string> ActNames { get; }
     private static char[] Chars { get; }
     private static IList<string> EventTypeNames { get; }
     private static IList<string> GenreNames { get; }
     private static IList<string> LocationNames { get; }
-    private static IList<string> SeriesNames { get; }
     [NotNull] private QueryHelper QueryHelper { get; }
+    private static IList<string> SeriesNames { get; }
+
+    public void AddActsPersisted(int count, [NotNull] SessionBase session) {
+      for (var i = 0; i < count; i++) {
+        var genre = new Act {
+          QueryHelper = QueryHelper,
+          Name = Acts.Count < ActNames.Count
+            ? ActNames[Acts.Count]
+            : GenerateUniqueName(8),
+          Notes = GenerateUniqueName(16)
+        };
+        session.Persist(genre);
+        Acts.Add(genre);
+      }
+    }
 
     public void AddEventsPersisted(int count, [NotNull] SessionBase session,
       Location location = null, EventType eventType = null) {
@@ -118,12 +144,30 @@ namespace SoundExplorers.Tests.Data {
         var newsletter = new Newsletter {
           QueryHelper = QueryHelper,
           Date = date,
-          Url = new Uri($"https://{GenerateUniqueName(8)}.com/{GenerateUniqueName(6)}",
-            UriKind.Absolute).ToString()
+          Url = GenerateUniqueUrl()
         };
         session.Persist(newsletter);
         Newsletters.Add(newsletter);
         date = date.AddDays(7);
+      }
+    }
+
+    public void AddPiecesPersisted(int count, [NotNull] SessionBase session,
+      Set set = null) {
+      var pieceNo = 1;
+      for (var i = 0; i < count; i++) {
+        var piece = new Piece {
+          QueryHelper = QueryHelper,
+          PieceNo = pieceNo,
+          Set = set ?? GetDefaultSet(),
+          AudioUrl = GenerateUniqueUrl(),
+          VideoUrl = GenerateUniqueUrl(),
+          Title = GenerateUniqueName(8),
+          Notes = GenerateUniqueName(16)
+        };
+        session.Persist(piece);
+        Pieces.Add(piece);
+        pieceNo++;
       }
     }
 
@@ -189,6 +233,14 @@ namespace SoundExplorers.Tests.Data {
       return Locations[0];
     }
 
+    [NotNull]
+    private Set GetDefaultSet() {
+      if (Sets.Count == 0) {
+        throw new InvalidOperationException("An Set must be added first.");
+      }
+      return Sets[0];
+    }
+
     private static string GenerateUniqueName(int size) {
       var data = new byte[4 * size];
       using (var crypto = new RNGCryptoServiceProvider()) {
@@ -201,6 +253,11 @@ namespace SoundExplorers.Tests.Data {
         result.Append(Chars[idx]);
       }
       return result.ToString();
+    }
+
+    private static string GenerateUniqueUrl() {
+      return new Uri($"https://{GenerateUniqueName(8)}.com/{GenerateUniqueName(6)}",
+        UriKind.Absolute).ToString();
     }
   }
 }

@@ -32,7 +32,7 @@ namespace SoundExplorers.Tests.Model {
 
     [Test]
     public void A010_Initial() {
-      Assert.AreEqual("Event", List.TableName, "TableName");
+      Assert.AreEqual("Event", List.EntityName, "EntityName");
       Assert.IsFalse(List.IsParentList, "IsParentList");
       Assert.IsNull(List.ParentListType, "ParentListType");
       Assert.AreEqual(6, List.Columns.Count, "Columns.Count");

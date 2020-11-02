@@ -73,6 +73,8 @@ namespace SoundExplorers.Model {
     /// </summary>
     public BindingColumnList Columns => _columns ?? (_columns = CreateColumns());
 
+    public string EntityName => typeof(TEntity).Name;
+
     /// <summary>
     ///   For unknown reason, the grid's RowRemoved event is raised 2 or 3 times
     ///   while data is being loaded into the grid.
@@ -95,7 +97,7 @@ namespace SoundExplorers.Model {
     public bool IsFixingNewRow { get; set; }
 
     /// <summary>
-    ///   True if this is a (read-only) parent list.
+    ///   Gets or sets whether this is a (read-only) parent list.
     ///   False (the default) if this is the (updatable) main (and maybe only) list.
     /// </summary>
     public bool IsParentList { get; set; }
@@ -117,8 +119,6 @@ namespace SoundExplorers.Model {
       // ReSharper disable once UnusedMember.Global
       set => _session = value;
     }
-
-    public string TableName => typeof(TEntity).Name;
 
     /// <summary>
     ///   Deletes the entity at the specified row index

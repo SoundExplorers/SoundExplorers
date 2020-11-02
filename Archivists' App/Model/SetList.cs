@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Linq;
 using SoundExplorers.Data;
 
 namespace SoundExplorers.Model {
@@ -6,11 +7,12 @@ namespace SoundExplorers.Model {
     public SetList() : base(typeof(EventList)) { }
 
     public override IList GetChildrenForMainList(int rowIndex) {
-      return (IList)this[rowIndex].Pieces.Values;
+      return this[rowIndex].Pieces.Values.ToList();
     }
 
     protected override SetBindingItem CreateBindingItem(Set set) {
       return new SetBindingItem {
+        Date = set.Event.Date, Location = set.Event.Location.Name,
         SetNo = set.SetNo, Act = set.Act?.Name,
         Genre = set.Genre.Name,
         Notes = set.Notes
@@ -24,7 +26,7 @@ namespace SoundExplorers.Model {
           typeof(ActList), nameof(Act.Name)),
         new BindingColumn(nameof(Set.Genre),
           typeof(GenreList), nameof(Genre.Name)),
-        new BindingColumn(nameof(Set.Notes), typeof(string))
+        new BindingColumn(nameof(Set.Notes))
       };
       if (IsParentList) {
         result.Insert(0,

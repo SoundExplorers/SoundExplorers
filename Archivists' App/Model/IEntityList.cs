@@ -22,6 +22,8 @@ namespace SoundExplorers.Model {
     [NotNull]
     BindingColumnList Columns { get; }
 
+    [NotNull] string EntityName { get; }
+
     /// <summary>
     ///   For unknown reason, the grid's RowRemoved event is raised 2 or 3 times
     ///   while data is being loaded into the grid.
@@ -44,7 +46,7 @@ namespace SoundExplorers.Model {
     bool IsFixingNewRow { get; set; }
 
     /// <summary>
-    ///   True if this is a (read-only) parent list.
+    ///   Gets or sets whether this is a (read-only) parent list.
     ///   False (the default) if this is the (updatable) main (and maybe only) list.
     /// </summary>
     bool IsParentList { get; set; }
@@ -64,8 +66,6 @@ namespace SoundExplorers.Model {
     /// </summary>
     [NotNull]
     SessionBase Session { get; set; }
-
-    [NotNull] string TableName { get; }
 
     /// <summary>
     ///   If the specified grid row is new or its data has changed,

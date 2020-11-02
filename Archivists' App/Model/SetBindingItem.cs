@@ -1,13 +1,32 @@
-﻿using JetBrains.Annotations;
+﻿using System;
+using JetBrains.Annotations;
 using SoundExplorers.Data;
 
 namespace SoundExplorers.Model {
   [NoReorder]
   public class SetBindingItem : BindingItemBase<Set, SetBindingItem> {
+    private DateTime _date;
+    private string _location;
     private int _setNo;
     private string _act;
     private string _genre;
     private string _notes;
+
+    public DateTime Date {
+      get => _date;
+      set {
+        _date = value;
+        OnPropertyChanged(nameof(Date));
+      }
+    }
+
+    public string Location {
+      get => _location;
+      set {
+        _location = value;
+        OnPropertyChanged(nameof(Location));
+      }
+    }
 
     public int SetNo {
       get => _setNo;

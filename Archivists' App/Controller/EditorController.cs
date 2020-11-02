@@ -51,7 +51,7 @@ namespace SoundExplorers.Controller {
 
     private Option GridSplitterDistanceOption =>
       _gridSplitterDistanceOption ?? (_gridSplitterDistanceOption =
-        CreateOption($"{MainList?.TableName}.GridSplitterDistance"));
+        CreateOption($"{MainList?.EntityName}.GridSplitterDistance"));
 
     protected virtual ChangeAction LastChangeAction =>
       MainList.LastDatabaseUpdateErrorException.ChangeAction;
@@ -70,7 +70,7 @@ namespace SoundExplorers.Controller {
     [ExcludeFromCodeCoverage]
     private Option ImageSplitterDistanceOption =>
       _imageSplitterDistanceOption ?? (_imageSplitterDistanceOption =
-        new Option($"{MainList?.TableName}.ImageSplitterDistance"));
+        new Option($"{MainList?.EntityName}.ImageSplitterDistance"));
 
     /// <summary>
     ///   Gets whether a read-only related grid for a parent table is to be shown
@@ -86,7 +86,7 @@ namespace SoundExplorers.Controller {
     protected IEntityList MainList { get; private set; }
 
     [NotNull] private Type MainListType { get; }
-    [CanBeNull] public string MainTableName => MainList?.TableName;
+    [CanBeNull] public string MainTableName => MainList?.EntityName;
     [CanBeNull] public IBindingList ParentBindingList => ParentList?.BindingList;
 
     /// <summary>
