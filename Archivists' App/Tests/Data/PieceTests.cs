@@ -249,33 +249,25 @@ namespace SoundExplorers.Tests.Data {
     [Test]
     public void DisallowInvalidAudioUrl() {
       var piece = new Piece();
-      try {
-        piece.AudioUrl = "blah";
-        Assert.Fail("A PropertyConstraintException should have been thrown.");
-      } catch (Exception exception) {
-        Assert.AreEqual("Invalid AudioUrl format: 'blah'.", exception.Message, 
-          "Message");
-        Assert.IsInstanceOf<PropertyConstraintException>(exception,
-          "Exception type");
-        Assert.AreEqual("AudioUrl", ((PropertyConstraintException)exception).PropertyName,
-          "PropertyName");
-      }
+      var exception = Assert.Catch<PropertyConstraintException>(
+        () => piece.AudioUrl = "blah",
+        "A PropertyConstraintException should have been thrown.");
+      Assert.AreEqual("Invalid AudioUrl format: 'blah'.", exception.Message, 
+        "Message");
+      Assert.AreEqual("AudioUrl", exception.PropertyName,
+        "PropertyName");
     }
 
     [Test]
     public void DisallowInvalidVideoUrl() {
       var piece = new Piece();
-      try {
-        piece.VideoUrl = "blah";
-        Assert.Fail("A PropertyConstraintException should have been thrown.");
-      } catch (Exception exception) {
-        Assert.AreEqual("Invalid VideoUrl format: 'blah'.", exception.Message, 
-          "Message");
-        Assert.IsInstanceOf<PropertyConstraintException>(exception,
-          "Exception type");
-        Assert.AreEqual("VideoUrl", ((PropertyConstraintException)exception).PropertyName,
-          "PropertyName");
-      }
+      var exception = Assert.Catch<PropertyConstraintException>(
+        () => piece.VideoUrl = "blah",
+        "A PropertyConstraintException should have been thrown.");
+      Assert.AreEqual("Invalid VideoUrl format: 'blah'.", exception.Message, 
+        "Message");
+      Assert.AreEqual("VideoUrl", exception.PropertyName,
+        "PropertyName");
     }
 
     [Test]

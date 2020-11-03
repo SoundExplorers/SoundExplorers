@@ -11,9 +11,9 @@ namespace SoundExplorers.Tests.Data {
     static TestData() {
       // ReSharper disable once StringLiteralTypo
       ActNames = new List<string> {
-        "Miles Davis Quintet", "Art Ensemble of Chicago", "World Saxophone Quartet", 
-        "Duke Ellington’s Jazz Orchestra", "Count Basie Orchestra", "Jazz Messengers", 
-        "Cab Calloway Orchestra", "Mahavishnu Orchestra", "Return to Forever", 
+        "Miles Davis Quintet", "Art Ensemble of Chicago", "World Saxophone Quartet",
+        "Duke Ellington’s Jazz Orchestra", "Count Basie Orchestra", "Jazz Messengers",
+        "Cab Calloway Orchestra", "Mahavishnu Orchestra", "Return to Forever",
         "Weather Report"
       };
       Chars =
@@ -204,41 +204,36 @@ namespace SoundExplorers.Tests.Data {
 
     [NotNull]
     private Event GetDefaultEvent() {
-      if (Events.Count == 0) {
-        throw new InvalidOperationException("An Event must be added first.");
-      }
-      return Events[0];
+      return Events.Count >= 0
+        ? Events[0]
+        : throw new InvalidOperationException("An Event must be added first.");
     }
 
     [NotNull]
     private EventType GetDefaultEventType() {
-      if (EventTypes.Count == 0) {
-        throw new InvalidOperationException("An EventType must be added first.");
-      }
-      return EventTypes[0];
+      return EventTypes.Count >= 0
+        ? EventTypes[0]
+        : throw new InvalidOperationException("An EventType must be added first.");
     }
 
     private Genre GetDefaultGenre() {
-      if (Genres.Count == 0) {
-        throw new InvalidOperationException("A Genre must be added first.");
-      }
-      return Genres[0];
+      return Genres.Count >= 0
+        ? Genres[0]
+        : throw new InvalidOperationException("A Genre must be added first.");
     }
 
     [NotNull]
     private Location GetDefaultLocation() {
-      if (Locations.Count == 0) {
-        throw new InvalidOperationException("A Location must be added first.");
-      }
-      return Locations[0];
+      return Locations.Count >= 0
+        ? Locations[0]
+        : throw new InvalidOperationException("A Location must be added first.");
     }
 
     [NotNull]
     private Set GetDefaultSet() {
-      if (Sets.Count == 0) {
-        throw new InvalidOperationException("An Set must be added first.");
-      }
-      return Sets[0];
+      return Sets.Count >= 0
+        ? Sets[0]
+        : throw new InvalidOperationException("A Set must be added first.");
     }
 
     private static string GenerateUniqueName(int size) {

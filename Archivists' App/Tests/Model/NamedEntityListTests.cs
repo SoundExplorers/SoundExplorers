@@ -109,21 +109,18 @@ namespace SoundExplorers.Tests.Model {
       where TEntityList : IEntityList, new() {
       var list = new TEntityList {Session = Session};
       list.Populate(entities);
-      try {
-        list.DeleteEntity(1);
-        Assert.Fail(
-          "DeleteEntity should have thrown DatabaseUpdateErrorException.");
-      } catch (DatabaseUpdateErrorException exception) {
-        Assert.AreEqual(ChangeAction.Delete, exception.ChangeAction, "ChangeAction");
-        Assert.IsTrue(
-          exception.Message.Contains("cannot be deleted because it is referenced by"),
-          "Message");
-        Assert.AreEqual(1, exception.RowIndex, "RowIndex");
-        Assert.IsInstanceOf(typeof(ConstraintException), exception.InnerException,
-          "InnerException");
-        Assert.AreSame(exception, list.LastDatabaseUpdateErrorException,
-          "LastDatabaseUpdateErrorException");
-      }
+      var exception = Assert.Catch<DatabaseUpdateErrorException>(
+        () => list.DeleteEntity(1),
+        "DeleteEntity should have thrown DatabaseUpdateErrorException.");
+      Assert.AreEqual(ChangeAction.Delete, exception.ChangeAction, "ChangeAction");
+      Assert.IsTrue(
+        exception.Message.Contains("cannot be deleted because it is referenced by"),
+        "Message");
+      Assert.AreEqual(1, exception.RowIndex, "RowIndex");
+      Assert.IsInstanceOf(typeof(ConstraintException), exception.InnerException,
+        "InnerException");
+      Assert.AreSame(exception, list.LastDatabaseUpdateErrorException,
+        "LastDatabaseUpdateErrorException");
     }
 
     [Test]
@@ -143,24 +140,21 @@ namespace SoundExplorers.Tests.Model {
       list.OnRowValidated(0);
       var item2 = editor.AddNew();
       item2.Name = name;
-      try {
-        list.OnRowValidated(1);
-        Assert.Fail(
-          "Duplicate name should have thrown DatabaseUpdateErrorException.");
-      } catch (DatabaseUpdateErrorException exception) {
-        Assert.AreEqual(ChangeAction.Insert, exception.ChangeAction, "ChangeAction");
-        Assert.IsTrue(
-          exception.Message.Contains(
-            $"cannot be added because another {list.EntityName} "
-            + "with the same key already persists."),
-          "Message");
-        Assert.AreEqual(1, exception.RowIndex, "RowIndex");
-        Assert.AreEqual(0, exception.ColumnIndex, "ColumnIndex");
-        Assert.IsInstanceOf(typeof(PropertyConstraintException), exception.InnerException,
-          "InnerException");
-        Assert.AreSame(exception, list.LastDatabaseUpdateErrorException,
-          "LastDatabaseUpdateErrorException");
-      }
+      var exception = Assert.Catch<DatabaseUpdateErrorException>(
+        () => list.OnRowValidated(1),
+        "Duplicate name should have thrown DatabaseUpdateErrorException.");
+      Assert.AreEqual(ChangeAction.Insert, exception.ChangeAction, "ChangeAction");
+      Assert.IsTrue(
+        exception.Message.Contains(
+          $"cannot be added because another {list.EntityName} "
+          + "with the same key already persists."),
+        "Message");
+      Assert.AreEqual(1, exception.RowIndex, "RowIndex");
+      Assert.AreEqual(0, exception.ColumnIndex, "ColumnIndex");
+      Assert.IsInstanceOf(typeof(PropertyConstraintException), exception.InnerException,
+        "InnerException");
+      Assert.AreSame(exception, list.LastDatabaseUpdateErrorException,
+        "LastDatabaseUpdateErrorException");
     }
 
     [Test]
@@ -182,24 +176,21 @@ namespace SoundExplorers.Tests.Model {
       var item2 = editor.AddNew();
       item2.Name = name2;
       list.OnRowValidated(1);
-      try {
-        item2.Name = name1;
-        Assert.Fail(
-          "Rename should have thrown DatabaseUpdateErrorException.");
-      } catch (DatabaseUpdateErrorException exception) {
-        Assert.AreEqual(ChangeAction.Update, exception.ChangeAction, "ChangeAction");
-        Assert.IsTrue(
-          exception.Message.Contains(
-            $"because another {list.EntityName} "
-            + "with that Name already exists."),
-          "Message");
-        Assert.AreEqual(1, exception.RowIndex, "RowIndex");
-        Assert.AreEqual(0, exception.ColumnIndex, "ColumnIndex");
-        Assert.IsInstanceOf(typeof(PropertyConstraintException), exception.InnerException,
-          "InnerException");
-        Assert.AreSame(exception, list.LastDatabaseUpdateErrorException,
-          "LastDatabaseUpdateErrorException");
-      }
+      var exception = Assert.Catch<DatabaseUpdateErrorException>(
+        () => item2.Name = name1,
+        "Rename name should have thrown DatabaseUpdateErrorException.");
+      Assert.AreEqual(ChangeAction.Update, exception.ChangeAction, "ChangeAction");
+      Assert.IsTrue(
+        exception.Message.Contains(
+          $"because another {list.EntityName} "
+          + "with that Name already exists."),
+        "Message");
+      Assert.AreEqual(1, exception.RowIndex, "RowIndex");
+      Assert.AreEqual(0, exception.ColumnIndex, "ColumnIndex");
+      Assert.IsInstanceOf(typeof(PropertyConstraintException), exception.InnerException,
+        "InnerException");
+      Assert.AreSame(exception, list.LastDatabaseUpdateErrorException,
+        "LastDatabaseUpdateErrorException");
     }
   }
 }

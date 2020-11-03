@@ -38,37 +38,28 @@ namespace SoundExplorers.Tests.Model {
     [Test]
     public void TheTest() {
       // Neither the configuration file nor the database folder exist.
-      try {
-        Connection.Open();
-        Assert.Fail(
-          "Open should have thrown ApplicationException for missing configuration file.");
-      } catch (ApplicationException exception) {
-        Assert.IsTrue(
-          exception.Message.StartsWith("Please edit database configuration file '"),
-          "Missing configuration file message");
-      }
+      var exception = Assert.Catch<ApplicationException>(
+        () => Connection.Open(),
+        "Open should have thrown ApplicationException for missing configuration file.");
+      Assert.IsTrue(
+        exception.Message.StartsWith("Please edit database configuration file '"),
+        "Missing configuration file message");
       // The configuration file has been created and already contains
       // the database folder path we want to use.
       // So we don't actually need to edit the configuration file.  
-      try {
-        Connection.Open();
-        Assert.Fail(
-          "Open should have thrown ApplicationException for missing database folder.");
-      } catch (ApplicationException exception) {
-        Assert.IsTrue(
-          exception.Message.StartsWith("Database folder '"),
-          "Missing database folder message");
-      }
+      exception = Assert.Catch<ApplicationException>(
+        () => Connection.Open(),
+        "Open should have thrown ApplicationException for missing database folder.");
+      Assert.IsTrue(
+        exception.Message.StartsWith("Database folder '"),
+        "Missing database folder message");
       Directory.CreateDirectory(DatabaseFolderPath);
-      try {
-        Connection.Open();
-        Assert.Fail(
-          "Open should have thrown ApplicationException for missing licence file.");
-      } catch (ApplicationException exception) {
-        Assert.IsTrue(
-          exception.Message.StartsWith("VelocityDB licence file '"),
-          "Missing licence file message");
-      }
+      exception = Assert.Catch<ApplicationException>(
+        () => Connection.Open(),
+        "Open should have thrown ApplicationException for missing licence file.");
+      Assert.IsTrue(
+        exception.Message.StartsWith("VelocityDB licence file '"),
+        "Missing licence file message");
       UpdateVelocityDbLicenceFilePath();
       Connection.Open();
       Assert.AreEqual(DatabaseFolderPath.ToLower(), Global.Session.SystemDirectory,
@@ -82,27 +73,21 @@ namespace SoundExplorers.Tests.Model {
       Connection.Open();
       Assert.AreEqual(Connection.ExpectedVersion, Schema.Instance.Version, "Version #2");
       RemoveXmlElement();
-      try {
-        Connection.Open();
-        Assert.Fail(
-          "Open should have thrown ApplicationException for when XML element is missing.");
-      } catch (ApplicationException exception) {
-        Assert.IsTrue(
-          exception.Message.Contains(
-            " tag was not found in database configuration file "),
-          "Missing XML element");
-      }
+      exception = Assert.Catch<ApplicationException>(
+        () => Connection.Open(),
+        "Open should have thrown ApplicationException for missing XML element.");
+      Assert.IsTrue(
+        exception.Message.Contains(
+          " tag was not found in database configuration file "),
+        "Missing XML element");
       MakeXmlError();
-      try {
-        Connection.Open();
-        Assert.Fail(
-          "Open should have thrown ApplicationException for XML error.");
-      } catch (ApplicationException exception) {
-        Assert.IsTrue(
-          exception.Message.StartsWith(
-            "The following XML error was found in database configuration file "),
-          "XML error");
-      }
+      exception = Assert.Catch<ApplicationException>(
+        () => Connection.Open(),
+        "Open should have thrown ApplicationException for XML error.");
+      Assert.IsTrue(
+        exception.Message.StartsWith(
+          "The following XML error was found in database configuration file "),
+        "XML error");
     }
 
     private void MakeXmlError() {

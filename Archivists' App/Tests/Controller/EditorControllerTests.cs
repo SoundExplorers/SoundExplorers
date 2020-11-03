@@ -55,15 +55,12 @@ namespace SoundExplorers.Tests.Controller {
       Assert.AreEqual(2, editor.Count, "editor.Count after FetchData #2");
       Controller.OnMainGridRowEnter(1);
       // Disallow rename to duplicate
-      try {
-        editor[1].Name = name1;
-        Assert.Fail(
-          "Rename should have thrown DatabaseUpdateErrorException.");
-      } catch (DatabaseUpdateErrorException exception) {
-        Assert.AreEqual(name1, editor[1].Name,
-          "Still duplicate name before error message shown for duplicate rename");
-        Controller.OnMainGridDataError(exception);
-      }
+      var exception = Assert.Catch<DatabaseUpdateErrorException>(
+        () => editor[1].Name = name1,
+        "Rename name should have thrown DatabaseUpdateErrorException.");
+      Assert.AreEqual(name1, editor[1].Name,
+        "Still duplicate name before error message shown for duplicate rename");
+      Controller.OnMainGridDataError(exception);
       Assert.AreEqual(1, View.EditMainGridCurrentCellCount,
         "EditMainGridCurrentCellCount after error message shown for duplicate rename");
       Assert.AreEqual(1, View.FocusMainGridCellCount,
