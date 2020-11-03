@@ -8,15 +8,17 @@ namespace SoundExplorers.Tests.Controller {
     [Test]
     public void InitiallySelectedTable() {
       const string initiallySelectedTableName = "Genre";
-      var view = new MockView<SelectEditorController>();
-      var controller = new SelectEditorController(view, initiallySelectedTableName);
-      Assert.AreSame(controller, view.Controller, "view.Controller");
+      var view =
+        (MockView<SelectEditorController>)ViewFactory
+          .Create<MockView<SelectEditorController>, SelectEditorController>(
+            initiallySelectedTableName);
+      var controller = view.Controller;
       Assert.AreEqual(typeof(GenreList), controller.SelectedEntityListType,
         "SelectedEntityListType");
       Assert.AreEqual(initiallySelectedTableName, controller.SelectedTableName,
         "SelectedTableName");
     }
-    
+
     [Test]
     public void NoInitiallySelectedTable() {
       var view = new MockView<SelectEditorController>();

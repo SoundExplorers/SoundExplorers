@@ -95,6 +95,7 @@
         <Compile Include="Controller\TestEditorController.cs" />
         <Compile Include="Controller\TestMainController.cs" />
         <Compile Include="Controller\TestSizeableFormOptionsController.cs" />
+        <Compile Include="Controller\ViewFactoryTests.cs" />
         <Compile Include="Data\ActTests.cs" />
         <Compile Include="Data\ArtistTests.cs" />
         <Compile Include="Data\CreditTests.cs" />
