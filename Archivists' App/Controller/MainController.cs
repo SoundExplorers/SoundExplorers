@@ -1,10 +1,11 @@
-﻿using JetBrains.Annotations;
+﻿using System.Diagnostics.CodeAnalysis;
+using JetBrains.Annotations;
 using SoundExplorers.Model;
 
 namespace SoundExplorers.Controller {
   [UsedImplicitly]
   public class MainController {
-    private DatabaseConnection _databaseConnection;
+    private IOpen _databaseConnection;
     private Option _statusBarOption;
     private Option _tableOption;
     private Option _toolBarOption;
@@ -17,10 +18,8 @@ namespace SoundExplorers.Controller {
     ///   The database connection,
     ///   whose default should only need to be replaced in tests.
     /// </summary>
-    // ReSharper disable once MemberCanBePrivate.Global
-    internal DatabaseConnection DatabaseConnection {
+    internal IOpen DatabaseConnection {
       get => _databaseConnection ?? new DatabaseConnection();
-      // ReSharper disable once UnusedMember.Global
       set => _databaseConnection = value;
     }
 
@@ -35,7 +34,8 @@ namespace SoundExplorers.Controller {
     }
 
     private Option StatusBarOption => _statusBarOption ??
-                                      (_statusBarOption = new Option("StatusBar", true));
+                                      (_statusBarOption =
+                                        CreateOption("StatusBar", true));
 
     public string TableName {
       get => TableOption.StringValue;
@@ -43,13 +43,20 @@ namespace SoundExplorers.Controller {
     }
 
     private Option TableOption => _tableOption ??
-                                  (_tableOption = new Option("Table"));
+                                  (_tableOption = CreateOption("Table"));
 
     private Option ToolBarOption => _toolBarOption ??
-                                    (_toolBarOption = new Option("ToolBar", true));
+                                    (_toolBarOption = CreateOption("ToolBar", true));
 
     public void ConnectToDatabase() {
       DatabaseConnection.Open();
+    }
+
+    [ExcludeFromCodeCoverage]
+    [NotNull]
+    protected virtual Option CreateOption([NotNull] string name,
+      object defaultValue = null) {
+      return new Option(name, defaultValue);
     }
   }
 }

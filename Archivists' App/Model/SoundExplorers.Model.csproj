@@ -64,6 +64,7 @@
         <Compile Include="Global.cs" />
         <Compile Include="IBindingItem.cs" />
         <Compile Include="IEntityList.cs" />
+        <Compile Include="IOpen.cs" />
         <Compile Include="LocationList.cs" />
         <Compile Include="NamedBindingItem.cs" />
         <Compile Include="NamedEntityList.cs" />

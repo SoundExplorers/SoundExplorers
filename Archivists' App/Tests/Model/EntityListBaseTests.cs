@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Diagnostics.CodeAnalysis;
-using JetBrains.Annotations;
 using NUnit.Framework;
 using SoundExplorers.Data;
 using SoundExplorers.Model;
@@ -20,8 +19,9 @@ namespace SoundExplorers.Tests.Model {
       Session.DeleteDatabaseFolderIfExists();
     }
 
+    [SuppressMessage("ReSharper", "UnusedMember.Local")]
     private class DudErrorThrower : EventType {
-      [UsedImplicitly]
+      [ExcludeFromCodeCoverage]
       public new string Name {
         get => SimpleKey;
         set => throw new InvalidOperationException();
