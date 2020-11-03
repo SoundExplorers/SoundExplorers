@@ -88,6 +88,7 @@
         <Compile Include="Controller\MockEditorView.cs" />
         <Compile Include="Controller\EditorControllerTests.cs" />
         <Compile Include="Controller\MockView.cs" />
+        <Compile Include="Controller\SelectEditorControllerTests.cs" />
         <Compile Include="Controller\SizeableFormOptionsControllerTests.cs" />
         <Compile Include="Controller\TestComboBoxCellController.cs" />
         <Compile Include="Controller\TestEditorController.cs" />
