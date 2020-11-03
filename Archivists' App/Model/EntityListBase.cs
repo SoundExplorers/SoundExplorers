@@ -116,7 +116,6 @@ namespace SoundExplorers.Model {
     /// </summary>
     public SessionBase Session {
       get => _session ?? (_session = Global.Session);
-      // ReSharper disable once UnusedMember.Global
       set => _session = value;
     }
 

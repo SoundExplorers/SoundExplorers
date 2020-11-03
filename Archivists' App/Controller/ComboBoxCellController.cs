@@ -54,7 +54,7 @@ namespace SoundExplorers.Controller {
 
     [NotNull]
     public object[] FetchItems([CanBeNull] string format) {
-      EntityList = Global.CreateEntityList(ReferencedEntityListType);
+      EntityList = CreateEntityList();
       EntityList.Populate();
       if (EntityList.Count == 0) {
         EditorController.ShowWarningMessage(CreateNoAvailableReferencesMessage());
@@ -76,6 +76,11 @@ namespace SoundExplorers.Controller {
       return isDateKey
         ? ((Newsletter)value).Date.ToString(format)
         : ((IEntity)value).SimpleKey;
+    }
+
+    [NotNull]
+    protected virtual IEntityList CreateEntityList() {
+      return Global.CreateEntityList(ReferencedEntityListType);
     }
 
     private string CreateNoAvailableReferencesMessage() {

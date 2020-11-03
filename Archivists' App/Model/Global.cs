@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Reflection;
 using JetBrains.Annotations;
@@ -64,6 +65,7 @@ namespace SoundExplorers.Model {
       }
     }
 
+    [ExcludeFromCodeCoverage]
     public static string GetApplicationFolderPath() {
       return Path.GetDirectoryName(Assembly.GetEntryAssembly()?.Location);
     }

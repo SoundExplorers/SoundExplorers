@@ -84,10 +84,12 @@
         </Reference>
     </ItemGroup>
     <ItemGroup>
+        <Compile Include="Controller\ComboBoxCellControllerTests.cs" />
         <Compile Include="Controller\MockEditorView.cs" />
         <Compile Include="Controller\EditorControllerTests.cs" />
         <Compile Include="Controller\MockView.cs" />
         <Compile Include="Controller\SizeableFormOptionsControllerTests.cs" />
+        <Compile Include="Controller\TestComboBoxCellController.cs" />
         <Compile Include="Controller\TestEditorController.cs" />
         <Compile Include="Controller\TestSizeableFormOptionsController.cs" />
         <Compile Include="Data\ActTests.cs" />
