@@ -122,6 +122,7 @@
         <Compile Include="Model\DatabaseConnectionTests.cs" />
         <Compile Include="Model\EntityListBaseTests.cs" />
         <Compile Include="Model\EventListTests.cs" />
+        <Compile Include="Model\GlobalTests.cs" />
         <Compile Include="Model\NamedEntityListTests.cs" />
         <Compile Include="Model\NewsletterListTests.cs" />
         <Compile Include="Model\OptionTests.cs" />
