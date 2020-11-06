@@ -224,7 +224,6 @@ namespace SoundExplorers.Model {
         return;
       }
       if (IsInsertionRowCurrent || IsFixingNewRow) {
-        IsInsertionRowCurrent = false;
         AddNewEntity(rowIndex);
       } else {
         SaveChangesToExistingEntity(rowIndex);
@@ -299,6 +298,7 @@ namespace SoundExplorers.Model {
         ErrorBindingItem = bindingItem;
         throw CreateDatabaseUpdateErrorException(exception, rowIndex);
       } finally {
+        IsInsertionRowCurrent = false;
         Session.Commit();
       }
     }

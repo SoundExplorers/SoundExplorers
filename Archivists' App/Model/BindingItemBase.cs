@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using JetBrains.Annotations;
 using SoundExplorers.Data;
+using VelocityDb.Session;
 
 namespace SoundExplorers.Model {
   /// <summary>
@@ -35,12 +36,32 @@ namespace SoundExplorers.Model {
     where TBindingItem : BindingItemBase<TEntity, TBindingItem>, new() {
     private IDictionary<string, IEntity> _parents;
     private IDictionary<string, PropertyInfo> _properties;
+    private QueryHelper _queryHelper;
+    private SessionBase _session;
 
     private IDictionary<string, IEntity> Parents =>
       _parents ?? (_parents = new Dictionary<string, IEntity>());
 
     private IDictionary<string, PropertyInfo> Properties =>
       _properties ?? (_properties = CreatePropertyDictionary());
+
+    /// <summary>
+    ///   The setter should only be needed for testing.
+    /// </summary>
+    [NotNull]
+    internal QueryHelper QueryHelper {
+      get => _queryHelper ?? (_queryHelper = QueryHelper.Instance);
+      set => _queryHelper = value;
+    }
+
+    /// <summary>
+    ///   Gets or sets the session to be used for accessing the database.
+    ///   The setter should only be needed for testing.
+    /// </summary>
+    internal SessionBase Session {
+      get => _session ?? (_session = Global.Session);
+      set => _session = value;
+    }
 
     public void SetParent(string propertyName, IEntity parent) {
       Parents[propertyName] = parent;
@@ -89,6 +110,7 @@ namespace SoundExplorers.Model {
 
     [NotNull]
     internal TEntity CreateEntity() {
+      SetParentsToDefaultIfNotSpecified();
       var result = new TEntity();
       CopyPropertyValuesToEntity(result);
       return result;
@@ -102,6 +124,20 @@ namespace SoundExplorers.Model {
         result.Add(property.Name, property);
       }
       return result;
+    }
+
+    /// <summary>
+    ///   Derived classes should override this when a parent cell in a new row
+    ///   has been defaulted to a specific referenced entity.
+    /// </summary>
+    /// <returns>
+    ///   A dictionary with the parent property name as the key
+    ///   and the default parent simple key as the value.
+    ///   If not overridden, an empty dictionary.
+    /// </returns>
+    [NotNull]
+    protected virtual IDictionary<string, string> GetDefaultParentSimpleKeys() {
+      return new Dictionary<string, string>();
     }
 
     [NotNull]
@@ -128,6 +164,21 @@ namespace SoundExplorers.Model {
     internal void RestorePropertyValuesFrom([NotNull] TBindingItem backup) {
       foreach (var property in Properties.Values) {
         property.SetValue(this, backup.GetPropertyValue(property));
+      }
+    }
+
+    private void SetParentsToDefaultIfNotSpecified() {
+      var dictionary = GetDefaultParentSimpleKeys();
+      foreach (var kvp in dictionary) {
+        SetParentToDefaultIfNotSpecified(kvp.Key, kvp.Value);
+      }
+    }
+
+    private void SetParentToDefaultIfNotSpecified([NotNull] string propertyName,
+      [NotNull] string defaultParentSimpleKey) {
+      if (!Parents.ContainsKey(propertyName)) {
+        SetParent(propertyName,
+          QueryHelper.Find<EventType>(defaultParentSimpleKey, Session));
       }
     }
 

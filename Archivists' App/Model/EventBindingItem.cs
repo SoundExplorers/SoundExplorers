@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using JetBrains.Annotations;
 using SoundExplorers.Data;
 
 namespace SoundExplorers.Model {
   [NoReorder]
   public class EventBindingItem : BindingItemBase<Event, EventBindingItem> {
+    private const string DefaultEventTypeName = "Performance";
     private DateTime _date;
     private string _location;
     private string _series;
@@ -15,7 +17,7 @@ namespace SoundExplorers.Model {
     public EventBindingItem() {
       Date = DateTime.Today;
       Newsletter = EntityBase.InitialDate;
-      EventType = "Performance";
+      EventType = DefaultEventTypeName;
     }
 
     public DateTime Date {
@@ -44,6 +46,7 @@ namespace SoundExplorers.Model {
 
     public string EventType {
       get => _eventType;
+      //get => _eventType ?? (_eventType = GetDefaultEventTypeName());
       set {
         _eventType = value;
         OnPropertyChanged(nameof(EventType));
@@ -64,6 +67,12 @@ namespace SoundExplorers.Model {
         _notes = value;
         OnPropertyChanged(nameof(Notes));
       }
+    }
+
+    protected override IDictionary<string, string> GetDefaultParentSimpleKeys() {
+      var result = base.GetDefaultParentSimpleKeys();
+      result.Add(nameof(EventType), DefaultEventTypeName);
+      return result;
     }
   }
 }

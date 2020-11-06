@@ -198,6 +198,11 @@ namespace SoundExplorers.Controller {
           MainList.LastDatabaseUpdateErrorException = databaseUpdateErrorException;
           View.StartDatabaseUpdateErrorTimer();
           break;
+        case FormatException formatException:
+          // Can happen when pasting an invalid value into a cell,
+          // e.g. a URL into a date.
+          // TODO: Handle FormatException when pasting an invalid value into a cell  
+          break;
         case null:
           // For unknown reason, the way I've got the error handling set up,
           // this event gets raise twice if there's a cell edit error,
