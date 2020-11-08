@@ -72,6 +72,7 @@ namespace SoundExplorers.Tests.Data {
         event2 = new Event {
           Date = event1.Date, Location = location2, EventType = event1.EventType
         };
+        // Later date but alphabetically prior location compared with event 2
         event3 = new Event {
           Date = event1.Date.AddDays(1), Location = location1,
           EventType = event1.EventType
@@ -104,6 +105,7 @@ namespace SoundExplorers.Tests.Data {
       Assert.IsTrue(nullKey < event3.Key, "event3.Key < nullKey");
       Assert.IsTrue(event5.Key < event6.Key, "event5.Key < event6.Key");
       Assert.IsTrue(set1.Key < set2.Key, "set1.Key < set2.Key");
+      Assert.IsTrue(event2.Key < event3.Key, "event2.Key < event3.Key");
     }
 
     [Test]

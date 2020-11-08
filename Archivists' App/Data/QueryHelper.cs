@@ -76,7 +76,7 @@ namespace SoundExplorers.Data {
     internal EntityBase FindDuplicateSimpleKey([NotNull] Type entityType,
       Oid oid, [CanBeNull] string simpleKey, SessionBase session) {
       var entity = FindTopLevelEntity(entityType, simpleKey, session);
-      return entity != null && entity.Oid.Equals(oid) ? entity : null;
+      return entity != null && !entity.Oid.Equals(oid) ? entity : null;
     }
 
     /// <summary>

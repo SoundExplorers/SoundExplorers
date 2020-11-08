@@ -7,6 +7,9 @@ namespace SoundExplorers.Data {
   ///   IdentifyingParent properties, for use as the entity's key
   ///   in any SortedChildLists of which it is a member.
   /// </summary>
+  /// <remarks>
+  ///   SimpleKey has priority over IdentifyingParent when keys are compared. 
+  /// </remarks>
   public class Key {
     private readonly IEntity _identifyingParent;
     private readonly string _simpleKey;
@@ -109,19 +112,30 @@ namespace SoundExplorers.Data {
       if (key2 == null) {
         return false;
       }
+      if (string.Compare(key1.SimpleKey, key2.SimpleKey,
+        StringComparison.OrdinalIgnoreCase) < 0) {
+        return true;
+      } 
+      if (string.Compare(key1.SimpleKey, key2.SimpleKey,
+        StringComparison.OrdinalIgnoreCase) > 0) {
+        return false;
+      }
+      // Simple keys are equal. So compare identifying parents.
       if (key1.IdentifyingParent != null && key2.IdentifyingParent != null) {
-        if (key1.IdentifyingParent.Key < key2.IdentifyingParent.Key) {
-          return true;
-        }
-        if (key1.IdentifyingParent.Key > key2.IdentifyingParent.Key) {
-          return false;
-        }
-        return string.Compare(key1.SimpleKey, key2.SimpleKey,
-          StringComparison.OrdinalIgnoreCase) < 0;
+        return key1.IdentifyingParent.Key < key2.IdentifyingParent.Key;
+        // if (key1.IdentifyingParent.Key < key2.IdentifyingParent.Key) {
+        //   return true;
+        // }
+        // if (key1.IdentifyingParent.Key > key2.IdentifyingParent.Key) {
+        //   return false;
+        // }
+        // return string.Compare(key1.SimpleKey, key2.SimpleKey,
+        //   StringComparison.OrdinalIgnoreCase) < 0;
       }
       if (key1.IdentifyingParent == null && key2.IdentifyingParent == null) {
-        return string.Compare(key1.SimpleKey, key2.SimpleKey,
-          StringComparison.OrdinalIgnoreCase) < 0;
+        return false;
+        // return string.Compare(key1.SimpleKey, key2.SimpleKey,
+        //   StringComparison.OrdinalIgnoreCase) < 0;
       }
       return key1.IdentifyingParent == null && key2.IdentifyingParent != null;
     }
