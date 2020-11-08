@@ -76,7 +76,7 @@ namespace SoundExplorers.Data {
     internal EntityBase FindDuplicateSimpleKey([NotNull] Type entityType,
       Oid oid, [CanBeNull] string simpleKey, SessionBase session) {
       var entity = FindTopLevelEntity(entityType, simpleKey, session);
-      return entity != null && entity.Oid.Equals(oid) ? entity : null; 
+      return entity != null && entity.Oid.Equals(oid) ? entity : null;
     }
 
     /// <summary>
@@ -89,6 +89,10 @@ namespace SoundExplorers.Data {
       if (!SchemaExistsOnDatabase(session)) {
         return null;
       }
+      // This complicated rigmarole is required to allow
+      // SessionBase.AllObjects<T> to be invoked with a an ordinary parameter
+      // instead of the type parameter T.
+      // Unfortunately VelocityDB does not provide a non-generic alternative.
       var allObjectsConstructedMethod =
         AllObjectsGenericMethod.MakeGenericMethod(entityType);
       var entities = (IEnumerable)allObjectsConstructedMethod.Invoke(session,

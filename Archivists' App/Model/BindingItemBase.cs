@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Data;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -73,7 +74,13 @@ namespace SoundExplorers.Model {
       PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 
-    private void CopyPropertyValueToEntity([NotNull] PropertyInfo property,
+    private void CopyValuesToEntityProperties([NotNull] TEntity entity) {
+      foreach (var property in Properties.Values) {
+        CopyValueToEntityProperty(property, entity);
+      }
+    }
+
+    private void CopyValueToEntityProperty([NotNull] PropertyInfo property,
       [NotNull] TEntity entity) {
       var entityProperty = EntityProperties[property.Name];
       var oldEntityPropertyValue = entityProperty.GetValue(entity);
@@ -83,13 +90,15 @@ namespace SoundExplorers.Model {
       }
       if (oldEntityPropertyValue == null ||
           !oldEntityPropertyValue.Equals(newEntityPropertyValue)) {
-        entityProperty.SetValue(entity, newEntityPropertyValue);
-      }
-    }
-
-    private void CopyPropertyValuesToEntity([NotNull] TEntity entity) {
-      foreach (var property in Properties.Values) {
-        CopyPropertyValueToEntity(property, entity);
+        try {
+          entityProperty.SetValue(entity, newEntityPropertyValue);
+        } catch (Exception exception) {
+          throw new PropertyConstraintException(
+            $"Failed to set {typeof(TEntity).Name}.{property.Name} "
+            + $"to '{newEntityPropertyValue}':"
+            + Environment.NewLine + $"{exception.Message}",
+            property.Name, exception);
+        }
       }
     }
 
@@ -102,9 +111,21 @@ namespace SoundExplorers.Model {
 
     [NotNull]
     internal TEntity CreateEntity() {
+      // Fetch any parent reference values from the database
+      // before instantiating the entity.
+      // After the entity has been instantiated,
+      // set its properties to the corresponding values that have
+      // been fetched in advance.
+      // Otherwise, i.e. if we were to attempt to
+      // fetch the parent reference values from the database
+      // after the entity had been instantiated, 
+      // in QueryHelper, SessionBase.AllObjects would invoke SessionBase.FlushUpdates,
+      // which prematurely attempts to persist the new entity before all its properties 
+      // have been set.  For Event and probably some other entity types,
+      // that causes a persistence failure.
       EntityPropertyValues = CreateEntityPropertyValueDictionary();
       var result = new TEntity();
-      CopyPropertyValuesToEntity(result);
+      CopyValuesToEntityProperties(result);
       return result;
     }
 
@@ -172,7 +193,7 @@ namespace SoundExplorers.Model {
 
     internal void RestoreToEntity([NotNull] TEntity entity) {
       EntityPropertyValues = CreateEntityPropertyValueDictionary();
-      CopyPropertyValuesToEntity(entity);
+      CopyValuesToEntityProperties(entity);
     }
 
     // private static void SetEntityProperty([NotNull] TEntity entity,
