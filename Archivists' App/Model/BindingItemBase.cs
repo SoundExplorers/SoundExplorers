@@ -90,15 +90,7 @@ namespace SoundExplorers.Model {
       }
       if (oldEntityPropertyValue == null ||
           !oldEntityPropertyValue.Equals(newEntityPropertyValue)) {
-        try {
-          entityProperty.SetValue(entity, newEntityPropertyValue);
-        } catch (Exception exception) {
-          throw new PropertyConstraintException(
-            $"Failed to set {typeof(TEntity).Name}.{property.Name} "
-            + $"to '{newEntityPropertyValue}':"
-            + Environment.NewLine + $"{exception.Message}",
-            property.Name, exception);
-        }
+        SetEntityPropertyValue(entity, entityProperty, newEntityPropertyValue);
       }
     }
 
@@ -196,16 +188,27 @@ namespace SoundExplorers.Model {
       CopyValuesToEntityProperties(entity);
     }
 
-    // private static void SetEntityProperty([NotNull] TEntity entity,
-    //   [NotNull] PropertyInfo entityProperty, [CanBeNull] object newEntityPropertyValue) {
-    //   entityProperty.SetValue(entity, newEntityPropertyValue);
-    // }
+    private static void SetEntityPropertyValue([NotNull] TEntity entity,
+      [NotNull] PropertyInfo entityProperty, [CanBeNull] object newEntityPropertyValue) {
+      try {
+        entityProperty.SetValue(entity, newEntityPropertyValue);
+      } catch (TargetInvocationException exception) {
+        throw exception.InnerException ?? exception;
+      } catch (Exception exception) {
+        throw new PropertyConstraintException(
+          $"Failed to set {typeof(TEntity).Name}.{entityProperty.Name} "
+          + $"to '{newEntityPropertyValue}':"
+          + Environment.NewLine + $"{exception.Message}",
+          entityProperty.Name, exception);
+      }
+    }
 
     internal void UpdateEntityProperty(
       [NotNull] string propertyName, [NotNull] TEntity entity) {
       var entityProperty = EntityProperties[propertyName];
-      entityProperty.SetValue(entity,
-        GetEntityPropertyValue(Properties[propertyName], entityProperty));
+      var newEntityPropertyValue =
+        GetEntityPropertyValue(Properties[propertyName], entityProperty);
+      SetEntityPropertyValue(entity, entityProperty, newEntityPropertyValue);
     }
   }
 }
