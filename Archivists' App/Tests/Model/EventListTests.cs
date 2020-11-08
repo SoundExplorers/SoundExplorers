@@ -74,16 +74,12 @@ namespace SoundExplorers.Tests.Model {
       var eventType = Data.EventTypes[1];
       var series = Data.Series[0];
       const string notes = "My notes";
-      List.Populate(); 
+      List.Populate();
       var editor = new TestEditor<Event, EventBindingItem>(List.BindingList);
       editor[1].Date = date;
-      editor[1].SetParent("Location", location);
       editor[1].Location = location.Name;
-      editor[1].SetParent("Newsletter", newsletter);
       editor[1].Newsletter = newsletter.Date;
-      editor[1].SetParent("EventType", eventType);
       editor[1].EventType = eventType.Name;
-      editor[1].SetParent("Series", series);
       editor[1].Series = series.Name;
       editor[1].Notes = notes;
       var @event = List[1];

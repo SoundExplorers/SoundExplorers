@@ -32,7 +32,7 @@ namespace SoundExplorers.Model {
     ///   an entity deletion is required.
     /// </summary>
     bool IsDataLoadComplete { get; }
-    
+
     /// <summary>
     ///   If there's an error on adding a new entity,
     ///   the data to be fixed will be in a row before the insertion row
@@ -97,8 +97,9 @@ namespace SoundExplorers.Model {
     /// </param>
     [CanBeNull]
     IList GetChildrenForMainList(int rowIndex);
-    
-    [NotNull] IList<object> GetErrorValues();
+
+    [NotNull]
+    IList<object> GetErrorValues();
 
     /// <summary>
     ///   This is called when any row has been entered.

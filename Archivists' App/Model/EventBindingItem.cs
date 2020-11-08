@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using JetBrains.Annotations;
 using SoundExplorers.Data;
 
@@ -69,10 +68,34 @@ namespace SoundExplorers.Model {
       }
     }
 
-    protected override IDictionary<string, string> GetDefaultParentSimpleKeys() {
-      var result = base.GetDefaultParentSimpleKeys();
-      result.Add(nameof(EventType), DefaultEventTypeName);
-      return result;
-    }
+    // internal override void CopyPropertyValuesToEntity(Event @event) {
+    //   @event.Date = Date;
+    //   @event.Location = QueryHelper.Find<Location>(Location, Session);
+    //   @event.EventType = QueryHelper.Find<EventType>(EventType, Session);
+    //   @event.Newsletter = Newsletter > EntityBase.InitialDate
+    //     ? QueryHelper.Find<Newsletter>(EntityBase.DateToSimpleKey(Newsletter), Session)
+    //     : null;
+    //   @event.Series = QueryHelper.Find<Series>(Series, Session);
+    //   @event.Notes = Notes;
+    // }
+
+    // protected override void CopyPropertyValueToEntity(PropertyInfo property, Event @event,
+    //   IEnumerable<PropertyInfo> entityProperties) {
+    //   if (property.Name == nameof(Date)) {
+    //     @event.Date = Date;
+    //   } else {
+    //     base.CopyPropertyValueToEntity(property, @event, entityProperties);
+    //   }
+    // }
+
+    // protected override void SetEntityProperty(Event @event, PropertyInfo entityProperty,
+    //   object newEntityPropertyValue) {
+    //   if (entityProperty.Name == nameof(Date)) {
+    //     @event.Date = (DateTime?)newEntityPropertyValue ??
+    //                   throw new ArgumentNullException(nameof(Date));
+    //   } else {
+    //     base.SetEntityProperty(@event, entityProperty, newEntityPropertyValue);
+    //   }
+    // }
   }
 }

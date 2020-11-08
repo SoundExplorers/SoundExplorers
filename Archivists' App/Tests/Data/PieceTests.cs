@@ -252,7 +252,7 @@ namespace SoundExplorers.Tests.Data {
       var exception = Assert.Catch<PropertyConstraintException>(
         () => piece.AudioUrl = "blah",
         "A PropertyConstraintException should have been thrown.");
-      Assert.AreEqual("Invalid AudioUrl format: 'blah'.", exception.Message, 
+      Assert.AreEqual("Invalid AudioUrl format: 'blah'.", exception.Message,
         "Message");
       Assert.AreEqual("AudioUrl", exception.PropertyName,
         "PropertyName");
@@ -264,7 +264,7 @@ namespace SoundExplorers.Tests.Data {
       var exception = Assert.Catch<PropertyConstraintException>(
         () => piece.VideoUrl = "blah",
         "A PropertyConstraintException should have been thrown.");
-      Assert.AreEqual("Invalid VideoUrl format: 'blah'.", exception.Message, 
+      Assert.AreEqual("Invalid VideoUrl format: 'blah'.", exception.Message,
         "Message");
       Assert.AreEqual("VideoUrl", exception.PropertyName,
         "PropertyName");

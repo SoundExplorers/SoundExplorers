@@ -35,7 +35,7 @@ namespace SoundExplorers.Model {
         OnPropertyChanged(nameof(Genre));
       }
     }
-    
+
     public string Act {
       get => _act;
       set {
@@ -43,7 +43,7 @@ namespace SoundExplorers.Model {
         OnPropertyChanged(nameof(Act));
       }
     }
-    
+
     public string Genre {
       get => _genre;
       set {

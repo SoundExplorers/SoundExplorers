@@ -6,7 +6,6 @@ namespace SoundExplorers.View {
   ///   Editing control for a ComboBox cell of a DataGridView.
   /// </summary>
   internal class ComboBoxEditingControl : DataGridViewComboBoxEditingControl {
-
     // /// <summary>
     // ///   Changes the control's user interface (UI) to be consistent with the specified
     // ///   cell style.
@@ -22,7 +21,7 @@ namespace SoundExplorers.View {
     //   ForeColor = dataGridViewCellStyle.ForeColor;
     //   BackColor = dataGridViewCellStyle.BackColor;
     // }
-    
+
     // /// <summary>
     // ///   Gets or sets the System.Windows.Forms.DataGridView that contains the cell.
     // /// </summary>

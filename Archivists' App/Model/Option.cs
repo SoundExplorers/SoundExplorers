@@ -11,7 +11,6 @@ namespace SoundExplorers.Model {
   ///   as held on the UserOption table.
   /// </summary>
   public class Option {
-
     /// <summary>
     ///   Initialises a new instance of the Option class,
     ///   fetching the corresponding UserOption record if it already exists.
@@ -59,7 +58,7 @@ namespace SoundExplorers.Model {
       }
       Session.Commit();
     }
-    
+
     private SessionBase Session { get; }
 
     /// <summary>

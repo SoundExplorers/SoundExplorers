@@ -55,6 +55,15 @@ namespace SoundExplorers.Data {
       }
     }
 
+    /// <summary>
+    ///   From VelocityDB User's Guide:
+    ///   'It is recommended that you make the following override in your
+    ///   OptimizedPersistable subclass for better performance. ...
+    ///   We may make this default but it could break existing code
+    ///   so it is not a trivial change.'
+    /// </summary>
+    public override bool AllowOtherTypesOnSamePage => false;
+
     private static IEnumerable<Type> CreateEntityTypes() {
       var list = new List<Type> {
         typeof(Act),
@@ -92,15 +101,6 @@ namespace SoundExplorers.Data {
       };
       return list.ToArray();
     }
-    
-    /// <summary>
-    ///   From VelocityDB User's Guide:
-    ///   'It is recommended that you make the following override in your
-    ///   OptimizedPersistable subclass for better performance. ...
-    ///   We may make this default but it could break existing code
-    ///   so it is not a trivial change.'
-    /// </summary>
-    public override bool AllowOtherTypesOnSamePage => false;
 
     /// <summary>
     ///   Returns the one Schema entity, if it already exists on the database,

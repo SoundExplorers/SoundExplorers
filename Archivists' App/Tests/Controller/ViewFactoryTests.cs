@@ -16,7 +16,7 @@ namespace SoundExplorers.Tests.Controller {
 
     [Test]
     public void ControllerConstructorException() {
-      Assert.Throws<InvalidOperationException>(()=>ViewFactory
+      Assert.Throws<InvalidOperationException>(() => ViewFactory
         .Create<MockView<ConstructorExceptionThrowingController>,
           ConstructorExceptionThrowingController>());
     }

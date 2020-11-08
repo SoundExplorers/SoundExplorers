@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using JetBrains.Annotations;
 using NUnit.Framework;
 using SoundExplorers.Data;
@@ -216,9 +215,6 @@ namespace SoundExplorers.Tests.Controller {
       var editor = new TestEditor<Event, EventBindingItem>(Controller.MainBindingList);
       string selectedSeriesName = Data.Series[0].Name;
       var selectedSeries = Data.Series[0];
-      var selectedItem =
-        new KeyValuePair<string, IEntity>(selectedSeriesName, selectedSeries);
-      Controller.SetParent(0, "Series", selectedItem);
       editor[0].Series = selectedSeriesName;
       Assert.AreSame(selectedSeries, ((Event)Controller.GetMainList()[0]).Series,
         "Series");

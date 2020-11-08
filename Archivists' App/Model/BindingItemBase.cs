@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
@@ -30,20 +31,21 @@ namespace SoundExplorers.Model {
   ///   Other derived classes are expected to be just as simple.
   ///   So the <see cref="NoReorderAttribute" /> is a safety feature.
   /// </remarks>
-  public abstract class BindingItemBase<TEntity, TBindingItem> : IBindingItem,
-    INotifyPropertyChanged
+  public abstract class BindingItemBase<TEntity, TBindingItem> : INotifyPropertyChanged
     where TEntity : EntityBase, new()
     where TBindingItem : BindingItemBase<TEntity, TBindingItem>, new() {
-    private IDictionary<string, IEntity> _parents;
+    private IDictionary<string, PropertyInfo> _entityProperties;
     private IDictionary<string, PropertyInfo> _properties;
     private QueryHelper _queryHelper;
     private SessionBase _session;
 
-    private IDictionary<string, IEntity> Parents =>
-      _parents ?? (_parents = new Dictionary<string, IEntity>());
+    private IDictionary<string, PropertyInfo> EntityProperties =>
+      _entityProperties ?? (_entityProperties = CreatePropertyDictionary<TEntity>());
+
+    private IDictionary<string, object> EntityPropertyValues { get; set; }
 
     private IDictionary<string, PropertyInfo> Properties =>
-      _properties ?? (_properties = CreatePropertyDictionary());
+      _properties ?? (_properties = CreatePropertyDictionary<TBindingItem>());
 
     /// <summary>
     ///   The setter should only be needed for testing.
@@ -63,16 +65,32 @@ namespace SoundExplorers.Model {
       set => _session = value;
     }
 
-    public void SetParent(string propertyName, IEntity parent) {
-      Parents[propertyName] = parent;
-    }
-
     public event PropertyChangedEventHandler PropertyChanged;
 
     [NotifyPropertyChangedInvocator]
     protected void OnPropertyChanged(
       [CallerMemberName] string propertyName = null) {
       PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+
+    private void CopyPropertyValueToEntity([NotNull] PropertyInfo property,
+      [NotNull] TEntity entity) {
+      var entityProperty = EntityProperties[property.Name];
+      var oldEntityPropertyValue = entityProperty.GetValue(entity);
+      var newEntityPropertyValue = EntityPropertyValues[property.Name];
+      if (oldEntityPropertyValue == null && newEntityPropertyValue == null) {
+        return;
+      }
+      if (oldEntityPropertyValue == null ||
+          !oldEntityPropertyValue.Equals(newEntityPropertyValue)) {
+        entityProperty.SetValue(entity, newEntityPropertyValue);
+      }
+    }
+
+    private void CopyPropertyValuesToEntity([NotNull] TEntity entity) {
+      foreach (var property in Properties.Values) {
+        CopyPropertyValueToEntity(property, entity);
+      }
     }
 
     [NotNull]
@@ -82,43 +100,27 @@ namespace SoundExplorers.Model {
       return result;
     }
 
-    private void CopyPropertyValueToEntity(PropertyInfo property, EntityBase entity,
-      IEnumerable<PropertyInfo> entityProperties) {
-      var entityProperty = GetMatchingEntityProperty(property, entityProperties);
-      var propertyValue = property.GetValue(this);
-      object entityPropertyValue;
-      if (entityProperty.PropertyType == property.PropertyType) {
-        entityPropertyValue = propertyValue;
-      } else {
-        entityPropertyValue = Parents.ContainsKey(property.Name)
-          ? Parents[property.Name]
-          : null;
-      }
-      try {
-        entityProperty.SetValue(entity, entityPropertyValue);
-      } catch (TargetInvocationException exception) {
-        throw exception.InnerException ?? exception;
-      }
-    }
-
-    internal void CopyPropertyValuesToEntity([NotNull] EntityBase entity) {
-      var entityProperties = entity.GetType().GetProperties();
-      foreach (var property in Properties.Values) {
-        CopyPropertyValueToEntity(property, entity, entityProperties);
-      }
-    }
-
     [NotNull]
     internal TEntity CreateEntity() {
-      SetParentsToDefaultIfNotSpecified();
+      EntityPropertyValues = CreateEntityPropertyValueDictionary();
       var result = new TEntity();
       CopyPropertyValuesToEntity(result);
       return result;
     }
 
     [NotNull]
-    private IDictionary<string, PropertyInfo> CreatePropertyDictionary() {
-      var properties = GetType().GetProperties().ToList();
+    private IDictionary<string, object> CreateEntityPropertyValueDictionary() {
+      var result = new Dictionary<string, object>();
+      foreach (var property in Properties.Values) {
+        result[property.Name] =
+          GetEntityPropertyValue(property, EntityProperties[property.Name]);
+      }
+      return result;
+    }
+
+    [NotNull]
+    private static IDictionary<string, PropertyInfo> CreatePropertyDictionary<T>() {
+      var properties = typeof(T).GetProperties().ToList();
       var result = new Dictionary<string, PropertyInfo>(properties.Count);
       foreach (var property in properties) {
         result.Add(property.Name, property);
@@ -126,32 +128,33 @@ namespace SoundExplorers.Model {
       return result;
     }
 
-    /// <summary>
-    ///   Derived classes should override this when a parent cell in a new row
-    ///   has been defaulted to a specific referenced entity.
-    /// </summary>
-    /// <returns>
-    ///   A dictionary with the parent property name as the key
-    ///   and the default parent simple key as the value.
-    ///   If not overridden, an empty dictionary.
-    /// </returns>
-    [NotNull]
-    protected virtual IDictionary<string, string> GetDefaultParentSimpleKeys() {
-      return new Dictionary<string, string>();
+    [CanBeNull]
+    private IEntity FindParent([NotNull] PropertyInfo property,
+      [NotNull] Type parentType) {
+      var propertyValue = property.GetValue(this);
+      if (propertyValue == null) {
+        return null;
+      }
+      string parentSimpleKey;
+      if (property.PropertyType == typeof(DateTime)) {
+        var date = (DateTime)propertyValue;
+        if (date > EntityBase.InitialDate) {
+          parentSimpleKey = EntityBase.DateToSimpleKey(date);
+        } else {
+          return null;
+        }
+      } else { // string
+        parentSimpleKey = propertyValue.ToString();
+      }
+      return QueryHelper.FindTopLevelEntity(parentType, parentSimpleKey, Session);
     }
 
-    [NotNull]
-    private static PropertyInfo GetMatchingEntityProperty([NotNull] PropertyInfo property,
-      [NotNull] IEnumerable<PropertyInfo> entityProperties) {
-      return (
-        from entityProperty in entityProperties
-        where entityProperty.Name == property.Name
-        select entityProperty).First();
-    }
-
-    [NotNull]
-    private object GetPropertyValue([NotNull] PropertyInfo property) {
-      return property.GetValue(this);
+    [CanBeNull]
+    private object GetEntityPropertyValue([NotNull] PropertyInfo property,
+      [NotNull] PropertyInfo entityProperty) {
+      return entityProperty.PropertyType == property.PropertyType
+        ? property.GetValue(this)
+        : FindParent(property, entityProperty.PropertyType);
     }
 
     [NotNull]
@@ -163,29 +166,25 @@ namespace SoundExplorers.Model {
 
     internal void RestorePropertyValuesFrom([NotNull] TBindingItem backup) {
       foreach (var property in Properties.Values) {
-        property.SetValue(this, backup.GetPropertyValue(property));
+        property.SetValue(this, property.GetValue(backup));
       }
     }
 
-    private void SetParentsToDefaultIfNotSpecified() {
-      var dictionary = GetDefaultParentSimpleKeys();
-      foreach (var kvp in dictionary) {
-        SetParentToDefaultIfNotSpecified(kvp.Key, kvp.Value);
-      }
+    internal void RestoreToEntity([NotNull] TEntity entity) {
+      EntityPropertyValues = CreateEntityPropertyValueDictionary();
+      CopyPropertyValuesToEntity(entity);
     }
 
-    private void SetParentToDefaultIfNotSpecified([NotNull] string propertyName,
-      [NotNull] string defaultParentSimpleKey) {
-      if (!Parents.ContainsKey(propertyName)) {
-        SetParent(propertyName,
-          QueryHelper.Find<EventType>(defaultParentSimpleKey, Session));
-      }
-    }
+    // private static void SetEntityProperty([NotNull] TEntity entity,
+    //   [NotNull] PropertyInfo entityProperty, [CanBeNull] object newEntityPropertyValue) {
+    //   entityProperty.SetValue(entity, newEntityPropertyValue);
+    // }
 
     internal void UpdateEntityProperty(
       [NotNull] string propertyName, [NotNull] TEntity entity) {
-      var entityProperties = entity.GetType().GetProperties();
-      CopyPropertyValueToEntity(Properties[propertyName], entity, entityProperties);
+      var entityProperty = EntityProperties[propertyName];
+      entityProperty.SetValue(entity,
+        GetEntityPropertyValue(Properties[propertyName], entityProperty));
     }
   }
 }

@@ -12,6 +12,8 @@ namespace SoundExplorers.Data {
       Sets = new SortedChildList<Set>(this);
     }
 
+    [NotNull] public SortedChildList<Set> Sets { get; }
+
     [CanBeNull]
     public string Name {
       get => SimpleKey;
@@ -20,8 +22,6 @@ namespace SoundExplorers.Data {
         SimpleKey = value;
       }
     }
-
-    [NotNull] public SortedChildList<Set> Sets { get; }
 
     protected override IDictionary GetChildren(Type childType) {
       return Sets;

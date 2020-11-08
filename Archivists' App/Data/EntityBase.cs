@@ -134,6 +134,15 @@ namespace SoundExplorers.Data {
     [NotNull] private string SimpleKeyName { get; }
 
     /// <summary>
+    ///   From VelocityDB User's Guide:
+    ///   'It is recommended that you make the following override in your
+    ///   OptimizedPersistable subclass for better performance. ...
+    ///   We may make this default but it could break existing code
+    ///   so it is not a trivial change.'
+    /// </summary>
+    public override bool AllowOtherTypesOnSamePage => false;
+
+    /// <summary>
     ///   The identifying parent entity, which, where applicable,
     ///   uniquely identifies this entity in combination with SimpleKey.
     /// </summary>
@@ -380,6 +389,10 @@ namespace SoundExplorers.Data {
       return writer.ToString();
     }
 
+    public static string DateToSimpleKey(DateTime date) {
+      return $"{date:yyyy/MM/dd}";
+    }
+
     /// <summary>
     ///   Allows a derived entity to return
     ///   its SortedChildList of child entities of the specified entity type.
@@ -405,15 +418,6 @@ namespace SoundExplorers.Data {
         Initialise();
       }
     }
-    
-    /// <summary>
-    ///   From VelocityDB User's Guide:
-    ///   'It is recommended that you make the following override in your
-    ///   OptimizedPersistable subclass for better performance. ...
-    ///   We may make this default but it could break existing code
-    ///   so it is not a trivial change.'
-    /// </summary>
-    public override bool AllowOtherTypesOnSamePage => false;
 
     public override ulong Persist(Placement place, SessionBase session,
       bool persistRefs = true,

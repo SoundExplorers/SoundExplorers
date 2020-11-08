@@ -41,7 +41,7 @@ namespace SoundExplorers.Tests.Model {
       Session.Commit();
       var date = DateTime.Parse("2015/04/03");
       const string url = "http://www.homegrownjuice.co.nz/thank-you.html";
-      List.Populate(); 
+      List.Populate();
       var editor = new TestEditor<Newsletter, NewsletterBindingItem>(List.BindingList);
       editor[0].Date = date;
       editor[0].Url = url;

@@ -465,13 +465,12 @@ namespace SoundExplorers.View {
 
     /// <summary>
     ///   Called when a cell edit is committed in
-    ///   <see cref="MainGridOnCurrentCellDirtyStateChanged"/>, which 
+    ///   <see cref="MainGridOnCurrentCellDirtyStateChanged" />, which
     ///   emulates a cell ComboBox's SelectedIndexChange event.
     /// </summary>
     private void MainGridOnCellValueChanged(object sender, DataGridViewCellEventArgs e) {
-      if (MainGrid.CurrentCell is ComboBoxCell comboBoxCell) {
-        Controller.SetParent(MainCurrentRow.Index, MainGrid.CurrentCell.OwningColumn.Name,
-          comboBoxCell.ComboBox.SelectedItem);
+      //Debug.WriteLine("MainGridOnCellValueChanged");
+      if (MainGrid.CurrentCell is ComboBoxCell) {
         MainGrid.Invalidate();
       }
     }
@@ -491,9 +490,12 @@ namespace SoundExplorers.View {
     ///   https://stackoverflow.com/questions/11141872/event-that-fires-during-datagridviewcomboboxcolumn-selectedindexchanged
     /// </remarks>
     private void MainGridOnCurrentCellDirtyStateChanged(object sender, EventArgs e) {
-      if (MainGrid.IsCurrentCellDirty && MainGrid.CurrentCell is ComboBoxCell) {
+      // Debug.WriteLine("MainGridOnCurrentCellDirtyStateChanged");
+      if (MainGrid.IsCurrentCellDirty &&
+          MainGrid.CurrentCell is ComboBoxCell) {
+        // Debug.WriteLine("    CommitEdit");
         // This fires the cell value changed handler MainGridOnCellValueChanged.
-        MainGrid.CommitEdit(DataGridViewDataErrorContexts.Commit);
+        MainGrid.CommitEdit(DataGridViewDataErrorContexts.CurrentCellChange);
       }
     }
 

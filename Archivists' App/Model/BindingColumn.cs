@@ -10,12 +10,12 @@ namespace SoundExplorers.Model {
     public BindingColumn([NotNull] string name,
       Type referencedEntityListType = null, string referencedColumnName = null) {
       Name = name ?? throw new ArgumentNullException(nameof(name));
-      if (referencedEntityListType != null && 
+      if (referencedEntityListType != null &&
           !referencedEntityListType.GetInterfaces().Contains(typeof(IEntityList))) {
         throw new ArgumentException(
-          $"The Type specified by {nameof(referencedEntityListType)} " + 
-          $"'{referencedEntityListType}' is invalid. If specified, it must " + 
-          $"implement the {nameof(IEntityList)} interface.", 
+          $"The Type specified by {nameof(referencedEntityListType)} " +
+          $"'{referencedEntityListType}' is invalid. If specified, it must " +
+          $"implement the {nameof(IEntityList)} interface.",
           nameof(referencedEntityListType));
       }
       if (referencedEntityListType != null && referencedColumnName == null ||
@@ -30,7 +30,7 @@ namespace SoundExplorers.Model {
 
     /// <summary>
     ///   Gets the display name to be used for reporting.
-    ///   If null, <see cref="Name"/> should be used.
+    ///   If null, <see cref="Name" /> should be used.
     /// </summary>
     [CanBeNull]
     public string DisplayName { get; set; }

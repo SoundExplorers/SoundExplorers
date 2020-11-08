@@ -68,14 +68,24 @@ namespace SoundExplorers.Data {
     }
 
     /// <summary>
-    ///   Returns an entity of the specified type with the specified SimpleKey
+    ///   Returns a top-level entity of the specified type with the specified SimpleKey
     ///   (case-insensitive) but a different object identifier from the one specified,
     ///   if found, otherwise a null reference.
     /// </summary>
     [CanBeNull]
     internal EntityBase FindDuplicateSimpleKey([NotNull] Type entityType,
-      Oid oid, [CanBeNull] string simpleKey,
-      SessionBase session) {
+      Oid oid, [CanBeNull] string simpleKey, SessionBase session) {
+      var entity = FindTopLevelEntity(entityType, simpleKey, session);
+      return entity != null && entity.Oid.Equals(oid) ? entity : null; 
+    }
+
+    /// <summary>
+    ///   Returns a top-level entity of the specified type with the specified SimpleKey
+    ///   (case-insensitive), if found, otherwise a null reference.
+    /// </summary>
+    [CanBeNull]
+    public EntityBase FindTopLevelEntity([NotNull] Type entityType,
+      [CanBeNull] string simpleKey, SessionBase session) {
       if (!SchemaExistsOnDatabase(session)) {
         return null;
       }
@@ -93,7 +103,7 @@ namespace SoundExplorers.Data {
       // }
       return (from EntityBase e in entities
         where string.Compare(e.SimpleKey, simpleKey,
-          StringComparison.OrdinalIgnoreCase) == 0 && !e.Oid.Equals(oid)
+          StringComparison.OrdinalIgnoreCase) == 0
         select e).FirstOrDefault();
     }
 

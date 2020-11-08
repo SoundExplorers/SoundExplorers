@@ -1,10 +1,8 @@
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data.Linq;
 using System.Diagnostics.CodeAnalysis;
 using JetBrains.Annotations;
-using SoundExplorers.Data;
 using SoundExplorers.Model;
 
 namespace SoundExplorers.Controller {
@@ -60,8 +58,8 @@ namespace SoundExplorers.Controller {
     ///   User option for the position of the split between the
     ///   image data (above) and the image (below) in the image table editor.
     /// </summary>
-    // ReSharper disable once UnusedMember.Global
     [ExcludeFromCodeCoverage]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public int ImageSplitterDistance {
       get => ImageSplitterDistanceOption.Int32Value;
       set => ImageSplitterDistanceOption.Int32Value = value;
@@ -132,12 +130,6 @@ namespace SoundExplorers.Controller {
       }
     }
 
-    public void SetParent(int rowIndex, [NotNull] string columnName,
-      [CanBeNull] object selectedItem) {
-      var entity = ((KeyValuePair<string, IEntity>?)selectedItem)?.Value;
-      ((IBindingItem)MainList.BindingList[rowIndex]).SetParent(columnName, entity);
-    }
-
     public void ShowDatabaseUpdateError() {
       View.FocusMainGridCell(MainList.LastDatabaseUpdateErrorException.RowIndex,
         MainList.LastDatabaseUpdateErrorException.ColumnIndex);
@@ -198,6 +190,7 @@ namespace SoundExplorers.Controller {
           MainList.LastDatabaseUpdateErrorException = databaseUpdateErrorException;
           View.StartDatabaseUpdateErrorTimer();
           break;
+        // ReSharper disable once UnusedVariable
         case FormatException formatException:
           // Can happen when pasting an invalid value into a cell,
           // e.g. a URL into a date.

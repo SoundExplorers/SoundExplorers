@@ -32,7 +32,7 @@ namespace SoundExplorers.Data {
         }
         UpdateNonIndexField();
         _date = value.Date;
-        SimpleKey = $"{_date:yyyy/MM/dd}";
+        SimpleKey = DateToSimpleKey(_date);
       }
     }
 

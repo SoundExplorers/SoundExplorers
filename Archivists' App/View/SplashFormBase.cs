@@ -1,6 +1,7 @@
 // Written by Simon O'Rorke, February 2005.
 
 using System;
+using System.ComponentModel;
 using System.Windows.Forms;
 
 namespace SoundExplorers.View {
@@ -69,12 +70,12 @@ namespace SoundExplorers.View {
 	///   </para>
 	/// </remarks>
 	public class SplashFormBase : Form, IMessageUpdater {
-		/// <summary>
-		///   Required designer variable.
-		/// </summary>
-		private System.ComponentModel.IContainer components;
-
     private string _status = "";
+
+    /// <summary>
+    ///   Required designer variable.
+    /// </summary>
+    private IContainer components;
 
     /// <summary>
     ///   A <see cref="System.Windows.Forms.Panel" />
@@ -113,10 +114,6 @@ namespace SoundExplorers.View {
       Load += OnLoad;
     }
 
-    private void OnLoad(object sender, EventArgs e) {
-	    Text = Application.ProductName;
-    }
-
     /// <summary>
     ///   Sets the application load status information
     ///   to be shown on the splash window.
@@ -128,6 +125,10 @@ namespace SoundExplorers.View {
     public void SetMessage(string status) {
       _status = status;
       ChangeStatusText();
+    }
+
+    private void OnLoad(object sender, EventArgs e) {
+      Text = Application.ProductName;
     }
 
     private void ChangeStatusText() {
@@ -157,7 +158,7 @@ namespace SoundExplorers.View {
     ///   the contents of this method with the code editor.
     /// </summary>
     private void InitializeComponent() {
-	    this.components = new System.ComponentModel.Container();
+      this.components = new System.ComponentModel.Container();
       this.SplashPanel = new System.Windows.Forms.Panel();
       this.StatusLabel = new System.Windows.Forms.Label();
       this.SplashPanel.SuspendLayout();

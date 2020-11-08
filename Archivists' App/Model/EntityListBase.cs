@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Data.Linq;
+using System.Diagnostics;
 using System.Linq;
 using JetBrains.Annotations;
 using SoundExplorers.Data;
@@ -295,6 +296,7 @@ namespace SoundExplorers.Model {
         Add(entity);
         IsFixingNewRow = false;
       } catch (Exception exception) {
+        Debug.WriteLine(exception);
         ErrorBindingItem = bindingItem;
         throw CreateDatabaseUpdateErrorException(exception, rowIndex);
       } finally {
@@ -327,6 +329,7 @@ namespace SoundExplorers.Model {
       if (!IsDatabaseUpdateError(exception)) {
         // Terminal error.  In the Release compilation,
         // the stack trace will be shown by the terminal error handler in Program.cs.
+        Debug.WriteLine(exception);
         throw exception;
       }
       string propertyName =
@@ -371,8 +374,8 @@ namespace SoundExplorers.Model {
     ///   now that row validation is complete,
     ///   in order to save the changes to the database.
     ///   <para>
-    ///   Because validation by property has already been done,
-    ///   user errors are not expected at this stage.
+    ///     Because validation by property has already been done,
+    ///     user errors are not expected at this stage.
     ///   </para>
     /// </remarks>
     /// <param name="rowIndex">Zero-based row index</param>
@@ -386,7 +389,8 @@ namespace SoundExplorers.Model {
       }
     }
 
-    private void UpdateExistingEntityProperty(int rowIndex, [NotNull] string propertyName) {
+    private void UpdateExistingEntityProperty(
+      int rowIndex, [NotNull] string propertyName) {
       //Debug.WriteLine("EntityListBase.UpdateExistingEntityProperty");
       LastDatabaseChangeAction = ChangeAction.Update;
       var bindingItem = (TBindingItem)BindingList[rowIndex];
@@ -395,11 +399,10 @@ namespace SoundExplorers.Model {
       var backupBindingItem = CreateBindingItem(entity);
       Session.BeginUpdate();
       try {
-        //Debug.WriteLine($"IsPersistent before update = {entity.IsPersistent}");
         bindingItem.UpdateEntityProperty(propertyName, entity);
       } catch (Exception exception) {
         BindingItemToFix = bindingItem;
-        backupBindingItem.CopyPropertyValuesToEntity(entity);
+        backupBindingItem.RestoreToEntity(entity);
         BackupBindingItemToRestoreFrom = BackupBindingItem;
         // This exception will be passed to the grid's DataError event handler.
         throw CreateDatabaseUpdateErrorException(exception, rowIndex);

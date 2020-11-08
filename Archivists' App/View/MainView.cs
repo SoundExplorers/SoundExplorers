@@ -21,7 +21,7 @@ namespace SoundExplorers.View {
     private SizeableFormOptions SizeableFormOptions { get; set; }
 
     private EditorView EditorView => ActiveMdiChild as EditorView ??
-                                   throw new NullReferenceException(nameof(EditorView));
+                                     throw new NullReferenceException(nameof(EditorView));
 
     public void SetController(MainController controller) {
       Controller = controller;

@@ -19,7 +19,7 @@ namespace SoundExplorers.Tests.Controller {
     }
 
     public void EditMainGridCurrentCell() {
-      EditMainGridCurrentCellCount ++;
+      EditMainGridCurrentCellCount++;
     }
 
     public void FocusMainGridCell(int rowIndex, int columnIndex) {
@@ -33,11 +33,12 @@ namespace SoundExplorers.Tests.Controller {
     }
 
     public void OnRowAddedOrDeleted() {
-      OnRowAddedOrDeletedCount ++;
+      OnRowAddedOrDeletedCount++;
     }
 
-    public void RestoreMainGridCurrentRowCellErrorValue(int columnIndex, object errorValue) {
-      RestoreMainGridCurrentRowCellErrorValueCount ++;
+    public void RestoreMainGridCurrentRowCellErrorValue(int columnIndex,
+      object errorValue) {
+      RestoreMainGridCurrentRowCellErrorValueCount++;
     }
 
     public void SelectCurrentRowOnly() {

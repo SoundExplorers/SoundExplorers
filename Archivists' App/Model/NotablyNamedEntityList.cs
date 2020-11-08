@@ -2,10 +2,9 @@
 
 namespace SoundExplorers.Model {
   public abstract class
-    NotablyNamedEntityList<TEntity> 
+    NotablyNamedEntityList<TEntity>
     : EntityListBase<TEntity, NotablyNamedBindingItem<TEntity>>
     where TEntity : EntityBase, INotablyNamedEntity, new() {
-
     protected override NotablyNamedBindingItem<TEntity> CreateBindingItem(
       TEntity entity) {
       return new NotablyNamedBindingItem<TEntity> {

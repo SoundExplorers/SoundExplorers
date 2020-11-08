@@ -5,7 +5,7 @@ using JetBrains.Annotations;
 
 namespace SoundExplorers.Model {
   /// <summary>
-  ///   Metadata for the columns of a binding list that links entities to a grid. 
+  ///   Metadata for the columns of a binding list that links entities to a grid.
   /// </summary>
   /// <remarks>
   ///   A keyed list of entity columns with

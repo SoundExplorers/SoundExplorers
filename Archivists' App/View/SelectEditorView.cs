@@ -36,8 +36,9 @@ namespace SoundExplorers.View {
     /// <returns></returns>
     [NotNull]
     public static SelectEditorView Create([NotNull] string tableName) {
-      return (SelectEditorView)ViewFactory.Create<SelectEditorView, SelectEditorController>(
-        tableName);
+      return (SelectEditorView)ViewFactory
+        .Create<SelectEditorView, SelectEditorController>(
+          tableName);
     }
 
     private void OKButton_Click(object sender, EventArgs e) {

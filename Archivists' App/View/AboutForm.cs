@@ -24,10 +24,6 @@ namespace SoundExplorers.View {
       Load += OnLoad;
     }
 
-    private void OnLoad(object sender, EventArgs e) {
-      Text = "About " + Application.ProductName;
-    }
-
     /// <summary>
     ///   Gets the company specified for the assembly
     ///   in AssemblyInfo.cs.
@@ -52,6 +48,10 @@ namespace SoundExplorers.View {
             typeof(AssemblyCopyrightAttribute), false)[0];
         return assemblyCopyrightAttribute.Copyright;
       }
+    }
+
+    private void OnLoad(object sender, EventArgs e) {
+      Text = "About " + Application.ProductName;
     }
   } //End of class
 } //End of namespace
