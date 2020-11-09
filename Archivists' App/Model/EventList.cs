@@ -4,8 +4,23 @@ using SoundExplorers.Data;
 
 namespace SoundExplorers.Model {
   public class EventList : EntityListBase<Event, EventBindingItem> {
-    public override IList GetChildrenForMainList(int rowIndex) {
-      return this[rowIndex].Sets.Values.ToList();
+    private bool HasDefaultEventTypeBeenFound { get; set; }
+
+    private void AddDefaultEventTypeIfItDoesNotExist() {
+      if (HasDefaultEventTypeBeenFound) {
+        return;
+      }
+      Session.BeginUpdate();
+      var defaultEventType = QueryHelper.Find<EventType>(
+        EventBindingItem.DefaultEventTypeName, Session);
+      if (defaultEventType == null) {
+        defaultEventType = new EventType {
+          Name = EventBindingItem.DefaultEventTypeName
+        };
+        Session.Persist(defaultEventType);
+      }
+      Session.Commit();
+      HasDefaultEventTypeBeenFound = true;
     }
 
     protected override EventBindingItem CreateBindingItem(Event @event) {
@@ -31,6 +46,15 @@ namespace SoundExplorers.Model {
           typeof(SeriesList), nameof(Series.Name)),
         new BindingColumn(nameof(Event.Notes))
       };
+    }
+
+    public override IList GetChildrenForMainList(int rowIndex) {
+      return this[rowIndex].Sets.Values.ToList();
+    }
+
+    public override void Populate(IList list = null) {
+      AddDefaultEventTypeIfItDoesNotExist();
+      base.Populate(list);
     }
   }
 }

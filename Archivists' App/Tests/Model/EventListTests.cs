@@ -17,7 +17,7 @@ namespace SoundExplorers.Tests.Model {
       Data.AddLocationsPersisted(2, Session);
       Data.AddEventsPersisted(4, Session);
       Session.Commit();
-      List = new EventList {Session = Session};
+      List = new EventList {QueryHelper = QueryHelper, Session = Session};
     }
 
     [TearDown]
@@ -60,6 +60,37 @@ namespace SoundExplorers.Tests.Model {
       Assert.AreEqual("Name", List.Columns[4].ReferencedColumnName,
         "Columns[4].ReferencedColumnName");
       Assert.AreEqual("Notes", List.Columns[5].Name, "Columns[5].Name");
+    }
+
+    [Test]
+    public void DefaultEventType() {
+      var defaultEventType = Data.EventTypes[0];
+      Assert.AreEqual(EventBindingItem.DefaultEventTypeName, defaultEventType.Name,
+        "Default EventType added in Setup");
+      Session.BeginUpdate();
+      // First, delete the events that reference the default event type,
+      // so that the default event type can then be deleted.
+      for (int i = Data.Events.Count - 1; i >= 0; i--) {
+        Session.Unpersist(Data.Events[i]);
+      }
+      Session.Unpersist(Data.EventTypes[0]);
+      defaultEventType = QueryHelper.Find<EventType>(
+        EventBindingItem.DefaultEventTypeName, Session);
+      Session.Commit();
+      Assert.IsNull(defaultEventType, "Default EventType removed");
+      List.Populate(); // This should re-add the now missing default event type.
+      Session.BeginRead();
+      defaultEventType = QueryHelper.Find<EventType>(
+        EventBindingItem.DefaultEventTypeName, Session);
+      Session.Commit();
+      Assert.IsNotNull(defaultEventType, "Default EventType after first populate");
+      // This refresh populate does not need to add the default event type.
+      List.Populate();  
+      Session.BeginRead();
+      defaultEventType = QueryHelper.Find<EventType>(
+        EventBindingItem.DefaultEventTypeName, Session);
+      Session.Commit();
+      Assert.IsNotNull(defaultEventType, "Default EventType after refresh populate");
     }
 
     [Test]

@@ -4,15 +4,10 @@ using NUnit.Framework;
 using SoundExplorers.Data;
 using SoundExplorers.Model;
 using SoundExplorers.Tests.Data;
-using VelocityDb.Session;
 
 namespace SoundExplorers.Tests {
   [TestFixture]
   public class TestDatabaseGenerator {
-    private TestData Data { get; set; }
-    private QueryHelper QueryHelper { get; set; }
-    private SessionBase Session { get; set; }
-
     // /// <summary>
     // ///   Comment out unless the main test database needs to be regenerated.
     // /// </summary>
@@ -26,20 +21,21 @@ namespace SoundExplorers.Tests {
     // }
 
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
+    [ExcludeFromCodeCoverage]
     private void Generate() {
-      QueryHelper = new QueryHelper();
-      Data = new TestData(QueryHelper);
+      var queryHelper = new QueryHelper();
+      var data = new TestData(queryHelper);
       TestSession.DeleteFolderIfExists(DatabaseConfig.DefaultDatabaseFolderPath);
       Directory.CreateDirectory(DatabaseConfig.DefaultDatabaseFolderPath);
-      Session = new TestSession(DatabaseConfig.DefaultDatabaseFolderPath);
-      Session.BeginUpdate();
-      Data.AddActsPersisted(10, Session);
-      Data.AddEventTypesPersisted(5, Session);
-      Data.AddGenresPersisted(10, Session);
-      Data.AddLocationsPersisted(8, Session);
-      Data.AddNewslettersPersisted(64, Session);
-      Data.AddSeriesPersisted(8, Session);
-      Session.Commit();
+      var session = new TestSession(DatabaseConfig.DefaultDatabaseFolderPath);
+      session.BeginUpdate();
+      data.AddActsPersisted(10, session);
+      data.AddEventTypesPersisted(5, session);
+      data.AddGenresPersisted(10, session);
+      data.AddLocationsPersisted(8, session);
+      data.AddNewslettersPersisted(64, session);
+      data.AddSeriesPersisted(8, session);
+      session.Commit();
     }
   }
 }

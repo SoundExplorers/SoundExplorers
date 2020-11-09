@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Data.Linq;
-using System.Diagnostics;
 using System.Linq;
 using JetBrains.Annotations;
 using SoundExplorers.Data;
@@ -24,6 +23,7 @@ namespace SoundExplorers.Model {
     where TEntity : EntityBase, new()
     where TBindingItem : BindingItemBase<TEntity, TBindingItem>, new() {
     private BindingColumnList _columns;
+    private QueryHelper _queryHelper;
     private SessionBase _session;
 
     /// <summary>
@@ -110,6 +110,15 @@ namespace SoundExplorers.Model {
     ///   Null if a parent list is not required when this is the main list.
     /// </summary>
     public Type ParentListType { get; }
+
+    /// <summary>
+    ///   The setter should only be needed for testing.
+    /// </summary>
+    [NotNull]
+    internal QueryHelper QueryHelper {
+      get => _queryHelper ?? (_queryHelper = QueryHelper.Instance);
+      set => _queryHelper = value;
+    }
 
     /// <summary>
     ///   Gets or sets the session to be used for accessing the database.
@@ -239,7 +248,7 @@ namespace SoundExplorers.Model {
     ///   If null, all entities of the class's entity type
     ///   will be fetched from the database.
     /// </param>
-    public void Populate(IList list = null) {
+    public virtual void Populate(IList list = null) {
       Clear();
       if (list != null) {
         AddRange((IList<TEntity>)list);
@@ -296,7 +305,7 @@ namespace SoundExplorers.Model {
         Add(entity);
         IsFixingNewRow = false;
       } catch (Exception exception) {
-        Debug.WriteLine(exception);
+        //Debug.WriteLine(exception);
         ErrorBindingItem = bindingItem;
         throw CreateDatabaseUpdateErrorException(exception, rowIndex);
       } finally {
@@ -329,7 +338,7 @@ namespace SoundExplorers.Model {
       if (!IsDatabaseUpdateError(exception)) {
         // Terminal error.  In the Release compilation,
         // the stack trace will be shown by the terminal error handler in Program.cs.
-        Debug.WriteLine(exception);
+        //Debug.WriteLine(exception);
         throw exception;
       }
       string propertyName =
