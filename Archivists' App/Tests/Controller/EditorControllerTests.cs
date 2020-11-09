@@ -32,7 +32,8 @@ namespace SoundExplorers.Tests.Controller {
     public void Edit() {
       const string name1 = "Auntie";
       const string name2 = "Uncle";
-      var editor = new TestEditor<Location, NotablyNamedBindingItem<Location>>();
+      var editor = new TestEditor<Location, NotablyNamedBindingItem<Location>>(
+        QueryHelper, Session);
       Controller = CreateController(typeof(LocationList));
       Assert.IsFalse(Controller.IsParentTableToBeShown, "IsParentTableToBeShown");
       Controller.FetchData(); // The grid will be empty initially
@@ -130,7 +131,8 @@ namespace SoundExplorers.Tests.Controller {
 
     [Test]
     public void ErrorOnDelete() {
-      var editor = new TestEditor<Location, NotablyNamedBindingItem<Location>>();
+      var editor = new TestEditor<Location, NotablyNamedBindingItem<Location>>(
+        QueryHelper, Session);
       Session.BeginUpdate();
       try {
         Data.AddEventTypesPersisted(1, Session);
@@ -212,7 +214,8 @@ namespace SoundExplorers.Tests.Controller {
       Controller.FetchData(); // Populate grid
       Assert.IsTrue(Controller.DoesColumnReferenceAnotherEntity("Series"),
         "DoesColumnReferenceAnotherEntity");
-      var editor = new TestEditor<Event, EventBindingItem>(Controller.MainBindingList);
+      var editor = new TestEditor<Event, EventBindingItem>(
+        QueryHelper, Session, Controller.MainBindingList);
       string selectedSeriesName = Data.Series[0].Name;
       var selectedSeries = Data.Series[0];
       editor[0].Series = selectedSeriesName;

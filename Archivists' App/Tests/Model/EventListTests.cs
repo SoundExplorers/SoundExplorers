@@ -75,7 +75,8 @@ namespace SoundExplorers.Tests.Model {
       var series = Data.Series[0];
       const string notes = "My notes";
       List.Populate();
-      var editor = new TestEditor<Event, EventBindingItem>(List.BindingList);
+      var editor = new TestEditor<Event, EventBindingItem>(
+        QueryHelper, Session, List.BindingList);
       editor[1].Date = date;
       editor[1].Location = location.Name;
       editor[1].Newsletter = newsletter.Date;
@@ -89,6 +90,10 @@ namespace SoundExplorers.Tests.Model {
       Assert.AreSame(eventType, @event.EventType, "EventType");
       Assert.AreSame(series, @event.Series, "Series");
       Assert.AreEqual(notes, @event.Notes, "Notes");
+      editor[1].Series = null;
+      Assert.IsNull(@event.Series, "Series reset to null");
+      editor[1].Newsletter = EntityBase.InitialDate;
+      Assert.IsNull(@event.Newsletter, "Newsletter reset to null");
     }
 
     [Test]

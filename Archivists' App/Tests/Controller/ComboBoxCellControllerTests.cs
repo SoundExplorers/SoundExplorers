@@ -15,7 +15,7 @@ namespace SoundExplorers.Tests.Controller {
       QueryHelper = new QueryHelper();
       Data = new TestData(QueryHelper);
       Session = new TestSession();
-      Editor = new TestEditor<Event, EventBindingItem>();
+      Editor = new TestEditor<Event, EventBindingItem>(QueryHelper, Session);
       EditorView = new MockEditorView();
       EditorController = CreateEditorController(typeof(EventList));
       CellView = new MockView<ComboBoxCellController>();

@@ -57,6 +57,7 @@ namespace SoundExplorers.Tests.Data {
       Event event4;
       Event event5;
       Event event6;
+      Event event7;
       Set set1;
       Set set2;
       using (var session = new TestSession(DatabaseFolderPath)) {
@@ -85,6 +86,7 @@ namespace SoundExplorers.Tests.Data {
         event6 = new Event {
           Date = event5.Date, Location = location2, EventType = event1.EventType
         };
+        event7 = new Event {Date = event5.Date};
         Data.AddGenresPersisted(1, session);
         set1 = new Set {
           SetNo = 1,
@@ -104,6 +106,7 @@ namespace SoundExplorers.Tests.Data {
       Assert.IsTrue(event3.Key > nullKey, "event3.Key > nullKey");
       Assert.IsTrue(nullKey < event3.Key, "event3.Key < nullKey");
       Assert.IsTrue(event5.Key < event6.Key, "event5.Key < event6.Key");
+      Assert.IsFalse(event5.Key < event7.Key, "event5.Key < event7.Key");
       Assert.IsTrue(set1.Key < set2.Key, "set1.Key < set2.Key");
       Assert.IsTrue(event2.Key < event3.Key, "event2.Key < event3.Key");
     }

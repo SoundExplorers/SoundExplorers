@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -194,12 +193,6 @@ namespace SoundExplorers.Model {
         entityProperty.SetValue(entity, newEntityPropertyValue);
       } catch (TargetInvocationException exception) {
         throw exception.InnerException ?? exception;
-      } catch (Exception exception) {
-        throw new PropertyConstraintException(
-          $"Failed to set {typeof(TEntity).Name}.{entityProperty.Name} "
-          + $"to '{newEntityPropertyValue}':"
-          + Environment.NewLine + $"{exception.Message}",
-          entityProperty.Name, exception);
       }
     }
 

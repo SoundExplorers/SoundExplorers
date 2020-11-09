@@ -11,6 +11,7 @@ namespace SoundExplorers.Tests.Model {
   public class EntityListBaseTests {
     [SetUp]
     public void Setup() {
+      QueryHelper = new QueryHelper();
       Session = new TestSession();
     }
 
@@ -19,22 +20,14 @@ namespace SoundExplorers.Tests.Model {
       Session.DeleteDatabaseFolderIfExists();
     }
 
-    [SuppressMessage("ReSharper", "UnusedMember.Local")]
-    private class DudErrorThrower : EventType {
-      [ExcludeFromCodeCoverage]
-      public new string Name {
-        get => SimpleKey;
-        set => throw new InvalidOperationException();
-      }
-    }
-
-    private class DudErrorThrowerList : NamedEntityList<DudErrorThrower> {
+    private class DudErrorThrowerList : NamedEntityList<ErrorThrowingEventType> {
       [ExcludeFromCodeCoverage]
       public override IList GetChildrenForMainList(int rowIndex) {
         throw new NotSupportedException();
       }
     }
 
+    private QueryHelper QueryHelper { get; set; }
     private TestSession Session { get; set; }
 
     [Test]
@@ -42,8 +35,8 @@ namespace SoundExplorers.Tests.Model {
       var list = new DudErrorThrowerList {Session = Session};
       list.Populate(); // Creates an empty BindingList
       var editor =
-        new TestEditor<DudErrorThrower, NamedBindingItem<DudErrorThrower>>(
-          list.BindingList);
+        new TestEditor<ErrorThrowingEventType, NamedBindingItem<ErrorThrowingEventType>>(
+          QueryHelper, Session, list.BindingList);
       var item1 = editor.AddNew();
       item1.Name = "Dudley";
       Assert.Throws<InvalidOperationException>(() => list.OnRowValidated(0));

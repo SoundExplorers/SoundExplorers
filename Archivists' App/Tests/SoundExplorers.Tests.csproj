@@ -124,6 +124,7 @@
         <Compile Include="Model\BindingColumnTests.cs" />
         <Compile Include="Model\DatabaseConnectionTests.cs" />
         <Compile Include="Model\EntityListBaseTests.cs" />
+        <Compile Include="Model\ErrorThrowingEventType.cs" />
         <Compile Include="Model\EventListTests.cs" />
         <Compile Include="Model\GlobalTests.cs" />
         <Compile Include="Model\MockDatabaseConnection.cs" />

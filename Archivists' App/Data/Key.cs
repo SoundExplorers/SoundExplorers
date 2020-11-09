@@ -123,19 +123,6 @@ namespace SoundExplorers.Data {
       // Simple keys are equal. So compare identifying parents.
       if (key1.IdentifyingParent != null && key2.IdentifyingParent != null) {
         return key1.IdentifyingParent.Key < key2.IdentifyingParent.Key;
-        // if (key1.IdentifyingParent.Key < key2.IdentifyingParent.Key) {
-        //   return true;
-        // }
-        // if (key1.IdentifyingParent.Key > key2.IdentifyingParent.Key) {
-        //   return false;
-        // }
-        // return string.Compare(key1.SimpleKey, key2.SimpleKey,
-        //   StringComparison.OrdinalIgnoreCase) < 0;
-      }
-      if (key1.IdentifyingParent == null && key2.IdentifyingParent == null) {
-        return false;
-        // return string.Compare(key1.SimpleKey, key2.SimpleKey,
-        //   StringComparison.OrdinalIgnoreCase) < 0;
       }
       return key1.IdentifyingParent == null && key2.IdentifyingParent != null;
     }
