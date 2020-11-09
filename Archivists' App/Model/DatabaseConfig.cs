@@ -17,7 +17,7 @@ namespace SoundExplorers.Model {
   ///   Refer to that again if this class needs to get more complicated.
   /// </remarks>
   public class DatabaseConfig {
-    private const string DefaultDatabaseFolderPath =
+    internal const string DefaultDatabaseFolderPath =
       @"E:\Simon\OneDrive\Documents\Software\Sound Explorers Audio Archive\Database";
 
     private string _configFilePath;

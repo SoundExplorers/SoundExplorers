@@ -137,6 +137,7 @@
         <Compile Include="Model\TestEditor.cs" />
         <Compile Include="Model\TestOption.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
+        <Compile Include="TestDatabaseGenerator.cs" />
     </ItemGroup>
     <ItemGroup>
       <None Include="packages.config" />
