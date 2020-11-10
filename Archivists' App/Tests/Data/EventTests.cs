@@ -189,7 +189,7 @@ namespace SoundExplorers.Tests.Data {
       Assert.AreEqual(0, Series1.References.Count, "Series1.Events.Count");
       Assert.AreEqual(1, Series2.Events.Count, "Series2.Events.Count");
       Assert.AreEqual(1, Series2.References.Count, "Series2.References.Count");
-      Assert.AreEqual(Event2Date, Event2.Date, "Event1.Date");
+      Assert.AreEqual(Event2Date, Event2.Date, "Event2.Date");
       Assert.AreSame(Location1, Event2.Location, "Event2.Location");
       Assert.AreEqual(1, Location2.Events.Count, "Location2.Events.Count");
       Assert.AreEqual(1, Location2.References.Count,
@@ -248,22 +248,56 @@ namespace SoundExplorers.Tests.Data {
     /// </summary>
     [Test]
     public void ChangeNewsletter() {
+      const string newNotes = "My new notes";
+      var newDate = Event1Date.AddDays(-1);
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
+        Location1 = QueryHelper.Read<Location>(Location1Name, session);
+        Location2 = QueryHelper.Read<Location>(Location2Name, session);
         Newsletter1 =
           QueryHelper.Read<Newsletter>(Newsletter1SimpleKey, session);
         Newsletter2 =
           QueryHelper.Read<Newsletter>(Newsletter2SimpleKey, session);
         Event1 = Newsletter1.Events[0];
         Event1.Newsletter = Newsletter2;
+        Event1.Date = newDate;
+        Event1.Location = Location2;
+        Event1.Notes = newNotes;
         session.Commit();
-        Assert.AreSame(Newsletter2, Event1.Newsletter, "Event1.Newsletter");
-        Assert.AreEqual(0, Newsletter1.Events.Count,
-          "Newsletter1.Events.Count");
-        Assert.AreEqual(2, Newsletter2.Events.Count,
-          "Newsletter2.Events.Count");
-        Assert.AreSame(Event1, Newsletter2.Events[0], "Newsletter2 1st Event");
       }
+      Assert.AreSame(Newsletter2, Event1.Newsletter, "Event1.Newsletter");
+      Assert.AreEqual(0, Newsletter1.Events.Count,
+        "Newsletter1.Events.Count");
+      Assert.AreEqual(2, Newsletter2.Events.Count,
+        "Newsletter2.Events.Count");
+      Assert.AreSame(Event1, Newsletter2.Events[0], "Newsletter2 1st Event");
+      using (var session = new TestSession(DatabaseFolderPath)) {
+        session.BeginRead();
+        Location1 = QueryHelper.Read<Location>(Location1Name, session);
+        Location2 = QueryHelper.Read<Location>(Location2Name, session);
+        Newsletter1 =
+          QueryHelper.Read<Newsletter>(Newsletter1SimpleKey, session);
+        Newsletter2 =
+          QueryHelper.Read<Newsletter>(Newsletter2SimpleKey, session);
+        Event1 = QueryHelper.Read<Event>(
+          EntityBase.DateToSimpleKey(newDate), Location2, session);
+        session.Commit();
+      }
+      Assert.AreEqual(newNotes, Event1.Notes, "Event1.Notes in new session");
+      Assert.AreSame(Location2, Event1.Location, "Event1.Location in new session");
+      Assert.AreSame(Newsletter2, Event1.Newsletter, "Event1.Newsletter in new session");
+      // Bug: Membership in parent Events lists revert in the new session
+      // and are inconsistent with the referencing properties,
+      // whose changes have been conserved correctly.
+      // So all these tests fail:
+      Assert.AreEqual(1, Location1.Events.Count, 
+        "Location1.Events.Count in new session");
+      Assert.AreEqual(2, Location2.Events.Count, 
+        "Location2.Events.Count in new session");
+      Assert.AreEqual(0, Newsletter1.Events.Count,
+        "Newsletter1.Events.Count in new session");
+      Assert.AreEqual(2, Newsletter2.Events.Count,
+        "Newsletter2.Events.Count in new session");
     }
 
     [Test]
