@@ -75,15 +75,15 @@ namespace SoundExplorers.Model {
 
     private void CopyValuesToEntityProperties([NotNull] TEntity entity) {
       foreach (var property in Properties.Values) {
-        CopyValueToEntityProperty(property, entity);
+        CopyValueToEntityProperty(property.Name, entity);
       }
     }
 
-    private void CopyValueToEntityProperty([NotNull] PropertyInfo property,
+    private void CopyValueToEntityProperty([NotNull] string propertyName,
       [NotNull] TEntity entity) {
-      var entityProperty = EntityProperties[property.Name];
+      var entityProperty = EntityProperties[propertyName];
       var oldEntityPropertyValue = entityProperty.GetValue(entity);
-      var newEntityPropertyValue = EntityPropertyValues[property.Name];
+      var newEntityPropertyValue = EntityPropertyValues[propertyName];
       if (oldEntityPropertyValue == null && newEntityPropertyValue == null) {
         return;
       }
