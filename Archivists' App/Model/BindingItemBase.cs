@@ -10,7 +10,8 @@ using VelocityDb.Session;
 
 namespace SoundExplorers.Model {
   /// <summary>
-  ///   Each derived class must call OnPropertyChanged in each of its property setters,
+  ///   Each derived class must call <see cref="OnPropertyChanged" />
+  ///   in each of its property setters,
   ///   in order that the BindingList of which instantiations are items
   ///   will raise its ListChanged event
   ///   (with ListChangedEventArgs.ListChangedType == ListChangedType.ItemChanged)
