@@ -7,9 +7,6 @@ namespace SoundExplorers.Model {
     private bool HasDefaultEventTypeBeenFound { get; set; }
 
     private void AddDefaultEventTypeIfItDoesNotExist() {
-      if (HasDefaultEventTypeBeenFound) {
-        return;
-      }
       Session.BeginUpdate();
       var defaultEventType = QueryHelper.Find<EventType>(
         EventBindingItem.DefaultEventTypeName, Session);
@@ -53,7 +50,9 @@ namespace SoundExplorers.Model {
     }
 
     public override void Populate(IList list = null) {
-      AddDefaultEventTypeIfItDoesNotExist();
+      if (!HasDefaultEventTypeBeenFound) {
+        AddDefaultEventTypeIfItDoesNotExist();
+      }
       base.Populate(list);
     }
   }

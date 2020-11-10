@@ -83,14 +83,7 @@ namespace SoundExplorers.Tests.Model {
       defaultEventType = QueryHelper.Find<EventType>(
         EventBindingItem.DefaultEventTypeName, Session);
       Session.Commit();
-      Assert.IsNotNull(defaultEventType, "Default EventType after first populate");
-      // This refresh populate does not need to add the default event type.
-      List.Populate();  
-      Session.BeginRead();
-      defaultEventType = QueryHelper.Find<EventType>(
-        EventBindingItem.DefaultEventTypeName, Session);
-      Session.Commit();
-      Assert.IsNotNull(defaultEventType, "Default EventType after refresh populate");
+      Assert.IsNotNull(defaultEventType, "Default EventType after populate");
     }
 
     [Test]
