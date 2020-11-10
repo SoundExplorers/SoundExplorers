@@ -22,7 +22,7 @@ namespace SoundExplorers.Tests {
 
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
     [ExcludeFromCodeCoverage]
-    private void Generate() {
+    private static void Generate() {
       var queryHelper = new QueryHelper();
       var data = new TestData(queryHelper);
       TestSession.DeleteFolderIfExists(DatabaseConfig.DefaultDatabaseFolderPath);
