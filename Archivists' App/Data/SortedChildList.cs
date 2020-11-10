@@ -33,7 +33,7 @@ namespace SoundExplorers.Data {
     private EntityBase Parent { get; }
 
     public void Add([NotNull] TChild child) {
-      Parent.AddChild(child);
+      Parent.AddNonIdentifiedChild(child);
     }
 
     [UsedImplicitly]

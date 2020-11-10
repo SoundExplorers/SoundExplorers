@@ -500,7 +500,7 @@ namespace SoundExplorers.Tests.Data {
           // Cannot use [Children].Add, as it is an ambiguous reference 
           // when a null parameter is specified.
           // ReSharper disable once AssignNullToNotNullAttribute
-          Father1.AddChild(null));
+          Father1.AddNonIdentifiedChild(null));
         session.Commit();
       }
     }

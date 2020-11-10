@@ -185,13 +185,17 @@ namespace SoundExplorers.Data {
         if (_identifyingParent != null &&
             // Should always be true
             _identifyingParent.ChildrenOfType[EntityType].Contains(Key)) {
+          _identifyingParent.UpdateNonIndexField();
           _identifyingParent.ChildrenOfType[EntityType].Remove(Key);
           _identifyingParent.References.Remove(
             _identifyingParent.References.First(r => r.To.Equals(this)));
         }
+        value.UpdateNonIndexField();
         value.ChildrenOfType[EntityType].Add(newKey, this);
         value.References.AddFast(new Reference(this, "_children"));
-        Parents[IdentifyingParentType] = value;
+        Parents[
+          IdentifyingParentType ??
+          throw new NullReferenceException(nameof(IdentifyingParentType))] = value;
         _identifyingParent = value;
       }
     }
@@ -223,8 +227,9 @@ namespace SoundExplorers.Data {
       }
     }
 
-    internal void AddChild([NotNull] EntityBase child) {
+    internal void AddNonIdentifiedChild([NotNull] EntityBase child) {
       CheckCanAddChild(child);
+      UpdateNonIndexField();
       ChildrenOfType[child.EntityType].Add(CreateChildKey(child), child);
       References.AddFast(new Reference(child, "_children"));
       UpdateChild(child, this);
@@ -234,7 +239,7 @@ namespace SoundExplorers.Data {
       [NotNull] Type parentEntityType,
       [CanBeNull] EntityBase newParent) {
       Parents[parentEntityType]?.RemoveChild(this, newParent != null);
-      newParent?.AddChild(this);
+      newParent?.AddNonIdentifiedChild(this);
     }
 
     private void CheckCanAddChild([NotNull] EntityBase child) {
@@ -429,6 +434,7 @@ namespace SoundExplorers.Data {
     internal void RemoveChild([NotNull] EntityBase child,
       bool isReplacingOrUnpersisting) {
       CheckCanRemoveChild(child, isReplacingOrUnpersisting);
+      UpdateNonIndexField();
       ChildrenOfType[child.EntityType].Remove(child.Key);
       References.Remove(References.First(r => r.To.Equals(child)));
       UpdateChild(child, null);

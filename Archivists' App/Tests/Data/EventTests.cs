@@ -253,6 +253,8 @@ namespace SoundExplorers.Tests.Data {
         session.BeginRead();
         Location1 = QueryHelper.Read<Location>(Location1Name, session);
         Location2 = QueryHelper.Read<Location>(Location2Name, session);
+        Event1AtLocation2 =
+          QueryHelper.Read<Event>(Event1SimpleKey, Location2, session);
         Event2 = QueryHelper.Read<Event>(Event2SimpleKey, Location2, session);
         session.Commit();
       }
@@ -301,10 +303,6 @@ namespace SoundExplorers.Tests.Data {
       }
       Assert.AreEqual(newNotes, Event1.Notes, "Event1.Notes in new session");
       Assert.AreSame(Newsletter2, Event1.Newsletter, "Event1.Newsletter in new session");
-      // Bug: Membership in parent Events lists revert in the new session
-      // and are inconsistent with the referencing properties,
-      // whose changes have been conserved correctly.
-      // So all these tests fail:
       Assert.AreEqual(0, Newsletter1.Events.Count,
         "Newsletter1.Events.Count in new session");
       Assert.AreEqual(2, Newsletter2.Events.Count,
@@ -437,6 +435,58 @@ namespace SoundExplorers.Tests.Data {
         session.Commit();
       }
       Assert.IsNull(Event1.Newsletter, "Event1.Newsletter in new session");
+      Assert.AreEqual(0, Newsletter1.Events.Count,
+        "Newsletter1.Events.Count in new session");
+    }
+
+    [Test]
+    public void Unpersist() {
+      ConstraintException exception;
+      using (var session = new TestSession(DatabaseFolderPath)) {
+        session.BeginUpdate();
+        Event1 = QueryHelper.Read<Event>(Event1SimpleKey, Location1, session);
+        Set1 = QueryHelper.Read<Set>(Set1.SimpleKey, Event1, session);
+        Set2 = QueryHelper.Read<Set>(Set2.SimpleKey, Event1, session);
+        exception = Assert.Catch<ConstraintException>(() => session.Unpersist(Event1),
+          "Unpersist Event with Sets");
+        session.Unpersist(Set1);
+        session.Unpersist(Set2);
+        session.Commit();
+      }
+      Assert.IsTrue(
+        exception.Message.Contains("' cannot be deleted because it is referenced by "),
+        "ConstraintException message");
+      using (var session = new TestSession(DatabaseFolderPath)) {
+        session.BeginUpdate();
+        Event1 = QueryHelper.Read<Event>(Event1SimpleKey, Location1, session);
+        EventType1 = QueryHelper.Read<EventType>(EventType1Name, session);
+        Location1 = QueryHelper.Read<Location>(Location1Name, session);
+        Newsletter1 =
+          QueryHelper.Read<Newsletter>(Newsletter1SimpleKey, session);
+        session.Unpersist(Event1);
+        session.Commit();
+      }
+      Assert.AreEqual(2, EventType1.Events.Count,
+        "EventType1.Events.Count after deleting Event1");
+      Assert.AreEqual(1, Location1.Events.Count,
+        "Location1.Events.Count after deleting Event1");
+      Assert.AreEqual(0, Newsletter1.Events.Count,
+        "Newsletter1.Events.Count after deleting Event1");
+      using (var session = new TestSession(DatabaseFolderPath)) {
+        session.BeginUpdate();
+        Event1 = QueryHelper.Find<Event>(Event1SimpleKey, Location1, session);
+        EventType1 = QueryHelper.Read<EventType>(EventType1Name, session);
+        Location1 = QueryHelper.Read<Location>(Location1Name, session);
+        Newsletter1 =
+          QueryHelper.Read<Newsletter>(Newsletter1SimpleKey, session);
+        session.Unpersist(Event1);
+        session.Commit();
+      }
+      Assert.IsNull(Event1, "Event1 in new session");
+      Assert.AreEqual(2, EventType1.Events.Count,
+        "EventType1.Events.Count in new session");
+      Assert.AreEqual(1, Location1.Events.Count,
+        "Location1.Events.Count in new session");
       Assert.AreEqual(0, Newsletter1.Events.Count,
         "Newsletter1.Events.Count in new session");
     }
