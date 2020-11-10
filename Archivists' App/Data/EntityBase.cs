@@ -434,6 +434,14 @@ namespace SoundExplorers.Data {
       UpdateChild(child, null);
     }
 
+    /// <summary>
+    ///   Allows a derived entity to update the field (not property)
+    ///   corresponding to the parent entity of the specified entity type
+    ///   with the specified new value.
+    /// </summary>
+    protected abstract void SetNonIdentifyingParentField(
+      [NotNull] Type parentEntityType, [CanBeNull] EntityBase newParent);
+
     public override void Unpersist(SessionBase session) {
       if (References.Count > 0) {
         // If we did not do this,
@@ -467,14 +475,6 @@ namespace SoundExplorers.Data {
           newParent);
       }
     }
-
-    /// <summary>
-    ///   Allows a derived entity to update the field (not property)
-    ///   corresponding to the parent entity of the specified entity type
-    ///   with the specified new value.
-    /// </summary>
-    protected abstract void SetNonIdentifyingParentField(
-      [NotNull] Type parentEntityType, [CanBeNull] EntityBase newParent);
 
     /// <summary>
     ///   Marks the entity as being updated, so that the entity will be written
