@@ -216,10 +216,19 @@ namespace SoundExplorers.Tests.Data {
         Event1 = QueryHelper.Read<Event>(Event1SimpleKey, Location1, session);
         Event1.Series = Series2;
         session.Commit();
-        Assert.AreSame(Series2, Event1.Series, "Event1.Series");
-        Assert.AreEqual(2, Series2.Events.Count, "Series2.Events.Count");
-        Assert.AreSame(Event1, Series2.Events[0], "Series2 1st Event");
       }
+      Assert.AreSame(Series2, Event1.Series, "Event1.Series");
+      Assert.AreEqual(2, Series2.Events.Count, "Series2.Events.Count");
+      Assert.AreSame(Event1, Series2.Events[0], "Series2 1st Event");
+      using (var session = new TestSession(DatabaseFolderPath)) {
+        session.BeginRead();
+        Series2 = QueryHelper.Read<Series>(Series2Name, session);
+        Event1 = QueryHelper.Read<Event>(Event1SimpleKey, Location1, session);
+        session.Commit();
+      }
+      Assert.AreSame(Series2, Event1.Series, "Event1.Series in new session");
+      Assert.AreEqual(2, Series2.Events.Count, "Series2.Events.Count in new session");
+      Assert.AreSame(Event1, Series2.Events[0], "Series2 1st Event in new session");
     }
 
     [Test]
@@ -233,13 +242,26 @@ namespace SoundExplorers.Tests.Data {
         Event2 = Location1.Events[1];
         Event2.Location = Location2;
         session.Commit();
-        Assert.AreSame(Location2, Event2.Location, "Event2.Location");
-        Assert.AreEqual(1, Location1.Events.Count, "Location1.Events.Count");
-        Assert.AreEqual(2, Location2.Events.Count, "Location2.Events.Count");
-        Assert.AreSame(Event1AtLocation2, Location2.Events[0],
-          "Location2 1st Event");
-        Assert.AreSame(Event2, Location2.Events[1], "Location2 2nd Event");
       }
+      Assert.AreSame(Location2, Event2.Location, "Event2.Location");
+      Assert.AreEqual(1, Location1.Events.Count, "Location1.Events.Count");
+      Assert.AreEqual(2, Location2.Events.Count, "Location2.Events.Count");
+      Assert.AreSame(Event1AtLocation2, Location2.Events[0],
+        "Location2 1st Event");
+      Assert.AreSame(Event2, Location2.Events[1], "Location2 2nd Event");
+      using (var session = new TestSession(DatabaseFolderPath)) {
+        session.BeginRead();
+        Location1 = QueryHelper.Read<Location>(Location1Name, session);
+        Location2 = QueryHelper.Read<Location>(Location2Name, session);
+        Event2 = QueryHelper.Read<Event>(Event2SimpleKey, Location2, session);
+        session.Commit();
+      }
+      Assert.AreSame(Location2, Event2.Location, "Event2.Location in new session");
+      Assert.AreEqual(1, Location1.Events.Count, "Location1.Events.Count in new session");
+      Assert.AreEqual(2, Location2.Events.Count, "Location2.Events.Count in new session");
+      Assert.AreSame(Event1AtLocation2, Location2.Events[0],
+        "Location2 1st Event in new session");
+      Assert.AreSame(Event2, Location2.Events[1], "Location2 2nd Event in new session");
     }
 
     /// <summary>
@@ -249,19 +271,14 @@ namespace SoundExplorers.Tests.Data {
     [Test]
     public void ChangeNewsletter() {
       const string newNotes = "My new notes";
-      var newDate = Event1Date.AddDays(-1);
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
-        Location1 = QueryHelper.Read<Location>(Location1Name, session);
-        Location2 = QueryHelper.Read<Location>(Location2Name, session);
         Newsletter1 =
           QueryHelper.Read<Newsletter>(Newsletter1SimpleKey, session);
         Newsletter2 =
           QueryHelper.Read<Newsletter>(Newsletter2SimpleKey, session);
         Event1 = Newsletter1.Events[0];
         Event1.Newsletter = Newsletter2;
-        Event1.Date = newDate;
-        Event1.Location = Location2;
         Event1.Notes = newNotes;
         session.Commit();
       }
@@ -279,21 +296,15 @@ namespace SoundExplorers.Tests.Data {
           QueryHelper.Read<Newsletter>(Newsletter1SimpleKey, session);
         Newsletter2 =
           QueryHelper.Read<Newsletter>(Newsletter2SimpleKey, session);
-        Event1 = QueryHelper.Read<Event>(
-          EntityBase.DateToSimpleKey(newDate), Location2, session);
+        Event1 = QueryHelper.Read<Event>(Event1SimpleKey, Location1, session);
         session.Commit();
       }
       Assert.AreEqual(newNotes, Event1.Notes, "Event1.Notes in new session");
-      Assert.AreSame(Location2, Event1.Location, "Event1.Location in new session");
       Assert.AreSame(Newsletter2, Event1.Newsletter, "Event1.Newsletter in new session");
       // Bug: Membership in parent Events lists revert in the new session
       // and are inconsistent with the referencing properties,
       // whose changes have been conserved correctly.
       // So all these tests fail:
-      Assert.AreEqual(1, Location1.Events.Count, 
-        "Location1.Events.Count in new session");
-      Assert.AreEqual(2, Location2.Events.Count, 
-        "Location2.Events.Count in new session");
       Assert.AreEqual(0, Newsletter1.Events.Count,
         "Newsletter1.Events.Count in new session");
       Assert.AreEqual(2, Newsletter2.Events.Count,
@@ -414,10 +425,20 @@ namespace SoundExplorers.Tests.Data {
         Event1 = Newsletter1.Events[0];
         Event1.Newsletter = null;
         session.Commit();
-        Assert.IsNull(Event1.Newsletter, "Event1.Newsletter");
-        Assert.AreEqual(0, Newsletter1.Events.Count,
-          "Newsletter1.Events.Count");
       }
+      Assert.IsNull(Event1.Newsletter, "Event1.Newsletter");
+      Assert.AreEqual(0, Newsletter1.Events.Count,
+        "Newsletter1.Events.Count");
+      using (var session = new TestSession(DatabaseFolderPath)) {
+        session.BeginRead();
+        Newsletter1 =
+          QueryHelper.Read<Newsletter>(Newsletter1.SimpleKey, session);
+        Event1 = QueryHelper.Read<Event>(Event1SimpleKey, Location1, session);
+        session.Commit();
+      }
+      Assert.IsNull(Event1.Newsletter, "Event1.Newsletter in new session");
+      Assert.AreEqual(0, Newsletter1.Events.Count,
+        "Newsletter1.Events.Count in new session");
     }
   }
 }
