@@ -235,7 +235,6 @@ namespace SoundExplorers.Data {
       [CanBeNull] EntityBase newParent) {
       Parents[parentEntityType]?.RemoveChild(this, newParent != null);
       newParent?.AddChild(this);
-      Parents[parentEntityType] = newParent;
     }
 
     private void CheckCanAddChild([NotNull] EntityBase child) {
