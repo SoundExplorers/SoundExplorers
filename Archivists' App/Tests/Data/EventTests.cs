@@ -266,6 +266,17 @@ namespace SoundExplorers.Tests.Data {
       Assert.AreSame(Event2, Location2.Events[1], "Location2 2nd Event in new session");
     }
 
+    [Test]
+    public void ChangeLocationToSame() {
+      using (var session = new TestSession(DatabaseFolderPath)) {
+        session.BeginUpdate();
+        Location1 = QueryHelper.Read<Location>(Location1Name, session);
+        Event1 = Location1.Events[0];
+        Assert.DoesNotThrow(()=>Event1.Location = Location1);
+        session.Commit();
+      }
+    }
+
     /// <summary>
     ///   Changes an Event's NewsLetter to one that already covers an Event
     ///   on the same Date at a different Location.
