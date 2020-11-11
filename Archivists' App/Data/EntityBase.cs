@@ -181,7 +181,7 @@ namespace SoundExplorers.Data {
             $"A {IdentifyingParentType.Name} is expected'.", IdentifyingParentType?.Name);
         }
         var newKey = new Key(SimpleKey, value);
-        value.CheckForDuplicateChild(EntityType, newKey);
+        value.CheckForDuplicateChild(this, newKey);
         if (_identifyingParent != null &&
             // Should always be true
             _identifyingParent.ChildrenOfType[EntityType].Contains(Key)) {
@@ -255,7 +255,7 @@ namespace SoundExplorers.Data {
           $"because it already belongs to {EntityType.Name} " +
           $"'{child.Parents[EntityType].Key}'.");
       }
-      CheckForDuplicateChild(child.EntityType, CreateChildKey(child));
+      CheckForDuplicateChild(child, CreateChildKey(child));
     }
 
     private void CheckCanChangeSimpleKey(
@@ -269,7 +269,7 @@ namespace SoundExplorers.Data {
         return;
       }
       if (!IsTopLevel) {
-        IdentifyingParent?.CheckForDuplicateChild(EntityType,
+        IdentifyingParent?.CheckForDuplicateChild(this,
           new Key(newSimpleKey, IdentifyingParent));
         return;
       }
@@ -337,14 +337,15 @@ namespace SoundExplorers.Data {
       }
     }
 
-    private void CheckForDuplicateChild([NotNull] Type childEntityType,
+    private void CheckForDuplicateChild([NotNull] EntityBase child,
       [NotNull] Key keyToCheck) {
-      if (ChildrenOfType[childEntityType]
-        .Contains(keyToCheck)) {
+      var childrenOfType = ChildrenOfType[child.EntityType];
+      if (childrenOfType.Contains(keyToCheck) &&
+          !((EntityBase)childrenOfType[keyToCheck]).Oid.Equals(child.Oid)) {
         throw new ConstraintException(
-          $"{childEntityType.Name} '{keyToCheck}' " +
+          $"{child.EntityType.Name} '{keyToCheck}' " +
           $"cannot be added to {EntityType.Name} '{Key}', " +
-          $"because a {childEntityType.Name} with that Key " +
+          $"because a {child.EntityType.Name} with that Key " +
           $"already belongs to the {EntityType.Name}.");
       }
     }

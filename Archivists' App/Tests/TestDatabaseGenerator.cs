@@ -48,16 +48,12 @@ namespace SoundExplorers.Tests {
       for (var i = 0; i < 16; i++) {
         data.Events[i].Newsletter = data.Newsletters[i];
       }
-      for (var i = 1; i < 8; i++) {
-        data.Events[i].Location = data.Locations[i];
-      }
       for (var i = 0; i < 8; i++) {
+        data.Events[i].Location = data.Locations[i];
         data.Events[i].Series = data.Series[i];
       }
-      for (var i = 9; i < 16; i++) {
-        data.Events[i].Location = data.Locations[i - 8];
-      }
       for (var i = 8; i < 16; i++) {
+        data.Events[i].Location = data.Locations[i - 8];
         data.Events[i].Series = data.Series[i - 8];
       }
       session.Commit();
