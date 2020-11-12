@@ -45,14 +45,14 @@ namespace SoundExplorers.Tests.Data {
         session.Persist(Event1);
         session.Persist(Act1);
         session.Persist(Act2);
-        Event1.Sets.Add(Set1);
-        Event1.Sets.Add(Set2);
+        Set1.Event = Event1;
+        Set2.Event = Event1;
         Data.AddGenresPersisted(1, session);
         Set1.Genre = Data.Genres[0];
         Set2.Genre = Set1.Genre;
         session.Persist(Set1);
         session.Persist(Set2);
-        Act1.Sets.Add(Set1);
+        Set1.Act = Act1;
         session.Commit();
       }
     }
@@ -144,19 +144,6 @@ namespace SoundExplorers.Tests.Data {
         Assert.Throws<PropertyConstraintException>(() => session.Persist(noName));
         session.Commit();
       }
-    }
-
-    [Test]
-    public void RemoveSet() {
-      using (var session = new TestSession(DatabaseFolderPath)) {
-        session.BeginUpdate();
-        Act1 = QueryHelper.Read<Act>(Act1Name, session);
-        Set1 = QueryHelper.Read<Set>(Set1.SimpleKey, Event1, session);
-        Act1.Sets.Remove(Set1);
-        session.Commit();
-      }
-      Assert.AreEqual(0, Act1.Sets.Count, "Act1.Sets.Count");
-      Assert.IsNull(Set1.Act, "Set1.Act");
     }
   }
 }

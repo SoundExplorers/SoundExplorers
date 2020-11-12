@@ -38,9 +38,9 @@ namespace SoundExplorers.Tests.Data {
         session.Persist(Location1);
         session.Persist(Newsletter1);
         session.Persist(Newsletter2);
-        Location1.Events.Add(Event1);
-        Location1.Events.Add(Event2);
-        Newsletter1.Events.Add(Event1);
+        Event1.Location = Location1;
+        Event1.Newsletter = Newsletter1;
+        Event2.Location = Location1;
         Data.AddEventTypesPersisted(1, session);
         Event1.EventType = Data.EventTypes[0];
         Event2.EventType = Event1.EventType;
@@ -241,21 +241,6 @@ namespace SoundExplorers.Tests.Data {
     [Test]
     public void DisallowSetNullUrl() {
       Assert.Throws<PropertyConstraintException>(() => Newsletter2.Url = null);
-    }
-
-    [Test]
-    public void RemoveEvent() {
-      using (var session = new TestSession(DatabaseFolderPath)) {
-        session.BeginUpdate();
-        Newsletter1 =
-          QueryHelper.Read<Newsletter>(Newsletter1.SimpleKey, session);
-        Event1 = QueryHelper.Read<Event>(Event1.SimpleKey, Location1, session);
-        Newsletter1.Events.Remove(Event1);
-        session.Commit();
-      }
-      Assert.AreEqual(0, Newsletter1.Events.Count,
-        "Newsletter1.Events.Count after remove");
-      Assert.IsNull(Event1.Newsletter, "Event1.Newsletter after remove");
     }
   }
 }

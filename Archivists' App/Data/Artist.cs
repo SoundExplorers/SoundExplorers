@@ -13,7 +13,7 @@ namespace SoundExplorers.Data {
     private string _surname;
 
     public Artist() : base(typeof(Artist), nameof(Name), null) {
-      Credits = new SortedChildList<Credit>(this);
+      Credits = new SortedChildList<Credit>();
     }
 
     [NotNull] public SortedChildList<Credit> Credits { get; }

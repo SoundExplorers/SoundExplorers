@@ -15,7 +15,7 @@ namespace SoundExplorers.Data {
 
     public Newsletter() : base(typeof(Newsletter), nameof(Date), null) {
       _date = InitialDate;
-      Events = new SortedChildList<Event>(this);
+      Events = new SortedChildList<Event>();
     }
 
     /// <summary>

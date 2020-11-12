@@ -64,12 +64,12 @@ namespace SoundExplorers.Tests.Data {
         session.Persist(Set1);
         Piece1.Set = Set1;
         session.Persist(Piece1);
-        Drums.Credits.Add(Credit1);
-        Drums.Credits.Add(Credit2);
-        Artist1.Credits.Add(Credit1);
-        Artist1.Credits.Add(Credit2);
-        Piece1.Credits.Add(Credit1);
-        Piece1.Credits.Add(Credit2);
+        Credit1.Artist = Artist1; 
+        Credit1.Piece = Piece1; 
+        Credit1.Role = Drums; 
+        Credit2.Artist = Artist1; 
+        Credit2.Piece = Piece1; 
+        Credit2.Role = Drums; 
         session.Persist(Credit1);
         session.Persist(Credit2);
         session.Commit();
@@ -134,13 +134,6 @@ namespace SoundExplorers.Tests.Data {
       };
       Session.BeginUpdate();
       Assert.Throws<PropertyConstraintException>(() => Session.Persist(duplicate));
-      Session.Commit();
-    }
-
-    [Test]
-    public void DisallowRemoveCredit() {
-      Session.BeginUpdate();
-      Assert.Throws<ConstraintException>(() => Drums.Credits.Remove(Credit1));
       Session.Commit();
     }
 

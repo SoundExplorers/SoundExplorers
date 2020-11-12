@@ -12,7 +12,7 @@ namespace SoundExplorers.Data {
     private string _notes;
 
     public Series() : base(typeof(Series), nameof(Name), null) {
-      Events = new SortedChildList<Event>(this);
+      Events = new SortedChildList<Event>();
     }
 
     [NotNull] public SortedChildList<Event> Events { get; }

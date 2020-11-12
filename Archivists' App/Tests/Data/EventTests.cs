@@ -87,10 +87,10 @@ namespace SoundExplorers.Tests.Data {
         Event1.Newsletter = Newsletter1;
         Event1AtLocation2.Newsletter = Newsletter2;
         Event1AtLocation2.Series = Series2;
-        Event1.Sets.Add(Set1);
-        Event1.Sets.Add(Set2);
-        Genre1.Sets.Add(Set1);
-        Genre1.Sets.Add(Set2);
+        Set1.Event = Event1;
+        Set1.Genre = Genre1;
+        Set2.Event = Event1;
+        Set2.Genre = Genre1;
         session.Persist(Set1);
         session.Persist(Set2);
         session.Commit();
@@ -376,17 +376,6 @@ namespace SoundExplorers.Tests.Data {
         noDate.Location = Location1;
         Assert.Throws<PropertyConstraintException>(() => session.Persist(noDate));
         session.Abort();
-      }
-    }
-
-    [Test]
-    public void DisallowRemoveSet() {
-      using (var session = new TestSession(DatabaseFolderPath)) {
-        session.BeginUpdate();
-        Event1 = QueryHelper.Read<Event>(Event1SimpleKey, Location1, session);
-        Set1 = QueryHelper.Read<Set>(Set1.SimpleKey, Event1, session);
-        Assert.Throws<ConstraintException>(() => Event1.Sets.Remove(Set1));
-        session.Commit();
       }
     }
 

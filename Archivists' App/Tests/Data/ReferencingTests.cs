@@ -27,20 +27,20 @@ namespace SoundExplorers.Tests.Data {
         session.Persist(Father1);
         session.Persist(Father2);
         Daughter1.Name = Daughter1Name;
-        Mother1.Daughters.Add(Daughter1);
+        Daughter1.Mother = Mother1;
         session.Persist(Daughter1);
         Daughter2.Name = Daughter2Name;
-        Mother2.Daughters.Add(Daughter2);
+        Daughter2.Mother = Mother2;
         session.Persist(Daughter2);
         Son1.Name = Son1Name;
         session.Persist(Son1);
         Son2.Name = Son2Name;
         session.Persist(Son2);
-        Mother1.Sons.Add(Son1);
-        Mother1.Sons.Add(Son2);
-        Father1.Sons.Add(Son1);
-        Father1.Daughters.Add(Daughter1);
-        Father1.Daughters.Add(Daughter2);
+        Son1.Father = Father1; 
+        Son1.Mother = Mother1; 
+        Son2.Mother = Mother1; 
+        Daughter1.Father = Father1;
+        Daughter2.Father = Father1;
         session.Commit();
       }
     }
@@ -188,77 +188,6 @@ namespace SoundExplorers.Tests.Data {
           () => Mother1.Daughters.RemoveAt(0),
           "Unsupported Mother.Daughters.RemoveAt");
         session.Commit();
-      }
-    }
-
-    [Test]
-    public void T040_AddRemoveChildren() {
-      using (var session = new TestSession(DatabaseFolderPath)) {
-        session.BeginUpdate();
-        Mother1 = QueryHelper.Read<Mother>(Mother1Name, session);
-        Mother2 = QueryHelper.Read<Mother>(Mother2Name, session);
-        Father1 = QueryHelper.Read<Father>(Father1Name, session);
-        Daughter1 = QueryHelper.Read<Daughter>(Daughter1Name, session);
-        Daughter2 = QueryHelper.Read<Daughter>(Daughter2Name, session);
-        Son1 = QueryHelper.Read<Son>(Son1Name, session);
-        Son2 = QueryHelper.Read<Son>(Son2Name, session);
-        Assert.Throws<ConstraintException>(() =>
-            Mother1.Daughters.Add(Daughter2),
-          "Cannot add Daughter2 to Mother1.Daughter because she is already " +
-          "a member of Mother2.Daughters.");
-        Father1.Sons.Add(Son2);
-        session.Commit();
-        Assert.AreSame(Mother2, Daughter2.Mother,
-          "Daughter2.Mother after failed Add #2");
-        session.BeginUpdate();
-        Assert.Throws<ConstraintException>(() =>
-            Mother1.Daughters.Remove(Daughter1),
-          "Cannot remove Daughter1 from mandatory link to Mother.");
-        session.Commit();
-        Assert.AreSame(Father1, Son2.Father,
-          "Son2.Father after Add #2");
-        Assert.AreSame(Son2, Father1.Sons[1],
-          "2nd child after Add #2");
-        Assert.AreEqual(2, Father1.Sons.Count,
-          "Father1.Sons.Count after Add #2");
-        Assert.AreEqual(4, Father1.References.Count,
-          "Father1.References.Count after Add #2");
-        session.BeginUpdate();
-        Father1.Sons.Remove(Son1);
-        session.Commit();
-        Assert.IsNull(Son1.Father, "Son1.Father after Remove #1");
-        Assert.AreSame(Father1, Son2.Father,
-          "Son2.Father after Remove #1");
-        Assert.AreSame(Son2, Father1.Sons[0],
-          "Father1 1st Son after Remove #1");
-        Assert.AreEqual(1, Father1.Sons.Count,
-          "Father1.Sons.Count after Remove #1");
-        Assert.AreEqual(3, Father1.References.Count,
-          "Father1.References.Count after Remove #1");
-        session.BeginUpdate();
-        Father1.Sons.Remove(Son2);
-        session.Commit();
-        Assert.IsNull(Son2.Father, "Son2.Father after Remove #2");
-        Assert.AreEqual(0, Father1.Sons.Count,
-          "Father1.Sons.Count after Remove #2");
-        Assert.AreEqual(2, Father1.References.Count,
-          "Father1.References.Count after Remove #2");
-        session.BeginUpdate();
-        Daughter1.Unpersist(session);
-        Daughter2.Unpersist(session);
-        Mother1.Sons.Remove(Son1);
-        Mother1.Sons.Remove(Son2);
-        Mother1.Unpersist(session);
-        Father1.Unpersist(session);
-        session.Commit();
-        Assert.IsFalse(Daughter1.IsPersistent,
-          "Daughter1.IsPersistent after Unpersist");
-        Assert.IsFalse(Daughter2.IsPersistent,
-          "Daughter2.IsPersistent after Unpersist");
-        Assert.IsFalse(Mother1.IsPersistent,
-          "Mother1.IsPersistent after Unpersist");
-        Assert.IsFalse(Father1.IsPersistent,
-          "Father1.IsPersistent after Unpersist");
       }
     }
 
@@ -454,44 +383,6 @@ namespace SoundExplorers.Tests.Data {
     }
 
     [Test]
-    public void T130_DisallowAddDuplicateChildToParent() {
-      using (var session = new TestSession(DatabaseFolderPath)) {
-        session.BeginUpdate();
-        Father1 = QueryHelper.Read<Father>(Father1Name, session);
-        var duplicateDaughter2 = new Daughter(QueryHelper)
-          {Name = Daughter2Name};
-        Assert.Throws<ConstraintException>(() =>
-          Father1.Daughters.Add(duplicateDaughter2));
-        session.Commit();
-      }
-    }
-
-    [Test]
-    public void T140_DisallowAddChildWithParentToAnotherParentOfSameType() {
-      using (var session = new TestSession(DatabaseFolderPath)) {
-        session.BeginUpdate();
-        Father2 = QueryHelper.Read<Father>(Father2Name, session);
-        Daughter2 = QueryHelper.Read<Daughter>(Daughter2Name, session);
-        Assert.Throws<ConstraintException>(() =>
-          Father2.Daughters.Add(Daughter2));
-        session.Commit();
-      }
-    }
-
-    [Test]
-    public void T150_DisallowRemoveChildThatDoesNotBelongToParent() {
-      using (var session = new TestSession(DatabaseFolderPath)) {
-        session.BeginUpdate();
-        Father1 = QueryHelper.Read<Father>(Father1Name, session);
-        Son1 = QueryHelper.Read<Son>(Son1Name, session);
-        Father1.Sons.Remove(Son1);
-        Assert.Throws<ConstraintException>(() =>
-          Father1.Sons.Remove(Son1));
-        session.Commit();
-      }
-    }
-
-    [Test]
     public void T160_DisallowAddNullChild() {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
@@ -501,20 +392,6 @@ namespace SoundExplorers.Tests.Data {
           // when a null parameter is specified.
           // ReSharper disable once AssignNullToNotNullAttribute
           Father1.AddNonIdentifiedChild(null));
-        session.Commit();
-      }
-    }
-
-    [Test]
-    public void T170_DisallowRemoveNullChild() {
-      using (var session = new TestSession(DatabaseFolderPath)) {
-        session.BeginUpdate();
-        Father1 = QueryHelper.Read<Father>(Father1Name, session);
-        Assert.Throws<ConstraintException>(() =>
-          // Cannot use [Children].Add, as it is an ambiguous reference 
-          // when a null parameter is specified.
-          // ReSharper disable once AssignNullToNotNullAttribute
-          Father1.RemoveChild(null, false));
         session.Commit();
       }
     }

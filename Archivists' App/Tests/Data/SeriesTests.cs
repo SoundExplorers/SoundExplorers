@@ -37,9 +37,9 @@ namespace SoundExplorers.Tests.Data {
         session.Persist(Location1);
         session.Persist(Series1);
         session.Persist(Series2);
-        Location1.Events.Add(Event1);
-        Location1.Events.Add(Event2);
-        Series1.Events.Add(Event1);
+        Event1.Location = Location1;
+        Event1.Series = Series1;
+        Event2.Location = Location1;
         Data.AddEventTypesPersisted(1, session);
         Event1.EventType = Data.EventTypes[0];
         Event2.EventType = Event1.EventType;
@@ -87,20 +87,6 @@ namespace SoundExplorers.Tests.Data {
       Assert.AreEqual(Series1.Name, Event1.Series?.Name,
         "Event1.Series.Name initially");
       Assert.IsNull(Event2.Series, "Event2.Series initially");
-    }
-
-    [Test]
-    public void T020_RemoveEvent() {
-      using (var session = new TestSession(DatabaseFolderPath)) {
-        session.BeginUpdate();
-        Series1 = QueryHelper.Read<Series>(Series1Name, session);
-        Event1 = QueryHelper.Read<Event>(Event1.SimpleKey, Location1, session);
-        Series1.Events.Remove(Event1);
-        session.Commit();
-      }
-      Assert.AreEqual(0, Series1.Events.Count,
-        "Series1.Events.Count after remove");
-      Assert.IsNull(Event1.Series, "Event1.Series after remove");
     }
 
     [Test]

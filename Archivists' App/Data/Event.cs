@@ -18,7 +18,7 @@ namespace SoundExplorers.Data {
 
     public Event() : base(typeof(Event), nameof(Date), typeof(Location)) {
       _date = InitialDate;
-      Sets = new SortedChildList<Set>(this);
+      Sets = new SortedChildList<Set>();
     }
 
     public DateTime Date {

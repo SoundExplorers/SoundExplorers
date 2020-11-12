@@ -11,8 +11,8 @@ namespace SoundExplorers.Tests.Data {
       QueryHelper = queryHelper ??
                     throw new ArgumentNullException(nameof(queryHelper));
       Schema = TestSchema.Instance;
-      Daughters = new SortedChildList<Daughter>(this);
-      Sons = new SortedChildList<Son>(this);
+      Daughters = new SortedChildList<Daughter>();
+      Sons = new SortedChildList<Son>();
     }
 
     [NotNull] public SortedChildList<Daughter> Daughters { get; }

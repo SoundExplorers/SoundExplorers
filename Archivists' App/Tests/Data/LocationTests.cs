@@ -32,8 +32,8 @@ namespace SoundExplorers.Tests.Data {
         session.BeginUpdate();
         session.Persist(Location1);
         session.Persist(Location2);
-        Location1.Events.Add(Event1);
-        Location1.Events.Add(Event2);
+        Event1.Location = Location1;
+        Event2.Location = Location1;
         Data.AddEventTypesPersisted(1, session);
         Event1.EventType = Data.EventTypes[0];
         Event2.EventType = Event1.EventType;
@@ -117,19 +117,6 @@ namespace SoundExplorers.Tests.Data {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
         Assert.Throws<PropertyConstraintException>(() => session.Persist(noName));
-        session.Commit();
-      }
-    }
-
-    [Test]
-    public void DisallowRemoveEvent() {
-      using (var session = new TestSession(DatabaseFolderPath)) {
-        session.BeginUpdate();
-        Location1 = QueryHelper.Read<Location>(Location1Name, session);
-        Event1 = QueryHelper.Read<Event>(Event1.SimpleKey, Location1, session);
-        Assert.Throws<ConstraintException>(() =>
-            Location1.Events.Remove(Event1),
-          "Disallow remove Event from mandatory link to Location.");
         session.Commit();
       }
     }

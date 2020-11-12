@@ -84,8 +84,8 @@ namespace SoundExplorers.Tests.Data {
         Set1.Act = Act1;
         Set1AtEvent2.Act = Act2;
         Set2.Act = Act1;
-        Set1.Pieces.Add(Piece1);
-        Set1.Pieces.Add(Piece2);
+        Piece1.Set = Set1;
+        Piece2.Set = Set1;
         session.Persist(Piece1);
         session.Persist(Piece2);
         session.Commit();
@@ -232,13 +232,6 @@ namespace SoundExplorers.Tests.Data {
       noSetNo.Event = Event1;
       Assert.Throws<PropertyConstraintException>(() => Session.Persist(noSetNo));
       Session.Abort();
-    }
-
-    [Test]
-    public void DisallowRemovePiece() {
-      Session.BeginUpdate();
-      Assert.Throws<ConstraintException>(() => Set1.Pieces.Remove(Piece1));
-      Session.Commit();
     }
 
     [Test]

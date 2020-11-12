@@ -9,7 +9,7 @@ namespace SoundExplorers.Data {
   /// </summary>
   public class Genre : EntityBase, INamedEntity {
     public Genre() : base(typeof(Genre), nameof(Name), null) {
-      Sets = new SortedChildList<Set>(this);
+      Sets = new SortedChildList<Set>();
     }
 
     [NotNull] public SortedChildList<Set> Sets { get; }

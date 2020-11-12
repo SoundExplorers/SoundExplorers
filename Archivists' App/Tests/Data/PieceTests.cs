@@ -81,12 +81,12 @@ namespace SoundExplorers.Tests.Data {
         session.Persist(Piece1);
         session.Persist(Piece1AtSet2);
         session.Persist(Piece2);
-        Baker.Credits.Add(Credit1);
-        Baker.Credits.Add(Credit2);
-        Drums.Credits.Add(Credit1);
-        Drums.Credits.Add(Credit2);
-        Piece1.Credits.Add(Credit1);
-        Piece1.Credits.Add(Credit2);
+        Credit1.Artist = Baker; 
+        Credit1.Piece = Piece1; 
+        Credit1.Role = Drums; 
+        Credit2.Artist = Baker; 
+        Credit2.Piece = Piece1; 
+        Credit2.Role = Drums; 
         session.Persist(Credit1);
         session.Persist(Credit2);
         session.Commit();
@@ -187,6 +187,7 @@ namespace SoundExplorers.Tests.Data {
     [Test]
     public void ChangeAudioUrl() {
       const string newAudioUrl =
+        // ReSharper disable once StringLiteralTypo
         "https://soundcloud.com/simonor/peter-daly-simon-ororke-tippabo?in=simonor/sets/peter-daly-and-simon-ororke";
       Session.BeginUpdate();
       Assert.DoesNotThrow(() => Piece1.AudioUrl = newAudioUrl);
@@ -305,13 +306,6 @@ namespace SoundExplorers.Tests.Data {
       noPieceNo.Set = Set1;
       Assert.Throws<PropertyConstraintException>(() => Session.Persist(noPieceNo));
       Session.Abort();
-    }
-
-    [Test]
-    public void DisallowRemoveCredit() {
-      Session.BeginUpdate();
-      Assert.Throws<ConstraintException>(() => Piece1.Credits.Remove(Credit1));
-      Session.Commit();
     }
 
     [Test]

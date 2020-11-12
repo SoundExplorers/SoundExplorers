@@ -185,14 +185,9 @@ namespace SoundExplorers.Data {
         if (_identifyingParent != null &&
             // Should always be true
             _identifyingParent.ChildrenOfType[EntityType].Contains(Key)) {
-          _identifyingParent.UpdateNonIndexField();
-          _identifyingParent.ChildrenOfType[EntityType].Remove(Key);
-          _identifyingParent.References.Remove(
-            _identifyingParent.References.First(r => r.To.Equals(this)));
+          _identifyingParent.RemoveChild(this);
         }
-        value.UpdateNonIndexField();
-        value.ChildrenOfType[EntityType].Add(newKey, this);
-        value.References.AddFast(new Reference(this, "_children"));
+        value.AddChild(this);
         Parents[
           IdentifyingParentType ??
           throw new NullReferenceException(nameof(IdentifyingParentType))] = value;
@@ -227,33 +222,33 @@ namespace SoundExplorers.Data {
       }
     }
 
-    internal void AddNonIdentifiedChild([NotNull] EntityBase child) {
-      CheckCanAddChild(child);
+    private void AddChild(EntityBase child) {
       UpdateNonIndexField();
       ChildrenOfType[child.EntityType].Add(CreateChildKey(child), child);
+      // Full referential integrity is implemented in this class.
+      // But, for added safety, update VelocityDB's internal referential integrity data. 
       References.AddFast(new Reference(child, "_children"));
+    }
+
+    internal void AddNonIdentifiedChild([NotNull] EntityBase child) {
+      CheckCanAddNonIdentifiedChild(child);
+      AddChild(child);
       UpdateChild(child, this);
     }
 
     protected void ChangeNonIdentifyingParent(
       [NotNull] Type parentEntityType,
       [CanBeNull] EntityBase newParent) {
-      Parents[parentEntityType]?.RemoveChild(this, newParent != null);
+      Parents[parentEntityType]?.RemoveChildWhenNonIdentifyingParentOrUnpersistingChild(
+        this, newParent != null);
       newParent?.AddNonIdentifiedChild(this);
     }
 
-    private void CheckCanAddChild([NotNull] EntityBase child) {
+    private void CheckCanAddNonIdentifiedChild([NotNull] EntityBase child) {
       if (child == null) {
         throw new ConstraintException(
           "A null reference has been specified. " +
           $"So addition to {EntityType.Name} '{Key}' is not supported.");
-      }
-      if (child.Parents[EntityType] != null) {
-        throw new ConstraintException(
-          $"{child.EntityType.Name} '{child.Key}' " +
-          $"cannot be added to {EntityType.Name} '{Key}', " +
-          $"because it already belongs to {EntityType.Name} " +
-          $"'{child.Parents[EntityType].Key}'.");
       }
       CheckForDuplicateChild(child, CreateChildKey(child));
     }
@@ -316,18 +311,6 @@ namespace SoundExplorers.Data {
 
     private void CheckCanRemoveChild(
       [NotNull] EntityBase child, bool isReplacingOrUnpersisting) {
-      if (child == null) {
-        throw new ConstraintException(
-          "A null reference has been specified. " +
-          $"So removal from {EntityType.Name} '{Key}' is not supported.");
-      }
-      if (!ChildrenOfType[child.EntityType].Contains(child.Key)) {
-        throw new ConstraintException(
-          $"{child.EntityType.Name} '{child.Key}' " +
-          $"cannot be removed from {EntityType.Name} '{Key}', " +
-          $"because it does not belong to {EntityType.Name} " +
-          $"'{Key}'.");
-      }
       if (ChildrenRelations[child.EntityType].IsMandatory &&
           !isReplacingOrUnpersisting) {
         throw new ConstraintException(
@@ -432,12 +415,18 @@ namespace SoundExplorers.Data {
       return base.Persist(place, session, persistRefs, disableFlush, toPersist);
     }
 
-    internal void RemoveChild([NotNull] EntityBase child,
-      bool isReplacingOrUnpersisting) {
-      CheckCanRemoveChild(child, isReplacingOrUnpersisting);
+    private void RemoveChild(EntityBase child) {
       UpdateNonIndexField();
       ChildrenOfType[child.EntityType].Remove(child.Key);
+      // Full referential integrity is implemented in this class.
+      // But, for added safety, update VelocityDB's internal referential integrity data. 
       References.Remove(References.First(r => r.To.Equals(child)));
+    }
+
+    private void RemoveChildWhenNonIdentifyingParentOrUnpersistingChild(
+      [NotNull] EntityBase child, bool isReplacingOrUnpersisting) {
+      CheckCanRemoveChild(child, isReplacingOrUnpersisting);
+      RemoveChild(child);
       UpdateChild(child, null);
     }
 
@@ -464,7 +453,8 @@ namespace SoundExplorers.Data {
         var parents =
           Parents.Values.Where(parent => parent != null).ToList();
         for (int i = parents.Count - 1; i >= 0; i--) {
-          parents[i].RemoveChild(this, true);
+          parents[i].RemoveChildWhenNonIdentifyingParentOrUnpersistingChild(
+            this, true);
         }
       }
     }

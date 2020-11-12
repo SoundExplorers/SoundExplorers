@@ -13,7 +13,7 @@ namespace SoundExplorers.Data {
     private string _notes;
 
     public Location() : base(typeof(Location), nameof(Name), null) {
-      Events = new SortedChildList<Event>(this);
+      Events = new SortedChildList<Event>();
     }
 
     [NotNull] public SortedChildList<Event> Events { get; }

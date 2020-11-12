@@ -10,7 +10,7 @@ namespace SoundExplorers.Data {
   /// </summary>
   public class EventType : EntityBase, INamedEntity {
     public EventType() : base(typeof(EventType), nameof(Name), null) {
-      Events = new SortedChildList<Event>(this);
+      Events = new SortedChildList<Event>();
     }
 
     [NotNull] public SortedChildList<Event> Events { get; }

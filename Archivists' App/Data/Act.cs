@@ -11,7 +11,7 @@ namespace SoundExplorers.Data {
     private string _notes;
 
     public Act() : base(typeof(Act), nameof(Name), null) {
-      Sets = new SortedChildList<Set>(this);
+      Sets = new SortedChildList<Set>();
     }
 
     [NotNull] public SortedChildList<Set> Sets { get; }

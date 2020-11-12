@@ -18,7 +18,7 @@ namespace SoundExplorers.Data {
     private string _videoUrl;
 
     public Piece() : base(typeof(Piece), nameof(PieceNo), typeof(Set)) {
-      Credits = new SortedChildList<Credit>(this);
+      Credits = new SortedChildList<Credit>();
     }
 
     /// <summary>

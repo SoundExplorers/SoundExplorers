@@ -15,7 +15,7 @@ namespace SoundExplorers.Data {
     private int _setNo;
 
     public Set() : base(typeof(Set), nameof(SetNo), typeof(Event)) {
-      Pieces = new SortedChildList<Piece>(this);
+      Pieces = new SortedChildList<Piece>();
       IsPublic = true;
     }
 

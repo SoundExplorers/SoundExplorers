@@ -9,7 +9,7 @@ namespace SoundExplorers.Data {
     ///   Role entity, usually representing a musical instrument.
     /// </summary>
     public Role() : base(typeof(Role), nameof(Name), null) {
-      Credits = new SortedChildList<Credit>(this);
+      Credits = new SortedChildList<Credit>();
     }
 
     [NotNull] public SortedChildList<Credit> Credits { get; }
