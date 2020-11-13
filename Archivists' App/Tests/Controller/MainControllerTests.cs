@@ -14,6 +14,11 @@ namespace SoundExplorers.Tests.Controller {
       Session = new TestSession();
     }
 
+    [TearDown]
+    public void TearDown() {
+      Session.DeleteDatabaseFolderIfExists();
+    }
+
     private MockDatabaseConnection Connection { get; set; }
     private QueryHelper QueryHelper { get; set; }
     private TestSession Session { get; set; }
