@@ -502,20 +502,22 @@ namespace SoundExplorers.View {
     /// <summary>
     ///   Handles the main grid's
     ///   <see cref="DataGridView.DataError" /> event,
-    ///   which occurs when an external data-parsing or validation operation throws an exception.
+    ///   which occurs when an external data-parsing or validation operation throws an
+    ///   exception.
     /// </summary>
-    /// <param name="sender">Event sender.</param>
-    /// <param name="e">Event arguments.</param>
     /// <remarks>
-    ///   The event is raised when there is an error on
-    ///   attempting to update a main grid cell representing a property of an existing entity.
+    ///   The event is raised in two anticipated scenarios:
+    ///   1) When there is an error on attempting to update a main grid cell
+    ///   representing a property of an existing entity.
+    ///   2) When invalidly formatted data is pasted into a cell of
+    ///   either a new or existing row, e.g. text into a date.
     /// </remarks>
     private void MainGridOnDataError(object sender, DataGridViewDataErrorEventArgs e) {
-      //Debug.WriteLine("MainGridOnDataError");
-      // Debug.WriteLine("Context = " + e.Context.ToString());
-      //Debug.WriteLine("RowIndex = " + e.ColumnIndex.ToString());
-      //Debug.WriteLine("RowIndex = " + e.RowIndex.ToString());
-      Controller.OnMainGridDataError(e.Exception);
+      // Debug.WriteLine("MainGridOnDataError");
+      // Debug.WriteLine("Context = " + e.Context);
+      // Debug.WriteLine("ColumnIndex = " + e.ColumnIndex);
+      // Debug.WriteLine("RowIndex = " + e.RowIndex);
+      Controller.OnMainGridDataError(e.RowIndex, e.ColumnIndex, e.Exception);
     }
 
     /// <summary>

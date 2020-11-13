@@ -60,7 +60,7 @@ namespace SoundExplorers.Tests.Controller {
         "Rename name should have thrown DatabaseUpdateErrorException.");
       Assert.AreEqual(name1, editor[1].Name,
         "Still duplicate name before error message shown for duplicate rename");
-      Controller.OnMainGridDataError(exception);
+      Controller.OnMainGridDataError(1,0, exception);
       Assert.AreEqual(1, View.EditMainGridCurrentCellCount,
         "EditMainGridCurrentCellCount after error message shown for duplicate rename");
       Assert.AreEqual(1, View.FocusMainGridCellCount,
@@ -80,12 +80,12 @@ namespace SoundExplorers.Tests.Controller {
       // as in the case of this rename,
       // the second time with a null exception.
       // So check that this is allowed for and has no effect.
-      Controller.OnMainGridDataError(null);
+      Controller.OnMainGridDataError(1,0, null);
       Assert.AreEqual(1, View.ShowErrorMessageCount,
         "ShowErrorMessageCount after null error");
-      // Check that an exception of an unsupported type rethrown
+      // Check that an exception of an unsupported type is rethrown
       Assert.Throws<InvalidOperationException>(
-        () => Controller.OnMainGridDataError(new InvalidOperationException()),
+        () => Controller.OnMainGridDataError(1,0, new InvalidOperationException()),
         "Unsupported exception type");
       // Disallow insert with duplicate name
       editor.AddNew();
@@ -157,6 +157,63 @@ namespace SoundExplorers.Tests.Controller {
       Controller.TestUnsupportedLastChangeAction = true;
       Assert.Throws<NotSupportedException>(() => Controller.OnMainGridRowRemoved(1),
         "Unsupported last change action");
+    }
+
+    [Test]
+    public void FormatExceptionOnInsert() {
+      Session.BeginUpdate();
+      try {
+        Data.AddNewslettersPersisted(3, Session);
+      } finally {
+        Session.Commit();
+      }
+      Controller = CreateController(typeof(NewsletterList));
+      Controller.FetchData(); // Populate grid
+      var editor = new TestEditor<Newsletter, NewsletterBindingItem>(
+        QueryHelper, Session, Controller.MainBindingList);
+      editor.AddNew(); // Create insertion row
+      Controller.OnMainGridRowEnter(3); // Go to insertion row
+      var exception = new FormatException("Potato is not a valid DateTime.");
+      Controller.OnMainGridDataError(3,0, exception);
+      Assert.AreEqual(1, View.ShowErrorMessageCount, "ShowErrorMessageCount");
+    }
+
+    [Test]
+    public void FormatExceptionOnUpdate() {
+      Session.BeginUpdate();
+      try {
+        Data.AddEventTypesPersisted(2, Session);
+        Data.AddLocationsPersisted(2, Session);
+        Data.AddEventsPersisted(3, Session);
+        Data.AddNewslettersPersisted(1, Session);
+        Data.AddSeriesPersisted(1, Session);
+      } finally {
+        Session.Commit();
+      }
+      Controller = CreateController(typeof(EventList));
+      Controller.FetchData(); // Populate grid
+      var editor = new TestEditor<Event, EventBindingItem>(
+        QueryHelper, Session, Controller.MainBindingList);
+      Controller.OnMainGridRowEnter(2);
+      string changedEventType = Data.EventTypes[1].Name;
+      string changedLocation = Data.Locations[1].Name;
+      var changedNewsletter = Data.Newsletters[0].Date;
+      const string changedNotes = "Changed notes";
+      string changedSeries = Data.Series[0].Name;
+      editor[2].EventType = changedEventType;
+      editor[2].Location = changedLocation;
+      editor[2].Newsletter = changedNewsletter;
+      editor[2].Notes = changedNotes;
+      editor[2].Series = changedSeries;
+      // Simulate pasting text into the Date cell.
+      var exception = new FormatException("Potato is not a valid value for DateTime.");
+      Controller.OnMainGridDataError(2,0, exception);
+      Assert.AreEqual(1, View.ShowErrorMessageCount, "ShowErrorMessageCount");
+      Assert.AreEqual(changedEventType, editor[2].EventType, "EventType");
+      Assert.AreEqual(changedLocation, editor[2].Location, "Location");
+      Assert.AreEqual(changedNewsletter, editor[2].Newsletter, "Newsletter");
+      Assert.AreEqual(changedNotes, editor[2].Notes, "Notes");
+      Assert.AreEqual(changedSeries, editor[2].Series, "Series");
     }
 
     [Test]

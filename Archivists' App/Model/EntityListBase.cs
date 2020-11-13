@@ -63,6 +63,15 @@ namespace SoundExplorers.Model {
     private bool IsInsertionRowCurrent { get; set; }
 
     /// <summary>
+    ///   The setter should only be needed for testing.
+    /// </summary>
+    [NotNull]
+    internal QueryHelper QueryHelper {
+      get => _queryHelper ?? (_queryHelper = QueryHelper.Instance);
+      set => _queryHelper = value;
+    }
+
+    /// <summary>
     ///   Gets the binding list representing the list of entities
     ///   and bound to the grid.
     /// </summary>
@@ -110,15 +119,6 @@ namespace SoundExplorers.Model {
     ///   Null if a parent list is not required when this is the main list.
     /// </summary>
     public Type ParentListType { get; }
-
-    /// <summary>
-    ///   The setter should only be needed for testing.
-    /// </summary>
-    [NotNull]
-    internal QueryHelper QueryHelper {
-      get => _queryHelper ?? (_queryHelper = QueryHelper.Instance);
-      set => _queryHelper = value;
-    }
 
     /// <summary>
     ///   Gets or sets the session to be used for accessing the database.
@@ -169,6 +169,30 @@ namespace SoundExplorers.Model {
 
     public IList<object> GetErrorValues() {
       return ErrorBindingItem.GetPropertyValues();
+    }
+
+    /// <summary>
+    ///   Invoked when when invalidly formatted data is pasted into a cell of
+    ///   either the insertion row or existing row, e.g. text into a date,
+    ///   which throws a <see cref="FormatException" />.
+    /// </summary>
+    /// <remarks>
+    ///   A paste format error in the insertion row is the only type of editing error
+    ///   where the error row remains the insertion row.
+    /// </remarks>
+    public void OnFormatException(int rowIndex, int columnIndex,
+      FormatException formatException) {
+      ChangeAction changeAction;
+      if (IsInsertionRowCurrent) {
+        changeAction = ChangeAction.Insert;
+        // In this case we are not returning edited cells to their changed values.
+        // See the long comment in EditorController.ShowDatabaseUpdateError.
+      } else {
+        changeAction = ChangeAction.Update;
+        ErrorBindingItem = (TBindingItem)BindingList[rowIndex];
+      }
+      LastDatabaseUpdateErrorException = new DatabaseUpdateErrorException(changeAction,
+        formatException.Message, rowIndex, columnIndex, formatException);
     }
 
     /// <summary>

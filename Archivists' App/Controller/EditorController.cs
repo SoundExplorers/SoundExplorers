@@ -70,6 +70,8 @@ namespace SoundExplorers.Controller {
       _imageSplitterDistanceOption ?? (_imageSplitterDistanceOption =
         new Option($"{MainList?.EntityName}.ImageSplitterDistance"));
 
+    private bool IsFormatException { get; set; }
+
     /// <summary>
     ///   Gets whether a read-only related grid for a parent table is to be shown
     ///   above the main grid.
@@ -137,21 +139,40 @@ namespace SoundExplorers.Controller {
         View.SelectCurrentRowOnly();
       }
       View.ShowErrorMessage(MainList.LastDatabaseUpdateErrorException.Message);
+      if (IsFormatException) {
+        IsFormatException = false;
+        if (LastChangeAction == ChangeAction.Insert) {
+          // A FormatException was thrown due to an invalidly formatted paste
+          // into an insertion row cell, e.g. text into a date cell.
+          // This the only type of editing error
+          // where the error row remains the insertion row.
+          //
+          // Unlike other editing error types,
+          // including FormatException in an existing row cell,
+          // in this case we are not returning edited cells to their changed values.
+          //
+          // It looks like that would be very tricky in to do in the insertion row.
+          // It seems to be impossible to change insertion cell values programatically.
+          // Perhaps the insertion row could to be exited and replaced with
+          // a new one based on a special binding item pre-populated
+          // with the changed values (apart from the property corresponding to the
+          // FormatException, which would be impossible).
+          // As this should be a rare scenario and the resulting lack of data restoration
+          // is not expected to be seen as onerous,
+          // I'm putting this in the too-hard basket for now.
+          return;
+        }
+        // LastChangeAction == ChangeAction.Update
+        RestoreCurrentRowErrorValues();
+        return;
+      }
       switch (LastChangeAction) {
         case ChangeAction.Delete:
           break;
         case ChangeAction.Insert:
           MainList.RemoveCurrentBindingItem();
           View.MakeMainGridInsertionRowCurrent();
-          var insertionRowErrorValues = MainList.GetErrorValues();
-          for (var i = 0; i < MainList.Columns.Count; i++) {
-            View.FocusMainGridCell(MainList.LastDatabaseUpdateErrorException.RowIndex, i);
-            View.EditMainGridCurrentCell();
-            View.RestoreMainGridCurrentRowCellErrorValue(i, insertionRowErrorValues[i]);
-          }
-          View.FocusMainGridCell(MainList.LastDatabaseUpdateErrorException.RowIndex,
-            MainList.LastDatabaseUpdateErrorException.ColumnIndex);
-          View.EditMainGridCurrentCell();
+          RestoreCurrentRowErrorValues();
           MainList.IsFixingNewRow = true;
           break;
         case ChangeAction.Update:
@@ -184,21 +205,23 @@ namespace SoundExplorers.Controller {
       return Columns[columnName]?.DisplayName;
     }
 
-    public void OnMainGridDataError([CanBeNull] Exception exception) {
+    public void OnMainGridDataError(int rowIndex, int columnIndex, 
+      [CanBeNull] Exception exception) {
       switch (exception) {
         case DatabaseUpdateErrorException databaseUpdateErrorException:
           MainList.LastDatabaseUpdateErrorException = databaseUpdateErrorException;
           View.StartDatabaseUpdateErrorTimer();
           break;
-        // ReSharper disable once UnusedVariable
         case FormatException formatException:
           // Can happen when pasting an invalid value into a cell,
-          // e.g. a URL into a date.
-          // TODO: Handle FormatException when pasting an invalid value into a cell  
+          // e.g. text into a date.
+          IsFormatException = true;
+          MainList.OnFormatException(rowIndex, columnIndex, formatException);
+          View.StartDatabaseUpdateErrorTimer();
           break;
         case null:
           // For unknown reason, the way I've got the error handling set up,
-          // this event gets raise twice if there's a cell edit error,
+          // this event gets raise twice if there's a DatabaseUpdateErrorException,
           // the second time with a null exception.
           // It does not seem to do any harm, so long as it is trapped like this.
           break;
@@ -282,6 +305,18 @@ namespace SoundExplorers.Controller {
     [ExcludeFromCodeCoverage]
     public void PlayVideo() {
       //Process.Start(GetMediumPath(Medium.Video));
+    }
+
+    private void RestoreCurrentRowErrorValues() {
+      var errorValues = MainList.GetErrorValues();
+      for (var i = 0; i < MainList.Columns.Count; i++) {
+        View.FocusMainGridCell(MainList.LastDatabaseUpdateErrorException.RowIndex, i);
+        View.EditMainGridCurrentCell();
+        View.RestoreMainGridCurrentRowCellErrorValue(i, errorValues[i]);
+      }
+      View.FocusMainGridCell(MainList.LastDatabaseUpdateErrorException.RowIndex,
+        MainList.LastDatabaseUpdateErrorException.ColumnIndex);
+      View.EditMainGridCurrentCell();
     }
 
     /// <summary>

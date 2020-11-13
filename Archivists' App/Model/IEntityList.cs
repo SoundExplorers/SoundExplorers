@@ -101,6 +101,9 @@ namespace SoundExplorers.Model {
     [NotNull]
     IList<object> GetErrorValues();
 
+    void OnFormatException(int rowIndex, int columnIndex,
+      [NotNull] FormatException formatException);
+
     /// <summary>
     ///   This is called when any row has been entered.
     /// </summary>
