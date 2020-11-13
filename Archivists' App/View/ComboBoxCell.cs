@@ -10,7 +10,6 @@ namespace SoundExplorers.View {
   /// <remarks>
   ///   The cell displays dates in ordinary text box cells,
   ///   but when the user edits a cell, a ComboBox control appears.
-  ///   TODO: Can DataGridViewComboBoxCell be used?
   /// </remarks>
   internal class ComboBoxCell : DataGridViewTextBoxCell, IView<ComboBoxCellController>,
     ICanRestoreErrorValue {
@@ -18,12 +17,11 @@ namespace SoundExplorers.View {
     ///   Gets the type of the editing control that the ComboBoxCell is to use.
     /// </summary>
     public override Type EditType => typeof(DataGridViewComboBoxEditingControl);
-    // public override Type EditType => typeof(ComboBoxEditingControl);
 
     /// <summary>
     ///   Gets the cell's combo box.
     /// </summary>
-    public ComboBox ComboBox => (ComboBox)DataGridView.EditingControl;
+    private ComboBox ComboBox => (ComboBox)DataGridView.EditingControl;
 
     private ComboBoxCellController Controller => (ComboBoxCellController)Tag;
 
@@ -88,119 +86,5 @@ namespace SoundExplorers.View {
       ComboBox.SelectedIndex =
         ComboBox.FindStringExact(initialFormattedValue.ToString());
     }
-
-    // /// <summary>
-    // ///   Populates the drop-down list of dates with the
-    // ///   available values of the date key column of the referenced table.
-    // /// </summary>
-    // /// <param name="initialFormattedDate">
-    // ///   The formatted date to be initially selected in the drop-down list of dates.
-    // /// </param>
-    // /// <param name="referencedBindingList">
-    // ///   The referenced table that will be used to populate the date list.
-    // /// </param>
-    // /// <remarks>
-    // ///   If the cell does not already contain a date:
-    // ///   01 Jan 1900, the standard default date,
-    // ///   will be initially selected in the list if
-    // ///   that date is available in the referenced table;
-    // ///   otherwise the latest available date
-    // ///   will be initially selected.
-    // /// </remarks>
-    // private void PopulateDateDropDownList(
-    //   string initialFormattedDate, IBindingList referencedBindingList) {
-    //   // var dictionary =
-    //   //   new Dictionary<string, DateTime>(referencedBindingList.Count);
-    //   // // Some of this should be in the controller.
-    //   // foreach (var row in referencedBindingList) {
-    //   //   dictionary.Add(
-    //   //     ((DateTime)row[Controller.ReferencedColumnName]).ToString(
-    //   //       OwningColumn.DefaultCellStyle.Format),
-    //   //     (DateTime)row[Controller.ReferencedColumnName]);
-    //   // } //End of foreach
-    //   // ComboBox.DataSource =
-    //   //   new BindingSource(dictionary, null);
-    //   // ComboBox.DisplayMember = "Key";
-    //   // ComboBox.ValueMember = "Value";
-    //   ComboBox.SelectedIndex = ComboBox.FindStringExact(initialFormattedDate);
-    //   if (ComboBox.SelectedIndex == -1) {
-    //     // var firstDate =
-    //     //   (DateTime)referencedBindingList.Rows[0][
-    //     //     Controller.ReferencedColumnName];
-    //     // if (firstDate == DateTime.Parse("01 Jan 1900")) {
-    //     //   ComboBox.SelectedIndex = 0;
-    //     //   if (string.IsNullOrWhiteSpace(Value.ToString())) {
-    //     //     Value = firstDate;
-    //     //   }
-    //     // } else {
-    //     //   var lastDate =
-    //     //     (DateTime)referencedBindingList.Rows[referencedBindingList.Rows.Count - 1][
-    //     //       Controller.ReferencedColumnName];
-    //     //   ComboBox.SelectedIndex = referencedBindingList.Count - 1;
-    //     //   if (string.IsNullOrWhiteSpace(Value.ToString())) {
-    //     //     Value = lastDate;
-    //     //   }
-    //     // }
-    //   }
-    // }
-
-    // /// <summary>
-    // ///   Throws an <see cref="ApplicationException" /> to indicate
-    // ///   that the referenced table contains no rows that
-    // ///   can be made available for selection in the cell's drop-down list.
-    // /// </summary>
-    // /// <param name="parentColumnName">
-    // ///   For possible future with images.
-    // ///   The name of the parent column, if any.
-    // ///   This is the grid column whose value in the current row
-    // ///   determines which rows of the current column's referenced table
-    // ///   can be made available for selection.
-    // ///   Null if the grid contains no such parent column.
-    // /// </param>
-    // /// <param name="parentColumnValue">
-    // ///   For possible future with images.
-    // ///   If the current column has a parent column,
-    // ///   the value of the parent cell in the current row.
-    // ///   Otherwise null.
-    // /// </param>
-    // /// <exception cref="ApplicationException">
-    // ///   The required application exception.
-    // /// </exception>
-    // /// <remarks>
-    // ///   When this exception is thrown,
-    // ///   the DataGridView.DataError event,
-    // ///   which is handled by EditorView.MainGrid_DataError,
-    // ///   gets raised.
-    // /// </remarks>
-    // private void ThrowNoAvailableReferencesException(string parentColumnName = null,
-    //   object parentColumnValue = null) {
-    //   string message =
-    //     "There are no " + Controller.ReferencedTableName
-    //                     + " " + Controller.ReferencedColumnName + "s ";
-    //   if (parentColumnName != null) {
-    //     message +=
-    //       "for " + parentColumnName
-    //              + " \"" + parentColumnValue + "\" ";
-    //   }
-    //   message +=
-    //     "to choose between.  You need to insert at least one row into the "
-    //     + Controller.ReferencedTableName + " table ";
-    //   if (parentColumnName != null) {
-    //     message +=
-    //       "for " + parentColumnName
-    //              + " \"" + parentColumnValue + "\" ";
-    //   }
-    //   message +=
-    //     "before you can add rows to the "
-    //     + Controller.TableName + " table";
-    //   // For possible future with images.
-    //   if (parentColumnName != null) {
-    //     message +=
-    //       " for " + parentColumnName
-    //               + " \"" + parentColumnValue + "\"";
-    //   }
-    //   message += ".";
-    //   throw new ApplicationException(message);
-    // }
   } //End of class
 } //End of namespace
