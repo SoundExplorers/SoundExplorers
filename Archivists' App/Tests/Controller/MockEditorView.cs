@@ -7,6 +7,8 @@ namespace SoundExplorers.Tests.Controller {
     public int FocusMainGridCellCount { get; private set; }
     public int FocusMainGridCellColumnIndex { get; private set; }
     public int FocusMainGridCellRowIndex { get; private set; }
+
+    public string LastErrorMessage { get; private set; }
     public int MakeMainGridInsertionRowCurrentCount { get; private set; }
     public int OnRowAddedOrDeletedCount { get; private set; }
     public int RestoreMainGridCurrentRowCellErrorValueCount { get; private set; }
@@ -46,6 +48,7 @@ namespace SoundExplorers.Tests.Controller {
     }
 
     public void ShowErrorMessage(string text) {
+      LastErrorMessage = text;
       ShowErrorMessageCount++;
     }
 

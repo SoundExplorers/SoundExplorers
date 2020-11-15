@@ -47,7 +47,6 @@ namespace SoundExplorers.Model {
       EntityComparer = new EntityComparer<TEntity>();
     }
 
-    // private TEntity BackupEntity { get; set; }
     private TBindingItem BackupBindingItem { get; set; }
     private TBindingItem BackupBindingItemToRestoreFrom { get; set; }
     private TBindingItem BindingItemToFix { get; set; }
@@ -55,12 +54,6 @@ namespace SoundExplorers.Model {
     private TBindingItem ErrorBindingItem { get; set; }
     private bool HasRowBeenEdited { get; set; }
     private ChangeAction LastDatabaseChangeAction { get; set; }
-
-    /// <summary>
-    ///   Gets whether the current grid row is the insertion row,
-    ///   which is for adding new entities and is located at the bottom of the grid.
-    /// </summary>
-    private bool IsInsertionRowCurrent { get; set; }
 
     /// <summary>
     ///   The setter should only be needed for testing.
@@ -105,6 +98,12 @@ namespace SoundExplorers.Model {
     ///   or the row gets removed from the grid when if the insertion is cancelled.
     /// </summary>
     public bool IsFixingNewRow { get; set; }
+
+    /// <summary>
+    ///   Gets whether the current grid row is the insertion row,
+    ///   which is for adding new entities and is located at the bottom of the grid.
+    /// </summary>
+    public bool IsInsertionRowCurrent { get; private set; }
 
     /// <summary>
     ///   Gets or sets whether this is a (read-only) parent list.
@@ -180,19 +179,32 @@ namespace SoundExplorers.Model {
     ///   A paste format error in the insertion row is the only type of editing error
     ///   where the error row remains the insertion row.
     /// </remarks>
-    public void OnFormatException(int rowIndex, int columnIndex,
+    public void OnFormatException(int rowIndex, string propertyName,
       FormatException formatException) {
-      ChangeAction changeAction;
       if (IsInsertionRowCurrent) {
-        changeAction = ChangeAction.Insert;
+        LastDatabaseChangeAction = ChangeAction.Insert;
         // In this case we are not returning edited cells to their changed values.
         // See the long comment in EditorController.ShowDatabaseUpdateError.
       } else {
-        changeAction = ChangeAction.Update;
+        LastDatabaseChangeAction = ChangeAction.Update;
         ErrorBindingItem = (TBindingItem)BindingList[rowIndex];
       }
-      LastDatabaseUpdateErrorException = new DatabaseUpdateErrorException(changeAction,
-        formatException.Message, rowIndex, columnIndex, formatException);
+      var message = $"Invalid {propertyName}:\r\n{formatException.Message}"; 
+      LastDatabaseUpdateErrorException = new DatabaseUpdateErrorException(
+        LastDatabaseChangeAction, message, rowIndex, Columns.GetIndex(propertyName), 
+        formatException);
+    }
+
+    public void OnReferencingValueNotFound(int rowIndex, string propertyName,
+      string formattedCellValue) {
+      var message = 
+        $"{propertyName} not found: '{formattedCellValue}'"; 
+       var exception = new RowNotInTableException(message);
+       LastDatabaseChangeAction =
+         IsInsertionRowCurrent ? ChangeAction.Insert : ChangeAction.Update; 
+       LastDatabaseUpdateErrorException = new DatabaseUpdateErrorException(
+         LastDatabaseChangeAction, message, rowIndex, Columns.GetIndex(propertyName), 
+         exception);
     }
 
     /// <summary>
@@ -302,6 +314,14 @@ namespace SoundExplorers.Model {
       HasRowBeenEdited = false;
     }
 
+    public void RestoreReferencingPropertyOriginalValue(int rowIndex, int columnIndex) {
+      var bindingItem = (TBindingItem)BindingList[rowIndex];
+      string propertyName = Columns[columnIndex].Name;
+      var originalValue = 
+        BackupBindingItem.Properties[propertyName].GetValue(BackupBindingItem);
+      bindingItem.Properties[propertyName].SetValue(bindingItem, originalValue);
+    }
+
     [NotNull]
     protected abstract TBindingItem CreateBindingItem([NotNull] TEntity entity);
 
@@ -369,7 +389,7 @@ namespace SoundExplorers.Model {
         exception is PropertyConstraintException propertyConstraintException
           ? propertyConstraintException.PropertyName
           : null;
-      int columnIndex = propertyName != null ? Columns.IndexOf(Columns[propertyName]) : 0;
+      int columnIndex = propertyName != null ? Columns.GetIndex(propertyName) : 0;
       LastDatabaseUpdateErrorException = new DatabaseUpdateErrorException(
         LastDatabaseChangeAction, exception.Message, rowIndex, columnIndex, exception);
       return LastDatabaseUpdateErrorException;

@@ -186,7 +186,7 @@ namespace SoundExplorers.View {
       // from crashing if F3 in pressed while the grid is focused.
       // TODO Check whether F3 crashes program when PARENT grid is focused.
       column.SortMode = DataGridViewColumnSortMode.NotSortable;
-      column.HeaderText = Controller.GetColumnDisplayName(column.Name) ?? column.Name;
+      column.HeaderText = Controller.GetColumnDisplayName(column.Name);
       if (column.ValueType == typeof(DateTime)) {
         column.DefaultCellStyle.Format = "dd MMM yyyy";
       }
@@ -463,23 +463,28 @@ namespace SoundExplorers.View {
       MissingImageLabel.Visible = false;
     }
 
-    /// <summary>
-    ///   Called when a cell edit is committed in
-    ///   <see cref="MainGridOnCurrentCellDirtyStateChanged" />, which
-    ///   emulates a cell ComboBox's SelectedIndexChange event.
-    /// </summary>
     private void MainGridOnCellValueChanged(object sender, DataGridViewCellEventArgs e) {
-      //Debug.WriteLine("MainGridOnCellValueChanged");
-      if (MainGrid.CurrentCell is ComboBoxCell) {
-        MainGrid.Invalidate();
+      if (MainGrid.CurrentCell is ComboBoxCell comboBoxCell) {
+        //var actualCellValueType = MainGrid.CurrentCell.Value.GetType();
+        var cellValue = MainGrid.CurrentCell.Value;
+        string columnName = MainGrid.CurrentCell.OwningColumn.Name;
+        string comboBoxText = comboBoxCell.ComboBox.Text;
+        //var expectedCellValueType = MainGrid.CurrentCell.OwningColumn.ValueType;
+        string format = MainGrid.CurrentCell.OwningColumn.DefaultCellStyle.Format;
+        int rowIndex = MainCurrentRow.Index;
+        // Debug.WriteLine("MainGridOnCellValueChanged, ComboBoxCell:");
+        // Debug.WriteLine(
+        //   $"  Cell = '{cellValue}'; combo box = '{comboBoxText}'");
+        Controller.OnMainGridComboBoxCellValueChanged(
+          rowIndex, columnName, cellValue, comboBoxText, format);
       }
     }
 
     /// <summary>
-    ///   Emulates a cell ComboBox's SelectedIndexChange event.
+    ///   Emulates the ComboBox's SelectedIndexChanged event.
     /// </summary>
     /// <remarks>
-    ///   A known problem with DataGridViews is that,
+    ///   A known problem with MainGrids is that,
     ///   where there are multiple ComboBox columns,
     ///   ComboBox events can get spuriously raised against the ComboBoxes
     ///   in multiple cells of the row that is being edited.
@@ -487,13 +492,13 @@ namespace SoundExplorers.View {
     ///   emulating a cell ComboBox's SelectedIndexChange event
     ///   but without the spurious occurrences.
     ///   The fix is based on the second answer here:
-    ///   https://stackoverflow.com/questions/11141872/event-that-fires-during-datagridviewcomboboxcolumn-selectedindexchanged
+    ///   https://stackoverflow.com/questions/11141872/event-that-fires-during-MainGridcomboboxcolumn-selectedindexchanged
     /// </remarks>
     private void MainGridOnCurrentCellDirtyStateChanged(object sender, EventArgs e) {
-      // Debug.WriteLine("MainGridOnCurrentCellDirtyStateChanged");
-      if (MainGrid.IsCurrentCellDirty &&
-          MainGrid.CurrentCell is ComboBoxCell) {
-        // Debug.WriteLine("    CommitEdit");
+      // Debug.WriteLine($"MainGridOnCurrentCellDirtyStateChanged: IsCurrentCellDirty = {MainGrid.IsCurrentCellDirty}");
+      if (MainGrid.CurrentCell is ComboBoxCell && MainGrid.IsCurrentCellDirty) {
+        // Debug.WriteLine(
+        //   "MainGridOnCurrentCellDirtyStateChanged: ComboBoxCell, IsCurrentCellDirty");
         // This fires the cell value changed handler MainGridOnCellValueChanged.
         MainGrid.CommitEdit(DataGridViewDataErrorContexts.CurrentCellChange);
       }
@@ -517,7 +522,8 @@ namespace SoundExplorers.View {
       // Debug.WriteLine("Context = " + e.Context);
       // Debug.WriteLine("ColumnIndex = " + e.ColumnIndex);
       // Debug.WriteLine("RowIndex = " + e.RowIndex);
-      Controller.OnMainGridDataError(e.RowIndex, e.ColumnIndex, e.Exception);
+      string columnName = MainGrid.Columns[e.ColumnIndex].Name;
+      Controller.OnMainGridDataError(e.RowIndex, columnName, e.Exception);
     }
 
     /// <summary>

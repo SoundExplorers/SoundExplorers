@@ -60,7 +60,7 @@ namespace SoundExplorers.Tests.Controller {
         "Rename name should have thrown DatabaseUpdateErrorException.");
       Assert.AreEqual(name1, editor[1].Name,
         "Still duplicate name before error message shown for duplicate rename");
-      Controller.OnMainGridDataError(1,0, exception);
+      Controller.OnMainGridDataError(1, "Name", exception);
       Assert.AreEqual(1, View.EditMainGridCurrentCellCount,
         "EditMainGridCurrentCellCount after error message shown for duplicate rename");
       Assert.AreEqual(1, View.FocusMainGridCellCount,
@@ -80,12 +80,12 @@ namespace SoundExplorers.Tests.Controller {
       // as in the case of this rename,
       // the second time with a null exception.
       // So check that this is allowed for and has no effect.
-      Controller.OnMainGridDataError(1,0, null);
+      Controller.OnMainGridDataError(1, "Name", null);
       Assert.AreEqual(1, View.ShowErrorMessageCount,
         "ShowErrorMessageCount after null error");
       // Check that an exception of an unsupported type is rethrown
       Assert.Throws<InvalidOperationException>(
-        () => Controller.OnMainGridDataError(1,0, new InvalidOperationException()),
+        () => Controller.OnMainGridDataError(1, "Name", new InvalidOperationException()),
         "Unsupported exception type");
       // Disallow insert with duplicate name
       editor.AddNew();
@@ -174,7 +174,7 @@ namespace SoundExplorers.Tests.Controller {
       editor.AddNew(); // Create insertion row
       Controller.OnMainGridRowEnter(3); // Go to insertion row
       var exception = new FormatException("Potato is not a valid DateTime.");
-      Controller.OnMainGridDataError(3,0, exception);
+      Controller.OnMainGridDataError(3, "Date", exception);
       Assert.AreEqual(1, View.ShowErrorMessageCount, "ShowErrorMessageCount");
     }
 
@@ -207,7 +207,7 @@ namespace SoundExplorers.Tests.Controller {
       editor[2].Series = changedSeries;
       // Simulate pasting text into the Date cell.
       var exception = new FormatException("Potato is not a valid value for DateTime.");
-      Controller.OnMainGridDataError(2,0, exception);
+      Controller.OnMainGridDataError(2, "Date", exception);
       Assert.AreEqual(1, View.ShowErrorMessageCount, "ShowErrorMessageCount");
       Assert.AreEqual(changedEventType, editor[2].EventType, "EventType");
       Assert.AreEqual(changedLocation, editor[2].Location, "Location");
@@ -223,7 +223,8 @@ namespace SoundExplorers.Tests.Controller {
       Session.Commit();
       Controller = CreateController(typeof(NewsletterList));
       Controller.FetchData(); // Populate grid
-      Assert.AreEqual("URL", Controller.GetColumnDisplayName("Url"));
+      Assert.AreEqual("Date", Controller.GetColumnDisplayName("Date"), "Date");
+      Assert.AreEqual("URL", Controller.GetColumnDisplayName("Url"), "Url");
     }
 
     [Test]
@@ -262,6 +263,7 @@ namespace SoundExplorers.Tests.Controller {
       try {
         Data.AddEventTypesPersisted(1, Session);
         Data.AddLocationsPersisted(1, Session);
+        Data.AddNewslettersPersisted(1, Session);
         Data.AddSeriesPersisted(1, Session);
         Data.AddEventsPersisted(1, Session);
       } finally {
@@ -270,14 +272,68 @@ namespace SoundExplorers.Tests.Controller {
       Controller = CreateController(typeof(EventList));
       Controller.FetchData(); // Populate grid
       Assert.IsTrue(Controller.DoesColumnReferenceAnotherEntity("Series"),
-        "DoesColumnReferenceAnotherEntity");
+        "Series DoesColumnReferenceAnotherEntity");
       var editor = new TestEditor<Event, EventBindingItem>(
         QueryHelper, Session, Controller.MainBindingList);
-      string selectedSeriesName = Data.Series[0].Name;
+      // Series
       var selectedSeries = Data.Series[0];
+      string selectedSeriesName = selectedSeries.Name;
+      Controller.OnMainGridRowEnter(0);
       editor[0].Series = selectedSeriesName;
+      Controller.OnMainGridComboBoxCellValueChanged(
+        0, "Series", selectedSeriesName, 
+        selectedSeriesName, string.Empty);
+      Assert.AreEqual(0, View.ShowErrorMessageCount, 
+        "ShowErrorMessageCount after valid Series selection");
+      Assert.AreEqual(selectedSeriesName, editor[0].Series,
+        "Series in editor after valid Series selection");
       Assert.AreSame(selectedSeries, ((Event)Controller.GetMainList()[0]).Series,
-        "Series");
+        "Series entity after valid Series selection");
+      const string notFoundName = "Not-Found Name";
+      Controller.OnMainGridRowEnter(0);
+      editor[0].Series = notFoundName;
+      Controller.OnMainGridComboBoxCellValueChanged(
+        0, "Series", notFoundName, 
+        selectedSeriesName, string.Empty);
+      Assert.AreEqual(1, View.ShowErrorMessageCount, 
+        "ShowErrorMessageCount after not-found Series pasted");
+      Assert.AreEqual($"Series not found: 'Not-Found Name'", View.LastErrorMessage, 
+        "LastErrorMessage after not-found Series pasted");
+      Assert.AreEqual(selectedSeriesName, editor[0].Series,
+        "Series in editor after not-found Series pasted");
+      Assert.AreSame(selectedSeries, ((Event)Controller.GetMainList()[0]).Series,
+        "Series entity after not-found Series pasted");
+      // Newsletter
+      const string dateFormat = "dd MMM yyyy";
+      var selectedNewsletter = Data.Newsletters[0];
+      var selectedNewsletterDate = selectedNewsletter.Date;
+      var selectedNewsletterDateFormatted = selectedNewsletterDate.ToString(dateFormat);
+      Controller.OnMainGridRowEnter(0);
+      editor[0].Newsletter = selectedNewsletterDate;
+      Controller.OnMainGridComboBoxCellValueChanged(
+        0, "Newsletter", selectedNewsletterDate, 
+        selectedNewsletterDateFormatted, dateFormat);
+      Assert.AreEqual(1, View.ShowErrorMessageCount, 
+        "ShowErrorMessageCount after valid Newsletter selection");
+      Assert.AreEqual(selectedNewsletterDate, editor[0].Newsletter,
+        "Newsletter in editor after valid Newsletter selection");
+      Assert.AreSame(selectedNewsletter, ((Event)Controller.GetMainList()[0]).Newsletter,
+        "Newsletter entity after valid Newsletter selection");
+      var notFoundDate = DateTime.Parse("2345/12/31");
+      Controller.OnMainGridRowEnter(0);
+      editor[0].Newsletter = notFoundDate;
+      Controller.OnMainGridComboBoxCellValueChanged(
+        0, "Newsletter", notFoundDate, 
+        selectedNewsletterDateFormatted, dateFormat);
+      Assert.AreEqual(2, View.ShowErrorMessageCount, 
+        "ShowErrorMessageCount after not-found Newsletter pasted");
+      Assert.AreEqual("Newsletter not found: '31 Dec 2345'", 
+        View.LastErrorMessage, 
+        "LastErrorMessage after not-found Newsletter pasted");
+      Assert.AreEqual(selectedNewsletterDate, editor[0].Newsletter,
+        "Newsletter in editor after not-found Newsletter pasted");
+      Assert.AreSame(selectedNewsletter, ((Event)Controller.GetMainList()[0]).Newsletter,
+        "Newsletter entity after not-found Newsletter pasted");
     }
 
     [Test]

@@ -46,6 +46,12 @@ namespace SoundExplorers.Model {
     bool IsFixingNewRow { get; set; }
 
     /// <summary>
+    ///   Gets whether the current grid row is the insertion row,
+    ///   which is for adding new entities and is located at the bottom of the grid.
+    /// </summary>
+    bool IsInsertionRowCurrent { get;  }
+    
+    /// <summary>
     ///   Gets or sets whether this is a (read-only) parent list.
     ///   False (the default) if this is the (updatable) main (and maybe only) list.
     /// </summary>
@@ -101,8 +107,11 @@ namespace SoundExplorers.Model {
     [NotNull]
     IList<object> GetErrorValues();
 
-    void OnFormatException(int rowIndex, int columnIndex,
+    void OnFormatException(int rowIndex, [NotNull] string propertyName,
       [NotNull] FormatException formatException);
+
+    void OnReferencingValueNotFound(int rowIndex, [NotNull] string propertyName,
+      [CanBeNull] string formattedCellValue);
 
     /// <summary>
     ///   This is called when any row has been entered.
@@ -124,5 +133,6 @@ namespace SoundExplorers.Model {
 
     void RemoveCurrentBindingItem();
     void RestoreCurrentBindingItemOriginalValues();
+    void RestoreReferencingPropertyOriginalValue(int rowIndex, int columnIndex);
   }
 }

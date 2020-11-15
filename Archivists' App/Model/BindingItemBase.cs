@@ -45,7 +45,7 @@ namespace SoundExplorers.Model {
 
     private IDictionary<string, object> EntityPropertyValues { get; set; }
 
-    private IDictionary<string, PropertyInfo> Properties =>
+    internal IDictionary<string, PropertyInfo> Properties =>
       _properties ?? (_properties = CreatePropertyDictionary<TBindingItem>());
 
     /// <summary>

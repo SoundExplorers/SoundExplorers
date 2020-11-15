@@ -73,6 +73,12 @@ namespace SoundExplorers.Controller {
       // The only non-string key expected, which therefore needs to be converted
       // to a formatted string is Newsletter.Date.
       bool isDateKey = !string.IsNullOrWhiteSpace(format);
+      // if (isDateKey && value is Newsletter newsletter) {
+      //   return newsletter.Date.ToString(format);
+      // } else if (value is IEntity entity) {
+      //   return entity.SimpleKey;
+      // }
+      // return value.ToString();
       return isDateKey
         ? ((Newsletter)value).Date.ToString(format)
         : ((IEntity)value).SimpleKey;

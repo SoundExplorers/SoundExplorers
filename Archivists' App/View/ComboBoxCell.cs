@@ -21,13 +21,18 @@ namespace SoundExplorers.View {
     /// <summary>
     ///   Gets the cell's combo box.
     /// </summary>
-    private ComboBox ComboBox => (ComboBox)DataGridView.EditingControl;
+    public ComboBox ComboBox => (ComboBox)DataGridView.EditingControl;
 
     private ComboBoxCellController Controller => (ComboBoxCellController)Tag;
 
     public void RestoreErrorValue(object errorValue) {
-      ComboBox.SelectedIndex = ComboBox.FindStringExact(
-        ComboBoxCellController.GetKey(errorValue, OwningColumn.DefaultCellStyle.Format));
+      string key =
+        ComboBoxCellController.GetKey(errorValue, OwningColumn.DefaultCellStyle.Format); 
+      int foundIndex = ComboBox.FindStringExact(key);
+      ComboBox.SelectedIndex = foundIndex;
+      if (ComboBox.SelectedIndex != foundIndex) {
+        ComboBox.SelectedIndex = foundIndex;
+      }
     }
 
     public void SetController(ComboBoxCellController controller) {
@@ -74,7 +79,7 @@ namespace SoundExplorers.View {
       int rowIndex,
       object initialFormattedValue,
       DataGridViewCellStyle dataGridViewCellStyle) {
-      // Set the value of the editing control to the current cell value.
+      //Debug.WriteLine($"ComboBoxCell.InitializeEditingControl: initialFormattedValue = '{initialFormattedValue}'"); 
       base.InitializeEditingControl(rowIndex, initialFormattedValue,
         dataGridViewCellStyle);
       ComboBox.DropDownStyle = ComboBoxStyle.DropDownList;

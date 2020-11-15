@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using System.Data;
 using System.Data.Linq;
 using System.Diagnostics.CodeAnalysis;
 using JetBrains.Annotations;
@@ -34,7 +35,7 @@ namespace SoundExplorers.Controller {
     ///   Gets metadata about the database columns
     ///   represented by the Entity's field properties.
     /// </summary>
-    internal BindingColumnList Columns => MainList?.Columns ??
+    [NotNull] internal BindingColumnList Columns => MainList?.Columns ??
                                           throw new NullReferenceException(
                                             nameof(Columns));
 
@@ -70,13 +71,19 @@ namespace SoundExplorers.Controller {
       _imageSplitterDistanceOption ?? (_imageSplitterDistanceOption =
         new Option($"{MainList?.EntityName}.ImageSplitterDistance"));
 
-    private bool IsFormatException { get; set; }
+    private bool IsFormatException =>
+      MainList.LastDatabaseUpdateErrorException?.InnerException?.GetType() ==
+      typeof(FormatException);
 
     /// <summary>
     ///   Gets whether a read-only related grid for a parent table is to be shown
     ///   above the main grid.
     /// </summary>
     public bool IsParentTableToBeShown => ParentList?.BindingList != null;
+
+    private bool IsReferencingValueNotFoundException =>
+      MainList.LastDatabaseUpdateErrorException?.InnerException?.GetType() ==
+      typeof(RowNotInTableException);
 
     [CanBeNull] public IBindingList MainBindingList => MainList?.BindingList;
 
@@ -101,7 +108,7 @@ namespace SoundExplorers.Controller {
     ///   Returns whether the specified column references another entity.
     /// </summary>
     public bool DoesColumnReferenceAnotherEntity([NotNull] string columnName) {
-      return !string.IsNullOrWhiteSpace(Columns[columnName]?.ReferencedColumnName);
+      return !string.IsNullOrWhiteSpace(Columns[columnName].ReferencedColumnName);
     }
 
     /// <summary>
@@ -138,32 +145,41 @@ namespace SoundExplorers.Controller {
       if (LastChangeAction == ChangeAction.Delete) {
         View.SelectCurrentRowOnly();
       }
+      // Known problem:  If IsReferencingValueNotFoundException on the insertion row, 
+      // the error value shown in the cell reverts to the default value
+      // on showing the message box.
       View.ShowErrorMessage(MainList.LastDatabaseUpdateErrorException.Message);
       if (IsFormatException) {
-        IsFormatException = false;
-        if (LastChangeAction == ChangeAction.Insert) {
-          // A FormatException was thrown due to an invalidly formatted paste
-          // into an insertion row cell, e.g. text into a date cell.
-          // This the only type of editing error
-          // where the error row remains the insertion row.
-          //
-          // Unlike other editing error types,
-          // including FormatException in an existing row cell,
-          // in this case we are not returning edited cells to their changed values.
-          //
-          // It looks like that would be very tricky in to do in the insertion row.
-          // It seems to be impossible to change insertion cell values programatically.
-          // Perhaps the insertion row could to be exited and replaced with
-          // a new one based on a special binding item pre-populated
-          // with the changed values (apart from the property corresponding to the
-          // FormatException, which would be impossible).
-          // As this should be a rare scenario and the resulting lack of data restoration
-          // is not expected to be seen as onerous,
-          // I'm putting this in the too-hard basket for now.
-          return;
+        // if (LastChangeAction == ChangeAction.Insert) {
+        //   // A FormatException was thrown due to an invalidly formatted paste
+        //   // into an insertion row cell, e.g. text into a date cell.
+        //   // This the only type of editing error
+        //   // where the error row remains the insertion row.
+        //   //
+        //   // Unlike other editing error types,
+        //   // including FormatException in an existing row cell,
+        //   // in this case we are not returning edited cells to their changed values.
+        //   //
+        //   // It looks like that would be very tricky in to do in the insertion row.
+        //   // It seems to be impossible to change insertion cell values programatically.
+        //   // Perhaps the insertion row could to be exited and replaced with
+        //   // a new one based on a special binding item pre-populated
+        //   // with the changed values (apart from the property corresponding to the
+        //   // FormatException, which would be impossible).
+        //   // As this should be a rare scenario and the resulting lack of data restoration
+        //   // is not expected to be seen as onerous by users,
+        //   // I'm putting this in the too-hard basket for now.
+        // } else {
+        //   // LastChangeAction == ChangeAction.Update
+        // }
+        return;
+      }
+      if (IsReferencingValueNotFoundException) {
+        if (!MainList.IsInsertionRowCurrent) {
+          MainList.RestoreReferencingPropertyOriginalValue(
+            MainList.LastDatabaseUpdateErrorException.RowIndex,
+            MainList.LastDatabaseUpdateErrorException.ColumnIndex);
         }
-        // LastChangeAction == ChangeAction.Update
-        RestoreCurrentRowErrorValues();
         return;
       }
       switch (LastChangeAction) {
@@ -200,12 +216,37 @@ namespace SoundExplorers.Controller {
       return new Option(name);
     }
 
-    [CanBeNull]
+    [NotNull]
     public string GetColumnDisplayName([NotNull] string columnName) {
-      return Columns[columnName]?.DisplayName;
+      var column = Columns[columnName]; 
+      return column.DisplayName ?? columnName;
     }
 
-    public void OnMainGridDataError(int rowIndex, int columnIndex, 
+    public void OnMainGridComboBoxCellValueChanged(int rowIndex,
+      [NotNull] string columnName, [CanBeNull] object cellValue, 
+      [CanBeNull] string comboBoxText, [NotNull] string format) {
+      string formattedCellValue;
+      if (cellValue is DateTime date) {
+        formattedCellValue = date.ToString(format);
+      } else { // string
+        formattedCellValue = cellValue?.ToString();
+      }
+      if (formattedCellValue == comboBoxText) {
+        return;
+      }
+      // The cell value does not match any of the combo box items.
+      // So the combo box's selected index and text could not be updated.
+      // As the combo boxes are all dropdown lists,
+      // the only way this can have happened is that
+      // the invalid value was pasted into the cell.
+      // If the cell value had been changed
+      // by selecting an item on the embedded combo box,
+      // it could only be a matching value.
+      MainList.OnReferencingValueNotFound(rowIndex, columnName, formattedCellValue);
+      View.StartDatabaseUpdateErrorTimer();
+    }
+
+    public void OnMainGridDataError(int rowIndex, [NotNull] string columnName,
       [CanBeNull] Exception exception) {
       switch (exception) {
         case DatabaseUpdateErrorException databaseUpdateErrorException:
@@ -215,8 +256,7 @@ namespace SoundExplorers.Controller {
         case FormatException formatException:
           // Can happen when pasting an invalid value into a cell,
           // e.g. text into a date.
-          IsFormatException = true;
-          MainList.OnFormatException(rowIndex, columnIndex, formatException);
+          MainList.OnFormatException(rowIndex, columnName, formatException);
           View.StartDatabaseUpdateErrorTimer();
           break;
         case null:
