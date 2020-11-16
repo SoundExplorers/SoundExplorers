@@ -35,7 +35,8 @@ namespace SoundExplorers.Controller {
     ///   Gets metadata about the database columns
     ///   represented by the Entity's field properties.
     /// </summary>
-    [NotNull] internal BindingColumnList Columns => MainList?.Columns ??
+    [NotNull]
+    internal BindingColumnList Columns => MainList?.Columns ??
                                           throw new NullReferenceException(
                                             nameof(Columns));
 
@@ -218,24 +219,21 @@ namespace SoundExplorers.Controller {
 
     [NotNull]
     public string GetColumnDisplayName([NotNull] string columnName) {
-      var column = Columns[columnName]; 
+      var column = Columns[columnName];
       return column.DisplayName ?? columnName;
     }
 
     public void OnMainGridComboBoxCellValueChanged(int rowIndex,
-      [NotNull] string columnName, [CanBeNull] object cellValue, 
-      [CanBeNull] string comboBoxText, [NotNull] string format) {
+      [NotNull] ComboBoxCellController cellController,
+      [NotNull] object cellValue) {
       string formattedCellValue;
       if (cellValue is DateTime date) {
-        formattedCellValue = date.ToString(format);
+        formattedCellValue = date.ToString(cellController.Format);
       } else { // string
-        formattedCellValue = cellValue?.ToString();
+        formattedCellValue = cellValue.ToString();
       }
-      if (MainList.IsInsertionRowCurrent) {
-      } else {
-        if (formattedCellValue == comboBoxText) {
-          return;
-        }
+      if (cellController.EntityDictionary.ContainsKey(formattedCellValue)) {
+        return;
       }
       // The cell value does not match any of the combo box items.
       // So the combo box's selected index and text could not be updated.
@@ -245,7 +243,8 @@ namespace SoundExplorers.Controller {
       // If the cell value had been changed
       // by selecting an item on the embedded combo box,
       // it could only be a matching value.
-      MainList.OnReferencingValueNotFound(rowIndex, columnName, formattedCellValue);
+      MainList.OnReferencingValueNotFound(
+        rowIndex, cellController.ColumnName, formattedCellValue);
       View.StartDatabaseUpdateErrorTimer();
     }
 

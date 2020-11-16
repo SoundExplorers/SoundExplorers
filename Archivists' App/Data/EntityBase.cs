@@ -362,9 +362,9 @@ namespace SoundExplorers.Data {
     [NotNull]
     private string CreateReferentialIntegrityViolationMessage() {
       var list = new SortedList<string, int>();
-      foreach (var childOfTypeKvp in ChildrenOfType) {
-        if (childOfTypeKvp.Value.Count > 0) {
-          list.Add(childOfTypeKvp.Key.Name, childOfTypeKvp.Value.Count);
+      foreach (var childOfTypePair in ChildrenOfType) {
+        if (childOfTypePair.Value.Count > 0) {
+          list.Add(childOfTypePair.Key.Name, childOfTypePair.Value.Count);
         }
       }
       var writer = new StringWriter();
@@ -391,13 +391,13 @@ namespace SoundExplorers.Data {
     private void Initialise() {
       ParentRelations = CreateParentRelations();
       Parents = new Dictionary<Type, EntityBase>();
-      foreach (var relationKvp in ParentRelations) {
-        Parents.Add(relationKvp.Key, null);
+      foreach (var relationPair in ParentRelations) {
+        Parents.Add(relationPair.Key, null);
       }
       ChildrenRelations = CreateChildrenRelations();
       ChildrenOfType = new Dictionary<Type, IDictionary>();
-      foreach (var relationKvp in ChildrenRelations) {
-        ChildrenOfType.Add(relationKvp.Key, GetChildren(relationKvp.Key));
+      foreach (var relationPair in ChildrenRelations) {
+        ChildrenOfType.Add(relationPair.Key, GetChildren(relationPair.Key));
       }
     }
 

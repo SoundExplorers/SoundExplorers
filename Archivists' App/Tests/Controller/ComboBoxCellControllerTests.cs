@@ -47,7 +47,7 @@ namespace SoundExplorers.Tests.Controller {
     private TestSession Session { get; set; }
 
     [Test]
-    public void TheTest() {
+    public void FetchItems() {
       string key = ComboBoxCellController.GetKey(null, null);
       Assert.IsNull(key, "Null key");
       Session.BeginUpdate();
@@ -66,6 +66,13 @@ namespace SoundExplorers.Tests.Controller {
       CellController = CreateCellController("NewsLetter");
       var newsLetterItems = CellController.FetchItems("dd MMM yyyy");
       Assert.AreEqual(3, newsLetterItems.Length, "newsLetterItems.Length");
+    }
+
+    [Test]
+    public void StringKeyValue() {
+      const string keyValue = "ABC";
+      string key = ComboBoxCellController.GetKey(keyValue, null);
+      Assert.AreEqual(keyValue, key);
     }
 
     [NotNull]

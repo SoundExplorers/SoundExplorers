@@ -1,6 +1,7 @@
 ﻿using System;
 using JetBrains.Annotations;
 using NUnit.Framework;
+using SoundExplorers.Controller;
 using SoundExplorers.Data;
 using SoundExplorers.Model;
 using SoundExplorers.Tests.Data;
@@ -276,14 +277,16 @@ namespace SoundExplorers.Tests.Controller {
       var editor = new TestEditor<Event, EventBindingItem>(
         QueryHelper, Session, Controller.MainBindingList);
       // Series
+      var comboBoxCellController =
+        CreateComboBoxCellControllerWithEntityDictionary("Series");
       var selectedSeries = Data.Series[0];
       string selectedSeriesName = selectedSeries.Name;
+      Assert.IsNotNull(selectedSeriesName, "selectedSeriesName");
       Controller.OnMainGridRowEnter(0);
       editor[0].Series = selectedSeriesName;
       Controller.OnMainGridComboBoxCellValueChanged(
-        0, "Series", selectedSeriesName, 
-        selectedSeriesName, string.Empty);
-      Assert.AreEqual(0, View.ShowErrorMessageCount, 
+        0, comboBoxCellController, selectedSeriesName);
+      Assert.AreEqual(0, View.ShowErrorMessageCount,
         "ShowErrorMessageCount after valid Series selection");
       Assert.AreEqual(selectedSeriesName, editor[0].Series,
         "Series in editor after valid Series selection");
@@ -293,11 +296,10 @@ namespace SoundExplorers.Tests.Controller {
       Controller.OnMainGridRowEnter(0);
       editor[0].Series = notFoundName;
       Controller.OnMainGridComboBoxCellValueChanged(
-        0, "Series", notFoundName, 
-        selectedSeriesName, string.Empty);
-      Assert.AreEqual(1, View.ShowErrorMessageCount, 
+        0, comboBoxCellController, notFoundName);
+      Assert.AreEqual(1, View.ShowErrorMessageCount,
         "ShowErrorMessageCount after not-found Series pasted");
-      Assert.AreEqual($"Series not found: 'Not-Found Name'", View.LastErrorMessage, 
+      Assert.AreEqual("Series not found: 'Not-Found Name'", View.LastErrorMessage,
         "LastErrorMessage after not-found Series pasted");
       Assert.AreEqual(selectedSeriesName, editor[0].Series,
         "Series in editor after not-found Series pasted");
@@ -305,15 +307,15 @@ namespace SoundExplorers.Tests.Controller {
         "Series entity after not-found Series pasted");
       // Newsletter
       const string dateFormat = "dd MMM yyyy";
+      comboBoxCellController =
+        CreateComboBoxCellControllerWithEntityDictionary("Newsletter", dateFormat);
       var selectedNewsletter = Data.Newsletters[0];
       var selectedNewsletterDate = selectedNewsletter.Date;
-      var selectedNewsletterDateFormatted = selectedNewsletterDate.ToString(dateFormat);
       Controller.OnMainGridRowEnter(0);
       editor[0].Newsletter = selectedNewsletterDate;
       Controller.OnMainGridComboBoxCellValueChanged(
-        0, "Newsletter", selectedNewsletterDate, 
-        selectedNewsletterDateFormatted, dateFormat);
-      Assert.AreEqual(1, View.ShowErrorMessageCount, 
+        0, comboBoxCellController, selectedNewsletterDate);
+      Assert.AreEqual(1, View.ShowErrorMessageCount,
         "ShowErrorMessageCount after valid Newsletter selection");
       Assert.AreEqual(selectedNewsletterDate, editor[0].Newsletter,
         "Newsletter in editor after valid Newsletter selection");
@@ -323,12 +325,11 @@ namespace SoundExplorers.Tests.Controller {
       Controller.OnMainGridRowEnter(0);
       editor[0].Newsletter = notFoundDate;
       Controller.OnMainGridComboBoxCellValueChanged(
-        0, "Newsletter", notFoundDate, 
-        selectedNewsletterDateFormatted, dateFormat);
-      Assert.AreEqual(2, View.ShowErrorMessageCount, 
+        0, comboBoxCellController, notFoundDate);
+      Assert.AreEqual(2, View.ShowErrorMessageCount,
         "ShowErrorMessageCount after not-found Newsletter pasted");
-      Assert.AreEqual("Newsletter not found: '31 Dec 2345'", 
-        View.LastErrorMessage, 
+      Assert.AreEqual("Newsletter not found: '31 Dec 2345'",
+        View.LastErrorMessage,
         "LastErrorMessage after not-found Newsletter pasted");
       Assert.AreEqual(selectedNewsletterDate, editor[0].Newsletter,
         "Newsletter in editor after not-found Newsletter pasted");
@@ -341,6 +342,16 @@ namespace SoundExplorers.Tests.Controller {
       Controller = CreateController(typeof(EventList));
       Controller.ShowWarningMessage("Warning! Warning!");
       Assert.AreEqual(1, View.ShowWarningMessageCount);
+    }
+
+    [NotNull]
+    private TestComboBoxCellController CreateComboBoxCellControllerWithEntityDictionary(
+      [NotNull] string columnName, string format = null) {
+      var comboBoxCell = new MockView<ComboBoxCellController>();
+      var comboBoxCellController =
+        new TestComboBoxCellController(comboBoxCell, Controller, columnName, Session);
+      comboBoxCellController.FetchItems(format);
+      return comboBoxCellController;
     }
 
     [NotNull]

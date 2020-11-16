@@ -8,7 +8,7 @@ namespace SoundExplorers.Controller {
       EditorController = editorController;
     }
 
-    [NotNull] protected string ColumnName { get; }
+    [NotNull] internal string ColumnName { get; }
     [NotNull] protected EditorController EditorController { get; }
     [CanBeNull] public string TableName => EditorController.MainTableName;
   }

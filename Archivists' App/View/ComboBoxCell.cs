@@ -23,7 +23,7 @@ namespace SoundExplorers.View {
     /// </summary>
     public ComboBox ComboBox => (ComboBox)DataGridView.EditingControl;
 
-    private ComboBoxCellController Controller => (ComboBoxCellController)Tag;
+    public ComboBoxCellController Controller => (ComboBoxCellController)Tag;
 
     public void RestoreErrorValue(object errorValue) {
       string key =

@@ -33,7 +33,8 @@ namespace SoundExplorers.Controller {
       view.SetController(this);
     }
 
-    private IEntityList EntityList { get; set; }
+    internal IDictionary<string, IEntity> EntityDictionary { get; private set; }
+    [CanBeNull] internal string Format { get; private set; }
 
     [NotNull]
     private string ReferencedColumnName =>
@@ -53,16 +54,25 @@ namespace SoundExplorers.Controller {
       throw new NullReferenceException(nameof(BindingColumn.ReferencedTableName)));
 
     [NotNull]
-    public object[] FetchItems([CanBeNull] string format) {
-      EntityList = CreateEntityList();
-      EntityList.Populate();
-      if (EntityList.Count == 0) {
+    private IDictionary<string, IEntity> FetchEntityDictionary() {
+      var entityList = CreateEntityList();
+      entityList.Populate();
+      if (entityList.Count == 0) {
         EditorController.ShowWarningMessage(CreateNoAvailableReferencesMessage());
       }
-      return (from IEntity entity in EntityList
-          select (object)new KeyValuePair<string, IEntity>(GetKey(entity, format), entity)
-        )
-        .ToArray();
+      return (from IEntity entity in entityList
+          select new KeyValuePair<string, IEntity>(GetKey(entity, Format), entity)
+        ).ToDictionary(pair => pair.Key, pair => pair.Value);
+    }
+
+    [NotNull]
+    public object[] FetchItems([CanBeNull] string format) {
+      Format = format;
+      EntityDictionary = FetchEntityDictionary();
+      return (
+          from KeyValuePair<string, IEntity> pair in EntityDictionary
+          select (object)new KeyValuePair<string, object>(pair.Key, pair.Value)
+        ).ToArray();
     }
 
     [CanBeNull]
@@ -79,7 +89,7 @@ namespace SoundExplorers.Controller {
       if (value is IEntity entity) {
         return entity.SimpleKey;
       }
-      // Location after duplicate key error message shown on inserting event.
+      // After duplicate key error message shown on inserting event.
       // Is this a problem?
       return value.ToString(); 
       // return isDateKey
