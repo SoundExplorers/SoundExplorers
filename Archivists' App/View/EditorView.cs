@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 using JetBrains.Annotations;
 using SoundExplorers.Controller;
@@ -466,15 +468,19 @@ namespace SoundExplorers.View {
     private void MainGridOnCellValueChanged(object sender, DataGridViewCellEventArgs e) {
       if (MainGrid.CurrentCell is ComboBoxCell comboBoxCell) {
         //var actualCellValueType = MainGrid.CurrentCell.Value.GetType();
-        var cellValue = MainGrid.CurrentCell.Value;
-        string columnName = MainGrid.CurrentCell.OwningColumn.Name;
-        string comboBoxText = comboBoxCell.ComboBox.Text;
+        var cellValue = MainGrid.CurrentCell.Value; string columnName = MainGrid.CurrentCell.OwningColumn.Name;
+        // Allowing for null ComboBox may prevent intermittent NullReferenceException
+        // crash of unknown cause.  But will something else go wrong instead?
+        string comboBoxText = comboBoxCell.ComboBox?.Text;
         //var expectedCellValueType = MainGrid.CurrentCell.OwningColumn.ValueType;
         string format = MainGrid.CurrentCell.OwningColumn.DefaultCellStyle.Format;
+        var dummy = comboBoxCell.ComboBox?.Items[0] as KeyValuePair<string, object>?;
+        // var comboBoxItems = comboBoxCell.ComboBox?.Items != null 
+        //   ? (from item in comboBoxCell.ComboBox.Items select item.) 
         int rowIndex = MainCurrentRow.Index;
         // Debug.WriteLine("MainGridOnCellValueChanged, ComboBoxCell:");
         // Debug.WriteLine(
-        //   $"  Cell = '{cellValue}'; combo box = '{comboBoxText}'");
+        //   $"  Cell = '{cellValue}'; combo box = '{comboBoxText}', {comboBoxCell.ComboBox?.Items.Count} items");
         Controller.OnMainGridComboBoxCellValueChanged(
           rowIndex, columnName, cellValue, comboBoxText, format);
       }

@@ -231,8 +231,11 @@ namespace SoundExplorers.Controller {
       } else { // string
         formattedCellValue = cellValue?.ToString();
       }
-      if (formattedCellValue == comboBoxText) {
-        return;
+      if (MainList.IsInsertionRowCurrent) {
+      } else {
+        if (formattedCellValue == comboBoxText) {
+          return;
+        }
       }
       // The cell value does not match any of the combo box items.
       // So the combo box's selected index and text could not be updated.

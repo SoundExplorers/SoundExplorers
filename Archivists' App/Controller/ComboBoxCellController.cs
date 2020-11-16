@@ -38,18 +38,18 @@ namespace SoundExplorers.Controller {
     [NotNull]
     private string ReferencedColumnName =>
       _referencedColumnName ?? (_referencedColumnName =
-        EditorController.Columns[ColumnName]?.ReferencedColumnName ??
+        EditorController.Columns[ColumnName].ReferencedColumnName ??
         throw new NullReferenceException(nameof(BindingColumn.ReferencedColumnName)));
 
     [NotNull]
     private Type ReferencedEntityListType =>
       _referencedEntityListType ?? (_referencedEntityListType =
-        EditorController.Columns[ColumnName]?.ReferencedEntityListType ??
+        EditorController.Columns[ColumnName].ReferencedEntityListType ??
         throw new NullReferenceException(nameof(BindingColumn.ReferencedEntityListType)));
 
     [NotNull]
     private string ReferencedTableName => _referencedTableName ?? (_referencedTableName =
-      EditorController.Columns[ColumnName]?.ReferencedTableName ??
+      EditorController.Columns[ColumnName].ReferencedTableName ??
       throw new NullReferenceException(nameof(BindingColumn.ReferencedTableName)));
 
     [NotNull]
@@ -73,15 +73,18 @@ namespace SoundExplorers.Controller {
       // The only non-string key expected, which therefore needs to be converted
       // to a formatted string is Newsletter.Date.
       bool isDateKey = !string.IsNullOrWhiteSpace(format);
-      // if (isDateKey && value is Newsletter newsletter) {
-      //   return newsletter.Date.ToString(format);
-      // } else if (value is IEntity entity) {
-      //   return entity.SimpleKey;
-      // }
-      // return value.ToString();
-      return isDateKey
-        ? ((Newsletter)value).Date.ToString(format)
-        : ((IEntity)value).SimpleKey;
+      if (isDateKey && value is Newsletter newsletter) {
+        return newsletter.Date.ToString(format);
+      } 
+      if (value is IEntity entity) {
+        return entity.SimpleKey;
+      }
+      // Location after duplicate key error message shown on inserting event.
+      // Is this a problem?
+      return value.ToString(); 
+      // return isDateKey
+      //   ? ((Newsletter)value).Date.ToString(format)
+      //   : ((IEntity)value).SimpleKey;
     }
 
     [NotNull]
