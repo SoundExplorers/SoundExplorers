@@ -284,8 +284,7 @@ namespace SoundExplorers.Tests.Controller {
       Assert.IsNotNull(selectedSeriesName, "selectedSeriesName");
       Controller.OnMainGridRowEnter(0);
       editor[0].Series = selectedSeriesName;
-      Controller.OnMainGridComboBoxCellValueChanged(
-        0, comboBoxCellController, selectedSeriesName);
+      comboBoxCellController.OnCellValueChanged(0, selectedSeriesName);
       Assert.AreEqual(0, View.ShowErrorMessageCount,
         "ShowErrorMessageCount after valid Series selection");
       Assert.AreEqual(selectedSeriesName, editor[0].Series,
@@ -295,8 +294,7 @@ namespace SoundExplorers.Tests.Controller {
       const string notFoundName = "Not-Found Name";
       Controller.OnMainGridRowEnter(0);
       editor[0].Series = notFoundName;
-      Controller.OnMainGridComboBoxCellValueChanged(
-        0, comboBoxCellController, notFoundName);
+      comboBoxCellController.OnCellValueChanged(0, notFoundName);
       Assert.AreEqual(1, View.ShowErrorMessageCount,
         "ShowErrorMessageCount after not-found Series pasted");
       Assert.AreEqual("Series not found: 'Not-Found Name'", View.LastErrorMessage,
@@ -313,8 +311,7 @@ namespace SoundExplorers.Tests.Controller {
       var selectedNewsletterDate = selectedNewsletter.Date;
       Controller.OnMainGridRowEnter(0);
       editor[0].Newsletter = selectedNewsletterDate;
-      Controller.OnMainGridComboBoxCellValueChanged(
-        0, comboBoxCellController, selectedNewsletterDate);
+      comboBoxCellController.OnCellValueChanged(0, selectedNewsletterDate);
       Assert.AreEqual(1, View.ShowErrorMessageCount,
         "ShowErrorMessageCount after valid Newsletter selection");
       Assert.AreEqual(selectedNewsletterDate, editor[0].Newsletter,
@@ -324,8 +321,7 @@ namespace SoundExplorers.Tests.Controller {
       var notFoundDate = DateTime.Parse("2345/12/31");
       Controller.OnMainGridRowEnter(0);
       editor[0].Newsletter = notFoundDate;
-      Controller.OnMainGridComboBoxCellValueChanged(
-        0, comboBoxCellController, notFoundDate);
+      comboBoxCellController.OnCellValueChanged(0, notFoundDate);
       Assert.AreEqual(2, View.ShowErrorMessageCount,
         "ShowErrorMessageCount after not-found Newsletter pasted");
       Assert.AreEqual("Newsletter not found: '31 Dec 2345'",

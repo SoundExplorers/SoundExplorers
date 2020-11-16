@@ -33,8 +33,8 @@ namespace SoundExplorers.Controller {
       view.SetController(this);
     }
 
-    internal IDictionary<string, IEntity> EntityDictionary { get; private set; }
-    [CanBeNull] internal string Format { get; private set; }
+    private IDictionary<string, IEntity> EntityDictionary { get; set; }
+    [CanBeNull] private string Format { get; set; }
 
     [NotNull]
     private string ReferencedColumnName =>
@@ -95,6 +95,21 @@ namespace SoundExplorers.Controller {
       // return isDateKey
       //   ? ((Newsletter)value).Date.ToString(format)
       //   : ((IEntity)value).SimpleKey;
+    }
+
+    public void OnCellValueChanged(int rowIndex,
+      [NotNull] object cellValue) {
+      string formattedCellValue;
+      if (cellValue is DateTime date) {
+        formattedCellValue = date.ToString(Format);
+      } else { // string
+        formattedCellValue = cellValue.ToString();
+      }
+      if (EntityDictionary.ContainsKey(formattedCellValue)) {
+        return;
+      }
+      EditorController.OnReferencingValueNotFound(
+        rowIndex, ColumnName, formattedCellValue);
     }
 
     [NotNull]

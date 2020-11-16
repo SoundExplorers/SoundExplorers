@@ -468,8 +468,7 @@ namespace SoundExplorers.View {
         // Debug.WriteLine("MainGridOnCellValueChanged, ComboBoxCell");
         var cellValue = MainGrid.CurrentCell.Value; 
         int rowIndex = MainCurrentRow.Index;
-        Controller.OnMainGridComboBoxCellValueChanged(
-          rowIndex, comboBoxCell.Controller, cellValue);
+        comboBoxCell.Controller.OnCellValueChanged(rowIndex, cellValue);
       }
     }
 

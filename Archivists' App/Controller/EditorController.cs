@@ -223,31 +223,6 @@ namespace SoundExplorers.Controller {
       return column.DisplayName ?? columnName;
     }
 
-    public void OnMainGridComboBoxCellValueChanged(int rowIndex,
-      [NotNull] ComboBoxCellController cellController,
-      [NotNull] object cellValue) {
-      string formattedCellValue;
-      if (cellValue is DateTime date) {
-        formattedCellValue = date.ToString(cellController.Format);
-      } else { // string
-        formattedCellValue = cellValue.ToString();
-      }
-      if (cellController.EntityDictionary.ContainsKey(formattedCellValue)) {
-        return;
-      }
-      // The cell value does not match any of the combo box items.
-      // So the combo box's selected index and text could not be updated.
-      // As the combo boxes are all dropdown lists,
-      // the only way this can have happened is that
-      // the invalid value was pasted into the cell.
-      // If the cell value had been changed
-      // by selecting an item on the embedded combo box,
-      // it could only be a matching value.
-      MainList.OnReferencingValueNotFound(
-        rowIndex, cellController.ColumnName, formattedCellValue);
-      View.StartDatabaseUpdateErrorTimer();
-    }
-
     public void OnMainGridDataError(int rowIndex, [NotNull] string columnName,
       [CanBeNull] Exception exception) {
       switch (exception) {
@@ -323,6 +298,23 @@ namespace SoundExplorers.Controller {
     /// </summary>
     public void OnParentGridRowEntered(int rowIndex) {
       MainList?.Populate(ParentList?.GetChildrenForMainList(rowIndex));
+    }
+
+    /// <summary>
+    ///   The a combo box cell value does not match any of the combo box items.
+    ///   So the combo box's selected index and text could not be updated.
+    ///   As the combo boxes are all dropdown lists,
+    ///   the only way this can have happened is that
+    ///   the invalid value was pasted into the cell.
+    ///   If the cell value had been changed
+    ///   by selecting an item on the embedded combo box,
+    ///   it could only be a matching value.
+    /// </summary>
+    internal void OnReferencingValueNotFound(int rowIndex, [NotNull] string columnName,
+      [CanBeNull] string formattedCellValue) {
+      MainList.OnReferencingValueNotFound(
+        rowIndex, columnName, formattedCellValue);
+      View.StartDatabaseUpdateErrorTimer();
     }
 
     /// <summary>
