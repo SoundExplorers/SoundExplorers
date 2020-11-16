@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using JetBrains.Annotations;
+using SoundExplorers.Data;
 using VelocityDb.Session;
 
 namespace SoundExplorers.Model {
@@ -74,17 +75,6 @@ namespace SoundExplorers.Model {
     SessionBase Session { get; set; }
 
     /// <summary>
-    ///   If the specified grid row is new or its data has changed,
-    ///   adds (if new) or updates the corresponding the entity
-    ///   on the database with the row data and
-    ///   saves the entity to the database.
-    /// </summary>
-    /// <param name="rowIndex">
-    ///   Zero-based row index.
-    /// </param>
-    void OnRowValidated(int rowIndex);
-
-    /// <summary>
     ///   Deletes the entity at the specified row index
     ///   from the database and removes it from the list.
     /// </summary>
@@ -110,7 +100,10 @@ namespace SoundExplorers.Model {
     void OnFormatException(int rowIndex, [NotNull] string propertyName,
       [NotNull] FormatException formatException);
 
-    void OnReferencingValueNotFound(int rowIndex, [NotNull] string propertyName,
+    void OnReferenceChanged(int rowIndex, [NotNull] string columnName,
+      [CanBeNull] IEntity referencedEntity);
+
+    void OnReferencedEntityNotFound(int rowIndex, [NotNull] string propertyName,
       [CanBeNull] string formattedCellValue);
 
     /// <summary>
@@ -120,6 +113,17 @@ namespace SoundExplorers.Model {
     ///   Zero-based row index.
     /// </param>
     void OnRowEnter(int rowIndex);
+
+    /// <summary>
+    ///   If the specified grid row is new or its data has changed,
+    ///   adds (if new) or updates the corresponding the entity
+    ///   on the database with the row data and
+    ///   saves the entity to the database.
+    /// </summary>
+    /// <param name="rowIndex">
+    ///   Zero-based row index.
+    /// </param>
+    void OnRowValidated(int rowIndex);
 
     /// <summary>
     ///   Populates and sorts the list and table.

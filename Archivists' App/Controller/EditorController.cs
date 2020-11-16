@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.Linq;
 using System.Diagnostics.CodeAnalysis;
 using JetBrains.Annotations;
+using SoundExplorers.Data;
 using SoundExplorers.Model;
 
 namespace SoundExplorers.Controller {
@@ -300,6 +301,11 @@ namespace SoundExplorers.Controller {
       MainList?.Populate(ParentList?.GetChildrenForMainList(rowIndex));
     }
 
+    internal void OnReferenceChanged(int rowIndex, [NotNull] string columnName,
+      [CanBeNull] IEntity referencedEntity) {
+      MainList.OnReferenceChanged(rowIndex, columnName, referencedEntity);
+    }
+
     /// <summary>
     ///   A combo box cell value does not match any of it's embedded combo box's items.
     ///   So the combo box's selected index and text could not be updated.
@@ -312,7 +318,7 @@ namespace SoundExplorers.Controller {
     /// </summary>
     internal void OnReferencedEntityNotFound(int rowIndex, [NotNull] string columnName,
       [CanBeNull] string formattedCellValue) {
-      MainList.OnReferencingValueNotFound(
+      MainList.OnReferencedEntityNotFound(
         rowIndex, columnName, formattedCellValue);
       View.StartDatabaseUpdateErrorTimer();
     }

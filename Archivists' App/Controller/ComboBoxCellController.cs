@@ -54,6 +54,18 @@ namespace SoundExplorers.Controller {
       throw new NullReferenceException(nameof(BindingColumn.ReferencedTableName)));
 
     [NotNull]
+    protected virtual IEntityList CreateEntityList() {
+      return Global.CreateEntityList(ReferencedEntityListType);
+    }
+
+    private string CreateNoAvailableReferencesMessage() {
+      return $"There are no {ReferencedTableName} {ReferencedColumnName}s " +
+             "to choose between. You need to add at least one row to the " +
+             $"{ReferencedTableName} table before you can select a " +
+             $"{ReferencedTableName} for a {TableName}.";
+    }
+
+    [NotNull]
     private IDictionary<string, IEntity> FetchEntityDictionary() {
       var entityList = CreateEntityList();
       entityList.Populate();
@@ -106,22 +118,12 @@ namespace SoundExplorers.Controller {
         formattedCellValue = cellValue.ToString();
       }
       if (EntityDictionary.ContainsKey(formattedCellValue)) {
-        return;
+        EditorController.OnReferenceChanged(
+          rowIndex, ColumnName, EntityDictionary[formattedCellValue]);
+      } else {
+        EditorController.OnReferencedEntityNotFound(
+          rowIndex, ColumnName, formattedCellValue);
       }
-      EditorController.OnReferencedEntityNotFound(
-        rowIndex, ColumnName, formattedCellValue);
-    }
-
-    [NotNull]
-    protected virtual IEntityList CreateEntityList() {
-      return Global.CreateEntityList(ReferencedEntityListType);
-    }
-
-    private string CreateNoAvailableReferencesMessage() {
-      return $"There are no {ReferencedTableName} {ReferencedColumnName}s " +
-             "to choose between. You need to add at least one row to the " +
-             $"{ReferencedTableName} table before you can select a " +
-             $"{ReferencedTableName} for a {TableName}.";
     }
   }
 }

@@ -189,22 +189,27 @@ namespace SoundExplorers.Model {
         LastDatabaseChangeAction = ChangeAction.Update;
         ErrorBindingItem = (TBindingItem)BindingList[rowIndex];
       }
-      var message = $"Invalid {propertyName}:\r\n{formatException.Message}"; 
+      var message = $"Invalid {propertyName}:\r\n{formatException.Message}";
       LastDatabaseUpdateErrorException = new DatabaseUpdateErrorException(
-        LastDatabaseChangeAction, message, rowIndex, Columns.GetIndex(propertyName), 
+        LastDatabaseChangeAction, message, rowIndex, Columns.GetIndex(propertyName),
         formatException);
     }
 
-    public void OnReferencingValueNotFound(int rowIndex, string propertyName,
+    public void OnReferenceChanged(int rowIndex, string columnName,
+      IEntity referencedEntity) {
+      //Debug.WriteLine("EntityListBase.OnReferenceChanged");
+    }
+
+    public void OnReferencedEntityNotFound(int rowIndex, string propertyName,
       string formattedCellValue) {
-      var message = 
-        $"{propertyName} not found: '{formattedCellValue}'"; 
-       var exception = new RowNotInTableException(message);
-       LastDatabaseChangeAction =
-         IsInsertionRowCurrent ? ChangeAction.Insert : ChangeAction.Update; 
-       LastDatabaseUpdateErrorException = new DatabaseUpdateErrorException(
-         LastDatabaseChangeAction, message, rowIndex, Columns.GetIndex(propertyName), 
-         exception);
+      var message =
+        $"{propertyName} not found: '{formattedCellValue}'";
+      var exception = new RowNotInTableException(message);
+      LastDatabaseChangeAction =
+        IsInsertionRowCurrent ? ChangeAction.Insert : ChangeAction.Update;
+      LastDatabaseUpdateErrorException = new DatabaseUpdateErrorException(
+        LastDatabaseChangeAction, message, rowIndex, Columns.GetIndex(propertyName),
+        exception);
     }
 
     /// <summary>
@@ -317,7 +322,7 @@ namespace SoundExplorers.Model {
     public void RestoreReferencingPropertyOriginalValue(int rowIndex, int columnIndex) {
       var bindingItem = (TBindingItem)BindingList[rowIndex];
       string propertyName = Columns[columnIndex].Name;
-      var originalValue = 
+      var originalValue =
         BackupBindingItem.Properties[propertyName].GetValue(BackupBindingItem);
       bindingItem.Properties[propertyName].SetValue(bindingItem, originalValue);
     }
@@ -340,6 +345,7 @@ namespace SoundExplorers.Model {
     ///   A database update error occured.
     /// </exception>
     private void AddNewEntity(int rowIndex) {
+      //Debug.WriteLine("EntityListBase.AddNewEntity");
       LastDatabaseChangeAction = ChangeAction.Insert;
       var bindingItem = (TBindingItem)BindingList[rowIndex];
       Session.BeginUpdate();
