@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using JetBrains.Annotations;
-using SoundExplorers.Data;
 using SoundExplorers.Model;
 
 namespace SoundExplorers.Controller {
@@ -11,9 +8,7 @@ namespace SoundExplorers.Controller {
   /// </summary>
   [UsedImplicitly]
   public class ComboBoxCellController : CellControllerBase {
-    private string _referencedColumnName;
-    private Type _referencedEntityListType;
-    private string _referencedTableName;
+    private ReferenceableItemList _referenceableItems;
 
     /// <summary>
     ///   Initialises a new instance of the <see cref="ComboBoxCellController" /> class.
@@ -33,80 +28,38 @@ namespace SoundExplorers.Controller {
       view.SetController(this);
     }
 
-    private IDictionary<string, IEntity> EntityDictionary { get; set; }
     [CanBeNull] private string Format { get; set; }
 
     [NotNull]
-    private string ReferencedColumnName =>
-      _referencedColumnName ?? (_referencedColumnName =
-        EditorController.Columns[ColumnName].ReferencedColumnName ??
-        throw new NullReferenceException(nameof(BindingColumn.ReferencedColumnName)));
-
-    [NotNull]
-    private Type ReferencedEntityListType =>
-      _referencedEntityListType ?? (_referencedEntityListType =
-        EditorController.Columns[ColumnName].ReferencedEntityListType ??
-        throw new NullReferenceException(nameof(BindingColumn.ReferencedEntityListType)));
-
-    [NotNull]
-    private string ReferencedTableName => _referencedTableName ?? (_referencedTableName =
-      EditorController.Columns[ColumnName].ReferencedTableName ??
-      throw new NullReferenceException(nameof(BindingColumn.ReferencedTableName)));
-
-    [NotNull]
-    protected virtual IEntityList CreateEntityList() {
-      return Global.CreateEntityList(ReferencedEntityListType);
-    }
+    private ReferenceableItemList ReferenceableItems =>
+      _referenceableItems ?? (_referenceableItems = CreateReferenceableItemList());
 
     private string CreateNoAvailableReferencesMessage() {
-      return $"There are no {ReferencedTableName} {ReferencedColumnName}s " +
+      return $"There are no {ReferenceableItems.ReferencedTableName} " + 
+             $"{ReferenceableItems.ReferencedPropertyName}s " +
              "to choose between. You need to add at least one row to the " +
-             $"{ReferencedTableName} table before you can select a " +
-             $"{ReferencedTableName} for a {TableName}.";
+             $"{ReferenceableItems.ReferencedTableName} table before you can select a " +
+             $"{ReferenceableItems.ReferencedTableName} for a {TableName}.";
     }
 
     [NotNull]
-    private IDictionary<string, IEntity> FetchEntityDictionary() {
-      var entityList = CreateEntityList();
-      entityList.Populate();
-      if (entityList.Count == 0) {
-        EditorController.ShowWarningMessage(CreateNoAvailableReferencesMessage());
-      }
-      return (from IEntity entity in entityList
-          select new KeyValuePair<string, IEntity>(GetKey(entity, Format), entity)
-        ).ToDictionary(pair => pair.Key, pair => pair.Value);
-    }
+    protected virtual ReferenceableItemList CreateReferenceableItemList() {
+      return new ReferenceableItemList(EditorController.Columns[ColumnName]);
+    } 
 
     [NotNull]
     public object[] FetchItems([CanBeNull] string format) {
       Format = format;
-      EntityDictionary = FetchEntityDictionary();
-      return (
-          from KeyValuePair<string, IEntity> pair in EntityDictionary
-          select (object)new KeyValuePair<string, object>(pair.Key, pair.Value)
-        ).ToArray();
+      ReferenceableItems.Fetch(format);
+      if (ReferenceableItems.Count == 0) {
+        EditorController.ShowWarningMessage(CreateNoAvailableReferencesMessage());
+      }
+      return ReferenceableItems.ToArray();
     }
 
     [CanBeNull]
     public static string GetKey([CanBeNull] object value, [CanBeNull] string format) {
-      if (value == null) {
-        return null;
-      }
-      // The only non-string key expected, which therefore needs to be converted
-      // to a formatted string is Newsletter.Date.
-      bool isDateKey = !string.IsNullOrWhiteSpace(format);
-      if (isDateKey && value is Newsletter newsletter) {
-        return newsletter.Date.ToString(format);
-      } 
-      if (value is IEntity entity) {
-        return entity.SimpleKey;
-      }
-      // After duplicate key error message shown on inserting event.
-      // Is this a problem?
-      return value.ToString(); 
-      // return isDateKey
-      //   ? ((Newsletter)value).Date.ToString(format)
-      //   : ((IEntity)value).SimpleKey;
+      return ReferenceableItemList.GetKey(value, format);
     }
 
     public void OnCellValueChanged(int rowIndex,
@@ -117,13 +70,11 @@ namespace SoundExplorers.Controller {
       } else { // string
         formattedCellValue = cellValue.ToString();
       }
-      if (EntityDictionary.ContainsKey(formattedCellValue)) {
-        EditorController.OnReferenceChanged(
-          rowIndex, ColumnName, EntityDictionary[formattedCellValue]);
-      } else {
-        EditorController.OnReferencedEntityNotFound(
-          rowIndex, ColumnName, formattedCellValue);
+      if (ReferenceableItems.ContainsKey(formattedCellValue)) {
+        return;
       }
+      EditorController.OnReferencedEntityNotFound(
+        rowIndex, ColumnName, formattedCellValue);
     }
   }
 }

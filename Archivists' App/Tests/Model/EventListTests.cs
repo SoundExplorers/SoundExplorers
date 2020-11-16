@@ -40,24 +40,24 @@ namespace SoundExplorers.Tests.Model {
       Assert.AreEqual("Location", List.Columns[1].Name, "Columns[1].Name");
       Assert.AreEqual(typeof(LocationList), List.Columns[1].ReferencedEntityListType,
         "Columns[1].ReferencedEntityListType");
-      Assert.AreEqual("Name", List.Columns[1].ReferencedColumnName,
+      Assert.AreEqual("Name", List.Columns[1].ReferencedPropertyName,
         "Columns[1].ReferencedColumnName");
       Assert.AreEqual("Location", List.Columns[1].ReferencedTableName,
         "Columns[1].ReferencedTableName");
       Assert.AreEqual("Newsletter", List.Columns[2].Name, "Columns[2].Name");
       Assert.AreEqual(typeof(NewsletterList), List.Columns[2].ReferencedEntityListType,
         "Columns[2].ReferencedEntityListType");
-      Assert.AreEqual("Date", List.Columns[2].ReferencedColumnName,
+      Assert.AreEqual("Date", List.Columns[2].ReferencedPropertyName,
         "Columns[2].ReferencedColumnName");
       Assert.AreEqual("EventType", List.Columns[3].Name, "Columns[3].Name");
       Assert.AreEqual(typeof(EventTypeList), List.Columns[3].ReferencedEntityListType,
         "Columns[3].ReferencedEntityListType");
-      Assert.AreEqual("Name", List.Columns[3].ReferencedColumnName,
+      Assert.AreEqual("Name", List.Columns[3].ReferencedPropertyName,
         "Columns[3].ReferencedColumnName");
       Assert.AreEqual("Series", List.Columns[4].Name, "Columns[4].Name");
       Assert.AreEqual(typeof(SeriesList), List.Columns[4].ReferencedEntityListType,
         "Columns[4].ReferencedEntityListType");
-      Assert.AreEqual("Name", List.Columns[4].ReferencedColumnName,
+      Assert.AreEqual("Name", List.Columns[4].ReferencedPropertyName,
         "Columns[4].ReferencedColumnName");
       Assert.AreEqual("Notes", List.Columns[5].Name, "Columns[5].Name");
     }

@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using JetBrains.Annotations;
-using SoundExplorers.Data;
 using VelocityDb.Session;
 
 namespace SoundExplorers.Model {
@@ -99,9 +98,6 @@ namespace SoundExplorers.Model {
 
     void OnFormatException(int rowIndex, [NotNull] string propertyName,
       [NotNull] FormatException formatException);
-
-    void OnReferenceChanged(int rowIndex, [NotNull] string columnName,
-      [CanBeNull] IEntity referencedEntity);
 
     void OnReferencedEntityNotFound(int rowIndex, [NotNull] string propertyName,
       [CanBeNull] string formattedCellValue);

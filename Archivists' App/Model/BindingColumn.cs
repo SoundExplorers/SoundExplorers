@@ -8,7 +8,7 @@ namespace SoundExplorers.Model {
   /// </summary>
   public class BindingColumn {
     public BindingColumn([NotNull] string name,
-      Type referencedEntityListType = null, string referencedColumnName = null) {
+      Type referencedEntityListType = null, string referencedPropertyName = null) {
       Name = name ?? throw new ArgumentNullException(nameof(name));
       if (referencedEntityListType != null &&
           !referencedEntityListType.GetInterfaces().Contains(typeof(IEntityList))) {
@@ -18,14 +18,14 @@ namespace SoundExplorers.Model {
           $"implement the {nameof(IEntityList)} interface.",
           nameof(referencedEntityListType));
       }
-      if (referencedEntityListType != null && referencedColumnName == null ||
-          referencedEntityListType == null && referencedColumnName != null) {
+      if (referencedEntityListType != null && referencedPropertyName == null ||
+          referencedEntityListType == null && referencedPropertyName != null) {
         throw new InvalidOperationException(
           $"Both or neither of {nameof(referencedEntityListType)} and "
-          + $"{nameof(referencedColumnName)} must be specified.");
+          + $"{nameof(referencedPropertyName)} must be specified.");
       }
       ReferencedEntityListType = referencedEntityListType;
-      ReferencedColumnName = referencedColumnName;
+      ReferencedPropertyName = referencedPropertyName;
     }
 
     /// <summary>
@@ -42,18 +42,18 @@ namespace SoundExplorers.Model {
     public string Name { get; }
 
     /// <summary>
-    ///   Gets the name of the corresponding column on the referenced table.
-    ///   Null if the column does not reference a column on another table.
-    /// </summary>
-    [CanBeNull]
-    public string ReferencedColumnName { get; }
-
-    /// <summary>
     ///   Gets the type of the referenced entity list.
     ///   Null if the column does not reference a column on another entity list.
     /// </summary>
     [CanBeNull]
     public Type ReferencedEntityListType { get; }
+
+    /// <summary>
+    ///   Gets the name of the corresponding property of the referenced entity.
+    ///   Null if the column does not reference a another entity type.
+    /// </summary>
+    [CanBeNull]
+    public string ReferencedPropertyName { get; }
 
     /// <summary>
     ///   Gets the name of the referenced entity list's main table.

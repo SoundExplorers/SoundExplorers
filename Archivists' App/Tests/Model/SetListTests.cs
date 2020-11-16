@@ -42,14 +42,14 @@ namespace SoundExplorers.Tests.Model {
       Assert.AreEqual("Act", List.Columns[3].Name, "Columns[3].Name");
       Assert.AreEqual(typeof(ActList), List.Columns[3].ReferencedEntityListType,
         "Columns[3].ReferencedEntityListType");
-      Assert.AreEqual("Name", List.Columns[3].ReferencedColumnName,
+      Assert.AreEqual("Name", List.Columns[3].ReferencedPropertyName,
         "Columns[3].ReferencedColumnName");
       Assert.AreEqual("Act", List.Columns[3].ReferencedTableName,
         "Columns[3].ReferencedTableName");
       Assert.AreEqual("Genre", List.Columns[4].Name, "Columns[4].Name");
       Assert.AreEqual(typeof(GenreList), List.Columns[4].ReferencedEntityListType,
         "Columns[4].ReferencedEntityListType");
-      Assert.AreEqual("Name", List.Columns[4].ReferencedColumnName,
+      Assert.AreEqual("Name", List.Columns[4].ReferencedPropertyName,
         "Columns[4].ReferencedColumnName");
       Assert.AreEqual("Notes", List.Columns[5].Name, "Columns[5].Name");
     }

@@ -195,11 +195,6 @@ namespace SoundExplorers.Model {
         formatException);
     }
 
-    public void OnReferenceChanged(int rowIndex, string columnName,
-      IEntity referencedEntity) {
-      //Debug.WriteLine("EntityListBase.OnReferenceChanged");
-    }
-
     public void OnReferencedEntityNotFound(int rowIndex, string propertyName,
       string formattedCellValue) {
       var message =

@@ -14,8 +14,8 @@ namespace SoundExplorers.Tests.Controller {
 
     private SessionBase Session { get; }
 
-    protected override IEntityList CreateEntityList() {
-      var result = base.CreateEntityList();
+    protected override ReferenceableItemList CreateReferenceableItemList() {
+      var result = base.CreateReferenceableItemList();
       result.Session = Session;
       return result;
     }

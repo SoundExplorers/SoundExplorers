@@ -4,7 +4,6 @@ using System.Data;
 using System.Data.Linq;
 using System.Diagnostics.CodeAnalysis;
 using JetBrains.Annotations;
-using SoundExplorers.Data;
 using SoundExplorers.Model;
 
 namespace SoundExplorers.Controller {
@@ -110,7 +109,7 @@ namespace SoundExplorers.Controller {
     ///   Returns whether the specified column references another entity.
     /// </summary>
     public bool DoesColumnReferenceAnotherEntity([NotNull] string columnName) {
-      return !string.IsNullOrWhiteSpace(Columns[columnName].ReferencedColumnName);
+      return !string.IsNullOrWhiteSpace(Columns[columnName].ReferencedPropertyName);
     }
 
     /// <summary>
@@ -299,11 +298,6 @@ namespace SoundExplorers.Controller {
     /// </summary>
     public void OnParentGridRowEntered(int rowIndex) {
       MainList?.Populate(ParentList?.GetChildrenForMainList(rowIndex));
-    }
-
-    internal void OnReferenceChanged(int rowIndex, [NotNull] string columnName,
-      [CanBeNull] IEntity referencedEntity) {
-      MainList.OnReferenceChanged(rowIndex, columnName, referencedEntity);
     }
 
     /// <summary>
