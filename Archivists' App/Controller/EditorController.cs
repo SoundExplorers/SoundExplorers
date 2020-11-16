@@ -310,7 +310,7 @@ namespace SoundExplorers.Controller {
     ///   by selecting an item on the embedded combo box,
     ///   it could only be a matching value.
     /// </summary>
-    internal void OnReferencingValueNotFound(int rowIndex, [NotNull] string columnName,
+    internal void OnReferencedEntityNotFound(int rowIndex, [NotNull] string columnName,
       [CanBeNull] string formattedCellValue) {
       MainList.OnReferencingValueNotFound(
         rowIndex, columnName, formattedCellValue);

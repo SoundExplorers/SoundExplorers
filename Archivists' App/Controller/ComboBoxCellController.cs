@@ -108,7 +108,7 @@ namespace SoundExplorers.Controller {
       if (EntityDictionary.ContainsKey(formattedCellValue)) {
         return;
       }
-      EditorController.OnReferencingValueNotFound(
+      EditorController.OnReferencedEntityNotFound(
         rowIndex, ColumnName, formattedCellValue);
     }
 
