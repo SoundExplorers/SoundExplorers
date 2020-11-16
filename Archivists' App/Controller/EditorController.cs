@@ -301,7 +301,7 @@ namespace SoundExplorers.Controller {
     }
 
     /// <summary>
-    ///   A combo box cell value does not match any of the combo box items.
+    ///   A combo box cell value does not match any of it's embedded combo box's items.
     ///   So the combo box's selected index and text could not be updated.
     ///   As the combo boxes are all dropdown lists,
     ///   the only way this can have happened is that
