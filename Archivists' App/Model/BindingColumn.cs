@@ -1,13 +1,17 @@
 ﻿using System;
 using System.Linq;
 using JetBrains.Annotations;
+using VelocityDb.Session;
 
 namespace SoundExplorers.Model {
   /// <summary>
-  ///   Column metadata for a binding list that links entities to a grid.
+  ///   Column data for a binding list that links entities to a grid.
   /// </summary>
   public class BindingColumn {
-    public BindingColumn([NotNull] string name,
+    private ReferenceableItemList _referenceableItems;
+    private SessionBase _session;
+
+    public BindingColumn([NotNull] string name,    
       Type referencedEntityListType = null, string referencedPropertyName = null) {
       Name = name ?? throw new ArgumentNullException(nameof(name));
       if (referencedEntityListType != null &&
@@ -30,16 +34,29 @@ namespace SoundExplorers.Model {
 
     /// <summary>
     ///   Gets the display name to be used for reporting.
-    ///   If null, <see cref="Name" /> should be used.
+    ///   Defaults to <see cref="Name" />.
     /// </summary>
     [CanBeNull]
-    public string DisplayName { get; set; }
+    public string DisplayName { get; internal set; }
 
     /// <summary>
     ///   Gets the column's property name.
     /// </summary>
     [NotNull]
     public string Name { get; }
+
+    /// <summary>
+    ///   Gets or sets the session to be used for accessing the database.
+    ///   The setter should only be needed for testing.
+    /// </summary>
+    internal SessionBase Session {
+      get => _session ?? (_session = Global.Session);
+      set => _session = value;
+    }
+
+    [NotNull]
+    public ReferenceableItemList ReferenceableItems =>
+      _referenceableItems ?? (_referenceableItems = FetchReferenceableItems());
 
     /// <summary>
     ///   Gets the type of the referenced entity list.
@@ -62,5 +79,19 @@ namespace SoundExplorers.Model {
     [CanBeNull]
     public string ReferencedTableName =>
       ReferencedEntityListType?.Name.Replace("List", string.Empty);
+
+    [NotNull]
+    private ReferenceableItemList FetchReferenceableItems() {
+      var result = new ReferenceableItemList(this);
+      bool transactionRequired = !Session.InTransaction; 
+      if (transactionRequired) {
+        Session.BeginRead();
+      }
+      result.Fetch();
+      if (transactionRequired) {
+        Session.Commit();
+      }
+      return result;
+    }
   } //End of class
 } //End of namespace

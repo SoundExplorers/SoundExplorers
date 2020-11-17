@@ -58,7 +58,7 @@ namespace SoundExplorers.Tests.Model {
       var list = new TEntityList {Session = Session};
       list.Populate(); // Creates an empty BindingList
       var editor = new TestEditor<TEntity, NamedBindingItem<TEntity>>(
-        QueryHelper, Session, list.BindingList);
+        list.BindingList);
       var item1 = editor.AddNew();
       item1.Name = name1;
       list.OnRowValidated(0);
@@ -136,7 +136,7 @@ namespace SoundExplorers.Tests.Model {
       var list = new TEntityList {Session = Session};
       list.Populate(); // Creates an empty BindingList
       var editor = new TestEditor<TEntity, NamedBindingItem<TEntity>>(
-        QueryHelper, Session, list.BindingList);
+        list.BindingList);
       var item1 = editor.AddNew();
       item1.Name = name;
       list.OnRowValidated(0);
@@ -172,7 +172,7 @@ namespace SoundExplorers.Tests.Model {
       var list = new TEntityList {Session = Session};
       list.Populate(); // Creates an empty BindingList
       var editor = new TestEditor<TEntity, NamedBindingItem<TEntity>>(
-        QueryHelper, Session, list.BindingList);
+        list.BindingList);
       var item1 = editor.AddNew();
       item1.Name = name1;
       list.OnRowValidated(0);

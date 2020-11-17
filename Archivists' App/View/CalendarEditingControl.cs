@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using SoundExplorers.Controller;
 
 namespace SoundExplorers.View {
   /// <summary>
@@ -13,9 +14,8 @@ namespace SoundExplorers.View {
   internal class CalendarEditingControl : DateTimePicker,
     IDataGridViewEditingControl {
     public CalendarEditingControl() {
-      //this.Format = DateTimePickerFormat.Short;
       Format = DateTimePickerFormat.Custom;
-      CustomFormat = "dd MMM yyyy";
+      CustomFormat = EditorController.DateFormat;
     }
 
     /// <summary>

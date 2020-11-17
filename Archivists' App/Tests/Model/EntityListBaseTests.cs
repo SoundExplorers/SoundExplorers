@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using NUnit.Framework;
-using SoundExplorers.Data;
 using SoundExplorers.Model;
 using SoundExplorers.Tests.Data;
 
@@ -11,7 +10,6 @@ namespace SoundExplorers.Tests.Model {
   public class EntityListBaseTests {
     [SetUp]
     public void Setup() {
-      QueryHelper = new QueryHelper();
       Session = new TestSession();
     }
 
@@ -27,7 +25,6 @@ namespace SoundExplorers.Tests.Model {
       }
     }
 
-    private QueryHelper QueryHelper { get; set; }
     private TestSession Session { get; set; }
 
     [Test]
@@ -36,7 +33,7 @@ namespace SoundExplorers.Tests.Model {
       list.Populate(); // Creates an empty BindingList
       var editor =
         new TestEditor<ErrorThrowingEventType, NamedBindingItem<ErrorThrowingEventType>>(
-          QueryHelper, Session, list.BindingList);
+          list.BindingList);
       var item1 = editor.AddNew();
       item1.Name = "Dudley";
       Assert.Throws<InvalidOperationException>(() => list.OnRowValidated(0));

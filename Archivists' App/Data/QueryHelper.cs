@@ -79,24 +79,30 @@ namespace SoundExplorers.Data {
       return entity != null && !entity.Oid.Equals(oid) ? entity : null;
     }
 
-    /// <summary>
-    ///   Returns a top-level entity of the specified type with the specified SimpleKey
-    ///   (case-insensitive), if found, otherwise a null reference.
-    /// </summary>
-    [CanBeNull]
-    public EntityBase FindTopLevelEntity([NotNull] Type entityType,
-      [CanBeNull] string simpleKey, SessionBase session) {
-      if (!SchemaExistsOnDatabase(session)) {
-        return null;
-      }
+    [NotNull]
+    public static IEnumerable FetchEntities([NotNull] Type entityType, 
+      SessionBase session) {
       // This complicated rigmarole is required to allow
       // SessionBase.AllObjects<T> to be invoked with a an ordinary parameter
       // instead of the type parameter T.
       // Unfortunately VelocityDB does not provide a non-generic alternative.
       var allObjectsConstructedMethod =
         AllObjectsGenericMethod.MakeGenericMethod(entityType);
-      var entities = (IEnumerable)allObjectsConstructedMethod.Invoke(session,
+      return (IEnumerable)allObjectsConstructedMethod.Invoke(session,
         new object[] {true, true});
+    }
+
+    /// <summary>
+    ///   Returns a top-level entity of the specified type with the specified SimpleKey
+    ///   (case-insensitive), if found, otherwise a null reference.
+    /// </summary>
+    [CanBeNull]
+    private EntityBase FindTopLevelEntity([NotNull] Type entityType,
+      [CanBeNull] string simpleKey, SessionBase session) {
+      if (!SchemaExistsOnDatabase(session)) {
+        return null;
+      }
+      var entities = FetchEntities(entityType, session);
       // IEnumerable entities;
       // try {
       //   entities = (IEnumerable)allObjectsConstructedMethod.Invoke(session,

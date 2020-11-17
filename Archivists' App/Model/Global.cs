@@ -9,6 +9,11 @@ using VelocityDb.Session;
 
 namespace SoundExplorers.Model {
   public static class Global {
+    /// <summary>
+    ///   Gets the format in which dates are to be shown on the grid.
+    /// </summary>
+    public const string DateFormat = "dd MMM yyyy";
+
     public static SessionBase Session { get; set; }
 
     /// <summary>

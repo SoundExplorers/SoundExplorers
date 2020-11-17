@@ -188,7 +188,7 @@ namespace SoundExplorers.View {
       column.SortMode = DataGridViewColumnSortMode.NotSortable;
       column.HeaderText = Controller.GetColumnDisplayName(column.Name);
       if (column.ValueType == typeof(DateTime)) {
-        column.DefaultCellStyle.Format = "dd MMM yyyy";
+        column.DefaultCellStyle.Format = EditorController.DateFormat;
       }
       if (Controller.DoesColumnReferenceAnotherEntity(column.Name)) {
         column.CellTemplate = ComboBoxCell.Create(Controller, column.Name);
@@ -701,7 +701,7 @@ namespace SoundExplorers.View {
       ParentGrid.DataSource = Controller.ParentBindingList;
       foreach (DataGridViewColumn column in ParentGrid.Columns) {
         if (column.ValueType == typeof(DateTime)) {
-          column.DefaultCellStyle.Format = "dd MMM yyyy";
+          column.DefaultCellStyle.Format = EditorController.DateFormat;
         }
       } // End of foreach
       // Has to be done when visible.

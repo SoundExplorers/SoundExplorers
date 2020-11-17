@@ -3,33 +3,17 @@ using System.ComponentModel;
 using JetBrains.Annotations;
 using SoundExplorers.Data;
 using SoundExplorers.Model;
-using VelocityDb.Session;
 
 namespace SoundExplorers.Tests.Model {
   public class TestEditor<TEntity, TBindingItem>
     where TEntity : EntityBase, new()
     where TBindingItem : BindingItemBase<TEntity, TBindingItem>, new() {
-    public TestEditor([NotNull] QueryHelper queryHelper, [NotNull] SessionBase session,
-      IBindingList bindingList = null) {
-      QueryHelper = queryHelper;
-      Session = session;
+    public TestEditor(IBindingList bindingList = null) {
       SetBindingList(bindingList);
     }
 
     private BindingList<TBindingItem> BindingList { get; set; }
-
-    [NotNull]
-    public TBindingItem this[int index] {
-      get {
-        var result = BindingList[index];
-        result.QueryHelper = QueryHelper;
-        result.Session = Session;
-        return result;
-      }
-    }
-
-    [NotNull] private QueryHelper QueryHelper { get; }
-    [NotNull] private SessionBase Session { get; }
+    [NotNull] public TBindingItem this[int index] => BindingList[index];
     public int Count => BindingList.Count;
 
     /// <summary>
@@ -37,10 +21,7 @@ namespace SoundExplorers.Tests.Model {
     /// </summary>
     [NotNull]
     public TBindingItem AddNew() {
-      var result = BindingList.AddNew() ?? throw new NullReferenceException();
-      result.QueryHelper = QueryHelper;
-      result.Session = Session;
-      return result;
+      return BindingList.AddNew() ?? throw new NullReferenceException();
     }
 
     public void SetBindingList(IBindingList bindingList) {

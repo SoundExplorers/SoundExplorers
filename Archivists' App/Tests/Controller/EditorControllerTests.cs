@@ -33,8 +33,7 @@ namespace SoundExplorers.Tests.Controller {
     public void Edit() {
       const string name1 = "Auntie";
       const string name2 = "Uncle";
-      var editor = new TestEditor<Location, NotablyNamedBindingItem<Location>>(
-        QueryHelper, Session);
+      var editor = new TestEditor<Location, NotablyNamedBindingItem<Location>>();
       Controller = CreateController(typeof(LocationList));
       Assert.IsFalse(Controller.IsParentTableToBeShown, "IsParentTableToBeShown");
       Controller.FetchData(); // The grid will be empty initially
@@ -132,8 +131,7 @@ namespace SoundExplorers.Tests.Controller {
 
     [Test]
     public void ErrorOnDelete() {
-      var editor = new TestEditor<Location, NotablyNamedBindingItem<Location>>(
-        QueryHelper, Session);
+      var editor = new TestEditor<Location, NotablyNamedBindingItem<Location>>();
       Session.BeginUpdate();
       try {
         Data.AddEventTypesPersisted(1, Session);
@@ -171,7 +169,7 @@ namespace SoundExplorers.Tests.Controller {
       Controller = CreateController(typeof(NewsletterList));
       Controller.FetchData(); // Populate grid
       var editor = new TestEditor<Newsletter, NewsletterBindingItem>(
-        QueryHelper, Session, Controller.MainBindingList);
+        Controller.MainBindingList);
       editor.AddNew(); // Create insertion row
       Controller.OnMainGridRowEnter(3); // Go to insertion row
       var exception = new FormatException("Potato is not a valid DateTime.");
@@ -194,7 +192,7 @@ namespace SoundExplorers.Tests.Controller {
       Controller = CreateController(typeof(EventList));
       Controller.FetchData(); // Populate grid
       var editor = new TestEditor<Event, EventBindingItem>(
-        QueryHelper, Session, Controller.MainBindingList);
+        Controller.MainBindingList);
       Controller.OnMainGridRowEnter(2);
       string changedEventType = Data.EventTypes[1].Name;
       string changedLocation = Data.Locations[1].Name;
@@ -275,10 +273,10 @@ namespace SoundExplorers.Tests.Controller {
       Assert.IsTrue(Controller.DoesColumnReferenceAnotherEntity("Series"),
         "Series DoesColumnReferenceAnotherEntity");
       var editor = new TestEditor<Event, EventBindingItem>(
-        QueryHelper, Session, Controller.MainBindingList);
+        Controller.MainBindingList);
       // Series
       var comboBoxCellController =
-        CreateComboBoxCellControllerWithEntityDictionary("Series");
+        CreateComboBoxCellControllerWithItems("Series");
       var selectedSeries = Data.Series[0];
       string selectedSeriesName = selectedSeries.Name;
       Assert.IsNotNull(selectedSeriesName, "selectedSeriesName");
@@ -304,9 +302,8 @@ namespace SoundExplorers.Tests.Controller {
       Assert.AreSame(selectedSeries, ((Event)Controller.GetMainList()[0]).Series,
         "Series entity after not-found Series pasted");
       // Newsletter
-      const string dateFormat = "dd MMM yyyy";
       comboBoxCellController =
-        CreateComboBoxCellControllerWithEntityDictionary("Newsletter", dateFormat);
+        CreateComboBoxCellControllerWithItems("Newsletter");
       var selectedNewsletter = Data.Newsletters[0];
       var selectedNewsletterDate = selectedNewsletter.Date;
       Controller.OnMainGridRowEnter(0);
@@ -341,12 +338,12 @@ namespace SoundExplorers.Tests.Controller {
     }
 
     [NotNull]
-    private TestComboBoxCellController CreateComboBoxCellControllerWithEntityDictionary(
-      [NotNull] string columnName, string format = null) {
+    private ComboBoxCellController CreateComboBoxCellControllerWithItems(
+      [NotNull] string columnName) {
       var comboBoxCell = new MockView<ComboBoxCellController>();
       var comboBoxCellController =
-        new TestComboBoxCellController(comboBoxCell, Controller, columnName, Session);
-      comboBoxCellController.FetchItems(format);
+        new ComboBoxCellController(comboBoxCell, Controller, columnName);
+      comboBoxCellController.GetItems();
       return comboBoxCellController;
     }
 

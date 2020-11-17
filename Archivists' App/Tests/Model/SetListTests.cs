@@ -74,7 +74,7 @@ namespace SoundExplorers.Tests.Model {
       Session.Commit();
       List.Populate();
       var reader = new TestEditor<Set, SetBindingItem>(
-        QueryHelper, Session, List.BindingList);
+        List.BindingList);
       Assert.AreEqual(set.Event.Date, reader[2].Date, "Date");
       Assert.AreEqual(set.Event.Location.Name, reader[2].Location, "Location");
       Assert.AreEqual(set.SetNo, reader[2].SetNo, "SetNo");

@@ -21,13 +21,13 @@ namespace SoundExplorers.View {
     /// <summary>
     ///   Gets the cell's combo box.
     /// </summary>
-    public ComboBox ComboBox => (ComboBox)DataGridView.EditingControl;
+    private ComboBox ComboBox => (ComboBox)DataGridView.EditingControl;
 
     public ComboBoxCellController Controller => (ComboBoxCellController)Tag;
 
     public void RestoreErrorValue(object errorValue) {
       string key =
-        ComboBoxCellController.GetKey(errorValue, OwningColumn.DefaultCellStyle.Format); 
+        ComboBoxCellController.GetKey(errorValue); 
       int foundIndex = ComboBox.FindStringExact(key);
       ComboBox.SelectedIndex = foundIndex;
       if (ComboBox.SelectedIndex != foundIndex) {
@@ -84,8 +84,7 @@ namespace SoundExplorers.View {
         dataGridViewCellStyle);
       ComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
       ComboBox.Items.Clear();
-      ComboBox.Items.AddRange(
-        Controller.FetchItems(OwningColumn.DefaultCellStyle.Format));
+      ComboBox.Items.AddRange(Controller.GetItems());
       ComboBox.DisplayMember = "Key";
       ComboBox.ValueMember = "Value";
       ComboBox.SelectedIndex =

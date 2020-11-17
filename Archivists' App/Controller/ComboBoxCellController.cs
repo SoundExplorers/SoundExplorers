@@ -8,7 +8,6 @@ namespace SoundExplorers.Controller {
   /// </summary>
   [UsedImplicitly]
   public class ComboBoxCellController : CellControllerBase {
-    private ReferenceableItemList _referenceableItems;
 
     /// <summary>
     ///   Initialises a new instance of the <see cref="ComboBoxCellController" /> class.
@@ -28,53 +27,44 @@ namespace SoundExplorers.Controller {
       view.SetController(this);
     }
 
-    [CanBeNull] private string Format { get; set; }
-
-    [NotNull]
-    private ReferenceableItemList ReferenceableItems =>
-      _referenceableItems ?? (_referenceableItems = CreateReferenceableItemList());
+    // [NotNull]
+    // private ReferenceableItemList ReferenceableItems => 
+    //   _referenceableItems ?? (_referenceableItems = Column.ReferenceableItems);
 
     private string CreateNoAvailableReferencesMessage() {
-      return $"There are no {ReferenceableItems.ReferencedTableName} " + 
-             $"{ReferenceableItems.ReferencedPropertyName}s " +
+      return $"There are no {Column.ReferencedTableName} " + 
+             $"{Column.ReferencedPropertyName}s " +
              "to choose between. You need to add at least one row to the " +
-             $"{ReferenceableItems.ReferencedTableName} table before you can select a " +
-             $"{ReferenceableItems.ReferencedTableName} for a {TableName}.";
+             $"{Column.ReferencedTableName} table before you can select a " +
+             $"{Column.ReferencedTableName} for a {TableName}.";
     }
 
     [NotNull]
-    protected virtual ReferenceableItemList CreateReferenceableItemList() {
-      return new ReferenceableItemList(EditorController.Columns[ColumnName]);
-    } 
-
-    [NotNull]
-    public object[] FetchItems([CanBeNull] string format) {
-      Format = format;
-      ReferenceableItems.Fetch(format);
-      if (ReferenceableItems.Count == 0) {
+    public object[] GetItems() {
+      if (Column.ReferenceableItems.Count == 0) {
         EditorController.ShowWarningMessage(CreateNoAvailableReferencesMessage());
       }
-      return ReferenceableItems.ToArray();
+      return Column.ReferenceableItems.ToArray();
     }
 
     [CanBeNull]
-    public static string GetKey([CanBeNull] object value, [CanBeNull] string format) {
-      return ReferenceableItemList.GetKey(value, format);
+    public static string GetKey([CanBeNull] object value) {
+      return ReferenceableItemList.GetKey(value);
     }
 
     public void OnCellValueChanged(int rowIndex,
       [NotNull] object cellValue) {
       string formattedCellValue;
       if (cellValue is DateTime date) {
-        formattedCellValue = date.ToString(Format);
+        formattedCellValue = date.ToString(Global.DateFormat);
       } else { // string
         formattedCellValue = cellValue.ToString();
       }
-      if (ReferenceableItems.ContainsKey(formattedCellValue)) {
+      if (Column.ReferenceableItems.ContainsFormattedValue(formattedCellValue)) {
         return;
       }
       EditorController.OnReferencedEntityNotFound(
-        rowIndex, ColumnName, formattedCellValue);
+        rowIndex, Column.Name, formattedCellValue);
     }
   }
 }

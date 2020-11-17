@@ -91,7 +91,6 @@
         <Compile Include="Controller\MockView.cs" />
         <Compile Include="Controller\SelectEditorControllerTests.cs" />
         <Compile Include="Controller\SizeableFormOptionsControllerTests.cs" />
-        <Compile Include="Controller\TestComboBoxCellController.cs" />
         <Compile Include="Controller\TestEditorController.cs" />
         <Compile Include="Controller\TestMainController.cs" />
         <Compile Include="Controller\TestSizeableFormOptionsController.cs" />

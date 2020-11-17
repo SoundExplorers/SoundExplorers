@@ -74,9 +74,11 @@ namespace SoundExplorers.Model {
     ///   Gets metadata for the columns of the editor grid that represents
     ///   the list of entities.
     /// </summary>
-    public BindingColumnList Columns => _columns ?? (_columns = CreateColumns());
+    public BindingColumnList Columns => 
+      _columns ?? (_columns = CreateColumnsWithSession());
 
-    public string EntityName => typeof(TEntity).Name;
+    public string EntityName => EntityType.Name;
+    public Type EntityType => typeof(TEntity);
 
     /// <summary>
     ///   For unknown reason, the grid's RowRemoved event is raised 2 or 3 times
@@ -326,7 +328,23 @@ namespace SoundExplorers.Model {
     protected abstract TBindingItem CreateBindingItem([NotNull] TEntity entity);
 
     [NotNull]
+    private TBindingItem CreateBindingItemWithColumns([NotNull] TEntity entity) {
+      var result = CreateBindingItem(entity);
+      result.Columns = Columns;
+      return result;
+    }
+
+    [NotNull]
     protected abstract BindingColumnList CreateColumns();
+
+    [NotNull]
+    private BindingColumnList CreateColumnsWithSession() {
+      var result = CreateColumns();
+      foreach (var column in result) {
+        column.Session = Session;
+      }
+      return result;
+    }
 
     /// <summary>
     ///   Adds a new entity to the list with the data in the specified grid row,
@@ -400,7 +418,7 @@ namespace SoundExplorers.Model {
     private BindingList<TBindingItem> CreateBindingList() {
       var list = (
         from entity in this
-        select CreateBindingItem(entity)
+        select CreateBindingItemWithColumns(entity)
       ).ToList();
       return new BindingList<TBindingItem>(list);
     }
@@ -450,7 +468,7 @@ namespace SoundExplorers.Model {
       var bindingItem = (TBindingItem)BindingList[rowIndex];
       var entity = this[rowIndex];
       //Debug.WriteLine($"Backing up {entity}");
-      var backupBindingItem = CreateBindingItem(entity);
+      var backupBindingItem = CreateBindingItemWithColumns(entity);
       Session.BeginUpdate();
       try {
         bindingItem.UpdateEntityProperty(propertyName, entity);

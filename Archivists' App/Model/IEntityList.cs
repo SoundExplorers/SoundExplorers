@@ -24,6 +24,8 @@ namespace SoundExplorers.Model {
 
     [NotNull] string EntityName { get; }
 
+    [NotNull] Type EntityType { get; }
+
     /// <summary>
     ///   For unknown reason, the grid's RowRemoved event is raised 2 or 3 times
     ///   while data is being loaded into the grid.

@@ -15,7 +15,7 @@ namespace SoundExplorers.Tests.Controller {
       QueryHelper = new QueryHelper();
       Data = new TestData(QueryHelper);
       Session = new TestSession();
-      Editor = new TestEditor<Event, EventBindingItem>(QueryHelper, Session);
+      Editor = new TestEditor<Event, EventBindingItem>();
       EditorView = new MockEditorView();
       EditorController = CreateEditorController(typeof(EventList));
       CellView = new MockView<ComboBoxCellController>();
@@ -37,7 +37,7 @@ namespace SoundExplorers.Tests.Controller {
       Session.DeleteDatabaseFolderIfExists();
     }
 
-    private TestComboBoxCellController CellController { get; set; }
+    private ComboBoxCellController CellController { get; set; }
     private MockView<ComboBoxCellController> CellView { get; set; }
     private TestEditor<Event, EventBindingItem> Editor { get; set; }
     private MockEditorView EditorView { get; set; }
@@ -48,37 +48,36 @@ namespace SoundExplorers.Tests.Controller {
 
     [Test]
     public void FetchItems() {
-      string key = ComboBoxCellController.GetKey(null, null);
+      string key = ComboBoxCellController.GetKey(null);
       Assert.IsNull(key, "Null key");
       Session.BeginUpdate();
       Data.Newsletters[0].Date = DateTime.Parse("1960-09-13");
       Session.Commit();
-      key = ComboBoxCellController.GetKey(Data.Newsletters[0], "dd MMM yyyy");
+      key = ComboBoxCellController.GetKey(Data.Newsletters[0]);
       Assert.AreEqual("13 Sep 1960", key, "Date key");
       CellController = CreateCellController("Series");
       Assert.AreEqual("Event", CellController.TableName, "TableName");
-      var seriesItems = CellController.FetchItems(null);
+      var seriesItems = CellController.GetItems();
       Assert.AreEqual(0, seriesItems.Length, "seriesItems.Length");
       Assert.AreEqual(1, EditorView.ShowWarningMessageCount, "ShowWarningMessageCount");
       CellController = CreateCellController("Location");
-      var locationItems = CellController.FetchItems(null);
+      var locationItems = CellController.GetItems();
       Assert.AreEqual(2, locationItems.Length, "locationItems.Length");
       CellController = CreateCellController("NewsLetter");
-      var newsLetterItems = CellController.FetchItems("dd MMM yyyy");
+      var newsLetterItems = CellController.GetItems();
       Assert.AreEqual(3, newsLetterItems.Length, "newsLetterItems.Length");
     }
 
     [Test]
     public void StringKeyValue() {
       const string keyValue = "ABC";
-      string key = ComboBoxCellController.GetKey(keyValue, null);
+      string key = ComboBoxCellController.GetKey(keyValue);
       Assert.AreEqual(keyValue, key);
     }
 
     [NotNull]
-    private TestComboBoxCellController CreateCellController([NotNull] string columnName) {
-      return new TestComboBoxCellController(CellView, EditorController, columnName,
-        Session);
+    private ComboBoxCellController CreateCellController([NotNull] string columnName) {
+      return new ComboBoxCellController(CellView, EditorController, columnName);
     }
 
     [NotNull]

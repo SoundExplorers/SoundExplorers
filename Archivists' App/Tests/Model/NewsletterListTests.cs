@@ -43,7 +43,7 @@ namespace SoundExplorers.Tests.Model {
       const string url = "http://www.homegrownjuice.co.nz/thank-you.html";
       List.Populate();
       var editor = new TestEditor<Newsletter, NewsletterBindingItem>(
-        QueryHelper, Session, List.BindingList);
+        List.BindingList);
       editor[0].Date = date;
       editor[0].Url = url;
       var location = List[0];

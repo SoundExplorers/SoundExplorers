@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using JetBrains.Annotations;
 using SoundExplorers.Data;
-using VelocityDb.Session;
 
 namespace SoundExplorers.Model {
   /// <summary>
@@ -37,8 +35,8 @@ namespace SoundExplorers.Model {
     where TBindingItem : BindingItemBase<TEntity, TBindingItem>, new() {
     private IDictionary<string, PropertyInfo> _entityProperties;
     private IDictionary<string, PropertyInfo> _properties;
-    private QueryHelper _queryHelper;
-    private SessionBase _session;
+
+    internal BindingColumnList Columns { get; set; }
 
     private IDictionary<string, PropertyInfo> EntityProperties =>
       _entityProperties ?? (_entityProperties = CreatePropertyDictionary<TEntity>());
@@ -47,24 +45,6 @@ namespace SoundExplorers.Model {
 
     internal IDictionary<string, PropertyInfo> Properties =>
       _properties ?? (_properties = CreatePropertyDictionary<TBindingItem>());
-
-    /// <summary>
-    ///   The setter should only be needed for testing.
-    /// </summary>
-    [NotNull]
-    internal QueryHelper QueryHelper {
-      get => _queryHelper ?? (_queryHelper = QueryHelper.Instance);
-      set => _queryHelper = value;
-    }
-
-    /// <summary>
-    ///   Gets or sets the session to be used for accessing the database.
-    ///   The setter should only be needed for testing.
-    /// </summary>
-    internal SessionBase Session {
-      get => _session ?? (_session = Global.Session);
-      set => _session = value;
-    }
 
     public event PropertyChangedEventHandler PropertyChanged;
 
@@ -96,7 +76,7 @@ namespace SoundExplorers.Model {
 
     [NotNull]
     internal TBindingItem CreateBackup() {
-      var result = new TBindingItem();
+      var result = new TBindingItem {Columns = Columns};
       result.RestorePropertyValuesFrom((TBindingItem)this);
       return result;
     }
@@ -142,24 +122,11 @@ namespace SoundExplorers.Model {
     }
 
     [CanBeNull]
-    private IEntity FindParent([NotNull] PropertyInfo property,
-      [NotNull] Type parentType) {
+    private IEntity FindParent([NotNull] PropertyInfo property) {
       var propertyValue = property.GetValue(this);
-      if (propertyValue == null) {
-        return null;
-      }
-      string parentSimpleKey;
-      if (property.PropertyType == typeof(DateTime)) {
-        var date = (DateTime)propertyValue;
-        if (date > EntityBase.InitialDate) {
-          parentSimpleKey = EntityBase.DateToSimpleKey(date);
-        } else {
-          return null;
-        }
-      } else { // string
-        parentSimpleKey = propertyValue.ToString();
-      }
-      return QueryHelper.FindTopLevelEntity(parentType, parentSimpleKey, Session);
+      return propertyValue != null
+        ? Columns[property.Name].ReferenceableItems.GetEntity(propertyValue)
+        : null;
     }
 
     [CanBeNull]
@@ -167,7 +134,7 @@ namespace SoundExplorers.Model {
       [NotNull] PropertyInfo entityProperty) {
       return entityProperty.PropertyType == property.PropertyType
         ? property.GetValue(this)
-        : FindParent(property, entityProperty.PropertyType);
+        : FindParent(property);
     }
 
     [NotNull]

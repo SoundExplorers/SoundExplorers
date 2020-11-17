@@ -12,6 +12,11 @@ namespace SoundExplorers.Controller {
   /// </summary>
   [UsedImplicitly]
   public class EditorController {
+    /// <summary>
+    ///   Gets the format in which dates are to be shown on the grid.
+    /// </summary>
+    public const string DateFormat = Global.DateFormat;
+
     private Option _gridSplitterDistanceOption;
     private Option _imageSplitterDistanceOption;
 
@@ -366,7 +371,7 @@ namespace SoundExplorers.Controller {
       //   newsletter.Path)) {
       //   throw new ApplicationException("Newsletter file \"" + newsletter.Path
       //     + "\", specified by the Path of the "
-      //     + newsletter.Date.ToString("dd MMM yyyy")
+      //     + newsletter.Date.ToString(BindingColumn.DateFormat)
       //     + " Newsletter, cannot be found.");
       // } else {
       //   Process.Start(newsletter.Path);

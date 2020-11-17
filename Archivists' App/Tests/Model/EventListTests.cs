@@ -100,7 +100,7 @@ namespace SoundExplorers.Tests.Model {
       const string notes = "My notes";
       List.Populate();
       var editor = new TestEditor<Event, EventBindingItem>(
-        QueryHelper, Session, List.BindingList);
+        List.BindingList);
       editor[1].Date = date;
       editor[1].Location = location.Name;
       editor[1].Newsletter = newsletter.Date;
