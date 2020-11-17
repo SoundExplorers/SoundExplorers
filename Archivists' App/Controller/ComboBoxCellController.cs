@@ -1,5 +1,4 @@
-﻿using System;
-using JetBrains.Annotations;
+﻿using JetBrains.Annotations;
 using SoundExplorers.Model;
 
 namespace SoundExplorers.Controller {
@@ -52,19 +51,19 @@ namespace SoundExplorers.Controller {
       return ReferenceableItemList.GetKey(value);
     }
 
-    public void OnCellValueChanged(int rowIndex,
-      [NotNull] object cellValue) {
-      string formattedCellValue;
-      if (cellValue is DateTime date) {
-        formattedCellValue = date.ToString(Global.DateFormat);
-      } else { // string
-        formattedCellValue = cellValue.ToString();
-      }
-      if (Column.ReferenceableItems.ContainsFormattedValue(formattedCellValue)) {
-        return;
-      }
-      EditorController.OnReferencedEntityNotFound(
-        rowIndex, Column.Name, formattedCellValue);
-    }
+    // public void OnCellValueChanged(int rowIndex,
+    //   [NotNull] object cellValue) {
+    //   string formattedCellValue;
+    //   if (cellValue is DateTime date) {
+    //     formattedCellValue = date.ToString(Global.DateFormat);
+    //   } else { // string
+    //     formattedCellValue = cellValue.ToString();
+    //   }
+    //   if (Column.ReferenceableItems.ContainsFormattedValue(formattedCellValue)) {
+    //     return;
+    //   }
+    //   EditorController.OnReferencedEntityNotFound(
+    //     rowIndex, Column.Name, formattedCellValue);
+    // }
   }
 }

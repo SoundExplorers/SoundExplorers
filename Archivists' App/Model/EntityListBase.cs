@@ -77,8 +77,7 @@ namespace SoundExplorers.Model {
     public BindingColumnList Columns => 
       _columns ?? (_columns = CreateColumnsWithSession());
 
-    public string EntityName => EntityType.Name;
-    public Type EntityType => typeof(TEntity);
+    public string EntityTypeName => typeof(TEntity).Name;
 
     /// <summary>
     ///   For unknown reason, the grid's RowRemoved event is raised 2 or 3 times
@@ -198,15 +197,13 @@ namespace SoundExplorers.Model {
     }
 
     public void OnReferencedEntityNotFound(int rowIndex, string propertyName,
-      string formattedCellValue) {
-      var message =
-        $"{propertyName} not found: '{formattedCellValue}'";
-      var exception = new RowNotInTableException(message);
+      RowNotInTableException referencedEntityNotFoundException) {
       LastDatabaseChangeAction =
         IsInsertionRowCurrent ? ChangeAction.Insert : ChangeAction.Update;
       LastDatabaseUpdateErrorException = new DatabaseUpdateErrorException(
-        LastDatabaseChangeAction, message, rowIndex, Columns.GetIndex(propertyName),
-        exception);
+        LastDatabaseChangeAction, referencedEntityNotFoundException.Message, rowIndex, 
+        Columns.GetIndex(propertyName),
+        referencedEntityNotFoundException);
     }
 
     /// <summary>
@@ -283,18 +280,33 @@ namespace SoundExplorers.Model {
     /// </summary>
     /// <param name="list">
     ///   Optionally specifies the required list of entities.
-    ///   If null, all entities of the class's entity type
+    ///   If null, the default, all entities of the class's entity type
     ///   will be fetched from the database.
     /// </param>
-    public virtual void Populate(IList list = null) {
+    /// <param name="createBindingList">
+    ///   Optionally specifies whether the <see cref="BindingList"/>,
+    ///   which will be bound to a grid in the editor window,
+    ///   is to be populated along with the list of entities.
+    ///   Default: true.
+    ///   Set to false if entity list is not to be used to populate a grid.
+    /// </param>
+    public virtual void Populate(IList list = null, bool createBindingList = true) {
       Clear();
       if (list != null) {
         AddRange((IList<TEntity>)list);
       } else {
-        Session.BeginRead();
+        bool isTransactionRequired = !Session.InTransaction; 
+        if (isTransactionRequired) {
+          Session.BeginRead();
+        }
         AddRange(Session.AllObjects<TEntity>());
-        Session.Commit();
+        if (isTransactionRequired) {
+          Session.Commit();
+        }
         Sort(EntityComparer);
+      }
+      if (!createBindingList) {
+        return;
       }
       if (BindingList != null) {
         BindingList.ListChanged -= BindingListOnListChanged;

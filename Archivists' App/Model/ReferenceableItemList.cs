@@ -29,9 +29,8 @@ namespace SoundExplorers.Model {
 
     [NotNull]
     private IDictionary<string, IEntity> FetchEntityDictionary() {
-      var entityType = GetEntityType();
-      var entities =
-        QueryHelper.FetchEntities(entityType, ReferencingColumn.Session);
+      var entities = CreateEntityList();
+      entities.Populate(createBindingList:false);
       return (from IEntity entity in entities
           select new KeyValuePair<string, IEntity>(GetKey(entity), entity)
         ).ToDictionary(pair => pair.Key, pair => pair.Value);
@@ -56,17 +55,18 @@ namespace SoundExplorers.Model {
       }
       var message =
         $"{ReferencingColumn.Name} not found: '{formattedValue}'";
-      throw new PropertyConstraintException(message, ReferencingColumn.Name);
+      throw new RowNotInTableException(message);
     }
 
     [NotNull]
-    private Type GetEntityType() {
-      var entityList =
+    private IEntityList CreateEntityList() {
+      var result =
         Global.CreateEntityList(
           ReferencingColumn.ReferencedEntityListType ??
           throw new NullReferenceException(
             nameof(ReferencingColumn.ReferencedEntityListType)));
-      return entityList.EntityType;
+      result.Session = ReferencingColumn.Session;
+      return result;
     }
 
     [CanBeNull]

@@ -33,7 +33,7 @@ namespace SoundExplorers.Tests.Model {
 
     [Test]
     public void A010_InitialiseAsParentList() {
-      Assert.AreEqual("Set", List.EntityName, "EntityName");
+      Assert.AreEqual("Set", List.EntityTypeName, "EntityName");
       Assert.AreEqual(typeof(EventList), List.ParentListType, "ParentListType");
       Assert.AreEqual(6, List.Columns.Count, "Columns.Count when parent list");
       Assert.AreEqual("Date", List.Columns[0].Name, "Columns[0].Name");

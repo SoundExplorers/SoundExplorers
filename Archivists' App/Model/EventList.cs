@@ -49,11 +49,11 @@ namespace SoundExplorers.Model {
       return this[rowIndex].Sets.Values.ToList();
     }
 
-    public override void Populate(IList list = null) {
+    public override void Populate(IList list = null, bool createBindingList = true) {
       if (!HasDefaultEventTypeBeenFound) {
         AddDefaultEventTypeIfItDoesNotExist();
       }
-      base.Populate(list);
+      base.Populate(list, createBindingList);
     }
   }
 }

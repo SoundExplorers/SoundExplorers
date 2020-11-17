@@ -56,7 +56,7 @@ namespace SoundExplorers.Controller {
 
     private Option GridSplitterDistanceOption =>
       _gridSplitterDistanceOption ?? (_gridSplitterDistanceOption =
-        CreateOption($"{MainList?.EntityName}.GridSplitterDistance"));
+        CreateOption($"{MainList?.EntityTypeName}.GridSplitterDistance"));
 
     protected virtual ChangeAction LastChangeAction =>
       MainList.LastDatabaseUpdateErrorException.ChangeAction;
@@ -75,7 +75,7 @@ namespace SoundExplorers.Controller {
     [ExcludeFromCodeCoverage]
     private Option ImageSplitterDistanceOption =>
       _imageSplitterDistanceOption ?? (_imageSplitterDistanceOption =
-        new Option($"{MainList?.EntityName}.ImageSplitterDistance"));
+        new Option($"{MainList?.EntityTypeName}.ImageSplitterDistance"));
 
     private bool IsFormatException =>
       MainList.LastDatabaseUpdateErrorException?.InnerException?.GetType() ==
@@ -99,7 +99,7 @@ namespace SoundExplorers.Controller {
     protected IEntityList MainList { get; private set; }
 
     [NotNull] private Type MainListType { get; }
-    [CanBeNull] public string MainTableName => MainList?.EntityName;
+    [CanBeNull] public string MainTableName => MainList?.EntityTypeName;
     [CanBeNull] public IBindingList ParentBindingList => ParentList?.BindingList;
 
     /// <summary>
@@ -241,6 +241,13 @@ namespace SoundExplorers.Controller {
           MainList.OnFormatException(rowIndex, columnName, formatException);
           View.StartDatabaseUpdateErrorTimer();
           break;
+        case RowNotInTableException referencedEntityNotFoundException:
+          // Can happen when pasting an invalid value into a cell,
+          // e.g. text into a date.
+          MainList.OnReferencedEntityNotFound(rowIndex, columnName, 
+            referencedEntityNotFoundException);
+          View.StartDatabaseUpdateErrorTimer();
+          break;
         case null:
           // For unknown reason, the way I've got the error handling set up,
           // this event gets raise twice if there's a DatabaseUpdateErrorException,
@@ -316,9 +323,9 @@ namespace SoundExplorers.Controller {
     ///   it could only be a matching value.
     /// </summary>
     internal void OnReferencedEntityNotFound(int rowIndex, [NotNull] string columnName,
-      [CanBeNull] string formattedCellValue) {
+      [NotNull] RowNotInTableException exception) {
       MainList.OnReferencedEntityNotFound(
-        rowIndex, columnName, formattedCellValue);
+        rowIndex, columnName, exception);
       View.StartDatabaseUpdateErrorTimer();
     }
 

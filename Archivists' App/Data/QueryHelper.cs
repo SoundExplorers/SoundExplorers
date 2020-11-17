@@ -80,7 +80,7 @@ namespace SoundExplorers.Data {
     }
 
     [NotNull]
-    public static IEnumerable FetchEntities([NotNull] Type entityType, 
+    private static IEnumerable FetchEntities([NotNull] Type entityType, 
       SessionBase session) {
       // This complicated rigmarole is required to allow
       // SessionBase.AllObjects<T> to be invoked with a an ordinary parameter

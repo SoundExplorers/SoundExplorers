@@ -464,12 +464,12 @@ namespace SoundExplorers.View {
     }
 
     private void MainGridOnCellValueChanged(object sender, DataGridViewCellEventArgs e) {
-      if (MainGrid.CurrentCell is ComboBoxCell comboBoxCell) {
-        // Debug.WriteLine("MainGridOnCellValueChanged, ComboBoxCell");
-        var cellValue = MainGrid.CurrentCell.Value; 
-        int rowIndex = MainCurrentRow.Index;
-        comboBoxCell.Controller.OnCellValueChanged(rowIndex, cellValue);
-      }
+      // if (MainGrid.CurrentCell is ComboBoxCell comboBoxCell) {
+      //   // Debug.WriteLine("MainGridOnCellValueChanged, ComboBoxCell");
+      //   var cellValue = MainGrid.CurrentCell.Value; 
+      //   int rowIndex = MainCurrentRow.Index;
+      //   comboBoxCell.Controller.OnCellValueChanged(rowIndex, cellValue);
+      // }
     }
 
     /// <summary>
@@ -488,12 +488,12 @@ namespace SoundExplorers.View {
     /// </remarks>
     private void MainGridOnCurrentCellDirtyStateChanged(object sender, EventArgs e) {
       // Debug.WriteLine($"MainGridOnCurrentCellDirtyStateChanged: IsCurrentCellDirty = {MainGrid.IsCurrentCellDirty}");
-      if (MainGrid.CurrentCell is ComboBoxCell && MainGrid.IsCurrentCellDirty) {
-        // Debug.WriteLine(
-        //   "MainGridOnCurrentCellDirtyStateChanged: ComboBoxCell, IsCurrentCellDirty");
-        // This fires the cell value changed handler MainGridOnCellValueChanged.
-        MainGrid.CommitEdit(DataGridViewDataErrorContexts.CurrentCellChange);
-      }
+      // if (MainGrid.CurrentCell is ComboBoxCell && MainGrid.IsCurrentCellDirty) {
+      //   // Debug.WriteLine(
+      //   //   "MainGridOnCurrentCellDirtyStateChanged: ComboBoxCell, IsCurrentCellDirty");
+      //   // This fires the cell value changed handler MainGridOnCellValueChanged.
+      //   MainGrid.CommitEdit(DataGridViewDataErrorContexts.CurrentCellChange);
+      // }
     }
 
     /// <summary>

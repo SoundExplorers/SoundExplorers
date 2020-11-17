@@ -83,12 +83,12 @@ namespace SoundExplorers.Model {
     [NotNull]
     private ReferenceableItemList FetchReferenceableItems() {
       var result = new ReferenceableItemList(this);
-      bool transactionRequired = !Session.InTransaction; 
-      if (transactionRequired) {
+      bool isTransactionRequired = !Session.InTransaction; 
+      if (isTransactionRequired) {
         Session.BeginRead();
       }
       result.Fetch();
-      if (transactionRequired) {
+      if (isTransactionRequired) {
         Session.Commit();
       }
       return result;

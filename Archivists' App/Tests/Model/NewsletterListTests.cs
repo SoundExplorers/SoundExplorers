@@ -27,7 +27,7 @@ namespace SoundExplorers.Tests.Model {
 
     [Test]
     public void A010_Initial() {
-      Assert.AreEqual("Newsletter", List.EntityName, "EntityName");
+      Assert.AreEqual("Newsletter", List.EntityTypeName, "EntityName");
       Assert.AreEqual(2, List.Columns.Count, "Columns.Count");
       Assert.AreEqual("Date", List.Columns[0].Name, "Columns[0].Name");
       Assert.AreEqual("Url", List.Columns[1].Name, "Columns[1].Name");

@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Data;
 using JetBrains.Annotations;
 using VelocityDb.Session;
 
@@ -22,9 +23,7 @@ namespace SoundExplorers.Model {
     [NotNull]
     BindingColumnList Columns { get; }
 
-    [NotNull] string EntityName { get; }
-
-    [NotNull] Type EntityType { get; }
+    [NotNull] string EntityTypeName { get; }
 
     /// <summary>
     ///   For unknown reason, the grid's RowRemoved event is raised 2 or 3 times
@@ -45,7 +44,7 @@ namespace SoundExplorers.Model {
     ///   sure an entity gets persisted if the error is fixed
     ///   or the row gets removed from the grid when if the insertion is cancelled.
     /// </summary>
-    bool IsFixingNewRow { get; set; }
+    bool IsFixingNewRow { set; }
 
     /// <summary>
     ///   Gets whether the current grid row is the insertion row,
@@ -73,7 +72,7 @@ namespace SoundExplorers.Model {
     ///   The setter should only be needed for testing.
     /// </summary>
     [NotNull]
-    SessionBase Session { get; set; }
+    SessionBase Session { set; }
 
     /// <summary>
     ///   Deletes the entity at the specified row index
@@ -102,7 +101,7 @@ namespace SoundExplorers.Model {
       [NotNull] FormatException formatException);
 
     void OnReferencedEntityNotFound(int rowIndex, [NotNull] string propertyName,
-      [CanBeNull] string formattedCellValue);
+      [NotNull] RowNotInTableException referencedEntityNotFoundException);
 
     /// <summary>
     ///   This is called when any row has been entered.
@@ -128,10 +127,17 @@ namespace SoundExplorers.Model {
     /// </summary>
     /// <param name="list">
     ///   Optionally specifies the required list of entities.
-    ///   If null, all entities of the class's entity type
+    ///   If null, the default, all entities of the class's entity type
     ///   will be fetched from the database.
     /// </param>
-    void Populate(IList list = null);
+    /// <param name="createBindingList">
+    ///   Optionally specifies whether the <see cref="BindingList"/>,
+    ///   which will be bound to a grid in the editor window,
+    ///   is to be populated along with the list of entities.
+    ///   Default: true.
+    ///   Set to false if entity list is not to be used to populate a grid.
+    /// </param>
+    void Populate(IList list = null, bool createBindingList = true);
 
     void RemoveCurrentBindingItem();
     void RestoreCurrentBindingItemOriginalValues();
