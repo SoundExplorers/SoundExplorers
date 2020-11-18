@@ -8,7 +8,7 @@ using SoundExplorers.Data;
 namespace SoundExplorers.Model {
   /// <summary>
   ///   Represents an entity table in a form suitable (when converted to an array)
-  ///   for populating a ComboBox.
+  ///   for populating a ComboBox for selecting a referenced entity.
   /// </summary>
   public class ReferenceableItemList : List<object> {
     public ReferenceableItemList([NotNull] BindingColumn referencingColumn) {
@@ -86,10 +86,10 @@ namespace SoundExplorers.Model {
       // ReSharper disable once SuggestBaseTypeForParameter
       IEntityList entities) {
       Clear();
-      // if (entities is NewsletterList) {
-      //   Add(new KeyValuePair<object, object>(
-      //     Format(EntityBase.DateToSimpleKey(EntityBase.InitialDate)), new Newsletter()));
-      // }
+      if (entities is NewsletterList) {
+        Add(new KeyValuePair<object, object>(
+          EntityBase.InitialDate.ToString(Global.DateFormat), null));
+      }
       AddRange(
         from IEntity entity in entities
         select (object)new KeyValuePair<object, object>(Format(entity.SimpleKey), entity)
