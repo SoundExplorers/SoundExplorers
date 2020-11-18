@@ -14,8 +14,8 @@ namespace SoundExplorers.Model {
     private IDictionary<string, IEntity> EntityDictionary { get; set; }
     [NotNull] private BindingColumn ReferencingColumn { get; }
 
-    public bool ContainsFormattedValue([NotNull] string formattedValue) {
-      return EntityDictionary.ContainsKey(formattedValue);
+    public bool ContainsKey([NotNull] string simpleKey) {
+      return EntityDictionary.ContainsKey(simpleKey);
     }
 
     internal void Fetch() {
@@ -30,31 +30,30 @@ namespace SoundExplorers.Model {
     [NotNull]
     private IDictionary<string, IEntity> FetchEntityDictionary() {
       var entities = CreateEntityList();
-      entities.Populate(createBindingList:false);
+      entities.Populate(createBindingList: false);
       return (from IEntity entity in entities
-          select new KeyValuePair<string, IEntity>(GetKey(entity), entity)
+          select new KeyValuePair<string, IEntity>(ToSimpleKey(entity), entity)
         ).ToDictionary(pair => pair.Key, pair => pair.Value);
     }
 
     [CanBeNull]
-    private static string Format([NotNull] object referencingPropertyValue) {
-      if (referencingPropertyValue is DateTime date) {
-        return date > EntityBase.InitialDate ? date.ToString(Global.DateFormat) : null;
-      } // string
-      return referencingPropertyValue.ToString();
+    private static string Format([NotNull] string simpleKey) {
+      return DateTime.TryParse(simpleKey, out var date)
+        ? date.ToString(Global.DateFormat)
+        : simpleKey;
     }
 
     [CanBeNull]
     internal IEntity GetEntity([NotNull] object referencingPropertyValue) {
-      string formattedValue = Format(referencingPropertyValue);
-      if (formattedValue == null) {
+      string simpleKey = ToSimpleKey(referencingPropertyValue);
+      if (string.IsNullOrWhiteSpace(simpleKey)) {
         return null;
       }
-      if (ContainsFormattedValue(formattedValue)) {
-        return EntityDictionary[formattedValue];
+      if (ContainsKey(simpleKey)) {
+        return EntityDictionary[simpleKey];
       }
       throw CreateReferencedEntityNotFoundException(
-        ReferencingColumn.Name, formattedValue);
+        ReferencingColumn.Name, simpleKey);
     }
 
     [NotNull]
@@ -70,25 +69,24 @@ namespace SoundExplorers.Model {
 
     [NotNull]
     public static RowNotInTableException CreateReferencedEntityNotFoundException(
-      [NotNull] string columnName, [NotNull] string formattedValue) {
-      var message = $"{columnName} not found: '{formattedValue}'";
+      [NotNull] string columnName, [NotNull] string simpleKey) {
+      var message = $"{columnName} not found: '{Format(simpleKey)}'";
       // Debug.WriteLine("ReferenceableItemList.CreateReferencedEntityNotFoundException");
       // Debug.WriteLine($"    {message}");
       return new RowNotInTableException(message);
     }
 
-    [CanBeNull]
-    public static string GetKey([CanBeNull] object value) {
+    public static string ToSimpleKey([CanBeNull] object value) {
       switch (value) {
         case null:
           return null;
         case Newsletter newsletter:
-          return newsletter.Date.ToString(Global.DateFormat);
+          return EntityBase.DateToSimpleKey(newsletter.Date);
         case IEntity entity:
           return entity.SimpleKey;
+        case DateTime date:
+          return EntityBase.DateToSimpleKey(date);
         default:
-          // After duplicate key error message shown on inserting event.
-          // Is this a problem?
           return value.ToString();
       }
     }

@@ -285,10 +285,10 @@ namespace SoundExplorers.Controller {
     /// </summary>
     internal void OnInsertionRowReferencedEntityNotFound(
       int rowIndex, [NotNull] string columnName,
-      [NotNull] string formattedValue) {
+      [NotNull] string simpleKey) {
       var referencedEntityNotFoundException =
         ReferenceableItemList.CreateReferencedEntityNotFoundException(
-          columnName, formattedValue);
+          columnName, simpleKey);
       MainList.OnReferencedEntityNotFound(
         rowIndex, columnName, referencedEntityNotFoundException);
       View.StartDatabaseUpdateErrorTimer();

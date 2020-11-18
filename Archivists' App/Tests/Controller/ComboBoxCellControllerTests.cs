@@ -54,7 +54,7 @@ namespace SoundExplorers.Tests.Controller {
       Data.Newsletters[0].Date = DateTime.Parse("1960-09-13");
       Session.Commit();
       key = ComboBoxCellController.GetKey(Data.Newsletters[0]);
-      Assert.AreEqual("13 Sep 1960", key, "Date key");
+      Assert.AreEqual("1960/09/13", key, "Date key");
       CellController = CreateCellController("Series");
       Assert.AreEqual("Event", CellController.TableName, "TableName");
       var seriesItems = CellController.GetItems();
