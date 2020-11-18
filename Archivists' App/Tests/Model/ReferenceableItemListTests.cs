@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using NUnit.Framework;
 using SoundExplorers.Data;
 using SoundExplorers.Model;
@@ -43,8 +42,10 @@ namespace SoundExplorers.Tests.Model {
       var item = items[0];
       Assert.IsInstanceOf<KeyValuePair<object, object>>(item, "item");
       var pair = (KeyValuePair<object, object>)item;
-      Assert.IsInstanceOf<DateTime>(pair.Key, "Key");
+      Assert.IsInstanceOf<string>(pair.Key, "Key");
       Assert.IsInstanceOf<Newsletter>(pair.Value, "Value");
+      var formattedDate = pair.Key.ToString();
+      Assert.AreEqual("06 Jan 2020", formattedDate, "formattedDate");
     }
 
     private TestData Data { get; set; }

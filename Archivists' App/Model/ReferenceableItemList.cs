@@ -86,10 +86,10 @@ namespace SoundExplorers.Model {
       // ReSharper disable once SuggestBaseTypeForParameter
       IEntityList entities) {
       Clear();
-      if (entities is NewsletterList) {
-        Add(new KeyValuePair<object, object>(
-          Format(EntityBase.DateToSimpleKey(EntityBase.InitialDate)), new Newsletter()));
-      }
+      // if (entities is NewsletterList) {
+      //   Add(new KeyValuePair<object, object>(
+      //     Format(EntityBase.DateToSimpleKey(EntityBase.InitialDate)), new Newsletter()));
+      // }
       AddRange(
         from IEntity entity in entities
         select (object)new KeyValuePair<object, object>(Format(entity.SimpleKey), entity)
