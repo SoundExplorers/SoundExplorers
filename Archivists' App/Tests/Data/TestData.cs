@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using JetBrains.Annotations;
@@ -8,6 +9,8 @@ using VelocityDb.Session;
 
 namespace SoundExplorers.Tests.Data {
   public class TestData {
+    private EventType _defaultEventType;
+
     static TestData() {
       // ReSharper disable once StringLiteralTypo
       ActNames = new List<string> {
@@ -51,6 +54,10 @@ namespace SoundExplorers.Tests.Data {
     }
 
     public IList<Act> Acts { get; }
+
+    private EventType DefaultEventType =>
+      _defaultEventType ?? (_defaultEventType = GetDefaultEventType());
+
     public IList<Event> Events { get; }
     public IList<EventType> EventTypes { get; }
     public IList<Genre> Genres { get; }
@@ -90,7 +97,7 @@ namespace SoundExplorers.Tests.Data {
           QueryHelper = QueryHelper,
           Date = date,
           Location = location ?? GetDefaultLocation(),
-          EventType = eventType ?? GetDefaultEventType(),
+          EventType = eventType ?? DefaultEventType,
           Notes = GenerateUniqueName(16)
         };
         session.Persist(@event);
@@ -217,7 +224,9 @@ namespace SoundExplorers.Tests.Data {
     [NotNull]
     private EventType GetDefaultEventType() {
       return EventTypes.Count >= 0
-        ? EventTypes[0]
+        ? (from eventType in EventTypes
+          where eventType.Name == "Performance"
+          select eventType).First()
         : throw new InvalidOperationException("An EventType must be added first.");
     }
 
