@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Diagnostics.CodeAnalysis;
-using SoundExplorers.Data;
+﻿using SoundExplorers.Data;
 
 namespace SoundExplorers.Model {
   public class NewsletterList : EntityListBase<Newsletter, NewsletterBindingItem> {
@@ -17,11 +14,6 @@ namespace SoundExplorers.Model {
         new BindingColumn(nameof(Newsletter.Date)),
         new BindingColumn(nameof(Newsletter.Url)) {DisplayName = "URL"}
       };
-    }
-
-    [ExcludeFromCodeCoverage]
-    public override IList GetChildrenForMainList(int rowIndex) {
-      throw new NotSupportedException();
     }
   }
 }

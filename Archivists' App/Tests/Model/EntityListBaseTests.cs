@@ -38,5 +38,12 @@ namespace SoundExplorers.Tests.Model {
       item1.Name = "Dudley";
       Assert.Throws<InvalidOperationException>(() => list.OnRowValidated(0));
     }
+
+    [Test]
+    public void GetChildrenForMainListNotSupported() {
+      var list = new ActList();
+      Assert.Throws<NotSupportedException>(
+        () => list.GetChildrenForMainList(0));
+    }
   }
 }

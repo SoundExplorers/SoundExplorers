@@ -157,7 +157,7 @@ namespace SoundExplorers.Model {
     }
 
     /// <summary>
-    ///   Derived classes that can be parent lists should
+    ///   Derived classes that can be parent lists must
     ///   return a list of the child entities of the entity at the specified row index
     ///   that are to populate the main list when this is the parent list.
     /// </summary>
@@ -165,7 +165,9 @@ namespace SoundExplorers.Model {
     ///   Zero-based row index.
     /// </param>
     [NotNull]
-    public abstract IList GetChildrenForMainList(int rowIndex);
+    public virtual IList GetChildrenForMainList(int rowIndex) {
+      throw new NotSupportedException();
+    }
 
     public IList<object> GetErrorValues() {
       return ErrorBindingItem.GetPropertyValues();
