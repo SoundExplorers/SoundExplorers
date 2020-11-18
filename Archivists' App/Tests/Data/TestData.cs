@@ -69,16 +69,17 @@ namespace SoundExplorers.Tests.Data {
 
     public void AddActsPersisted(int count, [NotNull] SessionBase session) {
       for (var i = 0; i < count; i++) {
-        var genre = new Act {
+        var act = new Act {
           QueryHelper = QueryHelper,
           Name = Acts.Count < ActNames.Count
             ? ActNames[Acts.Count]
             : GenerateUniqueName(8),
           Notes = GenerateUniqueName(16)
         };
-        session.Persist(genre);
-        Acts.Add(genre);
+        session.Persist(act);
+        Acts.Add(act);
       }
+      Sort(Acts);
     }
 
     public void AddEventsPersisted(int count, [NotNull] SessionBase session,
@@ -109,6 +110,7 @@ namespace SoundExplorers.Tests.Data {
         session.Persist(eventType);
         EventTypes.Add(eventType);
       }
+      Sort(EventTypes);
     }
 
     public void AddGenresPersisted(int count, [NotNull] SessionBase session) {
@@ -122,6 +124,7 @@ namespace SoundExplorers.Tests.Data {
         session.Persist(genre);
         Genres.Add(genre);
       }
+      Sort(Genres);
     }
 
     public void AddLocationsPersisted(int count, [NotNull] SessionBase session) {
@@ -136,6 +139,7 @@ namespace SoundExplorers.Tests.Data {
         session.Persist(location);
         Locations.Add(location);
       }
+      Sort(Locations);
     }
 
     public void AddNewslettersPersisted(int count, [NotNull] SessionBase session) {
@@ -183,6 +187,7 @@ namespace SoundExplorers.Tests.Data {
         session.Persist(series);
         Series.Add(series);
       }
+      Sort(Series);
     }
 
     public void AddSetsPersisted(int count, [NotNull] SessionBase session,
@@ -253,6 +258,10 @@ namespace SoundExplorers.Tests.Data {
     private static string GenerateUniqueUrl() {
       return new Uri($"https://{GenerateUniqueName(8)}.com/{GenerateUniqueName(6)}",
         UriKind.Absolute).ToString();
+    }
+
+    private static void Sort<TEntity>(IList<TEntity> list) where TEntity : IEntity {
+      ((List<TEntity>)list).Sort(new EntityComparer<TEntity>());
     }
   }
 }
