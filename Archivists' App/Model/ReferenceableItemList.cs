@@ -6,6 +6,10 @@ using JetBrains.Annotations;
 using SoundExplorers.Data;
 
 namespace SoundExplorers.Model {
+  /// <summary>
+  ///   Represents an entity table in a form suitable (when converted to an array)
+  ///   for populating a ComboBox.
+  /// </summary>
   public class ReferenceableItemList : List<object> {
     public ReferenceableItemList([NotNull] BindingColumn referencingColumn) {
       ReferencingColumn = referencingColumn;
@@ -18,42 +22,14 @@ namespace SoundExplorers.Model {
       return EntityDictionary.ContainsKey(simpleKey);
     }
 
-    internal void Fetch() {
-      EntityDictionary = FetchEntityDictionary();
-      Clear();
-      AddRange(
-        from KeyValuePair<string, IEntity> pair in EntityDictionary
-        select (object)new KeyValuePair<string, object>(pair.Key, pair.Value)
-      );
-    }
-
     [NotNull]
-    private IDictionary<string, IEntity> FetchEntityDictionary() {
-      var entities = CreateEntityList();
-      entities.Populate(createBindingList: false);
-      return (from IEntity entity in entities
-          select new KeyValuePair<string, IEntity>(ToSimpleKey(entity), entity)
-        ).ToDictionary(pair => pair.Key, pair => pair.Value);
-    }
-
-    [CanBeNull]
-    private static string Format([NotNull] string simpleKey) {
-      return DateTime.TryParse(simpleKey, out var date)
-        ? date.ToString(Global.DateFormat)
-        : simpleKey;
-    }
-
-    [CanBeNull]
-    internal IEntity GetEntity([NotNull] object referencingPropertyValue) {
-      string simpleKey = ToSimpleKey(referencingPropertyValue);
-      if (string.IsNullOrWhiteSpace(simpleKey)) {
-        return null;
-      }
-      if (ContainsKey(simpleKey)) {
-        return EntityDictionary[simpleKey];
-      }
-      throw CreateReferencedEntityNotFoundException(
-        ReferencingColumn.Name, simpleKey);
+    private static IDictionary<string, IEntity> CreateEntityDictionary(
+      // ReSharper disable once SuggestBaseTypeForParameter
+      [NotNull] IEntityList entities) {
+      return (
+        from IEntity entity in entities
+        select new KeyValuePair<string, IEntity>(ToSimpleKey(entity), entity)
+      ).ToDictionary(pair => pair.Key, pair => pair.Value);
     }
 
     [NotNull]
@@ -74,6 +50,50 @@ namespace SoundExplorers.Model {
       // Debug.WriteLine("ReferenceableItemList.CreateReferencedEntityNotFoundException");
       // Debug.WriteLine($"    {message}");
       return new RowNotInTableException(message);
+    }
+
+    internal void Fetch() {
+      var entities = CreateEntityList();
+      entities.Populate(createBindingList: false);
+      EntityDictionary = CreateEntityDictionary(entities);
+      PopulateItems(entities);
+    }
+
+    /// <summary>
+    ///   Returns the specified simple key formatted as it appears on the grid.
+    /// </summary>
+    [CanBeNull]
+    private static string Format([NotNull] string simpleKey) {
+      return DateTime.TryParse(simpleKey, out var date)
+        ? date.ToString(Global.DateFormat)
+        : simpleKey;
+    }
+
+    [CanBeNull]
+    internal IEntity GetEntity([NotNull] object referencingPropertyValue) {
+      string simpleKey = ToSimpleKey(referencingPropertyValue);
+      if (string.IsNullOrWhiteSpace(simpleKey)) {
+        return null;
+      }
+      if (ContainsKey(simpleKey)) {
+        return EntityDictionary[simpleKey];
+      }
+      throw CreateReferencedEntityNotFoundException(
+        ReferencingColumn.Name, simpleKey);
+    }
+
+    private void PopulateItems(
+      // ReSharper disable once SuggestBaseTypeForParameter
+      IEntityList entities) {
+      Clear();
+      if (entities is NewsletterList) {
+        Add(new KeyValuePair<object, object>(
+          Format(EntityBase.DateToSimpleKey(EntityBase.InitialDate)), new Newsletter()));
+      }
+      AddRange(
+        from IEntity entity in entities
+        select (object)new KeyValuePair<object, object>(Format(entity.SimpleKey), entity)
+      );
     }
 
     public static string ToSimpleKey([CanBeNull] object value) {

@@ -26,10 +26,6 @@ namespace SoundExplorers.Controller {
       view.SetController(this);
     }
 
-    // [NotNull]
-    // private ReferenceableItemList ReferenceableItems => 
-    //   _referenceableItems ?? (_referenceableItems = Column.ReferenceableItems);
-
     private string CreateNoAvailableReferencesMessage() {
       return $"There are no {Column.ReferencedTableName} " + 
              $"{Column.ReferencedPropertyName}s " +
