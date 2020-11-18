@@ -82,6 +82,12 @@ namespace SoundExplorers.Controller {
       typeof(FormatException);
 
     /// <summary>
+    ///   Gets whether the current main grid row is the insertion row,
+    ///   which is for adding new entities and is located at the bottom of the grid.
+    /// </summary>
+    public bool IsInsertionRowCurrent => MainList.IsInsertionRowCurrent;
+
+    /// <summary>
     ///   Gets whether a read-only related grid for a parent table is to be shown
     ///   above the main grid.
     /// </summary>
@@ -146,15 +152,14 @@ namespace SoundExplorers.Controller {
     }
 
     public void ShowDatabaseUpdateError() {
+      //Debug.WriteLine("EditorController.ShowDatabaseUpdateError");
       View.FocusMainGridCell(MainList.LastDatabaseUpdateErrorException.RowIndex,
         MainList.LastDatabaseUpdateErrorException.ColumnIndex);
       if (LastChangeAction == ChangeAction.Delete) {
         View.SelectCurrentRowOnly();
       }
-      // Known problem:  If IsReferencingValueNotFoundException on the insertion row, 
-      // the error value shown in the cell reverts to the default value
-      // on showing the message box.
       View.ShowErrorMessage(MainList.LastDatabaseUpdateErrorException.Message);
+      //Debug.WriteLine("Error message shown");
       if (IsFormatException) {
         // if (LastChangeAction == ChangeAction.Insert) {
         //   // A FormatException was thrown due to an invalidly formatted paste
@@ -181,7 +186,7 @@ namespace SoundExplorers.Controller {
         return;
       }
       if (IsReferencingValueNotFoundException) {
-        if (!MainList.IsInsertionRowCurrent) {
+        if (!IsInsertionRowCurrent) {
           MainList.RestoreReferencingPropertyOriginalValue(
             MainList.LastDatabaseUpdateErrorException.RowIndex,
             MainList.LastDatabaseUpdateErrorException.ColumnIndex);
@@ -228,7 +233,7 @@ namespace SoundExplorers.Controller {
       return column.DisplayName ?? columnName;
     }
 
-    public void OnMainGridDataError(int rowIndex, [NotNull] string columnName,
+    public void OnExistingRowCellUpdateError(int rowIndex, [NotNull] string columnName,
       [CanBeNull] Exception exception) {
       switch (exception) {
         case DatabaseUpdateErrorException databaseUpdateErrorException:
@@ -236,14 +241,20 @@ namespace SoundExplorers.Controller {
           View.StartDatabaseUpdateErrorTimer();
           break;
         case FormatException formatException:
-          // Can happen when pasting an invalid value into a cell,
-          // e.g. text into a date.
+          // An invalid value was pasted into a cell, e.g. text into a date.
           MainList.OnFormatException(rowIndex, columnName, formatException);
           View.StartDatabaseUpdateErrorTimer();
           break;
         case RowNotInTableException referencedEntityNotFoundException:
-          // Can happen when pasting an invalid value into a cell,
-          // e.g. text into a date.
+          // A combo box cell value 
+          // does not match any of it's embedded combo box's items.
+          // So the combo box's selected index and text could not be updated.
+          // As the combo boxes are all dropdown lists,
+          // the only way this can have happened is that
+          // the unmatched value was pasted into the cell.
+          // If the cell value had been changed
+          // by selecting an item on the embedded combo box,
+          // it could only be a matching value.
           MainList.OnReferencedEntityNotFound(rowIndex, columnName, 
             referencedEntityNotFoundException);
           View.StartDatabaseUpdateErrorTimer();
@@ -259,6 +270,28 @@ namespace SoundExplorers.Controller {
           // the stack trace will be shown by the terminal error handler in Program.cs.
           throw exception;
       }
+    }
+
+    /// <summary>
+    ///   A combo box cell value on the main grid's insertion row
+    ///   does not match any of it's embedded combo box's items.
+    ///   So the combo box's selected index and text could not be updated.
+    ///   As the combo boxes are all dropdown lists,
+    ///   the only way this can have happened is that
+    ///   the unmatched value was pasted into the cell.
+    ///   If the cell value had been changed
+    ///   by selecting an item on the embedded combo box,
+    ///   it could only be a matching value.
+    /// </summary>
+    internal void OnInsertionRowReferencedEntityNotFound(
+      int rowIndex, [NotNull] string columnName,
+      [NotNull] string formattedValue) {
+      var referencedEntityNotFoundException =
+        ReferenceableItemList.CreateReferencedEntityNotFoundException(
+          columnName, formattedValue);
+      MainList.OnReferencedEntityNotFound(
+        rowIndex, columnName, referencedEntityNotFoundException);
+      View.StartDatabaseUpdateErrorTimer();
     }
 
     public void OnMainGridRowEnter(int rowIndex) {
@@ -310,23 +343,6 @@ namespace SoundExplorers.Controller {
     /// </summary>
     public void OnParentGridRowEntered(int rowIndex) {
       MainList?.Populate(ParentList?.GetChildrenForMainList(rowIndex));
-    }
-
-    /// <summary>
-    ///   A combo box cell value does not match any of it's embedded combo box's items.
-    ///   So the combo box's selected index and text could not be updated.
-    ///   As the combo boxes are all dropdown lists,
-    ///   the only way this can have happened is that
-    ///   the invalid value was pasted into the cell.
-    ///   If the cell value had been changed
-    ///   by selecting an item on the embedded combo box,
-    ///   it could only be a matching value.
-    /// </summary>
-    internal void OnReferencedEntityNotFound(int rowIndex, [NotNull] string columnName,
-      [NotNull] RowNotInTableException exception) {
-      MainList.OnReferencedEntityNotFound(
-        rowIndex, columnName, exception);
-      View.StartDatabaseUpdateErrorTimer();
     }
 
     /// <summary>

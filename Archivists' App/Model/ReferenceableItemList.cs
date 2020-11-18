@@ -53,9 +53,8 @@ namespace SoundExplorers.Model {
       if (ContainsFormattedValue(formattedValue)) {
         return EntityDictionary[formattedValue];
       }
-      var message =
-        $"{ReferencingColumn.Name} not found: '{formattedValue}'";
-      throw new RowNotInTableException(message);
+      throw CreateReferencedEntityNotFoundException(
+        ReferencingColumn.Name, formattedValue);
     }
 
     [NotNull]
@@ -67,6 +66,15 @@ namespace SoundExplorers.Model {
             nameof(ReferencingColumn.ReferencedEntityListType)));
       result.Session = ReferencingColumn.Session;
       return result;
+    }
+
+    [NotNull]
+    public static RowNotInTableException CreateReferencedEntityNotFoundException(
+      [NotNull] string columnName, [NotNull] string formattedValue) {
+      var message = $"{columnName} not found: '{formattedValue}'";
+      // Debug.WriteLine("ReferenceableItemList.CreateReferencedEntityNotFoundException");
+      // Debug.WriteLine($"    {message}");
+      return new RowNotInTableException(message);
     }
 
     [CanBeNull]

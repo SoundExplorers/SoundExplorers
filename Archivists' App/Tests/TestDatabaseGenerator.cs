@@ -35,7 +35,7 @@ namespace SoundExplorers.Tests {
       data.AddLocationsPersisted(8, session);
       data.AddNewslettersPersisted(64, session);
       data.AddSeriesPersisted(8, session);
-      data.AddEventsPersisted(20, session);
+      data.AddEventsPersisted(18, session);
       for (var i = 0; i < 5; i++) {
         data.Events[i].EventType = data.EventTypes[i];
       }

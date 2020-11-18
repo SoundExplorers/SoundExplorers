@@ -198,6 +198,7 @@ namespace SoundExplorers.Model {
 
     public void OnReferencedEntityNotFound(int rowIndex, string propertyName,
       RowNotInTableException referencedEntityNotFoundException) {
+      //Debug.WriteLine($"EntityListBase.OnReferencedEntityNotFound: row {rowIndex}");
       LastDatabaseChangeAction =
         IsInsertionRowCurrent ? ChangeAction.Insert : ChangeAction.Update;
       LastDatabaseUpdateErrorException = new DatabaseUpdateErrorException(
@@ -219,11 +220,13 @@ namespace SoundExplorers.Model {
     ///   of the BindingList's ListChanged event.
     /// </remarks>
     public void OnRowEnter(int rowIndex) {
+      //Debug.WriteLine($"EntityListBase.OnRowEnter: row {rowIndex}");
       // Debug.WriteLine(
       //   $"{nameof(OnRowEnter)}:  Any row entered (after ItemAdded if insertion row)");
       HasRowBeenEdited = false;
       if (BackupBindingItemToRestoreFrom == null) {
         // Not forced to reenter row to fix an update error
+        //Debug.WriteLine("    Creating BackupBindingItem");
         BackupBindingItem = !IsInsertionRowCurrent
           ? ((TBindingItem)BindingList[rowIndex]).CreateBackup()
           : new TBindingItem();
@@ -321,6 +324,7 @@ namespace SoundExplorers.Model {
     }
 
     public void RestoreCurrentBindingItemOriginalValues() {
+      //Debug.WriteLine("EntityListBase.RestoreCurrentBindingItemOriginalValues");
       ErrorBindingItem = BindingItemToFix.CreateBackup();
       BindingItemToFix.RestorePropertyValuesFrom(BackupBindingItemToRestoreFrom);
       BackupBindingItemToRestoreFrom = null;
@@ -329,10 +333,14 @@ namespace SoundExplorers.Model {
     }
 
     public void RestoreReferencingPropertyOriginalValue(int rowIndex, int columnIndex) {
+      //Debug.WriteLine($"EntityListBase.RestoreReferencingPropertyOriginalValue: row {rowIndex}");
+      BackupBindingItemToRestoreFrom = null;
+      BindingItemToFix = null;
       var bindingItem = (TBindingItem)BindingList[rowIndex];
       string propertyName = Columns[columnIndex].Name;
       var originalValue =
         BackupBindingItem.Properties[propertyName].GetValue(BackupBindingItem);
+      //Debug.WriteLine($"    BackupBindingItem.{propertyName} = {originalValue}");
       bindingItem.Properties[propertyName].SetValue(bindingItem, originalValue);
     }
 
@@ -397,6 +405,8 @@ namespace SoundExplorers.Model {
           IsInsertionRowCurrent = true;
           break;
         case ListChangedType.ItemChanged: // Cell edit completed 
+          // Debug.WriteLine(
+          //   $"EntityListBase.BindingListOnListChanged: ItemChanged, row {e.NewIndex}");
           // Debug.WriteLine(
           //   $"ListChangedType.ItemChanged:  {e.PropertyDescriptor.Name} = '{e.PropertyDescriptor.GetValue(BindingList[e.NewIndex])}', cell edit completed or cancelled");
           HasRowBeenEdited = true;
@@ -475,7 +485,7 @@ namespace SoundExplorers.Model {
 
     private void UpdateExistingEntityProperty(
       int rowIndex, [NotNull] string propertyName) {
-      //Debug.WriteLine("EntityListBase.UpdateExistingEntityProperty");
+      //Debug.WriteLine($"EntityListBase.UpdateExistingEntityProperty: row {rowIndex}");
       LastDatabaseChangeAction = ChangeAction.Update;
       var bindingItem = (TBindingItem)BindingList[rowIndex];
       var entity = this[rowIndex];
@@ -486,6 +496,7 @@ namespace SoundExplorers.Model {
         bindingItem.UpdateEntityProperty(propertyName, entity);
       } catch (Exception exception) {
         BindingItemToFix = bindingItem;
+        //Debug.WriteLine($"    Restoring row {rowIndex}");
         backupBindingItem.RestoreToEntity(entity);
         BackupBindingItemToRestoreFrom = BackupBindingItem;
         // This exception will be passed to the grid's DataError event handler.

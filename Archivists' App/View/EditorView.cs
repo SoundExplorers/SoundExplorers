@@ -464,12 +464,12 @@ namespace SoundExplorers.View {
     }
 
     private void MainGridOnCellValueChanged(object sender, DataGridViewCellEventArgs e) {
-      // if (MainGrid.CurrentCell is ComboBoxCell comboBoxCell) {
-      //   // Debug.WriteLine("MainGridOnCellValueChanged, ComboBoxCell");
-      //   var cellValue = MainGrid.CurrentCell.Value; 
-      //   int rowIndex = MainCurrentRow.Index;
-      //   comboBoxCell.Controller.OnCellValueChanged(rowIndex, cellValue);
-      // }
+      if (MainGrid.CurrentCell is ComboBoxCell comboBoxCell) {
+        // Debug.WriteLine("MainGridOnCellValueChanged, ComboBoxCell");
+        var cellValue = MainGrid.CurrentCell.Value; 
+        int rowIndex = MainCurrentRow.Index;
+        comboBoxCell.Controller.OnCellValueChanged(rowIndex, cellValue);
+      }
     }
 
     /// <summary>
@@ -487,35 +487,28 @@ namespace SoundExplorers.View {
     ///   https://stackoverflow.com/questions/11141872/event-that-fires-during-MainGridcomboboxcolumn-selectedindexchanged
     /// </remarks>
     private void MainGridOnCurrentCellDirtyStateChanged(object sender, EventArgs e) {
-      // Debug.WriteLine($"MainGridOnCurrentCellDirtyStateChanged: IsCurrentCellDirty = {MainGrid.IsCurrentCellDirty}");
-      // if (MainGrid.CurrentCell is ComboBoxCell && MainGrid.IsCurrentCellDirty) {
-      //   // Debug.WriteLine(
-      //   //   "MainGridOnCurrentCellDirtyStateChanged: ComboBoxCell, IsCurrentCellDirty");
-      //   // This fires the cell value changed handler MainGridOnCellValueChanged.
-      //   MainGrid.CommitEdit(DataGridViewDataErrorContexts.CurrentCellChange);
-      // }
+      //Debug.WriteLine($"MainGridOnCurrentCellDirtyStateChanged: IsCurrentCellDirty = {MainGrid.IsCurrentCellDirty}");
+      if (MainGrid.CurrentCell is ComboBoxCell && MainGrid.IsCurrentCellDirty) {
+        // Debug.WriteLine(
+        //   "MainGridOnCurrentCellDirtyStateChanged: ComboBoxCell, IsCurrentCellDirty");
+        // This fires the cell value changed handler MainGridOnCellValueChanged.
+        MainGrid.CommitEdit(DataGridViewDataErrorContexts.CurrentCellChange);
+      }
     }
 
     /// <summary>
     ///   Handles the main grid's
     ///   <see cref="DataGridView.DataError" /> event,
-    ///   which occurs when an external data-parsing or validation operation throws an
-    ///   exception.
+    ///   which occurs when an external data-parsing or validation operation
+    ///   in an existing row (not the insertion row) throws an exception.
     /// </summary>
-    /// <remarks>
-    ///   The event is raised in two anticipated scenarios:
-    ///   1) When there is an error on attempting to update a main grid cell
-    ///   representing a property of an existing entity.
-    ///   2) When invalidly formatted data is pasted into a cell of
-    ///   either a new or existing row, e.g. text into a date.
-    /// </remarks>
     private void MainGridOnDataError(object sender, DataGridViewDataErrorEventArgs e) {
       // Debug.WriteLine("MainGridOnDataError");
       // Debug.WriteLine("Context = " + e.Context);
       // Debug.WriteLine("ColumnIndex = " + e.ColumnIndex);
       // Debug.WriteLine("RowIndex = " + e.RowIndex);
       string columnName = MainGrid.Columns[e.ColumnIndex].Name;
-      Controller.OnMainGridDataError(e.RowIndex, columnName, e.Exception);
+      Controller.OnExistingRowCellUpdateError(e.RowIndex, columnName, e.Exception);
     }
 
     /// <summary>
