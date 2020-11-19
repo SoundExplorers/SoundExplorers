@@ -32,12 +32,14 @@ namespace SoundExplorers.Tests.Controller {
 
     [Test]
     public void AddEvent() {
+      var event1Date = DateTime.Parse("2020/03/01");
+      var event2Date = event1Date.AddDays(1);
       var notFoundNewsletterDate = DateTime.Parse("2345/12/31");
       const string notFoundSeriesName = "Not-Found Name";
       Session.BeginUpdate();
       try {
         Data.AddLocationsPersisted(1, Session);
-        Data.AddNewslettersPersisted(1, Session);
+        Data.AddNewslettersPersisted(2, Session);
         Data.AddSeriesPersisted(1, Session);
       } finally {
         Session.Commit();
@@ -48,47 +50,52 @@ namespace SoundExplorers.Tests.Controller {
       var validNewsletterDate = validNewsletter.Date;
       var validSeries = Data.Series[0];
       string validSeriesName = validSeries.Name;
+      Assert.IsNotNull(validLocationName, "validLocationName");
+      Assert.IsNotNull(validSeriesName, "validSeriesName");
       Controller = CreateController(typeof(EventList));
       Controller.FetchData(); // Show an empty grid grid
       var editor = new TestEditor<Event, EventBindingItem>(
-        Controller.MainBindingList);
+        Controller.MainBindingList) {EditorController = Controller};
       editor.AddNew(); // Create insertion row
       Controller.OnMainGridRowEnter(0); // Go to insertion row
-      editor[0].Location = validLocationName;
+      editor[0].Date = event1Date;
+      editor.SetComboBoxCellValue(0, "Location", validLocationName);
       // Newsletter
-      var comboBoxCellController =
-        CreateComboBoxCellControllerWithItems("Newsletter");
-      editor[0].Newsletter = notFoundNewsletterDate;
-      comboBoxCellController.OnCellValueChanged(0, notFoundNewsletterDate);
+      editor.SetComboBoxCellValue(0, "Newsletter", notFoundNewsletterDate);
       Assert.AreEqual(1, View.ShowErrorMessageCount,
         "ShowErrorMessageCount after not-found Newsletter pasted");
       Assert.AreEqual("Newsletter not found: '31 Dec 2345'",
         View.LastErrorMessage,
         "LastErrorMessage after not-found Newsletter pasted");
-      editor[0].Newsletter = validNewsletterDate;
-      comboBoxCellController.OnCellValueChanged(0, validNewsletterDate);
+      editor.SetComboBoxCellValue(0, "Newsletter", validNewsletterDate);
       Assert.AreEqual(1, View.ShowErrorMessageCount,
         "ShowErrorMessageCount after valid Newsletter pasted");
       // Series
-      comboBoxCellController =
-        CreateComboBoxCellControllerWithItems("Series");
-      editor[0].Series = notFoundSeriesName;
-      comboBoxCellController.OnCellValueChanged(0, notFoundSeriesName);
+      editor.SetComboBoxCellValue(0, "Series", notFoundSeriesName);
       Assert.AreEqual(2, View.ShowErrorMessageCount,
         "ShowErrorMessageCount after not-found Series pasted");
       Assert.AreEqual("Series not found: 'Not-Found Name'", View.LastErrorMessage,
         "LastErrorMessage after not-found Series pasted");
-      Assert.IsNotNull(validSeriesName, "validSeriesName");
-      editor[0].Series = validSeriesName;
-      comboBoxCellController.OnCellValueChanged(0, validSeriesName);
+      editor.SetComboBoxCellValue(0, "Series", validSeriesName);
       Assert.AreEqual(2, View.ShowErrorMessageCount,
         "ShowErrorMessageCount after valid Series pasted");
       Controller.OnMainGridRowValidated(0);
-      Assert.AreEqual(1, validLocation.Events.Count, "Events.Count");
+      Assert.AreEqual(1, validLocation.Events.Count, "Events.Count after 1st add");
       var event1 = validLocation.Events[0];
-      Assert.AreSame(validLocation, event1.Location, "Location");
-      Assert.AreSame(validNewsletter, event1.Newsletter, "Newsletter");
-      Assert.AreSame(validSeries, event1.Series, "Series");
+      Assert.AreSame(validLocation, event1.Location, "event1.Location");
+      Assert.AreSame(validNewsletter, event1.Newsletter, "event1.Newsletter");
+      Assert.AreSame(validSeries, event1.Series, "event1.Series");
+      editor.AddNew(); // Create insertion row
+      Controller.OnMainGridRowEnter(1); // Go to insertion row
+      editor[1].Date = event2Date;
+      editor.SetComboBoxCellValue(1, "Location", validLocationName);
+      // Test that the user can reset the newsletter date to the special date
+      // that indicated that the event's newsletter is to be unassigned.
+      editor.SetComboBoxCellValue(1, "Newsletter", EntityBase.InitialDate);
+      Controller.OnMainGridRowValidated(1);
+      Assert.AreEqual(2, validLocation.Events.Count, "Events.Count after 2nd add");
+      var event2 = validLocation.Events[1];
+      Assert.IsNull(event2.Newsletter, "event2.Newsletter");
     }
 
     [Test]
@@ -237,15 +244,12 @@ namespace SoundExplorers.Tests.Controller {
       Assert.IsTrue(Controller.DoesColumnReferenceAnotherEntity("Newsletter"),
         "Newsletter DoesColumnReferenceAnotherEntity");
       var editor = new TestEditor<Event, EventBindingItem>(
-        Controller.MainBindingList);
+        Controller.MainBindingList) {EditorController = Controller};
       // Newsletter
-      var comboBoxCellController =
-        CreateComboBoxCellControllerWithItems("Newsletter");
       var selectedNewsletter = Data.Newsletters[0];
       var selectedNewsletterDate = selectedNewsletter.Date;
       Controller.OnMainGridRowEnter(0);
-      editor[0].Newsletter = selectedNewsletterDate;
-      comboBoxCellController.OnCellValueChanged(0, selectedNewsletterDate);
+      editor.SetComboBoxCellValue(0, "Newsletter", selectedNewsletterDate);
       Assert.AreEqual(0, View.ShowErrorMessageCount,
         "ShowErrorMessageCount after valid Newsletter selection");
       Assert.AreEqual(selectedNewsletterDate, editor[0].Newsletter,
@@ -254,12 +258,11 @@ namespace SoundExplorers.Tests.Controller {
         "Newsletter entity after valid Newsletter selection");
       var notFoundDate = DateTime.Parse("2345/12/31");
       Controller.OnMainGridRowEnter(0);
-      var exception = Assert.Catch(()=>editor[0].Newsletter = notFoundDate);
+      var exception = Assert.Catch(
+        ()=>editor.SetComboBoxCellValue(
+          0, "Newsletter", notFoundDate));
       Assert.IsInstanceOf<RowNotInTableException>(exception, 
         "Exception on not-found Newsletter pasted");
-      // OnCellValueChanged only shows parent-not-found messages for insertions.
-      // So it should have no effect here.
-      comboBoxCellController.OnCellValueChanged(0, notFoundDate);
       Assert.AreEqual(0, View.ShowErrorMessageCount,
         "ShowErrorMessageCount after not-found Newsletter pasted but before OnExistingRowCellUpdateError");
       Controller.OnExistingRowCellUpdateError(0, "Newsletter", exception);
@@ -273,14 +276,11 @@ namespace SoundExplorers.Tests.Controller {
       Assert.AreSame(selectedNewsletter, ((Event)Controller.GetMainList()[0]).Newsletter,
         "Newsletter entity after not-found Newsletter pasted");
       // Series
-      comboBoxCellController =
-        CreateComboBoxCellControllerWithItems("Series");
       var selectedSeries = Data.Series[0];
       string selectedSeriesName = selectedSeries.Name;
       Assert.IsNotNull(selectedSeriesName, "selectedSeriesName");
       Controller.OnMainGridRowEnter(0);
-      editor[0].Series = selectedSeriesName;
-      comboBoxCellController.OnCellValueChanged(0, selectedSeriesName);
+      editor.SetComboBoxCellValue(0, "Series", selectedSeriesName);
       Assert.AreEqual(1, View.ShowErrorMessageCount,
         "ShowErrorMessageCount after valid Series selection");
       Assert.AreEqual(selectedSeriesName, editor[0].Series,
@@ -289,12 +289,11 @@ namespace SoundExplorers.Tests.Controller {
         "Series entity after valid Series selection");
       const string notFoundName = "Not-Found Name";
       Controller.OnMainGridRowEnter(0);
-      exception = Assert.Catch(()=>editor[0].Series = notFoundName);
+      exception = Assert.Catch(
+        ()=>editor.SetComboBoxCellValue(
+          0, "Series", notFoundName));
       Assert.IsInstanceOf<RowNotInTableException>(exception, 
         "Exception on not-found Series pasted");
-      // OnCellValueChanged only shows parent-not-found messages for insertions.
-      // So it should have no effect here.
-      comboBoxCellController.OnCellValueChanged(0, notFoundName);
       Assert.AreEqual(1, View.ShowErrorMessageCount,
         "ShowErrorMessageCount after not-found Series pasted but before OnExistingRowCellUpdateError");
       Controller.OnExistingRowCellUpdateError(0, "Series", exception);
@@ -411,16 +410,6 @@ namespace SoundExplorers.Tests.Controller {
       Controller = CreateController(typeof(EventList));
       Controller.ShowWarningMessage("Warning! Warning!");
       Assert.AreEqual(1, View.ShowWarningMessageCount);
-    }
-
-    [NotNull]
-    private ComboBoxCellController CreateComboBoxCellControllerWithItems(
-      [NotNull] string columnName) {
-      var comboBoxCell = new MockView<ComboBoxCellController>();
-      var comboBoxCellController =
-        new ComboBoxCellController(comboBoxCell, Controller, columnName);
-      comboBoxCellController.GetItems();
-      return comboBoxCellController;
     }
 
     [NotNull]

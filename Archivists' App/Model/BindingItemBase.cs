@@ -141,6 +141,11 @@ namespace SoundExplorers.Model {
         : FindParent(property);
     }
 
+    [CanBeNull]
+    internal object GetPropertyValue([NotNull] string propertyName) {
+      return Properties[propertyName].GetValue(this);
+    }
+
     [NotNull]
     internal IList<object> GetPropertyValues() {
       return (
@@ -163,6 +168,15 @@ namespace SoundExplorers.Model {
       [NotNull] PropertyInfo entityProperty, [CanBeNull] object newEntityPropertyValue) {
       try {
         entityProperty.SetValue(entity, newEntityPropertyValue);
+      } catch (TargetInvocationException exception) {
+        throw exception.InnerException ?? exception;
+      }
+    }
+
+    internal void SetPropertyValue([NotNull] string propertyName,
+      [CanBeNull] object value) {
+      try {
+        Properties[propertyName].SetValue(this, value);
       } catch (TargetInvocationException exception) {
         throw exception.InnerException ?? exception;
       }

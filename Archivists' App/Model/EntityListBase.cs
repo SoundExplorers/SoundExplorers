@@ -340,10 +340,9 @@ namespace SoundExplorers.Model {
       BindingItemToFix = null;
       var bindingItem = (TBindingItem)BindingList[rowIndex];
       string propertyName = Columns[columnIndex].Name;
-      var originalValue =
-        BackupBindingItem.Properties[propertyName].GetValue(BackupBindingItem);
+      var originalValue = BackupBindingItem.GetPropertyValue(propertyName);
       //Debug.WriteLine($"    BackupBindingItem.{propertyName} = {originalValue}");
-      bindingItem.Properties[propertyName].SetValue(bindingItem, originalValue);
+      bindingItem.SetPropertyValue(propertyName, originalValue);
     }
 
     [NotNull]
