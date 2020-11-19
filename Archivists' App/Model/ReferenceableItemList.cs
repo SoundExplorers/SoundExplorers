@@ -11,10 +11,14 @@ namespace SoundExplorers.Model {
   ///   for populating a ComboBox for selecting a referenced entity.
   /// </summary>
   public class ReferenceableItemList : List<object> {
+    //private static Newsletter _dummyNewsletter;
+
     public ReferenceableItemList([NotNull] BindingColumn referencingColumn) {
       ReferencingColumn = referencingColumn;
     }
 
+    // private static Newsletter DummyNewsletter =>
+    //   _dummyNewsletter ?? (_dummyNewsletter = new Newsletter());
     private IDictionary<string, IEntity> EntityDictionary { get; set; }
     [NotNull] private BindingColumn ReferencingColumn { get; }
 
@@ -26,10 +30,14 @@ namespace SoundExplorers.Model {
     private static IDictionary<string, IEntity> CreateEntityDictionary(
       // ReSharper disable once SuggestBaseTypeForParameter
       [NotNull] IEntityList entities) {
-      return (
-        from IEntity entity in entities
-        select new KeyValuePair<string, IEntity>(ToSimpleKey(entity), entity)
-      ).ToDictionary(pair => pair.Key, pair => pair.Value);
+      var result = new Dictionary<string, IEntity>();
+      if (entities is NewsletterList) {
+        result.Add(EntityBase.DateToSimpleKey(EntityBase.InitialDate), null);
+      }
+      foreach (IEntity entity in entities) {
+        result.Add(ToSimpleKey(entity), entity);
+      }
+      return result;
     }
 
     [NotNull]
@@ -63,7 +71,7 @@ namespace SoundExplorers.Model {
     ///   Returns the specified simple key formatted as it appears on the grid.
     /// </summary>
     [CanBeNull]
-    private static string Format([NotNull] string simpleKey) {
+    private static string Format([CanBeNull] string simpleKey) {
       return DateTime.TryParse(simpleKey, out var date)
         ? date.ToString(Global.DateFormat)
         : simpleKey;
@@ -72,9 +80,6 @@ namespace SoundExplorers.Model {
     [CanBeNull]
     internal IEntity GetEntity([NotNull] object referencingPropertyValue) {
       string simpleKey = ToSimpleKey(referencingPropertyValue);
-      if (string.IsNullOrWhiteSpace(simpleKey)) {
-        return null;
-      }
       if (ContainsKey(simpleKey)) {
         return EntityDictionary[simpleKey];
       }
@@ -88,7 +93,8 @@ namespace SoundExplorers.Model {
       Clear();
       if (entities is NewsletterList) {
         Add(new KeyValuePair<object, object>(
-          EntityBase.InitialDate.ToString(Global.DateFormat), null));
+          Format(EntityBase.InitialDate.ToString(Global.DateFormat)),
+          null));
       }
       AddRange(
         from IEntity entity in entities

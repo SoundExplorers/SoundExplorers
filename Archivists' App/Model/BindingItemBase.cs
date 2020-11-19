@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
@@ -36,7 +37,7 @@ namespace SoundExplorers.Model {
     private IDictionary<string, PropertyInfo> _entityProperties;
     private IDictionary<string, PropertyInfo> _properties;
 
-    internal BindingColumnList Columns { get; set; }
+    [CanBeNull] internal BindingColumnList Columns { get; set; }
 
     private IDictionary<string, PropertyInfo> EntityProperties =>
       _entityProperties ?? (_entityProperties = CreatePropertyDictionary<TEntity>());
@@ -123,6 +124,9 @@ namespace SoundExplorers.Model {
 
     [CanBeNull]
     private IEntity FindParent([NotNull] PropertyInfo property) {
+      var dummy = Columns ?? throw new NullReferenceException(
+        "In BindingItemBase.FindParent, the binding item's " +
+        "Columns property has not been set.");
       var propertyValue = property.GetValue(this);
       return propertyValue != null
         ? Columns[property.Name].ReferenceableItems.GetEntity(propertyValue)

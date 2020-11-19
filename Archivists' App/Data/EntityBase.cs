@@ -378,7 +378,7 @@ namespace SoundExplorers.Data {
     }
 
     public static string DateToSimpleKey(DateTime date) {
-      return date > InitialDate ? $"{date:yyyy/MM/dd}" : null;
+      return $"{date:yyyy/MM/dd}";
     }
 
     /// <summary>

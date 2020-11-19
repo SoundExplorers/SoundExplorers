@@ -383,6 +383,7 @@ namespace SoundExplorers.Model {
       //Debug.WriteLine("EntityListBase.AddNewEntity");
       LastDatabaseChangeAction = ChangeAction.Insert;
       var bindingItem = (TBindingItem)BindingList[rowIndex];
+      bindingItem.Columns = Columns;
       Session.BeginUpdate();
       try {
         var entity = bindingItem.CreateEntity();

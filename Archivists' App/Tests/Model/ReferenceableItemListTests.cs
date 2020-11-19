@@ -39,6 +39,8 @@ namespace SoundExplorers.Tests.Model {
     public void Newsletters() {
       var items = EventList.Columns["Newsletter"].ReferenceableItems;
       Assert.AreEqual(5,items.Count, "Count");
+      Assert.IsTrue(items.ContainsKey("1900/01/01"), "Contains dummy Newsletter");
+      Assert.IsTrue(items.ContainsKey("2020/01/06"), "Contains real Newsletter");
       var item1 = items[0];
       Assert.IsInstanceOf<KeyValuePair<object, object>>(item1, "item1");
       var pair1 = (KeyValuePair<object, object>)item1;

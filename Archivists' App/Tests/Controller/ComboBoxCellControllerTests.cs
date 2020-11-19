@@ -65,7 +65,8 @@ namespace SoundExplorers.Tests.Controller {
       Assert.AreEqual(2, locationItems.Length, "locationItems.Length");
       CellController = CreateCellController("NewsLetter");
       var newsLetterItems = CellController.GetItems();
-      Assert.AreEqual(3, newsLetterItems.Length, "newsLetterItems.Length");
+      // Includes dummy newsletter
+      Assert.AreEqual(4, newsLetterItems.Length, "newsLetterItems.Length");
     }
 
     [Test]
