@@ -80,16 +80,12 @@ namespace SoundExplorers.View {
     }
 
     public void StartDatabaseUpdateErrorTimer() {
+      Cursor = Cursors.WaitCursor;
       DatabaseUpdateErrorTimer.Start();
     }
 
     public void SetController(EditorController controller) {
       Controller = controller;
-    }
-
-    private void ShowMessage([NotNull] string text, MessageBoxIcon icon) {
-      MessageBox.Show(
-        this, text, Application.ProductName, MessageBoxButtons.OK, icon);
     }
 
     public void Copy() {
@@ -466,7 +462,7 @@ namespace SoundExplorers.View {
     private void MainGridOnCellValueChanged(object sender, DataGridViewCellEventArgs e) {
       if (MainGrid.CurrentCell is ComboBoxCell comboBoxCell) {
         // Debug.WriteLine("MainGridOnCellValueChanged, ComboBoxCell");
-        var cellValue = MainGrid.CurrentCell.Value; 
+        var cellValue = MainGrid.CurrentCell.Value;
         int rowIndex = MainCurrentRow.Index;
         comboBoxCell.Controller.OnCellValueChanged(rowIndex, cellValue);
       }
@@ -564,8 +560,8 @@ namespace SoundExplorers.View {
       Controller.OnMainGridRowEnter(e.RowIndex);
     }
 
-    private void
-      MainGridOnRowsRemoved(object sender, DataGridViewRowsRemovedEventArgs e) {
+    private void MainGridOnRowsRemoved(
+      object sender, DataGridViewRowsRemovedEventArgs e) {
       //Debug.WriteLine("MainGridOnRowsRemoved");
       //Debug.WriteLine(MainGrid.Rows[e.RowIndex].Cells[0].Value);
       Controller.OnMainGridRowRemoved(e.RowIndex);
@@ -730,6 +726,12 @@ namespace SoundExplorers.View {
         FocusedGrid = MainGrid;
       }
       base.Refresh();
+    }
+
+    private void ShowMessage([NotNull] string text, MessageBoxIcon icon) {
+      Cursor = Cursors.Default;
+      MessageBox.Show(
+        this, text, Application.ProductName, MessageBoxButtons.OK, icon);
     }
 
     /// <summary>
