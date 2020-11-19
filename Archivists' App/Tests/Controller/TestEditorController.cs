@@ -8,7 +8,11 @@ using SoundExplorers.Tests.Model;
 using VelocityDb.Session;
 
 namespace SoundExplorers.Tests.Controller {
-  internal class TestEditorController : EditorController {
+  internal class TestEditorController<TEntity, TBindingItem> : EditorController
+    where TEntity : EntityBase, new()
+    where TBindingItem : BindingItemBase<TEntity, TBindingItem>, new() {
+    private TestEditor<TEntity, TBindingItem> _editor;
+
     public TestEditorController([NotNull] IEditorView view, [NotNull] Type mainListType,
       [NotNull] QueryHelper queryHelper, [NotNull] SessionBase session) :
       base(view, mainListType) {
@@ -16,14 +20,26 @@ namespace SoundExplorers.Tests.Controller {
       Session = session;
     }
 
-    private QueryHelper QueryHelper { get; }
-    private SessionBase Session { get; }
+    [NotNull]
+    public TestEditor<TEntity, TBindingItem> Editor {
+      get => _editor ?? throw new NullReferenceException(
+        "TestEditorController.Editor is null");
+      set => _editor = value;
+    }
+
+    [NotNull] private QueryHelper QueryHelper { get; }
+    [NotNull] private SessionBase Session { get; }
 
     protected override ChangeAction LastChangeAction => TestUnsupportedLastChangeAction
       ? ChangeAction.None
       : base.LastChangeAction;
 
     public bool TestUnsupportedLastChangeAction { get; set; }
+
+    public void CreateAndGoToInsertionRow() {
+      Editor.AddNew();
+      OnMainGridRowEnter(Editor.Count - 1);
+    }
 
     protected override IEntityList CreateEntityList(Type type) {
       var result = base.CreateEntityList(type);
@@ -37,6 +53,24 @@ namespace SoundExplorers.Tests.Controller {
 
     public IEntityList GetMainList() {
       return MainList;
+    }
+
+    public void SetComboBoxCellValue(
+      int rowIndex, [NotNull] string columnName, [NotNull] object value) {
+      var comboBoxCellController =
+        CreateComboBoxCellControllerWithItems(columnName);
+      Editor[rowIndex].SetPropertyValue(columnName, value);
+      comboBoxCellController.OnCellValueChanged(0, value);
+    }
+
+    [NotNull]
+    private ComboBoxCellController CreateComboBoxCellControllerWithItems(
+      [NotNull] string columnName) {
+      var comboBoxCell = new MockView<ComboBoxCellController>();
+      var comboBoxCellController =
+        new ComboBoxCellController(comboBoxCell, this, columnName);
+      comboBoxCellController.GetItems();
+      return comboBoxCellController;
     }
   }
 }
