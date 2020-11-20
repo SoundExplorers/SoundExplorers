@@ -153,7 +153,7 @@ namespace SoundExplorers.Data {
     ///   perstistable public property.
     ///   This is null initially and must be set before persistence
     ///   to a parent entity, of type specified by IdentifyingParentType,
-    ///   that already persists.
+    ///   that already exists.
     /// </remarks>
     [CanBeNull]
     public EntityBase IdentifyingParent {
@@ -305,7 +305,7 @@ namespace SoundExplorers.Data {
         throw new PropertyConstraintException(
           $"{EntityType.Name} '{Key}' " +
           $"cannot be added because another {EntityType.Name} "
-          + "with the same key already persists.", SimpleKeyName);
+          + "with the same key already exists.", SimpleKeyName);
       }
     }
 
@@ -489,7 +489,7 @@ namespace SoundExplorers.Data {
       } catch (NullReferenceException ex) {
         throw new InvalidOperationException(
           $"{EntityType.Name} '{SimpleKey}' cannot be updated outside a session " +
-          "because it already persists.", ex);
+          "because it already exists.", ex);
       }
     }
   }

@@ -149,7 +149,7 @@ namespace SoundExplorers.Tests.Model {
       Assert.IsTrue(
         exception.Message.Contains(
           $"cannot be added because another {list.EntityTypeName} "
-          + "with the same key already persists."),
+          + "with the same key already exists."),
         "Message");
       Assert.AreEqual(1, exception.RowIndex, "RowIndex");
       Assert.AreEqual(0, exception.ColumnIndex, "ColumnIndex");
