@@ -1,4 +1,5 @@
-﻿using JetBrains.Annotations;
+﻿using System.Data.Linq;
+using JetBrains.Annotations;
 using SoundExplorers.Model;
 
 namespace SoundExplorers.Controller {
@@ -54,10 +55,16 @@ namespace SoundExplorers.Controller {
       }
       string simpleKey = ReferenceableItemList.ToSimpleKey(cellValue);
       if (Column.ReferenceableItems.ContainsKey(simpleKey)) {
-        return;
+        try {
+          EditorController.CheckForDuplicateKey(rowIndex);
+        } catch (DuplicateKeyException duplicateKeyException) {
+          EditorController.OnInsertionRowDuplicateKey(
+            rowIndex, Column.Name, duplicateKeyException);
+        }
+      } else {
+        EditorController.OnInsertionRowReferencedEntityNotFound(
+          rowIndex, Column.Name, simpleKey);
       }
-      EditorController.OnInsertionRowReferencedEntityNotFound(
-        rowIndex, Column.Name, simpleKey);
     }
   }
 }

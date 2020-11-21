@@ -72,6 +72,7 @@ namespace SoundExplorers.View {
     }
 
     public void ShowErrorMessage(string text) {
+      //MeasureProfiler.SaveData();
       ShowMessage(text, MessageBoxIcon.Error);
     }
 
@@ -488,6 +489,9 @@ namespace SoundExplorers.View {
         // Debug.WriteLine(
         //   "MainGridOnCurrentCellDirtyStateChanged: ComboBoxCell, IsCurrentCellDirty");
         // This fires the cell value changed handler MainGridOnCellValueChanged.
+        // if (!Controller.IsKeyDuplicate(
+        //   MainCurrentRow.Index, MainGrid.CurrentCell.OwningColumn.Name)) {
+        // }
         MainGrid.CommitEdit(DataGridViewDataErrorContexts.CurrentCellChange);
       }
     }

@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using JetBrains.Annotations;
 using VelocityDb.Session;
 
@@ -74,6 +73,8 @@ namespace SoundExplorers.Model {
     [NotNull]
     SessionBase Session { set; }
 
+    void CheckForDuplicateKey(int rowIndex);
+
     /// <summary>
     ///   Deletes the entity at the specified row index
     ///   from the database and removes it from the list.
@@ -97,11 +98,17 @@ namespace SoundExplorers.Model {
     [NotNull]
     IList<object> GetErrorValues();
 
-    void OnFormatException(int rowIndex, [NotNull] string propertyName,
-      [NotNull] FormatException formatException);
+    // void OnDuplicateKeyException(int rowIndex, [NotNull] string propertyName,
+    //   [NotNull] PropertyConstraintException exception);
 
-    void OnReferencedEntityNotFound(int rowIndex, [NotNull] string propertyName,
-      [NotNull] RowNotInTableException referencedEntityNotFoundException);
+    // void OnFormatException(int rowIndex, [NotNull] string propertyName,
+    //   [NotNull] FormatException formatException);
+
+    // void OnReferencedEntityNotFound(int rowIndex, [NotNull] string propertyName,
+    //   [NotNull] RowNotInTableException referencedEntityNotFoundException);
+
+    void OnPropertyValidationError(int rowIndex, [NotNull] string propertyName,
+      [NotNull] Exception exception);
 
     /// <summary>
     ///   This is called when any row has been entered.

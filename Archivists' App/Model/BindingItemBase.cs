@@ -34,17 +34,26 @@ namespace SoundExplorers.Model {
   public abstract class BindingItemBase<TEntity, TBindingItem> : INotifyPropertyChanged
     where TEntity : EntityBase, new()
     where TBindingItem : BindingItemBase<TEntity, TBindingItem>, new() {
+    private BindingColumnList _columns;
     private IDictionary<string, PropertyInfo> _entityProperties;
     private IDictionary<string, PropertyInfo> _properties;
 
-    [CanBeNull] internal BindingColumnList Columns { get; set; }
+    [NotNull]
+    internal BindingColumnList Columns {
+      get => _columns ?? throw new NullReferenceException(
+        "The binding item's Columns property is null.");
+      set => _columns = value;
+    }
+    // var dummy = Columns ?? throw new NullReferenceException(
+    //   "In BindingItemBase.FindParent, the binding item's " +
+    //   "Columns property has not been set.");
 
     private IDictionary<string, PropertyInfo> EntityProperties =>
       _entityProperties ?? (_entityProperties = CreatePropertyDictionary<TEntity>());
 
     private IDictionary<string, object> EntityPropertyValues { get; set; }
 
-    private IDictionary<string, PropertyInfo> Properties =>
+    protected IDictionary<string, PropertyInfo> Properties =>
       _properties ?? (_properties = CreatePropertyDictionary<TBindingItem>());
 
     public event PropertyChangedEventHandler PropertyChanged;
@@ -123,10 +132,7 @@ namespace SoundExplorers.Model {
     }
 
     [CanBeNull]
-    private IEntity FindParent([NotNull] PropertyInfo property) {
-      var dummy = Columns ?? throw new NullReferenceException(
-        "In BindingItemBase.FindParent, the binding item's " +
-        "Columns property has not been set.");
+    protected IEntity FindParent([NotNull] PropertyInfo property) {
       var propertyValue = property.GetValue(this);
       return propertyValue != null
         ? Columns[property.Name].ReferenceableItems.GetEntity(propertyValue)
@@ -139,6 +145,10 @@ namespace SoundExplorers.Model {
       return entityProperty.PropertyType == property.PropertyType
         ? property.GetValue(this)
         : FindParent(property);
+    }
+    
+    internal virtual Key GetKey() {
+      throw new NotSupportedException();
     }
 
     [CanBeNull]
@@ -155,7 +165,7 @@ namespace SoundExplorers.Model {
 
     internal void RestorePropertyValuesFrom([NotNull] TBindingItem backup) {
       foreach (var property in Properties.Values) {
-        property.SetValue(this, property.GetValue(backup));
+        SetPropertyValue(property.Name, backup.GetPropertyValue(property.Name));
       }
     }
 

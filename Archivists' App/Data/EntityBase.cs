@@ -93,7 +93,7 @@ namespace SoundExplorers.Data {
     public static DateTime InitialDate { get; }
 
     private bool IsAddingToOrRemovingFromIdentifyingParent { get; set; }
-    private bool IsTopLevel => Parents.Count == 0;
+    public bool IsTopLevel => Parents.Count == 0;
 
     [NotNull]
     private IDictionary<Type, IRelationInfo> ParentRelations {

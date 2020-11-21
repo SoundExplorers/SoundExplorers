@@ -66,5 +66,10 @@ namespace SoundExplorers.Model {
         OnPropertyChanged(nameof(Notes));
       }
     }
+
+    internal override Key GetKey() {
+      return new Key(EntityBase.DateToSimpleKey(Date),
+        FindParent(Properties[nameof(Location)]));
+    }
   }
 }

@@ -77,9 +77,22 @@ namespace SoundExplorers.Controller {
       _imageSplitterDistanceOption ?? (_imageSplitterDistanceOption =
         new Option($"{MainList?.EntityTypeName}.ImageSplitterDistance"));
 
+    // public bool IsKeyDuplicate(int rowIndex, [NotNull] string columnName) {
+    //   try {
+    //     MainList.CheckForDuplicateKey(rowIndex, columnName);
+    //     return false;
+    //   } catch (PropertyConstraintException exception) {
+    //     MainList.OnDuplicateKeyException(rowIndex, columnName, exception);
+    //     View.StartDatabaseUpdateErrorTimer();
+    //     return true;
+    //   }
+    // }
+
+    private bool IsDuplicateKeyException =>
+      MainList.LastDatabaseUpdateErrorException?.InnerException is DuplicateKeyException;
+
     private bool IsFormatException =>
-      MainList.LastDatabaseUpdateErrorException?.InnerException?.GetType() ==
-      typeof(FormatException);
+      MainList.LastDatabaseUpdateErrorException?.InnerException is FormatException;
 
     /// <summary>
     ///   Gets whether the current main grid row is the insertion row,
@@ -94,8 +107,8 @@ namespace SoundExplorers.Controller {
     public bool IsParentTableToBeShown => ParentList?.BindingList != null;
 
     private bool IsReferencingValueNotFoundException =>
-      MainList.LastDatabaseUpdateErrorException?.InnerException?.GetType() ==
-      typeof(RowNotInTableException);
+      MainList.LastDatabaseUpdateErrorException?.InnerException 
+        is RowNotInTableException;
 
     [CanBeNull] public IBindingList MainBindingList => MainList?.BindingList;
 
@@ -115,6 +128,10 @@ namespace SoundExplorers.Controller {
     private IEntityList ParentList { get; set; }
 
     [NotNull] private IEditorView View { get; }
+
+    public void CheckForDuplicateKey(int rowIndex) {
+      MainList.CheckForDuplicateKey(rowIndex);
+    }
 
     /// <summary>
     ///   Returns whether the specified column references another entity.
@@ -185,7 +202,7 @@ namespace SoundExplorers.Controller {
         // }
         return;
       }
-      if (IsReferencingValueNotFoundException) {
+      if (IsDuplicateKeyException || IsReferencingValueNotFoundException) {
         if (!IsInsertionRowCurrent) {
           MainList.RestoreReferencingPropertyOriginalValue(
             MainList.LastDatabaseUpdateErrorException.RowIndex,
@@ -240,9 +257,14 @@ namespace SoundExplorers.Controller {
           MainList.LastDatabaseUpdateErrorException = databaseUpdateErrorException;
           View.StartDatabaseUpdateErrorTimer();
           break;
+        case DuplicateKeyException duplicateKeyException:
+          MainList.OnPropertyValidationError(rowIndex, columnName, duplicateKeyException);
+          View.StartDatabaseUpdateErrorTimer();
+          break;
         case FormatException formatException:
           // An invalid value was pasted into a cell, e.g. text into a date.
-          MainList.OnFormatException(rowIndex, columnName, formatException);
+          MainList.OnPropertyValidationError(rowIndex, columnName, formatException);
+          //MainList.OnFormatException(rowIndex, columnName, formatException);
           View.StartDatabaseUpdateErrorTimer();
           break;
         case RowNotInTableException referencedEntityNotFoundException:
@@ -255,7 +277,8 @@ namespace SoundExplorers.Controller {
           // If the cell value had been changed
           // by selecting an item on the embedded combo box,
           // it could only be a matching value.
-          MainList.OnReferencedEntityNotFound(rowIndex, columnName, 
+          // MainList.OnReferencedEntityNotFound(rowIndex, columnName, 
+          MainList.OnPropertyValidationError(rowIndex, columnName, 
             referencedEntityNotFoundException);
           View.StartDatabaseUpdateErrorTimer();
           break;
@@ -270,6 +293,13 @@ namespace SoundExplorers.Controller {
           // the stack trace will be shown by the terminal error handler in Program.cs.
           throw exception;
       }
+    }
+    internal void OnInsertionRowDuplicateKey(
+      int rowIndex, [NotNull] string columnName,
+      [NotNull] DuplicateKeyException duplicateKeyException) {
+      MainList.OnPropertyValidationError(
+        rowIndex, columnName, duplicateKeyException);
+      View.StartDatabaseUpdateErrorTimer();
     }
 
     /// <summary>
@@ -289,7 +319,7 @@ namespace SoundExplorers.Controller {
       var referencedEntityNotFoundException =
         ReferenceableItemList.CreateReferencedEntityNotFoundException(
           columnName, simpleKey);
-      MainList.OnReferencedEntityNotFound(
+      MainList.OnPropertyValidationError(
         rowIndex, columnName, referencedEntityNotFoundException);
       View.StartDatabaseUpdateErrorTimer();
     }

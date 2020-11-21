@@ -129,6 +129,12 @@ namespace SoundExplorers.Model {
       set => _session = value;
     }
 
+    public void CheckForDuplicateKey(int rowIndex) {
+      var bindingItem = GetBindingItem(rowIndex);
+      bindingItem.Columns = Columns;
+      CheckForDuplicateKey(bindingItem);
+    }
+
     /// <summary>
     ///   Deletes the entity at the specified row index
     ///   from the database and removes it from the list.
@@ -172,42 +178,73 @@ namespace SoundExplorers.Model {
     public IList<object> GetErrorValues() {
       return ErrorBindingItem.GetPropertyValues();
     }
-
-    /// <summary>
-    ///   Invoked when when invalidly formatted data is pasted into a cell of
-    ///   either the insertion row or existing row, e.g. text into a date,
-    ///   which throws a <see cref="FormatException" />.
-    /// </summary>
-    /// <remarks>
-    ///   A paste format error in the insertion row is the only type of editing error
-    ///   where the error row remains the insertion row.
-    /// </remarks>
-    public void OnFormatException(int rowIndex, string propertyName,
-      FormatException formatException) {
+    public void OnPropertyValidationError(int rowIndex, string propertyName,
+      Exception exception) {
       if (IsInsertionRowCurrent) {
         LastDatabaseChangeAction = ChangeAction.Insert;
         // In this case we are not returning edited cells to their changed values.
         // See the long comment in EditorController.ShowDatabaseUpdateError.
       } else {
         LastDatabaseChangeAction = ChangeAction.Update;
-        ErrorBindingItem = (TBindingItem)BindingList[rowIndex];
+        ErrorBindingItem = GetBindingItem(rowIndex);
       }
-      var message = $"Invalid {propertyName}:\r\n{formatException.Message}";
+      var message = $"Invalid {propertyName}:\r\n{exception.Message}";
       LastDatabaseUpdateErrorException = new DatabaseUpdateErrorException(
         LastDatabaseChangeAction, message, rowIndex, Columns.GetIndex(propertyName),
-        formatException);
+        exception);
     }
 
-    public void OnReferencedEntityNotFound(int rowIndex, string propertyName,
-      RowNotInTableException referencedEntityNotFoundException) {
-      //Debug.WriteLine($"EntityListBase.OnReferencedEntityNotFound: row {rowIndex}");
-      LastDatabaseChangeAction =
-        IsInsertionRowCurrent ? ChangeAction.Insert : ChangeAction.Update;
-      LastDatabaseUpdateErrorException = new DatabaseUpdateErrorException(
-        LastDatabaseChangeAction, referencedEntityNotFoundException.Message, rowIndex, 
-        Columns.GetIndex(propertyName),
-        referencedEntityNotFoundException);
-    }
+    // public void OnDuplicateKeyException(int rowIndex, string propertyName,
+    //   DuplicateKeyException duplicateKeyException) {
+    //   if (IsInsertionRowCurrent) {
+    //     LastDatabaseChangeAction = ChangeAction.Insert;
+    //     // In this case we are not returning edited cells to their changed values.
+    //     // See the long comment in EditorController.ShowDatabaseUpdateError.
+    //   } else {
+    //     LastDatabaseChangeAction = ChangeAction.Update;
+    //     ErrorBindingItem = GetBindingItem(rowIndex);
+    //   }
+    //   LastDatabaseUpdateErrorException = new DatabaseUpdateErrorException(
+    //     LastDatabaseChangeAction, duplicateKeyException.Message, rowIndex, 
+    //     Columns.GetIndex(propertyName),
+    //     duplicateKeyException);
+    // }
+
+    // /// <summary>
+    // ///   Invoked when when invalidly formatted data is pasted into a cell of
+    // ///   either the insertion row or existing row, e.g. text into a date,
+    // ///   which throws a <see cref="FormatException" />.
+    // /// </summary>
+    // /// <remarks>
+    // ///   A paste format error in the insertion row is the only type of editing error
+    // ///   where the error row remains the insertion row.
+    // /// </remarks>
+    // public void OnFormatException(int rowIndex, string propertyName,
+    //   FormatException formatException) {
+    //   if (IsInsertionRowCurrent) {
+    //     LastDatabaseChangeAction = ChangeAction.Insert;
+    //     // In this case we are not returning edited cells to their changed values.
+    //     // See the long comment in EditorController.ShowDatabaseUpdateError.
+    //   } else {
+    //     LastDatabaseChangeAction = ChangeAction.Update;
+    //     ErrorBindingItem = GetBindingItem(rowIndex);
+    //   }
+    //   var message = $"Invalid {propertyName}:\r\n{formatException.Message}";
+    //   LastDatabaseUpdateErrorException = new DatabaseUpdateErrorException(
+    //     LastDatabaseChangeAction, message, rowIndex, Columns.GetIndex(propertyName),
+    //     formatException);
+    // }
+
+    // public void OnReferencedEntityNotFound(int rowIndex, string propertyName,
+    //   RowNotInTableException referencedEntityNotFoundException) {
+    //   //Debug.WriteLine($"EntityListBase.OnReferencedEntityNotFound: row {rowIndex}");
+    //   LastDatabaseChangeAction =
+    //     IsInsertionRowCurrent ? ChangeAction.Insert : ChangeAction.Update;
+    //   LastDatabaseUpdateErrorException = new DatabaseUpdateErrorException(
+    //     LastDatabaseChangeAction, referencedEntityNotFoundException.Message, rowIndex, 
+    //     Columns.GetIndex(propertyName),
+    //     referencedEntityNotFoundException);
+    // }
 
     /// <summary>
     ///   This is called when any row has been entered.
@@ -230,7 +267,7 @@ namespace SoundExplorers.Model {
         // Not forced to reenter row to fix an update error
         //Debug.WriteLine("    Creating BackupBindingItem");
         BackupBindingItem = !IsInsertionRowCurrent
-          ? ((TBindingItem)BindingList[rowIndex]).CreateBackup()
+          ? (GetBindingItem(rowIndex)).CreateBackup()
           : new TBindingItem();
       }
     }
@@ -338,7 +375,7 @@ namespace SoundExplorers.Model {
       //Debug.WriteLine($"EntityListBase.RestoreReferencingPropertyOriginalValue: row {rowIndex}");
       BackupBindingItemToRestoreFrom = null;
       BindingItemToFix = null;
-      var bindingItem = (TBindingItem)BindingList[rowIndex];
+      var bindingItem = GetBindingItem(rowIndex);
       string propertyName = Columns[columnIndex].Name;
       var originalValue = BackupBindingItem.GetPropertyValue(propertyName);
       //Debug.WriteLine($"    BackupBindingItem.{propertyName} = {originalValue}");
@@ -381,7 +418,7 @@ namespace SoundExplorers.Model {
     private void AddNewEntity(int rowIndex) {
       //Debug.WriteLine("EntityListBase.AddNewEntity");
       LastDatabaseChangeAction = ChangeAction.Insert;
-      var bindingItem = (TBindingItem)BindingList[rowIndex];
+      var bindingItem = GetBindingItem(rowIndex);
       bindingItem.Columns = Columns;
       Session.BeginUpdate();
       try {
@@ -418,6 +455,36 @@ namespace SoundExplorers.Model {
           break;
       }
     }
+    private void CheckForDuplicateKey([NotNull] TBindingItem bindingItem) {
+      var newKey = bindingItem.GetKey();
+      var originalKey = BackupBindingItem.GetKey();
+      if (newKey == originalKey) {
+        return;
+      }
+      if ((from entity in this where entity.Key == newKey select entity).Any()) {
+        var message = 
+          $"Another {EntityTypeName} with key '{newKey}' already exists.";
+        throw new DuplicateKeyException(bindingItem, message);
+      }
+    }
+
+    // private void CheckForDuplicateKey(
+    //   [NotNull] TBindingItem bindingItem, string propertyName = null) {
+    //   var newKey = bindingItem.GetKey();
+    //   var originalKey = BackupBindingItem.GetKey();
+    //   if (newKey == originalKey) {
+    //     return;
+    //   }
+    //   if ((from entity in this where entity.Key == newKey select entity).Any()) {
+    //     var message = 
+    //       $"Another {EntityTypeName} with key '{newKey}' already exists.";
+    //     var innerException = new DuplicateKeyException(bindingItem, message);
+    //     if (propertyName != null) {
+    //       throw new PropertyConstraintException(message, propertyName, innerException);
+    //     }
+    //     throw new ConstraintException(message, innerException);
+    //   }
+    // }
 
     [NotNull]
     private DatabaseUpdateErrorException CreateDatabaseUpdateErrorException(
@@ -445,6 +512,10 @@ namespace SoundExplorers.Model {
         select CreateBindingItemWithColumns(entity)
       ).ToList();
       return new BindingList<TBindingItem>(list);
+    }
+
+    [NotNull] private TBindingItem GetBindingItem(int rowIndex) {
+      return (TBindingItem)BindingList[rowIndex];
     }
 
     /// <summary>
@@ -489,16 +560,17 @@ namespace SoundExplorers.Model {
       int rowIndex, [NotNull] string propertyName) {
       //Debug.WriteLine($"EntityListBase.UpdateExistingEntityProperty: row {rowIndex}");
       LastDatabaseChangeAction = ChangeAction.Update;
-      var bindingItem = (TBindingItem)BindingList[rowIndex];
+      var bindingItem = GetBindingItem(rowIndex);
       var entity = this[rowIndex];
-      //Debug.WriteLine($"Backing up {entity}");
+      if (!entity.IsTopLevel) {
+        CheckForDuplicateKey(bindingItem);
+      }
       var backupBindingItem = CreateBindingItemWithColumns(entity);
       Session.BeginUpdate();
       try {
         bindingItem.UpdateEntityProperty(propertyName, entity);
       } catch (Exception exception) {
         BindingItemToFix = bindingItem;
-        //Debug.WriteLine($"    Restoring row {rowIndex}");
         backupBindingItem.RestoreToEntity(entity);
         BackupBindingItemToRestoreFrom = BackupBindingItem;
         // This exception will be passed to the grid's DataError event handler.
