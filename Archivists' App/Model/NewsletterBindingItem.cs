@@ -28,5 +28,9 @@ namespace SoundExplorers.Model {
         OnPropertyChanged(nameof(Url));
       }
     }
+
+    internal override Key GetKey() {
+      return new Key(EntityBase.DateToSimpleKey(Date), null);
+    }
   }
 }

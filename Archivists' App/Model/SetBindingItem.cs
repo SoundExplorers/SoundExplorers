@@ -59,5 +59,9 @@ namespace SoundExplorers.Model {
         OnPropertyChanged(nameof(Notes));
       }
     }
+
+    internal override Key GetKey() {
+      return new Key(Set.SetNoToSimpleKey(SetNo), FindParent(Properties[nameof(Event)]));
+    }
   }
 }

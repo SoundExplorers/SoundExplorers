@@ -44,9 +44,6 @@ namespace SoundExplorers.Model {
         "The binding item's Columns property is null.");
       set => _columns = value;
     }
-    // var dummy = Columns ?? throw new NullReferenceException(
-    //   "In BindingItemBase.FindParent, the binding item's " +
-    //   "Columns property has not been set.");
 
     private IDictionary<string, PropertyInfo> EntityProperties =>
       _entityProperties ?? (_entityProperties = CreatePropertyDictionary<TEntity>());
@@ -146,10 +143,8 @@ namespace SoundExplorers.Model {
         ? property.GetValue(this)
         : FindParent(property);
     }
-    
-    internal virtual Key GetKey() {
-      throw new NotSupportedException();
-    }
+
+    internal abstract Key GetKey();
 
     [CanBeNull]
     internal object GetPropertyValue([NotNull] string propertyName) {

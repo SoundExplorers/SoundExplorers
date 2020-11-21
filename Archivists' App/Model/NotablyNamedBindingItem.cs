@@ -24,5 +24,9 @@ namespace SoundExplorers.Model {
         OnPropertyChanged(nameof(Notes));
       }
     }
+
+    internal override Key GetKey() {
+      return new Key(Name, null);
+    }
   }
 }

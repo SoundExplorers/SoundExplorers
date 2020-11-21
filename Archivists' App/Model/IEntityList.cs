@@ -23,6 +23,8 @@ namespace SoundExplorers.Model {
     BindingColumnList Columns { get; }
 
     [NotNull] string EntityTypeName { get; }
+    
+    //bool HasRowBeenEdited { get; set; }
 
     /// <summary>
     ///   For unknown reason, the grid's RowRemoved event is raised 2 or 3 times
@@ -73,8 +75,6 @@ namespace SoundExplorers.Model {
     [NotNull]
     SessionBase Session { set; }
 
-    void CheckForDuplicateKey(int rowIndex);
-
     /// <summary>
     ///   Deletes the entity at the specified row index
     ///   from the database and removes it from the list.
@@ -98,18 +98,6 @@ namespace SoundExplorers.Model {
     [NotNull]
     IList<object> GetErrorValues();
 
-    // void OnDuplicateKeyException(int rowIndex, [NotNull] string propertyName,
-    //   [NotNull] PropertyConstraintException exception);
-
-    // void OnFormatException(int rowIndex, [NotNull] string propertyName,
-    //   [NotNull] FormatException formatException);
-
-    // void OnReferencedEntityNotFound(int rowIndex, [NotNull] string propertyName,
-    //   [NotNull] RowNotInTableException referencedEntityNotFoundException);
-
-    void OnPropertyValidationError(int rowIndex, [NotNull] string propertyName,
-      [NotNull] Exception exception);
-
     /// <summary>
     ///   This is called when any row has been entered.
     /// </summary>
@@ -128,6 +116,9 @@ namespace SoundExplorers.Model {
     ///   Zero-based row index.
     /// </param>
     void OnRowValidated(int rowIndex);
+
+    void OnValidationError(int rowIndex, [CanBeNull] string propertyName,
+      [NotNull] Exception exception);
 
     /// <summary>
     ///   Populates and sorts the list and table.

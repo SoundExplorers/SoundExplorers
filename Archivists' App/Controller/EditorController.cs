@@ -41,9 +41,7 @@ namespace SoundExplorers.Controller {
     ///   represented by the Entity's field properties.
     /// </summary>
     [NotNull]
-    internal BindingColumnList Columns => MainList?.Columns ??
-                                          throw new NullReferenceException(
-                                            nameof(Columns));
+    internal BindingColumnList Columns => MainList.Columns;
 
     /// <summary>
     ///   User option for the position of the split between the
@@ -56,7 +54,7 @@ namespace SoundExplorers.Controller {
 
     private Option GridSplitterDistanceOption =>
       _gridSplitterDistanceOption ?? (_gridSplitterDistanceOption =
-        CreateOption($"{MainList?.EntityTypeName}.GridSplitterDistance"));
+        CreateOption($"{MainList.EntityTypeName}.GridSplitterDistance"));
 
     protected virtual ChangeAction LastChangeAction =>
       MainList.LastDatabaseUpdateErrorException.ChangeAction;
@@ -75,7 +73,7 @@ namespace SoundExplorers.Controller {
     [ExcludeFromCodeCoverage]
     private Option ImageSplitterDistanceOption =>
       _imageSplitterDistanceOption ?? (_imageSplitterDistanceOption =
-        new Option($"{MainList?.EntityTypeName}.ImageSplitterDistance"));
+        new Option($"{MainList.EntityTypeName}.ImageSplitterDistance"));
 
     // public bool IsKeyDuplicate(int rowIndex, [NotNull] string columnName) {
     //   try {
@@ -110,7 +108,7 @@ namespace SoundExplorers.Controller {
       MainList.LastDatabaseUpdateErrorException?.InnerException 
         is RowNotInTableException;
 
-    [CanBeNull] public IBindingList MainBindingList => MainList?.BindingList;
+    [CanBeNull] public IBindingList MainBindingList => MainList.BindingList;
 
     /// <summary>
     ///   Gets or set the list of entities represented in the main table.
@@ -118,7 +116,7 @@ namespace SoundExplorers.Controller {
     protected IEntityList MainList { get; private set; }
 
     [NotNull] private Type MainListType { get; }
-    [CanBeNull] public string MainTableName => MainList?.EntityTypeName;
+    [CanBeNull] public string MainTableName => MainList.EntityTypeName;
     [CanBeNull] public IBindingList ParentBindingList => ParentList?.BindingList;
 
     /// <summary>
@@ -128,10 +126,6 @@ namespace SoundExplorers.Controller {
     private IEntityList ParentList { get; set; }
 
     [NotNull] private IEditorView View { get; }
-
-    public void CheckForDuplicateKey(int rowIndex) {
-      MainList.CheckForDuplicateKey(rowIndex);
-    }
 
     /// <summary>
     ///   Returns whether the specified column references another entity.
@@ -203,12 +197,12 @@ namespace SoundExplorers.Controller {
         return;
       }
       if (IsDuplicateKeyException || IsReferencingValueNotFoundException) {
-        if (!IsInsertionRowCurrent) {
+        if (LastChangeAction == ChangeAction.Update) {
           MainList.RestoreReferencingPropertyOriginalValue(
             MainList.LastDatabaseUpdateErrorException.RowIndex,
             MainList.LastDatabaseUpdateErrorException.ColumnIndex);
+          return;
         }
-        return;
       }
       switch (LastChangeAction) {
         case ChangeAction.Delete:
@@ -217,6 +211,7 @@ namespace SoundExplorers.Controller {
           MainList.RemoveCurrentBindingItem();
           View.MakeMainGridInsertionRowCurrent();
           RestoreCurrentRowErrorValues();
+          //MainList.HasRowBeenEdited = false;
           MainList.IsFixingNewRow = true;
           break;
         case ChangeAction.Update:
@@ -258,12 +253,12 @@ namespace SoundExplorers.Controller {
           View.StartDatabaseUpdateErrorTimer();
           break;
         case DuplicateKeyException duplicateKeyException:
-          MainList.OnPropertyValidationError(rowIndex, columnName, duplicateKeyException);
+          MainList.OnValidationError(rowIndex, columnName, duplicateKeyException);
           View.StartDatabaseUpdateErrorTimer();
           break;
         case FormatException formatException:
           // An invalid value was pasted into a cell, e.g. text into a date.
-          MainList.OnPropertyValidationError(rowIndex, columnName, formatException);
+          MainList.OnValidationError(rowIndex, columnName, formatException);
           //MainList.OnFormatException(rowIndex, columnName, formatException);
           View.StartDatabaseUpdateErrorTimer();
           break;
@@ -278,7 +273,7 @@ namespace SoundExplorers.Controller {
           // by selecting an item on the embedded combo box,
           // it could only be a matching value.
           // MainList.OnReferencedEntityNotFound(rowIndex, columnName, 
-          MainList.OnPropertyValidationError(rowIndex, columnName, 
+          MainList.OnValidationError(rowIndex, columnName, 
             referencedEntityNotFoundException);
           View.StartDatabaseUpdateErrorTimer();
           break;
@@ -293,13 +288,6 @@ namespace SoundExplorers.Controller {
           // the stack trace will be shown by the terminal error handler in Program.cs.
           throw exception;
       }
-    }
-    internal void OnInsertionRowDuplicateKey(
-      int rowIndex, [NotNull] string columnName,
-      [NotNull] DuplicateKeyException duplicateKeyException) {
-      MainList.OnPropertyValidationError(
-        rowIndex, columnName, duplicateKeyException);
-      View.StartDatabaseUpdateErrorTimer();
     }
 
     /// <summary>
@@ -319,7 +307,7 @@ namespace SoundExplorers.Controller {
       var referencedEntityNotFoundException =
         ReferenceableItemList.CreateReferencedEntityNotFoundException(
           columnName, simpleKey);
-      MainList.OnPropertyValidationError(
+      MainList.OnValidationError(
         rowIndex, columnName, referencedEntityNotFoundException);
       View.StartDatabaseUpdateErrorTimer();
     }
@@ -327,7 +315,7 @@ namespace SoundExplorers.Controller {
     public void OnMainGridRowEnter(int rowIndex) {
       // Debug.WriteLine(
       //   $"{nameof(OnMainGridRowEnter)}:  Any row entered (after ItemAdded if insertion row)");
-      MainList?.OnRowEnter(rowIndex);
+      MainList.OnRowEnter(rowIndex);
     }
 
     /// <summary>
@@ -359,7 +347,7 @@ namespace SoundExplorers.Controller {
       // Debug.WriteLine(
       //   $"{nameof(OnMainGridRowValidated)}:  Any row left, after final ItemChanged, if any");
       try {
-        MainList?.OnRowValidated(rowIndex);
+        MainList.OnRowValidated(rowIndex);
         View.OnRowAddedOrDeleted();
       } catch (DatabaseUpdateErrorException) {
         View.StartDatabaseUpdateErrorTimer();
@@ -372,7 +360,7 @@ namespace SoundExplorers.Controller {
     ///   child entities of the entity at the specified row index.
     /// </summary>
     public void OnParentGridRowEntered(int rowIndex) {
-      MainList?.Populate(ParentList?.GetChildrenForMainList(rowIndex));
+      MainList.Populate(ParentList?.GetChildrenForMainList(rowIndex));
     }
 
     /// <summary>

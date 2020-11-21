@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Windows.Forms;
 using JetBrains.Annotations;
 using SoundExplorers.Controller;
@@ -38,6 +39,7 @@ namespace SoundExplorers.View {
 
     public void FocusMainGridCell(int rowIndex, int columnIndex) {
       // This triggers MainGridOnRowEnter.
+      Debug.WriteLine("EditorView.FocusMainGridCell");
       MainGrid.CurrentCell = MainGrid.Rows[rowIndex].Cells[columnIndex];
     }
 
@@ -48,6 +50,7 @@ namespace SoundExplorers.View {
     /// </remarks>
     public void MakeMainGridInsertionRowCurrent() {
       // This triggers MainGridOnRowEnter.
+      Debug.WriteLine("EditorView.MakeMainGridInsertionRowCurrent.");
       MainGrid.CurrentCell = MainGrid.Rows[MainGrid.Rows.Count - 1].Cells[0];
     }
 
@@ -81,6 +84,7 @@ namespace SoundExplorers.View {
     }
 
     public void StartDatabaseUpdateErrorTimer() {
+      Debug.WriteLine("EditorView.StartDatabaseUpdateErrorTimer");
       Cursor = Cursors.WaitCursor;
       DatabaseUpdateErrorTimer.Start();
     }
@@ -214,8 +218,8 @@ namespace SoundExplorers.View {
     ///   Have to use a Timer in order for focusing the error row and cell to work.
     /// </remarks>
     private void DatabaseUpdateErrorTimerOnTick(object sender, EventArgs e) {
+      Debug.WriteLine("DatabaseUpdateErrorTimerOnTick");
       DatabaseUpdateErrorTimer.Stop();
-      //Debug.WriteLine("DatabaseUpdateErrorTimerOnTick");
       MainGrid.CancelEdit();
       Controller.ShowDatabaseUpdateError();
     }

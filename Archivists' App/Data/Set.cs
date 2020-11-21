@@ -70,10 +70,14 @@ namespace SoundExplorers.Data {
         }
         UpdateNonIndexField();
         _setNo = value;
-        SimpleKey = value.ToString().PadLeft(2, '0');
+        SimpleKey = SetNoToSimpleKey(value);
       }
     }
 
+    public static string SetNoToSimpleKey(int setNo) {
+      return setNo.ToString().PadLeft(2, '0');
+    }
+    
     protected override IDictionary GetChildren(Type childType) {
       return Pieces;
     }
