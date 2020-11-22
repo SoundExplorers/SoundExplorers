@@ -40,7 +40,11 @@ namespace SoundExplorers.View {
     public void FocusMainGridCell(int rowIndex, int columnIndex) {
       // This triggers MainGridOnRowEnter.
       Debug.WriteLine("EditorView.FocusMainGridCell");
-      MainGrid.CurrentCell = MainGrid.Rows[rowIndex].Cells[columnIndex];
+      try {
+        MainGrid.CurrentCell = MainGrid.Rows[rowIndex].Cells[columnIndex];
+      } catch {
+        // Can happen if insertion row is left before error message is shown.
+      }
     }
 
     /// <summary>
