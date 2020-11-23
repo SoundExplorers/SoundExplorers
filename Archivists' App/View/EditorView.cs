@@ -50,12 +50,16 @@ namespace SoundExplorers.View {
     /// <summary>
     ///   Makes the insertion row of the main grid current.
     /// </summary>
-    /// <remarks>
-    /// </remarks>
-    public void MakeMainGridInsertionRowCurrent() {
+    private void MakeMainGridInsertionRowCurrent() {
       // This triggers MainGridOnRowEnter.
       Debug.WriteLine("EditorView.MakeMainGridInsertionRowCurrent.");
-      MainGrid.CurrentCell = MainGrid.Rows[MainGrid.Rows.Count - 1].Cells[0];
+      MakeMainGridRowCurrent(MainGrid.Rows.Count - 1);
+    }
+
+    public void MakeMainGridRowCurrent(int rowIndex) {
+      // This triggers MainGridOnRowEnter.
+      Debug.WriteLine("EditorView.MakeMainGridRowCurrent.");
+      MainGrid.CurrentCell = MainGrid.Rows[rowIndex].Cells[0];
     }
 
     /// <summary>
@@ -87,8 +91,8 @@ namespace SoundExplorers.View {
       ShowMessage(text, MessageBoxIcon.Warning);
     }
 
-    public void StartDatabaseUpdateErrorTimer() {
-      Debug.WriteLine("EditorView.StartDatabaseUpdateErrorTimer");
+    public void StartOnErrorTimer() {
+      Debug.WriteLine("EditorView.StartOnErrorTimer");
       Cursor = Cursors.WaitCursor;
       OnErrorTimer.Start();
     }
@@ -581,12 +585,12 @@ namespace SoundExplorers.View {
     ///   Have to use a Timer in order for focusing the error row and cell to work.
     /// </remarks>
     private void OnErrorTimerOnTick(object sender, EventArgs e) {
-      Debug.WriteLine("OnErrorTimerOnTick");
       OnErrorTimer.Stop();
+      Debug.WriteLine("OnErrorTimerOnTick");
       MainGrid.CancelEdit();
-      Controller.ShowDatabaseUpdateError();
+      Controller.ShowError();
     }
-
+    
     private void OpenTable() {
       InvertGridColors(ParentGrid); // Will revert when focused.
       PopulateGrid();

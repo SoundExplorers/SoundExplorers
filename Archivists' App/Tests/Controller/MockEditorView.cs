@@ -9,7 +9,8 @@ namespace SoundExplorers.Tests.Controller {
     public int FocusMainGridCellRowIndex { get; private set; }
 
     public string LastErrorMessage { get; private set; }
-    public int MakeMainGridInsertionRowCurrentCount { get; private set; }
+    public int MakeMainGridRowCurrentCount { get; private set; }
+    public int MakeMainGridRowCurrentRowIndex { get; private set; }
     public int OnRowAddedOrDeletedCount { get; private set; }
     public int RestoreMainGridCurrentRowCellErrorValueCount { get; private set; }
     public int SelectCurrentRowOnlyCount { get; private set; }
@@ -30,8 +31,9 @@ namespace SoundExplorers.Tests.Controller {
       FocusMainGridCellRowIndex = rowIndex;
     }
 
-    public void MakeMainGridInsertionRowCurrent() {
-      MakeMainGridInsertionRowCurrentCount++;
+    public void MakeMainGridRowCurrent(int rowIndex) {
+      MakeMainGridRowCurrentCount++;
+      MakeMainGridRowCurrentRowIndex = rowIndex;
     }
 
     public void OnRowAddedOrDeleted() {
@@ -56,8 +58,8 @@ namespace SoundExplorers.Tests.Controller {
       ShowWarningMessageCount++;
     }
 
-    public void StartDatabaseUpdateErrorTimer() {
-      Controller.ShowDatabaseUpdateError();
+    public void StartOnErrorTimer() {
+      Controller.ShowError();
     }
   }
 }

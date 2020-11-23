@@ -163,12 +163,12 @@ namespace SoundExplorers.Tests.Controller {
       controller.OnMainGridRowValidated(2);
       Assert.AreEqual(2, View.ShowErrorMessageCount,
         "ShowErrorMessageCount after error message shown for duplicate insert");
-      Assert.AreEqual(1, View.MakeMainGridInsertionRowCurrentCount,
-        "MakeMainGridInsertionRowCurrentCount after error message shown for duplicate insert");
+      Assert.AreEqual(1, View.MakeMainGridRowCurrentCount,
+        "MakeMainGridRowCurrentCount after error message shown for duplicate insert");
       // When the insertion error message was shown,
       // focus was forced back to the error row,
       // now no longer the insertion row,
-      // in EditorController.ShowDatabaseUpdateError.
+      // in EditorController.ShowError.
       // That would raise the EditorView.MainGridOnRowEnter event,
       // which we have to simulate here.
       controller.OnMainGridRowEnter(2);

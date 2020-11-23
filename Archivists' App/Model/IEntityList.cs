@@ -36,18 +36,6 @@ namespace SoundExplorers.Model {
     bool IsDataLoadComplete { get; }
 
     /// <summary>
-    ///   If there's an error on adding a new entity,
-    ///   the data to be fixed will be in a row before the insertion row
-    ///   to allow the user to either fix the error and try the add again
-    ///   or cancel the add.
-    ///   Either way, we temporarily have a grid row that's neither the insertion row
-    ///   not bound to an entity.  So it needs special housekeeping to make
-    ///   sure an entity gets persisted if the error is fixed
-    ///   or the row gets removed from the grid when if the insertion is cancelled.
-    /// </summary>
-    bool IsFixingNewRow { set; }
-
-    /// <summary>
     ///   Gets whether the current grid row is the insertion row,
     ///   which is for adding new entities and is located at the bottom of the grid.
     /// </summary>
@@ -58,6 +46,8 @@ namespace SoundExplorers.Model {
     ///   False (the default) if this is the (updatable) main (and maybe only) list.
     /// </summary>
     bool IsParentList { get; set; }
+
+    bool IsRemovingInvalidInsertionRow { get; set; }
 
     DatabaseUpdateErrorException LastDatabaseUpdateErrorException { get; set; }
 
@@ -137,8 +127,8 @@ namespace SoundExplorers.Model {
     /// </param>
     void Populate(IList list = null, bool createBindingList = true);
 
-    void RemoveCurrentBindingItem();
     void RestoreCurrentBindingItemOriginalValues();
+    void RemoveInsertionBindingItem();
     void RestoreReferencingPropertyOriginalValue(int rowIndex, int columnIndex);
   }
 }

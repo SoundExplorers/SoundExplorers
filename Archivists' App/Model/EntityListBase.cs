@@ -91,18 +91,6 @@ namespace SoundExplorers.Model {
     public bool IsDataLoadComplete { get; private set; }
 
     /// <summary>
-    ///   If there's an error on adding a new entity,
-    ///   the data to be fixed will be in a row before the insertion row
-    ///   to allow the user to either fix the error and try the add again
-    ///   or cancel the add.
-    ///   Either way, we temporarily have a grid row that's neither the insertion row
-    ///   not bound to an entity.  So it needs special housekeeping to make
-    ///   sure an entity gets persisted if the error is fixed
-    ///   or the row gets removed from the grid when if the insertion is cancelled.
-    /// </summary>
-    public bool IsFixingNewRow { get; set; }
-
-    /// <summary>
     ///   Gets whether the current grid row is the insertion row,
     ///   which is for adding new entities and is located at the bottom of the grid.
     /// </summary>
@@ -113,6 +101,8 @@ namespace SoundExplorers.Model {
     ///   False (the default) if this is the (updatable) main (and maybe only) list.
     /// </summary>
     public bool IsParentList { get; set; }
+
+    public bool IsRemovingInvalidInsertionRow { get; set; }
 
     public DatabaseUpdateErrorException LastDatabaseUpdateErrorException { get; set; }
 
@@ -192,7 +182,8 @@ namespace SoundExplorers.Model {
       // Debug.WriteLine(
       //   $"{nameof(OnRowEnter)}:  Any row entered (after ItemAdded if insertion row)");
       HasRowBeenEdited = false;
-      Debug.WriteLine($"EntityListBase.OnRowEnter: HasRowBeenEdited = {HasRowBeenEdited}");
+      Debug.WriteLine(
+        $"EntityListBase.OnRowEnter: HasRowBeenEdited = {HasRowBeenEdited}");
       if (BackupBindingItemToRestoreFrom == null) {
         // Not forced to reenter row to fix an update error
         //Debug.WriteLine("    Creating BackupBindingItem");
@@ -221,28 +212,13 @@ namespace SoundExplorers.Model {
     ///   A database update error occured.
     /// </exception>
     public void OnRowValidated(int rowIndex) {
-      Debug.WriteLine($"EntityListBase.OnRowValidated: HasRowBeenEdited == {HasRowBeenEdited}");
+      Debug.WriteLine(
+        $"EntityListBase.OnRowValidated: HasRowBeenEdited == {HasRowBeenEdited}; IsRemovingInvalidInsertionRow = {IsRemovingInvalidInsertionRow}");
       if (!HasRowBeenEdited) {
         IsInsertionRowCurrent = false;
-        if (IsFixingNewRow) {
-          // When an insertion error message was shown,
-          // focus was forced back to the error row,
-          // now no longer the insertion row,
-          // in EditorController.ShowDatabaseUpdateError.
-          // That raised the EditorView.MainGridOnRowEnter event.
-          // Then the user opted to cancel out of adding the new row
-          // rather than fixing it so that the add would work.
-          // That raised the EditorView.MainRowValidated event
-          // even though nothing has changed.
-          // That got us here.
-          // We need to remove the unwanted new row from the grid.
-          Debug.WriteLine($"  Removing insertion row");
-          BindingList.RemoveAt(rowIndex);
-          IsFixingNewRow = false;
-        }
         return;
       }
-      if (IsInsertionRowCurrent || IsFixingNewRow) {
+      if (IsInsertionRowCurrent) {
         AddNewEntity(rowIndex);
       } else {
         SaveChangesToExistingEntity(rowIndex);
@@ -308,10 +284,11 @@ namespace SoundExplorers.Model {
       BindingList.ListChanged += BindingListOnListChanged;
     }
 
-    public void RemoveCurrentBindingItem() {
-      Debug.WriteLine("EntityListBase.RemoveCurrentBindingItem");
-      BindingList?.Remove(BindingItemToFix);
-      BindingItemToFix = null;
+    public void RemoveInsertionBindingItem() {
+      Debug.WriteLine("EntityListBase.RemoveInsertionBindingItem");
+      IsInsertionRowCurrent = false;
+      IsRemovingInvalidInsertionRow = false;
+      BindingList?.RemoveAt(BindingList.Count - 1);
     }
 
     public void RestoreCurrentBindingItemOriginalValues() {
@@ -321,7 +298,8 @@ namespace SoundExplorers.Model {
       BackupBindingItemToRestoreFrom = null;
       BindingItemToFix = null;
       HasRowBeenEdited = false;
-      Debug.WriteLine($"EntityListBase.RestoreCurrentBindingItemOriginalValues: HasRowBeenEdited = {HasRowBeenEdited}");
+      Debug.WriteLine(
+        $"EntityListBase.RestoreCurrentBindingItemOriginalValues: HasRowBeenEdited = {HasRowBeenEdited}");
     }
 
     public void RestoreReferencingPropertyOriginalValue(int rowIndex, int columnIndex) {
@@ -384,7 +362,7 @@ namespace SoundExplorers.Model {
         var entity = bindingItem.CreateEntity();
         Session.Persist(entity);
         Add(entity);
-        IsFixingNewRow = false;
+        IsRemovingInvalidInsertionRow = false;
       } catch (Exception exception) {
         //Debug.WriteLine(exception);
         ErrorBindingItem = bindingItem;
@@ -403,13 +381,14 @@ namespace SoundExplorers.Model {
           IsInsertionRowCurrent = true;
           break;
         case ListChangedType.ItemChanged: // Cell edit completed 
-          // Debug.WriteLine(
-          //   $"EntityListBase.BindingListOnListChanged: ItemChanged, row {e.NewIndex}");
+          Debug.WriteLine(
+            $"EntityListBase.BindingListOnListChanged: ItemChanged, row {e.NewIndex}");
           // Debug.WriteLine(
           //   $"ListChangedType.ItemChanged:  {e.PropertyDescriptor.Name} = '{e.PropertyDescriptor.GetValue(BindingList[e.NewIndex])}', cell edit completed or cancelled");
           HasRowBeenEdited = true;
-          Debug.WriteLine($"EntityListBase.BindingListOnListChanged: ItemChanged, HasRowBeenEdited = {HasRowBeenEdited}");
-          if (!IsInsertionRowCurrent && !IsFixingNewRow) {
+          Debug.WriteLine(
+            $"EntityListBase.BindingListOnListChanged: ItemChanged, HasRowBeenEdited = {HasRowBeenEdited}");
+          if (!IsInsertionRowCurrent) {
             UpdateExistingEntityProperty(e.NewIndex, e.PropertyDescriptor.Name);
           }
           break;
@@ -429,24 +408,6 @@ namespace SoundExplorers.Model {
         throw new DuplicateKeyException(bindingItem, message);
       }
     }
-
-    // private void CheckForDuplicateKey(
-    //   [NotNull] TBindingItem bindingItem, string propertyName = null) {
-    //   var newKey = bindingItem.GetKey();
-    //   var originalKey = BackupBindingItem.GetKey();
-    //   if (newKey == originalKey) {
-    //     return;
-    //   }
-    //   if ((from entity in this where entity.Key == newKey select entity).Any()) {
-    //     var message = 
-    //       $"Another {EntityTypeName} with key '{newKey}' already exists.";
-    //     var innerException = new DuplicateKeyException(bindingItem, message);
-    //     if (propertyName != null) {
-    //       throw new PropertyConstraintException(message, propertyName, innerException);
-    //     }
-    //     throw new ConstraintException(message, innerException);
-    //   }
-    // }
 
     [NotNull]
     private DatabaseUpdateErrorException CreateDatabaseUpdateErrorException(

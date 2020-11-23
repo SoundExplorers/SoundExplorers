@@ -4,7 +4,7 @@ namespace SoundExplorers.Controller {
   public interface IEditorView : IView<EditorController> {
     void EditMainGridCurrentCell();
     void FocusMainGridCell(int rowIndex, int columnIndex);
-    void MakeMainGridInsertionRowCurrent();
+    void MakeMainGridRowCurrent(int rowIndex);
 
     /// <summary>
     ///   Occurs when an entity corresponding to a row in the main grid
@@ -16,8 +16,8 @@ namespace SoundExplorers.Controller {
       [CanBeNull] object errorValue);
 
     void SelectCurrentRowOnly();
-    void StartDatabaseUpdateErrorTimer();
     void ShowErrorMessage([NotNull] string text);
     void ShowWarningMessage(string text);
+    void StartOnErrorTimer();
   }
 }

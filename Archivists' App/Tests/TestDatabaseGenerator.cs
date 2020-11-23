@@ -8,17 +8,18 @@ using SoundExplorers.Tests.Data;
 namespace SoundExplorers.Tests {
   [TestFixture]
   public class TestDatabaseGenerator {
-    // /// <summary>
-    // ///   Comment out unless the main test database needs to be regenerated.
-    // /// </summary>
-    // /// <remarks>
-    // ///   If the main test database folder already exists,
-    // ///   it will be deleted and recreated from scratch.
-    // /// </remarks>
-    // [Test]
-    // public void GenerateData() {
-    //   Generate();
-    // }
+    private static int DoIt => 1;
+
+    /// <summary>
+    ///   If the main test database folder already exists,
+    ///   it will be deleted and recreated from scratch.
+    /// </summary>
+    [Test]
+    public void GenerateData() {
+      if (DoIt == 1) {
+        Generate();
+      }
+    }
 
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
     [ExcludeFromCodeCoverage]

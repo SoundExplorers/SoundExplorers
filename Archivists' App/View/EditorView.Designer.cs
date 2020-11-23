@@ -25,8 +25,8 @@
         private void InitializeComponent() {
             this.components = new System.ComponentModel.Container();
             this.AfterPopulateTimer = new System.Windows.Forms.Timer(this.components);
-            this.OnErrorTimer = new System.Windows.Forms.Timer(this.components);
             this.FocusTimer = new System.Windows.Forms.Timer(this.components);
+            this.OnErrorTimer = new System.Windows.Forms.Timer(this.components);
             this.ImageSplitContainer = new System.Windows.Forms.SplitContainer();
             this.GridSplitContainer = new System.Windows.Forms.SplitContainer();
             this.ParentGrid = new System.Windows.Forms.DataGridView();
@@ -55,6 +55,11 @@
             // 
             this.FocusTimer.Interval = 1;
             this.FocusTimer.Tick += new System.EventHandler(this.FocusTimerOnTick);
+            // 
+            // OnErrorTimer
+            // 
+            this.OnErrorTimer.Interval = 1;
+            this.OnErrorTimer.Tick += new System.EventHandler(this.OnErrorTimerOnTick);
             // 
             // ImageSplitContainer
             // 
@@ -92,11 +97,6 @@
             this.GridSplitContainer.Size = new System.Drawing.Size(379, 222);
             this.GridSplitContainer.SplitterDistance = 105;
             this.GridSplitContainer.TabIndex = 4;
-            // 
-            // OnErrorTimer
-            // 
-            this.OnErrorTimer.Interval = 1;
-            this.OnErrorTimer.Tick += new System.EventHandler(this.OnErrorTimerOnTick);
             // 
             // ParentGrid
             // 

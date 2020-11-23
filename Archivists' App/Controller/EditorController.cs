@@ -2,6 +2,7 @@ using System;
 using System.ComponentModel;
 using System.Data;
 using System.Data.Linq;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using JetBrains.Annotations;
 using SoundExplorers.Model;
@@ -74,17 +75,6 @@ namespace SoundExplorers.Controller {
     private Option ImageSplitterDistanceOption =>
       _imageSplitterDistanceOption ?? (_imageSplitterDistanceOption =
         new Option($"{MainList.EntityTypeName}.ImageSplitterDistance"));
-
-    // public bool IsKeyDuplicate(int rowIndex, [NotNull] string columnName) {
-    //   try {
-    //     MainList.CheckForDuplicateKey(rowIndex, columnName);
-    //     return false;
-    //   } catch (PropertyConstraintException exception) {
-    //     MainList.OnDuplicateKeyException(rowIndex, columnName, exception);
-    //     View.StartDatabaseUpdateErrorTimer();
-    //     return true;
-    //   }
-    // }
 
     private bool IsDuplicateKeyException =>
       MainList.LastDatabaseUpdateErrorException?.InnerException is DuplicateKeyException;
@@ -162,15 +152,16 @@ namespace SoundExplorers.Controller {
       }
     }
 
-    public void ShowDatabaseUpdateError() {
-      //Debug.WriteLine("EditorController.ShowDatabaseUpdateError");
+    public void ShowError() {
+      Debug.WriteLine(
+        $"EditorController.ShowError: LastChangeAction == {LastChangeAction}");
       View.FocusMainGridCell(MainList.LastDatabaseUpdateErrorException.RowIndex,
         MainList.LastDatabaseUpdateErrorException.ColumnIndex);
       if (LastChangeAction == ChangeAction.Delete) {
         View.SelectCurrentRowOnly();
       }
       View.ShowErrorMessage(MainList.LastDatabaseUpdateErrorException.Message);
-      //Debug.WriteLine("Error message shown");
+      Debug.WriteLine("Error message shown");
       if (IsFormatException) {
         // if (LastChangeAction == ChangeAction.Insert) {
         //   // A FormatException was thrown due to an invalidly formatted paste
@@ -208,11 +199,7 @@ namespace SoundExplorers.Controller {
         case ChangeAction.Delete:
           break;
         case ChangeAction.Insert:
-          MainList.RemoveCurrentBindingItem();
-          View.MakeMainGridInsertionRowCurrent();
-          RestoreCurrentRowErrorValues();
-          //MainList.HasRowBeenEdited = false;
-          MainList.IsFixingNewRow = true;
+          OnInsertErrorAcknowledged();
           break;
         case ChangeAction.Update:
           MainList.RestoreCurrentBindingItemOriginalValues();
@@ -250,17 +237,17 @@ namespace SoundExplorers.Controller {
       switch (exception) {
         case DatabaseUpdateErrorException databaseUpdateErrorException:
           MainList.LastDatabaseUpdateErrorException = databaseUpdateErrorException;
-          View.StartDatabaseUpdateErrorTimer();
+          View.StartOnErrorTimer();
           break;
         case DuplicateKeyException duplicateKeyException:
           MainList.OnValidationError(rowIndex, columnName, duplicateKeyException);
-          View.StartDatabaseUpdateErrorTimer();
+          View.StartOnErrorTimer();
           break;
         case FormatException formatException:
           // An invalid value was pasted into a cell, e.g. text into a date.
           MainList.OnValidationError(rowIndex, columnName, formatException);
           //MainList.OnFormatException(rowIndex, columnName, formatException);
-          View.StartDatabaseUpdateErrorTimer();
+          View.StartOnErrorTimer();
           break;
         case RowNotInTableException referencedEntityNotFoundException:
           // A combo box cell value 
@@ -275,7 +262,7 @@ namespace SoundExplorers.Controller {
           // MainList.OnReferencedEntityNotFound(rowIndex, columnName, 
           MainList.OnValidationError(rowIndex, columnName, 
             referencedEntityNotFoundException);
-          View.StartDatabaseUpdateErrorTimer();
+          View.StartOnErrorTimer();
           break;
         case null:
           // For unknown reason, the way I've got the error handling set up,
@@ -287,6 +274,22 @@ namespace SoundExplorers.Controller {
           // Terminal error.  In the Release compilation,
           // the stack trace will be shown by the terminal error handler in Program.cs.
           throw exception;
+      }
+    }
+
+    private void OnInsertErrorAcknowledged() {
+      Debug.WriteLine("EditorController.OnInsertErrorAcknowledged");
+      int insertionRowIndex = MainList.BindingList.Count - 1;
+      if (insertionRowIndex > 0) {
+        // Currently, it is not anticipated that there can be an insertion row error
+        // at this point 
+        // when the insertion row is the only row on the table,
+        // as the only anticipated error type that should get to this point
+        // is a duplicate key.
+        // Format errors are handled differently and should not get here.
+        MainList.IsRemovingInvalidInsertionRow = true;
+        View.MakeMainGridRowCurrent(insertionRowIndex - 1);
+        MainList.RemoveInsertionBindingItem();
       }
     }
 
@@ -309,7 +312,7 @@ namespace SoundExplorers.Controller {
           columnName, simpleKey);
       MainList.OnValidationError(
         rowIndex, columnName, referencedEntityNotFoundException);
-      View.StartDatabaseUpdateErrorTimer();
+      View.StartOnErrorTimer();
     }
 
     public void OnMainGridRowEnter(int rowIndex) {
@@ -334,7 +337,7 @@ namespace SoundExplorers.Controller {
           MainList.DeleteEntity(rowIndex);
           View.OnRowAddedOrDeleted();
         } catch (DatabaseUpdateErrorException) {
-          View.StartDatabaseUpdateErrorTimer();
+          View.StartOnErrorTimer();
         }
       }
     }
@@ -346,11 +349,14 @@ namespace SoundExplorers.Controller {
     public void OnMainGridRowValidated(int rowIndex) {
       // Debug.WriteLine(
       //   $"{nameof(OnMainGridRowValidated)}:  Any row left, after final ItemChanged, if any");
+      if (MainList.IsRemovingInvalidInsertionRow) {
+        return;
+      }
       try {
         MainList.OnRowValidated(rowIndex);
         View.OnRowAddedOrDeleted();
       } catch (DatabaseUpdateErrorException) {
-        View.StartDatabaseUpdateErrorTimer();
+        View.StartOnErrorTimer();
       }
     }
 
@@ -385,18 +391,6 @@ namespace SoundExplorers.Controller {
     [ExcludeFromCodeCoverage]
     public void PlayVideo() {
       //Process.Start(GetMediumPath(Medium.Video));
-    }
-
-    private void RestoreCurrentRowErrorValues() {
-      var errorValues = MainList.GetErrorValues();
-      for (var i = 0; i < MainList.Columns.Count; i++) {
-        View.FocusMainGridCell(MainList.LastDatabaseUpdateErrorException.RowIndex, i);
-        View.EditMainGridCurrentCell();
-        View.RestoreMainGridCurrentRowCellErrorValue(i, errorValues[i]);
-      }
-      View.FocusMainGridCell(MainList.LastDatabaseUpdateErrorException.RowIndex,
-        MainList.LastDatabaseUpdateErrorException.ColumnIndex);
-      View.EditMainGridCurrentCell();
     }
 
     /// <summary>
