@@ -90,7 +90,7 @@ namespace SoundExplorers.View {
     public void StartDatabaseUpdateErrorTimer() {
       Debug.WriteLine("EditorView.StartDatabaseUpdateErrorTimer");
       Cursor = Cursors.WaitCursor;
-      DatabaseUpdateErrorTimer.Start();
+      OnErrorTimer.Start();
     }
 
     public void SetController(EditorController controller) {
@@ -211,21 +211,6 @@ namespace SoundExplorers.View {
         // the program would crash with a NullReferenceException.
         column.DefaultCellStyle.DataSourceNullValue = string.Empty;
       }
-    }
-
-    /// <summary>
-    ///   Handle's the row error Timer's Tick event.
-    /// </summary>
-    /// <param name="sender">Event sender.</param>
-    /// <param name="e">Event arguments.</param>
-    /// <remarks>
-    ///   Have to use a Timer in order for focusing the error row and cell to work.
-    /// </remarks>
-    private void DatabaseUpdateErrorTimerOnTick(object sender, EventArgs e) {
-      Debug.WriteLine("DatabaseUpdateErrorTimerOnTick");
-      DatabaseUpdateErrorTimer.Stop();
-      MainGrid.CancelEdit();
-      Controller.ShowDatabaseUpdateError();
     }
 
     /// <summary>
@@ -585,6 +570,21 @@ namespace SoundExplorers.View {
         ParentRowChanged = false;
       }
       Controller.OnMainGridRowValidated(e.RowIndex);
+    }
+
+    /// <summary>
+    ///   Handle's the error Timer's Tick event.
+    /// </summary>
+    /// <param name="sender">Event sender.</param>
+    /// <param name="e">Event arguments.</param>
+    /// <remarks>
+    ///   Have to use a Timer in order for focusing the error row and cell to work.
+    /// </remarks>
+    private void OnErrorTimerOnTick(object sender, EventArgs e) {
+      Debug.WriteLine("OnErrorTimerOnTick");
+      OnErrorTimer.Stop();
+      MainGrid.CancelEdit();
+      Controller.ShowDatabaseUpdateError();
     }
 
     private void OpenTable() {
