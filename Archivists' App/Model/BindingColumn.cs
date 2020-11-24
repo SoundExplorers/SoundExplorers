@@ -38,6 +38,8 @@ namespace SoundExplorers.Model {
     /// </summary>
     [CanBeNull]
     public string DisplayName { get; internal set; }
+    
+    public bool IsInKey { get; internal set; }
 
     /// <summary>
     ///   Gets the column's property name.

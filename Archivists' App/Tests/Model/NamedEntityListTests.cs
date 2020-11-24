@@ -60,6 +60,7 @@ namespace SoundExplorers.Tests.Model {
       var editor = new TestEditor<TEntity, NamedBindingItem<TEntity>>(
         list.BindingList);
       var item1 = editor.AddNew();
+      list.OnRowEnter(0);
       item1.Name = name1;
       list.OnRowValidated(0);
       Assert.AreEqual(1, list.Count, "Entity count after 1st add");
@@ -138,6 +139,7 @@ namespace SoundExplorers.Tests.Model {
       var editor = new TestEditor<TEntity, NamedBindingItem<TEntity>>(
         list.BindingList);
       var item1 = editor.AddNew();
+      list.OnRowEnter(0);
       item1.Name = name;
       list.OnRowValidated(0);
       var item2 = editor.AddNew();
@@ -145,15 +147,12 @@ namespace SoundExplorers.Tests.Model {
       var exception = Assert.Catch<DatabaseUpdateErrorException>(
         () => list.OnRowValidated(1),
         "Duplicate name should have thrown DatabaseUpdateErrorException.");
+      Assert.AreEqual("Another EventType with key 'Performance' already exists.",
+        exception.Message, "Message");
       Assert.AreEqual(ChangeAction.Insert, exception.ChangeAction, "ChangeAction");
-      Assert.IsTrue(
-        exception.Message.Contains(
-          $"cannot be added because another {list.EntityTypeName} "
-          + "with the same key already exists."),
-        "Message");
       Assert.AreEqual(1, exception.RowIndex, "RowIndex");
       Assert.AreEqual(0, exception.ColumnIndex, "ColumnIndex");
-      Assert.IsInstanceOf(typeof(PropertyConstraintException), exception.InnerException,
+      Assert.IsInstanceOf(typeof(DuplicateKeyException), exception.InnerException,
         "InnerException");
       Assert.AreSame(exception, list.LastDatabaseUpdateErrorException,
         "LastDatabaseUpdateErrorException");
@@ -174,26 +173,42 @@ namespace SoundExplorers.Tests.Model {
       var editor = new TestEditor<TEntity, NamedBindingItem<TEntity>>(
         list.BindingList);
       var item1 = editor.AddNew();
+      list.OnRowEnter(0);
       item1.Name = name1;
       list.OnRowValidated(0);
       var item2 = editor.AddNew();
+      list.OnRowEnter(1);
       item2.Name = name2;
       list.OnRowValidated(1);
-      var exception = Assert.Catch<DatabaseUpdateErrorException>(
+      var exception = Assert.Catch<DuplicateKeyException>(
         () => item2.Name = name1,
-        "Rename name should have thrown DatabaseUpdateErrorException.");
-      Assert.AreEqual(ChangeAction.Update, exception.ChangeAction, "ChangeAction");
-      Assert.IsTrue(
-        exception.Message.Contains(
-          $"because another {list.EntityTypeName} "
-          + "with that Name already exists."),
-        "Message");
-      Assert.AreEqual(1, exception.RowIndex, "RowIndex");
-      Assert.AreEqual(0, exception.ColumnIndex, "ColumnIndex");
-      Assert.IsInstanceOf(typeof(PropertyConstraintException), exception.InnerException,
+        "Rename name should have thrown DuplicateKeyException.");
+      Assert.AreEqual("Another EventType with key 'Performance' already exists.",
+        exception.Message, "Message");
+      list.OnValidationError(1, "Name", exception);
+      Assert.AreEqual(ChangeAction.Update,
+        list.LastDatabaseUpdateErrorException.ChangeAction, "ChangeAction");
+      Assert.AreEqual(1, list.LastDatabaseUpdateErrorException.RowIndex, "RowIndex");
+      Assert.AreEqual(0, list.LastDatabaseUpdateErrorException.ColumnIndex,
+        "ColumnIndex");
+      Assert.AreSame(exception, list.LastDatabaseUpdateErrorException.InnerException,
         "InnerException");
-      Assert.AreSame(exception, list.LastDatabaseUpdateErrorException,
-        "LastDatabaseUpdateErrorException");
+    }
+
+    [Test]
+    public void IsInsertionRowCurrent() {
+      var list = new GenreList {Session = Session};
+      list.Populate(); // Creates an empty BindingList
+      var editor = new TestEditor<Genre, NamedBindingItem<Genre>>(
+        list.BindingList);
+      Assert.IsFalse(list.IsInsertionRowCurrent, "IsInsertionRowCurrent initially");
+      editor.AddNew();
+      Assert.IsTrue(list.IsInsertionRowCurrent, 
+        "IsInsertionRowCurrent after adding insertion row");
+      list.OnRowEnter(0);
+      list.OnRowValidated(0);
+      Assert.IsFalse(list.IsInsertionRowCurrent, 
+        "IsInsertionRowCurrent after cancelling insertion");
     }
   }
 }

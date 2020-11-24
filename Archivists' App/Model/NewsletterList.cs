@@ -11,7 +11,7 @@ namespace SoundExplorers.Model {
 
     protected override BindingColumnList CreateColumns() {
       return new BindingColumnList {
-        new BindingColumn(nameof(Newsletter.Date)),
+        new BindingColumn(nameof(Newsletter.Date)) {IsInKey = true},
         new BindingColumn(nameof(Newsletter.Url)) {DisplayName = "URL"}
       };
     }

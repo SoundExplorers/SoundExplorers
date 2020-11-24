@@ -47,8 +47,6 @@ namespace SoundExplorers.Model {
     /// </summary>
     bool IsParentList { get; set; }
 
-    bool IsRemovingInvalidInsertionRow { get; set; }
-
     DatabaseUpdateErrorException LastDatabaseUpdateErrorException { get; set; }
 
     /// <summary>

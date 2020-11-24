@@ -32,7 +32,7 @@ namespace SoundExplorers.Model {
       get => _setNo;
       set {
         _setNo = value;
-        OnPropertyChanged(nameof(Genre));
+        OnPropertyChanged(nameof(SetNo));
       }
     }
 

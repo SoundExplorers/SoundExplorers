@@ -21,7 +21,7 @@ namespace SoundExplorers.Model {
 
     protected override BindingColumnList CreateColumns() {
       var result = new BindingColumnList {
-        new BindingColumn(nameof(Set.SetNo)),
+        new BindingColumn(nameof(Set.SetNo)) {IsInKey = true},
         new BindingColumn(nameof(Set.Act),
           typeof(ActList), nameof(Act.Name)),
         new BindingColumn(nameof(Set.Genre),

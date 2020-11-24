@@ -7,8 +7,9 @@ using SoundExplorers.Tests.Data;
 
 namespace SoundExplorers.Tests {
   [TestFixture]
+  [ExcludeFromCodeCoverage]
   public class TestDatabaseGenerator {
-    private static int DoIt => 1;
+    private static int DoIt => 0;
 
     /// <summary>
     ///   If the main test database folder already exists,
@@ -22,7 +23,6 @@ namespace SoundExplorers.Tests {
     }
 
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
-    [ExcludeFromCodeCoverage]
     private static void Generate() {
       var queryHelper = new QueryHelper();
       var data = new TestData(queryHelper);

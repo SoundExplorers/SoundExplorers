@@ -44,6 +44,7 @@ namespace SoundExplorers.Tests.Model {
       List.Populate();
       var editor = new TestEditor<Newsletter, NewsletterBindingItem>(
         List.BindingList);
+      List.OnRowEnter(0);
       editor[0].Date = date;
       editor[0].Url = url;
       var location = List[0];

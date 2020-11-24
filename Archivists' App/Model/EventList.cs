@@ -32,9 +32,9 @@ namespace SoundExplorers.Model {
 
     protected override BindingColumnList CreateColumns() {
       return new BindingColumnList {
-        new BindingColumn(nameof(Event.Date)),
+        new BindingColumn(nameof(Event.Date)) {IsInKey = true},
         new BindingColumn(nameof(Event.Location),
-          typeof(LocationList), nameof(Location.Name)),
+          typeof(LocationList), nameof(Location.Name)) {IsInKey = true},
         new BindingColumn(nameof(Event.Newsletter),
           typeof(NewsletterList), nameof(Newsletter.Date)),
         new BindingColumn(nameof(Event.EventType),

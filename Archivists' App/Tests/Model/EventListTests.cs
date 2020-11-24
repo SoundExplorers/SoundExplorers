@@ -101,6 +101,7 @@ namespace SoundExplorers.Tests.Model {
       List.Populate();
       var editor = new TestEditor<Event, EventBindingItem>(
         List.BindingList);
+      List.OnRowEnter(1);
       editor[1].Date = date;
       editor[1].Location = location.Name;
       editor[1].Newsletter = newsletter.Date;

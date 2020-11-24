@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data;
+using System.Data.Linq;
 using JetBrains.Annotations;
 using NUnit.Framework;
 using SoundExplorers.Data;
@@ -61,7 +62,7 @@ namespace SoundExplorers.Tests.Controller {
       controller.SetComboBoxCellValue(0, "Newsletter", notFoundNewsletterDate);
       Assert.AreEqual(1, View.ShowErrorMessageCount,
         "ShowErrorMessageCount after not-found Newsletter pasted");
-      Assert.AreEqual("Newsletter not found: '31 Dec 2345'",
+      Assert.AreEqual("Invalid Newsletter:\r\nNewsletter not found: '31 Dec 2345'",
         View.LastErrorMessage,
         "LastErrorMessage after not-found Newsletter pasted");
       controller.SetComboBoxCellValue(0, "Newsletter", validNewsletterDate);
@@ -71,7 +72,8 @@ namespace SoundExplorers.Tests.Controller {
       controller.SetComboBoxCellValue(0, "Series", notFoundSeriesName);
       Assert.AreEqual(2, View.ShowErrorMessageCount,
         "ShowErrorMessageCount after not-found Series pasted");
-      Assert.AreEqual("Series not found: 'Not-Found Name'", View.LastErrorMessage,
+      Assert.AreEqual("Invalid Series:\r\nSeries not found: 'Not-Found Name'",
+        View.LastErrorMessage,
         "LastErrorMessage after not-found Series pasted");
       controller.SetComboBoxCellValue(0, "Series", validSeriesName);
       Assert.AreEqual(2, View.ShowErrorMessageCount,
@@ -95,13 +97,34 @@ namespace SoundExplorers.Tests.Controller {
     }
 
     [Test]
+    public void Delete() {
+      Session.BeginUpdate();
+      try {
+        Data.AddLocationsPersisted(3, Session);
+      } finally {
+        Session.Commit();
+      }
+      // The second Location cannot be deleted because it is a parent of 3 child Events.
+      var controller = CreateController<Location, NotablyNamedBindingItem<Location>>(
+        typeof(LocationList));
+      var editor = controller.Editor =
+        new TestEditor<Location, NotablyNamedBindingItem<Location>>();
+      controller.FetchData(); // Populate grid
+      editor.SetBindingList(controller.MainBindingList);
+      controller.CreateAndGoToInsertionRow();
+      controller.OnMainGridRowRemoved(1);
+      Assert.AreEqual(1, View.OnRowAddedOrDeletedCount, "OnRowAddedOrDeletedCount");
+      Assert.AreEqual(2, controller.GetMainList().Count, "MainList.Count");
+    }
+
+    [Test]
     public void Edit() {
       const string name1 = "Auntie";
       const string name2 = "Uncle";
-      var controller = 
+      var controller =
         CreateController<Location, NotablyNamedBindingItem<Location>>(
           typeof(LocationList));
-      var editor = controller.Editor = 
+      var editor = controller.Editor =
         new TestEditor<Location, NotablyNamedBindingItem<Location>>();
       Assert.IsFalse(controller.IsParentTableToBeShown, "IsParentTableToBeShown");
       controller.FetchData(); // The grid will be empty initially
@@ -121,14 +144,12 @@ namespace SoundExplorers.Tests.Controller {
       Assert.AreEqual(2, editor.Count, "editor.Count after FetchData #2");
       controller.OnMainGridRowEnter(1);
       // Disallow rename to duplicate
-      var exception = Assert.Catch<DatabaseUpdateErrorException>(
+      var exception = Assert.Catch<DuplicateKeyException>(
         () => editor[1].Name = name1,
-        "Rename name should have thrown DatabaseUpdateErrorException.");
+        "Rename name should have thrown DuplicateKeyException.");
       Assert.AreEqual(name1, editor[1].Name,
         "Still duplicate name before error message shown for duplicate rename");
       controller.OnExistingRowCellUpdateError(1, "Name", exception);
-      Assert.AreEqual(1, View.EditMainGridCurrentCellCount,
-        "EditMainGridCurrentCellCount after error message shown for duplicate rename");
       Assert.AreEqual(1, View.FocusMainGridCellCount,
         "FocusMainGridCellCount after error message shown for duplicate rename");
       Assert.AreEqual(0, View.FocusMainGridCellColumnIndex,
@@ -137,8 +158,6 @@ namespace SoundExplorers.Tests.Controller {
         "FocusMainGridCellRowIndex after error message shown for duplicate rename");
       Assert.AreEqual(name2, editor[1].Name,
         "Original name restored after error message shown for duplicate rename");
-      Assert.AreEqual(1, View.RestoreMainGridCurrentRowCellErrorValueCount,
-        "RestoreMainGridCurrentRowCellErrorValueCount after error message shown for duplicate rename");
       Assert.AreEqual(1, View.ShowErrorMessageCount,
         "ShowErrorMessageCount after error message shown for duplicate rename");
       // For unknown reason, the the error handling is set up,
@@ -151,7 +170,8 @@ namespace SoundExplorers.Tests.Controller {
         "ShowErrorMessageCount after null error");
       // Check that an exception of an unsupported type is rethrown
       Assert.Throws<InvalidOperationException>(
-        () => controller.OnExistingRowCellUpdateError(1, "Name", new InvalidOperationException()),
+        () => controller.OnExistingRowCellUpdateError(1, "Name",
+          new InvalidOperationException()),
         "Unsupported exception type");
       // Disallow insert with duplicate name
       controller.CreateAndGoToInsertionRow();
@@ -163,35 +183,10 @@ namespace SoundExplorers.Tests.Controller {
       controller.OnMainGridRowValidated(2);
       Assert.AreEqual(2, View.ShowErrorMessageCount,
         "ShowErrorMessageCount after error message shown for duplicate insert");
-      Assert.AreEqual(1, View.MakeMainGridRowCurrentCount,
+      Assert.AreEqual(2, View.MakeMainGridRowCurrentCount,
         "MakeMainGridRowCurrentCount after error message shown for duplicate insert");
-      // When the insertion error message was shown,
-      // focus was forced back to the error row,
-      // now no longer the insertion row,
-      // in EditorController.ShowError.
-      // That would raise the EditorView.MainGridOnRowEnter event,
-      // which we have to simulate here.
-      controller.OnMainGridRowEnter(2);
-      // Then the user opted to cancel out of adding the new row
-      // rather than fixing it so that the add would work.
-      // That would raise the EditorView.MainRowValidated event, 
-      // even though nothing has changed.
-      // We have to simulate that here to test to test
-      // that the unwanted new row would get removed from the grid
-      // (if there was a real grid).
-      controller.OnMainGridRowValidated(2);
-      Assert.AreEqual(3, View.OnRowAddedOrDeletedCount,
-        "OnRowAddedOrDeletedCount after cancel from insert error row");
-      Assert.AreEqual(2, editor.Count,
-        "editor.Count after cancel from insert error row");
-      // Delete the second item
-      controller.OnMainGridRowEnter(1);
-      controller.OnMainGridRowRemoved(1);
-      Assert.AreEqual(4, View.OnRowAddedOrDeletedCount,
-        "OnRowAddedOrDeletedCount after delete");
-      controller.FetchData(); // Refresh grid
-      editor.SetBindingList(controller.MainBindingList);
-      Assert.AreEqual(1, editor.Count, "editor.Count after FetchData #3");
+      Assert.AreEqual(2, View.MakeMainGridRowCurrentRowIndex,
+        "MakeMainGridRowCurrentRowIndex after error message shown for duplicate insert");
     }
 
     [Test]
@@ -207,7 +202,7 @@ namespace SoundExplorers.Tests.Controller {
       // The second Location cannot be deleted because it is a parent of 3 child Events.
       var controller = CreateController<Location, NotablyNamedBindingItem<Location>>(
         typeof(LocationList));
-      var editor = controller.Editor = 
+      var editor = controller.Editor =
         new TestEditor<Location, NotablyNamedBindingItem<Location>>();
       controller.FetchData(); // Populate grid
       editor.SetBindingList(controller.MainBindingList);
@@ -255,16 +250,16 @@ namespace SoundExplorers.Tests.Controller {
       var notFoundDate = DateTime.Parse("2345/12/31");
       controller.OnMainGridRowEnter(0);
       var exception = Assert.Catch(
-        ()=>controller.SetComboBoxCellValue(
+        () => controller.SetComboBoxCellValue(
           0, "Newsletter", notFoundDate));
-      Assert.IsInstanceOf<RowNotInTableException>(exception, 
+      Assert.IsInstanceOf<RowNotInTableException>(exception,
         "Exception on not-found Newsletter pasted");
       Assert.AreEqual(0, View.ShowErrorMessageCount,
         "ShowErrorMessageCount after not-found Newsletter pasted but before OnExistingRowCellUpdateError");
       controller.OnExistingRowCellUpdateError(0, "Newsletter", exception);
       Assert.AreEqual(1, View.ShowErrorMessageCount,
         "ShowErrorMessageCount after not-found Newsletter pasted and after OnExistingRowCellUpdateError");
-      Assert.AreEqual("Newsletter not found: '31 Dec 2345'",
+      Assert.AreEqual("Invalid Newsletter:\r\nNewsletter not found: '31 Dec 2345'",
         View.LastErrorMessage,
         "LastErrorMessage after not-found Newsletter pasted");
       Assert.AreEqual(selectedNewsletterDate, editor[0].Newsletter,
@@ -286,16 +281,17 @@ namespace SoundExplorers.Tests.Controller {
       const string notFoundName = "Not-Found Name";
       controller.OnMainGridRowEnter(0);
       exception = Assert.Catch(
-        ()=>controller.SetComboBoxCellValue(
+        () => controller.SetComboBoxCellValue(
           0, "Series", notFoundName));
-      Assert.IsInstanceOf<RowNotInTableException>(exception, 
+      Assert.IsInstanceOf<RowNotInTableException>(exception,
         "Exception on not-found Series pasted");
       Assert.AreEqual(1, View.ShowErrorMessageCount,
         "ShowErrorMessageCount after not-found Series pasted but before OnExistingRowCellUpdateError");
       controller.OnExistingRowCellUpdateError(0, "Series", exception);
       Assert.AreEqual(2, View.ShowErrorMessageCount,
         "ShowErrorMessageCount after not-found Series pasted and after OnExistingRowCellUpdateError");
-      Assert.AreEqual("Series not found: 'Not-Found Name'", View.LastErrorMessage,
+      Assert.AreEqual("Invalid Series:\r\nSeries not found: 'Not-Found Name'",
+        View.LastErrorMessage,
         "LastErrorMessage after not-found Series pasted");
       Assert.AreEqual(selectedSeriesName, editor[0].Series,
         "Series in editor after not-found Series pasted");
@@ -376,6 +372,7 @@ namespace SoundExplorers.Tests.Controller {
     public void GridSplitterDistance() {
       const int distance = 123;
       var controller = CreateController<Event, EventBindingItem>(typeof(EventList));
+      controller.FetchData();
       controller.GridSplitterDistance = distance;
       Assert.AreEqual(distance, controller.GridSplitterDistance);
     }
@@ -403,6 +400,25 @@ namespace SoundExplorers.Tests.Controller {
     }
 
     [Test]
+    public void NonKeyUpdateError() {
+      Session.BeginUpdate();
+      Data.AddNewslettersPersisted(2, Session);
+      Session.Commit();
+      var controller = CreateController<Newsletter, NewsletterBindingItem>(
+        typeof(NewsletterList));
+      controller.FetchData(); // Populate grid
+      var editor = controller.Editor = new TestEditor<Newsletter, NewsletterBindingItem>(
+        controller.MainBindingList);
+      controller.OnMainGridRowEnter(1);
+      var exception = Assert.Catch<DatabaseUpdateErrorException>(
+        () => editor[1].Url = editor[0].Url,
+        "Rename Url should have thrown DatabaseUpdateErrorException.");
+      controller.OnExistingRowCellUpdateError(1, "Url", exception);
+      Assert.AreEqual(1, View.RestoreMainGridCurrentRowCellErrorValueCount,
+        "RestoreMainGridCurrentRowCellErrorValueCount");
+    }
+
+    [Test]
     public void ShowWarningMessage() {
       var controller = CreateController<Event, EventBindingItem>(typeof(EventList));
       controller.ShowWarningMessage("Warning! Warning!");
@@ -410,8 +426,8 @@ namespace SoundExplorers.Tests.Controller {
     }
 
     [NotNull]
-    private TestEditorController<TEntity, TBindingItem> 
-      CreateController<TEntity, TBindingItem>([NotNull] Type mainListType) 
+    private TestEditorController<TEntity, TBindingItem>
+      CreateController<TEntity, TBindingItem>([NotNull] Type mainListType)
       where TEntity : EntityBase, new()
       where TBindingItem : BindingItemBase<TEntity, TBindingItem>, new() {
       return new TestEditorController<TEntity, TBindingItem>(

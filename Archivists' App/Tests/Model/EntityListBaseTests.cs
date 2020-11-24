@@ -35,6 +35,7 @@ namespace SoundExplorers.Tests.Model {
         new TestEditor<ErrorThrowingEventType, NamedBindingItem<ErrorThrowingEventType>>(
           list.BindingList);
       var item1 = editor.AddNew();
+      list.OnRowEnter(0);
       item1.Name = "Dudley";
       Assert.Throws<InvalidOperationException>(() => list.OnRowValidated(0));
     }
