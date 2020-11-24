@@ -34,6 +34,7 @@ namespace SoundExplorers.Controller {
       [NotNull] Type mainListType) {
       View = view;
       MainListType = mainListType;
+      CurrentRowIndex = -1;
       View.SetController(this);
     }
 
@@ -199,7 +200,7 @@ namespace SoundExplorers.Controller {
         case ChangeAction.Delete:
           break;
         case ChangeAction.Insert:
-          OnInsertErrorAcknowledged();
+          OnInsertionErrorAcknowledged();
           break;
         case ChangeAction.Update:
           MainList.RestoreCurrentBindingItemOriginalValues();
@@ -317,8 +318,8 @@ namespace SoundExplorers.Controller {
     ///     and hopefully robust solution instead.
     ///   </para>
     /// </remarks>
-    private void OnInsertErrorAcknowledged() {
-      Debug.WriteLine("EditorController.OnInsertErrorAcknowledged");
+    private void OnInsertionErrorAcknowledged() {
+      Debug.WriteLine("EditorController.OnInsertionErrorAcknowledged");
       int insertionRowIndex = MainList.BindingList.Count - 1;
       if (insertionRowIndex > 0) {
         // Currently, it is not anticipated that there can be an insertion row error
@@ -356,9 +357,13 @@ namespace SoundExplorers.Controller {
       View.StartOnErrorTimer();
     }
 
-    public void OnMainGridRowEnter(int rowIndex) {
+    protected int CurrentRowIndex { get; private set; }
+
+    public virtual void OnMainGridRowEnter(int rowIndex) {
       // Debug.WriteLine(
-      //   $"{nameof(OnMainGridRowEnter)}:  Any row entered (after ItemAdded if insertion row)");
+      //   "EditorController.OnMainGridRowEnter:  Any row entered (after ItemAdded if insertion row)");
+      Debug.WriteLine($"EditorController.OnMainGridRowEnter: row {rowIndex}");
+      CurrentRowIndex = rowIndex;
       MainList.OnRowEnter(rowIndex);
     }
 
@@ -388,8 +393,10 @@ namespace SoundExplorers.Controller {
     ///   inserts an entity on the database with the table row data.
     /// </summary>
     public void OnMainGridRowValidated(int rowIndex) {
-      // Debug.WriteLine(
-      //   $"{nameof(OnMainGridRowValidated)}:  Any row left, after final ItemChanged, if any");
+      //Debug.WriteLine("EditorController.OnMainGridRowValidated:  Any row left, after final ItemChanged, if any");
+      Debug.WriteLine(
+        $"EditorController.OnMainGridRowValidated: row {rowIndex}, IsRemovingInvalidInsertionRow == {MainList.IsRemovingInvalidInsertionRow}");
+      CurrentRowIndex = -1;
       if (MainList.IsRemovingInvalidInsertionRow) {
         return;
       }

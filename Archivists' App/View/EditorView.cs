@@ -52,13 +52,13 @@ namespace SoundExplorers.View {
     /// </summary>
     private void MakeMainGridInsertionRowCurrent() {
       // This triggers MainGridOnRowEnter.
-      Debug.WriteLine("EditorView.MakeMainGridInsertionRowCurrent.");
+      Debug.WriteLine("EditorView.MakeMainGridInsertionRowCurrent");
       MakeMainGridRowCurrent(MainGrid.Rows.Count - 1);
     }
 
     public void MakeMainGridRowCurrent(int rowIndex) {
       // This triggers MainGridOnRowEnter.
-      Debug.WriteLine("EditorView.MakeMainGridRowCurrent.");
+      Debug.WriteLine($"EditorView.MakeMainGridRowCurrent: row {rowIndex}");
       MainGrid.CurrentCell = MainGrid.Rows[rowIndex].Cells[0];
     }
 

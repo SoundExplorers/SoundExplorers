@@ -27,6 +27,8 @@ namespace SoundExplorers.Tests.Controller {
       set => _editor = value;
     }
 
+    public bool AutoValidate { get; set; }
+
     [NotNull] private QueryHelper QueryHelper { get; }
     [NotNull] private SessionBase Session { get; }
 
@@ -53,6 +55,18 @@ namespace SoundExplorers.Tests.Controller {
 
     public IEntityList GetMainList() {
       return MainList;
+    }
+
+    public override void OnMainGridRowEnter(int rowIndex) {
+      if (AutoValidate) {
+        if (MainList.HasRowBeenEdited) {
+          OnMainGridRowValidated(CurrentRowIndex);
+        }
+        if (rowIndex == MainList.BindingList.Count) { // New row
+          MainList.BindingList.AddNew();
+        }
+      }
+      base.OnMainGridRowEnter(rowIndex);
     }
 
     public void SetComboBoxCellValue(

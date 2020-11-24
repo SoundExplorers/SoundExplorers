@@ -24,7 +24,7 @@ namespace SoundExplorers.Model {
 
     [NotNull] string EntityTypeName { get; }
     
-    //bool HasRowBeenEdited { get; set; }
+    bool HasRowBeenEdited { get; }
 
     /// <summary>
     ///   For unknown reason, the grid's RowRemoved event is raised 2 or 3 times

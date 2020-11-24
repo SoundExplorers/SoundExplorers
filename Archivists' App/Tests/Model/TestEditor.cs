@@ -12,7 +12,7 @@ namespace SoundExplorers.Tests.Model {
       SetBindingList(bindingList);
     }
 
-    private BindingList<TBindingItem> BindingList { get; set; }
+    [CanBeNull] private BindingList<TBindingItem> BindingList { get; set; }
     [NotNull] public TBindingItem this[int index] => BindingList[index];
     public int Count => BindingList.Count;
 
@@ -21,7 +21,8 @@ namespace SoundExplorers.Tests.Model {
     /// </summary>
     [NotNull]
     public TBindingItem AddNew() {
-      return BindingList.AddNew() ?? throw new NullReferenceException();
+      return BindingList?.AddNew() ?? throw new NullReferenceException(
+        "In TestEditor.AddNew, BindingList is null.");
     }
 
     public void SetBindingList(IBindingList bindingList) {

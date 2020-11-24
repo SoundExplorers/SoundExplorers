@@ -118,6 +118,31 @@ namespace SoundExplorers.Tests.Controller {
     }
 
     [Test]
+    public void DisallowAddDuplicateKey() {
+      Session.BeginUpdate();
+      try {
+        Data.AddGenresPersisted(1, Session);
+      } finally {
+        Session.Commit();
+      }
+      var controller =
+        CreateController<Genre, NamedBindingItem<Genre>>(typeof(GenreList));
+      controller.AutoValidate = true;
+      controller.FetchData();
+      var editor = controller.Editor =
+        new TestEditor<Genre, NamedBindingItem<Genre>>(controller.MainBindingList);
+      controller.CreateAndGoToInsertionRow();
+      editor[1].Name = editor[0].Name;
+      controller.OnMainGridRowValidated(1);
+      Assert.AreEqual(1, View.ShowErrorMessageCount,
+        "ShowErrorMessageCount after error message shown for duplicate insert");
+      Assert.AreEqual(2, View.MakeMainGridRowCurrentCount,
+        "MakeMainGridRowCurrentCount after error message shown for duplicate insert");
+      Assert.AreEqual(1, View.MakeMainGridRowCurrentRowIndex,
+        "MakeMainGridRowCurrentRowIndex after error message shown for duplicate insert");
+    }
+
+    [Test]
     public void Edit() {
       const string name1 = "Auntie";
       const string name2 = "Uncle";
@@ -173,20 +198,6 @@ namespace SoundExplorers.Tests.Controller {
         () => controller.OnExistingRowCellUpdateError(1, "Name",
           new InvalidOperationException()),
         "Unsupported exception type");
-      // Disallow insert with duplicate name
-      controller.CreateAndGoToInsertionRow();
-      editor[2].Name = name1;
-      Assert.AreEqual(2, View.OnRowAddedOrDeletedCount,
-        "OnRowAddedOrDeletedCount unchanged after duplicate insert");
-      Assert.AreEqual(3, editor.Count,
-        "editor.Count before error message shown for duplicate insert");
-      controller.OnMainGridRowValidated(2);
-      Assert.AreEqual(2, View.ShowErrorMessageCount,
-        "ShowErrorMessageCount after error message shown for duplicate insert");
-      Assert.AreEqual(2, View.MakeMainGridRowCurrentCount,
-        "MakeMainGridRowCurrentCount after error message shown for duplicate insert");
-      Assert.AreEqual(2, View.MakeMainGridRowCurrentRowIndex,
-        "MakeMainGridRowCurrentRowIndex after error message shown for duplicate insert");
     }
 
     [Test]

@@ -53,7 +53,7 @@ namespace SoundExplorers.Model {
     private TBindingItem BindingItemToFix { get; set; }
     private EntityComparer<TEntity> EntityComparer { get; }
     private TBindingItem ErrorBindingItem { get; set; }
-    private bool HasRowBeenEdited { get; set; }
+    public bool HasRowBeenEdited { get; private set; }
     private ChangeAction LastDatabaseChangeAction { get; set; }
 
     /// <summary>
