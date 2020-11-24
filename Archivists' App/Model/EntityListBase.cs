@@ -102,6 +102,8 @@ namespace SoundExplorers.Model {
     /// </summary>
     public bool IsParentList { get; set; }
 
+    public bool IsRemovingInvalidInsertionRow { get; set; }
+
     public DatabaseUpdateErrorException LastDatabaseUpdateErrorException { get; set; }
 
     /// <summary>
@@ -211,7 +213,7 @@ namespace SoundExplorers.Model {
     /// </exception>
     public void OnRowValidated(int rowIndex) {
       Debug.WriteLine(
-        $"EntityListBase.OnRowValidated: HasRowBeenEdited == {HasRowBeenEdited}");
+        $"EntityListBase.OnRowValidated: HasRowBeenEdited == {HasRowBeenEdited}; IsRemovingInvalidInsertionRow = {IsRemovingInvalidInsertionRow}");
       if (!HasRowBeenEdited) {
         IsInsertionRowCurrent = false;
         return;
@@ -285,6 +287,7 @@ namespace SoundExplorers.Model {
     public void RemoveInsertionBindingItem() {
       Debug.WriteLine("EntityListBase.RemoveInsertionBindingItem");
       IsInsertionRowCurrent = false;
+      IsRemovingInvalidInsertionRow = false;
       BindingList?.RemoveAt(BindingList.Count - 1);
     }
 
@@ -359,6 +362,7 @@ namespace SoundExplorers.Model {
         var entity = bindingItem.CreateEntity();
         Session.Persist(entity);
         Add(entity);
+        IsRemovingInvalidInsertionRow = false;
       } catch (Exception exception) {
         //Debug.WriteLine(exception);
         ErrorBindingItem = bindingItem;

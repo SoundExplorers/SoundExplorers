@@ -327,6 +327,7 @@ namespace SoundExplorers.Controller {
         // as the only anticipated error type that should get to this point
         // is a duplicate key.
         // Format errors are handled differently and should not get here.
+        MainList.IsRemovingInvalidInsertionRow = true;
         View.MakeMainGridRowCurrent(insertionRowIndex - 1);
         MainList.RemoveInsertionBindingItem();
         View.MakeMainGridRowCurrent(insertionRowIndex);
@@ -389,6 +390,9 @@ namespace SoundExplorers.Controller {
     public void OnMainGridRowValidated(int rowIndex) {
       // Debug.WriteLine(
       //   $"{nameof(OnMainGridRowValidated)}:  Any row left, after final ItemChanged, if any");
+      if (MainList.IsRemovingInvalidInsertionRow) {
+        return;
+      }
       try {
         MainList.OnRowValidated(rowIndex);
         View.OnRowAddedOrDeleted();
