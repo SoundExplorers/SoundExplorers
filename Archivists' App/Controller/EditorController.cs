@@ -30,10 +30,14 @@ namespace SoundExplorers.Controller {
     /// <param name="mainListType">
     ///   The type of entity list whose data is to be displayed.
     /// </param>
+    /// <param name="mainController">
+    ///   Controller for the main window.
+    /// </param>
     public EditorController([NotNull] IEditorView view,
-      [NotNull] Type mainListType) {
+      [NotNull] Type mainListType, [NotNull] MainController mainController) {
       View = view;
       MainListType = mainListType;
+      MainController = mainController;
       CurrentRowIndex = -1;
       View.SetController(this);
     }
@@ -77,6 +81,8 @@ namespace SoundExplorers.Controller {
       _imageSplitterDistanceOption ?? (_imageSplitterDistanceOption =
         new Option($"{MainList.EntityTypeName}.ImageSplitterDistance"));
 
+    public bool IsClosing { get; set; }
+
     private bool IsDuplicateKeyException =>
       MainList.LastDatabaseUpdateErrorException?.InnerException is DuplicateKeyException;
 
@@ -100,6 +106,7 @@ namespace SoundExplorers.Controller {
         is RowNotInTableException;
 
     [CanBeNull] public IBindingList MainBindingList => MainList.BindingList;
+    [NotNull] protected MainController MainController { get; }
 
     /// <summary>
     ///   Gets or set the list of entities represented in the main table.
@@ -117,6 +124,7 @@ namespace SoundExplorers.Controller {
     private IEntityList ParentList { get; set; }
 
     [NotNull] private IEditorView View { get; }
+    protected int CurrentRowIndex { get; private set; }
 
     /// <summary>
     ///   Returns whether the specified column references another entity.
@@ -164,28 +172,6 @@ namespace SoundExplorers.Controller {
       View.ShowErrorMessage(MainList.LastDatabaseUpdateErrorException.Message);
       Debug.WriteLine("Error message shown");
       if (IsFormatException) {
-        // if (LastChangeAction == ChangeAction.Insert) {
-        //   // A FormatException was thrown due to an invalidly formatted paste
-        //   // into an insertion row cell, e.g. text into a date cell.
-        //   // This the only type of editing error
-        //   // where the error row remains the insertion row.
-        //   //
-        //   // Unlike other editing error types,
-        //   // including FormatException in an existing row cell,
-        //   // in this case we are not returning edited cells to their changed values.
-        //   //
-        //   // It looks like that would be very tricky in to do in the insertion row.
-        //   // It seems to be impossible to change insertion cell values programatically.
-        //   // Perhaps the insertion row could to be exited and replaced with
-        //   // a new one based on a special binding item pre-populated
-        //   // with the changed values (apart from the property corresponding to the
-        //   // FormatException, which would be impossible).
-        //   // As this should be a rare scenario and the resulting lack of data restoration
-        //   // is not expected to be seen as onerous by users,
-        //   // I'm putting this in the too-hard basket for now.
-        // } else {
-        //   // LastChangeAction == ChangeAction.Update
-        // }
         return;
       }
       if (IsDuplicateKeyException || IsReferencingValueNotFoundException) {
@@ -200,7 +186,7 @@ namespace SoundExplorers.Controller {
         case ChangeAction.Delete:
           break;
         case ChangeAction.Insert:
-          OnInsertionErrorAcknowledged();
+          CancelInsertion();
           break;
         case ChangeAction.Update:
           MainList.RestoreCurrentBindingItemOriginalValues();
@@ -213,6 +199,71 @@ namespace SoundExplorers.Controller {
         default:
           throw new NotSupportedException(
             $"{nameof(ChangeAction)} '{LastChangeAction}' is not supported.");
+      }
+    }
+
+    /// <summary>
+    ///   Invoked when the user clicks OK on an insert error message box.
+    ///   If the insertion row is not the only row,
+    ///   the row above the insertion row is temporarily made current,
+    ///   which allows the insertion row to be removed.
+    ///   The insertion row is then removed,
+    ///   forcing a new empty insertion row to be created.
+    ///   Finally the new empty insertion row is made current.
+    ///   The net effect is that, after the error message has been shown,
+    ///   the insertion row remains current, from the perspective of the user,
+    ///   but all its cells have been blanked out or, where applicable,
+    ///   reverted to default values.
+    /// </summary>
+    /// <remarks>
+    ///   The disadvantage is that the user's work on the insertion row is lost
+    ///   and, if still needed, has to be restarted from scratch.
+    ///   So why is this done?
+    ///   <para>
+    ///     If the insertion row were to be left with the error values,
+    ///     the user would no way of cancelling out of the insertion
+    ///     short of closing the application.
+    ///     And, as the most probable or only error type is a duplicate key,
+    ///     the user would quite likely want to cancel the insertion and
+    ///     edit the existing row with that key instead.
+    ///   </para>
+    ///   <para>
+    ///     There is no way of selectively reverting just the erroneous cell values
+    ///     of an insertion row to blank or default.
+    ///     So I spent an inordinate amount of effort trying to get
+    ///     another option to work.
+    ///     The idea was to convert the insertion row into an 'existing' row
+    ///     without updating the database, resetting just the erroneous cell values
+    ///     to blank or default.
+    ///     While I still think that would be possible,
+    ///     it turned out to add a great deal of complexity
+    ///     just to get it not working reliably.
+    ///     So I gave up and went for this relatively simple
+    ///     and hopefully robust solution instead.
+    ///   </para>
+    ///   <para>
+    ///     If in future we want to allow the insertion row to be re-edited,
+    ///     perhaps the insertion row could to be replaced with
+    ///     a new one based on a special binding item pre-populated
+    ///     with the changed values (apart from the property corresponding to a
+    ///     FormatException, which would be impossible,
+    ///     or a reference not found paste error, which would be pointless).
+    ///   </para>
+    /// </remarks>
+    private void CancelInsertion() {
+      Debug.WriteLine("EditorController.CancelInsertion");
+      int insertionRowIndex = MainList.BindingList.Count - 1;
+      if (insertionRowIndex > 0) {
+        // Currently, it is not anticipated that there can be an insertion row error
+        // at this point 
+        // when the insertion row is the only row on the table,
+        // as the only anticipated error type that should get to this point
+        // is a duplicate key.
+        // Format errors are handled differently and should not get here.
+        MainList.IsRemovingInvalidInsertionRow = true;
+        View.MakeMainGridRowCurrent(insertionRowIndex - 1);
+        MainList.RemoveInsertionBindingItem();
+        View.MakeMainGridRowCurrent(insertionRowIndex);
       }
     }
 
@@ -279,63 +330,6 @@ namespace SoundExplorers.Controller {
     }
 
     /// <summary>
-    ///   Invoked when the user clicks OK on an insert error message box.
-    ///   If the insertion row is not the only row,
-    ///   the row above the insertion row is temporarily made current,
-    ///   which allows the insertion row to be removed.
-    ///   The insertion row is then removed,
-    ///   forcing a new empty insertion row to be created.
-    ///   Finally the new empty insertion row is made current.
-    ///   The net effect is that, after the error message has been shown,
-    ///   the insertion row remains current, from the perspective of the user,
-    ///   but all its cells have been blanked out or, where applicable,
-    ///   reverted to default values.
-    /// </summary>
-    /// <remarks>
-    ///   The disadvantage is that the user's work on the insertion row is lost
-    ///   and, if still needed, has to be restarted from scratch.
-    ///   So why is this done?
-    ///   <para>
-    ///     If the insertion row were to be left with the error values,
-    ///     the user would no way of cancelling out of the insertion
-    ///     short of closing the application.
-    ///     And, as the most probable or only error type is a duplicate key,
-    ///     the user would quite likely want to cancel the insertion and
-    ///     edit the existing row with that key instead.
-    ///   </para>
-    ///   <para>
-    ///     There is no way of selectively reverting just the erroneous cell values
-    ///     of an insertion row to blank or default.
-    ///     So I spent an inordinate amount of effort trying to get
-    ///     another option to work.
-    ///     The idea was to convert the insertion row into an 'existing' row
-    ///     without updating the database, resetting just the erroneous cell values
-    ///     to blank or default.
-    ///     While I still think that would be possible,
-    ///     it turned out to add a great deal of complexity
-    ///     just to get it not working reliably.
-    ///     So I gave up and went for this relatively simple
-    ///     and hopefully robust solution instead.
-    ///   </para>
-    /// </remarks>
-    private void OnInsertionErrorAcknowledged() {
-      Debug.WriteLine("EditorController.OnInsertionErrorAcknowledged");
-      int insertionRowIndex = MainList.BindingList.Count - 1;
-      if (insertionRowIndex > 0) {
-        // Currently, it is not anticipated that there can be an insertion row error
-        // at this point 
-        // when the insertion row is the only row on the table,
-        // as the only anticipated error type that should get to this point
-        // is a duplicate key.
-        // Format errors are handled differently and should not get here.
-        MainList.IsRemovingInvalidInsertionRow = true;
-        View.MakeMainGridRowCurrent(insertionRowIndex - 1);
-        MainList.RemoveInsertionBindingItem();
-        View.MakeMainGridRowCurrent(insertionRowIndex);
-      }
-    }
-
-    /// <summary>
     ///   A combo box cell value on the main grid's insertion row
     ///   does not match any of it's embedded combo box's items.
     ///   So the combo box's selected index and text could not be updated.
@@ -356,8 +350,6 @@ namespace SoundExplorers.Controller {
         rowIndex, columnName, referencedEntityNotFoundException);
       View.StartOnErrorTimer();
     }
-
-    protected int CurrentRowIndex { get; private set; }
 
     public virtual void OnMainGridRowEnter(int rowIndex) {
       // Debug.WriteLine(
@@ -389,15 +381,33 @@ namespace SoundExplorers.Controller {
     }
 
     /// <summary>
+    ///   Handles the main grid's RowValidated event,
+    ///   which is raised when the user exits a row on the grid.
     ///   If the specified table row is new,
     ///   inserts an entity on the database with the table row data.
+    ///   For an existing row, there should be nothing to do,
+    ///   as any edits will have been committed on a cell by cell basis.
     /// </summary>
+    /// <remarks>
+    ///   The RowValidated event is also raised when the editor window or main window
+    ///   is closed.  If the insertion row is being edited when this happens,
+    ///   no insertion to the database will take place.
+    ///   Ao attempt a database insert in this scenario
+    ///   would result in an exception at an unpredictable point,
+    ///   due to the closure process already being underway.
+    ///   Ideally, the user would instead be given the options of
+    ///   committing the insertion or cancelling the close and returning to the editor.
+    ///   But see the XML comments for <see cref="CancelInsertion"/>
+    ///   for the difficulties that would be involved in
+    ///   reopening a 'validated' insertion. 
+    /// </remarks>
     public void OnMainGridRowValidated(int rowIndex) {
       //Debug.WriteLine("EditorController.OnMainGridRowValidated:  Any row left, after final ItemChanged, if any");
       Debug.WriteLine(
         $"EditorController.OnMainGridRowValidated: row {rowIndex}, IsRemovingInvalidInsertionRow == {MainList.IsRemovingInvalidInsertionRow}");
       CurrentRowIndex = -1;
-      if (MainList.IsRemovingInvalidInsertionRow) {
+      if (MainList.IsRemovingInvalidInsertionRow || IsClosing ||
+          MainController.IsClosing) {
         return;
       }
       try {

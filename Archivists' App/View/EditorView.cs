@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using JetBrains.Annotations;
 using SoundExplorers.Controller;
@@ -9,15 +10,15 @@ namespace SoundExplorers.View {
   ///   Table editor MDI child window of the main window.
   /// </summary>
   internal partial class EditorView : Form, IEditorView {
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    private const int WM_CLOSE = 0x0010;
+
     /// <summary>
     ///   Initialises a new instance of the <see cref="EditorView" /> class.
     /// </summary>
     public EditorView() {
       InitializeComponent();
-      // A known Visual Studio error is that PictureBox's AllowDrop property
-      // appears neither in the designer nor in intellisense.
-      // But is does exist and is required in order to 
-      // allow anything to be dropped on to the PictureBox.
+      // Allow things to be dropped on to the PictureBox.
       FittedPictureBox1.AllowDrop = true;
       GridSplitContainer.GotFocus += SplitContainerOnGotFocus;
       ImageSplitContainer.GotFocus += SplitContainerOnGotFocus;
@@ -30,7 +31,6 @@ namespace SoundExplorers.View {
                                               throw new NullReferenceException(
                                                 nameof(MainGrid.CurrentRow));
 
-    private bool ParentRowChanged { get; set; }
     private SizeableFormOptions SizeableFormOptions { get; set; }
 
     public void EditMainGridCurrentCell() {
@@ -62,10 +62,6 @@ namespace SoundExplorers.View {
       MainGrid.CurrentCell = MainGrid.Rows[rowIndex].Cells[0];
     }
 
-    /// <summary>
-    ///   Occurs when an entity corresponding to a row in the main grid
-    ///   has been successfully inserted or deleted on the database.
-    /// </summary>
     public void OnRowAddedOrDeleted() {
       MainGrid.AutoResizeColumns();
       MainGrid.Focus();
@@ -134,9 +130,14 @@ namespace SoundExplorers.View {
     /// <param name="entityListType">
     ///   The type of entity list whose data is to be displayed.
     /// </param>
+    /// <param name="mainController">
+    ///   Controller for the main window.
+    /// </param>
     [NotNull]
-    public static EditorView Create([CanBeNull] Type entityListType) {
-      return (EditorView)ViewFactory.Create<EditorView, EditorController>(entityListType);
+    public static EditorView Create([CanBeNull] Type entityListType, 
+      [NotNull] MainController mainController) {
+      return (EditorView)ViewFactory.Create<EditorView, EditorController>(
+        entityListType, mainController);
       // EditorView result;
       // try {
       //   result = new EditorView();
@@ -570,9 +571,6 @@ namespace SoundExplorers.View {
 
     private void MainGridOnRowValidated(object sender, DataGridViewCellEventArgs e) {
       //Debug.WriteLine("MainGridOnRowValidated");
-      if (ParentRowChanged) {
-        ParentRowChanged = false;
-      }
       Controller.OnMainGridRowValidated(e.RowIndex);
     }
 
@@ -620,7 +618,6 @@ namespace SoundExplorers.View {
     /// <param name="sender">Event sender.</param>
     /// <param name="e">Event arguments.</param>
     private void ParentGridOnRowEnter(object sender, DataGridViewCellEventArgs e) {
-      ParentRowChanged = true;
       Controller.OnParentGridRowEntered(e.RowIndex);
     }
 
@@ -931,6 +928,14 @@ namespace SoundExplorers.View {
           GridSplitContainer.Panel1Collapsed = true;
         }
       }
+    }
+
+    protected override void WndProc(ref Message m) {
+      if (m.Msg == WM_CLOSE) {
+        // Attempting to close Form
+        Controller.IsClosing = true;
+      }
+      base.WndProc(ref m);
     }
   } //End of class
 } //End of namespace

@@ -6,10 +6,6 @@ namespace SoundExplorers.Controller {
     void FocusMainGridCell(int rowIndex, int columnIndex);
     void MakeMainGridRowCurrent(int rowIndex);
 
-    /// <summary>
-    ///   Occurs when an entity corresponding to a row in the main grid
-    ///   has been successfully inserted or deleted on the database.
-    /// </summary>
     void OnRowAddedOrDeleted();
 
     void RestoreMainGridCurrentRowCellErrorValue(int columnIndex,

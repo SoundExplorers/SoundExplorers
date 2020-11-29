@@ -15,7 +15,8 @@ namespace SoundExplorers.Tests.Controller {
 
     public TestEditorController([NotNull] IEditorView view, [NotNull] Type mainListType,
       [NotNull] QueryHelper queryHelper, [NotNull] SessionBase session) :
-      base(view, mainListType) {
+      base(view, mainListType,
+        new TestMainController(new MockView<MainController>(), queryHelper, session)) {
       QueryHelper = queryHelper;
       Session = session;
     }
@@ -28,7 +29,6 @@ namespace SoundExplorers.Tests.Controller {
     }
 
     public bool AutoValidate { get; set; }
-
     [NotNull] private QueryHelper QueryHelper { get; }
     [NotNull] private SessionBase Session { get; }
 
@@ -51,6 +51,10 @@ namespace SoundExplorers.Tests.Controller {
 
     protected override Option CreateOption(string name) {
       return new TestOption(QueryHelper, Session, name);
+    }
+
+    public MainController GetMainController() {
+      return MainController;
     }
 
     public IEntityList GetMainList() {

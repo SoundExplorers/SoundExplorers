@@ -52,7 +52,7 @@ namespace SoundExplorers.Tests.Controller {
       Assert.IsNotNull(validLocationName, "validLocationName");
       Assert.IsNotNull(validSeriesName, "validSeriesName");
       var controller = CreateController<Event, EventBindingItem>(typeof(EventList));
-      controller.FetchData(); // Show an empty grid grid
+      controller.FetchData(); // Show an empty grid
       var editor = controller.Editor = new TestEditor<Event, EventBindingItem>(
         controller.MainBindingList);
       controller.CreateAndGoToInsertionRow();
@@ -94,6 +94,33 @@ namespace SoundExplorers.Tests.Controller {
       Assert.AreEqual(2, validLocation.Events.Count, "Events.Count after 2nd add");
       var event2 = validLocation.Events[1];
       Assert.IsNull(event2.Newsletter, "event2.Newsletter");
+    }
+
+    [Test]
+    public void CancelInsertionIfClosingWindow() {
+      const string name = "Boogie woogie";
+      var controller =
+        CreateController<Genre, NamedBindingItem<Genre>>(typeof(GenreList));
+      var mainController = controller.GetMainController();
+      controller.FetchData(); // Show an empty grid
+      var mainList = controller.GetMainList();
+      var editor = controller.Editor =
+        new TestEditor<Genre, NamedBindingItem<Genre>>(controller.MainBindingList);
+      controller.CreateAndGoToInsertionRow();
+      editor[0].Name = name;
+      controller.IsClosing = true;
+      // Called automatically when editor window is closing
+      controller.OnMainGridRowValidated(0);
+      Assert.AreEqual(0, mainList.Count, "Count on database when editor window closing");
+      controller.IsClosing = false;
+      mainController.IsClosing = true;
+      // Called automatically when main window is closing
+      controller.OnMainGridRowValidated(0); 
+      Assert.AreEqual(0, mainList.Count, "Count on database when main window closing");
+      mainController.IsClosing = false;
+      controller.OnMainGridRowValidated(0);
+      Assert.AreEqual(1, mainList.Count, 
+        "Count on database when a window is not closing");
     }
 
     [Test]

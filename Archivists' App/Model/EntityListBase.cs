@@ -221,7 +221,7 @@ namespace SoundExplorers.Model {
       if (IsInsertionRowCurrent) {
         AddNewEntity(rowIndex);
       } else {
-        SaveChangesToExistingEntity(rowIndex);
+        //SaveChangesToExistingEntity(rowIndex);
       }
     }
 
@@ -453,32 +453,32 @@ namespace SoundExplorers.Model {
       return exception is ConstraintException; // Includes PropertyConstraintException
     }
 
-    /// <summary>
-    ///   Saves changes to an existing entity.
-    /// </summary>
-    /// <remarks>
-    ///   For reasons I don't fully understand,
-    ///   even though the individual property values
-    ///   of the entity have already been updated,
-    ///   including calling UpdateNonIndexField for each property,
-    ///   we still have to call UpdateNonIndexField one more time,
-    ///   now that row validation is complete,
-    ///   in order to save the changes to the database.
-    ///   <para>
-    ///     Because validation by property has already been done,
-    ///     user errors are not expected at this stage.
-    ///   </para>
-    /// </remarks>
-    /// <param name="rowIndex">Zero-based row index</param>
-    private void SaveChangesToExistingEntity(int rowIndex) {
-      var entity = this[rowIndex];
-      Session.BeginUpdate();
-      try {
-        entity.UpdateNonIndexField();
-      } finally {
-        Session.Commit();
-      }
-    }
+    // /// <summary>
+    // ///   Saves changes to an existing entity.
+    // /// </summary>
+    // /// <remarks>
+    // ///   For reasons I don't fully understand,
+    // ///   even though the individual property values
+    // ///   of the entity have already been updated,
+    // ///   including calling UpdateNonIndexField for each property,
+    // ///   we still have to call UpdateNonIndexField one more time,
+    // ///   now that row validation is complete,
+    // ///   in order to save the changes to the database.
+    // ///   <para>
+    // ///     Because validation by property has already been done,
+    // ///     user errors are not expected at this stage.
+    // ///   </para>
+    // /// </remarks>
+    // /// <param name="rowIndex">Zero-based row index</param>
+    // private void SaveChangesToExistingEntity(int rowIndex) {
+    //   var entity = this[rowIndex];
+    //   Session.BeginUpdate();
+    //   try {
+    //     entity.UpdateNonIndexField();
+    //   } finally {
+    //     Session.Commit();
+    //   }
+    // }
 
     private void UpdateExistingEntityProperty(
       int rowIndex, [NotNull] string propertyName) {

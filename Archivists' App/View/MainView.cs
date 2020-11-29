@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows.Forms;
 using JetBrains.Annotations;
@@ -7,6 +8,9 @@ using SoundExplorers.Controller;
 
 namespace SoundExplorers.View {
   public partial class MainView : Form, IView<MainController> {
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    private const int WM_CLOSE = 0x0010;
+
     /// <summary>
     ///   Initialises a new instance of the <see cref="MainView" /> class.
     /// </summary>
@@ -86,7 +90,8 @@ namespace SoundExplorers.View {
 
     [NotNull]
     private EditorView CreateEditorView() {
-      return EditorView.Create(SelectEditorView.Controller.SelectedEntityListType);
+      return EditorView.Create(SelectEditorView.Controller.SelectedEntityListType, 
+        Controller);
     }
 
     private void CutToolStripMenuItem_Click(object sender, EventArgs e) {
@@ -413,6 +418,14 @@ namespace SoundExplorers.View {
 
     private void ToolBarToolStripMenuItem_Click(object sender, EventArgs e) {
       ToolStrip.Visible = ToolBarToolStripMenuItem.Checked;
+    }
+
+    protected override void WndProc(ref Message m) {
+      if (m.Msg == WM_CLOSE) {
+        // Attempting to close Form
+        Controller.IsClosing = true;
+      }
+      base.WndProc(ref m);
     }
   } //End of class
 } //End of namespace

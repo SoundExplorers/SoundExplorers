@@ -23,6 +23,8 @@ namespace SoundExplorers.Controller {
       set => _databaseConnection = value;
     }
 
+    public bool IsClosing { get; set; }
+
     public bool IsStatusBarVisible {
       get => StatusBarOption.BooleanValue;
       set => StatusBarOption.BooleanValue = value;
