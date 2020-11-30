@@ -19,6 +19,8 @@ namespace SoundExplorers.View {
     public EditorView() {
       InitializeComponent();
       // Allow things to be dropped on to the PictureBox.
+      Move += EditorViewOnMove;
+      Resize += EditorViewOnResize;
       FittedPictureBox1.AllowDrop = true;
       GridSplitContainer.GotFocus += SplitContainerOnGotFocus;
       ImageSplitContainer.GotFocus += SplitContainerOnGotFocus;
@@ -888,6 +890,16 @@ namespace SoundExplorers.View {
       // where any exception would be indirectly reported,
       // due to being thrown in the controller's constructor.
       OpenTable();
+    }
+
+    private void EditorViewOnMove(object sender, EventArgs e) {
+      // Stop ghost border lines appearing on main window background.
+      ParentForm?.Refresh();  
+    }
+
+    private void EditorViewOnResize(object sender, EventArgs e) {
+      // Stop ghost border lines appearing on main window background.
+      ParentForm?.Refresh();
     }
 
     private void EditorViewOnVisibleChanged(object sender, EventArgs e) {
