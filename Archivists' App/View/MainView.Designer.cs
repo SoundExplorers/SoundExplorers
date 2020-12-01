@@ -32,16 +32,13 @@ namespace SoundExplorers.View {
             this.FileNewMenuItem = new System.Windows.Forms.MenuItem();
             this.FileOpenMenuItem = new System.Windows.Forms.MenuItem();
             this.FileRefreshMenuItem = new System.Windows.Forms.MenuItem();
-            this.ToolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.FileExitMenuItem = new System.Windows.Forms.MenuItem();
             this.EditMenu = new System.Windows.Forms.MenuItem();
             this.EditUndoMenuItem = new System.Windows.Forms.MenuItem();
             this.EditRedoMenuItem = new System.Windows.Forms.MenuItem();
-            this.ToolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
             this.EditCutMenuItem = new System.Windows.Forms.MenuItem();
             this.EditCopyMenuItem = new System.Windows.Forms.MenuItem();
             this.EditPasteMenuItem = new System.Windows.Forms.MenuItem();
-            this.ToolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
             this.EditSelectAllMenuItem = new System.Windows.Forms.MenuItem();
             this.ViewMenu = new System.Windows.Forms.MenuItem();
             this.ViewToolBarMenuItem = new System.Windows.Forms.MenuItem();
@@ -63,7 +60,6 @@ namespace SoundExplorers.View {
             this.HelpContentsMenuItem = new System.Windows.Forms.MenuItem();
             this.HelpIndexMenuItem = new System.Windows.Forms.MenuItem();
             this.HelpSearchMenuItem = new System.Windows.Forms.MenuItem();
-            this.ToolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
             this.HelpAboutMenuItem = new System.Windows.Forms.MenuItem();
             this.ToolStrip = new System.Windows.Forms.ToolStrip();
             this.NewToolStripButton = new System.Windows.Forms.ToolStripButton();
@@ -126,11 +122,6 @@ namespace SoundExplorers.View {
             this.FileRefreshMenuItem.Text = "&Refresh Table";
             this.FileRefreshMenuItem.Click += new System.EventHandler(this.FileRefreshMenuItem_Click);
             // 
-            // ToolStripSeparator3
-            // 
-            this.ToolStripSeparator3.Name = "ToolStripSeparator3";
-            this.ToolStripSeparator3.Size = new System.Drawing.Size(204, 6);
-            // 
             // FileExitMenuItem
             // 
             this.FileExitMenuItem.Name = "FileExitMenuItem";
@@ -163,11 +154,6 @@ namespace SoundExplorers.View {
             this.EditRedoMenuItem.Shortcut = Shortcut.CtrlY;
             this.EditRedoMenuItem.Text = "&Redo";
             // 
-            // ToolStripSeparator6
-            // 
-            this.ToolStripSeparator6.Name = "ToolStripSeparator6";
-            this.ToolStripSeparator6.Size = new System.Drawing.Size(161, 6);
-            // 
             // EditCutMenuItem
             // 
             this.EditCutMenuItem.Name = "EditCutMenuItem";
@@ -188,11 +174,6 @@ namespace SoundExplorers.View {
             this.EditPasteMenuItem.Shortcut = Shortcut.CtrlV;
             this.EditPasteMenuItem.Text = "&Paste";
             this.EditPasteMenuItem.Click += new System.EventHandler(this.EditPasteMenuItem_Click);
-            // 
-            // ToolStripSeparator7
-            // 
-            this.ToolStripSeparator7.Name = "ToolStripSeparator7";
-            this.ToolStripSeparator7.Size = new System.Drawing.Size(161, 6);
             // 
             // EditSelectAllMenuItem
             // 
@@ -335,11 +316,6 @@ namespace SoundExplorers.View {
             // 
             this.HelpSearchMenuItem.Name = "HelpSearchMenuItem";
             this.HelpSearchMenuItem.Text = "&Search";
-            // 
-            // ToolStripSeparator8
-            // 
-            this.ToolStripSeparator8.Name = "ToolStripSeparator8";
-            this.ToolStripSeparator8.Size = new System.Drawing.Size(165, 6);
             // 
             // HelpAboutMenuItem
             // 
@@ -536,10 +512,6 @@ namespace SoundExplorers.View {
         private System.Windows.Forms.MainMenu MainMenu;
         private System.Windows.Forms.ToolStrip ToolStrip;
         public System.Windows.Forms.StatusStrip StatusStrip;
-        private System.Windows.Forms.ToolStripSeparator ToolStripSeparator3;
-        private System.Windows.Forms.ToolStripSeparator ToolStripSeparator6;
-        private System.Windows.Forms.ToolStripSeparator ToolStripSeparator7;
-        private System.Windows.Forms.ToolStripSeparator ToolStripSeparator8;
         private System.Windows.Forms.MenuItem FileMenu;
         private System.Windows.Forms.MenuItem FileNewMenuItem;
         private System.Windows.Forms.MenuItem FileOpenMenuItem;
