@@ -362,12 +362,12 @@ namespace SoundExplorers.Controller {
     /// <summary>
     ///   Deletes the entity at the specified row index
     ///   from the database and removes it from the list.
-    ///   TODO Allow for multiple rows removed
     /// </summary>
-    public void OnMainGridRowsRemoved(int rowIndex) {
+    public void OnMainGridRowRemoved(int rowIndex) {
+      //Debug.WriteLine("EditorController.OnMainGridRowRemoved");
       // Debug.WriteLine(
-      //   $"{nameof(OnMainGridRowsRemoved)}:  2 or 3 times on opening a table before 1st ItemAdded (insertion row entered); existing row removed");
-      // For unknown reason, the grid's RowRemoved event is raised 2 or 3 times
+      //   $"{nameof(OnMainGridRowRemoved)}:  2 or 3 times on opening a table before 1st ItemAdded (insertion row entered); existing row removed");
+      // For unknown reason, the grid's RowsRemoved event is raised 2 or 3 times
       // while data is being loaded into the grid.
       // Also, the grid row might have been removed because of an insertion error,
       // in which case the entity will not have been persisted (rowIndex == Count).

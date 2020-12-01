@@ -401,7 +401,9 @@ namespace SoundExplorers.Model {
       if (newKey == originalKey) {
         return;
       }
-      // TODO Entity list could be a sorted list. Would duplicate check be faster?
+      // Entity list could be a sorted list. Duplicate check might be faster.
+      // But it would be a big job to do and I don't think there will be
+      // a performance problem.
       if ((from entity in this where entity.Key == newKey select entity).Any()) {
         var message =
           $"Another {EntityTypeName} with key '{newKey}' already exists.";

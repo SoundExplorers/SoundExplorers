@@ -564,11 +564,20 @@ namespace SoundExplorers.View {
       Controller.OnMainGridRowEnter(e.RowIndex);
     }
 
+    /// <summary>
+    ///   Handles the main grid's RowsRemoved event, which is
+    ///   actually raised once for each row removed,
+    ///   even when multiple selected rows are removed at once. 
+    /// </summary>
+    /// <remarks>
+    ///   For unknown reason, the RowsRemoved event is raised 2 or 3 times
+    ///   while data is being loaded into the grid.
+    /// </remarks>
     private void MainGrid_RowsRemoved(
       object sender, DataGridViewRowsRemovedEventArgs e) {
-      //Debug.WriteLine("MainGrid_RowsRemoved");
+      // Debug.WriteLine("MainGrid_RowsRemoved");
       //Debug.WriteLine(MainGrid.Rows[e.RowIndex].Cells[0].Value);
-      Controller.OnMainGridRowsRemoved(e.RowIndex);
+      Controller.OnMainGridRowRemoved(e.RowIndex);
     }
 
     private void MainGrid_RowValidated(object sender, DataGridViewCellEventArgs e) {

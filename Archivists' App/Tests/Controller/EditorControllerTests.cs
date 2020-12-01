@@ -139,7 +139,7 @@ namespace SoundExplorers.Tests.Controller {
       controller.FetchData(); // Populate grid
       editor.SetBindingList(controller.MainBindingList);
       controller.CreateAndGoToInsertionRow();
-      controller.OnMainGridRowsRemoved(1);
+      controller.OnMainGridRowRemoved(1);
       Assert.AreEqual(1, View.OnRowAddedOrDeletedCount, "OnRowAddedOrDeletedCount");
       Assert.AreEqual(2, controller.GetMainList().Count, "MainList.Count");
     }
@@ -245,14 +245,14 @@ namespace SoundExplorers.Tests.Controller {
       controller.FetchData(); // Populate grid
       editor.SetBindingList(controller.MainBindingList);
       controller.CreateAndGoToInsertionRow();
-      controller.OnMainGridRowsRemoved(1);
+      controller.OnMainGridRowRemoved(1);
       Assert.AreEqual(1, View.ShowErrorMessageCount,
         "ShowErrorMessageCount after error message shown for disallowed delete");
       Assert.AreEqual(1, View.SelectCurrentRowOnlyCount,
         "SelectCurrentRowOnlyCount after error message shown for disallowed delete");
       controller.OnMainGridRowEnter(1);
       controller.TestUnsupportedLastChangeAction = true;
-      Assert.Throws<NotSupportedException>(() => controller.OnMainGridRowsRemoved(1),
+      Assert.Throws<NotSupportedException>(() => controller.OnMainGridRowRemoved(1),
         "Unsupported last change action");
     }
 
