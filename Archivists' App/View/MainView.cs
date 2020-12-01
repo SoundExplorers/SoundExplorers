@@ -20,12 +20,12 @@ namespace SoundExplorers.View {
       StatusLabel.Text = string.Empty;
     }
 
+    private EditorView EditorView => ActiveMdiChild as EditorView ??
+                                     throw new NullReferenceException(nameof(EditorView));
+
     private MainController Controller { get; set; }
     private SelectEditorView SelectEditorView { get; set; }
     private SizeableFormOptions SizeableFormOptions { get; set; }
-
-    private EditorView EditorView => ActiveMdiChild as EditorView ??
-                                     throw new NullReferenceException(nameof(EditorView));
 
     public void SetController(MainController controller) {
       Controller = controller;
@@ -49,30 +49,6 @@ namespace SoundExplorers.View {
       }
     }
 
-    private void HelpAboutMenuItem_Click(object sender, EventArgs e) {
-      new AboutForm().ShowDialog();
-    }
-
-    private void WindowsArrangeIconsMenuItem_Click(object sender, EventArgs e) {
-      LayoutMdi(MdiLayout.ArrangeIcons);
-    }
-
-    private void WindowsCascadeMenuItem_Click(object sender, EventArgs e) {
-      LayoutMdi(MdiLayout.Cascade);
-    }
-
-    private void WindowsCloseAllMenuItem_Click(object sender, EventArgs e) {
-      foreach (var childForm in MdiChildren) {
-        childForm.Close();
-      }
-    }
-
-    private void EditCopyMenuItem_Click(object sender, EventArgs e) {
-      if (MdiChildren.Any()) {
-        EditorView.Copy();
-      }
-    }
-
     /// <summary>
     ///   Creates a MainView and its associated controller,
     ///   as per the Model-View-Controller design pattern,
@@ -84,14 +60,20 @@ namespace SoundExplorers.View {
     }
 
     [NotNull]
+    private EditorView CreateEditorView() {
+      return EditorView.Create(SelectEditorView.Controller.SelectedEntityListType,
+        Controller);
+    }
+
+    [NotNull]
     private SelectEditorView CreateSelectEditorView() {
       return SelectEditorView.Create(Controller.TableName);
     }
 
-    [NotNull]
-    private EditorView CreateEditorView() {
-      return EditorView.Create(SelectEditorView.Controller.SelectedEntityListType, 
-        Controller);
+    private void EditCopyMenuItem_Click(object sender, EventArgs e) {
+      if (MdiChildren.Any()) {
+        EditorView.Copy();
+      }
     }
 
     private void EditCutMenuItem_Click(object sender, EventArgs e) {
@@ -100,96 +82,15 @@ namespace SoundExplorers.View {
       }
     }
 
-    /// <summary>
-    ///   Handles the
-    ///   <see cref="Control.Click" /> event
-    ///   of the Edit Audio File Tags menu item and toolbar button to
-    ///   edit the tags of the audio file, if found,
-    ///   of the current Piece, if any,
-    ///   relative to the active Table widow
-    ///   or otherwise show an informative message box.
-    /// </summary>
-    /// <param name="sender">Event sender.</param>
-    /// <param name="e">Event arguments.</param>
-    private void ToolsEditAudioFileTagsMenuItem_Click(object sender, EventArgs e) {
+    private void EditPasteMenuItem_Click(object sender, EventArgs e) {
       if (MdiChildren.Any()) {
-        try {
-          EditorView.Controller.EditAudioFileTags();
-        } catch (ApplicationException ex) {
-          MessageBox.Show(
-            this,
-            ex.Message,
-            Application.ProductName,
-            MessageBoxButtons.OK,
-            MessageBoxIcon.Error);
-        }
-      } else {
-        MessageBox.Show(
-          this,
-          "To edit the tags of a piece's audio file, "
-          + "first open the Credit or Piece table and select a row.",
-          Application.ProductName,
-          MessageBoxButtons.OK,
-          MessageBoxIcon.Information);
+        EditorView.Paste();
       }
     }
 
     private void FileExitMenuItem_Click(object sender, EventArgs e) {
       Close();
     }
-
-    private void MainView_FormClosed(object sender, FormClosedEventArgs e) {
-      Controller.IsStatusBarVisible = StatusStrip.Visible;
-      Controller.IsToolBarVisible = ToolStrip.Visible;
-      Controller.TableName = MdiChildren.Any()
-        ? EditorView.Controller.MainTableName
-        : SelectEditorView.Controller.SelectedTableName;
-      // Explicitly closing all the MIDI child forms
-      // fixes a problem where, 
-      // if multiple child forms were open and maximized
-      // and the most recently opened child form was not active,
-      // the child form window state was incorrectly saved
-      // as Normal.
-      WindowsCloseAllMenuItem_Click(this, EventArgs.Empty);
-      SizeableFormOptions.Save();
-    }
-
-    /// <summary>
-    ///   Handles the <see cref="Form" />'s
-    ///   <see cref="Control.VisibleChanged" />
-    ///   event to close the splash form and
-    ///   bring the main form to the foreground
-    ///   when the load is complete.
-    /// </summary>
-    /// <param name="sender">Event sender.</param>
-    /// <param name="e">Event arguments.</param>
-    /// <remarks>
-    ///   If you do not do this,
-    ///   the main window will not show in foreground
-    ///   unless a message box has previously been shown
-    ///   in front of the splash form.
-    /// </remarks>
-    private void MainView_VisibleChanged(object sender, EventArgs e) {
-      Activate();
-      SplashManager.Close();
-    }
-
-    // /// <summary>
-    // ///   Circumvents a known problem in WinForms where,
-    // ///   when an MDI child form is maximized,
-    // ///   a wrong (VS default) and unwanted icon is shown in the menu strip,
-    // ///   even when ShowIcon is false for the child form.
-    // /// </summary>
-    // /// <param name="sender">Event sender.</param>
-    // /// <param name="e">Event arguments.</param>
-    // /// <remarks>
-    // ///   http://social.msdn.microsoft.com/forums/en-US/winforms/thread/3c7c1bea-7f37-4786-acb4-5685f827f8f2/
-    // /// </remarks>
-    // private void MenuStrip_ItemAdded(object sender, ToolStripItemEventArgs e) {
-    //   if (e.Item.Text == string.Empty) {
-    //     e.Item.Visible = false;
-    //   }
-    // }
 
     private void FileNewMenuItem_Click(object sender, EventArgs e) {
       SelectEditorView.Text = "Select Table for New Editor";
@@ -292,9 +193,83 @@ namespace SoundExplorers.View {
       }
     }
 
-    private void EditPasteMenuItem_Click(object sender, EventArgs e) {
+    private void FileRefreshMenuItem_Click(object sender, EventArgs e) {
       if (MdiChildren.Any()) {
-        EditorView.Paste();
+        EditorView.Refresh();
+      }
+    }
+
+    private void HelpAboutMenuItem_Click(object sender, EventArgs e) {
+      new AboutForm().ShowDialog();
+    }
+
+    private void MainView_FormClosed(object sender, FormClosedEventArgs e) {
+      Controller.IsStatusBarVisible = StatusStrip.Visible;
+      Controller.IsToolBarVisible = ToolStrip.Visible;
+      Controller.TableName = MdiChildren.Any()
+        ? EditorView.Controller.MainTableName
+        : SelectEditorView.Controller.SelectedTableName;
+      // Explicitly closing all the MIDI child forms
+      // fixes a problem where, 
+      // if multiple child forms were open and maximized
+      // and the most recently opened child form was not active,
+      // the child form window state was incorrectly saved
+      // as Normal.
+      WindowsCloseAllMenuItem_Click(this, EventArgs.Empty);
+      SizeableFormOptions.Save();
+    }
+
+    /// <summary>
+    ///   Handles the <see cref="Form" />'s
+    ///   <see cref="Control.VisibleChanged" />
+    ///   event to close the splash form and
+    ///   bring the main form to the foreground
+    ///   when the load is complete.
+    /// </summary>
+    /// <param name="sender">Event sender.</param>
+    /// <param name="e">Event arguments.</param>
+    /// <remarks>
+    ///   If you do not do this,
+    ///   the main window will not show in foreground
+    ///   unless a message box has previously been shown
+    ///   in front of the splash form.
+    /// </remarks>
+    private void MainView_VisibleChanged(object sender, EventArgs e) {
+      Activate();
+      SplashManager.Close();
+    }
+
+    /// <summary>
+    ///   Handles the
+    ///   <see cref="Control.Click" /> event
+    ///   of the Edit Audio File Tags menu item and toolbar button to
+    ///   edit the tags of the audio file, if found,
+    ///   of the current Piece, if any,
+    ///   relative to the active Table widow
+    ///   or otherwise show an informative message box.
+    /// </summary>
+    /// <param name="sender">Event sender.</param>
+    /// <param name="e">Event arguments.</param>
+    private void ToolsEditAudioFileTagsMenuItem_Click(object sender, EventArgs e) {
+      if (MdiChildren.Any()) {
+        try {
+          EditorView.Controller.EditAudioFileTags();
+        } catch (ApplicationException ex) {
+          MessageBox.Show(
+            this,
+            ex.Message,
+            Application.ProductName,
+            MessageBoxButtons.OK,
+            MessageBoxIcon.Error);
+        }
+      } else {
+        MessageBox.Show(
+          this,
+          "To edit the tags of a piece's audio file, "
+          + "first open the Credit or Piece table and select a row.",
+          Application.ProductName,
+          MessageBoxButtons.OK,
+          MessageBoxIcon.Information);
       }
     }
 
@@ -364,12 +339,6 @@ namespace SoundExplorers.View {
       }
     }
 
-    private void FileRefreshMenuItem_Click(object sender, EventArgs e) {
-      if (MdiChildren.Any()) {
-        EditorView.Refresh();
-      }
-    }
-
     /// <summary>
     ///   Handles the
     ///   <see cref="Control.Click" /> event
@@ -405,7 +374,26 @@ namespace SoundExplorers.View {
     }
 
     private void ViewStatusBarMenuItem_Click(object sender, EventArgs e) {
-      StatusStrip.Visible = ViewStatusBarMenuItem.Checked = !ViewStatusBarMenuItem.Checked;
+      StatusStrip.Visible =
+        ViewStatusBarMenuItem.Checked = !ViewStatusBarMenuItem.Checked;
+    }
+
+    private void ViewToolBarMenuItem_Click(object sender, EventArgs e) {
+      ToolStrip.Visible = ViewToolBarMenuItem.Checked = !ViewToolBarMenuItem.Checked;
+    }
+
+    private void WindowsArrangeIconsMenuItem_Click(object sender, EventArgs e) {
+      LayoutMdi(MdiLayout.ArrangeIcons);
+    }
+
+    private void WindowsCascadeMenuItem_Click(object sender, EventArgs e) {
+      LayoutMdi(MdiLayout.Cascade);
+    }
+
+    private void WindowsCloseAllMenuItem_Click(object sender, EventArgs e) {
+      foreach (var childForm in MdiChildren) {
+        childForm.Close();
+      }
     }
 
     private void WindowsTileSideBySideMenuItem_Click(object sender, EventArgs e) {
@@ -414,10 +402,6 @@ namespace SoundExplorers.View {
 
     private void WindowsTileStackedMenuItem_Click(object sender, EventArgs e) {
       LayoutMdi(MdiLayout.TileHorizontal);
-    }
-
-    private void ViewToolBarMenuItem_Click(object sender, EventArgs e) {
-      ToolStrip.Visible = ViewToolBarMenuItem.Checked = !ViewToolBarMenuItem.Checked;
     }
 
     protected override void WndProc(ref Message m) {
