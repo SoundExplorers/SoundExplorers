@@ -344,7 +344,7 @@ namespace SoundExplorers.View {
             // HelpAboutMenuItem
             // 
             this.HelpAboutMenuItem.Name = "HelpAboutMenuItem";
-            this.HelpAboutMenuItem.Text = "&About ... ...";
+            this.HelpAboutMenuItem.Text = "&About...";
             this.HelpAboutMenuItem.Click += new System.EventHandler(this.HelpAboutMenuItem_Click);
             // 
             // ToolStrip

@@ -362,10 +362,11 @@ namespace SoundExplorers.Controller {
     /// <summary>
     ///   Deletes the entity at the specified row index
     ///   from the database and removes it from the list.
+    ///   TODO Allow for multiple rows removed
     /// </summary>
-    public void OnMainGridRowRemoved(int rowIndex) {
+    public void OnMainGridRowsRemoved(int rowIndex) {
       // Debug.WriteLine(
-      //   $"{nameof(OnMainGridRowRemoved)}:  2 or 3 times on opening a table before 1st ItemAdded (insertion row entered); existing row removed");
+      //   $"{nameof(OnMainGridRowsRemoved)}:  2 or 3 times on opening a table before 1st ItemAdded (insertion row entered); existing row removed");
       // For unknown reason, the grid's RowRemoved event is raised 2 or 3 times
       // while data is being loaded into the grid.
       // Also, the grid row might have been removed because of an insertion error,
@@ -423,7 +424,7 @@ namespace SoundExplorers.Controller {
     ///   So the main grid will be populated with the required
     ///   child entities of the entity at the specified row index.
     /// </summary>
-    public void OnParentGridRowEntered(int rowIndex) {
+    public void OnParentGridRowEnter(int rowIndex) {
       MainList.Populate(ParentList?.GetChildrenForMainList(rowIndex));
     }
 

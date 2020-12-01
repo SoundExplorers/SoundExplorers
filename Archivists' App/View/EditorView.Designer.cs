@@ -49,7 +49,7 @@
             // AfterPopulateTimer
             // 
             this.AfterPopulateTimer.Interval = 1;
-            this.AfterPopulateTimer.Tick += new System.EventHandler(this.AfterPopulateTimerOnTick);
+            this.AfterPopulateTimer.Tick += new System.EventHandler(this.AfterPopulateTimer_Tick);
             // 
             // FocusTimer
             // 
@@ -59,7 +59,7 @@
             // OnErrorTimer
             // 
             this.OnErrorTimer.Interval = 1;
-            this.OnErrorTimer.Tick += new System.EventHandler(this.OnErrorTimerOnTick);
+            this.OnErrorTimer.Tick += new System.EventHandler(this.OnErrorTimer_Tick);
             // 
             // ImageSplitContainer
             // 
@@ -135,8 +135,8 @@
             this.MissingImageLabel.TabIndex = 1;
             this.MissingImageLabel.Text = "You may drag an image file here.";
             this.MissingImageLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.MissingImageLabel.DragDrop += new System.Windows.Forms.DragEventHandler(this.FittedPictureBox1OnDragDrop);
-            this.MissingImageLabel.DragOver += new System.Windows.Forms.DragEventHandler(this.FittedPictureBox1OnDragOver);
+            this.MissingImageLabel.DragDrop += new System.Windows.Forms.DragEventHandler(this.FittedPictureBox1_DragDrop);
+            this.MissingImageLabel.DragOver += new System.Windows.Forms.DragEventHandler(this.FittedPictureBox1_DragOver);
             // 
             // FittedPictureBox1
             // 
@@ -146,9 +146,9 @@
             this.FittedPictureBox1.Size = new System.Drawing.Size(379, 96);
             this.FittedPictureBox1.TabIndex = 0;
             this.FittedPictureBox1.TabStop = false;
-            this.FittedPictureBox1.DragDrop += new System.Windows.Forms.DragEventHandler(this.FittedPictureBox1OnDragDrop);
-            this.FittedPictureBox1.DragOver += new System.Windows.Forms.DragEventHandler(this.FittedPictureBox1OnDragOver);
-            this.FittedPictureBox1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.FittedPictureBox1OnMouseDown);
+            this.FittedPictureBox1.DragDrop += new System.Windows.Forms.DragEventHandler(this.FittedPictureBox1_DragDrop);
+            this.FittedPictureBox1.DragOver += new System.Windows.Forms.DragEventHandler(this.FittedPictureBox1_DragOver);
+            this.FittedPictureBox1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.FittedPictureBox1_MouseDown);
             // 
             // EditorView
             // 
@@ -162,12 +162,12 @@
             this.Name = "EditorView";
             this.ShowIcon = false;
             this.Text = "EditorView";
-            this.Activated += new System.EventHandler(this.EditorViewOnActivated);
-            this.Deactivate += new System.EventHandler(this.EditorViewOnDeactivate);
-            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.EditorViewOnFormClosed);
-            this.Load += new System.EventHandler(this.EditorViewOnLoad);
-            this.VisibleChanged += new System.EventHandler(this.EditorViewOnVisibleChanged);
-            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.EditorViewOnKeyDown);
+            this.Activated += new System.EventHandler(this.EditorView_Activated);
+            this.Deactivate += new System.EventHandler(this.EditorView_Deactivate);
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.EditorView_FormClosed);
+            this.Load += new System.EventHandler(this.EditorView_Load);
+            this.VisibleChanged += new System.EventHandler(this.EditorView_VisibleChanged);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.EditorView_KeyDown);
             this.ImageSplitContainer.Panel1.ResumeLayout(false);
             this.ImageSplitContainer.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.ImageSplitContainer)).EndInit();

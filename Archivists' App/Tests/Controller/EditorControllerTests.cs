@@ -139,7 +139,7 @@ namespace SoundExplorers.Tests.Controller {
       controller.FetchData(); // Populate grid
       editor.SetBindingList(controller.MainBindingList);
       controller.CreateAndGoToInsertionRow();
-      controller.OnMainGridRowRemoved(1);
+      controller.OnMainGridRowsRemoved(1);
       Assert.AreEqual(1, View.OnRowAddedOrDeletedCount, "OnRowAddedOrDeletedCount");
       Assert.AreEqual(2, controller.GetMainList().Count, "MainList.Count");
     }
@@ -245,14 +245,14 @@ namespace SoundExplorers.Tests.Controller {
       controller.FetchData(); // Populate grid
       editor.SetBindingList(controller.MainBindingList);
       controller.CreateAndGoToInsertionRow();
-      controller.OnMainGridRowRemoved(1);
+      controller.OnMainGridRowsRemoved(1);
       Assert.AreEqual(1, View.ShowErrorMessageCount,
         "ShowErrorMessageCount after error message shown for disallowed delete");
       Assert.AreEqual(1, View.SelectCurrentRowOnlyCount,
         "SelectCurrentRowOnlyCount after error message shown for disallowed delete");
       controller.OnMainGridRowEnter(1);
       controller.TestUnsupportedLastChangeAction = true;
-      Assert.Throws<NotSupportedException>(() => controller.OnMainGridRowRemoved(1),
+      Assert.Throws<NotSupportedException>(() => controller.OnMainGridRowsRemoved(1),
         "Unsupported last change action");
     }
 
@@ -432,7 +432,7 @@ namespace SoundExplorers.Tests.Controller {
       controller.FetchData(); // Populate grid
       Assert.AreEqual(2, controller.ParentBindingList?.Count, "Parent list count");
       Assert.AreEqual(3, controller.MainBindingList?.Count, "Main list count initially");
-      controller.OnParentGridRowEntered(1);
+      controller.OnParentGridRowEnter(1);
       Assert.AreEqual(5, controller.MainBindingList?.Count,
         "Main list count when 2nd parent selected");
     }
