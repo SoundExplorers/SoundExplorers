@@ -517,6 +517,7 @@ namespace SoundExplorers.View {
             this.IsMdiContainer = true;
             this.KeyPreview = true;
             this.Margin = new System.Windows.Forms.Padding(4);
+            this.Menu = this.MainMenu;
             this.Name = "MainView";
             this.Text = "Sound Explorers Audio Archive";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainView_FormClosed);
