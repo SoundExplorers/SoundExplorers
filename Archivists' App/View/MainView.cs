@@ -49,25 +49,25 @@ namespace SoundExplorers.View {
       }
     }
 
-    private void AboutToolStripMenuItem_Click(object sender, EventArgs e) {
+    private void HelpAboutMenuItem_Click(object sender, EventArgs e) {
       new AboutForm().ShowDialog();
     }
 
-    private void ArrangeIconsToolStripMenuItem_Click(object sender, EventArgs e) {
+    private void WindowsArrangeIconsMenuItem_Click(object sender, EventArgs e) {
       LayoutMdi(MdiLayout.ArrangeIcons);
     }
 
-    private void CascadeToolStripMenuItem_Click(object sender, EventArgs e) {
+    private void WindowsCascadeMenuItem_Click(object sender, EventArgs e) {
       LayoutMdi(MdiLayout.Cascade);
     }
 
-    private void CloseAllToolStripMenuItem_Click(object sender, EventArgs e) {
+    private void WindowsCloseAllMenuItem_Click(object sender, EventArgs e) {
       foreach (var childForm in MdiChildren) {
         childForm.Close();
       }
     }
 
-    private void CopyToolStripMenuItem_Click(object sender, EventArgs e) {
+    private void EditCopyMenuItem_Click(object sender, EventArgs e) {
       if (MdiChildren.Any()) {
         EditorView.Copy();
       }
@@ -94,7 +94,7 @@ namespace SoundExplorers.View {
         Controller);
     }
 
-    private void CutToolStripMenuItem_Click(object sender, EventArgs e) {
+    private void EditCutMenuItem_Click(object sender, EventArgs e) {
       if (MdiChildren.Any()) {
         EditorView.Cut();
       }
@@ -111,7 +111,7 @@ namespace SoundExplorers.View {
     /// </summary>
     /// <param name="sender">Event sender.</param>
     /// <param name="e">Event arguments.</param>
-    private void EditAudioFileTagsToolStripMenuItem_Click(object sender, EventArgs e) {
+    private void ToolsEditAudioFileTagsMenuItem_Click(object sender, EventArgs e) {
       if (MdiChildren.Any()) {
         try {
           EditorView.Controller.EditAudioFileTags();
@@ -134,7 +134,7 @@ namespace SoundExplorers.View {
       }
     }
 
-    private void ExitToolsStripMenuItem_Click(object sender, EventArgs e) {
+    private void FileExitMenuItem_Click(object sender, EventArgs e) {
       Close();
     }
 
@@ -150,7 +150,7 @@ namespace SoundExplorers.View {
       // and the most recently opened child form was not active,
       // the child form window state was incorrectly saved
       // as Normal.
-      CloseAllToolStripMenuItem_Click(this, EventArgs.Empty);
+      WindowsCloseAllMenuItem_Click(this, EventArgs.Empty);
       SizeableFormOptions.Save();
     }
 
@@ -174,24 +174,24 @@ namespace SoundExplorers.View {
       SplashManager.Close();
     }
 
-    /// <summary>
-    ///   Circumvents a known problem in WinForms where,
-    ///   when an MDI child form is maximized,
-    ///   a wrong (VS default) and unwanted icon is shown in the menu strip,
-    ///   even when ShowIcon is false for the child form.
-    /// </summary>
-    /// <param name="sender">Event sender.</param>
-    /// <param name="e">Event arguments.</param>
-    /// <remarks>
-    ///   http://social.msdn.microsoft.com/forums/en-US/winforms/thread/3c7c1bea-7f37-4786-acb4-5685f827f8f2/
-    /// </remarks>
-    private void MenuStrip_ItemAdded(object sender, ToolStripItemEventArgs e) {
-      if (e.Item.Text == string.Empty) {
-        e.Item.Visible = false;
-      }
-    }
+    // /// <summary>
+    // ///   Circumvents a known problem in WinForms where,
+    // ///   when an MDI child form is maximized,
+    // ///   a wrong (VS default) and unwanted icon is shown in the menu strip,
+    // ///   even when ShowIcon is false for the child form.
+    // /// </summary>
+    // /// <param name="sender">Event sender.</param>
+    // /// <param name="e">Event arguments.</param>
+    // /// <remarks>
+    // ///   http://social.msdn.microsoft.com/forums/en-US/winforms/thread/3c7c1bea-7f37-4786-acb4-5685f827f8f2/
+    // /// </remarks>
+    // private void MenuStrip_ItemAdded(object sender, ToolStripItemEventArgs e) {
+    //   if (e.Item.Text == string.Empty) {
+    //     e.Item.Visible = false;
+    //   }
+    // }
 
-    private void NewToolStripMenuItem_Click(object sender, EventArgs e) {
+    private void FileNewMenuItem_Click(object sender, EventArgs e) {
       SelectEditorView.Text = "Select Table for New Editor";
       if (SelectEditorView.ShowDialog(this) == DialogResult.Cancel) {
         return;
@@ -222,9 +222,9 @@ namespace SoundExplorers.View {
       }
     }
 
-    private void OpenToolStripMenuItem_Click(object sender, EventArgs e) {
+    private void FileOpenMenuItem_Click(object sender, EventArgs e) {
       if (!MdiChildren.Any()) {
-        NewToolStripMenuItem_Click(sender, e);
+        FileNewMenuItem_Click(sender, e);
         return;
       }
       SelectEditorView.Text = "Select Table for Current Editor";
@@ -292,7 +292,7 @@ namespace SoundExplorers.View {
       }
     }
 
-    private void PasteToolStripMenuItem_Click(object sender, EventArgs e) {
+    private void EditPasteMenuItem_Click(object sender, EventArgs e) {
       if (MdiChildren.Any()) {
         EditorView.Paste();
       }
@@ -309,7 +309,7 @@ namespace SoundExplorers.View {
     /// </summary>
     /// <param name="sender">Event sender.</param>
     /// <param name="e">Event arguments.</param>
-    private void PlayAudioToolStripMenuItem_Click(object sender, EventArgs e) {
+    private void ToolsPlayAudioMenuItem_Click(object sender, EventArgs e) {
       if (MdiChildren.Any()) {
         try {
           EditorView.Controller.PlayAudio();
@@ -342,7 +342,7 @@ namespace SoundExplorers.View {
     /// </summary>
     /// <param name="sender">Event sender.</param>
     /// <param name="e">Event arguments.</param>
-    private void PlayVideoToolStripMenuItem_Click(object sender, EventArgs e) {
+    private void ToolsPlayVideoMenuItem_Click(object sender, EventArgs e) {
       if (MdiChildren.Any()) {
         try {
           EditorView.Controller.PlayVideo();
@@ -364,7 +364,7 @@ namespace SoundExplorers.View {
       }
     }
 
-    private void RefreshToolStripMenuItem_Click(object sender, EventArgs e) {
+    private void FileRefreshMenuItem_Click(object sender, EventArgs e) {
       if (MdiChildren.Any()) {
         EditorView.Refresh();
       }
@@ -380,7 +380,7 @@ namespace SoundExplorers.View {
     /// </summary>
     /// <param name="sender">Event sender.</param>
     /// <param name="e">Event arguments.</param>
-    private void ShowNewsletterToolStripMenuItem_Click(object sender, EventArgs e) {
+    private void ToolsShowNewsletterMenuItem_Click(object sender, EventArgs e) {
       if (MdiChildren.Any()) {
         try {
           EditorView.Controller.ShowNewsletter();
@@ -404,20 +404,20 @@ namespace SoundExplorers.View {
       }
     }
 
-    private void StatusBarToolStripMenuItem_Click(object sender, EventArgs e) {
-      StatusStrip.Visible = StatusBarToolStripMenuItem.Checked;
+    private void ViewStatusBarMenuItem_Click(object sender, EventArgs e) {
+      StatusStrip.Visible = ViewStatusBarMenuItem.Checked = !ViewStatusBarMenuItem.Checked;
     }
 
-    private void TileSideBySideToolStripMenuItem_Click(object sender, EventArgs e) {
+    private void WindowsTileSideBySideMenuItem_Click(object sender, EventArgs e) {
       LayoutMdi(MdiLayout.TileVertical);
     }
 
-    private void TileStackedToolStripMenuItem_Click(object sender, EventArgs e) {
+    private void WindowsTileStackedMenuItem_Click(object sender, EventArgs e) {
       LayoutMdi(MdiLayout.TileHorizontal);
     }
 
-    private void ToolBarToolStripMenuItem_Click(object sender, EventArgs e) {
-      ToolStrip.Visible = ToolBarToolStripMenuItem.Checked;
+    private void ViewToolBarMenuItem_Click(object sender, EventArgs e) {
+      ToolStrip.Visible = ViewToolBarMenuItem.Checked = !ViewToolBarMenuItem.Checked;
     }
 
     protected override void WndProc(ref Message m) {
