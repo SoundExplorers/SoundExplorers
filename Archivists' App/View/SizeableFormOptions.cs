@@ -165,7 +165,17 @@ namespace SoundExplorers.View {
         Controller.Top = Form.DesktopBounds.Y;
       }
       if (Form.WindowState == FormWindowState.Normal) {
-        Controller.Height = Form.DesktopBounds.Height;
+        int newHeight = Form.DesktopBounds.Height;
+        if (Form.Menu != null) {
+          // Due to an error in MenuStrip
+          // (left and right arrows navigate back to front after using down arrow),
+          // I had to convert the main window to use a MainMenu instead of a MenuStrip.
+          // But then I had to introduce this hack to
+          // stop the main window from growing taller every time it is opened.  Why?
+          newHeight -= 20;
+        }
+        Controller.Height = newHeight;
+        //Controller.Height = Form.DesktopBounds.Height;
         Controller.Width = Form.DesktopBounds.Width;
       }
       //if (Form.WindowState == FormWindowState.Maximized
