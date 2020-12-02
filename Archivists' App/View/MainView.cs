@@ -18,6 +18,7 @@ namespace SoundExplorers.View {
       SplashManager.Status = "Building window...";
       InitializeComponent();
       StatusLabel.Text = string.Empty;
+      HideMainMenuImageMargins();
     }
 
     private EditorView EditorView => ActiveMdiChild as EditorView ??
@@ -201,6 +202,19 @@ namespace SoundExplorers.View {
 
     private void HelpAboutMenuItem_Click(object sender, EventArgs e) {
       new AboutForm().ShowDialog();
+    }
+
+    /// <summary>
+    ///   As we are not showing images to the left of main menu item texts,
+    ///   hides the image margins, except for on the View menu,
+    ///   where we need to be able to show ticks to the left of the item texts.
+    /// </summary>
+    private void HideMainMenuImageMargins() {
+      foreach (ToolStripMenuItem menu in MenuStrip.Items) {
+        if (menu.Name != nameof(ViewMenu)) {
+          ((ToolStripDropDownMenu)menu.DropDown).ShowImageMargin = false;
+        }
+      }
     }
 
     private void MainView_FormClosed(object sender, FormClosedEventArgs e) {
