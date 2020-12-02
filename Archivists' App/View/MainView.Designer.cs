@@ -221,6 +221,8 @@ namespace SoundExplorers.View {
             // 
             this.ViewToolBarMenuItem.ImageTransparentColor = System.Drawing.Color.Black;
             this.ViewToolBarMenuItem.Checked = true;
+            this.ViewToolBarMenuItem.CheckOnClick = true;
+            this.ViewToolBarMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.ViewToolBarMenuItem.Name = "ViewToolBarMenuItem";
             this.ViewToolBarMenuItem.Size = new System.Drawing.Size(152, 22);
             this.ViewToolBarMenuItem.Text = "&Toolbar";
@@ -230,6 +232,8 @@ namespace SoundExplorers.View {
             // 
             this.ViewStatusBarMenuItem.ImageTransparentColor = System.Drawing.Color.Black;
             this.ViewStatusBarMenuItem.Checked = true;
+            this.ViewStatusBarMenuItem.CheckOnClick = true;
+            this.ViewStatusBarMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.ViewStatusBarMenuItem.Name = "ViewStatusBarMenuItem";
             this.ViewStatusBarMenuItem.Size = new System.Drawing.Size(152, 22);
             this.ViewStatusBarMenuItem.Text = "&Status Bar";
