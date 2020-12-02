@@ -240,6 +240,23 @@ namespace SoundExplorers.View {
     }
 
     /// <summary>
+    ///   Circumvents a known problem in WinForms where,
+    ///   when an MDI child form is maximized,
+    ///   a wrong (VS default) and unwanted icon is shown in the menu strip,
+    ///   even when ShowIcon is false for the child form.
+    /// </summary>
+    /// <param name="sender">Event sender.</param>
+    /// <param name="e">Event arguments.</param>
+    /// <remarks>
+    ///   http://social.msdn.microsoft.com/forums/en-US/winforms/thread/3c7c1bea-7f37-4786-acb4-5685f827f8f2/
+    /// </remarks>
+    private void MenuStrip_ItemAdded(object sender, ToolStripItemEventArgs e) {
+      if (e.Item.Text == string.Empty) {
+        e.Item.Visible = false;
+      }
+    }
+
+    /// <summary>
     ///   Handles the
     ///   <see cref="Control.Click" /> event
     ///   of the Edit Audio File Tags menu item and toolbar button to
@@ -374,12 +391,11 @@ namespace SoundExplorers.View {
     }
 
     private void ViewStatusBarMenuItem_Click(object sender, EventArgs e) {
-      StatusStrip.Visible =
-        ViewStatusBarMenuItem.Checked = !ViewStatusBarMenuItem.Checked;
+      StatusStrip.Visible = ViewStatusBarMenuItem.Checked;
     }
 
     private void ViewToolBarMenuItem_Click(object sender, EventArgs e) {
-      ToolStrip.Visible = ViewToolBarMenuItem.Checked = !ViewToolBarMenuItem.Checked;
+      ToolStrip.Visible = ViewToolBarMenuItem.Checked;
     }
 
     private void WindowsArrangeIconsMenuItem_Click(object sender, EventArgs e) {
