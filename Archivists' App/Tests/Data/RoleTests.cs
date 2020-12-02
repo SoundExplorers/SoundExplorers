@@ -64,12 +64,12 @@ namespace SoundExplorers.Tests.Data {
         session.Persist(Set1);
         Piece1.Set = Set1;
         session.Persist(Piece1);
-        Credit1.Artist = Artist1; 
-        Credit1.Piece = Piece1; 
-        Credit1.Role = Drums; 
-        Credit2.Artist = Artist1; 
-        Credit2.Piece = Piece1; 
-        Credit2.Role = Drums; 
+        Credit1.Artist = Artist1;
+        Credit1.Piece = Piece1;
+        Credit1.Role = Drums;
+        Credit2.Artist = Artist1;
+        Credit2.Piece = Piece1;
+        Credit2.Role = Drums;
         session.Persist(Credit1);
         session.Persist(Credit2);
         session.Commit();

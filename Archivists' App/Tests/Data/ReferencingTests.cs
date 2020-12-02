@@ -36,9 +36,9 @@ namespace SoundExplorers.Tests.Data {
         session.Persist(Son1);
         Son2.Name = Son2Name;
         session.Persist(Son2);
-        Son1.Father = Father1; 
-        Son1.Mother = Mother1; 
-        Son2.Mother = Mother1; 
+        Son1.Father = Father1;
+        Son1.Mother = Mother1;
+        Son2.Mother = Mother1;
         Daughter1.Father = Father1;
         Daughter2.Father = Father1;
         session.Commit();

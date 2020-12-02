@@ -7,7 +7,6 @@ namespace SoundExplorers.Controller {
   /// </summary>
   [UsedImplicitly]
   public class ComboBoxCellController : CellControllerBase {
-
     /// <summary>
     ///   Initialises a new instance of the <see cref="ComboBoxCellController" /> class.
     /// </summary>
@@ -27,7 +26,7 @@ namespace SoundExplorers.Controller {
     }
 
     private string CreateNoAvailableReferencesMessage() {
-      return $"There are no {Column.ReferencedTableName} " + 
+      return $"There are no {Column.ReferencedTableName} " +
              $"{Column.ReferencedPropertyName}s " +
              "to choose between. You need to add at least one row to the " +
              $"{Column.ReferencedTableName} table before you can select a " +

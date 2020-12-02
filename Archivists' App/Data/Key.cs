@@ -8,7 +8,7 @@ namespace SoundExplorers.Data {
   ///   in any SortedChildLists of which it is a member.
   /// </summary>
   /// <remarks>
-  ///   SimpleKey has priority over IdentifyingParent when keys are compared. 
+  ///   SimpleKey has priority over IdentifyingParent when keys are compared.
   /// </remarks>
   public class Key {
     private readonly IEntity _identifyingParent;
@@ -115,7 +115,7 @@ namespace SoundExplorers.Data {
       if (string.Compare(key1.SimpleKey, key2.SimpleKey,
         StringComparison.OrdinalIgnoreCase) < 0) {
         return true;
-      } 
+      }
       if (string.Compare(key1.SimpleKey, key2.SimpleKey,
         StringComparison.OrdinalIgnoreCase) > 0) {
         return false;

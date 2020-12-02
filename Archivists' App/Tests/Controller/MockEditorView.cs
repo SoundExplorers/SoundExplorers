@@ -8,7 +8,6 @@ namespace SoundExplorers.Tests.Controller {
     public int FocusMainGridCellCount { get; private set; }
     public int FocusMainGridCellColumnIndex { get; private set; }
     public int FocusMainGridCellRowIndex { get; private set; }
-
     public string LastErrorMessage { get; private set; }
     public int MakeMainGridRowCurrentCount { get; private set; }
     public int MakeMainGridRowCurrentRowIndex { get; private set; }

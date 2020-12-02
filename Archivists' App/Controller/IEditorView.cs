@@ -5,7 +5,6 @@ namespace SoundExplorers.Controller {
     void EditMainGridCurrentCell();
     void FocusMainGridCell(int rowIndex, int columnIndex);
     void MakeMainGridRowCurrent(int rowIndex);
-
     void OnRowAddedOrDeleted();
 
     void RestoreMainGridCurrentRowCellErrorValue(int columnIndex,

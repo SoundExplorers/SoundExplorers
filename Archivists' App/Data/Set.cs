@@ -77,7 +77,7 @@ namespace SoundExplorers.Data {
     public static string SetNoToSimpleKey(int setNo) {
       return setNo.ToString().PadLeft(2, '0');
     }
-    
+
     protected override IDictionary GetChildren(Type childType) {
       return Pieces;
     }

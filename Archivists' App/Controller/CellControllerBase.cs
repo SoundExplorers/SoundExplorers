@@ -3,7 +3,6 @@ using SoundExplorers.Model;
 
 namespace SoundExplorers.Controller {
   public abstract class CellControllerBase {
-    
     protected CellControllerBase([NotNull] EditorController editorController,
       [NotNull] string columnName) {
       EditorController = editorController;

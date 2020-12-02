@@ -15,8 +15,7 @@ namespace SoundExplorers.Data {
     /// <summary>
     ///   Creates a SortedChildList instance.
     /// </summary>
-    internal SortedChildList() : base(new KeyComparer()) {
-    }
+    internal SortedChildList() : base(new KeyComparer()) { }
 
     public TChild this[int index] => Values[index];
 

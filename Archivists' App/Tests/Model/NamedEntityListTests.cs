@@ -203,11 +203,11 @@ namespace SoundExplorers.Tests.Model {
         list.BindingList);
       Assert.IsFalse(list.IsInsertionRowCurrent, "IsInsertionRowCurrent initially");
       editor.AddNew();
-      Assert.IsTrue(list.IsInsertionRowCurrent, 
+      Assert.IsTrue(list.IsInsertionRowCurrent,
         "IsInsertionRowCurrent after adding insertion row");
       list.OnRowEnter(0);
       list.OnRowValidated(0);
-      Assert.IsFalse(list.IsInsertionRowCurrent, 
+      Assert.IsFalse(list.IsInsertionRowCurrent,
         "IsInsertionRowCurrent after cancelling insertion");
     }
   }

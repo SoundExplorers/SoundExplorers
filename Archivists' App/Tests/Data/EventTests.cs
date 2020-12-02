@@ -272,7 +272,7 @@ namespace SoundExplorers.Tests.Data {
         session.BeginUpdate();
         Location1 = QueryHelper.Read<Location>(Location1Name, session);
         Event1 = Location1.Events[0];
-        Assert.DoesNotThrow(()=>Event1.Location = Location1);
+        Assert.DoesNotThrow(() => Event1.Location = Location1);
         session.Commit();
       }
     }

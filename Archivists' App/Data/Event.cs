@@ -26,7 +26,7 @@ namespace SoundExplorers.Data {
       set {
         if (value <= InitialDate) {
           throw new PropertyConstraintException(
-            $"Event Date must be later than {DateToSimpleKey(InitialDate)}.", 
+            $"Event Date must be later than {DateToSimpleKey(InitialDate)}.",
             nameof(Date));
         }
         UpdateNonIndexField();

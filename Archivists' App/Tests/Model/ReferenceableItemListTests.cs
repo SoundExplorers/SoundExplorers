@@ -16,7 +16,7 @@ namespace SoundExplorers.Tests.Model {
       Data.AddLocationsPersisted(3, Session);
       Data.AddNewslettersPersisted(4, Session);
       Session.Commit();
-      EventList = new EventList() {Session = Session};
+      EventList = new EventList {Session = Session};
     }
 
     [TearDown]
@@ -27,7 +27,7 @@ namespace SoundExplorers.Tests.Model {
     [Test]
     public void Locations() {
       var items = EventList.Columns["Location"].ReferenceableItems;
-      Assert.AreEqual(3,items.Count, "Count");
+      Assert.AreEqual(3, items.Count, "Count");
       var item = items[0];
       Assert.IsInstanceOf<KeyValuePair<object, object>>(item, "item");
       var pair = (KeyValuePair<object, object>)item;
@@ -38,7 +38,7 @@ namespace SoundExplorers.Tests.Model {
     [Test]
     public void Newsletters() {
       var items = EventList.Columns["Newsletter"].ReferenceableItems;
-      Assert.AreEqual(5,items.Count, "Count");
+      Assert.AreEqual(5, items.Count, "Count");
       Assert.IsTrue(items.ContainsKey("1900/01/01"), "Contains dummy Newsletter");
       Assert.IsTrue(items.ContainsKey("2020/01/06"), "Contains real Newsletter");
       var item1 = items[0];

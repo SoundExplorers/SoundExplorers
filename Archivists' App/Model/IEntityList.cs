@@ -23,7 +23,6 @@ namespace SoundExplorers.Model {
     BindingColumnList Columns { get; }
 
     [NotNull] string EntityTypeName { get; }
-    
     bool HasRowBeenEdited { get; }
 
     /// <summary>
@@ -39,8 +38,8 @@ namespace SoundExplorers.Model {
     ///   Gets whether the current grid row is the insertion row,
     ///   which is for adding new entities and is located at the bottom of the grid.
     /// </summary>
-    bool IsInsertionRowCurrent { get;  }
-    
+    bool IsInsertionRowCurrent { get; }
+
     /// <summary>
     ///   Gets or sets whether this is a (read-only) parent list.
     ///   False (the default) if this is the (updatable) main (and maybe only) list.
@@ -48,7 +47,6 @@ namespace SoundExplorers.Model {
     bool IsParentList { get; set; }
 
     bool IsRemovingInvalidInsertionRow { get; set; }
-
     DatabaseUpdateErrorException LastDatabaseUpdateErrorException { get; set; }
 
     /// <summary>
@@ -119,7 +117,7 @@ namespace SoundExplorers.Model {
     ///   will be fetched from the database.
     /// </param>
     /// <param name="createBindingList">
-    ///   Optionally specifies whether the <see cref="BindingList"/>,
+    ///   Optionally specifies whether the <see cref="BindingList" />,
     ///   which will be bound to a grid in the editor window,
     ///   is to be populated along with the list of entities.
     ///   Default: true.

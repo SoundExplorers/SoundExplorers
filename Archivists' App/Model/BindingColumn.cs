@@ -11,7 +11,7 @@ namespace SoundExplorers.Model {
     private ReferenceableItemList _referenceableItems;
     private SessionBase _session;
 
-    public BindingColumn([NotNull] string name,    
+    public BindingColumn([NotNull] string name,
       Type referencedEntityListType = null, string referencedPropertyName = null) {
       Name = name ?? throw new ArgumentNullException(nameof(name));
       if (referencedEntityListType != null &&
@@ -38,7 +38,7 @@ namespace SoundExplorers.Model {
     /// </summary>
     [CanBeNull]
     public string DisplayName { get; internal set; }
-    
+
     public bool IsInKey { get; internal set; }
 
     /// <summary>
@@ -85,7 +85,7 @@ namespace SoundExplorers.Model {
     [NotNull]
     private ReferenceableItemList FetchReferenceableItems() {
       var result = new ReferenceableItemList(this);
-      bool isTransactionRequired = !Session.InTransaction; 
+      bool isTransactionRequired = !Session.InTransaction;
       if (isTransactionRequired) {
         Session.BeginRead();
       }

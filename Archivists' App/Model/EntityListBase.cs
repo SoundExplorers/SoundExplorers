@@ -53,7 +53,6 @@ namespace SoundExplorers.Model {
     private TBindingItem BindingItemToFix { get; set; }
     private EntityComparer<TEntity> EntityComparer { get; }
     private TBindingItem ErrorBindingItem { get; set; }
-    public bool HasRowBeenEdited { get; private set; }
     private ChangeAction LastDatabaseChangeAction { get; set; }
 
     /// <summary>
@@ -64,6 +63,8 @@ namespace SoundExplorers.Model {
       get => _queryHelper ?? (_queryHelper = QueryHelper.Instance);
       set => _queryHelper = value;
     }
+
+    public bool HasRowBeenEdited { get; private set; }
 
     /// <summary>
     ///   Gets the binding list representing the list of entities
@@ -103,7 +104,6 @@ namespace SoundExplorers.Model {
     public bool IsParentList { get; set; }
 
     public bool IsRemovingInvalidInsertionRow { get; set; }
-
     public DatabaseUpdateErrorException LastDatabaseUpdateErrorException { get; set; }
 
     /// <summary>
@@ -220,8 +220,6 @@ namespace SoundExplorers.Model {
       }
       if (IsInsertionRowCurrent) {
         AddNewEntity(rowIndex);
-      } else {
-        //SaveChangesToExistingEntity(rowIndex);
       }
     }
 

@@ -49,15 +49,6 @@ namespace SoundExplorers.View {
       }
     }
 
-    /// <summary>
-    ///   Makes the insertion row of the main grid current.
-    /// </summary>
-    private void MakeMainGridInsertionRowCurrent() {
-      // This triggers MainGrid_RowEnter.
-      Debug.WriteLine("EditorView.MakeMainGridInsertionRowCurrent");
-      MakeMainGridRowCurrent(MainGrid.Rows.Count - 1);
-    }
-
     public void MakeMainGridRowCurrent(int rowIndex) {
       // This triggers MainGrid_RowEnter.
       Debug.WriteLine($"EditorView.MakeMainGridRowCurrent: row {rowIndex}");
@@ -99,6 +90,15 @@ namespace SoundExplorers.View {
       Controller = controller;
     }
 
+    /// <summary>
+    ///   Makes the insertion row of the main grid current.
+    /// </summary>
+    private void MakeMainGridInsertionRowCurrent() {
+      // This triggers MainGrid_RowEnter.
+      Debug.WriteLine("EditorView.MakeMainGridInsertionRowCurrent");
+      MakeMainGridRowCurrent(MainGrid.Rows.Count - 1);
+    }
+
     public void Copy() {
       if (FocusedGrid.CurrentCell.Value == null) {
         return;
@@ -136,7 +136,7 @@ namespace SoundExplorers.View {
     ///   Controller for the main window.
     /// </param>
     [NotNull]
-    public static EditorView Create([CanBeNull] Type entityListType, 
+    public static EditorView Create([CanBeNull] Type entityListType,
       [NotNull] MainController mainController) {
       return (EditorView)ViewFactory.Create<EditorView, EditorController>(
         entityListType, mainController);
@@ -567,7 +567,7 @@ namespace SoundExplorers.View {
     /// <summary>
     ///   Handles the main grid's RowsRemoved event, which is
     ///   actually raised once for each row removed,
-    ///   even when multiple selected rows are removed at once. 
+    ///   even when multiple selected rows are removed at once.
     /// </summary>
     /// <remarks>
     ///   For unknown reason, the RowsRemoved event is raised 2 or 3 times
@@ -599,7 +599,7 @@ namespace SoundExplorers.View {
       MainGrid.CancelEdit();
       Controller.ShowError();
     }
-    
+
     private void OpenTable() {
       InvertGridColors(ParentGrid); // Will revert when focused.
       PopulateGrid();
@@ -903,7 +903,7 @@ namespace SoundExplorers.View {
 
     private void EditorView_Move(object sender, EventArgs e) {
       // Stop ghost border lines appearing on main window background.
-      ParentForm?.Refresh();  
+      ParentForm?.Refresh();
     }
 
     private void EditorView_Resize(object sender, EventArgs e) {

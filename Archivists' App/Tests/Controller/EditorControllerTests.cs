@@ -115,11 +115,11 @@ namespace SoundExplorers.Tests.Controller {
       controller.IsClosing = false;
       mainController.IsClosing = true;
       // Called automatically when main window is closing
-      controller.OnMainGridRowValidated(0); 
+      controller.OnMainGridRowValidated(0);
       Assert.AreEqual(0, mainList.Count, "Count on database when main window closing");
       mainController.IsClosing = false;
       controller.OnMainGridRowValidated(0);
-      Assert.AreEqual(1, mainList.Count, 
+      Assert.AreEqual(1, mainList.Count,
         "Count on database when a window is not closing");
     }
 

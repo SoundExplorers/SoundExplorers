@@ -398,9 +398,9 @@ namespace SoundExplorers.Controller {
     ///   due to the closure process already being underway.
     ///   Ideally, the user would instead be given the options of
     ///   committing the insertion or cancelling the close and returning to the editor.
-    ///   But see the XML comments for <see cref="CancelInsertion"/>
+    ///   But see the XML comments for <see cref="CancelInsertion" />
     ///   for the difficulties that would be involved in
-    ///   reopening a 'validated' insertion. 
+    ///   reopening a 'validated' insertion.
     /// </remarks>
     public void OnMainGridRowValidated(int rowIndex) {
       //Debug.WriteLine("EditorController.OnMainGridRowValidated:  Any row left, after final ItemChanged, if any");
