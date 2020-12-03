@@ -6,7 +6,6 @@ namespace SoundExplorers.Controller {
   [UsedImplicitly]
   public class MainController {
     private IOpen _databaseConnection;
-    private Option _statusBarOption;
     private Option _tableOption;
     private Option _toolBarOption;
 
@@ -25,19 +24,10 @@ namespace SoundExplorers.Controller {
 
     public bool IsClosing { get; set; }
 
-    public bool IsStatusBarVisible {
-      get => StatusBarOption.BooleanValue;
-      set => StatusBarOption.BooleanValue = value;
-    }
-
     public bool IsToolBarVisible {
       get => ToolBarOption.BooleanValue;
       set => ToolBarOption.BooleanValue = value;
     }
-
-    private Option StatusBarOption => _statusBarOption ??
-                                      (_statusBarOption =
-                                        CreateOption("StatusBar", true));
 
     public string TableName {
       get => TableOption.StringValue;

@@ -13,7 +13,6 @@ namespace SoundExplorers.View {
     public MainView() {
       SplashManager.Status = "Building window...";
       InitializeComponent();
-      StatusLabel.Text = string.Empty;
       HideMainMenuImageMargins();
     }
 
@@ -32,7 +31,6 @@ namespace SoundExplorers.View {
         SplashManager.Status = "Positioning window...";
         SizeableFormOptions = SizeableFormOptions.Create(this);
         SplashManager.Status = "Getting options...";
-        StatusStrip.Visible = Controller.IsStatusBarVisible;
         SelectEditorView = CreateSelectEditorView();
         ToolStrip.Visible = Controller.IsToolBarVisible;
       } catch (Exception ex) {
@@ -82,6 +80,12 @@ namespace SoundExplorers.View {
     private void EditPasteMenuItem_Click(object sender, EventArgs e) {
       if (MdiChildren.Any()) {
         EditorView.Paste();
+      }
+    }
+
+    private void EditSelectAllMenuItem_Click(object sender, EventArgs e) {
+      if (MdiChildren.Any()) {
+        EditorView.SelectAll();
       }
     }
 
@@ -214,7 +218,6 @@ namespace SoundExplorers.View {
     }
 
     private void MainView_FormClosed(object sender, FormClosedEventArgs e) {
-      Controller.IsStatusBarVisible = StatusStrip.Visible;
       Controller.IsToolBarVisible = ToolStrip.Visible;
       Controller.TableName = MdiChildren.Any()
         ? EditorView.Controller.MainTableName
@@ -264,144 +267,6 @@ namespace SoundExplorers.View {
       if (e.Item.Text == string.Empty) {
         e.Item.Visible = false;
       }
-    }
-
-    /// <summary>
-    ///   Handles the
-    ///   <see cref="Control.Click" /> event
-    ///   of the Edit Audio File Tags menu item and toolbar button to
-    ///   edit the tags of the audio file, if found,
-    ///   of the current Piece, if any,
-    ///   relative to the active Table widow
-    ///   or otherwise show an informative message box.
-    /// </summary>
-    /// <param name="sender">Event sender.</param>
-    /// <param name="e">Event arguments.</param>
-    private void ToolsEditAudioFileTagsMenuItem_Click(object sender, EventArgs e) {
-      if (MdiChildren.Any()) {
-        try {
-          EditorView.Controller.EditAudioFileTags();
-        } catch (ApplicationException ex) {
-          MessageBox.Show(
-            this,
-            ex.Message,
-            Application.ProductName,
-            MessageBoxButtons.OK,
-            MessageBoxIcon.Error);
-        }
-      } else {
-        MessageBox.Show(
-          this,
-          "To edit the tags of a piece's audio file, "
-          + "first open the Credit or Piece table and select a row.",
-          Application.ProductName,
-          MessageBoxButtons.OK,
-          MessageBoxIcon.Information);
-      }
-    }
-
-    /// <summary>
-    ///   Handles the
-    ///   <see cref="Control.Click" /> event
-    ///   of the Play Audio menu item and toolbar button to
-    ///   play the audio, if found,
-    ///   of the current Piece, if any,
-    ///   relative to the active Table widow
-    ///   or otherwise show an informative message box.
-    /// </summary>
-    /// <param name="sender">Event sender.</param>
-    /// <param name="e">Event arguments.</param>
-    private void ToolsPlayAudioMenuItem_Click(object sender, EventArgs e) {
-      if (MdiChildren.Any()) {
-        try {
-          EditorView.Controller.PlayAudio();
-        } catch (ApplicationException ex) {
-          MessageBox.Show(
-            this,
-            ex.Message,
-            Application.ProductName,
-            MessageBoxButtons.OK,
-            MessageBoxIcon.Information);
-        }
-      } else {
-        MessageBox.Show(
-          this,
-          "To play a piece's audio, first open the Credit or Piece table and select a row.",
-          Application.ProductName,
-          MessageBoxButtons.OK,
-          MessageBoxIcon.Information);
-      }
-    }
-
-    /// <summary>
-    ///   Handles the
-    ///   <see cref="Control.Click" /> event
-    ///   of the Play Video menu item and toolbar button to
-    ///   play the video, if found,
-    ///   of the current Piece, if any,
-    ///   relative to the active Table widow
-    ///   or otherwise show an informative message box.
-    /// </summary>
-    /// <param name="sender">Event sender.</param>
-    /// <param name="e">Event arguments.</param>
-    private void ToolsPlayVideoMenuItem_Click(object sender, EventArgs e) {
-      if (MdiChildren.Any()) {
-        try {
-          EditorView.Controller.PlayVideo();
-        } catch (ApplicationException ex) {
-          MessageBox.Show(
-            this,
-            ex.Message,
-            Application.ProductName,
-            MessageBoxButtons.OK,
-            MessageBoxIcon.Information);
-        }
-      } else {
-        MessageBox.Show(
-          this,
-          "To play a piece's video, first open the Credit or Piece table and select a row.",
-          Application.ProductName,
-          MessageBoxButtons.OK,
-          MessageBoxIcon.Information);
-      }
-    }
-
-    /// <summary>
-    ///   Handles the
-    ///   <see cref="Control.Click" /> event
-    ///   of the Show Newsletter menu item and toolbar button to
-    ///   show the current newsletter, if any,
-    ///   relative to the active Table widow
-    ///   or otherwise show an informative message box.
-    /// </summary>
-    /// <param name="sender">Event sender.</param>
-    /// <param name="e">Event arguments.</param>
-    private void ToolsShowNewsletterMenuItem_Click(object sender, EventArgs e) {
-      if (MdiChildren.Any()) {
-        try {
-          EditorView.Controller.ShowNewsletter();
-        } catch (ApplicationException exception) {
-          MessageBox.Show(
-            this,
-            exception.Message,
-            Application.ProductName,
-            MessageBoxButtons.OK,
-            MessageBoxIcon.Information);
-        }
-      } else {
-        MessageBox.Show(
-          this,
-          "To show a newsletter, first show the "
-          + "ArtistInImage, Credit, Image, Newsletter, "
-          + "Performance, Piece or Set table and select a row.",
-          Application.ProductName,
-          MessageBoxButtons.OK,
-          MessageBoxIcon.Information);
-      }
-    }
-
-    private void ViewStatusBarMenuItem_Click(object sender, EventArgs e) {
-      StatusStrip.Visible = ViewStatusBarMenuItem.Checked;
     }
 
     private void ViewToolBarMenuItem_Click(object sender, EventArgs e) {

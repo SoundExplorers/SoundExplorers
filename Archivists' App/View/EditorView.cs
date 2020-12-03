@@ -752,6 +752,19 @@ namespace SoundExplorers.View {
       base.Refresh();
     }
 
+    public void SelectAll() {
+      if (FocusedGrid != MainGrid) {
+        return;
+      }
+      if (!MainGrid.IsCurrentCellInEditMode) {
+        MainGrid.BeginEdit(true);
+      } else { // The cell is already being edited
+        if (MainGrid.EditingControl is TextBox textBox) {
+          textBox.SelectAll();
+        }
+      }
+    }
+
     private void ShowMessage([NotNull] string text, MessageBoxIcon icon) {
       Cursor = Cursors.Default;
       MessageBox.Show(
