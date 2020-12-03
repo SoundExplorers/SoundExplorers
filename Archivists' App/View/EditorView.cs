@@ -10,8 +10,6 @@ namespace SoundExplorers.View {
   ///   Table editor MDI child window of the main window.
   /// </summary>
   internal partial class EditorView : Form, IEditorView {
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
-    private const int WM_CLOSE = 0x0010;
 
     /// <summary>
     ///   Initialises a new instance of the <see cref="EditorView" /> class.
@@ -950,6 +948,8 @@ namespace SoundExplorers.View {
     }
 
     protected override void WndProc(ref Message m) {
+      // ReSharper disable once InconsistentNaming
+      const int WM_CLOSE = 0x0010;
       if (m.Msg == WM_CLOSE) {
         // Attempting to close Form
         Controller.IsClosing = true;
