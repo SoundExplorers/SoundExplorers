@@ -181,6 +181,52 @@ namespace SoundExplorers.View {
       }
     }
 
+    public void DeleteSelectedRows() {
+      if (FocusedGrid != MainGrid || Controller.IsInsertionRowCurrent) {
+        return;
+      }
+      if (MainGrid.IsCurrentCellInEditMode) {
+        MainGrid.CancelEdit();
+      }
+      if (MainGrid.SelectedRows.Count == 0) {
+        MainCurrentRow.Selected = true;
+      }
+      foreach (DataGridViewRow row in MainGrid.SelectedRows) {
+        MainGrid.Rows.Remove(row);
+      }
+    }
+
+    /// <summary>
+    ///   Refreshes the contents of the grid from the database and
+    ///   forces the form to invalidate its client area and immediately redraw itself
+    ///   and any child controls.
+    /// </summary>
+    public override void Refresh() {
+      PopulateGrid();
+      if (Controller.IsParentTableToBeShown) {
+        // A read-only related grid for the parent table is shown
+        // above the main grid.
+        FocusGrid(ParentGrid);
+      } else {
+        MainGrid.Focus();
+        FocusedGrid = MainGrid;
+      }
+      base.Refresh();
+    }
+
+    public void SelectAll() {
+      if (FocusedGrid != MainGrid) {
+        return;
+      }
+      if (!MainGrid.IsCurrentCellInEditMode) {
+        MainGrid.BeginEdit(true);
+      } else { // The cell is already being edited
+        if (MainGrid.EditingControl is TextBox textBox) {
+          textBox.SelectAll();
+        }
+      }
+    }
+
     private void AfterPopulateTimer_Tick(object sender, EventArgs e) {
       AfterPopulateTimer.Stop();
       MakeMainGridInsertionRowCurrent();
@@ -731,37 +777,6 @@ namespace SoundExplorers.View {
       if (ParentGrid.RowCount > 0) {
         ParentGrid.CurrentCell =
           ParentGrid.Rows[0].Cells[0]; // Triggers ParentGrid_RowEnter
-      }
-    }
-
-    /// <summary>
-    ///   Refreshes the contents of the grid from the database and
-    ///   forces the form to invalidate its client area and immediately redraw itself
-    ///   and any child controls.
-    /// </summary>
-    public override void Refresh() {
-      PopulateGrid();
-      if (Controller.IsParentTableToBeShown) {
-        // A read-only related grid for the parent table is shown
-        // above the main grid.
-        FocusGrid(ParentGrid);
-      } else {
-        MainGrid.Focus();
-        FocusedGrid = MainGrid;
-      }
-      base.Refresh();
-    }
-
-    public void SelectAll() {
-      if (FocusedGrid != MainGrid) {
-        return;
-      }
-      if (!MainGrid.IsCurrentCellInEditMode) {
-        MainGrid.BeginEdit(true);
-      } else { // The cell is already being edited
-        if (MainGrid.EditingControl is TextBox textBox) {
-          textBox.SelectAll();
-        }
       }
     }
 

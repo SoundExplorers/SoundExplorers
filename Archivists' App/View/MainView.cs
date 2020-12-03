@@ -77,6 +77,12 @@ namespace SoundExplorers.View {
       }
     }
 
+    private void EditDeleteSelectedRowsMenuItem_Click(object sender, EventArgs e) {
+      if (MdiChildren.Any()) {
+        EditorView.DeleteSelectedRows();
+      }
+    }
+
     private void EditPasteMenuItem_Click(object sender, EventArgs e) {
       if (MdiChildren.Any()) {
         EditorView.Paste();

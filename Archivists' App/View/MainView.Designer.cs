@@ -38,6 +38,7 @@ namespace SoundExplorers.View {
             this.EditCopyMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.EditPasteMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.EditSelectAllMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.EditDeleteSelectedRowsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ViewMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.ViewToolBarMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ToolsMenu = new System.Windows.Forms.ToolStripMenuItem();
@@ -119,7 +120,7 @@ namespace SoundExplorers.View {
             // 
             // EditMenu
             // 
-            this.EditMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {this.EditCutMenuItem, this.EditCopyMenuItem, this.EditPasteMenuItem, this.EditSelectAllMenuItem});
+            this.EditMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {this.EditCutMenuItem, this.EditCopyMenuItem, this.EditPasteMenuItem, this.EditSelectAllMenuItem, this.EditDeleteSelectedRowsMenuItem});
             this.EditMenu.Name = "EditMenu";
             this.EditMenu.Size = new System.Drawing.Size(47, 24);
             this.EditMenu.Text = "&Edit";
@@ -129,7 +130,7 @@ namespace SoundExplorers.View {
             this.EditCutMenuItem.ImageTransparentColor = System.Drawing.Color.Black;
             this.EditCutMenuItem.Name = "EditCutMenuItem";
             this.EditCutMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.X)));
-            this.EditCutMenuItem.Size = new System.Drawing.Size(214, 24);
+            this.EditCutMenuItem.Size = new System.Drawing.Size(297, 24);
             this.EditCutMenuItem.Text = "Cu&t";
             this.EditCutMenuItem.Click += new System.EventHandler(this.EditCutMenuItem_Click);
             // 
@@ -138,7 +139,7 @@ namespace SoundExplorers.View {
             this.EditCopyMenuItem.ImageTransparentColor = System.Drawing.Color.Black;
             this.EditCopyMenuItem.Name = "EditCopyMenuItem";
             this.EditCopyMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C)));
-            this.EditCopyMenuItem.Size = new System.Drawing.Size(214, 24);
+            this.EditCopyMenuItem.Size = new System.Drawing.Size(297, 24);
             this.EditCopyMenuItem.Text = "&Copy";
             this.EditCopyMenuItem.Click += new System.EventHandler(this.EditCopyMenuItem_Click);
             // 
@@ -147,7 +148,7 @@ namespace SoundExplorers.View {
             this.EditPasteMenuItem.ImageTransparentColor = System.Drawing.Color.Black;
             this.EditPasteMenuItem.Name = "EditPasteMenuItem";
             this.EditPasteMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.V)));
-            this.EditPasteMenuItem.Size = new System.Drawing.Size(214, 24);
+            this.EditPasteMenuItem.Size = new System.Drawing.Size(297, 24);
             this.EditPasteMenuItem.Text = "&Paste";
             this.EditPasteMenuItem.Click += new System.EventHandler(this.EditPasteMenuItem_Click);
             // 
@@ -157,9 +158,17 @@ namespace SoundExplorers.View {
             this.EditSelectAllMenuItem.Name = "EditSelectAllMenuItem";
             this.EditSelectAllMenuItem.ShortcutKeyDisplayString = "Ctrl+A, F2";
             this.EditSelectAllMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.A)));
-            this.EditSelectAllMenuItem.Size = new System.Drawing.Size(214, 24);
+            this.EditSelectAllMenuItem.Size = new System.Drawing.Size(297, 24);
             this.EditSelectAllMenuItem.Text = "Select &All";
             this.EditSelectAllMenuItem.Click += new System.EventHandler(this.EditSelectAllMenuItem_Click);
+            // 
+            // EditDeleteSelectedRowsMenuItem
+            // 
+            this.EditDeleteSelectedRowsMenuItem.Name = "EditDeleteSelectedRowsMenuItem";
+            this.EditDeleteSelectedRowsMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Delete)));
+            this.EditDeleteSelectedRowsMenuItem.Size = new System.Drawing.Size(297, 24);
+            this.EditDeleteSelectedRowsMenuItem.Text = "&Delete Selected Row(s)";
+            this.EditDeleteSelectedRowsMenuItem.Click += new System.EventHandler(this.EditDeleteSelectedRowsMenuItem_Click);
             // 
             // ViewMenu
             // 
@@ -361,6 +370,9 @@ namespace SoundExplorers.View {
             this.ResumeLayout(false);
             this.PerformLayout();
         }
+
+        private System.Windows.Forms.ToolStripMenuItem EditDeleteSelectedRowsMenuItem;
+
         #endregion
 
 
