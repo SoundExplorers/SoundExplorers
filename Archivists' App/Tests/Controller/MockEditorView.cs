@@ -39,6 +39,10 @@ namespace SoundExplorers.Tests.Controller {
       Controller.OnMainGridRowEnter(rowIndex);
     }
 
+    public void OnError() {
+      Controller.ShowError();
+    }
+
     public void OnRowAddedOrDeleted() {
       OnRowAddedOrDeletedCount++;
     }
@@ -60,10 +64,6 @@ namespace SoundExplorers.Tests.Controller {
 
     public void ShowWarningMessage(string text) {
       ShowWarningMessageCount++;
-    }
-
-    public void StartOnErrorTimer() {
-      Controller.ShowError();
     }
   }
 }

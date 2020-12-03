@@ -32,13 +32,6 @@ namespace SoundExplorers.View {
       var textBox = (TextBox)DataGridView.EditingControl;
       textBox.KeyUp += TextBoxOnKeyUp;
       textBox.SelectAll();
-      // I tried a timer to fix the failure of the initial SelectAll when
-      // the cell edit was started with the F2 key.  It does not work.
-      // var timer = new Timer();
-      // timer.Tick += (sender, args) => {
-      //   timer.Stop();
-      //   textBox.SelectAll();
-      // };
     }
 
     private static void TextBoxOnKeyUp(object sender, KeyEventArgs e) {

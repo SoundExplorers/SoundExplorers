@@ -55,6 +55,12 @@ namespace SoundExplorers.View {
       MainGrid.CurrentCell = MainGrid.Rows[rowIndex].Cells[0];
     }
 
+    public void OnError() {
+      Debug.WriteLine("EditorView.OnError");
+      Cursor = Cursors.WaitCursor;
+      BeginInvoke((Action)OnErrorAsync);
+    }
+
     public void OnRowAddedOrDeleted() {
       MainGrid.AutoResizeColumns();
       MainGrid.Focus();
@@ -78,12 +84,6 @@ namespace SoundExplorers.View {
 
     public void ShowWarningMessage(string text) {
       ShowMessage(text, MessageBoxIcon.Warning);
-    }
-
-    public void StartOnErrorTimer() {
-      Debug.WriteLine("EditorView.StartOnErrorTimer");
-      Cursor = Cursors.WaitCursor;
-      OnErrorTimer.Start();
     }
 
     public void SetController(EditorController controller) {
@@ -227,8 +227,7 @@ namespace SoundExplorers.View {
       }
     }
 
-    private void AfterPopulateTimer_Tick(object sender, EventArgs e) {
-      AfterPopulateTimer.Stop();
+    private void AfterPopulateAsync() {
       MakeMainGridInsertionRowCurrent();
       if (Controller.IsParentTableToBeShown) {
         // A read-only related grid for the parent table is to be shown
@@ -375,19 +374,12 @@ namespace SoundExplorers.View {
     }
 
     /// <summary>
-    ///   Handle's the focus Timer's Tick event
-    ///   to shift the focus to the required grid.
-    /// </summary>
-    /// <param name="sender">Event sender.</param>
-    /// <param name="e">Event arguments.</param>
-    /// <remarks>
     ///   For unknown reason,
     ///   when an existing table form is activated,
     ///   the split container gets focused.
-    ///   Refocusing in this Timer fixes the problem.
-    /// </remarks>
-    private void FocusTimerOnTick(object sender, EventArgs e) {
-      FocusTimer.Stop();
+    ///   Asynchronously refocusing  the problem.
+    /// </summary>
+    private void FocusAsync() {
       FocusGrid(FocusedGrid ?? ParentGrid);
     }
 
@@ -629,17 +621,8 @@ namespace SoundExplorers.View {
       Controller.OnMainGridRowValidated(e.RowIndex);
     }
 
-    /// <summary>
-    ///   Handle's the error Timer's Tick event.
-    /// </summary>
-    /// <param name="sender">Event sender.</param>
-    /// <param name="e">Event arguments.</param>
-    /// <remarks>
-    ///   Have to use a Timer in order for focusing the error row and cell to work.
-    /// </remarks>
-    private void OnErrorTimer_Tick(object sender, EventArgs e) {
-      OnErrorTimer.Stop();
-      Debug.WriteLine("OnErrorTimer_Tick");
+    private void OnErrorAsync() {
+      Debug.WriteLine("OnErrorAsync");
       MainGrid.CancelEdit();
       Controller.ShowError();
     }
@@ -744,7 +727,7 @@ namespace SoundExplorers.View {
       // So can't be done when called from constructor.
       if (Visible) {
         MainGrid.AutoResizeColumns();
-        AfterPopulateTimer.Start();
+        BeginInvoke((Action)AfterPopulateAsync);
       }
     }
 
@@ -799,7 +782,7 @@ namespace SoundExplorers.View {
     ///   grid after the user has grabbed the splitter.
     /// </remarks>
     private void SplitContainerOnGotFocus(object sender, EventArgs e) {
-      FocusTimer.Start();
+      BeginInvoke((Action)FocusAsync);
     }
 
     /// <summary>

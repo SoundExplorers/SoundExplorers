@@ -5,6 +5,7 @@ namespace SoundExplorers.Controller {
     void EditMainGridCurrentCell();
     void FocusMainGridCell(int rowIndex, int columnIndex);
     void MakeMainGridRowCurrent(int rowIndex);
+    void OnError();
     void OnRowAddedOrDeleted();
 
     void RestoreMainGridCurrentRowCellErrorValue(int columnIndex,
@@ -13,6 +14,5 @@ namespace SoundExplorers.Controller {
     void SelectCurrentRowOnly();
     void ShowErrorMessage([NotNull] string text);
     void ShowWarningMessage(string text);
-    void StartOnErrorTimer();
   }
 }

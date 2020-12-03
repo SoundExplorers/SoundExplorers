@@ -24,9 +24,6 @@
         /// </summary>
         private void InitializeComponent() {
             this.components = new System.ComponentModel.Container();
-            this.AfterPopulateTimer = new System.Windows.Forms.Timer(this.components);
-            this.FocusTimer = new System.Windows.Forms.Timer(this.components);
-            this.OnErrorTimer = new System.Windows.Forms.Timer(this.components);
             this.ImageSplitContainer = new System.Windows.Forms.SplitContainer();
             this.GridSplitContainer = new System.Windows.Forms.SplitContainer();
             this.ParentGrid = new System.Windows.Forms.DataGridView();
@@ -45,21 +42,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.MainGrid)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.FittedPictureBox1)).BeginInit();
             this.SuspendLayout();
-            // 
-            // AfterPopulateTimer
-            // 
-            this.AfterPopulateTimer.Interval = 1;
-            this.AfterPopulateTimer.Tick += new System.EventHandler(this.AfterPopulateTimer_Tick);
-            // 
-            // FocusTimer
-            // 
-            this.FocusTimer.Interval = 1;
-            this.FocusTimer.Tick += new System.EventHandler(this.FocusTimerOnTick);
-            // 
-            // OnErrorTimer
-            // 
-            this.OnErrorTimer.Interval = 1;
-            this.OnErrorTimer.Tick += new System.EventHandler(this.OnErrorTimer_Tick);
             // 
             // ImageSplitContainer
             // 
@@ -185,9 +167,6 @@
 
         #endregion
 
-        private System.Windows.Forms.Timer AfterPopulateTimer;
-        private System.Windows.Forms.Timer FocusTimer;
-        private System.Windows.Forms.Timer OnErrorTimer;
         private System.Windows.Forms.SplitContainer ImageSplitContainer;
         private System.Windows.Forms.SplitContainer GridSplitContainer;
         private System.Windows.Forms.DataGridView ParentGrid;

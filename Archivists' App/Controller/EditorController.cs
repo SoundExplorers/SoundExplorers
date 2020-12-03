@@ -289,17 +289,17 @@ namespace SoundExplorers.Controller {
       switch (exception) {
         case DatabaseUpdateErrorException databaseUpdateErrorException:
           MainList.LastDatabaseUpdateErrorException = databaseUpdateErrorException;
-          View.StartOnErrorTimer();
+          View.OnError();
           break;
         case DuplicateKeyException duplicateKeyException:
           MainList.OnValidationError(rowIndex, columnName, duplicateKeyException);
-          View.StartOnErrorTimer();
+          View.OnError();
           break;
         case FormatException formatException:
           // An invalid value was pasted into a cell, e.g. text into a date.
           MainList.OnValidationError(rowIndex, columnName, formatException);
           //MainList.OnFormatException(rowIndex, columnName, formatException);
-          View.StartOnErrorTimer();
+          View.OnError();
           break;
         case RowNotInTableException referencedEntityNotFoundException:
           // A combo box cell value 
@@ -314,7 +314,7 @@ namespace SoundExplorers.Controller {
           // MainList.OnReferencedEntityNotFound(rowIndex, columnName, 
           MainList.OnValidationError(rowIndex, columnName,
             referencedEntityNotFoundException);
-          View.StartOnErrorTimer();
+          View.OnError();
           break;
         case null:
           // For unknown reason, the way I've got the error handling set up,
@@ -348,7 +348,7 @@ namespace SoundExplorers.Controller {
           columnName, simpleKey);
       MainList.OnValidationError(
         rowIndex, columnName, referencedEntityNotFoundException);
-      View.StartOnErrorTimer();
+      View.OnError();
     }
 
     public virtual void OnMainGridRowEnter(int rowIndex) {
@@ -376,7 +376,7 @@ namespace SoundExplorers.Controller {
           MainList.DeleteEntity(rowIndex);
           View.OnRowAddedOrDeleted();
         } catch (DatabaseUpdateErrorException) {
-          View.StartOnErrorTimer();
+          View.OnError();
         }
       }
     }
@@ -415,7 +415,7 @@ namespace SoundExplorers.Controller {
         MainList.OnRowValidated(rowIndex);
         View.OnRowAddedOrDeleted();
       } catch (DatabaseUpdateErrorException) {
-        View.StartOnErrorTimer();
+        View.OnError();
       }
     }
 
