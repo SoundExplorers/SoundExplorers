@@ -898,9 +898,6 @@ namespace SoundExplorers.View {
     /// </remarks>
     private void EditorView_KeyDown(object sender, KeyEventArgs e) {
       switch (e.KeyData) {
-        case Keys.Control | Keys.W:
-          Close();
-          break;
         case Keys.F6:
           if (Controller.IsParentTableToBeShown) {
             FocusGrid(FocusedGrid == ParentGrid ? MainGrid : ParentGrid);

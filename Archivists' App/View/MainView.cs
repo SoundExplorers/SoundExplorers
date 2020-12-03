@@ -293,6 +293,12 @@ namespace SoundExplorers.View {
       }
     }
 
+    private void WindowsCloseCurrentTableEditorMenuItem_Click(object sender, EventArgs e) {
+      if (MdiChildren.Any()) {
+        EditorView.Close();
+      }
+    }
+
     private void WindowsTileSideBySideMenuItem_Click(object sender, EventArgs e) {
       LayoutMdi(MdiLayout.TileVertical);
     }
