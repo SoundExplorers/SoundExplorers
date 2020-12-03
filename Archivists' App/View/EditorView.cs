@@ -562,8 +562,6 @@ namespace SoundExplorers.View {
     ///   <see cref="Control.KeyDown" /> event to:
     ///   begin editing the current cell with, if a text cell, all contents selected.
     /// </summary>
-    /// <param name="sender">Event sender.</param>
-    /// <param name="e">Event arguments.</param>
     /// <remarks>
     ///   When a text cell edit is started with a mouse click,
     ///   selecting all contents of the cell is done by
@@ -891,28 +889,20 @@ namespace SoundExplorers.View {
 
     /// <summary>
     ///   Handles the <see cref="Form" />'s
-    ///   <see cref="Control.KeyDown" /> event to:
-    ///   switch focus from one grid to the other
-    ///   if two grids are shown and one is in focus.
+    ///   <see cref="Control.KeyDown" /> event.
     /// </summary>
-    /// <param name="sender">Event sender.</param>
-    /// <param name="e">Event arguments.</param>
     /// <remarks>
     ///   In order for this event handler to be triggered,
     ///   the <see cref="Form" />'s <see cref="Form.KeyPreview" />
     ///   property must be set to <b>True</b>.
     /// </remarks>
     private void EditorView_KeyDown(object sender, KeyEventArgs e) {
-      //switch (e.KeyCode) {
-      //case Keys.Enter:
-      //    Debug.WriteLine(e.KeyCode);
-      //    break;
-      //}
       switch (e.KeyData) {
+        case Keys.Control | Keys.W:
+          Close();
+          break;
         case Keys.F6:
           if (Controller.IsParentTableToBeShown) {
-            // A read-only related grid for the parent table is shown
-            // above the main grid.
             FocusGrid(FocusedGrid == ParentGrid ? MainGrid : ParentGrid);
           }
           break;
