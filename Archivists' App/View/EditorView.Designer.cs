@@ -29,7 +29,8 @@
             this.ParentGrid = new System.Windows.Forms.DataGridView();
             this.MainGrid = new System.Windows.Forms.DataGridView();
             this.MissingImageLabel = new System.Windows.Forms.Label();
-            this.FittedPictureBox1 = new FittedPictureBox();
+            this.FittedPictureBox1 = new SoundExplorers.View.FittedPictureBox();
+            this.MainGridContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.ImageSplitContainer)).BeginInit();
             this.ImageSplitContainer.Panel1.SuspendLayout();
             this.ImageSplitContainer.Panel2.SuspendLayout();
@@ -100,6 +101,7 @@
             this.MainGrid.AllowDrop = true;
             this.MainGrid.AllowUserToOrderColumns = true;
             this.MainGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.MainGrid.ContextMenuStrip = this.MainGridContextMenu;
             this.MainGrid.Dock = System.Windows.Forms.DockStyle.Fill;
             this.MainGrid.Location = new System.Drawing.Point(0, 0);
             this.MainGrid.Margin = new System.Windows.Forms.Padding(4);
@@ -132,9 +134,14 @@
             this.FittedPictureBox1.DragOver += new System.Windows.Forms.DragEventHandler(this.FittedPictureBox1_DragOver);
             this.FittedPictureBox1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.FittedPictureBox1_MouseDown);
             // 
+            // MainGridContextMenu
+            // 
+            this.MainGridContextMenu.Name = "MainGridContextMenu";
+            this.MainGridContextMenu.Size = new System.Drawing.Size(61, 4);
+            // 
             // EditorView
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 18F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(379, 322);
             this.Controls.Add(this.ImageSplitContainer);
@@ -162,8 +169,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.MainGrid)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.FittedPictureBox1)).EndInit();
             this.ResumeLayout(false);
-
         }
+
+        private System.Windows.Forms.ContextMenuStrip MainGridContextMenu;
 
         #endregion
 
