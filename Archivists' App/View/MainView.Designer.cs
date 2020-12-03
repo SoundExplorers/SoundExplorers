@@ -114,6 +114,8 @@ namespace SoundExplorers.View {
             // 
             this.FileExitMenuItem.ImageTransparentColor = System.Drawing.Color.Black;
             this.FileExitMenuItem.Name = "FileExitMenuItem";
+            this.FileExitMenuItem.ShortcutKeyDisplayString = "Alt+F4, Ctrl+Q";
+            this.FileExitMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Q)));
             this.FileExitMenuItem.Size = new System.Drawing.Size(244, 24);
             this.FileExitMenuItem.Text = "E&xit";
             this.FileExitMenuItem.Click += new System.EventHandler(this.FileExitMenuItem_Click);
