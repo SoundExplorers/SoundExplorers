@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Data;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows.Forms;
 using JetBrains.Annotations;
@@ -8,9 +7,6 @@ using SoundExplorers.Controller;
 
 namespace SoundExplorers.View {
   public partial class MainView : Form, IView<MainController> {
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
-    private const int WM_CLOSE = 0x0010;
-
     /// <summary>
     ///   Initialises a new instance of the <see cref="MainView" /> class.
     /// </summary>
@@ -435,6 +431,8 @@ namespace SoundExplorers.View {
     }
 
     protected override void WndProc(ref Message m) {
+      // ReSharper disable once InconsistentNaming
+      const int WM_CLOSE = 0x0010;
       if (m.Msg == WM_CLOSE) {
         // Attempting to close Form
         Controller.IsClosing = true;
