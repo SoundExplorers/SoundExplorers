@@ -283,7 +283,7 @@ namespace SoundExplorers.View {
             this.NewToolStripButton.ImageTransparentColor = System.Drawing.Color.Black;
             this.NewToolStripButton.Name = "NewToolStripButton";
             this.NewToolStripButton.Size = new System.Drawing.Size(38, 38);
-            this.NewToolStripButton.Text = "New Table Editor";
+            this.NewToolStripButton.Text = "New Table Editor (Ctrl+N)";
             this.NewToolStripButton.Click += new System.EventHandler(this.FileNewMenuItem_Click);
             // 
             // OpenToolStripButton
@@ -295,7 +295,7 @@ namespace SoundExplorers.View {
             this.OpenToolStripButton.ImageTransparentColor = System.Drawing.Color.Black;
             this.OpenToolStripButton.Name = "OpenToolStripButton";
             this.OpenToolStripButton.Size = new System.Drawing.Size(38, 38);
-            this.OpenToolStripButton.Text = "Open Table";
+            this.OpenToolStripButton.Text = "Open Table (Ctrl+O)";
             this.OpenToolStripButton.Click += new System.EventHandler(this.FileOpenMenuItem_Click);
             // 
             // RefreshToolStripButton
@@ -307,7 +307,7 @@ namespace SoundExplorers.View {
             this.RefreshToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.RefreshToolStripButton.Name = "RefreshToolStripButton";
             this.RefreshToolStripButton.Size = new System.Drawing.Size(38, 38);
-            this.RefreshToolStripButton.Text = "Refresh Table";
+            this.RefreshToolStripButton.Text = "Refresh Table (F5)";
             this.RefreshToolStripButton.Click += new System.EventHandler(this.FileRefreshMenuItem_Click);
             // 
             // CopyToolStripButton
@@ -319,7 +319,7 @@ namespace SoundExplorers.View {
             this.CopyToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.CopyToolStripButton.Name = "CopyToolStripButton";
             this.CopyToolStripButton.Size = new System.Drawing.Size(38, 38);
-            this.CopyToolStripButton.Text = "Copy";
+            this.CopyToolStripButton.Text = "Copy (Ctrl+C)";
             this.CopyToolStripButton.Click += new System.EventHandler(this.EditCopyMenuItem_Click);
             // 
             // CutToolStripButton
@@ -331,7 +331,7 @@ namespace SoundExplorers.View {
             this.CutToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.CutToolStripButton.Name = "CutToolStripButton";
             this.CutToolStripButton.Size = new System.Drawing.Size(38, 38);
-            this.CutToolStripButton.Text = "Cut";
+            this.CutToolStripButton.Text = "Cut (Ctrl+X)";
             this.CutToolStripButton.Click += new System.EventHandler(this.EditCutMenuItem_Click);
             // 
             // PasteToolStripButton
@@ -343,7 +343,7 @@ namespace SoundExplorers.View {
             this.PasteToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.PasteToolStripButton.Name = "PasteToolStripButton";
             this.PasteToolStripButton.Size = new System.Drawing.Size(38, 38);
-            this.PasteToolStripButton.Text = "Paste";
+            this.PasteToolStripButton.Text = "Paste (Ctrl+V)";
             this.PasteToolStripButton.Click += new System.EventHandler(this.EditPasteMenuItem_Click);
             // 
             // MainView
