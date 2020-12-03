@@ -51,6 +51,7 @@ namespace SoundExplorers.View {
             this.WindowsSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.WindowsCloseCurrentTableEditorMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.WindowsCloseAllMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.WindowsSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.HelpMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.HelpAboutMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ToolStrip = new System.Windows.Forms.ToolStrip();
@@ -216,7 +217,8 @@ namespace SoundExplorers.View {
                 this.WindowsArrangeIconsMenuItem, 
                 this.WindowsSeparator1, 
                 this.WindowsCloseCurrentTableEditorMenuItem, 
-                this.WindowsCloseAllMenuItem
+                this.WindowsCloseAllMenuItem,
+                this.WindowsSeparator2
             });
             this.WindowsMenu.Name = "WindowsMenu";
             this.WindowsMenu.Size = new System.Drawing.Size(82, 24);
@@ -275,6 +277,12 @@ namespace SoundExplorers.View {
             this.WindowsCloseAllMenuItem.Size = new System.Drawing.Size(188, 24);
             this.WindowsCloseAllMenuItem.Text = "Cl&ose All";
             this.WindowsCloseAllMenuItem.Click += new System.EventHandler(this.WindowsCloseAllMenuItem_Click);
+            // 
+            // WindowsSeparator2
+            // 
+            this.WindowsSeparator2.Name = "WindowsSeparator2";
+            this.WindowsSeparator2.Size = new System.Drawing.Size(305, 6);
+            this.WindowsSeparator2.Visible = false;
             // 
             // HelpMenu
             // 
@@ -430,6 +438,7 @@ namespace SoundExplorers.View {
         private System.Windows.Forms.ToolStripSeparator WindowsSeparator1;
         private System.Windows.Forms.ToolStripMenuItem WindowsCloseCurrentTableEditorMenuItem;
         private System.Windows.Forms.ToolStripMenuItem WindowsCloseAllMenuItem;
+        private System.Windows.Forms.ToolStripSeparator WindowsSeparator2;
         private System.Windows.Forms.ToolStripMenuItem HelpMenu;
         private System.Windows.Forms.ToolStripMenuItem HelpAboutMenuItem;
         private System.Windows.Forms.ToolStripButton NewToolStripButton;

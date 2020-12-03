@@ -56,13 +56,28 @@ namespace SoundExplorers.View {
 
     [NotNull]
     private EditorView CreateEditorView() {
-      return EditorView.Create(SelectEditorView.Controller.SelectedEntityListType,
+      WindowsSeparator2.Visible = true; // See comment in EditorView_FormClosed 
+      var result = EditorView.Create(SelectEditorView.Controller.SelectedEntityListType,
         Controller);
+      result.FormClosed += EditorView_FormClosed;
+      return result;
     }
 
     [NotNull]
     private SelectEditorView CreateSelectEditorView() {
       return SelectEditorView.Create(Controller.TableName);
+    }
+
+    private void EditorView_FormClosed(object sender, FormClosedEventArgs e) {
+      // Creating and then manually showing and hiding the separator above
+      // the MDI child list in the Windows menu (= MenuStrip.MdiWindowListItem)
+      // prevents the separator from remaining visible
+      // when all children have been closed, which is what happens when we allow
+      // the separator to be created and shown automatically.  See
+      // https://stackoverflow.com/questions/12951820/extra-separator-after-mdiwindowlistitem-when-no-child-windows-are-open
+      BeginInvoke((Action)delegate 
+        { WindowsSeparator2.Visible = MdiChildren.Any(); }
+      );
     }
 
     private void EditCopyMenuItem_Click(object sender, EventArgs e) {
