@@ -1,4 +1,6 @@
-﻿namespace SoundExplorers.View {
+﻿using System.Windows.Forms;
+
+namespace SoundExplorers.View {
     partial class EditorView {
         /// <summary>
         /// Required designer variable.
@@ -35,7 +37,7 @@
             this.MainGridDeleteSelectedRowsMenuItem = new SoundExplorers.View.DeleteSelectedRowsMenuItem();
             this.MissingImageLabel = new System.Windows.Forms.Label();
             this.FittedPictureBox1 = new SoundExplorers.View.FittedPictureBox();
-            this.MainGridContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.MainGridContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.ImageSplitContainer)).BeginInit();
             this.ImageSplitContainer.Panel1.SuspendLayout();
             this.ImageSplitContainer.Panel2.SuspendLayout();
@@ -106,7 +108,6 @@
             this.MainGrid.AllowDrop = true;
             this.MainGrid.AllowUserToOrderColumns = true;
             this.MainGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.MainGrid.ContextMenuStrip = this.MainGridContextMenu;
             this.MainGrid.Dock = System.Windows.Forms.DockStyle.Fill;
             this.MainGrid.Location = new System.Drawing.Point(0, 0);
             this.MainGrid.Margin = new System.Windows.Forms.Padding(4);
@@ -114,18 +115,18 @@
             this.MainGrid.Size = new System.Drawing.Size(379, 113);
             this.MainGrid.TabIndex = 4;
             // 
-            // MainGridContextMenu
+            // MainGridContextMenuStrip
             // 
-            this.MainGridContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.MainGridContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
                 this.MainGridCutMenuItem, 
                 this.MainGridCopyMenuItem, 
                 this.MainGridPasteMenuItem, 
                 this.MainGridSelectAllMenuItem, 
                 this.MainGridDeleteSelectedRowsMenuItem
             });
-            this.MainGridContextMenu.Name = "MainGridContextMenu";
-            this.MainGridContextMenu.ShowImageMargin = false;
-            this.MainGridContextMenu.Size = new System.Drawing.Size(61, 4);
+            this.MainGridContextMenuStrip.Name = "MainGridContextMenuStrip";
+            this.MainGridContextMenuStrip.ShowImageMargin = false;
+            this.MainGridContextMenuStrip.Size = new System.Drawing.Size(61, 4);
             // 
             // MainGridCutMenuItem
             //
@@ -183,6 +184,7 @@
             this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "EditorView";
             this.ShowIcon = false;
+            this.StartPosition = FormStartPosition.Manual;
             this.Text = "EditorView";
             this.Activated += new System.EventHandler(this.EditorView_Activated);
             this.Deactivate += new System.EventHandler(this.EditorView_Deactivate);
@@ -209,7 +211,7 @@
         private System.Windows.Forms.SplitContainer GridSplitContainer;
         private System.Windows.Forms.DataGridView ParentGrid;
         private System.Windows.Forms.DataGridView MainGrid;
-        private System.Windows.Forms.ContextMenuStrip MainGridContextMenu;
+        private System.Windows.Forms.ContextMenuStrip MainGridContextMenuStrip;
         private SoundExplorers.View.CutMenuItem MainGridCutMenuItem;
         private SoundExplorers.View.CopyMenuItem MainGridCopyMenuItem;
         private SoundExplorers.View.PasteMenuItem MainGridPasteMenuItem;

@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Drawing;
 using System.Windows.Forms;
 using JetBrains.Annotations;
 using SoundExplorers.Controller;
@@ -14,9 +15,9 @@ namespace SoundExplorers.View {
     /// </summary>
     public EditorView() {
       InitializeComponent();
-      // Allow things to be dropped on to the PictureBox.
       Move += EditorView_Move;
       Resize += EditorView_Resize;
+      // Allow things to be dropped on to the PictureBox.
       FittedPictureBox1.AllowDrop = true;
       GridSplitContainer.GotFocus += SplitContainerOnGotFocus;
       ImageSplitContainer.GotFocus += SplitContainerOnGotFocus;
@@ -424,10 +425,8 @@ namespace SoundExplorers.View {
     ///   When mouse button 2 is clicked,
     ///   the grid will be focused if it is not already.
     ///   When mouse button 2 is clicked on a cell,
-    ///   the cell will become the current cell.
-    ///   When mouse button 2 is clicked on a path cell,
-    ///   a drag-and-drop operation to allow the path to be
-    ///   dropped on another application will be initiated.
+    ///   the cell will become the current cell and
+    ///   if the main grid was clicked, the context menu will be shown.
     ///   <para>
     ///     I tried to initiate a drag-and-drop operation
     ///     when a cell is clicked with the mouse button 1.
@@ -451,6 +450,9 @@ namespace SoundExplorers.View {
         var cell = GetCellAtClientCoOrdinates(e.X, e.Y);
         if (cell != null) { // Cell found
           grid.CurrentCell = cell;
+          if (grid == MainGrid) {
+            MainGridContextMenuStrip.Show(MainGrid, e.Location);
+          }
         }
       }
     }
@@ -562,6 +564,24 @@ namespace SoundExplorers.View {
           if (MainGrid.CurrentCell != null) {
             MainGrid.BeginEdit(true);
           }
+          break;
+        case Keys.Apps: // Context menu key
+        case Keys.Shift | Keys.F10:
+          var cellRectangle = MainGrid.GetCellDisplayRectangle(
+            MainGrid.CurrentCell.ColumnIndex,
+            MainCurrentRow.Index, true);
+          var point = new Point(cellRectangle.Right, cellRectangle.Bottom);
+          MainGridContextMenuStrip.Show(MainGrid, point);
+          // When MainGrid.ContextMenuStrip was set to MainGridContextMenuStrip,
+          // neither e.Handled or e.SuppressKeyPress stopped
+          // the context menu from being shown a second time immediately afterwards
+          // in the default wrong position.
+          // The solution is not to set
+          // MainGrid.ContextMenuStrip to MainGridContextMenuStrip and instead to
+          // show the context menu in grid event handlers:
+          // here when shown with one of the two standard keyboard shortcuts:
+          // Grid_MouseDown when shown with a right mouse click.
+          e.Handled = e.SuppressKeyPress = true;
           break;
       } //End of switch
     }
@@ -901,6 +921,12 @@ namespace SoundExplorers.View {
       // due to being thrown in the controller's constructor.
       OpenTable();
     }
+
+    // private void EditorView_MouseDown(object sender, MouseEventArgs e) {
+    //   if (e.Button == MouseButtons.Right && MainGrid.Focused) {
+    //     MainGridContextMenuStrip.Show(PointToScreen(e.Location));
+    //   }
+    // }
 
     private void EditorView_Move(object sender, EventArgs e) {
       // Stop ghost border lines appearing on main window background.
