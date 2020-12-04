@@ -80,31 +80,31 @@ namespace SoundExplorers.View {
       );
     }
 
-    private void EditCopyMenuItem_Click(object sender, EventArgs e) {
+    internal void EditCopyMenuItem_Click(object sender, EventArgs e) {
       if (MdiChildren.Any()) {
         EditorView.Copy();
       }
     }
 
-    private void EditCutMenuItem_Click(object sender, EventArgs e) {
+    internal void EditCutMenuItem_Click(object sender, EventArgs e) {
       if (MdiChildren.Any()) {
         EditorView.Cut();
       }
     }
 
-    private void EditDeleteSelectedRowsMenuItem_Click(object sender, EventArgs e) {
+    internal void EditDeleteSelectedRowsMenuItem_Click(object sender, EventArgs e) {
       if (MdiChildren.Any()) {
         EditorView.DeleteSelectedRows();
       }
     }
 
-    private void EditPasteMenuItem_Click(object sender, EventArgs e) {
+    internal void EditPasteMenuItem_Click(object sender, EventArgs e) {
       if (MdiChildren.Any()) {
         EditorView.Paste();
       }
     }
 
-    private void EditSelectAllMenuItem_Click(object sender, EventArgs e) {
+    internal void EditSelectAllMenuItem_Click(object sender, EventArgs e) {
       if (MdiChildren.Any()) {
         EditorView.SelectAll();
       }

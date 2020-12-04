@@ -9,7 +9,6 @@ namespace SoundExplorers.View {
   ///   Table editor MDI child window of the main window.
   /// </summary>
   internal partial class EditorView : Form, IEditorView {
-
     /// <summary>
     ///   Initialises a new instance of the <see cref="EditorView" /> class.
     /// </summary>
@@ -30,6 +29,7 @@ namespace SoundExplorers.View {
                                               throw new NullReferenceException(
                                                 nameof(MainGrid.CurrentRow));
 
+    private MainView MainView => (MainView)MdiParent;
     private SizeableFormOptions SizeableFormOptions { get; set; }
 
     public void EditMainGridCurrentCell() {
@@ -887,6 +887,12 @@ namespace SoundExplorers.View {
     }
 
     private void EditorView_Load(object sender, EventArgs e) {
+      MainGridCutMenuItem.Click += MainView.EditCutMenuItem_Click;
+      MainGridCopyMenuItem.Click += MainView.EditCopyMenuItem_Click;
+      MainGridPasteMenuItem.Click += MainView.EditPasteMenuItem_Click;
+      MainGridSelectAllMenuItem.Click += MainView.EditSelectAllMenuItem_Click;
+      MainGridDeleteSelectedRowsMenuItem.Click +=
+        MainView.EditDeleteSelectedRowsMenuItem_Click;
       // Has to be done here rather than in constructor
       // in order to tell that this is an MDI child form.
       SizeableFormOptions = SizeableFormOptions.Create(this);

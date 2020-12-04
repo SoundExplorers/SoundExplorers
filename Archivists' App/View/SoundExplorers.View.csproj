@@ -68,6 +68,9 @@
         <Compile Include="ComboBoxEditingControl.cs">
           <SubType>Component</SubType>
         </Compile>
+        <Compile Include="CopyMenuItem.cs" />
+        <Compile Include="CutMenuItem.cs" />
+        <Compile Include="DeleteSelectedRowsMenuItem.cs" />
         <Compile Include="FittedPictureBox.cs">
           <SubType>Component</SubType>
         </Compile>
@@ -79,7 +82,9 @@
         <Compile Include="MainView.Designer.cs">
           <DependentUpon>MainView.cs</DependentUpon>
         </Compile>
+        <Compile Include="PasteMenuItem.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
+        <Compile Include="SelectAllMenuItem.cs" />
         <Compile Include="SelectEditorView.cs">
           <SubType>Form</SubType>
         </Compile>
