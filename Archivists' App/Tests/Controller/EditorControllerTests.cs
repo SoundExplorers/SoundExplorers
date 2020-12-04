@@ -454,6 +454,8 @@ namespace SoundExplorers.Tests.Controller {
       controller.OnExistingRowCellUpdateError(1, "Url", exception);
       Assert.AreEqual(1, View.RestoreMainGridCurrentRowCellErrorValueCount,
         "RestoreMainGridCurrentRowCellErrorValueCount");
+      Assert.AreEqual(1, View.EditMainGridCurrentCellCount, 
+        "EditMainGridCurrentCellCount");
     }
 
     [Test]
