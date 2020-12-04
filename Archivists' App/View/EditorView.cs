@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using JetBrains.Annotations;
@@ -39,7 +38,7 @@ namespace SoundExplorers.View {
 
     public void FocusMainGridCell(int rowIndex, int columnIndex) {
       // This triggers MainGrid_RowEnter.
-      Debug.WriteLine("EditorView.FocusMainGridCell");
+      // Debug.WriteLine("EditorView.FocusMainGridCell");
       try {
         MainGrid.CurrentCell = MainGrid.Rows[rowIndex].Cells[columnIndex];
       } catch {
@@ -49,12 +48,12 @@ namespace SoundExplorers.View {
 
     public void MakeMainGridRowCurrent(int rowIndex) {
       // This triggers MainGrid_RowEnter.
-      Debug.WriteLine($"EditorView.MakeMainGridRowCurrent: row {rowIndex}");
+      // Debug.WriteLine($"EditorView.MakeMainGridRowCurrent: row {rowIndex}");
       MainGrid.CurrentCell = MainGrid.Rows[rowIndex].Cells[0];
     }
 
     public void OnError() {
-      Debug.WriteLine("EditorView.OnError");
+      // Debug.WriteLine("EditorView.OnError");
       Cursor = Cursors.WaitCursor;
       BeginInvoke((Action)OnErrorAsync);
     }
@@ -93,7 +92,7 @@ namespace SoundExplorers.View {
     /// </summary>
     private void MakeMainGridInsertionRowCurrent() {
       // This triggers MainGrid_RowEnter.
-      Debug.WriteLine("EditorView.MakeMainGridInsertionRowCurrent");
+      // Debug.WriteLine("EditorView.MakeMainGridInsertionRowCurrent");
       MakeMainGridRowCurrent(MainGrid.Rows.Count - 1);
     }
 
@@ -639,7 +638,7 @@ namespace SoundExplorers.View {
     }
 
     private void OnErrorAsync() {
-      Debug.WriteLine("OnErrorAsync");
+      // Debug.WriteLine("OnErrorAsync");
       MainGrid.CancelEdit();
       Controller.ShowError();
     }

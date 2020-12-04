@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using SoundExplorers.Controller;
+﻿using SoundExplorers.Controller;
 
 namespace SoundExplorers.Tests.Controller {
   public class MockEditorView : IEditorView {
@@ -32,7 +31,7 @@ namespace SoundExplorers.Tests.Controller {
     }
 
     public void MakeMainGridRowCurrent(int rowIndex) {
-      Debug.WriteLine($"MockEditorView.MakeMainGridRowCurrent: row {rowIndex}");
+      //Debug.WriteLine($"MockEditorView.MakeMainGridRowCurrent: row {rowIndex}");
       MakeMainGridRowCurrentCount++;
       MakeMainGridRowCurrentRowIndex = rowIndex;
       //Controller.OnMainGridRowValidated();
@@ -57,7 +56,7 @@ namespace SoundExplorers.Tests.Controller {
     }
 
     public void ShowErrorMessage(string text) {
-      Debug.WriteLine("MockEditorView.ShowErrorMessage");
+      //Debug.WriteLine("MockEditorView.ShowErrorMessage");
       LastErrorMessage = text;
       ShowErrorMessageCount++;
     }

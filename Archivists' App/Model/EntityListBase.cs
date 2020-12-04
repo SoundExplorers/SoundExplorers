@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Data.Linq;
-using System.Diagnostics;
 using System.Linq;
 using JetBrains.Annotations;
 using SoundExplorers.Data;
@@ -182,8 +181,8 @@ namespace SoundExplorers.Model {
       // Debug.WriteLine(
       //   $"{nameof(OnRowEnter)}:  Any row entered (after ItemAdded if insertion row)");
       HasRowBeenEdited = false;
-      Debug.WriteLine(
-        $"EntityListBase.OnRowEnter: HasRowBeenEdited = {HasRowBeenEdited}");
+      // Debug.WriteLine(
+      //   $"EntityListBase.OnRowEnter: HasRowBeenEdited = {HasRowBeenEdited}");
       if (BackupBindingItemToRestoreFrom == null) {
         // Not forced to reenter row to fix an update error
         //Debug.WriteLine("    Creating BackupBindingItem");
@@ -212,8 +211,8 @@ namespace SoundExplorers.Model {
     ///   A database update error occured.
     /// </exception>
     public void OnRowValidated(int rowIndex) {
-      Debug.WriteLine(
-        $"EntityListBase.OnRowValidated: HasRowBeenEdited == {HasRowBeenEdited}; IsRemovingInvalidInsertionRow = {IsRemovingInvalidInsertionRow}");
+      // Debug.WriteLine(
+      //   $"EntityListBase.OnRowValidated: HasRowBeenEdited == {HasRowBeenEdited}; IsRemovingInvalidInsertionRow = {IsRemovingInvalidInsertionRow}");
       if (!HasRowBeenEdited) {
         IsInsertionRowCurrent = false;
         return;
@@ -283,7 +282,7 @@ namespace SoundExplorers.Model {
     }
 
     public void RemoveInsertionBindingItem() {
-      Debug.WriteLine("EntityListBase.RemoveInsertionBindingItem");
+      // Debug.WriteLine("EntityListBase.RemoveInsertionBindingItem");
       IsInsertionRowCurrent = false;
       IsRemovingInvalidInsertionRow = false;
       BindingList?.RemoveAt(BindingList.Count - 1);
@@ -296,8 +295,8 @@ namespace SoundExplorers.Model {
       BackupBindingItemToRestoreFrom = null;
       BindingItemToFix = null;
       HasRowBeenEdited = false;
-      Debug.WriteLine(
-        $"EntityListBase.RestoreCurrentBindingItemOriginalValues: HasRowBeenEdited = {HasRowBeenEdited}");
+      // Debug.WriteLine(
+      //   $"EntityListBase.RestoreCurrentBindingItemOriginalValues: HasRowBeenEdited = {HasRowBeenEdited}");
     }
 
     public void RestoreReferencingPropertyOriginalValue(int rowIndex, int columnIndex) {
@@ -379,13 +378,13 @@ namespace SoundExplorers.Model {
           IsInsertionRowCurrent = true;
           break;
         case ListChangedType.ItemChanged: // Cell edit completed 
-          Debug.WriteLine(
-            $"EntityListBase.BindingListOnListChanged: ItemChanged, row {e.NewIndex}");
+          // Debug.WriteLine(
+          //   $"EntityListBase.BindingListOnListChanged: ItemChanged, row {e.NewIndex}");
           // Debug.WriteLine(
           //   $"ListChangedType.ItemChanged:  {e.PropertyDescriptor.Name} = '{e.PropertyDescriptor.GetValue(BindingList[e.NewIndex])}', cell edit completed or cancelled");
           HasRowBeenEdited = true;
-          Debug.WriteLine(
-            $"EntityListBase.BindingListOnListChanged: ItemChanged, HasRowBeenEdited = {HasRowBeenEdited}");
+          // Debug.WriteLine(
+          //   $"EntityListBase.BindingListOnListChanged: ItemChanged, HasRowBeenEdited = {HasRowBeenEdited}");
           if (!IsInsertionRowCurrent) {
             UpdateExistingEntityProperty(e.NewIndex, e.PropertyDescriptor.Name);
           }

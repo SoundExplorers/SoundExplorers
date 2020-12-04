@@ -2,7 +2,6 @@ using System;
 using System.ComponentModel;
 using System.Data;
 using System.Data.Linq;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using JetBrains.Annotations;
 using SoundExplorers.Model;
@@ -142,6 +141,7 @@ namespace SoundExplorers.Controller {
     ///   Whatever error might be thrown on attempting to update the tags.
     /// </exception>
     [ExcludeFromCodeCoverage]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public void EditAudioFileTags() {
       // string path = GetMediumPath(Medium.Audio);
       // var dummy = new AudioFile(path);
@@ -162,15 +162,15 @@ namespace SoundExplorers.Controller {
     }
 
     public void ShowError() {
-      Debug.WriteLine(
-        $"EditorController.ShowError: LastChangeAction == {LastChangeAction}");
+      // Debug.WriteLine(
+      //   $"EditorController.ShowError: LastChangeAction == {LastChangeAction}");
       View.FocusMainGridCell(MainList.LastDatabaseUpdateErrorException.RowIndex,
         MainList.LastDatabaseUpdateErrorException.ColumnIndex);
       if (LastChangeAction == ChangeAction.Delete) {
         View.SelectCurrentRowOnly();
       }
       View.ShowErrorMessage(MainList.LastDatabaseUpdateErrorException.Message);
-      Debug.WriteLine("Error message shown");
+      // Debug.WriteLine("Error message shown");
       if (IsFormatException) {
         return;
       }
@@ -251,7 +251,7 @@ namespace SoundExplorers.Controller {
     ///   </para>
     /// </remarks>
     private void CancelInsertion() {
-      Debug.WriteLine("EditorController.CancelInsertion");
+      // Debug.WriteLine("EditorController.CancelInsertion");
       int insertionRowIndex = MainList.BindingList.Count - 1;
       if (insertionRowIndex > 0) {
         // Currently, it is not anticipated that there can be an insertion row error
@@ -354,7 +354,7 @@ namespace SoundExplorers.Controller {
     public virtual void OnMainGridRowEnter(int rowIndex) {
       // Debug.WriteLine(
       //   "EditorController.OnMainGridRowEnter:  Any row entered (after ItemAdded if insertion row)");
-      Debug.WriteLine($"EditorController.OnMainGridRowEnter: row {rowIndex}");
+      // Debug.WriteLine($"EditorController.OnMainGridRowEnter: row {rowIndex}");
       CurrentRowIndex = rowIndex;
       MainList.OnRowEnter(rowIndex);
     }
@@ -404,8 +404,8 @@ namespace SoundExplorers.Controller {
     /// </remarks>
     public void OnMainGridRowValidated(int rowIndex) {
       //Debug.WriteLine("EditorController.OnMainGridRowValidated:  Any row left, after final ItemChanged, if any");
-      Debug.WriteLine(
-        $"EditorController.OnMainGridRowValidated: row {rowIndex}, IsRemovingInvalidInsertionRow == {MainList.IsRemovingInvalidInsertionRow}");
+      // Debug.WriteLine(
+      //   $"EditorController.OnMainGridRowValidated: row {rowIndex}, IsRemovingInvalidInsertionRow == {MainList.IsRemovingInvalidInsertionRow}");
       CurrentRowIndex = -1;
       if (MainList.IsRemovingInvalidInsertionRow || IsClosing ||
           MainController.IsClosing) {
@@ -436,6 +436,7 @@ namespace SoundExplorers.Controller {
     ///   The audio cannot be played.
     /// </exception>
     [ExcludeFromCodeCoverage]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public void PlayAudio() {
       //Process.Start(GetMediumPath(Medium.Audio));
     }
@@ -448,6 +449,7 @@ namespace SoundExplorers.Controller {
     ///   The video cannot be played.
     /// </exception>
     [ExcludeFromCodeCoverage]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public void PlayVideo() {
       //Process.Start(GetMediumPath(Medium.Video));
     }
@@ -459,6 +461,7 @@ namespace SoundExplorers.Controller {
     ///   A newsletter cannot be shown.
     /// </exception>
     [ExcludeFromCodeCoverage]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public void ShowNewsletter() {
       // var newsletter = GetNewsletterToShow();
       // if (string.IsNullOrWhiteSpace(newsletter.Path)) { } else if (!File.Exists(
