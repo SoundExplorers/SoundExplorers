@@ -54,7 +54,10 @@ namespace SoundExplorers.View {
     public void OnError() {
       // Debug.WriteLine("EditorView.OnError");
       Cursor = Cursors.WaitCursor;
-      BeginInvoke((Action)OnErrorAsync);
+      BeginInvoke((Action)delegate {
+        MainGrid.CancelEdit();
+        Controller.ShowError();
+      });
     }
 
     public void OnRowAddedOrDeleted() {
@@ -521,16 +524,6 @@ namespace SoundExplorers.View {
     }
 
     /// <summary>
-    ///   For unknown reason,
-    ///   when an existing table form is activated,
-    ///   the split container gets focused.
-    ///   Asynchronously refocusing  the problem.
-    /// </summary>
-    private void FocusAsync() {
-      FocusGrid(FocusedGrid ?? ParentGrid);
-    }
-
-    /// <summary>
     ///   Gets the cell that is at the specified client co-ordinates of the main grid.
     ///   Null if there is no cell at the coordinates.
     /// </summary>
@@ -696,12 +689,6 @@ namespace SoundExplorers.View {
       MainGrid.Controller.OnRowValidated(e.RowIndex);
     }
 
-    private void OnErrorAsync() {
-      // Debug.WriteLine("OnErrorAsync");
-      MainGrid.CancelEdit();
-      Controller.ShowError();
-    }
-
     private void OpenTable() {
       InvertGridColors(ParentGrid); // Will revert when focused.
       PopulateGrid();
@@ -832,7 +819,7 @@ namespace SoundExplorers.View {
     ///   grid after the user has grabbed the splitter.
     /// </remarks>
     private void SplitContainerOnGotFocus(object sender, EventArgs e) {
-      BeginInvoke((Action)FocusAsync);
+      BeginInvoke((Action)delegate { FocusGrid(FocusedGrid ?? ParentGrid);});
     }
 
     /// <summary>
