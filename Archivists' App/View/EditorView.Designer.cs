@@ -51,6 +51,7 @@ namespace SoundExplorers.View {
             this.ImageSplitContainer.Location = new System.Drawing.Point(0, 0);
             this.ImageSplitContainer.Name = "ImageSplitContainer";
             this.ImageSplitContainer.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            this.ImageSplitContainer.Panel2Collapsed = true;
             // 
             // ImageSplitContainer.Panel1
             // 

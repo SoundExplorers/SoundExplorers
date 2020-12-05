@@ -56,6 +56,7 @@ namespace SoundExplorers.View {
 
     [NotNull]
     private EditorView CreateEditorView() {
+      Cursor = Cursors.WaitCursor;
       WindowsSeparator2.Visible = true; // See comment in EditorView_FormClosed 
       var result = EditorView.Create(SelectEditorView.Controller.SelectedEntityListType,
         Controller);

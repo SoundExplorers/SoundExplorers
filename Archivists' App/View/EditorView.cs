@@ -87,6 +87,16 @@ namespace SoundExplorers.View {
 
     public void SetController(EditorController controller) {
       Controller = controller;
+      if (Controller.IsParentTableToBeShown) {
+        // A read-only related grid for the parent table is shown
+        // above the main grid.
+        GridSplitContainer.Panel1Collapsed = false;
+        // Does not work if done in EditorView_Load.
+        GridSplitContainer.SplitterDistance = Controller.GridSplitterDistance;
+        ParentGrid.AutoResizeColumns();
+      } else {
+        GridSplitContainer.Panel1Collapsed = true;
+      }
     }
 
     /// <summary>
@@ -363,6 +373,7 @@ namespace SoundExplorers.View {
       // where any exception would be indirectly reported,
       // due to being thrown in the controller's constructor.
       OpenTable();
+      MainGrid.AutoResizeColumns();
     }
 
     private void EditorView_Move(object sender, EventArgs e) {
@@ -378,8 +389,8 @@ namespace SoundExplorers.View {
     private void EditorView_VisibleChanged(object sender, EventArgs e) {
       if (Visible) {
         //Debug.WriteLine("EditorView_VisibleChanged: " + this.Text);
-        MainGrid.AutoResizeColumns();
-        ImageSplitContainer.Panel2Collapsed = true;
+        MainView.Cursor = Cursors.Default;
+        //ImageSplitContainer.Panel2Collapsed = true;
         // We need to work out whether we need the image panel
         // before we position the grid splitter.
         // Otherwise the grid splitter gets out of kilter.
@@ -402,16 +413,6 @@ namespace SoundExplorers.View {
         // } else {
         //   ImageSplitContainer.Panel2Collapsed = true;
         // }
-        if (Controller.IsParentTableToBeShown) {
-          // A read-only related grid for the parent table is shown
-          // above the main grid.
-          GridSplitContainer.Panel1Collapsed = false;
-          // Does not work if done in EditorView_Load.
-          GridSplitContainer.SplitterDistance = Controller.GridSplitterDistance;
-          ParentGrid.AutoResizeColumns();
-        } else {
-          GridSplitContainer.Panel1Collapsed = true;
-        }
       }
     }
 
