@@ -39,13 +39,6 @@ namespace SoundExplorers.Controller {
     }
 
     /// <summary>
-    ///   Gets metadata about the database columns
-    ///   represented by the Entity's field properties.
-    /// </summary>
-    [NotNull]
-    internal BindingColumnList Columns => MainList.Columns;
-
-    /// <summary>
     ///   User option for the position of the split between the
     ///   (upper) parent grid, if shown, and the (lower) main grid.
     /// </summary>
@@ -77,18 +70,11 @@ namespace SoundExplorers.Controller {
     public bool IsClosing { get; set; }
 
     /// <summary>
-    ///   Gets whether the current main grid row is the insertion row,
-    ///   which is for adding new entities and is located at the bottom of the grid.
-    /// </summary>
-    public bool IsInsertionRowCurrent => MainList.IsInsertionRowCurrent;
-
-    /// <summary>
     ///   Gets whether a read-only related grid for a parent table is to be shown
     ///   above the main grid.
     /// </summary>
     public bool IsParentTableToBeShown => ParentList?.BindingList != null;
 
-    [CanBeNull] public IBindingList MainBindingList => MainList.BindingList;
     [NotNull] internal MainController MainController { get; }
 
     /// <summary>
@@ -97,7 +83,6 @@ namespace SoundExplorers.Controller {
     internal IEntityList MainList { get; private set; }
 
     [NotNull] private Type MainListType { get; }
-    [CanBeNull] public string MainTableName => MainList.EntityTypeName;
     [CanBeNull] public IBindingList ParentBindingList => ParentList?.BindingList;
 
     /// <summary>
@@ -107,13 +92,6 @@ namespace SoundExplorers.Controller {
     private IEntityList ParentList { get; set; }
 
     [NotNull] protected IEditorView View { get; }
-
-    /// <summary>
-    ///   Returns whether the specified column references another entity.
-    /// </summary>
-    public bool DoesColumnReferenceAnotherEntity([NotNull] string columnName) {
-      return !string.IsNullOrWhiteSpace(Columns[columnName].ReferencedPropertyName);
-    }
 
     /// <summary>
     ///   Edit the tags of the audio file, if found,
@@ -261,34 +239,6 @@ namespace SoundExplorers.Controller {
       return new Option(name);
     }
 
-    [NotNull]
-    public string GetColumnDisplayName([NotNull] string columnName) {
-      var column = Columns[columnName];
-      return column.DisplayName ?? columnName;
-    }
-
-    /// <summary>
-    ///   A combo box cell value on the main grid's insertion row
-    ///   does not match any of it's embedded combo box's items.
-    ///   So the combo box's selected index and text could not be updated.
-    ///   As the combo boxes are all dropdown lists,
-    ///   the only way this can have happened is that
-    ///   the unmatched value was pasted into the cell.
-    ///   If the cell value had been changed
-    ///   by selecting an item on the embedded combo box,
-    ///   it could only be a matching value.
-    /// </summary>
-    internal void OnInsertionRowReferencedEntityNotFound(
-      int rowIndex, [NotNull] string columnName,
-      [NotNull] string simpleKey) {
-      var referencedEntityNotFoundException =
-        ReferenceableItemList.CreateReferencedEntityNotFoundException(
-          columnName, simpleKey);
-      MainList.OnValidationError(
-        rowIndex, columnName, referencedEntityNotFoundException);
-      View.OnError();
-    }
-
     /// <summary>
     ///   An existing row on the parent grid has been entered.
     ///   So the main grid will be populated with the required
@@ -343,10 +293,6 @@ namespace SoundExplorers.Controller {
       // } else {
       //   Process.Start(newsletter.Path);
       // }
-    }
-
-    public void ShowWarningMessage(string message) {
-      View.ShowWarningMessage(message);
     }
   }
 }

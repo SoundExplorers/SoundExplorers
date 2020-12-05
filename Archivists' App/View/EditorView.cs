@@ -23,9 +23,9 @@ namespace SoundExplorers.View {
 
     private DataGridView FocusedGrid { get; set; }
 
-    private DataGridViewRow MainCurrentRow => MainGrid.CurrentRow ??
-                                              throw new NullReferenceException(
-                                                nameof(MainGrid.CurrentRow));
+    private DataGridViewRow MainCurrentRow => 
+      MainGrid.CurrentRow ??
+      throw new NullReferenceException(nameof(MainGrid.CurrentRow));
 
     private MainView MainView => (MainView)MdiParent;
     private SizeableFormOptions SizeableFormOptions { get; set; }
@@ -166,8 +166,8 @@ namespace SoundExplorers.View {
         MainGrid.CurrentCell.Value = string.Empty;
         MainGrid.EndEdit();
       } else {
+        // The cell is already being edited
         switch (MainGrid.EditingControl) {
-          // The cell is already being edited
           case TextBox textBox when string.IsNullOrWhiteSpace(textBox.SelectedText):
             // Clipboard.SetText throws an exception
             // if passed an empty string.
@@ -181,7 +181,7 @@ namespace SoundExplorers.View {
     }
 
     public void DeleteSelectedRows() {
-      if (FocusedGrid != MainGrid || Controller.IsInsertionRowCurrent) {
+      if (FocusedGrid != MainGrid || MainGrid.Controller.IsInsertionRowCurrent) {
         return;
       }
       if (MainGrid.IsCurrentCellInEditMode) {
@@ -242,12 +242,12 @@ namespace SoundExplorers.View {
       // from crashing if F3 in pressed while the grid is focused.
       // TODO Check whether F3 crashes program when PARENT grid is focused.
       column.SortMode = DataGridViewColumnSortMode.NotSortable;
-      column.HeaderText = Controller.GetColumnDisplayName(column.Name);
+      column.HeaderText = MainGrid.Controller.GetColumnDisplayName(column.Name);
       if (column.ValueType == typeof(DateTime)) {
         column.DefaultCellStyle.Format = EditorController.DateFormat;
       }
-      if (Controller.DoesColumnReferenceAnotherEntity(column.Name)) {
-        column.CellTemplate = ComboBoxCell.Create(Controller, column.Name);
+      if (MainGrid.Controller.DoesColumnReferenceAnotherEntity(column.Name)) {
+        column.CellTemplate = ComboBoxCell.Create(MainGrid.Controller, column.Name);
       } else if (column.ValueType == typeof(DateTime)) {
         column.CellTemplate = new CalendarCell();
       } else if (column.ValueType == typeof(string)) {
@@ -746,11 +746,11 @@ namespace SoundExplorers.View {
       MainGrid.RowsRemoved -= MainGrid_RowsRemoved;
       MainGrid.RowValidated -= MainGrid_RowValidated;
       Controller.FetchData();
-      Text = Controller.MainTableName;
+      Text = MainGrid.Controller.TableName;
       if (Controller.IsParentTableToBeShown) {
         PopulateParentGrid();
       }
-      MainGrid.DataSource = Controller.MainBindingList;
+      MainGrid.DataSource = MainGrid.Controller.BindingList;
       foreach (DataGridViewColumn column in MainGrid.Columns) {
         ConfigureMainGridColumn(column);
       } // End of foreach
@@ -771,8 +771,6 @@ namespace SoundExplorers.View {
     private void PopulateParentGrid() {
       ParentGrid.Click -= Grid_Click;
       ParentGrid.CurrentCellChanged -= ParentGrid_CurrentCellChanged;
-      //ParentGrid.GotFocus -= new EventHandler(ControlOnGotFocus);
-      //ParentGrid.LostFocus -= new EventHandler(ControlOnLostFocus);
       ParentGrid.MouseDown -= Grid_MouseDown;
       ParentGrid.RowEnter -= ParentGrid_RowEnter;
       ParentGrid.DataSource = Controller.ParentBindingList;
@@ -788,8 +786,6 @@ namespace SoundExplorers.View {
       }
       ParentGrid.Click += Grid_Click;
       ParentGrid.CurrentCellChanged += ParentGrid_CurrentCellChanged;
-      //ParentGrid.GotFocus += new EventHandler(ControlOnGotFocus);
-      //ParentGrid.LostFocus += new EventHandler(ControlOnLostFocus);
       ParentGrid.MouseDown += Grid_MouseDown;
       ParentGrid.RowEnter += ParentGrid_RowEnter;
       if (ParentGrid.RowCount > 0) {

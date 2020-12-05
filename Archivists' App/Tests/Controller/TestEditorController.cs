@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Data.Linq;
 using JetBrains.Annotations;
 using SoundExplorers.Controller;
 using SoundExplorers.Data;
@@ -13,11 +12,12 @@ namespace SoundExplorers.Tests.Controller {
     where TBindingItem : BindingItemBase<TEntity, TBindingItem>, new() {
     private TestEditor<TEntity, TBindingItem> _editor;
 
-    public TestEditorController([NotNull] MockEditorView view,
-      [NotNull] Type mainListType,
+    public TestEditorController(
+      [NotNull] Type mainListType, [NotNull] TestMainGridController mainGridController,
       [NotNull] QueryHelper queryHelper, [NotNull] SessionBase session) :
-      base(view, mainListType,
+      base(mainGridController.MockEditorView, mainListType,
         new TestMainController(new MockView<MainController>(), queryHelper, session)) {
+      MainGridController = mainGridController;
       QueryHelper = queryHelper;
       Session = session;
     }
@@ -29,7 +29,8 @@ namespace SoundExplorers.Tests.Controller {
       set => _editor = value;
     }
 
-    [NotNull] private MockEditorView MockEditorView => (MockEditorView)View;
+    [NotNull] private MockEditorView MockEditorView => MainGridController.MockEditorView;
+    [NotNull] private TestMainGridController MainGridController { get; }
     [NotNull] private QueryHelper QueryHelper { get; }
     [NotNull] private SessionBase Session { get; }
 
@@ -69,7 +70,7 @@ namespace SoundExplorers.Tests.Controller {
       [NotNull] string columnName) {
       var comboBoxCell = new MockView<ComboBoxCellController>();
       var comboBoxCellController =
-        new ComboBoxCellController(comboBoxCell, this, columnName);
+        new ComboBoxCellController(comboBoxCell, MainGridController, columnName);
       comboBoxCellController.GetItems();
       return comboBoxCellController;
     }

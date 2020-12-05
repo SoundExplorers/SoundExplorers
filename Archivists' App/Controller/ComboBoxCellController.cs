@@ -13,15 +13,15 @@ namespace SoundExplorers.Controller {
     /// <param name="view">
     ///   The view of the combo box cell to be controlled.
     /// </param>
-    /// <param name="editorController">
+    /// <param name="mainGridController">
     ///   The controller of the table editor.
     /// </param>
     /// <param name="columnName">
     ///   The name of the column that is edited with the combo box cell.
     /// </param>
     public ComboBoxCellController([NotNull] IView<ComboBoxCellController> view,
-      [NotNull] EditorController editorController, [NotNull] string columnName) : base(
-      editorController, columnName) {
+      [NotNull] MainGridController mainGridController, [NotNull] string columnName) : base(
+      mainGridController, columnName) {
       view.SetController(this);
     }
 
@@ -36,7 +36,7 @@ namespace SoundExplorers.Controller {
     [NotNull]
     public object[] GetItems() {
       if (Column.ReferenceableItems.Count == 0) {
-        EditorController.ShowWarningMessage(CreateNoAvailableReferencesMessage());
+        MainGridController.ShowWarningMessage(CreateNoAvailableReferencesMessage());
       }
       return Column.ReferenceableItems.ToArray();
     }
@@ -48,14 +48,14 @@ namespace SoundExplorers.Controller {
 
     public void OnCellValueChanged(int rowIndex,
       [NotNull] object cellValue) {
-      if (!EditorController.IsInsertionRowCurrent) {
+      if (!MainGridController.IsInsertionRowCurrent) {
         return;
       }
       string simpleKey = ReferenceableItemList.ToSimpleKey(cellValue);
       if (Column.ReferenceableItems.ContainsKey(simpleKey)) {
         return;
       }
-      EditorController.OnInsertionRowReferencedEntityNotFound(
+      MainGridController.OnInsertionRowReferencedEntityNotFound(
         rowIndex, Column.Name, simpleKey);
     }
   }

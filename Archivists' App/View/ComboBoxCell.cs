@@ -45,17 +45,17 @@ namespace SoundExplorers.View {
     ///   returning the view instance created.
     ///   The parameters are passed to the controller's constructor.
     /// </summary>
-    /// <param name="editorController">
+    /// <param name="mainGridController">
     ///   The controller of the table editor.
     /// </param>
     /// <param name="columnName">
     ///   The name of the column that is edited with the combo box cell.
     /// </param>
     [NotNull]
-    public static ComboBoxCell Create([NotNull] EditorController editorController,
+    public static ComboBoxCell Create([NotNull] MainGridController mainGridController,
       [NotNull] string columnName) {
       return (ComboBoxCell)ViewFactory.Create<ComboBoxCell, ComboBoxCellController>(
-        editorController, columnName);
+        mainGridController, columnName);
     }
 
     /// <summary>

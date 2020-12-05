@@ -239,7 +239,7 @@ namespace SoundExplorers.View {
     private void MainView_FormClosed(object sender, FormClosedEventArgs e) {
       Controller.IsToolBarVisible = ToolStrip.Visible;
       Controller.TableName = MdiChildren.Any()
-        ? EditorView.Controller.MainTableName
+        ? EditorView.MainGrid.Controller.TableName
         : SelectEditorView.Controller.SelectedTableName;
       // Explicitly closing all the MIDI child forms
       // fixes a problem where, 

@@ -168,7 +168,7 @@ namespace SoundExplorers.View {
         private System.Windows.Forms.SplitContainer ImageSplitContainer;
         private System.Windows.Forms.SplitContainer GridSplitContainer;
         private System.Windows.Forms.DataGridView ParentGrid;
-        private SoundExplorers.View.MainGrid MainGrid;
+        internal SoundExplorers.View.MainGrid MainGrid;
         private FittedPictureBox FittedPictureBox1;
         private System.Windows.Forms.Label MissingImageLabel;
 

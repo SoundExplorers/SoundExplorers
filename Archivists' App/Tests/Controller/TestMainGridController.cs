@@ -4,13 +4,17 @@ using SoundExplorers.Controller;
 
 namespace SoundExplorers.Tests.Controller {
   public class TestMainGridController : MainGridController {
-    public TestMainGridController([NotNull] IEditorView editorView) : base(editorView) { }
+    // ReSharper disable once SuggestBaseTypeForParameter (See MockEditorView property)
+    public TestMainGridController([NotNull] MockEditorView editorView) :
+      base(editorView) { }
+
     public bool AutoValidate { get; set; }
 
     protected override ChangeAction LastChangeAction => TestUnsupportedLastChangeAction
       ? ChangeAction.None
       : base.LastChangeAction;
 
+    [NotNull] public MockEditorView MockEditorView => (MockEditorView)EditorView;
     public bool TestUnsupportedLastChangeAction { get; set; }
 
     public override void OnRowEnter(int rowIndex) {

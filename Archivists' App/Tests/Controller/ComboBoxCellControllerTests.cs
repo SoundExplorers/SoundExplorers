@@ -17,6 +17,8 @@ namespace SoundExplorers.Tests.Controller {
       Session = new TestSession();
       Editor = new TestEditor<Event, EventBindingItem>();
       EditorView = new MockEditorView();
+      MainGridController = EditorView.MainGridController =
+        new TestMainGridController(EditorView);
       EditorController = CreateEditorController(typeof(EventList));
       CellView = new MockView<ComboBoxCellController>();
       Session.BeginUpdate();
@@ -29,7 +31,7 @@ namespace SoundExplorers.Tests.Controller {
         Session.Commit();
       }
       EditorController.FetchData(); // Populate grid
-      Editor.SetBindingList(EditorController.MainBindingList);
+      Editor.SetBindingList(MainGridController.BindingList);
     }
 
     [TearDown]
@@ -40,6 +42,7 @@ namespace SoundExplorers.Tests.Controller {
     private ComboBoxCellController CellController { get; set; }
     private MockView<ComboBoxCellController> CellView { get; set; }
     private TestEditor<Event, EventBindingItem> Editor { get; set; }
+    private TestMainGridController MainGridController { get; set; }
     private MockEditorView EditorView { get; set; }
     private TestData Data { get; set; }
     private TestEditorController<Event, EventBindingItem> EditorController { get; set; }
@@ -78,14 +81,14 @@ namespace SoundExplorers.Tests.Controller {
 
     [NotNull]
     private ComboBoxCellController CreateCellController([NotNull] string columnName) {
-      return new ComboBoxCellController(CellView, EditorController, columnName);
+      return new ComboBoxCellController(CellView, MainGridController, columnName);
     }
 
     [NotNull]
     private TestEditorController<Event, EventBindingItem> CreateEditorController(
       [NotNull] Type mainListType) {
-      return new TestEditorController<Event, EventBindingItem>(
-        EditorView, mainListType, QueryHelper, Session);
+      return new TestEditorController<Event, EventBindingItem>(mainListType,
+        MainGridController, QueryHelper, Session);
     }
   }
 }
