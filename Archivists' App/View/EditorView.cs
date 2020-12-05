@@ -1,5 +1,4 @@
 using System;
-using System.Drawing;
 using System.Windows.Forms;
 using JetBrains.Annotations;
 using SoundExplorers.Controller;
@@ -22,7 +21,6 @@ namespace SoundExplorers.View {
       ImageSplitContainer.GotFocus += SplitContainerOnGotFocus;
     }
 
-    public EditorController Controller { get; private set; }
     private DataGridView FocusedGrid { get; set; }
 
     private DataGridViewRow MainCurrentRow => MainGrid.CurrentRow ??
@@ -31,6 +29,7 @@ namespace SoundExplorers.View {
 
     private MainView MainView => (MainView)MdiParent;
     private SizeableFormOptions SizeableFormOptions { get; set; }
+    public EditorController Controller { get; private set; }
 
     public void EditMainGridCurrentCell() {
       MainGrid.BeginEdit(true);
@@ -263,6 +262,157 @@ namespace SoundExplorers.View {
     }
 
     /// <summary>
+    ///   Enables and focuses the grid
+    ///   when the window is activated.
+    /// </summary>
+    /// <param name="sender">Event sender.</param>
+    /// <param name="e">Event arguments.</param>
+    /// <remarks>
+    ///   This is necessary because of the
+    ///   workaround implemented in EditorView_Deactivate.
+    /// </remarks>
+    private void EditorView_Activated(object sender, EventArgs e) {
+      //Debug.WriteLine("EditorView_Activated: " + this.Text);
+      MainGrid.Enabled = true;
+      if (Controller.IsParentTableToBeShown) {
+        // A read-only related grid for the parent table is shown
+        // above the main grid.
+        FocusGrid(ParentGrid);
+      } else {
+        MainGrid.Focus();
+        FocusedGrid = MainGrid;
+      }
+    }
+
+    /// <summary>
+    ///   Disable the grid when another table window
+    ///   is activated.
+    /// </summary>
+    /// <param name="sender">Event sender.</param>
+    /// <param name="e">Event arguments.</param>
+    /// <remarks>
+    ///   For unknown reason,
+    ///   without this workaround,
+    ///   when a table window with date columns is
+    ///   deactivated and another table window is activated,
+    ///   it is impossible to navigate or edit the grid
+    ///   on the active window.
+    ///   To be safe, disable the grid even if there aren't date columns:
+    ///   maybe there are other data types that would cause similar problems.
+    /// </remarks>
+    private void EditorView_Deactivate(object sender, EventArgs e) {
+      //Debug.WriteLine("EditorView_Deactivate: " + this.Text);
+      MainGrid.Enabled = false;
+      if (Controller.IsParentTableToBeShown) {
+        // A read-only related grid for the parent table is shown
+        // above the main grid.
+        ParentGrid.Enabled = false;
+      }
+    }
+
+    private void EditorView_FormClosed(object sender, FormClosedEventArgs e) {
+      //MainGrid.RowValidated -= new DataGridViewCellEventHandler(MainGrid_RowValidated);
+      //MainGrid.ReadOnly = true;
+      //Refresh();
+      SizeableFormOptions.Save();
+      // if (Entities is ArtistInImageList
+      //     || Entities is ImageList) {
+      //   Controller.ImageSplitterDistance = ImageSplitContainer.SplitterDistance;
+      // }
+      if (Controller.IsParentTableToBeShown) {
+        // A read-only related grid for the parent table is shown
+        // above the main grid.
+        Controller.GridSplitterDistance = GridSplitContainer.SplitterDistance;
+      }
+    }
+
+    /// <summary>
+    ///   Handles the <see cref="Form" />'s
+    ///   <see cref="Control.KeyDown" /> event.
+    /// </summary>
+    /// <remarks>
+    ///   In order for this event handler to be triggered,
+    ///   the <see cref="Form" />'s <see cref="Form.KeyPreview" />
+    ///   property must be set to <b>True</b>.
+    /// </remarks>
+    private void EditorView_KeyDown(object sender, KeyEventArgs e) {
+      switch (e.KeyData) {
+        case Keys.F6:
+          if (Controller.IsParentTableToBeShown) {
+            FocusGrid(FocusedGrid == ParentGrid ? MainGrid : ParentGrid);
+          }
+          break;
+      } //End of switch
+    }
+
+    private void EditorView_Load(object sender, EventArgs e) {
+      MainGrid.Controller = new MainGridController(this);
+      MainGrid.CutMenuItem.Click += MainView.EditCutMenuItem_Click;
+      MainGrid.CopyMenuItem.Click += MainView.EditCopyMenuItem_Click;
+      MainGrid.PasteMenuItem.Click += MainView.EditPasteMenuItem_Click;
+      MainGrid.SelectAllMenuItem.Click += MainView.EditSelectAllMenuItem_Click;
+      MainGrid.DeleteSelectedRowsMenuItem.Click +=
+        MainView.EditDeleteSelectedRowsMenuItem_Click;
+      // Has to be done here rather than in constructor
+      // in order to tell that this is an MDI child form.
+      SizeableFormOptions = SizeableFormOptions.Create(this);
+      // And better to do this here than in SetController,
+      // where any exception would be indirectly reported,
+      // due to being thrown in the controller's constructor.
+      OpenTable();
+    }
+
+    private void EditorView_Move(object sender, EventArgs e) {
+      // Stop ghost border lines appearing on main window background.
+      ParentForm?.Refresh();
+    }
+
+    private void EditorView_Resize(object sender, EventArgs e) {
+      // Stop ghost border lines appearing on main window background.
+      ParentForm?.Refresh();
+    }
+
+    private void EditorView_VisibleChanged(object sender, EventArgs e) {
+      if (Visible) {
+        //Debug.WriteLine("EditorView_VisibleChanged: " + this.Text);
+        MainGrid.AutoResizeColumns();
+        ImageSplitContainer.Panel2Collapsed = true;
+        // We need to work out whether we need the image panel
+        // before we position the grid splitter.
+        // Otherwise the grid splitter gets out of kilter.
+        // if (Entities is ArtistInImageList
+        //     || Entities is ImageList) {
+        //   ImageSplitContainer.Panel2Collapsed = false;
+        //   ImageSplitContainer.SplitterDistance = Controller.ImageSplitterDistance;
+        //   ShowImageOrMessage(null); // Force image refresh
+        //   if (Entities is ImageList) {
+        //     if (Entities.Count > 0) {
+        //       ShowImageOrMessage(
+        //         MainGrid.Rows[0].Cells["Path"].Value.ToString());
+        //     }
+        //   } else { // ArtistInImageList
+        //     if (Controller.ParentList.Count > 0) {
+        //       ShowImageOrMessage(
+        //         ParentGrid.Rows[0].Cells["Path"].Value.ToString());
+        //     }
+        //   }
+        // } else {
+        //   ImageSplitContainer.Panel2Collapsed = true;
+        // }
+        if (Controller.IsParentTableToBeShown) {
+          // A read-only related grid for the parent table is shown
+          // above the main grid.
+          GridSplitContainer.Panel1Collapsed = false;
+          // Does not work if done in EditorView_Load.
+          GridSplitContainer.SplitterDistance = Controller.GridSplitterDistance;
+          ParentGrid.AutoResizeColumns();
+        } else {
+          GridSplitContainer.Panel1Collapsed = true;
+        }
+      }
+    }
+
+    /// <summary>
     ///   Handles both the missing image label's
     ///   and the picture box's
     ///   <see cref="Control.DragDrop" /> event
@@ -450,7 +600,7 @@ namespace SoundExplorers.View {
         if (cell != null) { // Cell found
           grid.CurrentCell = cell;
           if (grid == MainGrid) {
-            MainGridContextMenuStrip.Show(MainGrid, e.Location);
+            MainGrid.ContextMenuStrip.Show(MainGrid, e.Location);
           }
         }
       }
@@ -496,145 +646,54 @@ namespace SoundExplorers.View {
       MissingImageLabel.Visible = false;
     }
 
-    private void MainGrid_CellValueChanged(object sender, DataGridViewCellEventArgs e) {
-      if (MainGrid.CurrentCell is ComboBoxCell comboBoxCell) {
-        // Debug.WriteLine("MainGrid_CellValueChanged, ComboBoxCell");
-        var cellValue = MainGrid.CurrentCell.Value;
-        int rowIndex = MainCurrentRow.Index;
-        comboBoxCell.Controller.OnCellValueChanged(rowIndex, cellValue);
-      }
-    }
-
     /// <summary>
-    ///   Emulates the ComboBox's SelectedIndexChanged event.
-    /// </summary>
-    /// <remarks>
-    ///   A known problem with MainGrids is that,
-    ///   where there are multiple ComboBox columns,
-    ///   ComboBox events can get spuriously raised against the ComboBoxes
-    ///   in multiple cells of the row that is being edited.
-    ///   So this event handler provides a workaround by
-    ///   emulating a cell ComboBox's SelectedIndexChange event
-    ///   but without the spurious occurrences.
-    ///   The fix is based on the second answer here:
-    ///   https://stackoverflow.com/questions/11141872/event-that-fires-during-MainGridcomboboxcolumn-selectedindexchanged
-    /// </remarks>
-    private void MainGrid_CurrentCellDirtyStateChanged(object sender, EventArgs e) {
-      //Debug.WriteLine($"MainGrid_CurrentCellDirtyStateChanged: IsCurrentCellDirty = {MainGrid.IsCurrentCellDirty}");
-      if (MainGrid.CurrentCell is ComboBoxCell && MainGrid.IsCurrentCellDirty) {
-        // Debug.WriteLine(
-        //   "MainGrid_CurrentCellDirtyStateChanged: ComboBoxCell, IsCurrentCellDirty");
-        // This fires the cell value changed handler MainGrid_CellValueChanged.
-        // if (!Controller.IsKeyDuplicate(
-        //   MainCurrentRow.Index, MainGrid.CurrentCell.OwningColumn.Name)) {
-        // }
-        MainGrid.CommitEdit(DataGridViewDataErrorContexts.CurrentCellChange);
-      }
-    }
-
-    /// <summary>
-    ///   Handles the main grid's
-    ///   <see cref="DataGridView.DataError" /> event,
-    ///   which occurs when an external data-parsing or validation operation
+    ///   Occurs when an external data-parsing or validation operation
     ///   in an existing row (not the insertion row) throws an exception.
     /// </summary>
+    /// <remarks>
+    ///   The event has to be handled for error handling to work.
+    ///   Overriding the corresponding protected method in <see cref="MainGrid" />
+    ///   does not work.
+    /// </remarks>
     private void MainGrid_DataError(object sender, DataGridViewDataErrorEventArgs e) {
       // Debug.WriteLine("MainGrid_DataError");
       // Debug.WriteLine("Context = " + e.Context);
       // Debug.WriteLine("ColumnIndex = " + e.ColumnIndex);
       // Debug.WriteLine("RowIndex = " + e.RowIndex);
       string columnName = MainGrid.Columns[e.ColumnIndex].Name;
-      Controller.OnExistingRowCellUpdateError(e.RowIndex, columnName, e.Exception);
+      MainGrid.Controller.OnExistingRowCellUpdateError(e.RowIndex, columnName,
+        e.Exception);
     }
 
     /// <summary>
-    ///   Handles the main grid's
-    ///   <see cref="Control.KeyDown" /> event to:
-    ///   begin editing the current cell with, if a text cell, all contents selected.
-    /// </summary>
-    /// <remarks>
-    ///   When a text cell edit is started with a mouse click,
-    ///   selecting all contents of the cell is done by
-    ///   <see cref="TextBoxCell.InitializeEditingControl" />.
-    /// </remarks>
-    private void MainGrid_KeyDown(object sender, KeyEventArgs e) {
-      switch (e.KeyData) {
-        case Keys.F2:
-          if (MainGrid.CurrentCell != null) {
-            MainGrid.BeginEdit(true);
-          }
-          break;
-        case Keys.Apps: // Context menu key
-        case Keys.Shift | Keys.F10:
-          var cellRectangle = MainGrid.GetCellDisplayRectangle(
-            MainGrid.CurrentCell.ColumnIndex,
-            MainCurrentRow.Index, true);
-          var point = new Point(cellRectangle.Right, cellRectangle.Bottom);
-          MainGridContextMenuStrip.Show(MainGrid, point);
-          // When MainGrid.ContextMenuStrip was set to MainGridContextMenuStrip,
-          // neither e.Handled or e.SuppressKeyPress stopped
-          // the context menu from being shown a second time immediately afterwards
-          // in the default wrong position.
-          // The solution is not to set
-          // MainGrid.ContextMenuStrip to MainGridContextMenuStrip and instead to
-          // show the context menu in grid event handlers:
-          // here when shown with one of the two standard keyboard shortcuts:
-          // Grid_MouseDown when shown with a right mouse click.
-          e.Handled = e.SuppressKeyPress = true;
-          break;
-      } //End of switch
-    }
-
-    /// <summary>
-    ///   Handles the main grid's
-    ///   <see cref="DataGridView.RowEnter" /> event.
-    /// </summary>
-    /// <param name="sender">Event sender.</param>
-    /// <param name="e">Event arguments.</param>
-    /// <remarks>
-    ///   <para>
-    ///     The initial state of the row will be saved to a detached row
-    ///     to allow comparison with any changes if the row gets edited.
-    ///   </para>
-    ///   <para>
-    ///     If the row represents an Image whose Path
-    ///     specifies a valid image file,
-    ///     the image will be shown below the main grid.
-    ///     If the row represents an Image whose Path
-    ///     does not specifies a valid image file,
-    ///     a Missing Image label containing an appropriate message will be displayed.
-    ///   </para>
-    /// </remarks>
-    private void MainGrid_RowEnter(object sender, DataGridViewCellEventArgs e) {
-      // This is the safe way of checking whether we have entered the insertion (new) row:
-      //if (e.RowIndex == MainGrid.RowCount - 1) {
-      //   // Controller.OnEnteringInsertionRow();
-      //   // // if (Entities is ImageList) {
-      //   // //   ShowImageOrMessage(null);
-      //   // // }
-      //}
-      Controller.OnMainGridRowEnter(e.RowIndex);
-    }
-
-    /// <summary>
-    ///   Handles the main grid's RowsRemoved event, which is
-    ///   actually raised once for each row removed,
+    ///   Actually called once for each row removed,
     ///   even when multiple selected rows are removed at once.
     /// </summary>
     /// <remarks>
     ///   For unknown reason, the RowsRemoved event is raised 2 or 3 times
     ///   while data is being loaded into the grid.
     /// </remarks>
-    private void MainGrid_RowsRemoved(
-      object sender, DataGridViewRowsRemovedEventArgs e) {
-      // Debug.WriteLine("MainGrid_RowsRemoved");
-      //Debug.WriteLine(MainGrid.Rows[e.RowIndex].Cells[0].Value);
-      Controller.OnMainGridRowRemoved(e.RowIndex);
+    /// <remarks>
+    ///   Overriding the corresponding protected method in <see cref="MainGrid" />
+    ///   does not work. The event has to be handled, otherwise the program will crash
+    ///   in some circumstances.
+    /// </remarks>
+    private void MainGrid_RowsRemoved(object sender, DataGridViewRowsRemovedEventArgs e) {
+      MainGrid.Controller.OnRowValidated(e.RowIndex);
     }
 
+    /// <summary>
+    ///   Handles the main grid's RowValidated event,
+    ///   which is raised when the user exits a row on the grid,
+    ///   even when nothing has changed.
+    /// </summary>
+    /// <remarks>
+    ///   Overriding the corresponding protected method in <see cref="MainGrid" />
+    ///   does not work. The event has to be handled, otherwise the program will crash
+    ///   in some circumstances.
+    /// </remarks>
     private void MainGrid_RowValidated(object sender, DataGridViewCellEventArgs e) {
-      //Debug.WriteLine("MainGrid_RowValidated");
-      Controller.OnMainGridRowValidated(e.RowIndex);
+      MainGrid.Controller.OnRowValidated(e.RowIndex);
     }
 
     private void OnErrorAsync() {
@@ -693,24 +752,10 @@ namespace SoundExplorers.View {
     }
 
     private void PopulateGrid() {
-      // Controller.FetchData();
-      // Text = Controller.MainTable?.TableName;
       MainGrid.CellBeginEdit -= MainGrid_CellBeginEdit;
-      //MainGrid.CellEndEdit -= MainGridOnCellEndEdit;
-      //MainGrid.CellEnter -= new DataGridViewCellEventHandler(MainGridOnCellEnter);
-      //MainGrid.CellStateChanged -= new DataGridViewCellStateChangedEventHandler(GridOnCellStateChanged);
-      //MainGrid.CellValidated -= new DataGridViewCellEventHandler(MainGridOnCellValidated);
-      MainGrid.CellValueChanged -= MainGrid_CellValueChanged;
       MainGrid.Click -= Grid_Click;
-      MainGrid.CurrentCellDirtyStateChanged -= MainGrid_CurrentCellDirtyStateChanged;
       MainGrid.DataError -= MainGrid_DataError;
-      //MainGrid.GotFocus -= new EventHandler(ControlOnGotFocus);
-      MainGrid.KeyDown -= MainGrid_KeyDown;
-      //MainGrid.LostFocus -= new EventHandler(ControlOnLostFocus);
       MainGrid.MouseDown -= Grid_MouseDown;
-      //MainGrid.RowStateChanged
-      MainGrid.RowEnter -= MainGrid_RowEnter;
-      //MainGrid.RowLeave -= MainGridOnRowLeave;
       MainGrid.RowsRemoved -= MainGrid_RowsRemoved;
       MainGrid.RowValidated -= MainGrid_RowValidated;
       Controller.FetchData();
@@ -723,20 +768,9 @@ namespace SoundExplorers.View {
         ConfigureMainGridColumn(column);
       } // End of foreach
       MainGrid.CellBeginEdit += MainGrid_CellBeginEdit;
-      //MainGrid.CellEndEdit += MainGridOnCellEndEdit;
-      //MainGrid.CellEnter += new DataGridViewCellEventHandler(MainGridOnCellEnter);
-      //MainGrid.CellStateChanged += new DataGridViewCellStateChangedEventHandler(GridOnCellStateChanged);
-      //MainGrid.CellValidated += new DataGridViewCellEventHandler(MainGridOnCellValidated);
-      MainGrid.CellValueChanged += MainGrid_CellValueChanged;
       MainGrid.Click += Grid_Click;
-      MainGrid.CurrentCellDirtyStateChanged += MainGrid_CurrentCellDirtyStateChanged;
       MainGrid.DataError += MainGrid_DataError;
-      //MainGrid.GotFocus += new EventHandler(ControlOnGotFocus);
-      MainGrid.KeyDown += MainGrid_KeyDown;
-      //MainGrid.LostFocus += new EventHandler(ControlOnLostFocus);
       MainGrid.MouseDown += Grid_MouseDown;
-      MainGrid.RowEnter += MainGrid_RowEnter;
-      //MainGrid.RowLeave += MainGridOnRowLeave;
       MainGrid.RowsRemoved += MainGrid_RowsRemoved;
       MainGrid.RowValidated += MainGrid_RowValidated;
       // Has to be done when visible.
@@ -819,162 +853,6 @@ namespace SoundExplorers.View {
       MainGrid.DefaultCellStyle.SelectionForeColor =
         ParentGrid.DefaultCellStyle.SelectionForeColor;
       ParentGrid.DefaultCellStyle.SelectionForeColor = swapColor;
-    }
-
-    /// <summary>
-    ///   Enables and focuses the grid
-    ///   when the window is activated.
-    /// </summary>
-    /// <param name="sender">Event sender.</param>
-    /// <param name="e">Event arguments.</param>
-    /// <remarks>
-    ///   This is necessary because of the
-    ///   workaround implemented in EditorView_Deactivate.
-    /// </remarks>
-    private void EditorView_Activated(object sender, EventArgs e) {
-      //Debug.WriteLine("EditorView_Activated: " + this.Text);
-      MainGrid.Enabled = true;
-      if (Controller.IsParentTableToBeShown) {
-        // A read-only related grid for the parent table is shown
-        // above the main grid.
-        FocusGrid(ParentGrid);
-      } else {
-        MainGrid.Focus();
-        FocusedGrid = MainGrid;
-      }
-    }
-
-    /// <summary>
-    ///   Disable the grid when another table window
-    ///   is activated.
-    /// </summary>
-    /// <param name="sender">Event sender.</param>
-    /// <param name="e">Event arguments.</param>
-    /// <remarks>
-    ///   For unknown reason,
-    ///   without this workaround,
-    ///   when a table window with date columns is
-    ///   deactivated and another table window is activated,
-    ///   it is impossible to navigate or edit the grid
-    ///   on the active window.
-    ///   To be safe, disable the grid even if there aren't date columns:
-    ///   maybe there are other data types that would cause similar problems.
-    /// </remarks>
-    private void EditorView_Deactivate(object sender, EventArgs e) {
-      //Debug.WriteLine("EditorView_Deactivate: " + this.Text);
-      MainGrid.Enabled = false;
-      if (Controller.IsParentTableToBeShown) {
-        // A read-only related grid for the parent table is shown
-        // above the main grid.
-        ParentGrid.Enabled = false;
-      }
-    }
-
-    private void EditorView_FormClosed(object sender, FormClosedEventArgs e) {
-      //MainGrid.RowValidated -= new DataGridViewCellEventHandler(MainGrid_RowValidated);
-      //MainGrid.ReadOnly = true;
-      //Refresh();
-      SizeableFormOptions.Save();
-      // if (Entities is ArtistInImageList
-      //     || Entities is ImageList) {
-      //   Controller.ImageSplitterDistance = ImageSplitContainer.SplitterDistance;
-      // }
-      if (Controller.IsParentTableToBeShown) {
-        // A read-only related grid for the parent table is shown
-        // above the main grid.
-        Controller.GridSplitterDistance = GridSplitContainer.SplitterDistance;
-      }
-    }
-
-    /// <summary>
-    ///   Handles the <see cref="Form" />'s
-    ///   <see cref="Control.KeyDown" /> event.
-    /// </summary>
-    /// <remarks>
-    ///   In order for this event handler to be triggered,
-    ///   the <see cref="Form" />'s <see cref="Form.KeyPreview" />
-    ///   property must be set to <b>True</b>.
-    /// </remarks>
-    private void EditorView_KeyDown(object sender, KeyEventArgs e) {
-      switch (e.KeyData) {
-        case Keys.F6:
-          if (Controller.IsParentTableToBeShown) {
-            FocusGrid(FocusedGrid == ParentGrid ? MainGrid : ParentGrid);
-          }
-          break;
-      } //End of switch
-    }
-
-    private void EditorView_Load(object sender, EventArgs e) {
-      MainGridCutMenuItem.Click += MainView.EditCutMenuItem_Click;
-      MainGridCopyMenuItem.Click += MainView.EditCopyMenuItem_Click;
-      MainGridPasteMenuItem.Click += MainView.EditPasteMenuItem_Click;
-      MainGridSelectAllMenuItem.Click += MainView.EditSelectAllMenuItem_Click;
-      MainGridDeleteSelectedRowsMenuItem.Click +=
-        MainView.EditDeleteSelectedRowsMenuItem_Click;
-      // Has to be done here rather than in constructor
-      // in order to tell that this is an MDI child form.
-      SizeableFormOptions = SizeableFormOptions.Create(this);
-      // And better to do this here than in SetController,
-      // where any exception would be indirectly reported,
-      // due to being thrown in the controller's constructor.
-      OpenTable();
-    }
-
-    // private void EditorView_MouseDown(object sender, MouseEventArgs e) {
-    //   if (e.Button == MouseButtons.Right && MainGrid.Focused) {
-    //     MainGridContextMenuStrip.Show(PointToScreen(e.Location));
-    //   }
-    // }
-
-    private void EditorView_Move(object sender, EventArgs e) {
-      // Stop ghost border lines appearing on main window background.
-      ParentForm?.Refresh();
-    }
-
-    private void EditorView_Resize(object sender, EventArgs e) {
-      // Stop ghost border lines appearing on main window background.
-      ParentForm?.Refresh();
-    }
-
-    private void EditorView_VisibleChanged(object sender, EventArgs e) {
-      if (Visible) {
-        //Debug.WriteLine("EditorView_VisibleChanged: " + this.Text);
-        MainGrid.AutoResizeColumns();
-        ImageSplitContainer.Panel2Collapsed = true;
-        // We need to work out whether we need the image panel
-        // before we position the grid splitter.
-        // Otherwise the grid splitter gets out of kilter.
-        // if (Entities is ArtistInImageList
-        //     || Entities is ImageList) {
-        //   ImageSplitContainer.Panel2Collapsed = false;
-        //   ImageSplitContainer.SplitterDistance = Controller.ImageSplitterDistance;
-        //   ShowImageOrMessage(null); // Force image refresh
-        //   if (Entities is ImageList) {
-        //     if (Entities.Count > 0) {
-        //       ShowImageOrMessage(
-        //         MainGrid.Rows[0].Cells["Path"].Value.ToString());
-        //     }
-        //   } else { // ArtistInImageList
-        //     if (Controller.ParentList.Count > 0) {
-        //       ShowImageOrMessage(
-        //         ParentGrid.Rows[0].Cells["Path"].Value.ToString());
-        //     }
-        //   }
-        // } else {
-        //   ImageSplitContainer.Panel2Collapsed = true;
-        // }
-        if (Controller.IsParentTableToBeShown) {
-          // A read-only related grid for the parent table is shown
-          // above the main grid.
-          GridSplitContainer.Panel1Collapsed = false;
-          // Does not work if done in EditorView_Load.
-          GridSplitContainer.SplitterDistance = Controller.GridSplitterDistance;
-          ParentGrid.AutoResizeColumns();
-        } else {
-          GridSplitContainer.Panel1Collapsed = true;
-        }
-      }
     }
 
     protected override void WndProc(ref Message m) {

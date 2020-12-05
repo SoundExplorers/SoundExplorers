@@ -75,8 +75,7 @@ namespace SoundExplorers.View {
       // when all children have been closed, which is what happens when we allow
       // the separator to be created and shown automatically.  See
       // https://stackoverflow.com/questions/12951820/extra-separator-after-mdiwindowlistitem-when-no-child-windows-are-open
-      BeginInvoke((Action)delegate 
-        { WindowsSeparator2.Visible = MdiChildren.Any(); }
+      BeginInvoke((Action)delegate { WindowsSeparator2.Visible = MdiChildren.Any(); }
       );
     }
 
@@ -308,7 +307,8 @@ namespace SoundExplorers.View {
       }
     }
 
-    private void WindowsCloseCurrentTableEditorMenuItem_Click(object sender, EventArgs e) {
+    private void
+      WindowsCloseCurrentTableEditorMenuItem_Click(object sender, EventArgs e) {
       if (MdiChildren.Any()) {
         EditorView.Close();
       }

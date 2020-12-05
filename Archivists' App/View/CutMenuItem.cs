@@ -19,7 +19,7 @@ namespace SoundExplorers.View {
 
     public override string Text {
       // Getter loops if compared with base instead of field.
-      get => _text ?? (base.Text = _text = "Cu&t"); 
+      get => _text ?? (base.Text = _text = "Cu&t");
       set => base.Text = value;
     }
   }

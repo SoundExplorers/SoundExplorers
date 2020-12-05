@@ -20,7 +20,7 @@ namespace SoundExplorers.View {
 
     public override string Text {
       // Getter loops if compared with base instead of field.
-      get => _text ?? (base.Text = _text = "Select &All"); 
+      get => _text ?? (base.Text = _text = "Select &All");
       set => base.Text = value;
     }
   }

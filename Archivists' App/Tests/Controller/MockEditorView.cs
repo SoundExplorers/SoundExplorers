@@ -2,12 +2,12 @@
 
 namespace SoundExplorers.Tests.Controller {
   public class MockEditorView : IEditorView {
-    private EditorController Controller { get; set; }
     public int EditMainGridCurrentCellCount { get; private set; }
     public int FocusMainGridCellCount { get; private set; }
     public int FocusMainGridCellColumnIndex { get; private set; }
     public int FocusMainGridCellRowIndex { get; private set; }
     public string LastErrorMessage { get; private set; }
+    public TestMainGridController MainGridController { get; set; }
     public int MakeMainGridRowCurrentCount { get; private set; }
     public int MakeMainGridRowCurrentRowIndex { get; private set; }
     public int OnRowAddedOrDeletedCount { get; private set; }
@@ -15,6 +15,7 @@ namespace SoundExplorers.Tests.Controller {
     public int SelectCurrentRowOnlyCount { get; private set; }
     public int ShowErrorMessageCount { get; private set; }
     public int ShowWarningMessageCount { get; private set; }
+    public EditorController Controller { get; private set; }
 
     public void SetController(EditorController controller) {
       Controller = controller;
@@ -34,8 +35,7 @@ namespace SoundExplorers.Tests.Controller {
       //Debug.WriteLine($"MockEditorView.MakeMainGridRowCurrent: row {rowIndex}");
       MakeMainGridRowCurrentCount++;
       MakeMainGridRowCurrentRowIndex = rowIndex;
-      //Controller.OnMainGridRowValidated();
-      Controller.OnMainGridRowEnter(rowIndex);
+      MainGridController.OnRowEnter(rowIndex);
     }
 
     public void OnError() {

@@ -29,15 +29,9 @@ namespace SoundExplorers.View {
             this.ImageSplitContainer = new System.Windows.Forms.SplitContainer();
             this.GridSplitContainer = new System.Windows.Forms.SplitContainer();
             this.ParentGrid = new System.Windows.Forms.DataGridView();
-            this.MainGrid = new System.Windows.Forms.DataGridView();
-            this.MainGridCutMenuItem = new SoundExplorers.View.CutMenuItem();
-            this.MainGridCopyMenuItem = new SoundExplorers.View.CopyMenuItem();
-            this.MainGridPasteMenuItem = new SoundExplorers.View.PasteMenuItem();
-            this.MainGridSelectAllMenuItem = new SoundExplorers.View.SelectAllMenuItem();
-            this.MainGridDeleteSelectedRowsMenuItem = new SoundExplorers.View.DeleteSelectedRowsMenuItem();
+            this.MainGrid = new SoundExplorers.View.MainGrid();
             this.MissingImageLabel = new System.Windows.Forms.Label();
             this.FittedPictureBox1 = new SoundExplorers.View.FittedPictureBox();
-            this.MainGridContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.ImageSplitContainer)).BeginInit();
             this.ImageSplitContainer.Panel1.SuspendLayout();
             this.ImageSplitContainer.Panel2.SuspendLayout();
@@ -105,48 +99,12 @@ namespace SoundExplorers.View {
             // 
             // MainGrid
             // 
-            this.MainGrid.AllowDrop = true;
-            this.MainGrid.AllowUserToOrderColumns = true;
-            this.MainGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.MainGrid.Dock = System.Windows.Forms.DockStyle.Fill;
             this.MainGrid.Location = new System.Drawing.Point(0, 0);
             this.MainGrid.Margin = new System.Windows.Forms.Padding(4);
             this.MainGrid.Name = "MainGrid";
             this.MainGrid.Size = new System.Drawing.Size(379, 113);
             this.MainGrid.TabIndex = 4;
-            // 
-            // MainGridContextMenuStrip
-            // 
-            this.MainGridContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-                this.MainGridCutMenuItem, 
-                this.MainGridCopyMenuItem, 
-                this.MainGridPasteMenuItem, 
-                this.MainGridSelectAllMenuItem, 
-                this.MainGridDeleteSelectedRowsMenuItem
-            });
-            this.MainGridContextMenuStrip.Name = "MainGridContextMenuStrip";
-            this.MainGridContextMenuStrip.ShowImageMargin = false;
-            this.MainGridContextMenuStrip.Size = new System.Drawing.Size(61, 4);
-            // 
-            // MainGridCutMenuItem
-            //
-            this.MainGridCutMenuItem.Name = "MainGridCutMenuItem";
-            // 
-            // MainGridCopyMenuItem
-            // 
-            this.MainGridCopyMenuItem.Name = "MainGridCopyMenuItem";
-            // 
-            // MainGridPasteMenuItem
-            // 
-            this.MainGridPasteMenuItem.Name = "MainGridPasteMenuItem";
-            // 
-            // MainGridSelectAllMenuItem
-            // 
-            this.MainGridSelectAllMenuItem.Name = "MainGridSelectAllMenuItem";
-            // 
-            // MainGridDeleteSelectedRowsMenuItem
-            // 
-            this.MainGridDeleteSelectedRowsMenuItem.Name = "MainGridDeleteSelectedRowsMenuItem";
             // 
             // MissingImageLabel
             // 
@@ -210,13 +168,7 @@ namespace SoundExplorers.View {
         private System.Windows.Forms.SplitContainer ImageSplitContainer;
         private System.Windows.Forms.SplitContainer GridSplitContainer;
         private System.Windows.Forms.DataGridView ParentGrid;
-        private System.Windows.Forms.DataGridView MainGrid;
-        private System.Windows.Forms.ContextMenuStrip MainGridContextMenuStrip;
-        private SoundExplorers.View.CutMenuItem MainGridCutMenuItem;
-        private SoundExplorers.View.CopyMenuItem MainGridCopyMenuItem;
-        private SoundExplorers.View.PasteMenuItem MainGridPasteMenuItem;
-        private SoundExplorers.View.SelectAllMenuItem MainGridSelectAllMenuItem;
-        private SoundExplorers.View.DeleteSelectedRowsMenuItem MainGridDeleteSelectedRowsMenuItem;
+        private SoundExplorers.View.MainGrid MainGrid;
         private FittedPictureBox FittedPictureBox1;
         private System.Windows.Forms.Label MissingImageLabel;
 

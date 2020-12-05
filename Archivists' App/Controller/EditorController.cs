@@ -37,7 +37,6 @@ namespace SoundExplorers.Controller {
       View = view;
       MainListType = mainListType;
       MainController = mainController;
-      CurrentRowIndex = -1;
       View.SetController(this);
     }
 
@@ -105,12 +104,12 @@ namespace SoundExplorers.Controller {
         is RowNotInTableException;
 
     [CanBeNull] public IBindingList MainBindingList => MainList.BindingList;
-    [NotNull] protected MainController MainController { get; }
+    [NotNull] internal MainController MainController { get; }
 
     /// <summary>
     ///   Gets or set the list of entities represented in the main table.
     /// </summary>
-    protected IEntityList MainList { get; private set; }
+    internal IEntityList MainList { get; private set; }
 
     [NotNull] private Type MainListType { get; }
     [CanBeNull] public string MainTableName => MainList.EntityTypeName;
@@ -122,8 +121,7 @@ namespace SoundExplorers.Controller {
     [CanBeNull]
     private IEntityList ParentList { get; set; }
 
-    [NotNull] private IEditorView View { get; }
-    protected int CurrentRowIndex { get; private set; }
+    [NotNull] protected IEditorView View { get; }
 
     /// <summary>
     ///   Returns whether the specified column references another entity.
@@ -284,51 +282,6 @@ namespace SoundExplorers.Controller {
       return column.DisplayName ?? columnName;
     }
 
-    public void OnExistingRowCellUpdateError(int rowIndex, [NotNull] string columnName,
-      [CanBeNull] Exception exception) {
-      switch (exception) {
-        case DatabaseUpdateErrorException databaseUpdateErrorException:
-          MainList.LastDatabaseUpdateErrorException = databaseUpdateErrorException;
-          View.OnError();
-          break;
-        case DuplicateKeyException duplicateKeyException:
-          MainList.OnValidationError(rowIndex, columnName, duplicateKeyException);
-          View.OnError();
-          break;
-        case FormatException formatException:
-          // An invalid value was pasted into a cell, e.g. text into a date.
-          MainList.OnValidationError(rowIndex, columnName, formatException);
-          //MainList.OnFormatException(rowIndex, columnName, formatException);
-          View.OnError();
-          break;
-        case RowNotInTableException referencedEntityNotFoundException:
-          // A combo box cell value 
-          // does not match any of it's embedded combo box's items.
-          // So the combo box's selected index and text could not be updated.
-          // As the combo boxes are all dropdown lists,
-          // the only way this can have happened is that
-          // the unmatched value was pasted into the cell.
-          // If the cell value had been changed
-          // by selecting an item on the embedded combo box,
-          // it could only be a matching value.
-          // MainList.OnReferencedEntityNotFound(rowIndex, columnName, 
-          MainList.OnValidationError(rowIndex, columnName,
-            referencedEntityNotFoundException);
-          View.OnError();
-          break;
-        case null:
-          // For unknown reason, the way I've got the error handling set up,
-          // this event gets raise twice if there's a DatabaseUpdateErrorException,
-          // the second time with a null exception.
-          // It does not seem to do any harm, so long as it is trapped like this.
-          break;
-        default:
-          // Terminal error.  In the Release compilation,
-          // the stack trace will be shown by the terminal error handler in Program.cs.
-          throw exception;
-      }
-    }
-
     /// <summary>
     ///   A combo box cell value on the main grid's insertion row
     ///   does not match any of it's embedded combo box's items.
@@ -349,74 +302,6 @@ namespace SoundExplorers.Controller {
       MainList.OnValidationError(
         rowIndex, columnName, referencedEntityNotFoundException);
       View.OnError();
-    }
-
-    public virtual void OnMainGridRowEnter(int rowIndex) {
-      // Debug.WriteLine(
-      //   "EditorController.OnMainGridRowEnter:  Any row entered (after ItemAdded if insertion row)");
-      // Debug.WriteLine($"EditorController.OnMainGridRowEnter: row {rowIndex}");
-      CurrentRowIndex = rowIndex;
-      MainList.OnRowEnter(rowIndex);
-    }
-
-    /// <summary>
-    ///   Deletes the entity at the specified row index
-    ///   from the database and removes it from the list.
-    /// </summary>
-    public void OnMainGridRowRemoved(int rowIndex) {
-      //Debug.WriteLine("EditorController.OnMainGridRowRemoved");
-      // Debug.WriteLine(
-      //   $"{nameof(OnMainGridRowRemoved)}:  2 or 3 times on opening a table before 1st ItemAdded (insertion row entered); existing row removed");
-      // For unknown reason, the grid's RowsRemoved event is raised 2 or 3 times
-      // while data is being loaded into the grid.
-      // Also, the grid row might have been removed because of an insertion error,
-      // in which case the entity will not have been persisted (rowIndex == Count).
-      if (MainList.IsDataLoadComplete && rowIndex < MainList.Count) {
-        try {
-          MainList.DeleteEntity(rowIndex);
-          View.OnRowAddedOrDeleted();
-        } catch (DatabaseUpdateErrorException) {
-          View.OnError();
-        }
-      }
-    }
-
-    /// <summary>
-    ///   Handles the main grid's RowValidated event,
-    ///   which is raised when the user exits a row on the grid.
-    ///   If the specified table row is new,
-    ///   inserts an entity on the database with the table row data.
-    ///   For an existing row, there should be nothing to do,
-    ///   as any edits will have been committed on a cell by cell basis.
-    /// </summary>
-    /// <remarks>
-    ///   The RowValidated event is also raised when the editor window or main window
-    ///   is closed.  If the insertion row is being edited when this happens,
-    ///   no insertion to the database will take place.
-    ///   Ao attempt a database insert in this scenario
-    ///   would result in an exception at an unpredictable point,
-    ///   due to the closure process already being underway.
-    ///   Ideally, the user would instead be given the options of
-    ///   committing the insertion or cancelling the close and returning to the editor.
-    ///   But see the XML comments for <see cref="CancelInsertion" />
-    ///   for the difficulties that would be involved in
-    ///   reopening a 'validated' insertion.
-    /// </remarks>
-    public void OnMainGridRowValidated(int rowIndex) {
-      //Debug.WriteLine("EditorController.OnMainGridRowValidated:  Any row left, after final ItemChanged, if any");
-      // Debug.WriteLine(
-      //   $"EditorController.OnMainGridRowValidated: row {rowIndex}, IsRemovingInvalidInsertionRow == {MainList.IsRemovingInvalidInsertionRow}");
-      CurrentRowIndex = -1;
-      if (MainList.IsRemovingInvalidInsertionRow || IsClosing ||
-          MainController.IsClosing) {
-        return;
-      }
-      try {
-        MainList.OnRowValidated(rowIndex);
-        View.OnRowAddedOrDeleted();
-      } catch (DatabaseUpdateErrorException) {
-        View.OnError();
-      }
     }
 
     /// <summary>

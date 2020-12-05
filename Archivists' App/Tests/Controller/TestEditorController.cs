@@ -13,7 +13,8 @@ namespace SoundExplorers.Tests.Controller {
     where TBindingItem : BindingItemBase<TEntity, TBindingItem>, new() {
     private TestEditor<TEntity, TBindingItem> _editor;
 
-    public TestEditorController([NotNull] IEditorView view, [NotNull] Type mainListType,
+    public TestEditorController([NotNull] MockEditorView view,
+      [NotNull] Type mainListType,
       [NotNull] QueryHelper queryHelper, [NotNull] SessionBase session) :
       base(view, mainListType,
         new TestMainController(new MockView<MainController>(), queryHelper, session)) {
@@ -28,7 +29,7 @@ namespace SoundExplorers.Tests.Controller {
       set => _editor = value;
     }
 
-    public bool AutoValidate { get; set; }
+    [NotNull] private MockEditorView MockEditorView => (MockEditorView)View;
     [NotNull] private QueryHelper QueryHelper { get; }
     [NotNull] private SessionBase Session { get; }
 
@@ -40,7 +41,7 @@ namespace SoundExplorers.Tests.Controller {
 
     public void CreateAndGoToInsertionRow() {
       Editor.AddNew();
-      OnMainGridRowEnter(Editor.Count - 1);
+      MockEditorView.MainGridController.OnRowEnter(Editor.Count - 1);
     }
 
     protected override IEntityList CreateEntityList(Type type) {
@@ -59,18 +60,6 @@ namespace SoundExplorers.Tests.Controller {
 
     public IEntityList GetMainList() {
       return MainList;
-    }
-
-    public override void OnMainGridRowEnter(int rowIndex) {
-      if (AutoValidate) {
-        if (MainList.HasRowBeenEdited) {
-          OnMainGridRowValidated(CurrentRowIndex);
-        }
-        if (rowIndex == MainList.BindingList.Count) { // New row
-          MainList.BindingList.AddNew();
-        }
-      }
-      base.OnMainGridRowEnter(rowIndex);
     }
 
     public void SetComboBoxCellValue(

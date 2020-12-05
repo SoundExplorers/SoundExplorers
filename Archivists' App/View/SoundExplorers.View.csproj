@@ -76,6 +76,7 @@
         </Compile>
         <Compile Include="IMessageUpdater.cs" />
         <Compile Include="ICanRestoreErrorValue.cs" />
+        <Compile Include="MainGrid.cs" />
         <Compile Include="MainView.cs">
           <SubType>Form</SubType>
         </Compile>

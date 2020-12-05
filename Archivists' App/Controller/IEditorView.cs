@@ -2,6 +2,7 @@
 
 namespace SoundExplorers.Controller {
   public interface IEditorView : IView<EditorController> {
+    EditorController Controller { get; }
     void EditMainGridCurrentCell();
     void FocusMainGridCell(int rowIndex, int columnIndex);
     void MakeMainGridRowCurrent(int rowIndex);
