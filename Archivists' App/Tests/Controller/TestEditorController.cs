@@ -33,12 +33,6 @@ namespace SoundExplorers.Tests.Controller {
     [NotNull] private QueryHelper QueryHelper { get; }
     [NotNull] private SessionBase Session { get; }
 
-    protected override ChangeAction LastChangeAction => TestUnsupportedLastChangeAction
-      ? ChangeAction.None
-      : base.LastChangeAction;
-
-    public bool TestUnsupportedLastChangeAction { get; set; }
-
     public void CreateAndGoToInsertionRow() {
       Editor.AddNew();
       MockEditorView.MainGridController.OnRowEnter(Editor.Count - 1);

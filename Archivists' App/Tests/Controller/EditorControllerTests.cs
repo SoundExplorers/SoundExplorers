@@ -253,7 +253,7 @@ namespace SoundExplorers.Tests.Controller {
       Assert.AreEqual(1, View.SelectCurrentRowOnlyCount,
         "SelectCurrentRowOnlyCount after error message shown for disallowed delete");
       MainGridController.OnRowEnter(1);
-      controller.TestUnsupportedLastChangeAction = true;
+      MainGridController.TestUnsupportedLastChangeAction = true;
       Assert.Throws<NotSupportedException>(() => MainGridController.OnRowRemoved(1),
         "Unsupported last change action");
     }

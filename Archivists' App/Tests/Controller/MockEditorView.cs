@@ -39,7 +39,7 @@ namespace SoundExplorers.Tests.Controller {
     }
 
     public void OnError() {
-      Controller.ShowError();
+      MainGridController.ShowError();
     }
 
     public void OnRowAddedOrDeleted() {

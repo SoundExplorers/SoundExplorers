@@ -1,10 +1,17 @@
-﻿using JetBrains.Annotations;
+﻿using System.Data.Linq;
+using JetBrains.Annotations;
 using SoundExplorers.Controller;
 
 namespace SoundExplorers.Tests.Controller {
   public class TestMainGridController : MainGridController {
     public TestMainGridController([NotNull] IEditorView editorView) : base(editorView) { }
     public bool AutoValidate { get; set; }
+
+    protected override ChangeAction LastChangeAction => TestUnsupportedLastChangeAction
+      ? ChangeAction.None
+      : base.LastChangeAction;
+
+    public bool TestUnsupportedLastChangeAction { get; set; }
 
     public override void OnRowEnter(int rowIndex) {
       if (AutoValidate) {

@@ -1,7 +1,5 @@
 using System;
 using System.ComponentModel;
-using System.Data;
-using System.Data.Linq;
 using System.Diagnostics.CodeAnalysis;
 using JetBrains.Annotations;
 using SoundExplorers.Model;
@@ -60,9 +58,6 @@ namespace SoundExplorers.Controller {
       _gridSplitterDistanceOption ?? (_gridSplitterDistanceOption =
         CreateOption($"{MainList.EntityTypeName}.GridSplitterDistance"));
 
-    protected virtual ChangeAction LastChangeAction =>
-      MainList.LastDatabaseUpdateErrorException.ChangeAction;
-
     /// <summary>
     ///   User option for the position of the split between the
     ///   image data (above) and the image (below) in the image table editor.
@@ -81,12 +76,6 @@ namespace SoundExplorers.Controller {
 
     public bool IsClosing { get; set; }
 
-    private bool IsDuplicateKeyException =>
-      MainList.LastDatabaseUpdateErrorException?.InnerException is DuplicateKeyException;
-
-    private bool IsFormatException =>
-      MainList.LastDatabaseUpdateErrorException?.InnerException is FormatException;
-
     /// <summary>
     ///   Gets whether the current main grid row is the insertion row,
     ///   which is for adding new entities and is located at the bottom of the grid.
@@ -98,10 +87,6 @@ namespace SoundExplorers.Controller {
     ///   above the main grid.
     /// </summary>
     public bool IsParentTableToBeShown => ParentList?.BindingList != null;
-
-    private bool IsReferencingValueNotFoundException =>
-      MainList.LastDatabaseUpdateErrorException?.InnerException
-        is RowNotInTableException;
 
     [CanBeNull] public IBindingList MainBindingList => MainList.BindingList;
     [NotNull] internal MainController MainController { get; }
@@ -159,111 +144,111 @@ namespace SoundExplorers.Controller {
       }
     }
 
-    public void ShowError() {
-      // Debug.WriteLine(
-      //   $"EditorController.ShowError: LastChangeAction == {LastChangeAction}");
-      View.FocusMainGridCell(MainList.LastDatabaseUpdateErrorException.RowIndex,
-        MainList.LastDatabaseUpdateErrorException.ColumnIndex);
-      if (LastChangeAction == ChangeAction.Delete) {
-        View.SelectCurrentRowOnly();
-      }
-      View.ShowErrorMessage(MainList.LastDatabaseUpdateErrorException.Message);
-      // Debug.WriteLine("Error message shown");
-      if (IsFormatException) {
-        return;
-      }
-      if (IsDuplicateKeyException || IsReferencingValueNotFoundException) {
-        if (LastChangeAction == ChangeAction.Update) {
-          MainList.RestoreReferencingPropertyOriginalValue(
-            MainList.LastDatabaseUpdateErrorException.RowIndex,
-            MainList.LastDatabaseUpdateErrorException.ColumnIndex);
-          return;
-        }
-      }
-      switch (LastChangeAction) {
-        case ChangeAction.Delete:
-          break;
-        case ChangeAction.Insert:
-          CancelInsertion();
-          break;
-        case ChangeAction.Update:
-          MainList.RestoreCurrentBindingItemOriginalValues();
-          View.EditMainGridCurrentCell();
-          View.RestoreMainGridCurrentRowCellErrorValue(
-            MainList.LastDatabaseUpdateErrorException.ColumnIndex,
-            MainList.GetErrorValues()[
-              MainList.LastDatabaseUpdateErrorException.ColumnIndex]);
-          break;
-        default:
-          throw new NotSupportedException(
-            $"{nameof(ChangeAction)} '{LastChangeAction}' is not supported.");
-      }
-    }
+    // public void ShowError() {
+    //   // Debug.WriteLine(
+    //   //   $"EditorController.ShowError: LastChangeAction == {LastChangeAction}");
+    //   View.FocusMainGridCell(MainList.LastDatabaseUpdateErrorException.RowIndex,
+    //     MainList.LastDatabaseUpdateErrorException.ColumnIndex);
+    //   if (LastChangeAction == ChangeAction.Delete) {
+    //     View.SelectCurrentRowOnly();
+    //   }
+    //   View.ShowErrorMessage(MainList.LastDatabaseUpdateErrorException.Message);
+    //   // Debug.WriteLine("Error message shown");
+    //   if (IsFormatException) {
+    //     return;
+    //   }
+    //   if (IsDuplicateKeyException || IsReferencingValueNotFoundException) {
+    //     if (LastChangeAction == ChangeAction.Update) {
+    //       MainList.RestoreReferencingPropertyOriginalValue(
+    //         MainList.LastDatabaseUpdateErrorException.RowIndex,
+    //         MainList.LastDatabaseUpdateErrorException.ColumnIndex);
+    //       return;
+    //     }
+    //   }
+    //   switch (LastChangeAction) {
+    //     case ChangeAction.Delete:
+    //       break;
+    //     case ChangeAction.Insert:
+    //       CancelInsertion();
+    //       break;
+    //     case ChangeAction.Update:
+    //       MainList.RestoreCurrentBindingItemOriginalValues();
+    //       View.EditMainGridCurrentCell();
+    //       View.RestoreMainGridCurrentRowCellErrorValue(
+    //         MainList.LastDatabaseUpdateErrorException.ColumnIndex,
+    //         MainList.GetErrorValues()[
+    //           MainList.LastDatabaseUpdateErrorException.ColumnIndex]);
+    //       break;
+    //     default:
+    //       throw new NotSupportedException(
+    //         $"{nameof(ChangeAction)} '{LastChangeAction}' is not supported.");
+    //   }
+    // }
 
-    /// <summary>
-    ///   Invoked when the user clicks OK on an insert error message box.
-    ///   If the insertion row is not the only row,
-    ///   the row above the insertion row is temporarily made current,
-    ///   which allows the insertion row to be removed.
-    ///   The insertion row is then removed,
-    ///   forcing a new empty insertion row to be created.
-    ///   Finally the new empty insertion row is made current.
-    ///   The net effect is that, after the error message has been shown,
-    ///   the insertion row remains current, from the perspective of the user,
-    ///   but all its cells have been blanked out or, where applicable,
-    ///   reverted to default values.
-    /// </summary>
-    /// <remarks>
-    ///   The disadvantage is that the user's work on the insertion row is lost
-    ///   and, if still needed, has to be restarted from scratch.
-    ///   So why is this done?
-    ///   <para>
-    ///     If the insertion row were to be left with the error values,
-    ///     the user would no way of cancelling out of the insertion
-    ///     short of closing the application.
-    ///     And, as the most probable or only error type is a duplicate key,
-    ///     the user would quite likely want to cancel the insertion and
-    ///     edit the existing row with that key instead.
-    ///   </para>
-    ///   <para>
-    ///     There is no way of selectively reverting just the erroneous cell values
-    ///     of an insertion row to blank or default.
-    ///     So I spent an inordinate amount of effort trying to get
-    ///     another option to work.
-    ///     The idea was to convert the insertion row into an 'existing' row
-    ///     without updating the database, resetting just the erroneous cell values
-    ///     to blank or default.
-    ///     While I still think that would be possible,
-    ///     it turned out to add a great deal of complexity
-    ///     just to get it not working reliably.
-    ///     So I gave up and went for this relatively simple
-    ///     and hopefully robust solution instead.
-    ///   </para>
-    ///   <para>
-    ///     If in future we want to allow the insertion row to be re-edited,
-    ///     perhaps the insertion row could to be replaced with
-    ///     a new one based on a special binding item pre-populated
-    ///     with the changed values (apart from the property corresponding to a
-    ///     FormatException, which would be impossible,
-    ///     or a reference not found paste error, which would be pointless).
-    ///   </para>
-    /// </remarks>
-    private void CancelInsertion() {
-      // Debug.WriteLine("EditorController.CancelInsertion");
-      int insertionRowIndex = MainList.BindingList.Count - 1;
-      if (insertionRowIndex > 0) {
-        // Currently, it is not anticipated that there can be an insertion row error
-        // at this point 
-        // when the insertion row is the only row on the table,
-        // as the only anticipated error type that should get to this point
-        // is a duplicate key.
-        // Format errors are handled differently and should not get here.
-        MainList.IsRemovingInvalidInsertionRow = true;
-        View.MakeMainGridRowCurrent(insertionRowIndex - 1);
-        MainList.RemoveInsertionBindingItem();
-        View.MakeMainGridRowCurrent(insertionRowIndex);
-      }
-    }
+    // /// <summary>
+    // ///   Invoked when the user clicks OK on an insert error message box.
+    // ///   If the insertion row is not the only row,
+    // ///   the row above the insertion row is temporarily made current,
+    // ///   which allows the insertion row to be removed.
+    // ///   The insertion row is then removed,
+    // ///   forcing a new empty insertion row to be created.
+    // ///   Finally the new empty insertion row is made current.
+    // ///   The net effect is that, after the error message has been shown,
+    // ///   the insertion row remains current, from the perspective of the user,
+    // ///   but all its cells have been blanked out or, where applicable,
+    // ///   reverted to default values.
+    // /// </summary>
+    // /// <remarks>
+    // ///   The disadvantage is that the user's work on the insertion row is lost
+    // ///   and, if still needed, has to be restarted from scratch.
+    // ///   So why is this done?
+    // ///   <para>
+    // ///     If the insertion row were to be left with the error values,
+    // ///     the user would no way of cancelling out of the insertion
+    // ///     short of closing the application.
+    // ///     And, as the most probable or only error type is a duplicate key,
+    // ///     the user would quite likely want to cancel the insertion and
+    // ///     edit the existing row with that key instead.
+    // ///   </para>
+    // ///   <para>
+    // ///     There is no way of selectively reverting just the erroneous cell values
+    // ///     of an insertion row to blank or default.
+    // ///     So I spent an inordinate amount of effort trying to get
+    // ///     another option to work.
+    // ///     The idea was to convert the insertion row into an 'existing' row
+    // ///     without updating the database, resetting just the erroneous cell values
+    // ///     to blank or default.
+    // ///     While I still think that would be possible,
+    // ///     it turned out to add a great deal of complexity
+    // ///     just to get it not working reliably.
+    // ///     So I gave up and went for this relatively simple
+    // ///     and hopefully robust solution instead.
+    // ///   </para>
+    // ///   <para>
+    // ///     If in future we want to allow the insertion row to be re-edited,
+    // ///     perhaps the insertion row could to be replaced with
+    // ///     a new one based on a special binding item pre-populated
+    // ///     with the changed values (apart from the property corresponding to a
+    // ///     FormatException, which would be impossible,
+    // ///     or a reference not found paste error, which would be pointless).
+    // ///   </para>
+    // /// </remarks>
+    // private void CancelInsertion() {
+    //   // Debug.WriteLine("EditorController.CancelInsertion");
+    //   int insertionRowIndex = MainList.BindingList.Count - 1;
+    //   if (insertionRowIndex > 0) {
+    //     // Currently, it is not anticipated that there can be an insertion row error
+    //     // at this point 
+    //     // when the insertion row is the only row on the table,
+    //     // as the only anticipated error type that should get to this point
+    //     // is a duplicate key.
+    //     // Format errors are handled differently and should not get here.
+    //     MainList.IsRemovingInvalidInsertionRow = true;
+    //     View.MakeMainGridRowCurrent(insertionRowIndex - 1);
+    //     MainList.RemoveInsertionBindingItem();
+    //     View.MakeMainGridRowCurrent(insertionRowIndex);
+    //   }
+    // }
 
     [NotNull]
     protected virtual IEntityList CreateEntityList([NotNull] Type type) {

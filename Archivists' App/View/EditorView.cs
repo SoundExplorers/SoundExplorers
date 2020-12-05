@@ -56,7 +56,7 @@ namespace SoundExplorers.View {
       Cursor = Cursors.WaitCursor;
       BeginInvoke((Action)delegate {
         MainGrid.CancelEdit();
-        Controller.ShowError();
+        MainGrid.Controller.ShowError();
       });
     }
 
