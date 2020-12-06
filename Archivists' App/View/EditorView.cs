@@ -87,16 +87,7 @@ namespace SoundExplorers.View {
 
     public void SetController(EditorController controller) {
       Controller = controller;
-      if (Controller.IsParentTableToBeShown) {
-        // A read-only related grid for the parent table is shown
-        // above the main grid.
-        GridSplitContainer.Panel1Collapsed = false;
-        // Does not work if done in EditorView_Load.
-        GridSplitContainer.SplitterDistance = Controller.GridSplitterDistance;
-        ParentGrid.AutoResizeColumns();
-      } else {
-        GridSplitContainer.Panel1Collapsed = true;
-      }
+      GridSplitContainer.Panel1Collapsed = !Controller.IsParentTableToBeShown;
     }
 
     /// <summary>
@@ -374,6 +365,12 @@ namespace SoundExplorers.View {
       // due to being thrown in the controller's constructor.
       OpenTable();
       MainGrid.AutoResizeColumns();
+      if (Controller.IsParentTableToBeShown) {
+        // TODO Check setting GridSplitContainer.SplitterDistance works.
+        // Previous comment says 'Does not work if done in EditorView_Load.'
+        GridSplitContainer.SplitterDistance = Controller.GridSplitterDistance;
+        ParentGrid.AutoResizeColumns();
+      }
     }
 
     private void EditorView_Move(object sender, EventArgs e) {
