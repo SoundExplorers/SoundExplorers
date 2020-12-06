@@ -363,7 +363,7 @@ namespace SoundExplorers.View {
       // A read-only related grid for the parent table is shown
       // above the main grid.
       if (grid != FocusedGrid) {
-        GridBase.SwapColors(MainGrid, ParentGrid);
+        MainGrid.SwapColorsWith(ParentGrid);
       }
       // By trial an error,
       // I found that this complicated rigmarole was required to

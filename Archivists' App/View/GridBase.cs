@@ -64,21 +64,21 @@ namespace SoundExplorers.View {
     /// <summary>
     ///   Swaps the colour schemes of the two grids.
     /// </summary>
-    public static void SwapColors([NotNull] DataGridView a, [NotNull] DataGridView b) {
-      var swapColor = a.DefaultCellStyle.BackColor;
-      a.DefaultCellStyle.BackColor = b.DefaultCellStyle.BackColor;
-      b.DefaultCellStyle.BackColor = swapColor;
-      swapColor = a.DefaultCellStyle.ForeColor;
-      a.DefaultCellStyle.ForeColor = b.DefaultCellStyle.ForeColor;
-      b.DefaultCellStyle.ForeColor = swapColor;
-      swapColor = a.DefaultCellStyle.SelectionBackColor;
-      a.DefaultCellStyle.SelectionBackColor =
-        b.DefaultCellStyle.SelectionBackColor;
-      b.DefaultCellStyle.SelectionBackColor = swapColor;
-      swapColor = a.DefaultCellStyle.SelectionForeColor;
-      a.DefaultCellStyle.SelectionForeColor =
-        b.DefaultCellStyle.SelectionForeColor;
-      b.DefaultCellStyle.SelectionForeColor = swapColor;
+    public void SwapColorsWith([NotNull] DataGridView otherGrid) {
+      var swapColor = DefaultCellStyle.BackColor;
+      DefaultCellStyle.BackColor = otherGrid.DefaultCellStyle.BackColor;
+      otherGrid.DefaultCellStyle.BackColor = swapColor;
+      swapColor = DefaultCellStyle.ForeColor;
+      DefaultCellStyle.ForeColor = otherGrid.DefaultCellStyle.ForeColor;
+      otherGrid.DefaultCellStyle.ForeColor = swapColor;
+      swapColor = DefaultCellStyle.SelectionBackColor;
+      DefaultCellStyle.SelectionBackColor =
+        otherGrid.DefaultCellStyle.SelectionBackColor;
+      otherGrid.DefaultCellStyle.SelectionBackColor = swapColor;
+      swapColor = DefaultCellStyle.SelectionForeColor;
+      DefaultCellStyle.SelectionForeColor =
+        otherGrid.DefaultCellStyle.SelectionForeColor;
+      otherGrid.DefaultCellStyle.SelectionForeColor = swapColor;
     }
   }
 }
