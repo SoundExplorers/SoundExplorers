@@ -125,7 +125,7 @@ namespace SoundExplorers.Controller {
     // public void ShowError() {
     //   // Debug.WriteLine(
     //   //   $"EditorController.ShowError: LastChangeAction == {LastChangeAction}");
-    //   View.FocusMainGridCell(MainList.LastDatabaseUpdateErrorException.RowIndex,
+    //   View.MakeCellCurrent(MainList.LastDatabaseUpdateErrorException.RowIndex,
     //     MainList.LastDatabaseUpdateErrorException.ColumnIndex);
     //   if (LastChangeAction == ChangeAction.Delete) {
     //     View.SelectCurrentRowOnly();
@@ -151,7 +151,7 @@ namespace SoundExplorers.Controller {
     //       break;
     //     case ChangeAction.Update:
     //       MainList.RestoreCurrentBindingItemOriginalValues();
-    //       View.EditMainGridCurrentCell();
+    //       View.EditCurrentCell();
     //       View.RestoreMainGridCurrentRowCellErrorValue(
     //         MainList.LastDatabaseUpdateErrorException.ColumnIndex,
     //         MainList.GetErrorValues()[
@@ -222,9 +222,9 @@ namespace SoundExplorers.Controller {
     //     // is a duplicate key.
     //     // Format errors are handled differently and should not get here.
     //     MainList.IsRemovingInvalidInsertionRow = true;
-    //     View.MakeMainGridRowCurrent(insertionRowIndex - 1);
+    //     View.MakeRowCurrent(insertionRowIndex - 1);
     //     MainList.RemoveInsertionBindingItem();
-    //     View.MakeMainGridRowCurrent(insertionRowIndex);
+    //     View.MakeRowCurrent(insertionRowIndex);
     //   }
     // }
 

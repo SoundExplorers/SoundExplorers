@@ -7,11 +7,13 @@ using SoundExplorers.Model;
 
 namespace SoundExplorers.Controller {
   public class MainGridController {
-    public MainGridController([NotNull] IEditorView editorView) {
+    public MainGridController(
+      [NotNull] IMainGrid grid, [NotNull] IEditorView editorView) {
+      Grid = grid;
       EditorView = editorView;
       CurrentRowIndex = -1;
     }
-    
+
     [CanBeNull] public IBindingList BindingList => List.BindingList;
 
     /// <summary>
@@ -23,6 +25,7 @@ namespace SoundExplorers.Controller {
 
     protected int CurrentRowIndex { get; private set; }
     [NotNull] protected IEditorView EditorView { get; }
+    [NotNull] protected IMainGrid Grid { get; }
 
     private bool IsDuplicateKeyException =>
       List.LastDatabaseUpdateErrorException?.InnerException is DuplicateKeyException;
@@ -47,9 +50,9 @@ namespace SoundExplorers.Controller {
     ///   Gets or set the list of entities represented in the main table.
     /// </summary>
     protected IEntityList List => EditorView.Controller.MainList;
-    
+
     [CanBeNull] public string TableName => List.EntityTypeName;
-    
+
     /// <summary>
     ///   Invoked when the user clicks OK on an insert error message box.
     ///   If the insertion row is not the only row,
@@ -109,9 +112,9 @@ namespace SoundExplorers.Controller {
         // is a duplicate key.
         // Format errors are handled differently and should not get here.
         List.IsRemovingInvalidInsertionRow = true;
-        EditorView.MakeMainGridRowCurrent(insertionRowIndex - 1);
+        Grid.MakeRowCurrent(insertionRowIndex - 1);
         List.RemoveInsertionBindingItem();
-        EditorView.MakeMainGridRowCurrent(insertionRowIndex);
+        Grid.MakeRowCurrent(insertionRowIndex);
       }
     }
 
@@ -218,7 +221,7 @@ namespace SoundExplorers.Controller {
       if (List.IsDataLoadComplete && rowIndex < List.Count) {
         try {
           List.DeleteEntity(rowIndex);
-          EditorView.OnRowAddedOrDeleted();
+          Grid.OnRowAddedOrDeleted();
         } catch (DatabaseUpdateErrorException) {
           EditorView.OnError();
         }
@@ -257,7 +260,7 @@ namespace SoundExplorers.Controller {
       }
       try {
         List.OnRowValidated(rowIndex);
-        EditorView.OnRowAddedOrDeleted();
+        Grid.OnRowAddedOrDeleted();
       } catch (DatabaseUpdateErrorException) {
         EditorView.OnError();
       }
@@ -266,10 +269,10 @@ namespace SoundExplorers.Controller {
     public void ShowError() {
       // Debug.WriteLine(
       //   $"EditorController.ShowError: LastChangeAction == {LastChangeAction}");
-      EditorView.FocusMainGridCell(List.LastDatabaseUpdateErrorException.RowIndex,
+      Grid.MakeCellCurrent(List.LastDatabaseUpdateErrorException.RowIndex,
         List.LastDatabaseUpdateErrorException.ColumnIndex);
       if (LastChangeAction == ChangeAction.Delete) {
-        EditorView.SelectCurrentRowOnly();
+        Grid.SelectCurrentRowOnly();
       }
       EditorView.ShowErrorMessage(List.LastDatabaseUpdateErrorException.Message);
       // Debug.WriteLine("Error message shown");
@@ -292,8 +295,8 @@ namespace SoundExplorers.Controller {
           break;
         case ChangeAction.Update:
           List.RestoreCurrentBindingItemOriginalValues();
-          EditorView.EditMainGridCurrentCell();
-          EditorView.RestoreMainGridCurrentRowCellErrorValue(
+          Grid.EditCurrentCell();
+          Grid.RestoreCurrentRowCellErrorValue(
             List.LastDatabaseUpdateErrorException.ColumnIndex,
             List.GetErrorValues()[
               List.LastDatabaseUpdateErrorException.ColumnIndex]);

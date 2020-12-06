@@ -47,6 +47,7 @@
         <Compile Include="CellControllerBase.cs" />
         <Compile Include="ComboBoxCellController.cs" />
         <Compile Include="IEditorView.cs" />
+        <Compile Include="IMainGrid.cs" />
         <Compile Include="IView.cs" />
         <Compile Include="MainController.cs" />
         <Compile Include="MainGridController.cs" />

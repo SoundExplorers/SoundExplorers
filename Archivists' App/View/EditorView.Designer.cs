@@ -28,7 +28,7 @@ namespace SoundExplorers.View {
             this.components = new System.ComponentModel.Container();
             this.ImageSplitContainer = new System.Windows.Forms.SplitContainer();
             this.GridSplitContainer = new System.Windows.Forms.SplitContainer();
-            this.ParentGrid = new System.Windows.Forms.DataGridView();
+            this.ParentGrid = new SoundExplorers.View.ParentGrid();
             this.MainGrid = new SoundExplorers.View.MainGrid();
             this.MissingImageLabel = new System.Windows.Forms.Label();
             this.FittedPictureBox1 = new SoundExplorers.View.FittedPictureBox();
@@ -85,16 +85,10 @@ namespace SoundExplorers.View {
             // 
             // ParentGrid
             // 
-            this.ParentGrid.AllowUserToAddRows = false;
-            this.ParentGrid.AllowUserToDeleteRows = false;
-            this.ParentGrid.AllowUserToOrderColumns = true;
-            this.ParentGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.ParentGrid.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ParentGrid.Location = new System.Drawing.Point(0, 0);
             this.ParentGrid.Margin = new System.Windows.Forms.Padding(4);
-            this.ParentGrid.MultiSelect = false;
             this.ParentGrid.Name = "ParentGrid";
-            this.ParentGrid.ReadOnly = true;
             this.ParentGrid.Size = new System.Drawing.Size(379, 105);
             this.ParentGrid.TabIndex = 3;
             // 
@@ -168,7 +162,7 @@ namespace SoundExplorers.View {
 
         private System.Windows.Forms.SplitContainer ImageSplitContainer;
         private System.Windows.Forms.SplitContainer GridSplitContainer;
-        private System.Windows.Forms.DataGridView ParentGrid;
+        private SoundExplorers.View.ParentGrid ParentGrid;
         internal SoundExplorers.View.MainGrid MainGrid;
         private FittedPictureBox FittedPictureBox1;
         private System.Windows.Forms.Label MissingImageLabel;

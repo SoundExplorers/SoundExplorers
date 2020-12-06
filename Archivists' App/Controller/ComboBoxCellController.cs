@@ -20,7 +20,8 @@ namespace SoundExplorers.Controller {
     ///   The name of the column that is edited with the combo box cell.
     /// </param>
     public ComboBoxCellController([NotNull] IView<ComboBoxCellController> view,
-      [NotNull] MainGridController mainGridController, [NotNull] string columnName) : base(
+      [NotNull] MainGridController mainGridController,
+      [NotNull] string columnName) : base(
       mainGridController, columnName) {
       view.SetController(this);
     }

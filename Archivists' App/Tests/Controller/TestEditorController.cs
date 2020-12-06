@@ -29,6 +29,8 @@ namespace SoundExplorers.Tests.Controller {
       set => _editor = value;
     }
 
+    public new MainController MainController => base.MainController;
+    public new IEntityList MainList => base.MainList;
     [NotNull] private MockEditorView MockEditorView => MainGridController.MockEditorView;
     [NotNull] private TestMainGridController MainGridController { get; }
     [NotNull] private QueryHelper QueryHelper { get; }
@@ -47,14 +49,6 @@ namespace SoundExplorers.Tests.Controller {
 
     protected override Option CreateOption(string name) {
       return new TestOption(QueryHelper, Session, name);
-    }
-
-    public MainController GetMainController() {
-      return MainController;
-    }
-
-    public IEntityList GetMainList() {
-      return MainList;
     }
 
     public void SetComboBoxCellValue(

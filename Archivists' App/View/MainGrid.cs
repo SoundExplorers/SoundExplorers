@@ -5,13 +5,10 @@ using JetBrains.Annotations;
 using SoundExplorers.Controller;
 
 namespace SoundExplorers.View {
-  public class MainGrid : DataGridView {
-    private bool _allowDrop;
+  public class MainGrid : GridBase, IMainGrid {
     private ContextMenuStrip _contextMenuStrip;
 
     public MainGrid() {
-      AllowUserToOrderColumns = true;
-      ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
       CutMenuItem = new CutMenuItem();
       CopyMenuItem = new CopyMenuItem();
       PasteMenuItem = new PasteMenuItem();
@@ -19,15 +16,10 @@ namespace SoundExplorers.View {
       DeleteSelectedRowsMenuItem = new DeleteSelectedRowsMenuItem();
     }
 
-    public override bool AllowDrop {
-      get => _allowDrop ? _allowDrop : base.AllowDrop = _allowDrop = true;
-      set => base.AllowDrop = value;
-    }
-
-    public new ContextMenuStrip ContextMenuStrip =>
+    private new ContextMenuStrip ContextMenuStrip =>
       _contextMenuStrip ?? (_contextMenuStrip = CreateContextMenuStrip());
 
-    public MainGridController Controller { get; set; }
+    public MainGridController Controller { get; private set; }
     public CopyMenuItem CopyMenuItem { get; }
 
     private new DataGridViewRow CurrentRow =>
@@ -37,6 +29,159 @@ namespace SoundExplorers.View {
     public DeleteSelectedRowsMenuItem DeleteSelectedRowsMenuItem { get; }
     public PasteMenuItem PasteMenuItem { get; }
     public SelectAllMenuItem SelectAllMenuItem { get; }
+
+    public void SetController(MainGridController controller) {
+      Controller = controller;
+    }
+
+    public void EditCurrentCell() {
+      BeginEdit(true);
+    }
+
+    public void MakeCellCurrent(int rowIndex, int columnIndex) {
+      // This triggers OnRowEnter.
+      // Debug.WriteLine("EditorView.MakeCellCurrent");
+      try {
+        CurrentCell = Rows[rowIndex].Cells[columnIndex];
+      } catch {
+        // Can happen if insertion row is left before error message is shown.
+      }
+    }
+
+    public void MakeRowCurrent(int rowIndex) {
+      // This triggers OnRowEnter.
+      // Debug.WriteLine($"EditorView.MakeRowCurrent: row {rowIndex}");
+      CurrentCell = Rows[rowIndex].Cells[0];
+    }
+
+    public void OnRowAddedOrDeleted() {
+      AutoResizeColumns();
+      Focus();
+    }
+
+    public void RestoreCurrentRowCellErrorValue(int columnIndex, object errorValue) {
+      ((ICanRestoreErrorValue)CurrentRow.Cells[columnIndex]).RestoreErrorValue(
+        errorValue);
+    }
+
+    public void SelectCurrentRowOnly() {
+      ClearSelection();
+      CurrentRow.Selected = true;
+    }
+
+    public override void Copy() {
+      base.Copy();
+      if (CurrentCell.Value == null || !IsCurrentCellInEditMode) {
+        return;
+      }
+      switch (EditingControl) {
+        case TextBox textBox: {
+          if (string.IsNullOrWhiteSpace(textBox.SelectedText)) {
+            // Clipboard.SetText throws an exception
+            // if passed an empty string.
+            return;
+          }
+          Clipboard.SetText(textBox.SelectedText);
+          break;
+        }
+      }
+    }
+
+    public override void Cut() {
+      base.Cut();
+      if (CurrentCell.Value == null || CurrentCell.ReadOnly) {
+        return;
+      }
+      if (!IsCurrentCellInEditMode) {
+        BeginEdit(true);
+        CurrentCell.Value = string.Empty;
+        EndEdit();
+      } else {
+        // The cell is already being edited
+        switch (EditingControl) {
+          case TextBox textBox when string.IsNullOrWhiteSpace(textBox.SelectedText):
+            // Clipboard.SetText throws an exception
+            // if passed an empty string.
+            return;
+          case TextBox textBox:
+            Clipboard.SetText(textBox.SelectedText);
+            textBox.SelectedText = string.Empty;
+            break;
+        }
+      }
+    }
+
+    public void DeleteSelectedRows() {
+      if (Controller.IsInsertionRowCurrent) {
+        return;
+      }
+      if (IsCurrentCellInEditMode) {
+        CancelEdit();
+      }
+      if (SelectedRows.Count == 0) {
+        CurrentRow.Selected = true;
+      }
+      foreach (DataGridViewRow row in SelectedRows) {
+        Rows.Remove(row);
+      }
+    }
+
+    public void Paste() {
+      if (!CurrentCell.ReadOnly) {
+        if (!IsCurrentCellInEditMode) {
+          BeginEdit(true);
+          CurrentCell.Value = Clipboard.GetText();
+          EndEdit();
+        } else { // The cell is already being edited
+          if (EditingControl is TextBox textBox) {
+            textBox.SelectedText = Clipboard.GetText();
+          }
+        }
+      }
+    }
+
+    public void SelectAllInCurrentCell() {
+      if (!IsCurrentCellInEditMode) {
+        BeginEdit(true);
+      } else { // The cell is already being edited
+        if (EditingControl is TextBox textBox) {
+          textBox.SelectAll();
+        }
+      }
+    }
+
+    private void ConfigureColumn([NotNull] DataGridViewColumn column) {
+      // Making every column explicitly not sortable prevents the program
+      // from crashing if F3 in pressed while the grid is focused.
+      // TODO Check whether F3 crashes program when PARENT grid is focused.
+      column.SortMode = DataGridViewColumnSortMode.NotSortable;
+      column.HeaderText = Controller.GetColumnDisplayName(column.Name);
+      if (column.ValueType == typeof(DateTime)) {
+        column.DefaultCellStyle.Format = EditorController.DateFormat;
+      }
+      if (Controller.DoesColumnReferenceAnotherEntity(column.Name)) {
+        column.CellTemplate = ComboBoxCell.Create(Controller, column.Name);
+      } else if (column.ValueType == typeof(DateTime)) {
+        column.CellTemplate = new CalendarCell();
+      } else if (column.ValueType == typeof(string)) {
+        column.CellTemplate = new TextBoxCell();
+        // Interpret blanking a cell as an empty string, not null.
+        // Null is not a problem for the object-oriented database to handle.
+        // But this fixes an error where,
+        // when a text cell was edited to blank
+        // and then Tab was pressed to proceed to the next cell,
+        // which happened to be the first cell of the insertion row,
+        // if that is relevant,
+        // the program would crash with a NullReferenceException.
+        column.DefaultCellStyle.DataSourceNullValue = string.Empty;
+      }
+    }
+
+    public void ConfigureColumns() {
+      foreach (DataGridViewColumn column in Columns) {
+        ConfigureColumn(column);
+      }
+    }
 
     [NotNull]
     private ContextMenuStrip CreateContextMenuStrip() {
@@ -51,6 +196,12 @@ namespace SoundExplorers.View {
       result.ShowImageMargin = false;
       result.Size = new Size(61, 4);
       return result;
+    }
+
+    public void MakeInsertionRowCurrent() {
+      // This triggers OnRowEnter.
+      // Debug.WriteLine("EditorView.MakeMainGridInsertionRowCurrent");
+      MakeRowCurrent(Rows.Count - 1);
     }
 
     protected override void OnCellValueChanged(DataGridViewCellEventArgs e) {
@@ -88,6 +239,11 @@ namespace SoundExplorers.View {
       }
     }
 
+    public void OnError() {
+      CancelEdit();
+      Controller.ShowError();
+    }
+
     protected override void OnKeyDown(KeyEventArgs e) {
       switch (e.KeyData) {
         case Keys.F2:
@@ -117,6 +273,20 @@ namespace SoundExplorers.View {
           base.OnKeyDown(e);
           break;
       } //End of switch
+    }
+
+    /// <summary>
+    ///   When mouse button 2 is clicked on a cell
+    ///   and unless the cell is being edited,
+    ///   the context menu will be shown:
+    ///   the base method will already have made
+    ///   that cell the current cell.
+    /// </summary>
+    protected override void OnMouseDown(MouseEventArgs e) {
+      base.OnMouseDown(e);
+      if (!IsCurrentCellInEditMode && e.Button == MouseButtons.Right) {
+        ContextMenuStrip.Show(this, e.Location);
+      }
     }
 
     /// <summary>

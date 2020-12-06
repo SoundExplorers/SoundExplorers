@@ -18,6 +18,8 @@ namespace SoundExplorers.Tests.Controller {
       Session = new TestSession();
       View = new MockEditorView();
       MainGridController = View.MainGridController = new TestMainGridController(View);
+      MainGrid = MainGridController.Grid;
+      MainGrid.SetController(MainGridController);
     }
 
     [TearDown]
@@ -26,6 +28,7 @@ namespace SoundExplorers.Tests.Controller {
     }
 
     private TestData Data { get; set; }
+    private MockMainGrid MainGrid { get; set; }
     private TestMainGridController MainGridController { get; set; }
     private QueryHelper QueryHelper { get; set; }
     private TestSession Session { get; set; }
@@ -103,9 +106,9 @@ namespace SoundExplorers.Tests.Controller {
       const string name = "Boogie woogie";
       var controller =
         CreateController<Genre, NamedBindingItem<Genre>>(typeof(GenreList));
-      var mainController = controller.GetMainController();
+      var mainController = controller.MainController;
       controller.FetchData(); // Show an empty grid
-      var mainList = controller.GetMainList();
+      var mainList = controller.MainList;
       var editor = controller.Editor =
         new TestEditor<Genre, NamedBindingItem<Genre>>(MainGridController.BindingList);
       controller.CreateAndGoToInsertionRow();
@@ -142,8 +145,8 @@ namespace SoundExplorers.Tests.Controller {
       editor.SetBindingList(MainGridController.BindingList);
       controller.CreateAndGoToInsertionRow();
       MainGridController.OnRowRemoved(1);
-      Assert.AreEqual(1, View.OnRowAddedOrDeletedCount, "OnRowAddedOrDeletedCount");
-      Assert.AreEqual(2, controller.GetMainList().Count, "MainList.Count");
+      Assert.AreEqual(1, MainGrid.OnRowAddedOrDeletedCount, "OnRowAddedOrDeletedCount");
+      Assert.AreEqual(2, controller.MainList.Count, "MainList.Count");
     }
 
     [Test]
@@ -165,10 +168,10 @@ namespace SoundExplorers.Tests.Controller {
       MainGridController.OnRowValidated(1);
       Assert.AreEqual(1, View.ShowErrorMessageCount,
         "ShowErrorMessageCount after error message shown for duplicate insert");
-      Assert.AreEqual(2, View.MakeMainGridRowCurrentCount,
-        "MakeMainGridRowCurrentCount after error message shown for duplicate insert");
-      Assert.AreEqual(1, View.MakeMainGridRowCurrentRowIndex,
-        "MakeMainGridRowCurrentRowIndex after error message shown for duplicate insert");
+      Assert.AreEqual(2, MainGrid.MakeRowCurrentCount,
+        "MakeRowCurrentCount after error message shown for duplicate insert");
+      Assert.AreEqual(1, MainGrid.MakeRowCurrentRowIndex,
+        "MakeRowCurrentRowIndex after error message shown for duplicate insert");
     }
 
     [Test]
@@ -192,7 +195,7 @@ namespace SoundExplorers.Tests.Controller {
       editor[1].Name = name2;
       editor[1].Notes = "Bob";
       MainGridController.OnRowValidated(1);
-      Assert.AreEqual(2, View.OnRowAddedOrDeletedCount, "OnRowAddedOrDeletedCount");
+      Assert.AreEqual(2, MainGrid.OnRowAddedOrDeletedCount, "OnRowAddedOrDeletedCount");
       controller.FetchData(); // Refresh grid
       editor.SetBindingList(MainGridController.BindingList);
       Assert.AreEqual(2, editor.Count, "editor.Count after FetchData #2");
@@ -204,12 +207,12 @@ namespace SoundExplorers.Tests.Controller {
       Assert.AreEqual(name1, editor[1].Name,
         "Still duplicate name before error message shown for duplicate rename");
       MainGridController.OnExistingRowCellUpdateError(1, "Name", exception);
-      Assert.AreEqual(1, View.FocusMainGridCellCount,
-        "FocusMainGridCellCount after error message shown for duplicate rename");
-      Assert.AreEqual(0, View.FocusMainGridCellColumnIndex,
-        "FocusMainGridCellColumnIndex after error message shown for duplicate rename");
-      Assert.AreEqual(1, View.FocusMainGridCellRowIndex,
-        "FocusMainGridCellRowIndex after error message shown for duplicate rename");
+      Assert.AreEqual(1, MainGrid.MakeCellCurrentCount,
+        "MakeCellCurrentCount after error message shown for duplicate rename");
+      Assert.AreEqual(0, MainGrid.MakeCellCurrentColumnIndex,
+        "MakeCellCurrentColumnIndex after error message shown for duplicate rename");
+      Assert.AreEqual(1, MainGrid.MakeCellCurrentRowIndex,
+        "MakeCellCurrentRowIndex after error message shown for duplicate rename");
       Assert.AreEqual(name2, editor[1].Name,
         "Original name restored after error message shown for duplicate rename");
       Assert.AreEqual(1, View.ShowErrorMessageCount,
@@ -250,7 +253,7 @@ namespace SoundExplorers.Tests.Controller {
       MainGridController.OnRowRemoved(1);
       Assert.AreEqual(1, View.ShowErrorMessageCount,
         "ShowErrorMessageCount after error message shown for disallowed delete");
-      Assert.AreEqual(1, View.SelectCurrentRowOnlyCount,
+      Assert.AreEqual(1, MainGrid.SelectCurrentRowOnlyCount,
         "SelectCurrentRowOnlyCount after error message shown for disallowed delete");
       MainGridController.OnRowEnter(1);
       MainGridController.TestUnsupportedLastChangeAction = true;
@@ -285,7 +288,7 @@ namespace SoundExplorers.Tests.Controller {
         "ShowErrorMessageCount after valid Newsletter selection");
       Assert.AreEqual(selectedNewsletterDate, editor[0].Newsletter,
         "Newsletter in editor after valid Newsletter selection");
-      Assert.AreSame(selectedNewsletter, ((Event)controller.GetMainList()[0]).Newsletter,
+      Assert.AreSame(selectedNewsletter, ((Event)controller.MainList[0]).Newsletter,
         "Newsletter entity after valid Newsletter selection");
       var notFoundDate = DateTime.Parse("2345/12/31");
       MainGridController.OnRowEnter(0);
@@ -304,7 +307,7 @@ namespace SoundExplorers.Tests.Controller {
         "LastErrorMessage after not-found Newsletter pasted");
       Assert.AreEqual(selectedNewsletterDate, editor[0].Newsletter,
         "Newsletter in editor after not-found Newsletter pasted");
-      Assert.AreSame(selectedNewsletter, ((Event)controller.GetMainList()[0]).Newsletter,
+      Assert.AreSame(selectedNewsletter, ((Event)controller.MainList[0]).Newsletter,
         "Newsletter entity after not-found Newsletter pasted");
       // Series
       var selectedSeries = Data.Series[0];
@@ -316,7 +319,7 @@ namespace SoundExplorers.Tests.Controller {
         "ShowErrorMessageCount after valid Series selection");
       Assert.AreEqual(selectedSeriesName, editor[0].Series,
         "Series in editor after valid Series selection");
-      Assert.AreSame(selectedSeries, ((Event)controller.GetMainList()[0]).Series,
+      Assert.AreSame(selectedSeries, ((Event)controller.MainList[0]).Series,
         "Series entity after valid Series selection");
       const string notFoundName = "Not-Found Name";
       MainGridController.OnRowEnter(0);
@@ -335,7 +338,7 @@ namespace SoundExplorers.Tests.Controller {
         "LastErrorMessage after not-found Series pasted");
       Assert.AreEqual(selectedSeriesName, editor[0].Series,
         "Series in editor after not-found Series pasted");
-      Assert.AreSame(selectedSeries, ((Event)controller.GetMainList()[0]).Series,
+      Assert.AreSame(selectedSeries, ((Event)controller.MainList[0]).Series,
         "Series entity after not-found Series pasted");
     }
 
@@ -455,10 +458,10 @@ namespace SoundExplorers.Tests.Controller {
         () => editor[1].Url = editor[0].Url,
         "Rename Url should have thrown DatabaseUpdateErrorException.");
       MainGridController.OnExistingRowCellUpdateError(1, "Url", exception);
-      Assert.AreEqual(1, View.RestoreMainGridCurrentRowCellErrorValueCount,
-        "RestoreMainGridCurrentRowCellErrorValueCount");
-      Assert.AreEqual(1, View.EditMainGridCurrentCellCount,
-        "EditMainGridCurrentCellCount");
+      Assert.AreEqual(1, MainGrid.RestoreCurrentRowCellErrorValueCount,
+        "RestoreCurrentRowCellErrorValueCount");
+      Assert.AreEqual(1, MainGrid.EditCurrentCellCount,
+        "EditCurrentCellCount");
     }
 
     [Test]

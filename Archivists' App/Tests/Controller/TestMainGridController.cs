@@ -6,7 +6,7 @@ namespace SoundExplorers.Tests.Controller {
   public class TestMainGridController : MainGridController {
     // ReSharper disable once SuggestBaseTypeForParameter (See MockEditorView property)
     public TestMainGridController([NotNull] MockEditorView editorView) :
-      base(editorView) { }
+      base(new MockMainGrid(), editorView) { }
 
     public bool AutoValidate { get; set; }
 
@@ -16,6 +16,7 @@ namespace SoundExplorers.Tests.Controller {
 
     [NotNull] public MockEditorView MockEditorView => (MockEditorView)EditorView;
     public bool TestUnsupportedLastChangeAction { get; set; }
+    public new MockMainGrid Grid => (MockMainGrid)base.Grid;
 
     public override void OnRowEnter(int rowIndex) {
       if (AutoValidate) {

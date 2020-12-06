@@ -21,59 +21,15 @@ namespace SoundExplorers.View {
       ImageSplitContainer.GotFocus += SplitContainerOnGotFocus;
     }
 
-    private DataGridView FocusedGrid { get; set; }
-
-    private DataGridViewRow MainCurrentRow => 
-      MainGrid.CurrentRow ??
-      throw new NullReferenceException(nameof(MainGrid.CurrentRow));
-
+    private GridBase FocusedGrid { get; set; }
     private MainView MainView => (MainView)MdiParent;
     private SizeableFormOptions SizeableFormOptions { get; set; }
     public EditorController Controller { get; private set; }
 
-    public void EditMainGridCurrentCell() {
-      MainGrid.BeginEdit(true);
-    }
-
-    public void FocusMainGridCell(int rowIndex, int columnIndex) {
-      // This triggers MainGrid_RowEnter.
-      // Debug.WriteLine("EditorView.FocusMainGridCell");
-      try {
-        MainGrid.CurrentCell = MainGrid.Rows[rowIndex].Cells[columnIndex];
-      } catch {
-        // Can happen if insertion row is left before error message is shown.
-      }
-    }
-
-    public void MakeMainGridRowCurrent(int rowIndex) {
-      // This triggers MainGrid_RowEnter.
-      // Debug.WriteLine($"EditorView.MakeMainGridRowCurrent: row {rowIndex}");
-      MainGrid.CurrentCell = MainGrid.Rows[rowIndex].Cells[0];
-    }
-
     public void OnError() {
       // Debug.WriteLine("EditorView.OnError");
-      Cursor = Cursors.WaitCursor;
-      BeginInvoke((Action)delegate {
-        MainGrid.CancelEdit();
-        MainGrid.Controller.ShowError();
-      });
-    }
-
-    public void OnRowAddedOrDeleted() {
-      MainGrid.AutoResizeColumns();
-      MainGrid.Focus();
-    }
-
-    public void RestoreMainGridCurrentRowCellErrorValue(int columnIndex,
-      object errorValue) {
-      ((ICanRestoreErrorValue)MainCurrentRow.Cells[columnIndex]).RestoreErrorValue(
-        errorValue);
-    }
-
-    public void SelectCurrentRowOnly() {
-      MainGrid.ClearSelection();
-      MainCurrentRow.Selected = true;
+      MainView.Cursor = Cursors.WaitCursor;
+      BeginInvoke((Action)MainGrid.OnError);
     }
 
     public void ShowErrorMessage(string text) {
@@ -90,37 +46,8 @@ namespace SoundExplorers.View {
       GridSplitContainer.Panel1Collapsed = !Controller.IsParentTableToBeShown;
     }
 
-    /// <summary>
-    ///   Makes the insertion row of the main grid current.
-    /// </summary>
-    private void MakeMainGridInsertionRowCurrent() {
-      // This triggers MainGrid_RowEnter.
-      // Debug.WriteLine("EditorView.MakeMainGridInsertionRowCurrent");
-      MakeMainGridRowCurrent(MainGrid.Rows.Count - 1);
-    }
-
     public void Copy() {
-      if (FocusedGrid.CurrentCell.Value == null) {
-        return;
-      }
-      if (!FocusedGrid.IsCurrentCellInEditMode) {
-        Clipboard.SetText(FocusedGrid.CurrentCell.Value.ToString());
-        return;
-      }
-      switch (MainGrid.EditingControl) {
-        // The current cell is in the main grid,
-        // (the only grid that can be edited)
-        // and is already being edited.
-        case TextBox textBox: {
-          if (string.IsNullOrWhiteSpace(textBox.SelectedText)) {
-            // Clipboard.SetText throws an exception
-            // if passed an empty string.
-            return;
-          }
-          Clipboard.SetText(textBox.SelectedText);
-          break;
-        }
-      }
+      FocusedGrid?.Copy();
     }
 
     /// <summary>
@@ -151,49 +78,14 @@ namespace SoundExplorers.View {
     }
 
     public void Cut() {
-      if (FocusedGrid.CurrentCell.Value == null) {
-        return;
-      }
-      if (!FocusedGrid.IsCurrentCellInEditMode) {
-        Clipboard.SetText(FocusedGrid.CurrentCell.Value.ToString());
-      }
-      if (FocusedGrid.CurrentCell.ReadOnly) {
-        return;
-      }
-      // The current cell is in the main grid,
-      // (the only grid that can be edited).
-      if (!MainGrid.IsCurrentCellInEditMode) {
-        MainGrid.BeginEdit(true);
-        MainGrid.CurrentCell.Value = string.Empty;
-        MainGrid.EndEdit();
-      } else {
-        // The cell is already being edited
-        switch (MainGrid.EditingControl) {
-          case TextBox textBox when string.IsNullOrWhiteSpace(textBox.SelectedText):
-            // Clipboard.SetText throws an exception
-            // if passed an empty string.
-            return;
-          case TextBox textBox:
-            Clipboard.SetText(textBox.SelectedText);
-            textBox.SelectedText = string.Empty;
-            break;
-        }
-      }
+      FocusedGrid?.Cut();
     }
 
     public void DeleteSelectedRows() {
-      if (FocusedGrid != MainGrid || MainGrid.Controller.IsInsertionRowCurrent) {
+      if (FocusedGrid != MainGrid) {
         return;
       }
-      if (MainGrid.IsCurrentCellInEditMode) {
-        MainGrid.CancelEdit();
-      }
-      if (MainGrid.SelectedRows.Count == 0) {
-        MainCurrentRow.Selected = true;
-      }
-      foreach (DataGridViewRow row in MainGrid.SelectedRows) {
-        MainGrid.Rows.Remove(row);
-      }
+      MainGrid.DeleteSelectedRows();
     }
 
     /// <summary>
@@ -218,50 +110,17 @@ namespace SoundExplorers.View {
       if (FocusedGrid != MainGrid) {
         return;
       }
-      if (!MainGrid.IsCurrentCellInEditMode) {
-        MainGrid.BeginEdit(true);
-      } else { // The cell is already being edited
-        if (MainGrid.EditingControl is TextBox textBox) {
-          textBox.SelectAll();
-        }
-      }
+      MainGrid.SelectAllInCurrentCell();
     }
 
     private void AfterPopulateAsync() {
-      MakeMainGridInsertionRowCurrent();
+      MainGrid.MakeInsertionRowCurrent();
       if (Controller.IsParentTableToBeShown) {
         // A read-only related grid for the parent table is to be shown
         // above the main grid.
         ParentGrid.Focus();
       } else { // No parent grid
         MainGrid.Focus();
-      }
-    }
-
-    private void ConfigureMainGridColumn([NotNull] DataGridViewColumn column) {
-      // Making every column explicitly not sortable prevents the program
-      // from crashing if F3 in pressed while the grid is focused.
-      // TODO Check whether F3 crashes program when PARENT grid is focused.
-      column.SortMode = DataGridViewColumnSortMode.NotSortable;
-      column.HeaderText = MainGrid.Controller.GetColumnDisplayName(column.Name);
-      if (column.ValueType == typeof(DateTime)) {
-        column.DefaultCellStyle.Format = EditorController.DateFormat;
-      }
-      if (MainGrid.Controller.DoesColumnReferenceAnotherEntity(column.Name)) {
-        column.CellTemplate = ComboBoxCell.Create(MainGrid.Controller, column.Name);
-      } else if (column.ValueType == typeof(DateTime)) {
-        column.CellTemplate = new CalendarCell();
-      } else if (column.ValueType == typeof(string)) {
-        column.CellTemplate = new TextBoxCell();
-        // Interpret blanking a cell as an empty string, not null.
-        // Null is not a problem for the object-oriented database to handle.
-        // But this fixes an error where,
-        // when a text cell was edited to blank
-        // and then Tab was pressed to proceed to the next cell,
-        // which happened to be the first cell of the insertion row,
-        // if that is relevant,
-        // the program would crash with a NullReferenceException.
-        column.DefaultCellStyle.DataSourceNullValue = string.Empty;
       }
     }
 
@@ -343,14 +202,14 @@ namespace SoundExplorers.View {
       switch (e.KeyData) {
         case Keys.F6:
           if (Controller.IsParentTableToBeShown) {
-            FocusGrid(FocusedGrid == ParentGrid ? MainGrid : ParentGrid);
+            FocusGrid(FocusedGrid == ParentGrid ? (GridBase)MainGrid : ParentGrid);
           }
           break;
       } //End of switch
     }
 
     private void EditorView_Load(object sender, EventArgs e) {
-      MainGrid.Controller = new MainGridController(this);
+      MainGrid.SetController(new MainGridController(MainGrid, this));
       MainGrid.CutMenuItem.Click += MainView.EditCutMenuItem_Click;
       MainGrid.CopyMenuItem.Click += MainView.EditCopyMenuItem_Click;
       MainGrid.PasteMenuItem.Click += MainView.EditPasteMenuItem_Click;
@@ -496,7 +355,7 @@ namespace SoundExplorers.View {
     ///   by having the usual colour scheme inverted
     ///   on the other grid.
     /// </remarks>
-    private void FocusGrid(DataGridView grid) {
+    private void FocusGrid(GridBase grid) {
       if (!Controller.IsParentTableToBeShown) {
         grid.Focus();
         return;
@@ -504,14 +363,14 @@ namespace SoundExplorers.View {
       // A read-only related grid for the parent table is shown
       // above the main grid.
       if (grid != FocusedGrid) {
-        SwapGridColors();
+        GridBase.SwapColors(MainGrid, ParentGrid);
       }
       // By trial an error,
       // I found that this complicated rigmarole was required to
       // properly shift the focus programatically, 
       // i.e. in EditorView_KeyDown to implement doing it with the F6 key.
       var unfocusedGrid =
-        grid == MainGrid ? ParentGrid : MainGrid;
+        grid == MainGrid ? (GridBase)ParentGrid : MainGrid;
       unfocusedGrid.Enabled = false;
       grid.Enabled = true;
       base.Refresh(); // Don't want to repopulate grid, which this.Refresh would do!
@@ -522,51 +381,13 @@ namespace SoundExplorers.View {
     }
 
     /// <summary>
-    ///   Gets the cell that is at the specified client co-ordinates of the main grid.
-    ///   Null if there is no cell at the coordinates.
-    /// </summary>
-    /// <param name="x">
-    ///   The x co-ordinate relative to the main grid's client rectangle.
-    /// </param>
-    /// <param name="y">
-    ///   The y co-ordinate relative to the main grid's client rectangle.
-    /// </param>
-    /// <returns>
-    ///   The cell at the co-ordinates if found, otherwise null.
-    /// </returns>
-    private DataGridViewCell GetCellAtClientCoOrdinates(int x, int y) {
-      var hitTestInfo = MainGrid.HitTest(x, y);
-      if (hitTestInfo.Type == DataGridViewHitTestType.Cell) {
-        return MainGrid.Rows[
-          hitTestInfo.RowIndex].Cells[
-          hitTestInfo.ColumnIndex];
-      }
-      return null;
-    }
-
-    private void Grid_Click(object sender, EventArgs e) {
-      var grid = sender as DataGridView;
-      if (grid != FocusedGrid) {
-        FocusGrid(grid);
-      }
-    }
-
-    /// <summary>
     ///   Handles the
     ///   <see cref="Control.MouseDown" /> event
-    ///   of either of the two <see cref="DataGridView" />s.
+    ///   of either of the two grids.
     /// </summary>
-    /// <param name="sender">Event sender.</param>
-    /// <param name="e">Event arguments.</param>
     /// <remarks>
-    ///   To save confusion,
-    ///   none of the following will work while the main grid
-    ///   is in edit mode.
-    ///   When mouse button 2 is clicked,
+    ///   When either mouse button is clicked,
     ///   the grid will be focused if it is not already.
-    ///   When mouse button 2 is clicked on a cell,
-    ///   the cell will become the current cell and
-    ///   if the main grid was clicked, the context menu will be shown.
     ///   <para>
     ///     I tried to initiate a drag-and-drop operation
     ///     when a cell is clicked with the mouse button 1.
@@ -578,22 +399,9 @@ namespace SoundExplorers.View {
     ///   </para>
     /// </remarks>
     private void Grid_MouseDown(object sender, MouseEventArgs e) {
-      var grid = (DataGridView)sender;
-      if (MainGrid.IsCurrentCellInEditMode) {
-        return;
-      }
-      if (e.Button == MouseButtons.Right) {
-        if (grid != FocusedGrid) {
-          FocusGrid(grid);
-        }
-        // Find the cell, if any, that mouse button 2 clicked.
-        var cell = GetCellAtClientCoOrdinates(e.X, e.Y);
-        if (cell != null) { // Cell found
-          grid.CurrentCell = cell;
-          if (grid == MainGrid) {
-            MainGrid.ContextMenuStrip.Show(MainGrid, e.Location);
-          }
-        }
+      var grid = (GridBase)sender;
+      if (grid != FocusedGrid) {
+        FocusGrid(grid);
       }
     }
 
@@ -605,7 +413,7 @@ namespace SoundExplorers.View {
     /// <param name="grid">
     ///   The grid whose colours are to be inverted.
     /// </param>
-    private void InvertGridColors(DataGridView grid) {
+    private static void InvertGridColors(DataGridView grid) {
       var swapColor = grid.DefaultCellStyle.BackColor;
       grid.DefaultCellStyle.BackColor = grid.DefaultCellStyle.ForeColor;
       grid.DefaultCellStyle.ForeColor = swapColor;
@@ -723,22 +531,11 @@ namespace SoundExplorers.View {
       if (FocusedGrid != MainGrid) {
         return;
       }
-      if (!MainGrid.CurrentCell.ReadOnly) {
-        if (!MainGrid.IsCurrentCellInEditMode) {
-          MainGrid.BeginEdit(true);
-          MainGrid.CurrentCell.Value = Clipboard.GetText();
-          MainGrid.EndEdit();
-        } else { // The cell is already being edited
-          if (MainGrid.EditingControl is TextBox textBox) {
-            textBox.SelectedText = Clipboard.GetText();
-          }
-        }
-      }
+      MainGrid.Paste();
     }
 
     private void PopulateGrid() {
       MainGrid.CellBeginEdit -= MainGrid_CellBeginEdit;
-      MainGrid.Click -= Grid_Click;
       MainGrid.DataError -= MainGrid_DataError;
       MainGrid.MouseDown -= Grid_MouseDown;
       MainGrid.RowsRemoved -= MainGrid_RowsRemoved;
@@ -749,11 +546,8 @@ namespace SoundExplorers.View {
         PopulateParentGrid();
       }
       MainGrid.DataSource = MainGrid.Controller.BindingList;
-      foreach (DataGridViewColumn column in MainGrid.Columns) {
-        ConfigureMainGridColumn(column);
-      } // End of foreach
+      MainGrid.ConfigureColumns();
       MainGrid.CellBeginEdit += MainGrid_CellBeginEdit;
-      MainGrid.Click += Grid_Click;
       MainGrid.DataError += MainGrid_DataError;
       MainGrid.MouseDown += Grid_MouseDown;
       MainGrid.RowsRemoved += MainGrid_RowsRemoved;
@@ -767,7 +561,6 @@ namespace SoundExplorers.View {
     }
 
     private void PopulateParentGrid() {
-      ParentGrid.Click -= Grid_Click;
       ParentGrid.CurrentCellChanged -= ParentGrid_CurrentCellChanged;
       ParentGrid.MouseDown -= Grid_MouseDown;
       ParentGrid.RowEnter -= ParentGrid_RowEnter;
@@ -782,7 +575,6 @@ namespace SoundExplorers.View {
       if (Visible) {
         ParentGrid.AutoResizeColumns();
       }
-      ParentGrid.Click += Grid_Click;
       ParentGrid.CurrentCellChanged += ParentGrid_CurrentCellChanged;
       ParentGrid.MouseDown += Grid_MouseDown;
       ParentGrid.RowEnter += ParentGrid_RowEnter;
@@ -793,7 +585,7 @@ namespace SoundExplorers.View {
     }
 
     private void ShowMessage([NotNull] string text, MessageBoxIcon icon) {
-      Cursor = Cursors.Default;
+      MainView.Cursor = Cursors.Default;
       MessageBox.Show(
         this, text, Application.ProductName, MessageBoxButtons.OK, icon);
     }
@@ -813,27 +605,7 @@ namespace SoundExplorers.View {
     ///   grid after the user has grabbed the splitter.
     /// </remarks>
     private void SplitContainerOnGotFocus(object sender, EventArgs e) {
-      BeginInvoke((Action)delegate { FocusGrid(FocusedGrid ?? ParentGrid);});
-    }
-
-    /// <summary>
-    ///   Swaps the colour schemes of the two grids.
-    /// </summary>
-    private void SwapGridColors() {
-      var swapColor = MainGrid.DefaultCellStyle.BackColor;
-      MainGrid.DefaultCellStyle.BackColor = ParentGrid.DefaultCellStyle.BackColor;
-      ParentGrid.DefaultCellStyle.BackColor = swapColor;
-      swapColor = MainGrid.DefaultCellStyle.ForeColor;
-      MainGrid.DefaultCellStyle.ForeColor = ParentGrid.DefaultCellStyle.ForeColor;
-      ParentGrid.DefaultCellStyle.ForeColor = swapColor;
-      swapColor = MainGrid.DefaultCellStyle.SelectionBackColor;
-      MainGrid.DefaultCellStyle.SelectionBackColor =
-        ParentGrid.DefaultCellStyle.SelectionBackColor;
-      ParentGrid.DefaultCellStyle.SelectionBackColor = swapColor;
-      swapColor = MainGrid.DefaultCellStyle.SelectionForeColor;
-      MainGrid.DefaultCellStyle.SelectionForeColor =
-        ParentGrid.DefaultCellStyle.SelectionForeColor;
-      ParentGrid.DefaultCellStyle.SelectionForeColor = swapColor;
+      BeginInvoke((Action)delegate { FocusGrid(FocusedGrid ?? ParentGrid); });
     }
 
     protected override void WndProc(ref Message m) {
