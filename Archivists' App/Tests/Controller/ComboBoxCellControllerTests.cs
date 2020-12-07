@@ -5,7 +5,6 @@ using SoundExplorers.Controller;
 using SoundExplorers.Data;
 using SoundExplorers.Model;
 using SoundExplorers.Tests.Data;
-using SoundExplorers.Tests.Model;
 
 namespace SoundExplorers.Tests.Controller {
   [TestFixture]
@@ -15,7 +14,6 @@ namespace SoundExplorers.Tests.Controller {
       QueryHelper = new QueryHelper();
       Data = new TestData(QueryHelper);
       Session = new TestSession();
-      Editor = new TestEditor<Event, EventBindingItem>();
       EditorView = new MockEditorView();
       MainGridController = EditorView.MainGridController =
         new TestMainGridController(EditorView);
@@ -31,7 +29,6 @@ namespace SoundExplorers.Tests.Controller {
         Session.Commit();
       }
       EditorController.FetchData(); // Populate grid
-      Editor.SetBindingList(MainGridController.BindingList);
     }
 
     [TearDown]
@@ -41,7 +38,7 @@ namespace SoundExplorers.Tests.Controller {
 
     private ComboBoxCellController CellController { get; set; }
     private MockView<ComboBoxCellController> CellView { get; set; }
-    private TestEditor<Event, EventBindingItem> Editor { get; set; }
+
     private TestMainGridController MainGridController { get; set; }
     private MockEditorView EditorView { get; set; }
     private TestData Data { get; set; }

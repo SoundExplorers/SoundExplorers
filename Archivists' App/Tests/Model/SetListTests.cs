@@ -73,14 +73,13 @@ namespace SoundExplorers.Tests.Model {
       set.Act = Data.Acts[1];
       Session.Commit();
       List.Populate();
-      var reader = new TestEditor<Set, SetBindingItem>(
-        List.BindingList);
-      Assert.AreEqual(set.Event.Date, reader[2].Date, "Date");
-      Assert.AreEqual(set.Event.Location.Name, reader[2].Location, "Location");
-      Assert.AreEqual(set.SetNo, reader[2].SetNo, "SetNo");
-      Assert.AreEqual(set.Act?.Name, reader[2].Act, "Act");
-      Assert.AreEqual(set.Genre.Name, reader[2].Genre, "Genre");
-      Assert.AreEqual(set.Notes, reader[2].Notes, "Notes");
+      var bindingList = List.TypedBindingList;
+      Assert.AreEqual(set.Event.Date, bindingList[2].Date, "Date");
+      Assert.AreEqual(set.Event.Location.Name, bindingList[2].Location, "Location");
+      Assert.AreEqual(set.SetNo, bindingList[2].SetNo, "SetNo");
+      Assert.AreEqual(set.Act?.Name, bindingList[2].Act, "Act");
+      Assert.AreEqual(set.Genre.Name, bindingList[2].Genre, "Genre");
+      Assert.AreEqual(set.Notes, bindingList[2].Notes, "Notes");
     }
   }
 }

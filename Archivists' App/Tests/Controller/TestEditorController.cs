@@ -10,8 +10,6 @@ namespace SoundExplorers.Tests.Controller {
   internal class TestEditorController<TEntity, TBindingItem> : EditorController
     where TEntity : EntityBase, new()
     where TBindingItem : BindingItemBase<TEntity, TBindingItem>, new() {
-    private TestEditor<TEntity, TBindingItem> _editor;
-
     public TestEditorController(
       [NotNull] Type mainListType, [NotNull] TestMainGridController mainGridController,
       [NotNull] QueryHelper queryHelper, [NotNull] SessionBase session) :
@@ -23,22 +21,19 @@ namespace SoundExplorers.Tests.Controller {
     }
 
     [NotNull]
-    public TestEditor<TEntity, TBindingItem> Editor {
-      get => _editor ?? throw new NullReferenceException(
-        "TestEditorController.Editor is null");
-      set => _editor = value;
-    }
+    public TypedBindingList<TEntity, TBindingItem> TypedBindingList =>
+      ((EntityListBase<TEntity, TBindingItem>)MainList).TypedBindingList;
 
-    public new MainController MainController => base.MainController;
-    public new IEntityList MainList => base.MainList;
+    // public new MainController MainController => base.MainController;
+    // public new IEntityList MainList => base.MainList;
     [NotNull] private MockEditorView MockEditorView => MainGridController.MockEditorView;
     [NotNull] private TestMainGridController MainGridController { get; }
     [NotNull] private QueryHelper QueryHelper { get; }
     [NotNull] private SessionBase Session { get; }
 
     public void CreateAndGoToInsertionRow() {
-      Editor.AddNew();
-      MockEditorView.MainGridController.OnRowEnter(Editor.Count - 1);
+      TypedBindingList.AddNew();
+      MockEditorView.MainGridController.OnRowEnter(TypedBindingList.Count - 1);
     }
 
     protected override IEntityList CreateEntityList(Type type) {
@@ -55,7 +50,7 @@ namespace SoundExplorers.Tests.Controller {
       int rowIndex, [NotNull] string columnName, [NotNull] object value) {
       var comboBoxCellController =
         CreateComboBoxCellControllerWithItems(columnName);
-      Editor[rowIndex].SetPropertyValue(columnName, value);
+      TypedBindingList[rowIndex].SetPropertyValue(columnName, value);
       comboBoxCellController.OnCellValueChanged(0, value);
     }
 

@@ -42,11 +42,10 @@ namespace SoundExplorers.Tests.Model {
       var date = DateTime.Parse("2015/04/03");
       const string url = "http://www.homegrownjuice.co.nz/thank-you.html";
       List.Populate();
-      var editor = new TestEditor<Newsletter, NewsletterBindingItem>(
-        List.BindingList);
+      var bindingList = List.TypedBindingList;
       List.OnRowEnter(0);
-      editor[0].Date = date;
-      editor[0].Url = url;
+      bindingList[0].Date = date;
+      bindingList[0].Url = url;
       var location = List[0];
       Assert.AreEqual(date, location.Date, "Date");
       Assert.AreEqual(url, location.Url, "Url");

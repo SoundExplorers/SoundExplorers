@@ -31,10 +31,8 @@ namespace SoundExplorers.Tests.Model {
     public void RethrowDudError() {
       var list = new DudErrorThrowerList {Session = Session};
       list.Populate(); // Creates an empty BindingList
-      var editor =
-        new TestEditor<ErrorThrowingEventType, NamedBindingItem<ErrorThrowingEventType>>(
-          list.BindingList);
-      var item1 = editor.AddNew();
+      var bindingList = list.TypedBindingList;
+      var item1 = bindingList.AddNew();
       list.OnRowEnter(0);
       item1.Name = "Dudley";
       Assert.Throws<InvalidOperationException>(() => list.OnRowValidated(0));

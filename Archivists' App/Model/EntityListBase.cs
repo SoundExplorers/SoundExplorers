@@ -63,7 +63,11 @@ namespace SoundExplorers.Model {
       set => _queryHelper = value;
     }
 
-    public bool HasRowBeenEdited { get; private set; }
+    /// <summary>
+    ///   Gets a strongly typed view of the binding list to facilitate testing.
+    /// </summary>
+    internal TypedBindingList<TEntity, TBindingItem> TypedBindingList =>
+      (TypedBindingList<TEntity, TBindingItem>)BindingList;
 
     /// <summary>
     ///   Gets the binding list representing the list of entities
@@ -79,7 +83,7 @@ namespace SoundExplorers.Model {
       _columns ?? (_columns = CreateColumnsWithSession());
 
     public string EntityTypeName => typeof(TEntity).Name;
-    // public bool HasRowBeenEdited { get; set; }
+    public bool HasRowBeenEdited { get; private set; }
 
     /// <summary>
     ///   For unknown reason, the grid's RowRemoved event is raised 2 or 3 times
@@ -428,12 +432,12 @@ namespace SoundExplorers.Model {
     }
 
     [NotNull]
-    private BindingList<TBindingItem> CreateBindingList() {
+    private TypedBindingList<TEntity, TBindingItem> CreateBindingList() {
       var list = (
         from entity in this
         select CreateBindingItemWithColumns(entity)
       ).ToList();
-      return new BindingList<TBindingItem>(list);
+      return new TypedBindingList<TEntity, TBindingItem>(list);
     }
 
     [NotNull]

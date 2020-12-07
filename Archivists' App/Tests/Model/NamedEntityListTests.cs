@@ -51,22 +51,21 @@ namespace SoundExplorers.Tests.Model {
 
     private void Edit<TEntity, TEntityList>()
       where TEntity : EntityBase, INamedEntity, new()
-      where TEntityList : IEntityList, new() {
+      where TEntityList : EntityListBase<TEntity, NamedBindingItem<TEntity>>, new() {
       const string name1 = "Performance";
       const string name2 = "Interview";
       const string name3 = "Rehearsal";
       var list = new TEntityList {Session = Session};
       list.Populate(); // Creates an empty BindingList
-      var editor = new TestEditor<TEntity, NamedBindingItem<TEntity>>(
-        list.BindingList);
-      var item1 = editor.AddNew();
+      var bindingList = list.TypedBindingList;
+      var item1 = bindingList.AddNew();
       list.OnRowEnter(0);
       item1.Name = name1;
       list.OnRowValidated(0);
       Assert.AreEqual(1, list.Count, "Entity count after 1st add");
       var entity1 = (INamedEntity)list[0];
       Assert.AreEqual(name1, entity1.Name, "1st entity Name after 1st add");
-      var item2 = editor.AddNew();
+      var item2 = bindingList.AddNew();
       item2.Name = name2;
       list.OnRowValidated(1);
       Assert.AreEqual(2, list.Count, "Entity count after 2nd add");
@@ -74,25 +73,25 @@ namespace SoundExplorers.Tests.Model {
       Assert.AreEqual(name2, entity2.Name, "2nd entity Name after 2nd add");
       // Refresh the grid from the saved entities on the database
       list.Populate();
-      editor.SetBindingList(list.BindingList);
-      Assert.AreEqual(2, editor.Count, "editor.Count after Populate");
+      bindingList = list.TypedBindingList;
+      Assert.AreEqual(2, bindingList.Count, "editor.Count after Populate");
       // After being refreshed by Populate, the table should now be sorted into Name order.
-      Assert.AreEqual(name2, editor[0].Name, "1st item Name after populate");
-      Assert.AreEqual(name1, editor[1].Name, "2nd item Name after populate");
+      Assert.AreEqual(name2, bindingList[0].Name, "1st item Name after populate");
+      Assert.AreEqual(name1, bindingList[1].Name, "2nd item Name after populate");
       list.OnRowValidated(0); // Should have no effect
-      Assert.AreEqual(2, editor.Count, "editor.Count going to existing row");
+      Assert.AreEqual(2, bindingList.Count, "editor.Count going to existing row");
       // Rename the first item
-      editor[0].Name = name3;
-      entity1 = (INamedEntity)list[0];
+      bindingList[0].Name = name3;
+      entity1 = list[0];
       Assert.AreEqual(name3, entity1.Name, "1st entity Name after update");
       list.DeleteEntity(0); // And delete it
       list.Populate(); // And refresh the grid from the database again.
-      editor.SetBindingList(list.BindingList);
+      bindingList = list.TypedBindingList;
       Assert.AreEqual(1, list.Count, "Entity count after delete and repopulate");
-      entity1 = (INamedEntity)list[0];
+      entity1 = list[0];
       Assert.AreEqual(name1, entity1.Name, "1st entity Name after delete and repopulate");
-      Assert.AreEqual(1, editor.Count, "editor.Count after delete and repopulate");
-      Assert.AreEqual(name1, editor[0].Name, "1st item Name after delete and repopulate");
+      Assert.AreEqual(1, bindingList.Count, "editor.Count after delete and repopulate");
+      Assert.AreEqual(name1, bindingList[0].Name, "1st item Name after delete and repopulate");
     }
 
     [Test]
@@ -132,17 +131,16 @@ namespace SoundExplorers.Tests.Model {
 
     private void ErrorOnInsert<TEntity, TEntityList>()
       where TEntity : EntityBase, INamedEntity, new()
-      where TEntityList : IEntityList, new() {
+      where TEntityList : EntityListBase<TEntity, NamedBindingItem<TEntity>>, new() {
       const string name = "Performance";
       var list = new TEntityList {Session = Session};
       list.Populate(); // Creates an empty BindingList
-      var editor = new TestEditor<TEntity, NamedBindingItem<TEntity>>(
-        list.BindingList);
-      var item1 = editor.AddNew();
+      var bindingList = list.TypedBindingList;
+      var item1 = bindingList.AddNew();
       list.OnRowEnter(0);
       item1.Name = name;
       list.OnRowValidated(0);
-      var item2 = editor.AddNew();
+      var item2 = bindingList.AddNew();
       item2.Name = name;
       var exception = Assert.Catch<DatabaseUpdateErrorException>(
         () => list.OnRowValidated(1),
@@ -165,18 +163,17 @@ namespace SoundExplorers.Tests.Model {
 
     private void ErrorOnUpdate<TEntity, TEntityList>()
       where TEntity : EntityBase, INamedEntity, new()
-      where TEntityList : IEntityList, new() {
+      where TEntityList : EntityListBase<TEntity, NamedBindingItem<TEntity>>, new() {
       const string name1 = "Performance";
       const string name2 = "Rehearsal";
       var list = new TEntityList {Session = Session};
       list.Populate(); // Creates an empty BindingList
-      var editor = new TestEditor<TEntity, NamedBindingItem<TEntity>>(
-        list.BindingList);
-      var item1 = editor.AddNew();
+      var bindingList = list.TypedBindingList;
+      var item1 = bindingList.AddNew();
       list.OnRowEnter(0);
       item1.Name = name1;
       list.OnRowValidated(0);
-      var item2 = editor.AddNew();
+      var item2 = bindingList.AddNew();
       list.OnRowEnter(1);
       item2.Name = name2;
       list.OnRowValidated(1);
@@ -199,10 +196,9 @@ namespace SoundExplorers.Tests.Model {
     public void IsInsertionRowCurrent() {
       var list = new GenreList {Session = Session};
       list.Populate(); // Creates an empty BindingList
-      var editor = new TestEditor<Genre, NamedBindingItem<Genre>>(
-        list.BindingList);
+      var bindingList = list.TypedBindingList;
       Assert.IsFalse(list.IsInsertionRowCurrent, "IsInsertionRowCurrent initially");
-      editor.AddNew();
+      bindingList.AddNew();
       Assert.IsTrue(list.IsInsertionRowCurrent,
         "IsInsertionRowCurrent after adding insertion row");
       list.OnRowEnter(0);
