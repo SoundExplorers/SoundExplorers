@@ -54,71 +54,6 @@ namespace SoundExplorers.Controller {
     [CanBeNull] public string TableName => List.EntityTypeName;
 
     /// <summary>
-    ///   Invoked when the user clicks OK on an insert error message box.
-    ///   If the insertion row is not the only row,
-    ///   the row above the insertion row is temporarily made current,
-    ///   which allows the insertion row to be removed.
-    ///   The insertion row is then removed,
-    ///   forcing a new empty insertion row to be created.
-    ///   Finally the new empty insertion row is made current.
-    ///   The net effect is that, after the error message has been shown,
-    ///   the insertion row remains current, from the perspective of the user,
-    ///   but all its cells have been blanked out or, where applicable,
-    ///   reverted to default values.
-    /// </summary>
-    /// <remarks>
-    ///   The disadvantage is that the user's work on the insertion row is lost
-    ///   and, if still needed, has to be restarted from scratch.
-    ///   So why is this done?
-    ///   <para>
-    ///     If the insertion row were to be left with the error values,
-    ///     the user would no way of cancelling out of the insertion
-    ///     short of closing the application.
-    ///     And, as the most probable or only error type is a duplicate key,
-    ///     the user would quite likely want to cancel the insertion and
-    ///     edit the existing row with that key instead.
-    ///   </para>
-    ///   <para>
-    ///     There is no way of selectively reverting just the erroneous cell values
-    ///     of an insertion row to blank or default.
-    ///     So I spent an inordinate amount of effort trying to get
-    ///     another option to work.
-    ///     The idea was to convert the insertion row into an 'existing' row
-    ///     without updating the database, resetting just the erroneous cell values
-    ///     to blank or default.
-    ///     While I still think that would be possible,
-    ///     it turned out to add a great deal of complexity
-    ///     just to get it not working reliably.
-    ///     So I gave up and went for this relatively simple
-    ///     and hopefully robust solution instead.
-    ///   </para>
-    ///   <para>
-    ///     If in future we want to allow the insertion row to be re-edited,
-    ///     perhaps the insertion row could to be replaced with
-    ///     a new one based on a special binding item pre-populated
-    ///     with the changed values (apart from the property corresponding to a
-    ///     FormatException, which would be impossible,
-    ///     or a reference not found paste error, which would be pointless).
-    ///   </para>
-    /// </remarks>
-    private void CancelInsertion() {
-      // Debug.WriteLine("EditorController.CancelInsertion");
-      int insertionRowIndex = List.BindingList.Count - 1;
-      if (insertionRowIndex > 0) {
-        // Currently, it is not anticipated that there can be an insertion row error
-        // at this point 
-        // when the insertion row is the only row on the table,
-        // as the only anticipated error type that should get to this point
-        // is a duplicate key.
-        // Format errors are handled differently and should not get here.
-        List.IsRemovingInvalidInsertionRow = true;
-        Grid.MakeRowCurrent(insertionRowIndex - 1);
-        List.RemoveInsertionBindingItem();
-        Grid.MakeRowCurrent(insertionRowIndex);
-      }
-    }
-
-    /// <summary>
     ///   Returns whether the specified column references another entity.
     /// </summary>
     public bool DoesColumnReferenceAnotherEntity([NotNull] string columnName) {
@@ -174,28 +109,6 @@ namespace SoundExplorers.Controller {
           // the stack trace will be shown by the terminal error handler in Program.cs.
           throw exception;
       }
-    }
-
-    /// <summary>
-    ///   A combo box cell value on the main grid's insertion row
-    ///   does not match any of it's embedded combo box's items.
-    ///   So the combo box's selected index and text could not be updated.
-    ///   As the combo boxes are all dropdown lists,
-    ///   the only way this can have happened is that
-    ///   the unmatched value was pasted into the cell.
-    ///   If the cell value had been changed
-    ///   by selecting an item on the embedded combo box,
-    ///   it could only be a matching value.
-    /// </summary>
-    internal void OnInsertionRowReferencedEntityNotFound(
-      int rowIndex, [NotNull] string columnName,
-      [NotNull] string simpleKey) {
-      var referencedEntityNotFoundException =
-        ReferenceableItemList.CreateReferencedEntityNotFoundException(
-          columnName, simpleKey);
-      List.OnValidationError(
-        rowIndex, columnName, referencedEntityNotFoundException);
-      EditorView.OnError();
     }
 
     public virtual void OnRowEnter(int rowIndex) {
@@ -309,6 +222,93 @@ namespace SoundExplorers.Controller {
 
     public void ShowWarningMessage(string message) {
       EditorView.ShowWarningMessage(message);
+    }
+
+    /// <summary>
+    ///   A combo box cell value on the main grid's insertion row
+    ///   does not match any of it's embedded combo box's items.
+    ///   So the combo box's selected index and text could not be updated.
+    ///   As the combo boxes are all dropdown lists,
+    ///   the only way this can have happened is that
+    ///   the unmatched value was pasted into the cell.
+    ///   If the cell value had been changed
+    ///   by selecting an item on the embedded combo box,
+    ///   it could only be a matching value.
+    /// </summary>
+    internal void OnInsertionRowReferencedEntityNotFound(
+      int rowIndex, [NotNull] string columnName,
+      [NotNull] string simpleKey) {
+      var referencedEntityNotFoundException =
+        ReferenceableItemList.CreateReferencedEntityNotFoundException(
+          columnName, simpleKey);
+      List.OnValidationError(
+        rowIndex, columnName, referencedEntityNotFoundException);
+      EditorView.OnError();
+    }
+
+    /// <summary>
+    ///   Invoked when the user clicks OK on an insert error message box.
+    ///   If the insertion row is not the only row,
+    ///   the row above the insertion row is temporarily made current,
+    ///   which allows the insertion row to be removed.
+    ///   The insertion row is then removed,
+    ///   forcing a new empty insertion row to be created.
+    ///   Finally the new empty insertion row is made current.
+    ///   The net effect is that, after the error message has been shown,
+    ///   the insertion row remains current, from the perspective of the user,
+    ///   but all its cells have been blanked out or, where applicable,
+    ///   reverted to default values.
+    /// </summary>
+    /// <remarks>
+    ///   The disadvantage is that the user's work on the insertion row is lost
+    ///   and, if still needed, has to be restarted from scratch.
+    ///   So why is this done?
+    ///   <para>
+    ///     If the insertion row were to be left with the error values,
+    ///     the user would no way of cancelling out of the insertion
+    ///     short of closing the application.
+    ///     And, as the most probable or only error type is a duplicate key,
+    ///     the user would quite likely want to cancel the insertion and
+    ///     edit the existing row with that key instead.
+    ///   </para>
+    ///   <para>
+    ///     There is no way of selectively reverting just the erroneous cell values
+    ///     of an insertion row to blank or default.
+    ///     So I spent an inordinate amount of effort trying to get
+    ///     another option to work.
+    ///     The idea was to convert the insertion row into an 'existing' row
+    ///     without updating the database, resetting just the erroneous cell values
+    ///     to blank or default.
+    ///     While I still think that would be possible,
+    ///     it turned out to add a great deal of complexity
+    ///     just to get it not working reliably.
+    ///     So I gave up and went for this relatively simple
+    ///     and hopefully robust solution instead.
+    ///   </para>
+    ///   <para>
+    ///     If in future we want to allow the insertion row to be re-edited,
+    ///     perhaps the insertion row could to be replaced with
+    ///     a new one based on a special binding item pre-populated
+    ///     with the changed values (apart from the property corresponding to a
+    ///     FormatException, which would be impossible,
+    ///     or a reference not found paste error, which would be pointless).
+    ///   </para>
+    /// </remarks>
+    private void CancelInsertion() {
+      // Debug.WriteLine("EditorController.CancelInsertion");
+      int insertionRowIndex = List.BindingList.Count - 1;
+      if (insertionRowIndex > 0) {
+        // Currently, it is not anticipated that there can be an insertion row error
+        // at this point 
+        // when the insertion row is the only row on the table,
+        // as the only anticipated error type that should get to this point
+        // is a duplicate key.
+        // Format errors are handled differently and should not get here.
+        List.IsRemovingInvalidInsertionRow = true;
+        Grid.MakeRowCurrent(insertionRowIndex - 1);
+        List.RemoveInsertionBindingItem();
+        Grid.MakeRowCurrent(insertionRowIndex);
+      }
     }
   }
 }

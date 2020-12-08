@@ -10,7 +10,7 @@ namespace SoundExplorers.View {
   ///   or, when editing, Ctrl+A or F2.
   ///   For unknown reason, the initial text selection works if the cell edit was started
   ///   with a mouse click but not if started with the F2 key.
-  ///   This is fixed by handling F2 in <see cref="EditorView.MainGrid_KeyDown" />.
+  ///   This is fixed by handling F2 in <see cref="MainGrid.OnKeyDown" />.
   /// </remarks>
   public class TextBoxCell : DataGridViewTextBoxCell, ICanRestoreErrorValue {
     public override Type EditType => typeof(DataGridViewTextBoxEditingControl);

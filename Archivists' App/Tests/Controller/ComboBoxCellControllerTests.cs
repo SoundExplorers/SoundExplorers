@@ -42,7 +42,7 @@ namespace SoundExplorers.Tests.Controller {
     private TestMainGridController MainGridController { get; set; }
     private MockEditorView EditorView { get; set; }
     private TestData Data { get; set; }
-    private TestEditorController<Event, EventBindingItem> EditorController { get; set; }
+    private TestEditorController EditorController { get; set; }
     private QueryHelper QueryHelper { get; set; }
     private TestSession Session { get; set; }
 
@@ -82,10 +82,10 @@ namespace SoundExplorers.Tests.Controller {
     }
 
     [NotNull]
-    private TestEditorController<Event, EventBindingItem> CreateEditorController(
+    private TestEditorController CreateEditorController(
       [NotNull] Type mainListType) {
-      return new TestEditorController<Event, EventBindingItem>(mainListType,
-        MainGridController, QueryHelper, Session);
+      return new TestEditorController(mainListType,
+        EditorView, QueryHelper, Session);
     }
   }
 }

@@ -31,7 +31,8 @@ namespace SoundExplorers.Model {
   ///   Other derived classes are expected to be just as simple.
   ///   So the <see cref="NoReorderAttribute" /> is a safety feature.
   /// </remarks>
-  public abstract class BindingItemBase<TEntity, TBindingItem> : INotifyPropertyChanged
+  public abstract class BindingItemBase<TEntity, TBindingItem> :
+    IBindingItem, INotifyPropertyChanged
     where TEntity : EntityBase, new()
     where TBindingItem : BindingItemBase<TEntity, TBindingItem>, new() {
     private BindingColumnList _columns;
@@ -52,6 +53,14 @@ namespace SoundExplorers.Model {
 
     protected IDictionary<string, PropertyInfo> Properties =>
       _properties ?? (_properties = CreatePropertyDictionary<TBindingItem>());
+
+    public void SetPropertyValue(string propertyName, object value) {
+      try {
+        Properties[propertyName].SetValue(this, value);
+      } catch (TargetInvocationException exception) {
+        throw exception.InnerException ?? exception;
+      }
+    }
 
     public event PropertyChangedEventHandler PropertyChanged;
 
@@ -173,15 +182,6 @@ namespace SoundExplorers.Model {
       [NotNull] PropertyInfo entityProperty, [CanBeNull] object newEntityPropertyValue) {
       try {
         entityProperty.SetValue(entity, newEntityPropertyValue);
-      } catch (TargetInvocationException exception) {
-        throw exception.InnerException ?? exception;
-      }
-    }
-
-    internal void SetPropertyValue([NotNull] string propertyName,
-      [CanBeNull] object value) {
-      try {
-        Properties[propertyName].SetValue(this, value);
       } catch (TargetInvocationException exception) {
         throw exception.InnerException ?? exception;
       }

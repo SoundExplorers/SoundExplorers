@@ -89,9 +89,9 @@ namespace SoundExplorers.Controller {
     ///   Gets or sets the list of entities represented in the parent table, if any.
     /// </summary>
     [CanBeNull]
-    private IEntityList ParentList { get; set; }
+    internal IEntityList ParentList { get; set; }
 
-    [NotNull] protected IEditorView View { get; }
+    [NotNull] private IEditorView View { get; }
 
     /// <summary>
     ///   Edit the tags of the audio file, if found,
@@ -237,15 +237,6 @@ namespace SoundExplorers.Controller {
     [NotNull]
     protected virtual Option CreateOption([NotNull] string name) {
       return new Option(name);
-    }
-
-    /// <summary>
-    ///   An existing row on the parent grid has been entered.
-    ///   So the main grid will be populated with the required
-    ///   child entities of the entity at the specified row index.
-    /// </summary>
-    public void OnParentGridRowEnter(int rowIndex) {
-      MainList.Populate(ParentList?.GetChildrenForMainList(rowIndex));
     }
 
     /// <summary>

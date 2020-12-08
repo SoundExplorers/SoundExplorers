@@ -228,6 +228,8 @@ namespace SoundExplorers.View {
         // TODO Check setting GridSplitContainer.SplitterDistance works.
         // Previous comment says 'Does not work if done in EditorView_Load.'
         GridSplitContainer.SplitterDistance = Controller.GridSplitterDistance;
+        ParentGrid.SetController(new ParentGridController(Controller));
+        ParentGrid.MainGrid = MainGrid;
         ParentGrid.AutoResizeColumns();
       }
     }
@@ -500,33 +502,6 @@ namespace SoundExplorers.View {
       PopulateGrid();
     }
 
-    /// <summary>
-    ///   Handles the parent grid's CurrentCellChanged event
-    ///   to resize the main grid when its contents are automatically
-    ///   kept in step with the parent grid row change.
-    /// </summary>
-    /// <param name="sender">Event sender.</param>
-    /// <param name="e">Event arguments.</param>
-    /// <remarks>
-    ///   This really only needs to be done when the current row changes.
-    ///   But there's no event for that.  The RowEnter event is raised
-    ///   just before the row becomes current.  So it is too early
-    ///   to work:  I tried.
-    /// </remarks>
-    private void ParentGrid_CurrentCellChanged(object sender, EventArgs e) {
-      MainGrid.AutoResizeColumns();
-    }
-
-    /// <summary>
-    ///   Handles the parent grid's
-    ///   <see cref="DataGridView.RowEnter" /> event.
-    /// </summary>
-    /// <param name="sender">Event sender.</param>
-    /// <param name="e">Event arguments.</param>
-    private void ParentGrid_RowEnter(object sender, DataGridViewCellEventArgs e) {
-      Controller.OnParentGridRowEnter(e.RowIndex);
-    }
-
     public void Paste() {
       if (FocusedGrid != MainGrid) {
         return;
@@ -561,9 +536,7 @@ namespace SoundExplorers.View {
     }
 
     private void PopulateParentGrid() {
-      ParentGrid.CurrentCellChanged -= ParentGrid_CurrentCellChanged;
       ParentGrid.MouseDown -= Grid_MouseDown;
-      ParentGrid.RowEnter -= ParentGrid_RowEnter;
       ParentGrid.DataSource = Controller.ParentBindingList;
       foreach (DataGridViewColumn column in ParentGrid.Columns) {
         if (column.ValueType == typeof(DateTime)) {
@@ -575,9 +548,7 @@ namespace SoundExplorers.View {
       if (Visible) {
         ParentGrid.AutoResizeColumns();
       }
-      ParentGrid.CurrentCellChanged += ParentGrid_CurrentCellChanged;
       ParentGrid.MouseDown += Grid_MouseDown;
-      ParentGrid.RowEnter += ParentGrid_RowEnter;
       if (ParentGrid.RowCount > 0) {
         ParentGrid.CurrentCell =
           ParentGrid.Rows[0].Cells[0]; // Triggers ParentGrid_RowEnter

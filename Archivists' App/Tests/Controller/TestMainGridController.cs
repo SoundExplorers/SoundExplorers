@@ -1,21 +1,20 @@
 ﻿using System.Data.Linq;
 using JetBrains.Annotations;
 using SoundExplorers.Controller;
+using SoundExplorers.Model;
 
 namespace SoundExplorers.Tests.Controller {
   public class TestMainGridController : MainGridController {
-    // ReSharper disable once SuggestBaseTypeForParameter (See MockEditorView property)
-    public TestMainGridController([NotNull] MockEditorView editorView) :
+    public TestMainGridController([NotNull] IEditorView editorView) :
       base(new MockMainGrid(), editorView) { }
 
-    public bool AutoValidate { get; set; }
+    internal bool AutoValidate { get; set; }
 
     protected override ChangeAction LastChangeAction => TestUnsupportedLastChangeAction
       ? ChangeAction.None
       : base.LastChangeAction;
 
-    [NotNull] public MockEditorView MockEditorView => (MockEditorView)EditorView;
-    public bool TestUnsupportedLastChangeAction { get; set; }
+    internal bool TestUnsupportedLastChangeAction { get; set; }
     public new MockMainGrid Grid => (MockMainGrid)base.Grid;
 
     public override void OnRowEnter(int rowIndex) {
@@ -28,6 +27,29 @@ namespace SoundExplorers.Tests.Controller {
         }
       }
       base.OnRowEnter(rowIndex);
+    }
+
+    internal void CreateAndGoToInsertionRow() {
+      List.BindingList.AddNew();
+      OnRowEnter(List.BindingList.Count - 1);
+    }
+
+    internal void SetComboBoxCellValue(
+      int rowIndex, [NotNull] string columnName, [NotNull] object value) {
+      var comboBoxCellController =
+        CreateComboBoxCellControllerWithItems(columnName);
+      ((IBindingItem)List.BindingList[rowIndex]).SetPropertyValue(columnName, value);
+      comboBoxCellController.OnCellValueChanged(0, value);
+    }
+
+    [NotNull]
+    private ComboBoxCellController CreateComboBoxCellControllerWithItems(
+      [NotNull] string columnName) {
+      var comboBoxCell = new MockView<ComboBoxCellController>();
+      var comboBoxCellController =
+        new ComboBoxCellController(comboBoxCell, this, columnName);
+      comboBoxCellController.GetItems();
+      return comboBoxCellController;
     }
   }
 }

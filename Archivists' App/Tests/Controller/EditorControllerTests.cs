@@ -3,6 +3,7 @@ using System.Data;
 using System.Data.Linq;
 using JetBrains.Annotations;
 using NUnit.Framework;
+using SoundExplorers.Controller;
 using SoundExplorers.Data;
 using SoundExplorers.Model;
 using SoundExplorers.Tests.Data;
@@ -55,30 +56,31 @@ namespace SoundExplorers.Tests.Controller {
       string validSeriesName = validSeries.Name;
       Assert.IsNotNull(validLocationName, "validLocationName");
       Assert.IsNotNull(validSeriesName, "validSeriesName");
-      var controller = CreateController<Event, EventBindingItem>(typeof(EventList));
+      var controller = CreateController(typeof(EventList));
       controller.FetchData(); // Show an empty grid
-      var bindingList = controller.TypedBindingList;
-      controller.CreateAndGoToInsertionRow();
+      var bindingList =
+        (TypedBindingList<Event, EventBindingItem>)controller.MainList.BindingList;
+      MainGridController.CreateAndGoToInsertionRow();
       bindingList[0].Date = event1Date;
-      controller.SetComboBoxCellValue(0, "Location", validLocationName);
+      MainGridController.SetComboBoxCellValue(0, "Location", validLocationName);
       // Newsletter
-      controller.SetComboBoxCellValue(0, "Newsletter", notFoundNewsletterDate);
+      MainGridController.SetComboBoxCellValue(0, "Newsletter", notFoundNewsletterDate);
       Assert.AreEqual(1, View.ShowErrorMessageCount,
         "ShowErrorMessageCount after not-found Newsletter pasted");
       Assert.AreEqual("Invalid Newsletter:\r\nNewsletter not found: '31 Dec 2345'",
         View.LastErrorMessage,
         "LastErrorMessage after not-found Newsletter pasted");
-      controller.SetComboBoxCellValue(0, "Newsletter", validNewsletterDate);
+      MainGridController.SetComboBoxCellValue(0, "Newsletter", validNewsletterDate);
       Assert.AreEqual(1, View.ShowErrorMessageCount,
         "ShowErrorMessageCount after valid Newsletter pasted");
       // Series
-      controller.SetComboBoxCellValue(0, "Series", notFoundSeriesName);
+      MainGridController.SetComboBoxCellValue(0, "Series", notFoundSeriesName);
       Assert.AreEqual(2, View.ShowErrorMessageCount,
         "ShowErrorMessageCount after not-found Series pasted");
       Assert.AreEqual("Invalid Series:\r\nSeries not found: 'Not-Found Name'",
         View.LastErrorMessage,
         "LastErrorMessage after not-found Series pasted");
-      controller.SetComboBoxCellValue(0, "Series", validSeriesName);
+      MainGridController.SetComboBoxCellValue(0, "Series", validSeriesName);
       Assert.AreEqual(2, View.ShowErrorMessageCount,
         "ShowErrorMessageCount after valid Series pasted");
       MainGridController.OnRowValidated(0);
@@ -87,12 +89,12 @@ namespace SoundExplorers.Tests.Controller {
       Assert.AreSame(validLocation, event1.Location, "event1.Location");
       Assert.AreSame(validNewsletter, event1.Newsletter, "event1.Newsletter");
       Assert.AreSame(validSeries, event1.Series, "event1.Series");
-      controller.CreateAndGoToInsertionRow();
+      MainGridController.CreateAndGoToInsertionRow();
       bindingList[1].Date = event2Date;
-      controller.SetComboBoxCellValue(1, "Location", validLocationName);
+      MainGridController.SetComboBoxCellValue(1, "Location", validLocationName);
       // Test that the user can reset the newsletter date to the special date
       // that indicated that the event's newsletter is to be unassigned.
-      controller.SetComboBoxCellValue(1, "Newsletter", EntityBase.InitialDate);
+      MainGridController.SetComboBoxCellValue(1, "Newsletter", EntityBase.InitialDate);
       MainGridController.OnRowValidated(1);
       Assert.AreEqual(2, validLocation.Events.Count, "Events.Count after 2nd add");
       var event2 = validLocation.Events[1];
@@ -102,13 +104,13 @@ namespace SoundExplorers.Tests.Controller {
     [Test]
     public void CancelInsertionIfClosingWindow() {
       const string name = "Boogie woogie";
-      var controller =
-        CreateController<Genre, NamedBindingItem<Genre>>(typeof(GenreList));
+      var controller = CreateController(typeof(GenreList));
       var mainController = controller.MainController;
       controller.FetchData(); // Show an empty grid
       var mainList = controller.MainList;
-      var bindingList = controller.TypedBindingList;
-      controller.CreateAndGoToInsertionRow();
+      var bindingList =
+        (TypedBindingList<Genre, NamedBindingItem<Genre>>)controller.MainList.BindingList;
+      MainGridController.CreateAndGoToInsertionRow();
       bindingList[0].Name = name;
       controller.IsClosing = true;
       // Called automatically when editor window is closing
@@ -134,10 +136,9 @@ namespace SoundExplorers.Tests.Controller {
         Session.Commit();
       }
       // The second Location cannot be deleted because it is a parent of 3 child Events.
-      var controller = CreateController<Location, NotablyNamedBindingItem<Location>>(
-        typeof(LocationList));
+      var controller = CreateController(typeof(LocationList));
       controller.FetchData(); // Populate grid
-      controller.CreateAndGoToInsertionRow();
+      MainGridController.CreateAndGoToInsertionRow();
       MainGridController.OnRowRemoved(1);
       Assert.AreEqual(1, MainGrid.OnRowAddedOrDeletedCount, "OnRowAddedOrDeletedCount");
       Assert.AreEqual(2, controller.MainList.Count, "MainList.Count");
@@ -151,12 +152,12 @@ namespace SoundExplorers.Tests.Controller {
       } finally {
         Session.Commit();
       }
-      var controller =
-        CreateController<Genre, NamedBindingItem<Genre>>(typeof(GenreList));
+      var controller = CreateController(typeof(GenreList));
       MainGridController.AutoValidate = true;
       controller.FetchData();
-      var bindingList = controller.TypedBindingList;
-      controller.CreateAndGoToInsertionRow();
+      var bindingList =
+        (TypedBindingList<Genre, NamedBindingItem<Genre>>)controller.MainList.BindingList;
+      MainGridController.CreateAndGoToInsertionRow();
       bindingList[1].Name = bindingList[0].Name;
       MainGridController.OnRowValidated(1);
       Assert.AreEqual(1, View.ShowErrorMessageCount,
@@ -171,24 +172,26 @@ namespace SoundExplorers.Tests.Controller {
     public void Edit() {
       const string name1 = "Auntie";
       const string name2 = "Uncle";
-      var controller =
-        CreateController<Location, NotablyNamedBindingItem<Location>>(
-          typeof(LocationList));
+      var controller = CreateController(typeof(LocationList));
       Assert.IsFalse(controller.IsParentTableToBeShown, "IsParentTableToBeShown");
       controller.FetchData(); // The grid will be empty initially
       Assert.AreEqual("Location", MainGridController.TableName, "Main TableName");
-      var bindingList = controller.TypedBindingList;
-      controller.CreateAndGoToInsertionRow();
+      var bindingList =
+        (TypedBindingList<Location, NotablyNamedBindingItem<Location>>)controller.MainList
+          .BindingList;
+      MainGridController.CreateAndGoToInsertionRow();
       bindingList[0].Name = name1;
       bindingList[0].Notes = "Disestablishmentarianism";
       MainGridController.OnRowValidated(0);
-      controller.CreateAndGoToInsertionRow();
+      MainGridController.CreateAndGoToInsertionRow();
       bindingList[1].Name = name2;
       bindingList[1].Notes = "Bob";
       MainGridController.OnRowValidated(1);
       Assert.AreEqual(2, MainGrid.OnRowAddedOrDeletedCount, "OnRowAddedOrDeletedCount");
       controller.FetchData(); // Refresh grid
-      bindingList = controller.TypedBindingList;
+      bindingList =
+        (TypedBindingList<Location, NotablyNamedBindingItem<Location>>)controller.MainList
+          .BindingList;
       Assert.AreEqual(2, bindingList.Count, "editor.Count after FetchData #2");
       MainGridController.OnRowEnter(1);
       // Disallow rename to duplicate
@@ -234,10 +237,9 @@ namespace SoundExplorers.Tests.Controller {
         Session.Commit();
       }
       // The second Location cannot be deleted because it is a parent of 3 child Events.
-      var controller = CreateController<Location, NotablyNamedBindingItem<Location>>(
-        typeof(LocationList));
+      var controller = CreateController(typeof(LocationList));
       controller.FetchData(); // Populate grid
-      controller.CreateAndGoToInsertionRow();
+      MainGridController.CreateAndGoToInsertionRow();
       MainGridController.OnRowRemoved(1);
       Assert.AreEqual(1, View.ShowErrorMessageCount,
         "ShowErrorMessageCount after error message shown for disallowed delete");
@@ -261,16 +263,17 @@ namespace SoundExplorers.Tests.Controller {
       } finally {
         Session.Commit();
       }
-      var controller = CreateController<Event, EventBindingItem>(typeof(EventList));
+      var controller = CreateController(typeof(EventList));
       controller.FetchData(); // Populate grid
       Assert.IsTrue(MainGridController.DoesColumnReferenceAnotherEntity("Newsletter"),
         "Newsletter DoesColumnReferenceAnotherEntity");
-      var bindingList = controller.TypedBindingList;
+      var bindingList =
+        (TypedBindingList<Event, EventBindingItem>)controller.MainList.BindingList;
       // Newsletter
       var selectedNewsletter = Data.Newsletters[0];
       var selectedNewsletterDate = selectedNewsletter.Date;
       MainGridController.OnRowEnter(0);
-      controller.SetComboBoxCellValue(0, "Newsletter", selectedNewsletterDate);
+      MainGridController.SetComboBoxCellValue(0, "Newsletter", selectedNewsletterDate);
       Assert.AreEqual(0, View.ShowErrorMessageCount,
         "ShowErrorMessageCount after valid Newsletter selection");
       Assert.AreEqual(selectedNewsletterDate, bindingList[0].Newsletter,
@@ -280,7 +283,7 @@ namespace SoundExplorers.Tests.Controller {
       var notFoundDate = DateTime.Parse("2345/12/31");
       MainGridController.OnRowEnter(0);
       var exception = Assert.Catch(
-        () => controller.SetComboBoxCellValue(
+        () => MainGridController.SetComboBoxCellValue(
           0, "Newsletter", notFoundDate));
       Assert.IsInstanceOf<RowNotInTableException>(exception,
         "Exception on not-found Newsletter pasted");
@@ -301,7 +304,7 @@ namespace SoundExplorers.Tests.Controller {
       string selectedSeriesName = selectedSeries.Name;
       Assert.IsNotNull(selectedSeriesName, "selectedSeriesName");
       MainGridController.OnRowEnter(0);
-      controller.SetComboBoxCellValue(0, "Series", selectedSeriesName);
+      MainGridController.SetComboBoxCellValue(0, "Series", selectedSeriesName);
       Assert.AreEqual(1, View.ShowErrorMessageCount,
         "ShowErrorMessageCount after valid Series selection");
       Assert.AreEqual(selectedSeriesName, bindingList[0].Series,
@@ -311,7 +314,7 @@ namespace SoundExplorers.Tests.Controller {
       const string notFoundName = "Not-Found Name";
       MainGridController.OnRowEnter(0);
       exception = Assert.Catch(
-        () => controller.SetComboBoxCellValue(
+        () => MainGridController.SetComboBoxCellValue(
           0, "Series", notFoundName));
       Assert.IsInstanceOf<RowNotInTableException>(exception,
         "Exception on not-found Series pasted");
@@ -337,10 +340,9 @@ namespace SoundExplorers.Tests.Controller {
       } finally {
         Session.Commit();
       }
-      var controller = CreateController<Newsletter, NewsletterBindingItem>(
-        typeof(NewsletterList));
+      var controller = CreateController(typeof(NewsletterList));
       controller.FetchData(); // Populate grid
-      controller.CreateAndGoToInsertionRow();
+      MainGridController.CreateAndGoToInsertionRow();
       var exception = new FormatException("Potato is not a valid DateTime.");
       MainGridController.OnExistingRowCellUpdateError(3, "Date", exception);
       Assert.AreEqual(1, View.ShowErrorMessageCount, "ShowErrorMessageCount");
@@ -358,9 +360,10 @@ namespace SoundExplorers.Tests.Controller {
       } finally {
         Session.Commit();
       }
-      var controller = CreateController<Event, EventBindingItem>(typeof(EventList));
+      var controller = CreateController(typeof(EventList));
       controller.FetchData(); // Populate grid
-      var bindingList = controller.TypedBindingList;
+      var bindingList =
+        (TypedBindingList<Event, EventBindingItem>)controller.MainList.BindingList;
       MainGridController.OnRowEnter(2);
       string changedEventType = Data.EventTypes[1].Name;
       string changedLocation = Data.Locations[1].Name;
@@ -388,8 +391,7 @@ namespace SoundExplorers.Tests.Controller {
       Session.BeginUpdate();
       Data.AddNewslettersPersisted(1, Session);
       Session.Commit();
-      var controller = CreateController<Newsletter, NewsletterBindingItem>(
-        typeof(NewsletterList));
+      var controller = CreateController(typeof(NewsletterList));
       controller.FetchData(); // Populate grid
       Assert.AreEqual("Date", MainGridController.GetColumnDisplayName("Date"), "Date");
       Assert.AreEqual("URL", MainGridController.GetColumnDisplayName("Url"), "Url");
@@ -398,10 +400,31 @@ namespace SoundExplorers.Tests.Controller {
     [Test]
     public void GridSplitterDistance() {
       const int distance = 123;
-      var controller = CreateController<Event, EventBindingItem>(typeof(EventList));
+      var controller = CreateController(typeof(EventList));
       controller.FetchData();
       controller.GridSplitterDistance = distance;
       Assert.AreEqual(distance, controller.GridSplitterDistance);
+    }
+
+    [Test]
+    public void NonKeyUpdateError() {
+      Session.BeginUpdate();
+      Data.AddNewslettersPersisted(2, Session);
+      Session.Commit();
+      var controller = CreateController(typeof(NewsletterList));
+      controller.FetchData(); // Populate grid
+      var bindingList =
+        (TypedBindingList<Newsletter, NewsletterBindingItem>)controller.MainList
+          .BindingList;
+      MainGridController.OnRowEnter(1);
+      var exception = Assert.Catch<DatabaseUpdateErrorException>(
+        () => bindingList[1].Url = bindingList[0].Url,
+        "Rename Url should have thrown DatabaseUpdateErrorException.");
+      MainGridController.OnExistingRowCellUpdateError(1, "Url", exception);
+      Assert.AreEqual(1, MainGrid.RestoreCurrentRowCellErrorValueCount,
+        "RestoreCurrentRowCellErrorValueCount");
+      Assert.AreEqual(1, MainGrid.EditCurrentCellCount,
+        "EditCurrentCellCount");
     }
 
     [Test]
@@ -417,34 +440,15 @@ namespace SoundExplorers.Tests.Controller {
       } finally {
         Session.Commit();
       }
-      var controller = CreateController<Set, SetBindingItem>(typeof(SetList));
+      var controller = CreateController(typeof(SetList));
       controller.FetchData(); // Populate grid
       Assert.AreEqual(2, controller.ParentBindingList?.Count, "Parent list count");
       Assert.AreEqual(3, MainGridController.BindingList?.Count,
         "Main list count initially");
-      controller.OnParentGridRowEnter(1);
+      var parentGridController = new ParentGridController(controller);
+      parentGridController.OnRowEnter(1);
       Assert.AreEqual(5, MainGridController.BindingList?.Count,
         "Main list count when 2nd parent selected");
-    }
-
-    [Test]
-    public void NonKeyUpdateError() {
-      Session.BeginUpdate();
-      Data.AddNewslettersPersisted(2, Session);
-      Session.Commit();
-      var controller = CreateController<Newsletter, NewsletterBindingItem>(
-        typeof(NewsletterList));
-      controller.FetchData(); // Populate grid
-      var bindingList = controller.TypedBindingList;
-      MainGridController.OnRowEnter(1);
-      var exception = Assert.Catch<DatabaseUpdateErrorException>(
-        () => bindingList[1].Url = bindingList[0].Url,
-        "Rename Url should have thrown DatabaseUpdateErrorException.");
-      MainGridController.OnExistingRowCellUpdateError(1, "Url", exception);
-      Assert.AreEqual(1, MainGrid.RestoreCurrentRowCellErrorValueCount,
-        "RestoreCurrentRowCellErrorValueCount");
-      Assert.AreEqual(1, MainGrid.EditCurrentCellCount,
-        "EditCurrentCellCount");
     }
 
     [Test]
@@ -454,12 +458,9 @@ namespace SoundExplorers.Tests.Controller {
     }
 
     [NotNull]
-    private TestEditorController<TEntity, TBindingItem>
-      CreateController<TEntity, TBindingItem>([NotNull] Type mainListType)
-      where TEntity : EntityBase, new()
-      where TBindingItem : BindingItemBase<TEntity, TBindingItem>, new() {
-      return new TestEditorController<TEntity, TBindingItem>(mainListType,
-        MainGridController, QueryHelper, Session);
+    private TestEditorController CreateController([NotNull] Type mainListType) {
+      return new TestEditorController(mainListType,
+        View, QueryHelper, Session);
     }
   }
 }

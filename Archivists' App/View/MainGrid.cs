@@ -19,16 +19,16 @@ namespace SoundExplorers.View {
     private new ContextMenuStrip ContextMenuStrip =>
       _contextMenuStrip ?? (_contextMenuStrip = CreateContextMenuStrip());
 
-    public MainGridController Controller { get; private set; }
-    public CopyMenuItem CopyMenuItem { get; }
+    internal MainGridController Controller { get; private set; }
+    internal CopyMenuItem CopyMenuItem { get; }
 
     private new DataGridViewRow CurrentRow =>
       base.CurrentRow ?? throw new NullReferenceException(nameof(CurrentRow));
 
-    public CutMenuItem CutMenuItem { get; }
-    public DeleteSelectedRowsMenuItem DeleteSelectedRowsMenuItem { get; }
-    public PasteMenuItem PasteMenuItem { get; }
-    public SelectAllMenuItem SelectAllMenuItem { get; }
+    internal CutMenuItem CutMenuItem { get; }
+    internal DeleteSelectedRowsMenuItem DeleteSelectedRowsMenuItem { get; }
+    internal PasteMenuItem PasteMenuItem { get; }
+    internal SelectAllMenuItem SelectAllMenuItem { get; }
 
     public void SetController(MainGridController controller) {
       Controller = controller;
@@ -111,7 +111,7 @@ namespace SoundExplorers.View {
       }
     }
 
-    public void DeleteSelectedRows() {
+    internal void DeleteSelectedRows() {
       if (Controller.IsInsertionRowCurrent) {
         return;
       }
@@ -126,7 +126,7 @@ namespace SoundExplorers.View {
       }
     }
 
-    public void Paste() {
+    internal void Paste() {
       if (!CurrentCell.ReadOnly) {
         if (!IsCurrentCellInEditMode) {
           BeginEdit(true);
@@ -140,7 +140,7 @@ namespace SoundExplorers.View {
       }
     }
 
-    public void SelectAllInCurrentCell() {
+    internal void SelectAllInCurrentCell() {
       if (!IsCurrentCellInEditMode) {
         BeginEdit(true);
       } else { // The cell is already being edited
@@ -177,7 +177,7 @@ namespace SoundExplorers.View {
       }
     }
 
-    public void ConfigureColumns() {
+    internal void ConfigureColumns() {
       foreach (DataGridViewColumn column in Columns) {
         ConfigureColumn(column);
       }
@@ -198,7 +198,7 @@ namespace SoundExplorers.View {
       return result;
     }
 
-    public void MakeInsertionRowCurrent() {
+    internal void MakeInsertionRowCurrent() {
       // This triggers OnRowEnter.
       // Debug.WriteLine("EditorView.MakeMainGridInsertionRowCurrent");
       MakeRowCurrent(Rows.Count - 1);
@@ -239,7 +239,7 @@ namespace SoundExplorers.View {
       }
     }
 
-    public void OnError() {
+    internal void OnError() {
       CancelEdit();
       Controller.ShowError();
     }
