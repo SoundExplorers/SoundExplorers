@@ -80,6 +80,7 @@ namespace SoundExplorers.View {
     }
 
     internal void EditCopyMenuItem_Click(object sender, EventArgs e) {
+      //Debug.WriteLine("MainView.EditCopyMenuItem_Click");
       if (MdiChildren.Any()) {
         EditorView.Copy();
       }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Windows.Forms;
 
 namespace SoundExplorers.View {
@@ -13,13 +14,15 @@ namespace SoundExplorers.View {
   ///   This is fixed by handling F2 in <see cref="MainGrid.OnKeyDown" />.
   /// </remarks>
   public class TextBoxCell : DataGridViewTextBoxCell, ICanRestoreErrorValue {
-    public override Type EditType => typeof(DataGridViewTextBoxEditingControl);
+    private TextBoxContextMenu _textBoxContextMenu;
 
-    public void RestoreErrorValue(object errorValue) {
-      var textBox = (TextBox)DataGridView.EditingControl;
-      textBox.Text = errorValue?.ToString();
-      textBox.SelectAll();
-    }
+    private MainView MainView => (MainView)Tag;
+    private TextBox TextBox => (TextBox)DataGridView.EditingControl;
+    
+    private TextBoxContextMenu TextBoxContextMenu =>
+      _textBoxContextMenu ?? (_textBoxContextMenu = new TextBoxContextMenu(MainView, TextBox));
+
+    public override Type EditType => typeof(DataGridViewTextBoxEditingControl);
 
     public override void InitializeEditingControl(
       int rowIndex,
@@ -29,9 +32,14 @@ namespace SoundExplorers.View {
       //   $"{nameof(TextBoxCell)}.{nameof(InitializeEditingControl)}");
       base.InitializeEditingControl(rowIndex, initialFormattedValue,
         dataGridViewCellStyle);
-      var textBox = (TextBox)DataGridView.EditingControl;
-      textBox.KeyUp += TextBoxOnKeyUp;
-      textBox.SelectAll();
+      TextBox.ContextMenuStrip = TextBoxContextMenu;
+      TextBox.KeyUp += TextBoxOnKeyUp;
+      TextBox.SelectAll();
+    }
+
+    public void RestoreErrorValue(object errorValue) {
+      TextBox.Text = errorValue?.ToString();
+      TextBox.SelectAll();
     }
 
     private static void TextBoxOnKeyUp(object sender, KeyEventArgs e) {

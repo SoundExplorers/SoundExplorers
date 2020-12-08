@@ -70,6 +70,7 @@
         </Compile>
         <Compile Include="CopyMenuItem.cs" />
         <Compile Include="CutMenuItem.cs" />
+        <Compile Include="DeleteMenuItem.cs" />
         <Compile Include="DeleteSelectedRowsMenuItem.cs" />
         <Compile Include="FittedPictureBox.cs">
           <SubType>Component</SubType>
@@ -115,6 +116,8 @@
           <DependentUpon>EditorView.cs</DependentUpon>
         </Compile>
         <Compile Include="TextBoxCell.cs" />
+        <Compile Include="TextBoxContextMenu.cs" />
+        <Compile Include="UndoMenuItem.cs" />
         <EmbeddedResource Include="AboutForm.resx">
           <DependentUpon>AboutForm.cs</DependentUpon>
         </EmbeddedResource>

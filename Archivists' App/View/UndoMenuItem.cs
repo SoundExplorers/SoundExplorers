@@ -2,14 +2,14 @@
 using System.Windows.Forms;
 
 namespace SoundExplorers.View {
-  public class CopyMenuItem : ToolStripMenuItem {
+  public class UndoMenuItem : ToolStripMenuItem {
     private Size _size;
     private string _text;
 
-    public CopyMenuItem() {
+    public UndoMenuItem() {
       ImageTransparentColor = Color.Black;
-      Name = "CopyMenuItem";
-      ShortcutKeys = Keys.Control | Keys.C;
+      Name = "UndoMenuItem";
+      ShortcutKeys = Keys.Control | Keys.Z;
     }
 
     public override Size Size {
@@ -19,7 +19,7 @@ namespace SoundExplorers.View {
 
     public override string Text {
       // Getter loops if compared with base instead of field.
-      get => _text ?? (base.Text = _text = "&Copy");
+      get => _text ?? (base.Text = _text = "&Undo");
       set => base.Text = value;
     }
   }

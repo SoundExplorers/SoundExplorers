@@ -8,14 +8,25 @@ namespace SoundExplorers.View {
   public class MainGrid : GridBase, IMainGrid {
     private RowContextMenu _rowContextMenu;
 
-    internal RowContextMenu RowContextMenu =>
-      _rowContextMenu ?? (_rowContextMenu = new RowContextMenu());
-
-    internal MainGridController Controller { get; private set; }
-
     private new DataGridViewRow CurrentRow =>
       base.CurrentRow ?? throw new NullReferenceException(nameof(CurrentRow));
 
+    internal MainGridController Controller { get; private set; }
+
+    private RowContextMenu RowContextMenu =>
+      _rowContextMenu ?? (_rowContextMenu = CreateRowContextMenu());
+
+    private RowContextMenu CreateRowContextMenu() {
+      var result = new RowContextMenu();
+      result.CutMenuItem.Click += MainView.EditCutMenuItem_Click;
+      result.CopyMenuItem.Click += MainView.EditCopyMenuItem_Click;
+      result.PasteMenuItem.Click += MainView.EditPasteMenuItem_Click;
+      result.SelectAllMenuItem.Click += MainView.EditSelectAllMenuItem_Click;
+      result.DeleteSelectedRowsMenuItem.Click += MainView.EditDeleteSelectedRowsMenuItem_Click;
+      return result;
+    }
+
+    internal MainView MainView { get; set; }
 
     public void SetController(MainGridController controller) {
       Controller = controller;
@@ -151,9 +162,7 @@ namespace SoundExplorers.View {
       } else if (column.ValueType == typeof(DateTime)) {
         column.CellTemplate = new CalendarCell();
       } else if (column.ValueType == typeof(string)) {
-        column.CellTemplate = new TextBoxCell {
-          Tag = RowContextMenu
-        };
+        column.CellTemplate = new TextBoxCell {Tag = MainView};
         // Interpret blanking a cell as an empty string, not null.
         // Null is not a problem for the object-oriented database to handle.
         // But this fixes an error where,

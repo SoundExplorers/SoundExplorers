@@ -13,7 +13,7 @@ namespace SoundExplorers.View {
     }
 
     public override Size Size {
-      get => _size != Size.Empty ? _size : base.Size = _size = new Size(308, 24);
+      get => _size != Size.Empty ? _size : base.Size = _size = new Size(198, 24);
       set => base.Size = value;
     }
 

@@ -252,7 +252,7 @@ namespace SoundExplorers.View {
             this.WindowsCloseCurrentTableEditorMenuItem.Name = "WindowsCloseCurrentTableEditorMenuItem";
             this.WindowsCloseCurrentTableEditorMenuItem.ShortcutKeyDisplayString = "Ctrl+F4, Ctrl+W";
             this.WindowsCloseCurrentTableEditorMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.W)));
-            this.WindowsCloseCurrentTableEditorMenuItem.Size = new System.Drawing.Size(308, 24);
+            this.WindowsCloseCurrentTableEditorMenuItem.Size = new System.Drawing.Size(198, 24);
             this.WindowsCloseCurrentTableEditorMenuItem.Text = "C&lose Current Table Editor";
             this.WindowsCloseCurrentTableEditorMenuItem.Click += new System.EventHandler(this.WindowsCloseCurrentTableEditorMenuItem_Click);
             // 
