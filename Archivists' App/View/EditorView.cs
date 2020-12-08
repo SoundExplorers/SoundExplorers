@@ -210,11 +210,11 @@ namespace SoundExplorers.View {
 
     private void EditorView_Load(object sender, EventArgs e) {
       MainGrid.SetController(new MainGridController(MainGrid, this));
-      MainGrid.CutMenuItem.Click += MainView.EditCutMenuItem_Click;
-      MainGrid.CopyMenuItem.Click += MainView.EditCopyMenuItem_Click;
-      MainGrid.PasteMenuItem.Click += MainView.EditPasteMenuItem_Click;
-      MainGrid.SelectAllMenuItem.Click += MainView.EditSelectAllMenuItem_Click;
-      MainGrid.DeleteSelectedRowsMenuItem.Click +=
+      MainGrid.RowContextMenu.CutMenuItem.Click += MainView.EditCutMenuItem_Click;
+      MainGrid.RowContextMenu.CopyMenuItem.Click += MainView.EditCopyMenuItem_Click;
+      MainGrid.RowContextMenu.PasteMenuItem.Click += MainView.EditPasteMenuItem_Click;
+      MainGrid.RowContextMenu.SelectAllMenuItem.Click += MainView.EditSelectAllMenuItem_Click;
+      MainGrid.RowContextMenu.DeleteSelectedRowsMenuItem.Click +=
         MainView.EditDeleteSelectedRowsMenuItem_Click;
       // Has to be done here rather than in constructor
       // in order to tell that this is an MDI child form.

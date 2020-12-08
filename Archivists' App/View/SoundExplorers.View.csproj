@@ -87,6 +87,7 @@
         <Compile Include="ParentGrid.cs" />
         <Compile Include="PasteMenuItem.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
+        <Compile Include="RowContextMenu.cs" />
         <Compile Include="SelectAllMenuItem.cs" />
         <Compile Include="SelectEditorView.cs">
           <SubType>Form</SubType>

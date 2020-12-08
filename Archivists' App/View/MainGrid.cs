@@ -6,29 +6,16 @@ using SoundExplorers.Controller;
 
 namespace SoundExplorers.View {
   public class MainGrid : GridBase, IMainGrid {
-    private ContextMenuStrip _contextMenuStrip;
+    private RowContextMenu _rowContextMenu;
 
-    public MainGrid() {
-      CutMenuItem = new CutMenuItem();
-      CopyMenuItem = new CopyMenuItem();
-      PasteMenuItem = new PasteMenuItem();
-      SelectAllMenuItem = new SelectAllMenuItem();
-      DeleteSelectedRowsMenuItem = new DeleteSelectedRowsMenuItem();
-    }
-
-    private new ContextMenuStrip ContextMenuStrip =>
-      _contextMenuStrip ?? (_contextMenuStrip = CreateContextMenuStrip());
+    internal RowContextMenu RowContextMenu =>
+      _rowContextMenu ?? (_rowContextMenu = new RowContextMenu());
 
     internal MainGridController Controller { get; private set; }
-    internal CopyMenuItem CopyMenuItem { get; }
 
     private new DataGridViewRow CurrentRow =>
       base.CurrentRow ?? throw new NullReferenceException(nameof(CurrentRow));
 
-    internal CutMenuItem CutMenuItem { get; }
-    internal DeleteSelectedRowsMenuItem DeleteSelectedRowsMenuItem { get; }
-    internal PasteMenuItem PasteMenuItem { get; }
-    internal SelectAllMenuItem SelectAllMenuItem { get; }
 
     public void SetController(MainGridController controller) {
       Controller = controller;
@@ -164,7 +151,9 @@ namespace SoundExplorers.View {
       } else if (column.ValueType == typeof(DateTime)) {
         column.CellTemplate = new CalendarCell();
       } else if (column.ValueType == typeof(string)) {
-        column.CellTemplate = new TextBoxCell();
+        column.CellTemplate = new TextBoxCell {
+          Tag = RowContextMenu
+        };
         // Interpret blanking a cell as an empty string, not null.
         // Null is not a problem for the object-oriented database to handle.
         // But this fixes an error where,
@@ -181,21 +170,6 @@ namespace SoundExplorers.View {
       foreach (DataGridViewColumn column in Columns) {
         ConfigureColumn(column);
       }
-    }
-
-    [NotNull]
-    private ContextMenuStrip CreateContextMenuStrip() {
-      var result = new ContextMenuStrip();
-      result.Items.AddRange(new ToolStripItem[] {
-        CutMenuItem,
-        CopyMenuItem,
-        PasteMenuItem,
-        SelectAllMenuItem,
-        DeleteSelectedRowsMenuItem
-      });
-      result.ShowImageMargin = false;
-      result.Size = new Size(61, 4);
-      return result;
     }
 
     internal void MakeInsertionRowCurrent() {
@@ -257,13 +231,13 @@ namespace SoundExplorers.View {
             CurrentCell.ColumnIndex,
             CurrentRow.Index, true);
           var point = new Point(cellRectangle.Right, cellRectangle.Bottom);
-          ContextMenuStrip.Show(this, point);
-          // When base.ContextMenuStrip was set to (new) ContextMenuStrip,
+          RowContextMenu.Show(this, point);
+          // When base.ContextMenuStrip was set to RowContextMenu,
           // neither e.Handled nor e.SuppressKeyPress nor not calling base.OnKeyDown
           // stopped the context menu from being shown a second time
           // immediately afterwards in the default wrong position.
           // The solution is not to set
-          // base.ContextMenuStrip to (new) GridContextMenuStrip and instead to
+          // base.ContextMenuStrip to RowContextMenu and instead to
           // show the context menu in grid event handlers:
           // here when shown with one of the two standard keyboard shortcuts:
           // EditorView.Grid_MouseDown when shown with a right mouse click.
@@ -283,9 +257,12 @@ namespace SoundExplorers.View {
     ///   that cell the current cell.
     /// </summary>
     protected override void OnMouseDown(MouseEventArgs e) {
-      base.OnMouseDown(e);
-      if (!IsCurrentCellInEditMode && e.Button == MouseButtons.Right) {
-        ContextMenuStrip.Show(this, e.Location);
+      if (e.Button == MouseButtons.Right) {
+        if (!IsCurrentCellInEditMode) {
+          RowContextMenu.Show(this, e.Location);
+        }
+      } else {
+        base.OnMouseDown(e);
       }
     }
 
