@@ -7,30 +7,30 @@ using JetBrains.Annotations;
 namespace SoundExplorers.View {
   public class TextBoxContextMenu : ContextMenuStrip {
 
-    public TextBoxContextMenu([NotNull] MainView mainView, [NotNull] TextBox textBox) {
+    public TextBoxContextMenu([NotNull] TextBox textBox) {
       TextBox = textBox;
       UndoMenuItem = new UndoMenuItem();
       UndoMenuItem.Click += UndoMenuItem_Click;
       CutMenuItem = new CutMenuItem();
-      CutMenuItem.Click += mainView.EditCutMenuItem_Click;
+      CutMenuItem.Click += CutMenuItem_Click;
       CopyMenuItem = new CopyMenuItem();
-      CopyMenuItem.Click += mainView.EditCopyMenuItem_Click;
+      CopyMenuItem.Click += CopyMenuItem_Click;
       PasteMenuItem = new PasteMenuItem();
-      PasteMenuItem.Click += mainView.EditPasteMenuItem_Click;
+      PasteMenuItem.Click += PasteMenuItem_Click;
       DeleteMenuItem = new DeleteMenuItem();
       DeleteMenuItem.Click += DeleteMenuItem_Click;
       SelectAllMenuItem = new SelectAllMenuItem();
-      SelectAllMenuItem.Click += mainView.EditSelectAllMenuItem_Click;
+      SelectAllMenuItem.Click += SelectAllMenuItem_Click;
       ShowImageMargin = false;
       Size = new Size(61, 4);
     }
 
-    internal CopyMenuItem CopyMenuItem { get; }
-    internal CutMenuItem CutMenuItem { get; }
-    internal DeleteMenuItem DeleteMenuItem { get; }
-    internal PasteMenuItem PasteMenuItem { get; }
-    internal SelectAllMenuItem SelectAllMenuItem { get; }
-    internal UndoMenuItem UndoMenuItem { get; }
+    private CopyMenuItem CopyMenuItem { get; }
+    private CutMenuItem CutMenuItem { get; }
+    private DeleteMenuItem DeleteMenuItem { get; }
+    private PasteMenuItem PasteMenuItem { get; }
+    private SelectAllMenuItem SelectAllMenuItem { get; }
+    private UndoMenuItem UndoMenuItem { get; }
     private TextBox TextBox { get; }
 
     public override ToolStripItemCollection Items {
@@ -67,6 +67,14 @@ namespace SoundExplorers.View {
       SelectAllMenuItem.Enabled = TextBox.Text.Length > 0;
     }
 
+    private void CopyMenuItem_Click(object sender, EventArgs e) {
+      TextBox.Copy();
+    }
+
+    private void CutMenuItem_Click(object sender, EventArgs e) {
+      TextBox.Cut();
+    }
+
     private void DeleteMenuItem_Click(object sender, EventArgs e) {
       int selectionStart = TextBox.SelectionStart;
       int selectionLength = TextBox.SelectionLength;
@@ -74,10 +82,15 @@ namespace SoundExplorers.View {
       TextBox.SelectionStart = selectionStart;
     }
 
+    private void PasteMenuItem_Click(object sender, EventArgs e) {
+      TextBox.Paste();
+    }
+
+    private void SelectAllMenuItem_Click(object sender, EventArgs e) {
+    }
+
     private void UndoMenuItem_Click(object sender, EventArgs e) {
-      if (TextBox.CanUndo) {
-        TextBox.Undo();
-      }
+      TextBox.Undo();
     }
   }
 }

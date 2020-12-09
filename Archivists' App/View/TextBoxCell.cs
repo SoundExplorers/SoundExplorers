@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Windows.Forms;
 
 namespace SoundExplorers.View {
@@ -33,7 +32,7 @@ namespace SoundExplorers.View {
       base.InitializeEditingControl(rowIndex, initialFormattedValue,
         dataGridViewCellStyle);
       TextBox.ContextMenuStrip = TextBoxContextMenu;
-      TextBox.KeyUp += TextBoxOnKeyUp;
+      TextBox.KeyUp += TextBox_KeyUp;
       TextBox.SelectAll();
     }
 
@@ -42,7 +41,7 @@ namespace SoundExplorers.View {
       TextBox.SelectAll();
     }
 
-    private static void TextBoxOnKeyUp(object sender, KeyEventArgs e) {
+    private static void TextBox_KeyUp(object sender, KeyEventArgs e) {
       // Debug.WriteLine(
       //   $"{nameof(TextBoxCell)}.{nameof(TextBoxOnKeyUp)}: KeyCode = {e.KeyCode}");
       if (e.Modifiers == Keys.Control && e.KeyCode == Keys.A ||
