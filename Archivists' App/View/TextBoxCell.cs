@@ -6,12 +6,12 @@ namespace SoundExplorers.View {
   ///   TextBox cell of a DataGridView.
   /// </summary>
   internal class TextBoxCell : DataGridViewTextBoxCell, ICanRestoreErrorValue {
-    private CellTextBoxContextMenu _cellTextBoxContextMenu;
+    private TextBoxContextMenu _cellTextBoxContextMenu;
     private TextBox TextBox => (TextBox)DataGridView.EditingControl;
 
-    private CellTextBoxContextMenu CellTextBoxContextMenu =>
+    private TextBoxContextMenu TextBoxContextMenu =>
       _cellTextBoxContextMenu ??
-      (_cellTextBoxContextMenu = new CellTextBoxContextMenu(DataGridView));
+      (_cellTextBoxContextMenu = new TextBoxContextMenu(TextBox));
 
     public override Type EditType => typeof(DataGridViewTextBoxEditingControl);
 
@@ -28,7 +28,7 @@ namespace SoundExplorers.View {
       //   $"{nameof(TextBoxCell)}.{nameof(InitializeEditingControl)}");
       base.InitializeEditingControl(rowIndex, initialFormattedValue,
         dataGridViewCellStyle);
-      TextBox.ContextMenuStrip = CellTextBoxContextMenu;
+      TextBox.ContextMenuStrip = TextBoxContextMenu;
       TextBox.KeyUp += TextBox_KeyUp;
     }
 

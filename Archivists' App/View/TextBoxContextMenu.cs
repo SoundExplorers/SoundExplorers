@@ -3,9 +3,13 @@ using System.Windows.Forms;
 using JetBrains.Annotations;
 
 namespace SoundExplorers.View {
-  internal class CellTextBoxContextMenu : GridContextMenu {
-    public CellTextBoxContextMenu([NotNull] DataGridView grid) : base(grid) {
+  internal class TextBoxContextMenu : EditContextMenuBase {
+
+    public TextBoxContextMenu([NotNull] TextBox textBox) {
+      TextBox = textBox;
     }
+    
+    private TextBox TextBox { get; }
 
     public override ToolStripItemCollection Items {
       get {
@@ -26,6 +30,7 @@ namespace SoundExplorers.View {
     }
 
     protected override void OnOpening(CancelEventArgs e) {
+      base.OnOpening(e);
       UndoMenuItem.Enabled = TextBox.CanUndo;
       if (TextBox.SelectedText.Length == 0) {
         CutMenuItem.Enabled = false;
@@ -40,7 +45,7 @@ namespace SoundExplorers.View {
       SelectAllMenuItem.Enabled = TextBox.Text.Length > 0;
     }
 
-    public override void Undo() {
+    protected override void Undo() {
       TextBox.Undo();
     }
 
@@ -57,7 +62,10 @@ namespace SoundExplorers.View {
     }
 
     public override void Delete() {
-      DeleteTextBoxSelectedText(TextBox);
+      int selectionStart = TextBox.SelectionStart;
+      int selectionLength = TextBox.SelectionLength;
+      TextBox.Text = TextBox.Text.Remove(selectionStart, selectionLength);
+      TextBox.SelectionStart = selectionStart;
     }
 
     public override void SelectAll() {
