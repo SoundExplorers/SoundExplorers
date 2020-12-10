@@ -2,29 +2,15 @@
 using JetBrains.Annotations;
 
 namespace SoundExplorers.View {
-  public abstract class GridBase : DataGridView {
+  internal abstract class GridBase : DataGridView {
+    private GridContextMenu _contextMenu;
     protected GridBase() {
       AllowUserToOrderColumns = true;
       ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
     }
 
-    public virtual void Copy() {
-      if (CurrentCell.Value == null) {
-        return;
-      }
-      if (!IsCurrentCellInEditMode) {
-        Clipboard.SetText(CurrentCell.Value.ToString());
-      }
-    }
-
-    public virtual void Cut() {
-      if (CurrentCell.Value == null) {
-        return;
-      }
-      if (!IsCurrentCellInEditMode) {
-        Clipboard.SetText(CurrentCell.Value.ToString());
-      }
-    }
+    public new GridContextMenu ContextMenu =>
+      _contextMenu ?? (_contextMenu = new GridContextMenu(this));
 
     /// <summary>
     ///   Returns the cell that is at the specified client co-ordinates of the main grid.

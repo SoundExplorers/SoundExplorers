@@ -79,34 +79,36 @@ namespace SoundExplorers.View {
       BeginInvoke((Action)delegate { WindowsSeparator2.Visible = MdiChildren.Any(); });
     }
 
-    internal void EditCopyMenuItem_Click(object sender, EventArgs e) {
+    private void EditCutMenuItem_Click(object sender, EventArgs e) {
+      if (MdiChildren.Any() && EditorView.FocusedGrid.ContextMenu.CutMenuItem.Enabled) {
+        EditorView.FocusedGrid.ContextMenu.Cut();
+      }
+    }
+
+    private void EditCopyMenuItem_Click(object sender, EventArgs e) {
       //Debug.WriteLine("MainView.EditCopyMenuItem_Click");
-      if (MdiChildren.Any()) {
-        EditorView.Copy();
+      if (MdiChildren.Any() && EditorView.FocusedGrid.ContextMenu.CutMenuItem.Enabled) {
+        EditorView.FocusedGrid.ContextMenu.Copy();
       }
     }
 
-    internal void EditCutMenuItem_Click(object sender, EventArgs e) {
-      if (MdiChildren.Any()) {
-        EditorView.Cut();
+    private void EditPasteMenuItem_Click(object sender, EventArgs e) {
+      if (MdiChildren.Any() && EditorView.FocusedGrid.ContextMenu.PasteMenuItem.Enabled) {
+        EditorView.FocusedGrid.ContextMenu.Paste();
       }
     }
 
-    internal void EditDeleteSelectedRowsMenuItem_Click(object sender, EventArgs e) {
-      if (MdiChildren.Any()) {
-        EditorView.DeleteSelectedRows();
+    private void EditSelectAllMenuItem_Click(object sender, EventArgs e) {
+      if (MdiChildren.Any() &&
+          EditorView.FocusedGrid.ContextMenu.SelectAllMenuItem.Enabled) {
+        EditorView.FocusedGrid.ContextMenu.SelectAll();
       }
     }
 
-    internal void EditPasteMenuItem_Click(object sender, EventArgs e) {
-      if (MdiChildren.Any()) {
-        EditorView.Paste();
-      }
-    }
-
-    internal void EditSelectAllMenuItem_Click(object sender, EventArgs e) {
-      if (MdiChildren.Any()) {
-        EditorView.SelectAll();
+    private void EditDeleteSelectedRowsMenuItem_Click(object sender, EventArgs e) {
+      if (MdiChildren.Any() &&
+          EditorView.FocusedGrid.ContextMenu.DeleteSelectedRowsMenuItem.Enabled) {
+        EditorView.FocusedGrid.ContextMenu.DeleteSelectedRows();
       }
     }
 
@@ -129,19 +131,6 @@ namespace SoundExplorers.View {
           Application.ProductName,
           MessageBoxButtons.OK,
           MessageBoxIcon.Error);
-      } catch (DataException ex) {
-        MessageBox.Show(
-          ex.Message,
-          //ex.ToString(),
-          Application.ProductName,
-          MessageBoxButtons.OK,
-          MessageBoxIcon.Error);
-        //} catch (Exception ex) {
-        //    MessageBox.Show(
-        //        ex.ToString(),
-        //        Application.ProductName,
-        //        MessageBoxButtons.OK,
-        //        MessageBoxIcon.Error);
       }
     }
 

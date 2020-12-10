@@ -3,7 +3,7 @@ using System.Windows.Forms;
 using SoundExplorers.Controller;
 
 namespace SoundExplorers.View {
-  public class ParentGrid : GridBase,  IView<ParentGridController> {
+  internal class ParentGrid : GridBase,  IView<ParentGridController> {
     public ParentGrid() {
       AllowUserToAddRows = false;
       AllowUserToDeleteRows = false;

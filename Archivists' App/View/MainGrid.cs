@@ -5,28 +5,12 @@ using JetBrains.Annotations;
 using SoundExplorers.Controller;
 
 namespace SoundExplorers.View {
-  public class MainGrid : GridBase, IMainGrid {
-    private RowContextMenu _rowContextMenu;
+  internal class MainGrid : GridBase, IMainGrid {
 
     private new DataGridViewRow CurrentRow =>
       base.CurrentRow ?? throw new NullReferenceException(nameof(CurrentRow));
 
-    internal MainGridController Controller { get; private set; }
-
-    private RowContextMenu RowContextMenu =>
-      _rowContextMenu ?? (_rowContextMenu = CreateRowContextMenu());
-
-    private RowContextMenu CreateRowContextMenu() {
-      var result = new RowContextMenu();
-      result.CutMenuItem.Click += MainView.EditCutMenuItem_Click;
-      result.CopyMenuItem.Click += MainView.EditCopyMenuItem_Click;
-      result.PasteMenuItem.Click += MainView.EditPasteMenuItem_Click;
-      result.SelectAllMenuItem.Click += MainView.EditSelectAllMenuItem_Click;
-      result.DeleteSelectedRowsMenuItem.Click += MainView.EditDeleteSelectedRowsMenuItem_Click;
-      return result;
-    }
-
-    internal MainView MainView { get; set; }
+    public MainGridController Controller { get; private set; }
 
     public void SetController(MainGridController controller) {
       Controller = controller;
@@ -67,87 +51,6 @@ namespace SoundExplorers.View {
       CurrentRow.Selected = true;
     }
 
-    public override void Copy() {
-      base.Copy();
-      if (CurrentCell.Value == null || !IsCurrentCellInEditMode) {
-        return;
-      }
-      switch (EditingControl) {
-        case TextBox textBox: {
-          if (string.IsNullOrWhiteSpace(textBox.SelectedText)) {
-            // Clipboard.SetText throws an exception
-            // if passed an empty string.
-            return;
-          }
-          Clipboard.SetText(textBox.SelectedText);
-          break;
-        }
-      }
-    }
-
-    public override void Cut() {
-      base.Cut();
-      if (CurrentCell.Value == null || CurrentCell.ReadOnly) {
-        return;
-      }
-      if (!IsCurrentCellInEditMode) {
-        BeginEdit(true);
-        CurrentCell.Value = string.Empty;
-        EndEdit();
-      } else {
-        // The cell is already being edited
-        switch (EditingControl) {
-          case TextBox textBox when string.IsNullOrWhiteSpace(textBox.SelectedText):
-            // Clipboard.SetText throws an exception
-            // if passed an empty string.
-            return;
-          case TextBox textBox:
-            Clipboard.SetText(textBox.SelectedText);
-            textBox.SelectedText = string.Empty;
-            break;
-        }
-      }
-    }
-
-    internal void DeleteSelectedRows() {
-      if (Controller.IsInsertionRowCurrent) {
-        return;
-      }
-      if (IsCurrentCellInEditMode) {
-        CancelEdit();
-      }
-      if (SelectedRows.Count == 0) {
-        CurrentRow.Selected = true;
-      }
-      foreach (DataGridViewRow row in SelectedRows) {
-        Rows.Remove(row);
-      }
-    }
-
-    internal void Paste() {
-      if (!CurrentCell.ReadOnly) {
-        if (!IsCurrentCellInEditMode) {
-          BeginEdit(true);
-          CurrentCell.Value = Clipboard.GetText();
-          EndEdit();
-        } else { // The cell is already being edited
-          if (EditingControl is TextBox textBox) {
-            textBox.SelectedText = Clipboard.GetText();
-          }
-        }
-      }
-    }
-
-    internal void SelectAllInCurrentCell() {
-      if (!IsCurrentCellInEditMode) {
-        BeginEdit(true);
-      } else { // The cell is already being edited
-        if (EditingControl is TextBox textBox) {
-          textBox.SelectAll();
-        }
-      }
-    }
-
     private void ConfigureColumn([NotNull] DataGridViewColumn column) {
       // Making every column explicitly not sortable prevents the program
       // from crashing if F3 in pressed while the grid is focused.
@@ -162,7 +65,7 @@ namespace SoundExplorers.View {
       } else if (column.ValueType == typeof(DateTime)) {
         column.CellTemplate = new CalendarCell();
       } else if (column.ValueType == typeof(string)) {
-        column.CellTemplate = new TextBoxCell {Tag = MainView};
+        column.CellTemplate = new TextBoxCell();
         // Interpret blanking a cell as an empty string, not null.
         // Null is not a problem for the object-oriented database to handle.
         // But this fixes an error where,
@@ -175,13 +78,13 @@ namespace SoundExplorers.View {
       }
     }
 
-    internal void ConfigureColumns() {
+    public void ConfigureColumns() {
       foreach (DataGridViewColumn column in Columns) {
         ConfigureColumn(column);
       }
     }
 
-    internal void MakeInsertionRowCurrent() {
+    public void MakeInsertionRowCurrent() {
       // This triggers OnRowEnter.
       // Debug.WriteLine("EditorView.MakeMainGridInsertionRowCurrent");
       MakeRowCurrent(Rows.Count - 1);
@@ -222,7 +125,7 @@ namespace SoundExplorers.View {
       }
     }
 
-    internal void OnError() {
+    public void OnError() {
       CancelEdit();
       Controller.ShowError();
     }
@@ -231,16 +134,16 @@ namespace SoundExplorers.View {
       switch (e.KeyData) {
         case Keys.F2:
           if (CurrentCell != null) {
-            BeginEdit(true);
+            BeginEdit(false);
           }
           break;
         case Keys.Apps: // Context menu key
-        case Keys.Shift | Keys.F10:
+        case Keys.Shift | Keys.F10: // Alternate context menu keyboard shortcut
           var cellRectangle = GetCellDisplayRectangle(
             CurrentCell.ColumnIndex,
             CurrentRow.Index, true);
           var point = new Point(cellRectangle.Right, cellRectangle.Bottom);
-          RowContextMenu.Show(this, point);
+          ContextMenu.Show(this, point);
           // When base.ContextMenuStrip was set to RowContextMenu,
           // neither e.Handled nor e.SuppressKeyPress nor not calling base.OnKeyDown
           // stopped the context menu from being shown a second time
@@ -268,7 +171,7 @@ namespace SoundExplorers.View {
     protected override void OnMouseDown(MouseEventArgs e) {
       if (e.Button == MouseButtons.Right) {
         if (!IsCurrentCellInEditMode) {
-          RowContextMenu.Show(this, e.Location);
+          ContextMenu.Show(this, e.Location);
         }
       } else {
         base.OnMouseDown(e);

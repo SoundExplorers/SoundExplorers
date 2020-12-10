@@ -21,7 +21,7 @@ namespace SoundExplorers.View {
       ImageSplitContainer.GotFocus += SplitContainerOnGotFocus;
     }
 
-    private GridBase FocusedGrid { get; set; }
+    public GridBase FocusedGrid { get; private set; }
     private MainView MainView => (MainView)MdiParent;
     private SizeableFormOptions SizeableFormOptions { get; set; }
     public EditorController Controller { get; private set; }
@@ -44,10 +44,6 @@ namespace SoundExplorers.View {
     public void SetController(EditorController controller) {
       Controller = controller;
       GridSplitContainer.Panel1Collapsed = !Controller.IsParentTableToBeShown;
-    }
-
-    public void Copy() {
-      FocusedGrid?.Copy();
     }
 
     /// <summary>
@@ -77,17 +73,6 @@ namespace SoundExplorers.View {
       // return result;
     }
 
-    public void Cut() {
-      FocusedGrid?.Cut();
-    }
-
-    public void DeleteSelectedRows() {
-      if (FocusedGrid != MainGrid) {
-        return;
-      }
-      MainGrid.DeleteSelectedRows();
-    }
-
     /// <summary>
     ///   Refreshes the contents of the grid from the database and
     ///   forces the form to invalidate its client area and immediately redraw itself
@@ -104,13 +89,6 @@ namespace SoundExplorers.View {
         FocusedGrid = MainGrid;
       }
       base.Refresh();
-    }
-
-    public void SelectAll() {
-      if (FocusedGrid != MainGrid) {
-        return;
-      }
-      MainGrid.SelectAllInCurrentCell();
     }
 
     private void AfterPopulateAsync() {
@@ -210,7 +188,6 @@ namespace SoundExplorers.View {
 
     private void EditorView_Load(object sender, EventArgs e) {
       MainGrid.SetController(new MainGridController(MainGrid, this));
-      MainGrid.MainView = MainView;
       // Has to be done here rather than in constructor
       // in order to tell that this is an MDI child form.
       SizeableFormOptions = SizeableFormOptions.Create(this);
@@ -495,13 +472,6 @@ namespace SoundExplorers.View {
     private void OpenTable() {
       InvertGridColors(ParentGrid); // Will revert when focused.
       PopulateGrid();
-    }
-
-    public void Paste() {
-      if (FocusedGrid != MainGrid) {
-        return;
-      }
-      MainGrid.Paste();
     }
 
     private void PopulateGrid() {

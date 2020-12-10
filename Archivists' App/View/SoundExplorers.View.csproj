@@ -76,6 +76,7 @@
           <SubType>Component</SubType>
         </Compile>
         <Compile Include="GridBase.cs" />
+        <Compile Include="GridContextMenu.cs" />
         <Compile Include="IMessageUpdater.cs" />
         <Compile Include="ICanRestoreErrorValue.cs" />
         <Compile Include="MainGrid.cs" />
@@ -88,7 +89,6 @@
         <Compile Include="ParentGrid.cs" />
         <Compile Include="PasteMenuItem.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
-        <Compile Include="RowContextMenu.cs" />
         <Compile Include="SelectAllMenuItem.cs" />
         <Compile Include="SelectEditorView.cs">
           <SubType>Form</SubType>
@@ -116,7 +116,7 @@
           <DependentUpon>EditorView.cs</DependentUpon>
         </Compile>
         <Compile Include="TextBoxCell.cs" />
-        <Compile Include="TextBoxContextMenu.cs" />
+        <Compile Include="CellTextBoxContextMenu.cs" />
         <Compile Include="UndoMenuItem.cs" />
         <EmbeddedResource Include="AboutForm.resx">
           <DependentUpon>AboutForm.cs</DependentUpon>

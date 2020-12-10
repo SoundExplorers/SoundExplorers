@@ -24,7 +24,7 @@ namespace SoundExplorers.Controller {
     internal BindingColumnList Columns => List.Columns;
 
     protected int CurrentRowIndex { get; private set; }
-    [NotNull] protected IEditorView EditorView { get; }
+    [NotNull] private IEditorView EditorView { get; }
     [NotNull] protected IMainGrid Grid { get; }
 
     private bool IsDuplicateKeyException =>

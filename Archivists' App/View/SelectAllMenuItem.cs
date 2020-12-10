@@ -9,7 +9,6 @@ namespace SoundExplorers.View {
     public SelectAllMenuItem() {
       ImageTransparentColor = Color.Black;
       Name = "SelectAllMenuItem";
-      ShortcutKeyDisplayString = "Ctrl+A, F2";
       ShortcutKeys = Keys.Control | Keys.A;
     }
 
