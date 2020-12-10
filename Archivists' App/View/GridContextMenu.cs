@@ -8,8 +8,6 @@ namespace SoundExplorers.View {
   internal class GridContextMenu : ContextMenuStrip {
     public GridContextMenu([NotNull] DataGridView grid) {
       Grid = grid;
-      ShowImageMargin = false;
-      Size = new Size(61, 4);
       UndoMenuItem = new UndoMenuItem();
       UndoMenuItem.Click += UndoMenuItem_Click;
       CutMenuItem = new CutMenuItem();
@@ -24,6 +22,11 @@ namespace SoundExplorers.View {
       SelectAllMenuItem.Click += SelectAllMenuItem_Click;
       DeleteSelectedRowsMenuItem = new DeleteSelectedRowsMenuItem();
       DeleteSelectedRowsMenuItem.Click += DeleteSelectedRowsMenuItem_Click;
+      // The menu properties must be set after creating the menu items,
+      // as their setters call the Items getter, which needs all the menu items 
+      // to have been created.
+      Size = new Size(61, 4);
+      ShowImageMargin = false;
     }
 
     [NotNull] private DataGridView Grid { get; }
@@ -36,10 +39,10 @@ namespace SoundExplorers.View {
     private bool IsGridInsertionRowCurrent =>
       Grid.CurrentRow?.Index == Grid.Rows.Count - 1;
     
-    [NotNull] public UndoMenuItem UndoMenuItem { get; }
+    [NotNull] protected UndoMenuItem UndoMenuItem { get; }
     [NotNull] public CutMenuItem CutMenuItem { get; }
-    [NotNull] public CopyMenuItem CopyMenuItem { get; }
-    [NotNull] public DeleteMenuItem DeleteMenuItem { get; }
+    [NotNull] protected CopyMenuItem CopyMenuItem { get; }
+    [NotNull] protected DeleteMenuItem DeleteMenuItem { get; }
     [NotNull] public PasteMenuItem PasteMenuItem { get; }
     [NotNull] public SelectAllMenuItem SelectAllMenuItem { get; }
     [NotNull] public DeleteSelectedRowsMenuItem DeleteSelectedRowsMenuItem { get; }
