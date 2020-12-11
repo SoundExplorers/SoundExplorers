@@ -72,12 +72,14 @@
         <Compile Include="CutMenuItem.cs" />
         <Compile Include="DeleteMenuItem.cs" />
         <Compile Include="DeleteSelectedRowsMenuItem.cs" />
+        <Compile Include="EditMenu.cs" />
         <Compile Include="FittedPictureBox.cs">
           <SubType>Component</SubType>
         </Compile>
         <Compile Include="GridBase.cs" />
         <Compile Include="GridContextMenu.cs" />
         <Compile Include="EditContextMenuBase.cs" />
+        <Compile Include="IGridMenu.cs" />
         <Compile Include="IMessageUpdater.cs" />
         <Compile Include="ICanRestoreErrorValue.cs" />
         <Compile Include="MainGrid.cs" />

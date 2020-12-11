@@ -29,8 +29,8 @@ namespace SoundExplorers.View {
     
     [NotNull] protected UndoMenuItem UndoMenuItem { get; }
     [NotNull] public CutMenuItem CutMenuItem { get; }
-    [NotNull] protected CopyMenuItem CopyMenuItem { get; }
-    [NotNull] protected DeleteMenuItem DeleteMenuItem { get; }
+    [NotNull] public CopyMenuItem CopyMenuItem { get; }
+    [NotNull] public DeleteMenuItem DeleteMenuItem { get; }
     [NotNull] public PasteMenuItem PasteMenuItem { get; }
     [NotNull] public SelectAllMenuItem SelectAllMenuItem { get; }
     [NotNull] public DeleteSelectedRowsMenuItem DeleteSelectedRowsMenuItem { get; }

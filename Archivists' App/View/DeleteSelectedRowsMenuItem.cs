@@ -19,7 +19,7 @@ namespace SoundExplorers.View {
 
     public override string Text {
       // Getter loops if compared with base instead of field.
-      get => _text ?? (base.Text = _text = "&Delete Selected Row(s)");
+      get => _text ?? (base.Text = _text = "Delete Selected &Row(s)");
       set => base.Text = value;
     }
   }

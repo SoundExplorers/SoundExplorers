@@ -14,9 +14,10 @@ namespace SoundExplorers.View {
       SplashManager.Status = "Building window...";
       InitializeComponent();
       HideMainMenuImageMargins();
+      EditMenu.MainView = this;
     }
 
-    private EditorView EditorView => ActiveMdiChild as EditorView ??
+    internal EditorView EditorView => ActiveMdiChild as EditorView ??
                                      throw new NullReferenceException(nameof(EditorView));
 
     private MainController Controller { get; set; }
@@ -77,39 +78,6 @@ namespace SoundExplorers.View {
       // the separator to be created and shown automatically.  See
       // https://stackoverflow.com/questions/12951820/extra-separator-after-mdiwindowlistitem-when-no-child-windows-are-open
       BeginInvoke((Action)delegate { WindowsSeparator2.Visible = MdiChildren.Any(); });
-    }
-
-    private void EditCutMenuItem_Click(object sender, EventArgs e) {
-      if (MdiChildren.Any() && EditorView.FocusedGrid.ContextMenu.CutMenuItem.Enabled) {
-        EditorView.FocusedGrid.ContextMenu.Cut();
-      }
-    }
-
-    private void EditCopyMenuItem_Click(object sender, EventArgs e) {
-      //Debug.WriteLine("MainView.EditCopyMenuItem_Click");
-      if (MdiChildren.Any() && EditorView.FocusedGrid.ContextMenu.CutMenuItem.Enabled) {
-        EditorView.FocusedGrid.ContextMenu.Copy();
-      }
-    }
-
-    private void EditPasteMenuItem_Click(object sender, EventArgs e) {
-      if (MdiChildren.Any() && EditorView.FocusedGrid.ContextMenu.PasteMenuItem.Enabled) {
-        EditorView.FocusedGrid.ContextMenu.Paste();
-      }
-    }
-
-    private void EditSelectAllMenuItem_Click(object sender, EventArgs e) {
-      if (MdiChildren.Any() &&
-          EditorView.FocusedGrid.ContextMenu.SelectAllMenuItem.Enabled) {
-        EditorView.FocusedGrid.ContextMenu.SelectAll();
-      }
-    }
-
-    private void EditDeleteSelectedRowsMenuItem_Click(object sender, EventArgs e) {
-      if (MdiChildren.Any() &&
-          EditorView.FocusedGrid.ContextMenu.DeleteSelectedRowsMenuItem.Enabled) {
-        EditorView.FocusedGrid.ContextMenu.DeleteSelectedRows();
-      }
     }
 
     private void FileExitMenuItem_Click(object sender, EventArgs e) {

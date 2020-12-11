@@ -4,21 +4,16 @@ using System.Windows.Forms;
 using JetBrains.Annotations;
 
 namespace SoundExplorers.View {
-  internal class GridContextMenu : EditContextMenuBase {
-    public GridContextMenu([NotNull] DataGridView grid) {
+  internal class GridContextMenu : EditContextMenuBase, IGridMenu {
+    public GridContextMenu([NotNull] GridBase grid) {
       Grid = grid;
     }
-
-    [NotNull] private DataGridView Grid { get; }
 
     [NotNull]
     private TextBox TextBox =>
       (TextBox)Grid.EditingControl ??
       throw new InvalidOperationException(
         "The current grid cell's editor is not a TextBox.");
-
-    private bool IsGridInsertionRowCurrent =>
-      Grid.CurrentRow?.Index == Grid.Rows.Count - 1;
 
     public override ToolStripItemCollection Items {
       get {
@@ -37,43 +32,58 @@ namespace SoundExplorers.View {
       }
     }
 
+    private GridBase Grid { get; }
+
     protected override void OnOpening(CancelEventArgs e) {
       if (Grid.IsCurrentCellInEditMode) {
+        // A context menu specific to the cell editor type
+        // will be shown instead if available:
+        // currently this only applies to TextBoxCells.
         e.Cancel = true;
       }
-      CutMenuItem.Enabled = DeleteMenuItem.Enabled = SelectAllMenuItem.Enabled =
-        !Grid.CurrentCell.ReadOnly &&
-        Grid.CurrentCell.OwningColumn.CellTemplate is TextBoxCell &&
-        Grid.CurrentCell.Value.ToString().Length > 0;
-      CopyMenuItem.Enabled = Grid.CurrentCell.Value?.ToString().Length > 0;
-      PasteMenuItem.Enabled = !Grid.CurrentCell.ReadOnly && Clipboard.ContainsText();
-      DeleteSelectedRowsMenuItem.Enabled = !Grid.ReadOnly && !IsGridInsertionRowCurrent;
+      Grid.EnableMenuItems(this);
+    }
+
+    /// <summary>
+    ///   The grid context menu does not do edits on TextBox cells that are already in
+    ///   edit mode.  But the Edit menu on the main window menu,
+    ///   which used the same commands, does, as it combines the functions of the
+    ///   grid context menu and the TextBox context menu.
+    ///   So we need to allow for the cell either already being in edit mode or not.
+    /// </summary>
+    private void DoCellEdit([NotNull] Action action) {
+      bool isAlreadyInEditMode = Grid.IsCurrentCellInEditMode;
+      if (!isAlreadyInEditMode) {
+        Grid.BeginEdit(true);
+      }
+      action.Invoke();
+      if (!isAlreadyInEditMode) {
+        Grid.EndEdit();
+      }
     }
 
     public override void Cut() {
-      Grid.BeginEdit(true);
-      TextBox.Cut();
-      Grid.EndEdit();
+      DoCellEdit(TextBox.Cut);
     }
 
     public override void Copy() {
-      Clipboard.SetText(Grid.CurrentCell.Value.ToString());
+      Clipboard.SetText(Grid.CopyableText);
     }
 
     public override void Paste() {
-      Grid.BeginEdit(true);
-      Grid.CurrentCell.Value = Clipboard.GetText();
-      Grid.EndEdit();
+      DoCellEdit(() => Grid.CurrentCell.Value = Clipboard.GetText());
     }
 
     public override void Delete() {
-      Grid.BeginEdit(true);
-      DeleteTextBoxSelectedText(TextBox);
-      Grid.EndEdit();
+      DoCellEdit(() => DeleteTextBoxSelectedText(TextBox));
     }
 
     public override void SelectAll() {
-      Grid.BeginEdit(true);
+      if (Grid.IsCurrentCellInEditMode) {
+        DoCellEdit(TextBox.SelectAll);
+      } else {
+        Grid.BeginEdit(true);
+      }
     }
 
     public override void DeleteSelectedRows() {

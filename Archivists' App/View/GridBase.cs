@@ -4,6 +4,7 @@ using JetBrains.Annotations;
 namespace SoundExplorers.View {
   internal abstract class GridBase : DataGridView {
     private GridContextMenu _contextMenu;
+
     protected GridBase() {
       AllowUserToOrderColumns = true;
       ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
@@ -11,6 +12,33 @@ namespace SoundExplorers.View {
 
     public new GridContextMenu ContextMenu =>
       _contextMenu ?? (_contextMenu = new GridContextMenu(this));
+
+    private bool IsInsertionRowCurrent =>
+      (this as MainGrid)?.Controller.IsInsertionRowCurrent ?? false;
+
+    private bool IsTextBoxCellCurrent =>
+      CurrentCell.OwningColumn.CellTemplate is TextBoxCell;
+
+    [NotNull]
+    public string CopyableText {
+      get {
+        if (IsTextBoxCellCurrent && IsCurrentCellInEditMode) {
+          return ((TextBox)EditingControl).SelectedText;
+        }
+        return CurrentCell.Value?.ToString() ?? string.Empty;
+      }
+    } 
+
+    public void EnableMenuItems([NotNull] IGridMenu menu) {
+      menu.SelectAllMenuItem.Enabled = !CurrentCell.ReadOnly && IsTextBoxCellCurrent;
+      menu.CutMenuItem.Enabled = menu.DeleteMenuItem.Enabled =
+        menu.SelectAllMenuItem.Enabled && CopyableText.Length > 0;
+      menu.CopyMenuItem.Enabled = CopyableText.Length > 0;
+      menu.PasteMenuItem.Enabled =
+        !CurrentCell.ReadOnly && Clipboard.ContainsText();
+      menu.DeleteSelectedRowsMenuItem.Enabled =
+        !ReadOnly && !IsInsertionRowCurrent && !IsCurrentCellInEditMode;
+    }
 
     /// <summary>
     ///   Returns the cell that is at the specified client co-ordinates of the main grid.

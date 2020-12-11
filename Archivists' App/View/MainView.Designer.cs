@@ -33,12 +33,8 @@ namespace SoundExplorers.View {
             this.FileOpenMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.FileRefreshMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.FileExitMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.EditMenu = new System.Windows.Forms.ToolStripMenuItem();
-            this.EditCutMenuItem = new SoundExplorers.View.CutMenuItem();
-            this.EditCopyMenuItem = new SoundExplorers.View.CopyMenuItem();
-            this.EditPasteMenuItem = new SoundExplorers.View.PasteMenuItem();
-            this.EditSelectAllMenuItem = new SoundExplorers.View.SelectAllMenuItem();
-            this.EditDeleteSelectedRowsMenuItem = new SoundExplorers.View.DeleteSelectedRowsMenuItem();
+            this.EditMenu = new SoundExplorers.View.EditMenu();
+            this.EditSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.ViewMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.ViewToolBarMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ToolsMenu = new System.Windows.Forms.ToolStripMenuItem();
@@ -127,40 +123,22 @@ namespace SoundExplorers.View {
             // EditMenu
             // 
             this.EditMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-                this.EditCutMenuItem, 
-                this.EditCopyMenuItem, 
-                this.EditPasteMenuItem, 
-                this.EditSelectAllMenuItem, 
-                this.EditDeleteSelectedRowsMenuItem
+                this.EditMenu.CutMenuItem, 
+                this.EditMenu.CopyMenuItem, 
+                this.EditMenu.PasteMenuItem, 
+                this.EditMenu.DeleteMenuItem,
+                this.EditSeparator1,
+                this.EditMenu.SelectAllMenuItem, 
+                this.EditMenu.DeleteSelectedRowsMenuItem
             });
             this.EditMenu.Name = "EditMenu";
             this.EditMenu.Size = new System.Drawing.Size(47, 24);
             this.EditMenu.Text = "&Edit";
             // 
-            // EditCutMenuItem
-            //
-            this.EditCutMenuItem.Name = "EditCutMenuItem";
-            this.EditCutMenuItem.Click += new System.EventHandler(this.EditCutMenuItem_Click);
+            // EditSeparator1
             // 
-            // EditCopyMenuItem
-            // 
-            this.EditCopyMenuItem.Name = "EditCopyMenuItem";
-            this.EditCopyMenuItem.Click += new System.EventHandler(this.EditCopyMenuItem_Click);
-            // 
-            // EditPasteMenuItem
-            // 
-            this.EditPasteMenuItem.Name = "EditPasteMenuItem";
-            this.EditPasteMenuItem.Click += new System.EventHandler(this.EditPasteMenuItem_Click);
-            // 
-            // EditSelectAllMenuItem
-            // 
-            this.EditSelectAllMenuItem.Name = "EditSelectAllMenuItem";
-            this.EditSelectAllMenuItem.Click += new System.EventHandler(this.EditSelectAllMenuItem_Click);
-            // 
-            // EditDeleteSelectedRowsMenuItem
-            // 
-            this.EditDeleteSelectedRowsMenuItem.Name = "EditDeleteSelectedRowsMenuItem";
-            this.EditDeleteSelectedRowsMenuItem.Click += new System.EventHandler(this.EditDeleteSelectedRowsMenuItem_Click);
+            this.EditSeparator1.Name = "EditSeparator1";
+            this.EditSeparator1.Size = new System.Drawing.Size(305, 6);
             // 
             // ViewMenu
             // 
@@ -341,7 +319,7 @@ namespace SoundExplorers.View {
             this.CopyToolStripButton.Name = "CopyToolStripButton";
             this.CopyToolStripButton.Size = new System.Drawing.Size(38, 38);
             this.CopyToolStripButton.Text = "Copy (Ctrl+C)";
-            this.CopyToolStripButton.Click += new System.EventHandler(this.EditCopyMenuItem_Click);
+            this.CopyToolStripButton.Click += new System.EventHandler(this.EditMenu.CopyMenuItem_Click);
             // 
             // CutToolStripButton
             // 
@@ -353,7 +331,7 @@ namespace SoundExplorers.View {
             this.CutToolStripButton.Name = "CutToolStripButton";
             this.CutToolStripButton.Size = new System.Drawing.Size(38, 38);
             this.CutToolStripButton.Text = "Cut (Ctrl+X)";
-            this.CutToolStripButton.Click += new System.EventHandler(this.EditCutMenuItem_Click);
+            this.CutToolStripButton.Click += new System.EventHandler(this.EditMenu.CutMenuItem_Click);
             // 
             // PasteToolStripButton
             // 
@@ -365,7 +343,7 @@ namespace SoundExplorers.View {
             this.PasteToolStripButton.Name = "PasteToolStripButton";
             this.PasteToolStripButton.Size = new System.Drawing.Size(38, 38);
             this.PasteToolStripButton.Text = "Paste (Ctrl+V)";
-            this.PasteToolStripButton.Click += new System.EventHandler(this.EditPasteMenuItem_Click);
+            this.PasteToolStripButton.Click += new System.EventHandler(this.EditMenu.PasteMenuItem_Click);
             // 
             // FileSeparator1
             // 
@@ -406,12 +384,8 @@ namespace SoundExplorers.View {
         private System.Windows.Forms.ToolStripMenuItem FileRefreshMenuItem;
         private System.Windows.Forms.ToolStripSeparator FileSeparator1;
         private System.Windows.Forms.ToolStripMenuItem FileExitMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem EditMenu;
-        private SoundExplorers.View.CutMenuItem EditCutMenuItem;
-        private SoundExplorers.View.CopyMenuItem EditCopyMenuItem;
-        private SoundExplorers.View.PasteMenuItem EditPasteMenuItem;
-        private SoundExplorers.View.SelectAllMenuItem EditSelectAllMenuItem;
-        private SoundExplorers.View.DeleteSelectedRowsMenuItem EditDeleteSelectedRowsMenuItem;
+        private SoundExplorers.View.EditMenu EditMenu;
+        private System.Windows.Forms.ToolStripSeparator EditSeparator1;
         private System.Windows.Forms.ToolStripMenuItem ViewMenu;
         private System.Windows.Forms.ToolStripMenuItem ViewToolBarMenuItem;
         private System.Windows.Forms.ToolStripMenuItem ToolsMenu;
