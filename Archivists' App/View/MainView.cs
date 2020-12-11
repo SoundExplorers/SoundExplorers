@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Data;
 using System.Linq;
 using System.Windows.Forms;
@@ -14,11 +15,12 @@ namespace SoundExplorers.View {
       SplashManager.Status = "Building window...";
       InitializeComponent();
       HideMainMenuImageMargins();
-      EditMenu.MainView = this;
+      EditMenu.DropDown.Opening += EditMenu_DropDown_Opening;
     }
 
     internal EditorView EditorView => ActiveMdiChild as EditorView ??
-                                     throw new NullReferenceException(nameof(EditorView));
+                                      throw new NullReferenceException(
+                                        nameof(EditorView));
 
     private MainController Controller { get; set; }
     private SelectEditorView SelectEditorView { get; set; }
@@ -45,6 +47,26 @@ namespace SoundExplorers.View {
       }
     }
 
+    private void EditMenu_DropDown_Opening(object sender, CancelEventArgs e) {
+      if (MdiChildren.Any()) {
+        EditSelectAllMenuItem.Enabled = !EditorView.FocusedGrid.CurrentCell.ReadOnly &&
+                                        EditorView.FocusedGrid.IsTextBoxCellCurrent;
+        EditCutMenuItem.Enabled = EditDeleteMenuItem.Enabled =
+          EditSelectAllMenuItem.Enabled && EditorView.FocusedGrid.CopyableText.Length > 0;
+        EditCopyMenuItem.Enabled = EditorView.FocusedGrid.CopyableText.Length > 0;
+        EditPasteMenuItem.Enabled =
+          !EditorView.FocusedGrid.CurrentCell.ReadOnly && Clipboard.ContainsText();
+        EditDeleteSelectedRowsMenuItem.Enabled =
+          !EditorView.FocusedGrid.ReadOnly &&
+          !EditorView.FocusedGrid.IsInsertionRowCurrent &&
+          !EditorView.FocusedGrid.IsCurrentCellInEditMode;
+      } else {
+        foreach (ToolStripItem item in EditMenu.DropDownItems) {
+          item.Enabled = false;
+        }
+      }
+    }
+
     /// <summary>
     ///   Creates a MainView and its associated controller,
     ///   as per the Model-View-Controller design pattern,
@@ -57,7 +79,6 @@ namespace SoundExplorers.View {
 
     [NotNull]
     private EditorView CreateEditorView() {
-      Cursor = Cursors.WaitCursor;
       WindowsSeparator2.Visible = true; // See comment in EditorView_FormClosed 
       var result = EditorView.Create(SelectEditorView.Controller.SelectedEntityListType,
         Controller);
@@ -77,7 +98,32 @@ namespace SoundExplorers.View {
       // when all children have been closed, which is what happens when we allow
       // the separator to be created and shown automatically.  See
       // https://stackoverflow.com/questions/12951820/extra-separator-after-mdiwindowlistitem-when-no-child-windows-are-open
-      BeginInvoke((Action)delegate { WindowsSeparator2.Visible = MdiChildren.Any(); });
+      BeginInvoke((Action)delegate { WindowsSeparator2.Visible = MdiChildren.Any(); }
+      );
+    }
+
+    private void EditCutMenuItem_Click(object sender, EventArgs e) {
+      EditorView.FocusedGrid.ContextMenu.Cut();
+    }
+
+    private void EditCopyMenuItem_Click(object sender, EventArgs e) {
+      EditorView.FocusedGrid.ContextMenu.Copy();
+    }
+
+    private void EditPasteMenuItem_Click(object sender, EventArgs e) {
+      EditorView.FocusedGrid.ContextMenu.DeleteSelectedRows();
+    }
+
+    private void EditDeleteMenuItem_Click(object sender, EventArgs e) {
+      EditorView.FocusedGrid.ContextMenu.Delete();
+    }
+
+    private void EditSelectAllMenuItem_Click(object sender, EventArgs e) {
+      EditorView.FocusedGrid.ContextMenu.SelectAll();
+    }
+
+    private void EditDeleteSelectedRowsMenuItem_Click(object sender, EventArgs e) {
+      EditorView.FocusedGrid.ContextMenu.DeleteSelectedRows();
     }
 
     private void FileExitMenuItem_Click(object sender, EventArgs e) {
@@ -99,6 +145,19 @@ namespace SoundExplorers.View {
           Application.ProductName,
           MessageBoxButtons.OK,
           MessageBoxIcon.Error);
+      } catch (DataException ex) {
+        MessageBox.Show(
+          ex.Message,
+          //ex.ToString(),
+          Application.ProductName,
+          MessageBoxButtons.OK,
+          MessageBoxIcon.Error);
+        //} catch (Exception ex) {
+        //    MessageBox.Show(
+        //        ex.ToString(),
+        //        Application.ProductName,
+        //        MessageBoxButtons.OK,
+        //        MessageBoxIcon.Error);
       }
     }
 

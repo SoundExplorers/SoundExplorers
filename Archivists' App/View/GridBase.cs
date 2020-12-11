@@ -13,10 +13,10 @@ namespace SoundExplorers.View {
     public new GridContextMenu ContextMenu =>
       _contextMenu ?? (_contextMenu = new GridContextMenu(this));
 
-    private bool IsInsertionRowCurrent =>
+    public bool IsInsertionRowCurrent =>
       (this as MainGrid)?.Controller.IsInsertionRowCurrent ?? false;
 
-    private bool IsTextBoxCellCurrent =>
+    public bool IsTextBoxCellCurrent =>
       CurrentCell.OwningColumn.CellTemplate is TextBoxCell;
 
     [NotNull]
