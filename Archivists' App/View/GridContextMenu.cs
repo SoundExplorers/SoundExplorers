@@ -4,7 +4,7 @@ using System.Windows.Forms;
 using JetBrains.Annotations;
 
 namespace SoundExplorers.View {
-  internal class GridContextMenu : EditContextMenuBase, IGridMenu {
+  internal class GridContextMenu : EditContextMenuBase {
     public GridContextMenu([NotNull] GridBase grid) {
       Grid = grid;
     }
@@ -41,8 +41,11 @@ namespace SoundExplorers.View {
         // currently this only applies to TextBoxCells.
         e.Cancel = true;
       }
-      Grid.EnableMenuItems(this);
+      Grid.EnableMenuItems(CutMenuItem, CopyMenuItem, PasteMenuItem, DeleteMenuItem,
+        SelectAllMenuItem, DeleteSelectedRowsMenuItem);
     }
+
+    private bool IsAlreadyInEditMode { get; set; }
 
     /// <summary>
     ///   The grid context menu does not do edits on TextBox cells that are already in
@@ -51,19 +54,23 @@ namespace SoundExplorers.View {
     ///   grid context menu and the TextBox context menu.
     ///   So we need to allow for the cell either already being in edit mode or not.
     /// </summary>
-    private void DoCellEdit([NotNull] Action action) {
-      bool isAlreadyInEditMode = Grid.IsCurrentCellInEditMode;
-      if (!isAlreadyInEditMode) {
+    private void BeginCellEditIfRequired() {
+      IsAlreadyInEditMode = Grid.IsCurrentCellInEditMode;
+      if (!IsAlreadyInEditMode) {
         Grid.BeginEdit(true);
       }
-      action.Invoke();
-      if (!isAlreadyInEditMode) {
+    }
+    
+    private void EndCellEditIfRequired() {
+      if (!IsAlreadyInEditMode) {
         Grid.EndEdit();
       }
     }
 
     public override void Cut() {
-      DoCellEdit(TextBox.Cut);
+      BeginCellEditIfRequired();
+      TextBox.Cut();
+      EndCellEditIfRequired();
     }
 
     public override void Copy() {
@@ -71,19 +78,25 @@ namespace SoundExplorers.View {
     }
 
     public override void Paste() {
-      DoCellEdit(() => Grid.CurrentCell.Value = Clipboard.GetText());
+      if (Grid.IsTextBoxCellCurrent) {
+        BeginCellEditIfRequired();
+        TextBox.SelectedText = Clipboard.GetText();
+        EndCellEditIfRequired();
+      } else {
+        Grid.CurrentCell.Value = Clipboard.GetText();
+      }
     }
 
     public override void Delete() {
-      DoCellEdit(() => DeleteTextBoxSelectedText(TextBox));
+      BeginCellEditIfRequired();
+      DeleteTextBoxSelectedText(TextBox);
+      EndCellEditIfRequired();
     }
 
     public override void SelectAll() {
-      if (Grid.IsCurrentCellInEditMode) {
-        DoCellEdit(TextBox.SelectAll);
-      } else {
-        Grid.BeginEdit(true);
-      }
+      BeginCellEditIfRequired();
+      TextBox.SelectAll();
+      EndCellEditIfRequired();
     }
 
     public override void DeleteSelectedRows() {

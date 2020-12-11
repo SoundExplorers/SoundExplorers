@@ -29,14 +29,20 @@ namespace SoundExplorers.View {
       }
     } 
 
-    public void EnableMenuItems([NotNull] IGridMenu menu) {
-      menu.SelectAllMenuItem.Enabled = !CurrentCell.ReadOnly && IsTextBoxCellCurrent;
-      menu.CutMenuItem.Enabled = menu.DeleteMenuItem.Enabled =
-        menu.SelectAllMenuItem.Enabled && CopyableText.Length > 0;
-      menu.CopyMenuItem.Enabled = CopyableText.Length > 0;
-      menu.PasteMenuItem.Enabled =
+    public void EnableMenuItems(
+      [NotNull] ToolStripMenuItem cutMenuItem,
+      [NotNull] ToolStripMenuItem copyMenuItem,
+      [NotNull] ToolStripMenuItem pasteMenuItem,
+      [NotNull] ToolStripMenuItem deleteMenuItem,
+      [NotNull] ToolStripMenuItem selectAllMenuItem,
+      [NotNull] ToolStripMenuItem deleteSelectedRowsMenuItem) {
+      selectAllMenuItem.Enabled = !CurrentCell.ReadOnly && IsTextBoxCellCurrent;
+      cutMenuItem.Enabled = deleteMenuItem.Enabled =
+        selectAllMenuItem.Enabled && CopyableText.Length > 0;
+      copyMenuItem.Enabled = CopyableText.Length > 0;
+      pasteMenuItem.Enabled =
         !CurrentCell.ReadOnly && Clipboard.ContainsText();
-      menu.DeleteSelectedRowsMenuItem.Enabled =
+      deleteSelectedRowsMenuItem.Enabled =
         !ReadOnly && !IsInsertionRowCurrent && !IsCurrentCellInEditMode;
     }
 

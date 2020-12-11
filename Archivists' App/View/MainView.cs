@@ -47,26 +47,6 @@ namespace SoundExplorers.View {
       }
     }
 
-    private void EditMenu_DropDown_Opening(object sender, CancelEventArgs e) {
-      if (MdiChildren.Any()) {
-        EditSelectAllMenuItem.Enabled = !EditorView.FocusedGrid.CurrentCell.ReadOnly &&
-                                        EditorView.FocusedGrid.IsTextBoxCellCurrent;
-        EditCutMenuItem.Enabled = EditDeleteMenuItem.Enabled =
-          EditSelectAllMenuItem.Enabled && EditorView.FocusedGrid.CopyableText.Length > 0;
-        EditCopyMenuItem.Enabled = EditorView.FocusedGrid.CopyableText.Length > 0;
-        EditPasteMenuItem.Enabled =
-          !EditorView.FocusedGrid.CurrentCell.ReadOnly && Clipboard.ContainsText();
-        EditDeleteSelectedRowsMenuItem.Enabled =
-          !EditorView.FocusedGrid.ReadOnly &&
-          !EditorView.FocusedGrid.IsInsertionRowCurrent &&
-          !EditorView.FocusedGrid.IsCurrentCellInEditMode;
-      } else {
-        foreach (ToolStripItem item in EditMenu.DropDownItems) {
-          item.Enabled = false;
-        }
-      }
-    }
-
     /// <summary>
     ///   Creates a MainView and its associated controller,
     ///   as per the Model-View-Controller design pattern,
@@ -102,6 +82,19 @@ namespace SoundExplorers.View {
       );
     }
 
+    private void EditMenu_DropDown_Opening(object sender, CancelEventArgs e) {
+      if (MdiChildren.Any()) {
+        EditorView.FocusedGrid.EnableMenuItems(
+          EditCutMenuItem, EditCopyMenuItem, EditPasteMenuItem, 
+          EditDeleteMenuItem, 
+          EditSelectAllMenuItem, EditDeleteSelectedRowsMenuItem);
+      } else {
+        foreach (ToolStripItem item in EditMenu.DropDownItems) {
+          item.Enabled = false;
+        }
+      }
+    }
+
     private void EditCutMenuItem_Click(object sender, EventArgs e) {
       EditorView.FocusedGrid.ContextMenu.Cut();
     }
@@ -111,7 +104,7 @@ namespace SoundExplorers.View {
     }
 
     private void EditPasteMenuItem_Click(object sender, EventArgs e) {
-      EditorView.FocusedGrid.ContextMenu.DeleteSelectedRows();
+      EditorView.FocusedGrid.ContextMenu.Paste();
     }
 
     private void EditDeleteMenuItem_Click(object sender, EventArgs e) {
