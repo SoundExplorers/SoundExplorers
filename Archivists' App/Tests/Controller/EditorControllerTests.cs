@@ -169,6 +169,22 @@ namespace SoundExplorers.Tests.Controller {
     }
 
     [Test]
+    public void DisallowAddWithoutIdentifyingParent() {
+      var controller = CreateController(typeof(EventList));
+      controller.FetchData(); // Show an empty grid
+      var bindingList =
+        (TypedBindingList<Event, EventBindingItem>)controller.MainList.BindingList;
+      MainGridController.CreateAndGoToInsertionRow();
+      var event1Date = DateTime.Parse("2020/03/01");
+      bindingList[0].Date = event1Date;
+      MainGridController.OnRowValidated(0);
+      Assert.AreEqual(1, View.ShowErrorMessageCount, "ShowErrorMessageCount");
+      Assert.AreEqual(
+        "Event '2020/03/01' cannot be added because its Location has not been specified.",
+        View.LastErrorMessage, "LastErrorMessage");
+    }
+
+    [Test]
     public void Edit() {
       const string name1 = "Auntie";
       const string name2 = "Uncle";

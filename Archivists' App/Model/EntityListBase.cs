@@ -363,14 +363,15 @@ namespace SoundExplorers.Model {
         var entity = bindingItem.CreateEntity();
         Session.Persist(entity);
         Add(entity);
+        Session.Commit();
         IsRemovingInvalidInsertionRow = false;
       } catch (Exception exception) {
         //Debug.WriteLine(exception);
+        Session.Abort();
         ErrorBindingItem = bindingItem;
         throw CreateDatabaseUpdateErrorException(exception, rowIndex);
       } finally {
         IsInsertionRowCurrent = false;
-        Session.Commit();
       }
     }
 
