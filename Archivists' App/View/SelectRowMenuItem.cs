@@ -9,6 +9,8 @@ namespace SoundExplorers.View {
     public SelectRowMenuItem() {
       ImageTransparentColor = Color.Black;
       Name = "SelectRowMenuItem";
+      // The keyboard shortcut is built into DataGridView,
+      // so here it is a dummy, represented by this text display.
       ShortcutKeyDisplayString = "Shift+Space";
     }
 
