@@ -13,7 +13,7 @@ namespace SoundExplorers.View {
     public new GridContextMenu ContextMenu =>
       _contextMenu ?? (_contextMenu = new GridContextMenu(this));
 
-    public bool IsInsertionRowCurrent =>
+    private bool IsInsertionRowCurrent =>
       (this as MainGrid)?.Controller.IsInsertionRowCurrent ?? false;
 
     public bool IsTextBoxCellCurrent =>
@@ -27,7 +27,17 @@ namespace SoundExplorers.View {
         }
         return CurrentCell.Value?.ToString() ?? string.Empty;
       }
-    } 
+    }
+
+    public bool CanCut => CanSelectAll && CopyableText.Length > 0;
+    public bool CanCopy => CopyableText.Length > 0;
+    public bool CanPaste => !CurrentCell.ReadOnly && Clipboard.ContainsText();
+    public bool CanDelete => CanCut;
+    public bool CanSelectAll => !CurrentCell.ReadOnly && IsTextBoxCellCurrent;
+    public bool CanSelectRow => true;
+
+    public bool CanDeleteSelectedRows =>
+      !ReadOnly && !IsInsertionRowCurrent && !IsCurrentCellInEditMode;
 
     public void EnableMenuItems(
       [NotNull] ToolStripMenuItem cutMenuItem,
@@ -35,15 +45,15 @@ namespace SoundExplorers.View {
       [NotNull] ToolStripMenuItem pasteMenuItem,
       [NotNull] ToolStripMenuItem deleteMenuItem,
       [NotNull] ToolStripMenuItem selectAllMenuItem,
+      [NotNull] ToolStripMenuItem selectRowMenuItem,
       [NotNull] ToolStripMenuItem deleteSelectedRowsMenuItem) {
-      selectAllMenuItem.Enabled = !CurrentCell.ReadOnly && IsTextBoxCellCurrent;
-      cutMenuItem.Enabled = deleteMenuItem.Enabled =
-        selectAllMenuItem.Enabled && CopyableText.Length > 0;
-      copyMenuItem.Enabled = CopyableText.Length > 0;
-      pasteMenuItem.Enabled =
-        !CurrentCell.ReadOnly && Clipboard.ContainsText();
-      deleteSelectedRowsMenuItem.Enabled =
-        !ReadOnly && !IsInsertionRowCurrent && !IsCurrentCellInEditMode;
+      selectAllMenuItem.Enabled = CanSelectAll;
+      cutMenuItem.Enabled = CanCut;
+      deleteMenuItem.Enabled = CanDelete;
+      copyMenuItem.Enabled = CanCopy;
+      pasteMenuItem.Enabled = CanPaste;
+      selectRowMenuItem.Enabled = CanSelectRow;
+      deleteSelectedRowsMenuItem.Enabled = CanDeleteSelectedRows;
     }
 
     /// <summary>

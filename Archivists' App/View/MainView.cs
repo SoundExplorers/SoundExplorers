@@ -87,7 +87,7 @@ namespace SoundExplorers.View {
         EditorView.FocusedGrid.EnableMenuItems(
           EditCutMenuItem, EditCopyMenuItem, EditPasteMenuItem, 
           EditDeleteMenuItem, 
-          EditSelectAllMenuItem, EditDeleteSelectedRowsMenuItem);
+          EditSelectAllMenuItem, EditSelectRowMenuItem, EditDeleteSelectedRowsMenuItem);
       } else {
         foreach (ToolStripItem item in EditMenu.DropDownItems) {
           item.Enabled = false;
@@ -113,6 +113,10 @@ namespace SoundExplorers.View {
 
     private void EditSelectAllMenuItem_Click(object sender, EventArgs e) {
       EditorView.FocusedGrid.ContextMenu.SelectAll();
+    }
+
+    private void EditSelectRowMenuItem_Click(object sender, EventArgs e) {
+      EditorView.FocusedGrid.ContextMenu.SelectRow();
     }
 
     private void EditDeleteSelectedRowsMenuItem_Click(object sender, EventArgs e) {

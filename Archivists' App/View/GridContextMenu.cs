@@ -25,6 +25,7 @@ namespace SoundExplorers.View {
             DeleteMenuItem,
             new ToolStripSeparator(),
             SelectAllMenuItem,
+            SelectRowMenuItem,
             DeleteSelectedRowsMenuItem
           });
         }
@@ -39,10 +40,10 @@ namespace SoundExplorers.View {
         // A context menu specific to the cell editor type
         // will be shown instead if available:
         // currently this only applies to TextBoxCells.
-        e.Cancel = true;
+        e.Cancel = true; // Stops the context menu from being shown.
       }
       Grid.EnableMenuItems(CutMenuItem, CopyMenuItem, PasteMenuItem, DeleteMenuItem,
-        SelectAllMenuItem, DeleteSelectedRowsMenuItem);
+        SelectAllMenuItem, SelectRowMenuItem, DeleteSelectedRowsMenuItem);
     }
 
     private bool IsAlreadyInEditMode { get; set; }
@@ -68,16 +69,28 @@ namespace SoundExplorers.View {
     }
 
     public override void Cut() {
+      if (!Grid.CanCut) {
+        // Prevents use of keyboard shortcut outside valid context. 
+        return;
+      }
       BeginCellEditIfRequired();
       TextBox.Cut();
       EndCellEditIfRequired();
     }
 
     public override void Copy() {
+      if (!Grid.CanCopy) {
+        // Prevents use of keyboard shortcut outside valid context. 
+        return;
+      }
       Clipboard.SetText(Grid.CopyableText);
     }
 
     public override void Paste() {
+      if (!Grid.CanPaste) {
+        // Prevents use of keyboard shortcut outside valid context. 
+        return;
+      }
       if (Grid.IsTextBoxCellCurrent) {
         BeginCellEditIfRequired();
         TextBox.SelectedText = Clipboard.GetText();
@@ -88,18 +101,40 @@ namespace SoundExplorers.View {
     }
 
     public override void Delete() {
+      if (!Grid.CanDelete) {
+        // Prevents use of keyboard shortcut outside valid context. 
+        return;
+      }
       BeginCellEditIfRequired();
       DeleteTextBoxSelectedText(TextBox);
       EndCellEditIfRequired();
     }
 
     public override void SelectAll() {
+      if (!Grid.CanSelectAll) {
+        // Prevents use of keyboard shortcut outside valid context. 
+        return;
+      }
       BeginCellEditIfRequired();
       TextBox.SelectAll();
       EndCellEditIfRequired();
     }
 
+    public override void SelectRow() {
+      if (!Grid.CanSelectRow) {
+        // Prevents use of keyboard shortcut outside valid context. 
+        return;
+      }
+      if (Grid.CurrentRow != null) {
+        Grid.CurrentRow.Selected = true;
+      }
+    }
+
     public override void DeleteSelectedRows() {
+      if (!Grid.CanDeleteSelectedRows) {
+        // Prevents use of keyboard shortcut outside valid context. 
+        return;
+      }
       if (Grid.SelectedRows.Count == 0) {
         if (Grid.CurrentRow != null) {
           Grid.CurrentRow.Selected = true;

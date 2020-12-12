@@ -40,6 +40,7 @@ namespace SoundExplorers.View {
             this.EditDeleteMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.EditSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.EditSelectAllMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.EditSelectRowMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.EditDeleteSelectedRowsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ViewMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.ViewToolBarMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -135,6 +136,7 @@ namespace SoundExplorers.View {
                 this.EditDeleteMenuItem, 
                 this.EditSeparator1,
                 this.EditSelectAllMenuItem, 
+                this.EditSelectRowMenuItem, 
                 this.EditDeleteSelectedRowsMenuItem
             });
             this.EditMenu.Name = "EditMenu";
@@ -181,11 +183,19 @@ namespace SoundExplorers.View {
             // 
             this.EditSelectAllMenuItem.ImageTransparentColor = System.Drawing.Color.Black;
             this.EditSelectAllMenuItem.Name = "EditSelectAllMenuItem";
-            this.EditSelectAllMenuItem.ShortcutKeyDisplayString = "Ctrl+A, F2";
             this.EditSelectAllMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.A)));
             this.EditSelectAllMenuItem.Size = new System.Drawing.Size(308, 24);
             this.EditSelectAllMenuItem.Text = "Select &All";
             this.EditSelectAllMenuItem.Click += new System.EventHandler(this.EditSelectAllMenuItem_Click);
+            // 
+            // EditSelectRowMenuItem
+            // 
+            this.EditSelectRowMenuItem.ImageTransparentColor = System.Drawing.Color.Black;
+            this.EditSelectRowMenuItem.Name = "EditSelectRowMenuItem";
+            this.EditSelectRowMenuItem.ShortcutKeyDisplayString = "Shift+Space";
+            this.EditSelectRowMenuItem.Size = new System.Drawing.Size(308, 24);
+            this.EditSelectRowMenuItem.Text = "&Select Row";
+            this.EditSelectRowMenuItem.Click += new System.EventHandler(this.EditSelectRowMenuItem_Click);
             // 
             // EditDeleteSelectedRowsMenuItem
             // 
@@ -446,6 +456,7 @@ namespace SoundExplorers.View {
         private System.Windows.Forms.ToolStripMenuItem EditDeleteMenuItem;
         private System.Windows.Forms.ToolStripSeparator EditSeparator1;
         private System.Windows.Forms.ToolStripMenuItem EditSelectAllMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem EditSelectRowMenuItem;
         private System.Windows.Forms.ToolStripMenuItem EditDeleteSelectedRowsMenuItem;
         private System.Windows.Forms.ToolStripMenuItem ViewMenu;
         private System.Windows.Forms.ToolStripMenuItem ViewToolBarMenuItem;

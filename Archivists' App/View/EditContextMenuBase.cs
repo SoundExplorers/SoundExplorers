@@ -18,6 +18,8 @@ namespace SoundExplorers.View {
       DeleteMenuItem.Click += DeleteMenuItem_Click;
       SelectAllMenuItem = new SelectAllMenuItem();
       SelectAllMenuItem.Click += SelectAllMenuItem_Click;
+      SelectRowMenuItem = new SelectRowMenuItem();
+      SelectRowMenuItem.Click += SelectRowMenuItem_Click;
       DeleteSelectedRowsMenuItem = new DeleteSelectedRowsMenuItem();
       DeleteSelectedRowsMenuItem.Click += DeleteSelectedRowsMenuItem_Click;
       // The menu properties must be set after creating the menu items,
@@ -28,12 +30,13 @@ namespace SoundExplorers.View {
     }
     
     [NotNull] protected UndoMenuItem UndoMenuItem { get; }
-    [NotNull] public CutMenuItem CutMenuItem { get; }
-    [NotNull] public CopyMenuItem CopyMenuItem { get; }
-    [NotNull] public DeleteMenuItem DeleteMenuItem { get; }
-    [NotNull] public PasteMenuItem PasteMenuItem { get; }
-    [NotNull] public SelectAllMenuItem SelectAllMenuItem { get; }
-    [NotNull] public DeleteSelectedRowsMenuItem DeleteSelectedRowsMenuItem { get; }
+    [NotNull] protected CutMenuItem CutMenuItem { get; }
+    [NotNull] protected CopyMenuItem CopyMenuItem { get; }
+    [NotNull] protected DeleteMenuItem DeleteMenuItem { get; }
+    [NotNull] protected PasteMenuItem PasteMenuItem { get; }
+    [NotNull] protected SelectAllMenuItem SelectAllMenuItem { get; }
+    [NotNull] protected SelectRowMenuItem SelectRowMenuItem { get; }
+    [NotNull] protected DeleteSelectedRowsMenuItem DeleteSelectedRowsMenuItem { get; }
 
     protected static void DeleteTextBoxSelectedText([NotNull] TextBox textBox) {
       int selectionStart = textBox.SelectionStart;
@@ -55,6 +58,10 @@ namespace SoundExplorers.View {
     public abstract void Delete();
 
     public abstract void SelectAll();
+
+    public virtual void SelectRow() {
+      throw new NotSupportedException();
+    }
 
     public virtual void DeleteSelectedRows() {
       throw new NotSupportedException();
@@ -82,6 +89,10 @@ namespace SoundExplorers.View {
 
     private void SelectAllMenuItem_Click(object sender, EventArgs e) {
       SelectAll();
+    }
+
+    private void SelectRowMenuItem_Click(object sender, EventArgs e) {
+      SelectRow();
     }
 
     private void DeleteSelectedRowsMenuItem_Click(object sender, EventArgs e) {

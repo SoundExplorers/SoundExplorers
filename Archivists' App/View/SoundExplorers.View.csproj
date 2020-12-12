@@ -97,6 +97,7 @@
         <Compile Include="SelectEditorView.Designer.cs">
           <DependentUpon>SelectEditorView.cs</DependentUpon>
         </Compile>
+        <Compile Include="SelectRowMenuItem.cs" />
         <Compile Include="SizeableFormOptions.cs" />
         <Compile Include="SplashForm.cs">
           <SubType>Form</SubType>
