@@ -107,7 +107,7 @@ namespace SoundExplorers.Model {
     ///   see <see cref="BindingList_ListChanged"/>.
     ///   The insertion row ceases to be the new row once any of its cells is edited:
     ///   at that point, an empty new row is automatically added below the insertion row.
-    ///   Therefore the insertion row is always the current row.
+    ///   Therefore the insertion row, if it exists, is always the current row.
     /// </remarks>
     public bool IsInsertionRowCurrent { get; private set; }
 
