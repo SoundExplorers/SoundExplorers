@@ -14,13 +14,16 @@ namespace SoundExplorers.View {
     [NotNull] public new GridContextMenu ContextMenu =>
       _contextMenu ?? (_contextMenu = new GridContextMenu(this));
 
-    [NotNull] private DataGridViewRow InsertionRow => !ReadOnly
-      ? Rows[Rows.Count - 1]
-      : throw new InvalidOperationException(
-        "A read-only grid does not contain an insertion row.");
-
     public bool IsTextBoxCellCurrent =>
       CurrentCell.OwningColumn.CellTemplate is TextBoxCell; 
+
+    /// <summary>
+    ///   The new (i.e. empty) row at the bottom of an editable grid.
+    /// </summary>
+    [NotNull] private DataGridViewRow NewRow => !ReadOnly
+      ? Rows[Rows.Count - 1]
+      : throw new InvalidOperationException(
+        "A read-only grid does not contain a new row.");
 
     /// <summary>
     ///   Gets the cell text that can be copied to the clipboard or, if there is none,
@@ -45,7 +48,7 @@ namespace SoundExplorers.View {
 
     public bool CanDeleteSelectedRows =>
       !ReadOnly && !IsCurrentCellInEditMode && SelectedRows.Count > 0 &&
-      !SelectedRows.Contains(InsertionRow);
+      !SelectedRows.Contains(NewRow);
 
     /// <summary>
     ///   Enables or disables the menu items of the grid's context menu

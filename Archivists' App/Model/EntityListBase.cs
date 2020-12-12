@@ -98,6 +98,17 @@ namespace SoundExplorers.Model {
     ///   Gets whether the current grid row is the insertion row,
     ///   which is for adding new entities and is located at the bottom of the grid.
     /// </summary>
+    /// <remarks>
+    ///   What we here call the insertion row
+    ///   is nor necessarily the grid's new (i.e. empty) row.
+    ///   Rather it is the row that, if committed, will provide the data for an entity
+    ///   to be inserted into the database.
+    ///   The new row becomes the insertion row when entered:
+    ///   see <see cref="BindingList_ListChanged"/>.
+    ///   The insertion row ceases to be the new row once any of its cells is edited:
+    ///   at that point, an empty new row is automatically added below the insertion row.
+    ///   Therefore the insertion row is always the current row.
+    /// </remarks>
     public bool IsInsertionRowCurrent { get; private set; }
 
     /// <summary>
@@ -279,10 +290,10 @@ namespace SoundExplorers.Model {
         return;
       }
       if (BindingList != null) {
-        BindingList.ListChanged -= BindingListOnListChanged;
+        BindingList.ListChanged -= BindingList_ListChanged;
       }
       BindingList = CreateBindingList();
-      BindingList.ListChanged += BindingListOnListChanged;
+      BindingList.ListChanged += BindingList_ListChanged;
     }
 
     public void RemoveInsertionBindingItem() {
@@ -375,21 +386,21 @@ namespace SoundExplorers.Model {
       }
     }
 
-    private void BindingListOnListChanged(object sender, ListChangedEventArgs e) {
+    private void BindingList_ListChanged(object sender, ListChangedEventArgs e) {
       switch (e.ListChangedType) {
         case ListChangedType.ItemAdded: // Insertion row entered
-          //Debug.WriteLine("ListChangedType.ItemAdded: Insertion row entered");
+          // Debug.WriteLine("ListChangedType.ItemAdded: Insertion row entered");
           IsDataLoadComplete = true;
           IsInsertionRowCurrent = true;
           break;
         case ListChangedType.ItemChanged: // Cell edit completed 
           // Debug.WriteLine(
-          //   $"EntityListBase.BindingListOnListChanged: ItemChanged, row {e.NewIndex}");
+          //   $"EntityListBase.BindingList_ListChanged: ItemChanged, row {e.NewIndex}");
           // Debug.WriteLine(
           //   $"ListChangedType.ItemChanged:  {e.PropertyDescriptor.Name} = '{e.PropertyDescriptor.GetValue(BindingList[e.NewIndex])}', cell edit completed or cancelled");
           HasRowBeenEdited = true;
           // Debug.WriteLine(
-          //   $"EntityListBase.BindingListOnListChanged: ItemChanged, HasRowBeenEdited = {HasRowBeenEdited}");
+          //   $"EntityListBase.BindingList_ListChanged: ItemChanged, HasRowBeenEdited = {HasRowBeenEdited}");
           if (!IsInsertionRowCurrent) {
             UpdateExistingEntityProperty(e.NewIndex, e.PropertyDescriptor.Name);
           }
