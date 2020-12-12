@@ -16,6 +16,7 @@ namespace SoundExplorers.View {
       InitializeComponent();
       HideMainMenuImageMargins();
       EditMenu.DropDown.Opening += EditMenu_DropDown_Opening;
+      WindowsMenu.DropDown.Opening += WindowsMenu_DropDown_Opening;
     }
 
     internal EditorView EditorView => ActiveMdiChild as EditorView ??
@@ -85,8 +86,8 @@ namespace SoundExplorers.View {
     private void EditMenu_DropDown_Opening(object sender, CancelEventArgs e) {
       if (MdiChildren.Any()) {
         EditorView.FocusedGrid.EnableMenuItems(
-          EditCutMenuItem, EditCopyMenuItem, EditPasteMenuItem, 
-          EditDeleteMenuItem, 
+          EditCutMenuItem, EditCopyMenuItem, EditPasteMenuItem,
+          EditDeleteMenuItem,
           EditSelectAllMenuItem, EditSelectRowMenuItem, EditDeleteSelectedRowsMenuItem);
       } else {
         foreach (ToolStripItem item in EditMenu.DropDownItems) {
@@ -307,18 +308,35 @@ namespace SoundExplorers.View {
       ToolStrip.Visible = ViewToolBarMenuItem.Checked;
     }
 
-    private void WindowsArrangeIconsMenuItem_Click(object sender, EventArgs e) {
-      LayoutMdi(MdiLayout.ArrangeIcons);
+    private void WindowsMenu_DropDown_Opening(object sender, CancelEventArgs e) {
+      bool hasChildren = MdiChildren.Any();
+      foreach (ToolStripItem item in WindowsMenu.DropDownItems) {
+        item.Enabled = hasChildren;
+      }
+      if (!hasChildren) {
+        return;
+      }
+      bool hasMinimizedChildren = (
+        from child in MdiChildren
+        where child.WindowState == FormWindowState.Minimized
+        select child).Any();
+      WindowsArrangeIconsMenuItem.Enabled = hasMinimizedChildren;
     }
 
     private void WindowsCascadeMenuItem_Click(object sender, EventArgs e) {
       LayoutMdi(MdiLayout.Cascade);
     }
 
-    private void WindowsCloseAllMenuItem_Click(object sender, EventArgs e) {
-      foreach (var childForm in MdiChildren) {
-        childForm.Close();
-      }
+    private void WindowsTileSideBySideMenuItem_Click(object sender, EventArgs e) {
+      LayoutMdi(MdiLayout.TileVertical);
+    }
+
+    private void WindowsTileStackedMenuItem_Click(object sender, EventArgs e) {
+      LayoutMdi(MdiLayout.TileHorizontal);
+    }
+
+    private void WindowsArrangeIconsMenuItem_Click(object sender, EventArgs e) {
+      LayoutMdi(MdiLayout.ArrangeIcons);
     }
 
     private void
@@ -328,12 +346,10 @@ namespace SoundExplorers.View {
       }
     }
 
-    private void WindowsTileSideBySideMenuItem_Click(object sender, EventArgs e) {
-      LayoutMdi(MdiLayout.TileVertical);
-    }
-
-    private void WindowsTileStackedMenuItem_Click(object sender, EventArgs e) {
-      LayoutMdi(MdiLayout.TileHorizontal);
+    private void WindowsCloseAllMenuItem_Click(object sender, EventArgs e) {
+      foreach (var childForm in MdiChildren) {
+        childForm.Close();
+      }
     }
 
     protected override void WndProc(ref Message m) {
