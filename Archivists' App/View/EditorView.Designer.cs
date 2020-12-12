@@ -25,7 +25,7 @@ namespace SoundExplorers.View {
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
-            this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EditorView));
             this.ImageSplitContainer = new System.Windows.Forms.SplitContainer();
             this.GridSplitContainer = new System.Windows.Forms.SplitContainer();
             this.ParentGrid = new SoundExplorers.View.ParentGrid();
@@ -51,7 +51,6 @@ namespace SoundExplorers.View {
             this.ImageSplitContainer.Location = new System.Drawing.Point(0, 0);
             this.ImageSplitContainer.Name = "ImageSplitContainer";
             this.ImageSplitContainer.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            this.ImageSplitContainer.Panel2Collapsed = true;
             // 
             // ImageSplitContainer.Panel1
             // 
@@ -61,6 +60,7 @@ namespace SoundExplorers.View {
             // 
             this.ImageSplitContainer.Panel2.Controls.Add(this.MissingImageLabel);
             this.ImageSplitContainer.Panel2.Controls.Add(this.FittedPictureBox1);
+            this.ImageSplitContainer.Panel2Collapsed = true;
             this.ImageSplitContainer.Size = new System.Drawing.Size(379, 322);
             this.ImageSplitContainer.SplitterDistance = 222;
             this.ImageSplitContainer.TabIndex = 4;
@@ -79,26 +79,34 @@ namespace SoundExplorers.View {
             // GridSplitContainer.Panel2
             // 
             this.GridSplitContainer.Panel2.Controls.Add(this.MainGrid);
-            this.GridSplitContainer.Size = new System.Drawing.Size(379, 222);
-            this.GridSplitContainer.SplitterDistance = 105;
+            this.GridSplitContainer.Size = new System.Drawing.Size(379, 322);
+            this.GridSplitContainer.SplitterDistance = 152;
             this.GridSplitContainer.TabIndex = 4;
             // 
             // ParentGrid
             // 
+            this.ParentGrid.AllowUserToAddRows = false;
+            this.ParentGrid.AllowUserToDeleteRows = false;
+            this.ParentGrid.AllowUserToOrderColumns = true;
+            this.ParentGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.ParentGrid.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ParentGrid.Location = new System.Drawing.Point(0, 0);
             this.ParentGrid.Margin = new System.Windows.Forms.Padding(4);
+            this.ParentGrid.MultiSelect = false;
             this.ParentGrid.Name = "ParentGrid";
-            this.ParentGrid.Size = new System.Drawing.Size(379, 105);
+            this.ParentGrid.ReadOnly = true;
+            this.ParentGrid.Size = new System.Drawing.Size(379, 152);
             this.ParentGrid.TabIndex = 3;
             // 
             // MainGrid
             // 
+            this.MainGrid.AllowUserToOrderColumns = true;
+            this.MainGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.MainGrid.Dock = System.Windows.Forms.DockStyle.Fill;
             this.MainGrid.Location = new System.Drawing.Point(0, 0);
             this.MainGrid.Margin = new System.Windows.Forms.Padding(4);
             this.MainGrid.Name = "MainGrid";
-            this.MainGrid.Size = new System.Drawing.Size(379, 113);
+            this.MainGrid.Size = new System.Drawing.Size(379, 166);
             this.MainGrid.TabIndex = 4;
             // 
             // MissingImageLabel
@@ -107,7 +115,7 @@ namespace SoundExplorers.View {
             this.MissingImageLabel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.MissingImageLabel.Location = new System.Drawing.Point(0, 0);
             this.MissingImageLabel.Name = "MissingImageLabel";
-            this.MissingImageLabel.Size = new System.Drawing.Size(379, 96);
+            this.MissingImageLabel.Size = new System.Drawing.Size(150, 46);
             this.MissingImageLabel.TabIndex = 1;
             this.MissingImageLabel.Text = "You may drag an image file here.";
             this.MissingImageLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -119,7 +127,7 @@ namespace SoundExplorers.View {
             this.FittedPictureBox1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.FittedPictureBox1.Location = new System.Drawing.Point(0, 0);
             this.FittedPictureBox1.Name = "FittedPictureBox1";
-            this.FittedPictureBox1.Size = new System.Drawing.Size(379, 96);
+            this.FittedPictureBox1.Size = new System.Drawing.Size(150, 46);
             this.FittedPictureBox1.TabIndex = 0;
             this.FittedPictureBox1.TabStop = false;
             this.FittedPictureBox1.DragDrop += new System.Windows.Forms.DragEventHandler(this.FittedPictureBox1_DragDrop);
@@ -133,11 +141,11 @@ namespace SoundExplorers.View {
             this.ClientSize = new System.Drawing.Size(379, 322);
             this.Controls.Add(this.ImageSplitContainer);
             this.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
             this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "EditorView";
-            this.ShowIcon = false;
-            this.StartPosition = FormStartPosition.Manual;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "EditorView";
             this.Activated += new System.EventHandler(this.EditorView_Activated);
             this.Deactivate += new System.EventHandler(this.EditorView_Deactivate);
