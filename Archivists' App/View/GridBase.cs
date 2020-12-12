@@ -20,8 +20,7 @@ namespace SoundExplorers.View {
         "A read-only grid does not contain an insertion row.");
 
     public bool IsTextBoxCellCurrent =>
-      CurrentCell.OwningColumn
-        .CellTemplate is TextBoxCell; // TODO Use IsTextBoxCellCurrent elsewhere? 
+      CurrentCell.OwningColumn.CellTemplate is TextBoxCell; 
 
     /// <summary>
     ///   Gets the cell text that can be copied to the clipboard or, if there is none,
