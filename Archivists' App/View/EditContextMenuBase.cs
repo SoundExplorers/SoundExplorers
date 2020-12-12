@@ -6,9 +6,8 @@ using JetBrains.Annotations;
 namespace SoundExplorers.View {
   internal abstract class EditContextMenuBase : ContextMenuStrip {
     protected EditContextMenuBase() {
-      // Using these custom menu items on the Edit menu on the 
-      // main window's menu bar caused display problems:
-      // items could become underlined or go missing.
+      // Using these custom menu items of the Edit menu on the main window menu bar 
+      // caused display problems: items could become underlined or go missing.
       // That why equivalents have had to be duplicated in MainView.Designer.
       UndoMenuItem = new UndoMenuItem();
       UndoMenuItem.Click += UndoMenuItem_Click;

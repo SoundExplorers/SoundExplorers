@@ -1,4 +1,5 @@
-﻿using System.Windows.Forms;
+﻿using System;
+using System.Windows.Forms;
 using JetBrains.Annotations;
 
 namespace SoundExplorers.View {
@@ -10,15 +11,22 @@ namespace SoundExplorers.View {
       ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
     }
 
-    public new GridContextMenu ContextMenu =>
+    [NotNull] public new GridContextMenu ContextMenu =>
       _contextMenu ?? (_contextMenu = new GridContextMenu(this));
 
-    private bool IsInsertionRowCurrent =>
-      (this as MainGrid)?.Controller.IsInsertionRowCurrent ?? false;
+    [NotNull] private DataGridViewRow InsertionRow => !ReadOnly
+      ? Rows[Rows.Count - 1]
+      : throw new InvalidOperationException(
+        "A read-only grid does not contain an insertion row.");
 
     public bool IsTextBoxCellCurrent =>
-      CurrentCell.OwningColumn.CellTemplate is TextBoxCell;
+      CurrentCell.OwningColumn
+        .CellTemplate is TextBoxCell; // TODO Use IsTextBoxCellCurrent elsewhere? 
 
+    /// <summary>
+    ///   Gets the cell text that can be copied to the clipboard or, if there is none,
+    ///   an empty string.
+    /// </summary>
     [NotNull]
     public string CopyableText {
       get {
@@ -34,11 +42,16 @@ namespace SoundExplorers.View {
     public bool CanPaste => !CurrentCell.ReadOnly && Clipboard.ContainsText();
     public bool CanDelete => CanCut;
     public bool CanSelectAll => !CurrentCell.ReadOnly && IsTextBoxCellCurrent;
-    public bool CanSelectRow => true;
+    public bool CanSelectRow => CurrentRow != null;
 
     public bool CanDeleteSelectedRows =>
-      !ReadOnly && !IsInsertionRowCurrent && !IsCurrentCellInEditMode;
+      !ReadOnly && !IsCurrentCellInEditMode && SelectedRows.Count > 0 &&
+      !SelectedRows.Contains(InsertionRow);
 
+    /// <summary>
+    ///   Enables or disables the menu items of the grid's context menu
+    ///   or the corresponding items of the Edit menu on the main window menu bar.  
+    /// </summary>
     public void EnableMenuItems(
       [NotNull] ToolStripMenuItem cutMenuItem,
       [NotNull] ToolStripMenuItem copyMenuItem,

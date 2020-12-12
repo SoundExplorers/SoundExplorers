@@ -50,7 +50,7 @@ namespace SoundExplorers.View {
 
     /// <summary>
     ///   The grid context menu does not do edits on TextBox cells that are already in
-    ///   edit mode.  But the Edit menu on the main window menu,
+    ///   edit mode.  But the Edit menu on the main window menu bar,
     ///   which used the same commands, does, as it combines the functions of the
     ///   grid context menu and the TextBox context menu.
     ///   So we need to allow for the cell either already being in edit mode or not.
@@ -125,20 +125,13 @@ namespace SoundExplorers.View {
         // Prevents use of keyboard shortcut outside valid context. 
         return;
       }
-      if (Grid.CurrentRow != null) {
-        Grid.CurrentRow.Selected = true;
-      }
+      (Grid.CurrentRow ?? throw new NullReferenceException()).Selected = true;
     }
 
     public override void DeleteSelectedRows() {
       if (!Grid.CanDeleteSelectedRows) {
         // Prevents use of keyboard shortcut outside valid context. 
         return;
-      }
-      if (Grid.SelectedRows.Count == 0) {
-        if (Grid.CurrentRow != null) {
-          Grid.CurrentRow.Selected = true;
-        }
       }
       foreach (DataGridViewRow row in Grid.SelectedRows) {
         Grid.Rows.Remove(row);
