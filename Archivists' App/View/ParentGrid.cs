@@ -30,7 +30,9 @@ namespace SoundExplorers.View {
     /// </remarks>
     protected override void OnCurrentCellChanged(EventArgs e) {
       base.OnCurrentCellChanged(e);
-      MainGrid.AutoResizeColumns();
+      if (CurrentCell != null) {
+        MainGrid.AutoResizeColumns();
+      }
     }
 
     protected override void OnRowEnter(DataGridViewCellEventArgs e) {

@@ -8,12 +8,11 @@ namespace SoundExplorers.View {
     public GridContextMenu([NotNull] GridBase grid) {
       Grid = grid;
     }
-
-    [NotNull]
+    
     private TextBox TextBox =>
-      (TextBox)Grid.EditingControl ??
+      (Grid as MainGrid)?.TextBox ??
       throw new InvalidOperationException(
-        "The current grid cell's editor is not a TextBox.");
+        "ParentGrid does not support the TextBox property.");
 
     public override ToolStripItemCollection Items {
       get {
@@ -34,6 +33,7 @@ namespace SoundExplorers.View {
     }
 
     private GridBase Grid { get; }
+    private bool IsAlreadyInEditMode { get; set; }
 
     protected override void OnOpening(CancelEventArgs e) {
       if (Grid.IsCurrentCellInEditMode) {
@@ -42,11 +42,10 @@ namespace SoundExplorers.View {
         // currently this only applies to TextBoxCells.
         e.Cancel = true; // Stops the context menu from being shown.
       }
-      Grid.EnableMenuItems(CutMenuItem, CopyMenuItem, PasteMenuItem, DeleteMenuItem,
+      Grid.EnableOrDisableMenuItems(CutMenuItem, CopyMenuItem, PasteMenuItem,
+        DeleteMenuItem,
         SelectAllMenuItem, SelectRowMenuItem, DeleteSelectedRowsMenuItem);
     }
-
-    private bool IsAlreadyInEditMode { get; set; }
 
     /// <summary>
     ///   The grid context menu does not do edits on TextBox cells that are already in
@@ -61,7 +60,7 @@ namespace SoundExplorers.View {
         Grid.BeginEdit(true);
       }
     }
-    
+
     private void EndCellEditIfRequired() {
       if (!IsAlreadyInEditMode) {
         Grid.EndEdit();

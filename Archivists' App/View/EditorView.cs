@@ -188,6 +188,7 @@ namespace SoundExplorers.View {
 
     private void EditorView_Load(object sender, EventArgs e) {
       MainGrid.SetController(new MainGridController(MainGrid, this));
+      MainGrid.MainView = MainView;
       // Has to be done here rather than in constructor
       // in order to tell that this is an MDI child form.
       SizeableFormOptions = SizeableFormOptions.Create(this);
@@ -201,6 +202,7 @@ namespace SoundExplorers.View {
         // Previous comment says 'Does not work if done in EditorView_Load.'
         GridSplitContainer.SplitterDistance = Controller.GridSplitterDistance;
         ParentGrid.SetController(new ParentGridController(Controller));
+        ParentGrid.MainView = MainView;
         ParentGrid.MainGrid = MainGrid;
         ParentGrid.AutoResizeColumns();
       }

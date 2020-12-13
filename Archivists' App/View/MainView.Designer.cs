@@ -32,6 +32,7 @@ namespace SoundExplorers.View {
             this.FileNewMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.FileOpenMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.FileRefreshMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.FileSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.FileExitMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.EditMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.EditCutMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -57,15 +58,14 @@ namespace SoundExplorers.View {
             this.WindowsSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.HelpMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.HelpAboutMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.ToolStrip = new System.Windows.Forms.ToolStrip();
             this.NewToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.OpenToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.RefreshToolStripButton = new System.Windows.Forms.ToolStripButton();
-            this.CopyToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.CutToolStripButton = new System.Windows.Forms.ToolStripButton();
+            this.CopyToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.PasteToolStripButton = new System.Windows.Forms.ToolStripButton();
-            this.ToolTip = new System.Windows.Forms.ToolTip(this.components);
-            this.FileSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.MenuStrip.SuspendLayout();
             this.ToolStrip.SuspendLayout();
             this.SuspendLayout();
@@ -84,7 +84,10 @@ namespace SoundExplorers.View {
             // 
             // FileMenu
             // 
-            this.FileMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {this.FileNewMenuItem, this.FileOpenMenuItem, this.FileRefreshMenuItem, this.FileSeparator1, this.FileExitMenuItem});
+            this.FileMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+                this.FileNewMenuItem, this.FileOpenMenuItem, this.FileRefreshMenuItem, 
+                this.FileSeparator1, this.FileExitMenuItem
+            });
             this.FileMenu.ImageTransparentColor = System.Drawing.SystemColors.ActiveBorder;
             this.FileMenu.Name = "FileMenu";
             this.FileMenu.Size = new System.Drawing.Size(44, 24);
@@ -331,7 +334,14 @@ namespace SoundExplorers.View {
             // ToolStrip
             // 
             this.ToolStrip.AutoSize = false;
-            this.ToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {this.NewToolStripButton, this.OpenToolStripButton, this.RefreshToolStripButton, this.CopyToolStripButton, this.CutToolStripButton, this.PasteToolStripButton});
+            this.ToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+                this.NewToolStripButton, 
+                this.OpenToolStripButton, 
+                this.RefreshToolStripButton, 
+                this.CutToolStripButton, 
+                this.CopyToolStripButton, 
+                this.PasteToolStripButton
+            });
             this.ToolStrip.Location = new System.Drawing.Point(0, 28);
             this.ToolStrip.Name = "ToolStrip";
             this.ToolStrip.Size = new System.Drawing.Size(843, 41);
@@ -374,18 +384,6 @@ namespace SoundExplorers.View {
             this.RefreshToolStripButton.Text = "Refresh Current Table (F5)";
             this.RefreshToolStripButton.Click += new System.EventHandler(this.FileRefreshMenuItem_Click);
             // 
-            // CopyToolStripButton
-            // 
-            this.CopyToolStripButton.AutoSize = false;
-            this.CopyToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.CopyToolStripButton.Image = global::SoundExplorers.View.Properties.Resources.ActionsEditCopy32x32;
-            this.CopyToolStripButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.CopyToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.CopyToolStripButton.Name = "CopyToolStripButton";
-            this.CopyToolStripButton.Size = new System.Drawing.Size(38, 38);
-            this.CopyToolStripButton.Text = "Copy (Ctrl+C)";
-            this.CopyToolStripButton.Click += new System.EventHandler(this.EditCopyMenuItem_Click);
-            // 
             // CutToolStripButton
             // 
             this.CutToolStripButton.AutoSize = false;
@@ -397,6 +395,18 @@ namespace SoundExplorers.View {
             this.CutToolStripButton.Size = new System.Drawing.Size(38, 38);
             this.CutToolStripButton.Text = "Cut (Ctrl+X)";
             this.CutToolStripButton.Click += new System.EventHandler(this.EditCutMenuItem_Click);
+            // 
+            // CopyToolStripButton
+            // 
+            this.CopyToolStripButton.AutoSize = false;
+            this.CopyToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.CopyToolStripButton.Image = global::SoundExplorers.View.Properties.Resources.ActionsEditCopy32x32;
+            this.CopyToolStripButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.CopyToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.CopyToolStripButton.Name = "CopyToolStripButton";
+            this.CopyToolStripButton.Size = new System.Drawing.Size(38, 38);
+            this.CopyToolStripButton.Text = "Copy (Ctrl+C)";
+            this.CopyToolStripButton.Click += new System.EventHandler(this.EditCopyMenuItem_Click);
             // 
             // PasteToolStripButton
             // 
@@ -473,12 +483,12 @@ namespace SoundExplorers.View {
         private System.Windows.Forms.ToolStripSeparator WindowsSeparator2;
         private System.Windows.Forms.ToolStripMenuItem HelpMenu;
         private System.Windows.Forms.ToolStripMenuItem HelpAboutMenuItem;
+        private System.Windows.Forms.ToolTip ToolTip;
         private System.Windows.Forms.ToolStripButton NewToolStripButton;
         private System.Windows.Forms.ToolStripButton OpenToolStripButton;
-        private System.Windows.Forms.ToolTip ToolTip;
         private System.Windows.Forms.ToolStripButton RefreshToolStripButton;
-        private System.Windows.Forms.ToolStripButton CopyToolStripButton;
-        private System.Windows.Forms.ToolStripButton CutToolStripButton;
-        private System.Windows.Forms.ToolStripButton PasteToolStripButton;
+        public System.Windows.Forms.ToolStripButton CutToolStripButton;
+        public System.Windows.Forms.ToolStripButton CopyToolStripButton;
+        public System.Windows.Forms.ToolStripButton PasteToolStripButton;
     }
 }

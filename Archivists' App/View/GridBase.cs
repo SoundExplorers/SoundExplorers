@@ -11,11 +11,24 @@ namespace SoundExplorers.View {
       ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
     }
 
+    public bool CanCut => CanSelectAll && CopyableText.Length > 0;
+    public bool CanCopy => CopyableText.Length > 0;
+    public bool CanPaste => !CurrentCell.ReadOnly && Clipboard.ContainsText();
+    public bool CanDelete => CanCut;
+    public bool CanSelectAll => !CurrentCell.ReadOnly && IsTextBoxCellCurrent;
+    public bool CanSelectRow => CurrentRow != null;
+
+    public bool CanDeleteSelectedRows =>
+      !ReadOnly && !IsCurrentCellInEditMode && SelectedRows.Count > 0 &&
+      !SelectedRows.Contains(NewRow);
+
     [NotNull] public new GridContextMenu ContextMenu =>
       _contextMenu ?? (_contextMenu = new GridContextMenu(this));
 
     public bool IsTextBoxCellCurrent =>
-      CurrentCell.OwningColumn.CellTemplate is TextBoxCell; 
+      CurrentCell?.OwningColumn.CellTemplate is TextBoxCell; 
+    
+    public MainView MainView { get; set; }
 
     /// <summary>
     ///   Gets the new (i.e. empty) row at the bottom of an editable grid.
@@ -39,22 +52,11 @@ namespace SoundExplorers.View {
       }
     }
 
-    public bool CanCut => CanSelectAll && CopyableText.Length > 0;
-    public bool CanCopy => CopyableText.Length > 0;
-    public bool CanPaste => !CurrentCell.ReadOnly && Clipboard.ContainsText();
-    public bool CanDelete => CanCut;
-    public bool CanSelectAll => !CurrentCell.ReadOnly && IsTextBoxCellCurrent;
-    public bool CanSelectRow => CurrentRow != null;
-
-    public bool CanDeleteSelectedRows =>
-      !ReadOnly && !IsCurrentCellInEditMode && SelectedRows.Count > 0 &&
-      !SelectedRows.Contains(NewRow);
-
     /// <summary>
     ///   Enables or disables the menu items of the grid's context menu
     ///   or the corresponding items of the Edit menu on the main window menu bar.  
     /// </summary>
-    public void EnableMenuItems(
+    public void EnableOrDisableMenuItems(
       [NotNull] ToolStripMenuItem cutMenuItem,
       [NotNull] ToolStripMenuItem copyMenuItem,
       [NotNull] ToolStripMenuItem pasteMenuItem,
@@ -89,6 +91,13 @@ namespace SoundExplorers.View {
           hitTestInfo.ColumnIndex];
       }
       return null;
+    }
+    
+    protected override void OnCurrentCellChanged(EventArgs e) {
+      base.OnCurrentCellChanged(e);
+      if (CurrentCell != null) {
+        MainView.CopyToolStripButton.Enabled = CanCopy;
+      }
     }
 
     /// <summary>

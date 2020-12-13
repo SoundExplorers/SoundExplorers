@@ -12,6 +12,11 @@ namespace SoundExplorers.View {
 
     public MainGridController Controller { get; private set; }
 
+    public TextBox TextBox =>
+      (TextBox)EditingControl ??
+      throw new InvalidOperationException(
+        "The current cell is not in edit mode or its editor is not a TextBox.");
+
     public void SetController(MainGridController controller) {
       Controller = controller;
     }
@@ -90,6 +95,33 @@ namespace SoundExplorers.View {
       MakeRowCurrent(Rows.Count - 1);
     }
 
+    protected override void OnCellBeginEdit(DataGridViewCellCancelEventArgs e) {
+      base.OnCellBeginEdit(e);
+      if (IsTextBoxCellCurrent) {
+        //Debug.WriteLine("MainGrid.OnCellBeginEdit: TextBox cell");
+        BeginInvoke((Action)delegate {
+          TextBox.KeyUp -= TextBox_KeyUp;
+          TextBox.MouseClick -= TextBox_MouseClick;
+          TextBox.TextChanged -= TextBox_TextChanged;
+          OnTextBoxSelectionMayHaveChanged();
+          TextBox.KeyUp += TextBox_KeyUp;
+          TextBox.MouseClick += TextBox_MouseClick;
+          TextBox.TextChanged += TextBox_TextChanged;
+        });
+      }
+    }
+
+    protected override void OnCellEndEdit(DataGridViewCellEventArgs e) {
+      base.OnCellEndEdit(e);
+      if (IsTextBoxCellCurrent) {
+        // Now that the TextBox cell edit has finished,
+        // whether text can be cut or copied reverts to depending on
+        // whether there is any text in the cell.
+        MainView.CutToolStripButton.Enabled = CanCut;
+        MainView.CopyToolStripButton.Enabled = CanCopy;
+      }
+    }
+
     protected override void OnCellValueChanged(DataGridViewCellEventArgs e) {
       base.OnCellValueChanged(e);
       if (CurrentCell is ComboBoxCell comboBoxCell) {
@@ -122,6 +154,16 @@ namespace SoundExplorers.View {
         //   "MainGrid_CurrentCellDirtyStateChanged: ComboBoxCell, IsCurrentCellDirty");
         // This fires the cell value changed handler MainGrid_CellValueChanged.
         CommitEdit(DataGridViewDataErrorContexts.CurrentCellChange);
+      }
+    }
+    
+    protected override void OnCurrentCellChanged(EventArgs e) {
+      base.OnCurrentCellChanged(e);
+      if (CurrentCell != null) {
+        MainView.CutToolStripButton.Enabled = CanCut;
+        // I don't it is practicable to continually enable or disable the Paste button
+        // depending on the change in whether to clipboard contain text.
+        MainView.PasteToolStripButton.Enabled = !CurrentCell.ReadOnly;
       }
     }
 
@@ -200,6 +242,30 @@ namespace SoundExplorers.View {
       //   // // }
       //}
       Controller.OnRowEnter(e.RowIndex);
+    }
+
+    private void OnTextBoxSelectionMayHaveChanged() {
+      //Debug.WriteLine("MainGrid.OnTextBoxSelectionMayHaveChanged");
+      // While a text box cell is being edited,
+      // whether text can be cut or copied depends on
+      // whether any text in the cell is selected.
+      MainView.CutToolStripButton.Enabled = CanCut;
+      MainView.CopyToolStripButton.Enabled = CanCopy;
+    }
+
+    private void TextBox_KeyUp(object sender, KeyEventArgs e) {
+      //Debug.WriteLine("MainGrid.TextBox_KeyUp");
+      OnTextBoxSelectionMayHaveChanged();
+    }
+
+    private void TextBox_MouseClick(object sender, MouseEventArgs e) {
+      //Debug.WriteLine("MainGrid.TextBox_MouseClick");
+      OnTextBoxSelectionMayHaveChanged();
+    }
+
+    private void TextBox_TextChanged(object sender, EventArgs e) {
+      //Debug.WriteLine("MainGrid.TextBox_TextChanged");
+      OnTextBoxSelectionMayHaveChanged();
     }
   }
 }

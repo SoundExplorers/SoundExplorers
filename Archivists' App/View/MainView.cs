@@ -14,6 +14,7 @@ namespace SoundExplorers.View {
       SplashManager.Status = "Building window...";
       InitializeComponent();
       HideMainMenuImageMargins();
+      DisableGridToolStripButtons();
       FileMenu.DropDown.Opening += FileMenu_DropDown_Opening;
       EditMenu.DropDown.Opening += EditMenu_DropDown_Opening;
       WindowsMenu.DropDown.Opening += WindowsMenu_DropDown_Opening;
@@ -22,7 +23,7 @@ namespace SoundExplorers.View {
     internal EditorView EditorView => ActiveMdiChild as EditorView ??
                                       throw new NullReferenceException(
                                         nameof(EditorView));
-
+    
     private MainController Controller { get; set; }
     private SelectEditorView SelectEditorView { get; set; }
     private SizeableFormOptions SizeableFormOptions { get; set; }
@@ -72,20 +73,44 @@ namespace SoundExplorers.View {
       return SelectEditorView.Create(Controller.TableName);
     }
 
-    private void EditorView_FormClosed(object sender, FormClosedEventArgs e) {
+    private void DisableGridToolStripButtons() {
+      RefreshToolStripButton.Enabled = CutToolStripButton.Enabled = 
+        CopyToolStripButton.Enabled = PasteToolStripButton.Enabled = false;
+    }
+
+    private void OnEditorClosed() {
       // Creating and then manually showing and hiding the separator above
       // the MDI child list in the Windows menu (= MenuStrip.MdiWindowListItem)
       // prevents the separator from remaining visible
       // when all children have been closed, which is what happens when we allow
       // the separator to be created and shown automatically.  See
       // https://stackoverflow.com/questions/12951820/extra-separator-after-mdiwindowlistitem-when-no-child-windows-are-open
-      BeginInvoke((Action)delegate { WindowsSeparator2.Visible = MdiChildren.Any(); }
-      );
+      if (!MdiChildren.Any()) {
+        WindowsSeparator2.Visible = false;
+        DisableGridToolStripButtons();
+      } 
+    }
+
+    private void OnNewEditorOpened() {
+      RefreshToolStripButton.Enabled = true;
+    }
+
+    private void EditorView_FormClosed(object sender, FormClosedEventArgs e) {
+      BeginInvoke((Action)OnEditorClosed);
+      // RefreshToolStripButton.Enabled = CanRefresh;
+      // // Creating and then manually showing and hiding the separator above
+      // // the MDI child list in the Windows menu (= MenuStrip.MdiWindowListItem)
+      // // prevents the separator from remaining visible
+      // // when all children have been closed, which is what happens when we allow
+      // // the separator to be created and shown automatically.  See
+      // // https://stackoverflow.com/questions/12951820/extra-separator-after-mdiwindowlistitem-when-no-child-windows-are-open
+      // BeginInvoke((Action)delegate { WindowsSeparator2.Visible = MdiChildren.Any(); }
+      // );
     }
 
     private void EditMenu_DropDown_Opening(object sender, CancelEventArgs e) {
       if (MdiChildren.Any()) {
-        EditorView.FocusedGrid.EnableMenuItems(
+        EditorView.FocusedGrid.EnableOrDisableMenuItems(
           EditCutMenuItem, EditCopyMenuItem, EditPasteMenuItem,
           EditDeleteMenuItem,
           EditSelectAllMenuItem, EditSelectRowMenuItem, EditDeleteSelectedRowsMenuItem);
@@ -142,6 +167,7 @@ namespace SoundExplorers.View {
         var editorView = CreateEditorView();
         editorView.MdiParent = this;
         editorView.Show();
+        BeginInvoke((Action)OnNewEditorOpened);
       } catch (ApplicationException ex) {
         MessageBox.Show(
           ex.Message,
