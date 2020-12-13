@@ -48,8 +48,8 @@ namespace SoundExplorers.View {
             this.ToolsOptionsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.WindowsMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.WindowsCascadeMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.WindowsTileSideBySideMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.WindowsTileStackedMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.WindowsTileHorizontallyMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.WindowsTileVerticallyMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.WindowsArrangeIconsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.WindowsSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.WindowsCloseCurrentTableEditorMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -114,7 +114,7 @@ namespace SoundExplorers.View {
             this.FileRefreshMenuItem.Name = "FileRefreshMenuItem";
             this.FileRefreshMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F5;
             this.FileRefreshMenuItem.Size = new System.Drawing.Size(244, 24);
-            this.FileRefreshMenuItem.Text = "&Refresh Table";
+            this.FileRefreshMenuItem.Text = "&Refresh Current Table";
             this.FileRefreshMenuItem.Click += new System.EventHandler(this.FileRefreshMenuItem_Click);
             // 
             // FileExitMenuItem
@@ -241,8 +241,8 @@ namespace SoundExplorers.View {
             // 
             this.WindowsMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
                 this.WindowsCascadeMenuItem, 
-                this.WindowsTileSideBySideMenuItem, 
-                this.WindowsTileStackedMenuItem, 
+                this.WindowsTileHorizontallyMenuItem, 
+                this.WindowsTileVerticallyMenuItem, 
                 this.WindowsArrangeIconsMenuItem, 
                 this.WindowsSeparator1, 
                 this.WindowsCloseCurrentTableEditorMenuItem, 
@@ -261,21 +261,21 @@ namespace SoundExplorers.View {
             this.WindowsCascadeMenuItem.Text = "&Cascade";
             this.WindowsCascadeMenuItem.Click += new System.EventHandler(this.WindowsCascadeMenuItem_Click);
             // 
-            // WindowsTileSideBySideMenuItem
+            // WindowsTileHorizontallyMenuItem
             // 
-            this.WindowsTileSideBySideMenuItem.ImageTransparentColor = System.Drawing.Color.Black;
-            this.WindowsTileSideBySideMenuItem.Name = "WindowsTileSideBySideMenuItem";
-            this.WindowsTileSideBySideMenuItem.Size = new System.Drawing.Size(188, 24);
-            this.WindowsTileSideBySideMenuItem.Text = "Tile &Side By Side";
-            this.WindowsTileSideBySideMenuItem.Click += new System.EventHandler(this.WindowsTileSideBySideMenuItem_Click);
+            this.WindowsTileHorizontallyMenuItem.ImageTransparentColor = System.Drawing.Color.Black;
+            this.WindowsTileHorizontallyMenuItem.Name = "WindowsTileHorizontallyMenuItem";
+            this.WindowsTileHorizontallyMenuItem.Size = new System.Drawing.Size(188, 24);
+            this.WindowsTileHorizontallyMenuItem.Text = "Tile &Horizontally";
+            this.WindowsTileHorizontallyMenuItem.Click += new System.EventHandler(this.WindowsTileSideBySideMenuItem_Click);
             // 
-            // WindowsTileStackedMenuItem
+            // WindowsTileVerticallyMenuItem
             // 
-            this.WindowsTileStackedMenuItem.ImageTransparentColor = System.Drawing.Color.Black;
-            this.WindowsTileStackedMenuItem.Name = "WindowsTileStackedMenuItem";
-            this.WindowsTileStackedMenuItem.Size = new System.Drawing.Size(188, 24);
-            this.WindowsTileStackedMenuItem.Text = "Tile S&tacked";
-            this.WindowsTileStackedMenuItem.Click += new System.EventHandler(this.WindowsTileStackedMenuItem_Click);
+            this.WindowsTileVerticallyMenuItem.ImageTransparentColor = System.Drawing.Color.Black;
+            this.WindowsTileVerticallyMenuItem.Name = "WindowsTileVerticallyMenuItem";
+            this.WindowsTileVerticallyMenuItem.Size = new System.Drawing.Size(188, 24);
+            this.WindowsTileVerticallyMenuItem.Text = "Tile &Vertically";
+            this.WindowsTileVerticallyMenuItem.Click += new System.EventHandler(this.WindowsTileStackedMenuItem_Click);
             // 
             // WindowsArrangeIconsMenuItem
             // 
@@ -371,7 +371,7 @@ namespace SoundExplorers.View {
             this.RefreshToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.RefreshToolStripButton.Name = "RefreshToolStripButton";
             this.RefreshToolStripButton.Size = new System.Drawing.Size(38, 38);
-            this.RefreshToolStripButton.Text = "Refresh Table (F5)";
+            this.RefreshToolStripButton.Text = "Refresh Current Table (F5)";
             this.RefreshToolStripButton.Click += new System.EventHandler(this.FileRefreshMenuItem_Click);
             // 
             // CopyToolStripButton
@@ -464,8 +464,8 @@ namespace SoundExplorers.View {
         private System.Windows.Forms.ToolStripMenuItem ToolsOptionsMenuItem;
         private System.Windows.Forms.ToolStripMenuItem WindowsMenu;
         private System.Windows.Forms.ToolStripMenuItem WindowsCascadeMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem WindowsTileSideBySideMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem WindowsTileStackedMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem WindowsTileHorizontallyMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem WindowsTileVerticallyMenuItem;
         private System.Windows.Forms.ToolStripMenuItem WindowsArrangeIconsMenuItem;
         private System.Windows.Forms.ToolStripSeparator WindowsSeparator1;
         private System.Windows.Forms.ToolStripMenuItem WindowsCloseCurrentTableEditorMenuItem;
