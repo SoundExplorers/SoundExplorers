@@ -114,7 +114,7 @@ namespace SoundExplorers.View {
             this.FileRefreshMenuItem.Name = "FileRefreshMenuItem";
             this.FileRefreshMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F5;
             this.FileRefreshMenuItem.Size = new System.Drawing.Size(244, 24);
-            this.FileRefreshMenuItem.Text = "&Refresh Table";
+            this.FileRefreshMenuItem.Text = "&Refresh Current Table";
             this.FileRefreshMenuItem.Click += new System.EventHandler(this.FileRefreshMenuItem_Click);
             // 
             // FileExitMenuItem
@@ -371,7 +371,7 @@ namespace SoundExplorers.View {
             this.RefreshToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.RefreshToolStripButton.Name = "RefreshToolStripButton";
             this.RefreshToolStripButton.Size = new System.Drawing.Size(38, 38);
-            this.RefreshToolStripButton.Text = "Refresh Table (F5)";
+            this.RefreshToolStripButton.Text = "Refresh Current Table (F5)";
             this.RefreshToolStripButton.Click += new System.EventHandler(this.FileRefreshMenuItem_Click);
             // 
             // CopyToolStripButton
