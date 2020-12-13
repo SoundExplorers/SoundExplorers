@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Data;
 using System.Linq;
 using System.Windows.Forms;
 using JetBrains.Annotations;
@@ -146,13 +145,6 @@ namespace SoundExplorers.View {
       } catch (ApplicationException ex) {
         MessageBox.Show(
           ex.Message,
-          Application.ProductName,
-          MessageBoxButtons.OK,
-          MessageBoxIcon.Error);
-      } catch (DataException ex) {
-        MessageBox.Show(
-          ex.Message,
-          //ex.ToString(),
           Application.ProductName,
           MessageBoxButtons.OK,
           MessageBoxIcon.Error);
