@@ -220,12 +220,6 @@ namespace SoundExplorers.View {
           Application.ProductName,
           MessageBoxButtons.OK,
           MessageBoxIcon.Error);
-      } catch (DataException ex) {
-        MessageBox.Show(
-          ex.Message,
-          Application.ProductName,
-          MessageBoxButtons.OK,
-          MessageBoxIcon.Error);
         //} catch (Exception ex) {
         //    MessageBox.Show(
         //        ex.ToString(),
