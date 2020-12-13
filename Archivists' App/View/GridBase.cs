@@ -18,7 +18,7 @@ namespace SoundExplorers.View {
       CurrentCell.OwningColumn.CellTemplate is TextBoxCell; 
 
     /// <summary>
-    ///   The new (i.e. empty) row at the bottom of an editable grid.
+    ///   Gets the new (i.e. empty) row at the bottom of an editable grid.
     /// </summary>
     [NotNull] private DataGridViewRow NewRow => !ReadOnly
       ? Rows[Rows.Count - 1]
