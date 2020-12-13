@@ -15,6 +15,7 @@ namespace SoundExplorers.View {
       SplashManager.Status = "Building window...";
       InitializeComponent();
       HideMainMenuImageMargins();
+      FileMenu.DropDown.Opening += FileMenu_DropDown_Opening;
       EditMenu.DropDown.Opening += EditMenu_DropDown_Opening;
       WindowsMenu.DropDown.Opening += WindowsMenu_DropDown_Opening;
     }
@@ -124,6 +125,11 @@ namespace SoundExplorers.View {
       EditorView.FocusedGrid.ContextMenu.DeleteSelectedRows();
     }
 
+
+    private void FileMenu_DropDown_Opening(object sender, CancelEventArgs e) {
+      FileRefreshMenuItem.Enabled = MdiChildren.Any();
+    }
+    
     private void FileExitMenuItem_Click(object sender, EventArgs e) {
       Close();
     }
