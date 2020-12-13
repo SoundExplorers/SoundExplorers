@@ -154,6 +154,8 @@
         <None Include="Images\Actions View Refresh 16x16.png" />
         <None Include="Images\Actions View Refresh 32x32.png" />
         <None Include="Images\Actions View Refresh 48x48.png" />
+        <None Include="Images\Copy Flatastic 32x32.png" />
+        <None Include="Images\Cut Flatastic 32x32.png" />
         <None Include="Images\Devices Video Display 16x16.png" />
         <None Include="Images\Devices Video Display 32x32.png" />
         <None Include="Images\Devices Video Display 48x48.png" />
@@ -167,6 +169,7 @@
         <None Include="Images\News 16x16.png" />
         <None Include="Images\News 32x32.png" />
         <None Include="Images\News 48x48.png" />
+        <None Include="Images\Paste Flatastic 32x32.png" />
         <None Include="packages.config" />
         <None Include="Properties\Settings.settings">
             <Generator>SettingsSingleFileGenerator</Generator>
