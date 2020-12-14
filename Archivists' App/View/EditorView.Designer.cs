@@ -145,7 +145,7 @@ namespace SoundExplorers.View {
             this.KeyPreview = true;
             this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "EditorView";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.WindowsDefaultLocation;
             this.Text = "EditorView";
             this.Activated += new System.EventHandler(this.EditorView_Activated);
             this.Deactivate += new System.EventHandler(this.EditorView_Deactivate);
