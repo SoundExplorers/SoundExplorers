@@ -53,9 +53,12 @@ namespace SoundExplorers.View {
       this.WindowsTileStackedMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.WindowsArrangeIconsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.WindowsSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+      this.WindowsNextMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.WindowsPreviousMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.WindowsSeparator2 = new System.Windows.Forms.ToolStripSeparator();
       this.WindowsCloseCurrentTableEditorMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.WindowsCloseAllMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-      this.WindowsSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+      this.WindowsSeparator3 = new System.Windows.Forms.ToolStripSeparator();
       this.HelpMenu = new System.Windows.Forms.ToolStripMenuItem();
       this.HelpAboutMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.ToolTip = new System.Windows.Forms.ToolTip(this.components);
@@ -267,9 +270,12 @@ namespace SoundExplorers.View {
             this.WindowsTileStackedMenuItem,
             this.WindowsArrangeIconsMenuItem,
             this.WindowsSeparator1,
+            this.WindowsNextMenuItem,
+            this.WindowsPreviousMenuItem,
+            this.WindowsSeparator2,
             this.WindowsCloseCurrentTableEditorMenuItem,
             this.WindowsCloseAllMenuItem,
-            this.WindowsSeparator2});
+            this.WindowsSeparator3});
       this.WindowsMenu.Name = "WindowsMenu";
       this.WindowsMenu.Size = new System.Drawing.Size(84, 26);
       this.WindowsMenu.Text = "&Windows";
@@ -311,6 +317,27 @@ namespace SoundExplorers.View {
       this.WindowsSeparator1.Name = "WindowsSeparator1";
       this.WindowsSeparator1.Size = new System.Drawing.Size(371, 6);
       // 
+      // WindowsNextMenuItem
+      // 
+      this.WindowsNextMenuItem.Name = "WindowsNextMenuItem";
+      this.WindowsNextMenuItem.ShortcutKeyDisplayString = "Ctrl+F6";
+      this.WindowsNextMenuItem.Size = new System.Drawing.Size(374, 26);
+      this.WindowsNextMenuItem.Text = "&Next";
+      this.WindowsNextMenuItem.Click += new System.EventHandler(this.WindowsNextMenuItem_Click);
+      // 
+      // WindowsPreviousMenuItem
+      // 
+      this.WindowsPreviousMenuItem.Name = "WindowsPreviousMenuItem";
+      this.WindowsPreviousMenuItem.ShortcutKeyDisplayString = "Ctrl+Shift+F6";
+      this.WindowsPreviousMenuItem.Size = new System.Drawing.Size(374, 26);
+      this.WindowsPreviousMenuItem.Text = "&Previous";
+      this.WindowsPreviousMenuItem.Click += new System.EventHandler(this.WindowsPreviousMenuItem_Click);
+      // 
+      // WindowsSeparator2
+      // 
+      this.WindowsSeparator2.Name = "WindowsSeparator2";
+      this.WindowsSeparator2.Size = new System.Drawing.Size(371, 6);
+      // 
       // WindowsCloseCurrentTableEditorMenuItem
       // 
       this.WindowsCloseCurrentTableEditorMenuItem.Name = "WindowsCloseCurrentTableEditorMenuItem";
@@ -328,11 +355,11 @@ namespace SoundExplorers.View {
       this.WindowsCloseAllMenuItem.Text = "Cl&ose All";
       this.WindowsCloseAllMenuItem.Click += new System.EventHandler(this.WindowsCloseAllMenuItem_Click);
       // 
-      // WindowsSeparator2
+      // WindowsSeparator3
       // 
-      this.WindowsSeparator2.Name = "WindowsSeparator2";
-      this.WindowsSeparator2.Size = new System.Drawing.Size(371, 6);
-      this.WindowsSeparator2.Visible = false;
+      this.WindowsSeparator3.Name = "WindowsSeparator3";
+      this.WindowsSeparator3.Size = new System.Drawing.Size(371, 6);
+      this.WindowsSeparator3.Visible = false;
       // 
       // HelpMenu
       // 
@@ -493,9 +520,12 @@ namespace SoundExplorers.View {
         private System.Windows.Forms.ToolStripMenuItem WindowsTileStackedMenuItem;
         private System.Windows.Forms.ToolStripMenuItem WindowsArrangeIconsMenuItem;
         private System.Windows.Forms.ToolStripSeparator WindowsSeparator1;
+        private System.Windows.Forms.ToolStripMenuItem WindowsNextMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem WindowsPreviousMenuItem;
+        private System.Windows.Forms.ToolStripSeparator WindowsSeparator2;
         private System.Windows.Forms.ToolStripMenuItem WindowsCloseCurrentTableEditorMenuItem;
         private System.Windows.Forms.ToolStripMenuItem WindowsCloseAllMenuItem;
-        private System.Windows.Forms.ToolStripSeparator WindowsSeparator2;
+        private System.Windows.Forms.ToolStripSeparator WindowsSeparator3;
         private System.Windows.Forms.ToolStripMenuItem HelpMenu;
         private System.Windows.Forms.ToolStripMenuItem HelpAboutMenuItem;
         private System.Windows.Forms.ToolTip ToolTip;

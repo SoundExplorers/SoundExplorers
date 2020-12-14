@@ -23,7 +23,7 @@ namespace SoundExplorers.View {
     internal EditorView EditorView => ActiveMdiChild as EditorView ??
                                       throw new NullReferenceException(
                                         nameof(EditorView));
-    
+
     private MainController Controller { get; set; }
     private SelectEditorView SelectEditorView { get; set; }
     private SizeableFormOptions SizeableFormOptions { get; set; }
@@ -61,7 +61,7 @@ namespace SoundExplorers.View {
 
     [NotNull]
     private EditorView CreateEditorView() {
-      WindowsSeparator2.Visible = true; // See comment in EditorView_FormClosed 
+      WindowsSeparator3.Visible = true; // See comment in EditorView_FormClosed 
       var result = EditorView.Create(SelectEditorView.Controller.SelectedEntityListType,
         Controller);
       result.FormClosed += EditorView_FormClosed;
@@ -74,7 +74,7 @@ namespace SoundExplorers.View {
     }
 
     private void DisableGridToolStripButtons() {
-      RefreshToolStripButton.Enabled = CutToolStripButton.Enabled = 
+      RefreshToolStripButton.Enabled = CutToolStripButton.Enabled =
         CopyToolStripButton.Enabled = PasteToolStripButton.Enabled = false;
     }
 
@@ -86,9 +86,9 @@ namespace SoundExplorers.View {
       // the separator to be created and shown automatically.  See
       // https://stackoverflow.com/questions/12951820/extra-separator-after-mdiwindowlistitem-when-no-child-windows-are-open
       if (!MdiChildren.Any()) {
-        WindowsSeparator2.Visible = false;
+        WindowsSeparator3.Visible = false;
         DisableGridToolStripButtons();
-      } 
+      }
     }
 
     private void OnNewEditorOpened() {
@@ -104,7 +104,7 @@ namespace SoundExplorers.View {
       // // when all children have been closed, which is what happens when we allow
       // // the separator to be created and shown automatically.  See
       // // https://stackoverflow.com/questions/12951820/extra-separator-after-mdiwindowlistitem-when-no-child-windows-are-open
-      // BeginInvoke((Action)delegate { WindowsSeparator2.Visible = MdiChildren.Any(); }
+      // BeginInvoke((Action)delegate { WindowsSeparator3.Visible = MdiChildren.Any(); }
       // );
     }
 
@@ -149,11 +149,10 @@ namespace SoundExplorers.View {
       EditorView.FocusedGrid.ContextMenu.DeleteSelectedRows();
     }
 
-
     private void FileMenu_DropDown_Opening(object sender, CancelEventArgs e) {
       FileRefreshMenuItem.Enabled = MdiChildren.Any();
     }
-    
+
     private void FileExitMenuItem_Click(object sender, EventArgs e) {
       Close();
     }
@@ -339,6 +338,8 @@ namespace SoundExplorers.View {
         where child.WindowState == FormWindowState.Minimized
         select child).Any();
       WindowsArrangeIconsMenuItem.Enabled = hasMinimizedChildren;
+      WindowsNextMenuItem.Enabled =
+        WindowsPreviousMenuItem.Enabled = MdiChildren.Length > 1;
     }
 
     private void WindowsCascadeMenuItem_Click(object sender, EventArgs e) {
@@ -356,6 +357,9 @@ namespace SoundExplorers.View {
     private void WindowsArrangeIconsMenuItem_Click(object sender, EventArgs e) {
       LayoutMdi(MdiLayout.ArrangeIcons);
     }
+
+    private void WindowsNextMenuItem_Click(object sender, EventArgs e) { }
+    private void WindowsPreviousMenuItem_Click(object sender, EventArgs e) { }
 
     private void
       WindowsCloseCurrentTableEditorMenuItem_Click(object sender, EventArgs e) {
