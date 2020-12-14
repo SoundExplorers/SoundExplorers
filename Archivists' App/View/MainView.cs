@@ -68,6 +68,13 @@ namespace SoundExplorers.View {
       return result;
     }
 
+    // private void EditorView_GotFocus(object sender, EventArgs e) {
+    //   Debug.WriteLine($"MainView.EditorView_GotFocus: {EditorView.Text}");
+    //   for (int i = 0; i < MdiChildren.Length; i++) {
+    //     Debug.WriteLine($"  {i} {MdiChildren[i].Text}");
+    //   }
+    // }
+
     [NotNull]
     private SelectEditorView CreateSelectEditorView() {
       return SelectEditorView.Create(Controller.TableName);
@@ -358,8 +365,33 @@ namespace SoundExplorers.View {
       LayoutMdi(MdiLayout.ArrangeIcons);
     }
 
-    private void WindowsNextMenuItem_Click(object sender, EventArgs e) { }
-    private void WindowsPreviousMenuItem_Click(object sender, EventArgs e) { }
+    private void WindowsNextMenuItem_Click(object sender, EventArgs e) {
+      // Just emulating the MDI's built-in Next behaviour (Ctrl+F6),
+      // which backtracks through the child editor windows
+      // in the order in which they were opened.
+      // Previous (Ctrl+Shift+F6) does the converse.
+      // It looks like they are the wrong way round.
+      // And no attempt is made to progress through the order in which the user actually
+      // accessed the windows, i.e. by clicking on them
+      // or by selecting a numbered window from the Windows menu.
+      // So there is arguably room for improvement, though, for consistency,
+      // it would then be necessary to change the behaviour of the keyboard shortcuts
+      // and, if possible, Next on the Editor window's system menu.
+      var childList = MdiChildren.ToList();
+      int currentChildIndex = childList.IndexOf(ActiveMdiChild);
+      int nextChildIndex =
+        currentChildIndex > 0 ? currentChildIndex - 1 : childList.Count - 1;
+      childList[nextChildIndex].Activate();
+    }
+
+    private void WindowsPreviousMenuItem_Click(object sender, EventArgs e) {
+      // Se comment in WindowsNextMenuItem_Click.
+      var childList = MdiChildren.ToList();
+      int currentChildIndex = childList.IndexOf(ActiveMdiChild);
+      int previousChildIndex =
+        currentChildIndex < childList.Count - 1 ? currentChildIndex + 1 : 0;
+      childList[previousChildIndex].Activate();
+    }
 
     private void
       WindowsCloseCurrentTableEditorMenuItem_Click(object sender, EventArgs e) {
