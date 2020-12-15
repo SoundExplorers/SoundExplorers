@@ -328,6 +328,11 @@ namespace SoundExplorers.View {
       }
     }
 
+    private void ToolsOptionsMenuItem_Click(object sender, EventArgs e) {
+      var optionsView = OptionsView.Create();
+      optionsView.ShowDialog();
+    }
+
     private void ViewToolBarMenuItem_Click(object sender, EventArgs e) {
       ToolStrip.Visible = ViewToolBarMenuItem.Checked;
     }

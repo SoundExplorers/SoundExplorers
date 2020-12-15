@@ -33,7 +33,6 @@ namespace SoundExplorers.View {
     ///   The name of the table that is to be initially selected.
     ///   An empty string for no table to be initially selected.
     /// </param>
-    /// <returns></returns>
     [NotNull]
     public static SelectEditorView Create([NotNull] string tableName) {
       return (SelectEditorView)ViewFactory

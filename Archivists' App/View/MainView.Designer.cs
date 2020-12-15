@@ -261,6 +261,7 @@ namespace SoundExplorers.View {
       this.ToolsOptionsMenuItem.Name = "ToolsOptionsMenuItem";
       this.ToolsOptionsMenuItem.Size = new System.Drawing.Size(144, 26);
       this.ToolsOptionsMenuItem.Text = "&Options";
+      this.ToolsOptionsMenuItem.Click += new System.EventHandler(this.ToolsOptionsMenuItem_Click);
       // 
       // WindowsMenu
       // 
