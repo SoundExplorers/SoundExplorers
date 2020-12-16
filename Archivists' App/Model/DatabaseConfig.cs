@@ -16,38 +16,39 @@ namespace SoundExplorers.Model {
   ///   the KiwiSaverTax application.
   ///   Refer to that again if this class needs to get more complicated.
   /// </remarks>
-  public class DatabaseConfig {
+  public class DatabaseConfig : IDatabaseConfig {
     internal const string DefaultDatabaseFolderPath =
       @"E:\Simon\OneDrive\Documents\Software\Sound Explorers Audio Archive\Database";
 
     private string _configFilePath;
     private XElement Data { get; set; }
+    private XmlWriter XmlWriter { get; set; }
+
+    [Description(
+      "Path of the licence file for the VelocityDB object-oriented database management system.")]
+    public string VelocityDbLicenceFilePath { get; protected set; }
 
     /// <summary>
     ///   Gets or sets the path of the database configuration file.
     ///   The setter should only be required for testing.
     /// </summary>
-    protected internal string ConfigFilePath {
+    public string ConfigFilePath {
       get => _configFilePath ??
              Global.GetApplicationFolderPath() +
              Path.DirectorySeparatorChar + "DatabaseConfig.xml";
       protected set => _configFilePath = value;
     }
 
-    private XmlWriter XmlWriter { get; set; }
-
     [Description(@"Database folder path. Example: C:\Folder\Subfolder")]
     public string DatabaseFolderPath { get; protected set; }
-
-    [Description(
-      "Path of the licence file for the VelocityDB object-oriented database management system.")]
-    public string VelocityDbLicenceFilePath { get; protected set; }
 
     public void Load() {
       if (File.Exists(ConfigFilePath)) {
         Data = LoadData();
         foreach (var property in GetType().GetProperties()) {
-          SetPropertyValue(property);
+          if (property.Name != "ConfigFilePath") {
+            SetPropertyValue(property);
+          }
         }
       } else {
         DatabaseFolderPath = SetDatabaseFolderPath();

@@ -8,9 +8,13 @@ namespace SoundExplorers.View {
     public TextBoxContextMenu([NotNull] TextBox textBox) {
       TextBox = textBox;
     }
-    
-    private TextBox TextBox { get; }
 
+    private bool CanCutOrDelete => !TextBox.ReadOnly && TextBox.SelectedText.Length > 0; 
+    private bool CanCopy => TextBox.SelectedText.Length > 0; 
+    private bool CanPaste => !TextBox.ReadOnly && Clipboard.ContainsText(); 
+    private bool CanSelectAll => TextBox.Text.Length > 0; 
+    private TextBox TextBox { get; }
+    
     public override ToolStripItemCollection Items {
       get {
         if (base.Items.Count == 0) {
@@ -32,44 +36,49 @@ namespace SoundExplorers.View {
     protected override void OnOpening(CancelEventArgs e) {
       base.OnOpening(e);
       UndoMenuItem.Enabled = TextBox.CanUndo;
-      if (TextBox.SelectedText.Length == 0) {
-        CutMenuItem.Enabled = false;
-        CopyMenuItem.Enabled = false;
-        DeleteMenuItem.Enabled = false;
-      } else {
-        CutMenuItem.Enabled = true;
-        CopyMenuItem.Enabled = true;
-        DeleteMenuItem.Enabled = true;
-      }
-      PasteMenuItem.Enabled = Clipboard.ContainsText();
-      SelectAllMenuItem.Enabled = TextBox.Text.Length > 0;
+      CutMenuItem.Enabled = DeleteMenuItem.Enabled = CanCutOrDelete;
+      CopyMenuItem.Enabled = CanCopy;
+      PasteMenuItem.Enabled = CanPaste;
+      SelectAllMenuItem.Enabled = CanSelectAll;
     }
 
     protected override void Undo() {
-      TextBox.Undo();
+      if (TextBox.CanUndo) {
+        TextBox.Undo();
+      }
     }
 
     public override void Cut() {
-      TextBox.Cut();
+      if (CanCutOrDelete) {
+        TextBox.Cut();
+      }
     }
 
     public override void Copy() {
-      TextBox.Copy();
+      if (CanCopy) {
+        TextBox.Copy();
+      }
     }
 
     public override void Paste() {
-      TextBox.Paste();
+      if (CanPaste) {
+        TextBox.Paste();
+      }
     }
 
     public override void Delete() {
-      int selectionStart = TextBox.SelectionStart;
-      int selectionLength = TextBox.SelectionLength;
-      TextBox.Text = TextBox.Text.Remove(selectionStart, selectionLength);
-      TextBox.SelectionStart = selectionStart;
+      if (CanCutOrDelete) {
+        int selectionStart = TextBox.SelectionStart;
+        int selectionLength = TextBox.SelectionLength;
+        TextBox.Text = TextBox.Text.Remove(selectionStart, selectionLength);
+        TextBox.SelectionStart = selectionStart;
+      }
     }
 
     public override void SelectAll() {
-      TextBox.SelectAll();
+      if (CanSelectAll) {
+        TextBox.SelectAll();
+      }
     }
   }
 }

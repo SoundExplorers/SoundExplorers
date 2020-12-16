@@ -76,5 +76,15 @@ namespace SoundExplorers.Model {
     public static string GetApplicationFolderPath() {
       return Path.GetDirectoryName(Assembly.GetEntryAssembly()?.Location);
     }
+
+    [ExcludeFromCodeCoverage]
+    public static string GetProductName() {
+      var entryAssembly =
+        Assembly.GetEntryAssembly() ??
+        throw new NullReferenceException(
+          "In Global.GetProductName, cannot find entry assembly.");
+      return ((AssemblyProductAttribute)Attribute.GetCustomAttribute(entryAssembly,
+        typeof(AssemblyProductAttribute), false)).Product;
+    }
   }
 }

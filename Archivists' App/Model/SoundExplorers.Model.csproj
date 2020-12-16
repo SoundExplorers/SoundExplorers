@@ -63,6 +63,7 @@
         <Compile Include="GenreList.cs" />
         <Compile Include="Global.cs" />
         <Compile Include="IBindingItem.cs" />
+        <Compile Include="IDatabaseConfig.cs" />
         <Compile Include="IEntityList.cs" />
         <Compile Include="IOpen.cs" />
         <Compile Include="LocationList.cs" />
