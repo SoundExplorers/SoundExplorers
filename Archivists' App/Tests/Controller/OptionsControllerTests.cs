@@ -8,29 +8,30 @@ namespace SoundExplorers.Tests.Controller {
   public class OptionsControllerTests {
     [SetUp]
     public void Setup() {
+      DatabaseConfig = new MockDatabaseConfig();
       View = new MockView<OptionsController>();
-      Controller = new TestOptionsController(View,
-        new MockDatabaseConfig());
-      Controller.MockDatabaseConfig.TestConfigFilePath = "Test Config File";
-      Controller.MockDatabaseConfig.TestDatabaseFolderPath = "Test Database Folder";
+      Controller = new TestOptionsController(View, DatabaseConfig);
+      DatabaseConfig.TestConfigFilePath = "Test Config File";
+      DatabaseConfig.TestDatabaseFolderPath = "Test Database Folder";
     }
 
     private TestOptionsController Controller { get; set; }
+    private MockDatabaseConfig DatabaseConfig { get; set; }
     private MockView<OptionsController> View { get; set; }
 
     [Test]
-    public void Initial() {
+    public void A010_Initial() {
       Assert.AreSame(Controller, View.Controller, "View.Controller");
     }
 
     [Test]
     public void Error() {
-      Controller.MockDatabaseConfig.ApplicationExceptionOnLoad =
+      DatabaseConfig.ApplicationExceptionOnLoad =
         new ApplicationException("Error Message");
       Controller.LoadDatabaseConfig();
       Assert.IsEmpty(Controller.DatabaseFolderPath, "DatabaseFolderPath");
       Assert.IsTrue(
-        Controller.Message.StartsWith(Controller.MockDatabaseConfig
+        Controller.Message.StartsWith(DatabaseConfig
           .ApplicationExceptionOnLoad.Message),
         "Message");
     }
@@ -38,10 +39,10 @@ namespace SoundExplorers.Tests.Controller {
     [Test]
     public void Normal() {
       Controller.LoadDatabaseConfig();
-      Assert.AreEqual(Controller.MockDatabaseConfig.TestDatabaseFolderPath,
+      Assert.AreEqual(DatabaseConfig.TestDatabaseFolderPath,
         Controller.DatabaseFolderPath, "DatabaseFolderPath");
       Assert.IsTrue(
-        Controller.Message.Contains(Controller.MockDatabaseConfig.TestConfigFilePath),
+        Controller.Message.Contains(DatabaseConfig.TestConfigFilePath),
         "Message");
     }
   }

@@ -10,7 +10,7 @@ namespace SoundExplorers.Tests.Controller {
       MockDatabaseConfig = mockDatabaseConfig;
     }
 
-    internal MockDatabaseConfig MockDatabaseConfig { get; }
+    private MockDatabaseConfig MockDatabaseConfig { get; }
 
     protected override IDatabaseConfig CreateDatabaseConfig() {
       return MockDatabaseConfig;
