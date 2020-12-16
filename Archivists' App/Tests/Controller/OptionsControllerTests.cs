@@ -8,11 +8,12 @@ namespace SoundExplorers.Tests.Controller {
   public class OptionsControllerTests {
     [SetUp]
     public void Setup() {
-      DatabaseConfig = new MockDatabaseConfig();
+      DatabaseConfig = new MockDatabaseConfig {
+        TestConfigFilePath = "Test Config File",
+        TestDatabaseFolderPath = "Test Database Folder"
+      };
       View = new MockView<OptionsController>();
       Controller = new TestOptionsController(View, DatabaseConfig);
-      DatabaseConfig.TestConfigFilePath = "Test Config File";
-      DatabaseConfig.TestDatabaseFolderPath = "Test Database Folder";
     }
 
     private TestOptionsController Controller { get; set; }
