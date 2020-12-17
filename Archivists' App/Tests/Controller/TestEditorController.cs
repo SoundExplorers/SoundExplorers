@@ -16,6 +16,7 @@ namespace SoundExplorers.Tests.Controller {
       QueryHelper = queryHelper;
       Session = session;
     }
+
     [NotNull] private QueryHelper QueryHelper { get; }
     [NotNull] private SessionBase Session { get; }
 

@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Data;
 using NUnit.Framework;
 using SoundExplorers.Data;
+using PropertyConstraintException = SoundExplorers.Data.PropertyConstraintException;
 
 namespace SoundExplorers.Tests.Data {
   [TestFixture]
@@ -326,7 +328,7 @@ namespace SoundExplorers.Tests.Data {
         Event2 =
           QueryHelper.Read<Event>(Event2SimpleKey, Location1, session);
         Event2.Date = Event2Date;
-        Assert.Throws<System.Data.ConstraintException>(() => Event2.Date = Event1Date);
+        Assert.Throws<ConstraintException>(() => Event2.Date = Event1Date);
         session.Commit();
       }
     }
@@ -348,7 +350,7 @@ namespace SoundExplorers.Tests.Data {
         session.BeginUpdate();
         EventType1 = QueryHelper.Read<EventType>(EventType1Name, session);
         Event1 = QueryHelper.Read<Event>(Event1SimpleKey, Location1, session);
-        Assert.Throws<System.Data.ConstraintException>(() => Event1.EventType = null);
+        Assert.Throws<ConstraintException>(() => Event1.EventType = null);
         session.Commit();
       }
     }
@@ -387,7 +389,7 @@ namespace SoundExplorers.Tests.Data {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
         Location1 = QueryHelper.Read<Location>(Location1Name, session);
-        Assert.Throws<System.Data.ConstraintException>(() =>
+        Assert.Throws<ConstraintException>(() =>
           duplicate.Location = Location1);
         session.Commit();
       }
@@ -398,7 +400,7 @@ namespace SoundExplorers.Tests.Data {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
         Event1 = QueryHelper.Read<Event>(Event1SimpleKey, Location1, session);
-        Assert.Throws<System.Data.ConstraintException>(() =>
+        Assert.Throws<ConstraintException>(() =>
           Event1.Unpersist(session));
         session.Commit();
       }
@@ -440,13 +442,13 @@ namespace SoundExplorers.Tests.Data {
 
     [Test]
     public void Unpersist() {
-      System.Data.ConstraintException exception;
+      ConstraintException exception;
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
         Event1 = QueryHelper.Read<Event>(Event1SimpleKey, Location1, session);
         Set1 = QueryHelper.Read<Set>(Set1.SimpleKey, Event1, session);
         Set2 = QueryHelper.Read<Set>(Set2.SimpleKey, Event1, session);
-        exception = Assert.Catch<System.Data.ConstraintException>(() => session.Unpersist(Event1),
+        exception = Assert.Catch<ConstraintException>(() => session.Unpersist(Event1),
           "Unpersist Event with Sets");
         session.Unpersist(Set1);
         session.Unpersist(Set2);

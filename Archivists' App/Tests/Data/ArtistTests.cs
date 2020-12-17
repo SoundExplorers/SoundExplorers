@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Data;
 using NUnit.Framework;
 using SoundExplorers.Data;
+using PropertyConstraintException = SoundExplorers.Data.PropertyConstraintException;
 
 namespace SoundExplorers.Tests.Data {
   [TestFixture]
@@ -176,7 +178,7 @@ namespace SoundExplorers.Tests.Data {
     [Test]
     public void DisallowUnpersistArtistWithCredits() {
       Session.BeginUpdate();
-      Assert.Throws<System.Data.ConstraintException>(() =>
+      Assert.Throws<ConstraintException>(() =>
         RalphJenkins.Unpersist(Session));
       Session.Commit();
     }

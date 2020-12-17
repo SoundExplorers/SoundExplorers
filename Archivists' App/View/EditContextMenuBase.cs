@@ -31,7 +31,7 @@ namespace SoundExplorers.View {
       Size = new Size(61, 4);
       ShowImageMargin = false;
     }
-    
+
     [NotNull] protected UndoMenuItem UndoMenuItem { get; }
     [NotNull] protected CutMenuItem CutMenuItem { get; }
     [NotNull] protected CopyMenuItem CopyMenuItem { get; }
@@ -53,13 +53,9 @@ namespace SoundExplorers.View {
     }
 
     public abstract void Cut();
-
     public abstract void Copy();
-
     public abstract void Paste();
-
     public abstract void Delete();
-
     public abstract void SelectAll();
 
     public virtual void SelectRow() {

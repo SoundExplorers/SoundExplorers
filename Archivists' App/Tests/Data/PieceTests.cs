@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Data;
 using NUnit.Framework;
 using SoundExplorers.Data;
+using PropertyConstraintException = SoundExplorers.Data.PropertyConstraintException;
 
 namespace SoundExplorers.Tests.Data {
   [TestFixture]
@@ -225,7 +227,7 @@ namespace SoundExplorers.Tests.Data {
     public void DisallowChangePieceNoToDuplicate() {
       Session.BeginUpdate();
       Piece2.PieceNo = Piece2PieceNo;
-      Assert.Throws<System.Data.ConstraintException>(() =>
+      Assert.Throws<ConstraintException>(() =>
         Piece2.PieceNo = Piece1PieceNo);
       Session.Commit();
     }
@@ -314,14 +316,14 @@ namespace SoundExplorers.Tests.Data {
         PieceNo = Piece1PieceNo
       };
       Session.BeginUpdate();
-      Assert.Throws<System.Data.ConstraintException>(() => duplicate.Set = Set1);
+      Assert.Throws<ConstraintException>(() => duplicate.Set = Set1);
       Session.Commit();
     }
 
     [Test]
     public void DisallowUnpersistPieceWithCredits() {
       Session.BeginUpdate();
-      Assert.Throws<System.Data.ConstraintException>(() =>
+      Assert.Throws<ConstraintException>(() =>
         Piece1.Unpersist(Session));
       Session.Commit();
     }

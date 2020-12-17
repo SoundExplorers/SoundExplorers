@@ -38,7 +38,6 @@ namespace SoundExplorers.Tests.Controller {
 
     private ComboBoxCellController CellController { get; set; }
     private MockView<ComboBoxCellController> CellView { get; set; }
-
     private TestMainGridController MainGridController { get; set; }
     private MockEditorView EditorView { get; set; }
     private TestData Data { get; set; }

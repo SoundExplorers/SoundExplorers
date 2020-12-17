@@ -4,17 +4,16 @@ using JetBrains.Annotations;
 
 namespace SoundExplorers.View {
   internal class TextBoxContextMenu : EditContextMenuBase {
-
     public TextBoxContextMenu([NotNull] TextBox textBox) {
       TextBox = textBox;
     }
 
-    private bool CanCutOrDelete => !TextBox.ReadOnly && TextBox.SelectedText.Length > 0; 
-    private bool CanCopy => TextBox.SelectedText.Length > 0; 
-    private bool CanPaste => !TextBox.ReadOnly && Clipboard.ContainsText(); 
-    private bool CanSelectAll => TextBox.Text.Length > 0; 
+    private bool CanCutOrDelete => !TextBox.ReadOnly && TextBox.SelectedText.Length > 0;
+    private bool CanCopy => TextBox.SelectedText.Length > 0;
+    private bool CanPaste => !TextBox.ReadOnly && Clipboard.ContainsText();
+    private bool CanSelectAll => TextBox.Text.Length > 0;
     private TextBox TextBox { get; }
-    
+
     public override ToolStripItemCollection Items {
       get {
         if (base.Items.Count == 0) {

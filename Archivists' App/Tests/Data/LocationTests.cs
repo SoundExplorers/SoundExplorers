@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Data;
 using NUnit.Framework;
 using SoundExplorers.Data;
+using PropertyConstraintException = SoundExplorers.Data.PropertyConstraintException;
 
 namespace SoundExplorers.Tests.Data {
   [TestFixture]
@@ -132,7 +134,7 @@ namespace SoundExplorers.Tests.Data {
     public void DisallowUnpersistLocationWithEvents() {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
-        Assert.Throws<System.Data.ConstraintException>(() =>
+        Assert.Throws<ConstraintException>(() =>
           Location1.Unpersist(session));
         session.Commit();
       }

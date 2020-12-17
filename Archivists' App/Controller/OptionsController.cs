@@ -9,10 +9,6 @@ namespace SoundExplorers.Controller {
   /// </summary>
   [UsedImplicitly]
   public class OptionsController {
-
-    public string DatabaseFolderPath { get ; private set; }
-    public string Message { get; private set; }
-
     /// <summary>
     ///   Initialises a new instance of the <see cref="OptionsController" /> class.
     /// </summary>
@@ -23,18 +19,21 @@ namespace SoundExplorers.Controller {
       view.SetController(this);
     }
 
+    public string DatabaseFolderPath { get; private set; }
+    public string Message { get; private set; }
+
     public void LoadDatabaseConfig() {
       var config = CreateDatabaseConfig();
       try {
         config.Load();
         DatabaseFolderPath = config.DatabaseFolderPath;
         Message = "To change the database folder path, " +
-                  "please edit database configuration file\r\n" + 
+                  "please edit database configuration file\r\n" +
                   $"'{config.ConfigFilePath}'\r\n" +
                   $"and then restart {GetProductName()}.";
       } catch (ApplicationException exception) {
         DatabaseFolderPath = string.Empty;
-        Message = exception.Message + 
+        Message = exception.Message +
                   $"\r\nPlease fix. Then restart {GetProductName()}.";
       }
     }
