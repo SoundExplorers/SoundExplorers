@@ -82,10 +82,6 @@
         <Compile Include="TypedBindingList.cs" />
     </ItemGroup>
     <ItemGroup>
-      <ProjectReference Include="..\Common\SoundExplorers.Common.csproj">
-        <Project>{24f52a9c-6679-4029-abfd-7eaa964cc945}</Project>
-        <Name>SoundExplorers.Common</Name>
-      </ProjectReference>
       <ProjectReference Include="..\Data\SoundExplorers.Data.csproj">
         <Project>{eb9dd1ae-4445-45c2-bd75-b27cf5a87642}</Project>
         <Name>SoundExplorers.Data</Name>

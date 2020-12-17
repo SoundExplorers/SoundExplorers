@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30413.136
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoundExplorers", "SoundExplorers.csproj", "{8C3EC55A-FE12-4564-99AB-A41722D3A99C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoundExplorers", "SoundExplorers\SoundExplorers.csproj", "{8C3EC55A-FE12-4564-99AB-A41722D3A99C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoundExplorers.Controller", "Controller\SoundExplorers.Controller.csproj", "{1DF40F87-9462-4211-9F51-A15AF63CB6AE}"
 EndProject

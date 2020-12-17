@@ -63,10 +63,6 @@
       <None Include="packages.config" />
     </ItemGroup>
     <ItemGroup>
-      <ProjectReference Include="..\Common\SoundExplorers.Common.csproj">
-        <Project>{24f52a9c-6679-4029-abfd-7eaa964cc945}</Project>
-        <Name>SoundExplorers.Common</Name>
-      </ProjectReference>
       <ProjectReference Include="..\Model\SoundExplorers.Model.csproj">
         <Project>{f49e2374-ef0d-46a3-ad01-6f52a5826473}</Project>
         <Name>SoundExplorers.Model</Name>
