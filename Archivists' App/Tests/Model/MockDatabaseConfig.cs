@@ -1,5 +1,4 @@
 ﻿using System;
-using JetBrains.Annotations;
 using SoundExplorers.Model;
 
 namespace SoundExplorers.Tests.Model {

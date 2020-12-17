@@ -3,14 +3,14 @@ using System.Windows.Forms;
 using SoundExplorers.Controller;
 
 namespace SoundExplorers.View {
-  internal class ParentGrid : GridBase,  IView<ParentGridController> {
+  internal class ParentGrid : GridBase, IView<ParentGridController> {
     public ParentGrid() {
       AllowUserToAddRows = false;
       AllowUserToDeleteRows = false;
       MultiSelect = false;
       ReadOnly = true;
     }
-    
+
     private ParentGridController Controller { get; set; }
     internal MainGrid MainGrid { get; set; }
 

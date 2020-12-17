@@ -103,8 +103,8 @@ namespace SoundExplorers.Model {
     ///   is nor necessarily the grid's new (i.e. empty) row.
     ///   Rather it is the row that, if committed, will provide the data for an entity
     ///   to be inserted into the database.
-    ///   The new row becomes the insertion row when entered 
-    ///   (see <see cref="BindingList_ListChanged"/>)
+    ///   The new row becomes the insertion row when entered
+    ///   (see <see cref="BindingList_ListChanged" />)
     ///   and ceases to be the insertion row
     ///   when and if it is left without having been edited.
     ///   The insertion row ceases to be the new row once any of its cells is edited:

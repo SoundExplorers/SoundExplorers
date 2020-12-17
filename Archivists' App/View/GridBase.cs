@@ -22,18 +22,20 @@ namespace SoundExplorers.View {
       !ReadOnly && !IsCurrentCellInEditMode && SelectedRows.Count > 0 &&
       !SelectedRows.Contains(NewRow);
 
-    [NotNull] public new GridContextMenu ContextMenu =>
+    [NotNull]
+    public new GridContextMenu ContextMenu =>
       _contextMenu ?? (_contextMenu = new GridContextMenu(this));
 
     public bool IsTextBoxCellCurrent =>
-      CurrentCell?.OwningColumn.CellTemplate is TextBoxCell; 
-    
+      CurrentCell?.OwningColumn.CellTemplate is TextBoxCell;
+
     public MainView MainView { get; set; }
 
     /// <summary>
     ///   Gets the new (i.e. empty) row at the bottom of an editable grid.
     /// </summary>
-    [NotNull] private DataGridViewRow NewRow => !ReadOnly
+    [NotNull]
+    private DataGridViewRow NewRow => !ReadOnly
       ? Rows[Rows.Count - 1]
       : throw new InvalidOperationException(
         "A read-only grid does not contain a new row.");
@@ -54,7 +56,7 @@ namespace SoundExplorers.View {
 
     /// <summary>
     ///   Enables or disables the menu items of the grid's context menu
-    ///   or the corresponding items of the Edit menu on the main window menu bar.  
+    ///   or the corresponding items of the Edit menu on the main window menu bar.
     /// </summary>
     public void EnableOrDisableMenuItems(
       [NotNull] ToolStripMenuItem cutMenuItem,
@@ -92,7 +94,7 @@ namespace SoundExplorers.View {
       }
       return null;
     }
-    
+
     protected override void OnCurrentCellChanged(EventArgs e) {
       base.OnCurrentCellChanged(e);
       if (CurrentCell != null) {

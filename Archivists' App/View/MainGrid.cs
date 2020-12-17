@@ -6,7 +6,6 @@ using SoundExplorers.Controller;
 
 namespace SoundExplorers.View {
   internal class MainGrid : GridBase, IMainGrid {
-
     private new DataGridViewRow CurrentRow =>
       base.CurrentRow ?? throw new NullReferenceException(nameof(CurrentRow));
 
@@ -156,7 +155,7 @@ namespace SoundExplorers.View {
         CommitEdit(DataGridViewDataErrorContexts.CurrentCellChange);
       }
     }
-    
+
     protected override void OnCurrentCellChanged(EventArgs e) {
       base.OnCurrentCellChanged(e);
       if (CurrentCell != null) {

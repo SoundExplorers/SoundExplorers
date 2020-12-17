@@ -91,7 +91,8 @@ namespace SoundExplorers.Tests.Model {
       entity1 = list[0];
       Assert.AreEqual(name1, entity1.Name, "1st entity Name after delete and repopulate");
       Assert.AreEqual(1, bindingList.Count, "editor.Count after delete and repopulate");
-      Assert.AreEqual(name1, bindingList[0].Name, "1st item Name after delete and repopulate");
+      Assert.AreEqual(name1, bindingList[0].Name,
+        "1st item Name after delete and repopulate");
     }
 
     [Test]

@@ -8,7 +8,7 @@ namespace SoundExplorers.View {
     public GridContextMenu([NotNull] GridBase grid) {
       Grid = grid;
     }
-    
+
     private TextBox TextBox =>
       (Grid as MainGrid)?.TextBox ??
       throw new InvalidOperationException(
