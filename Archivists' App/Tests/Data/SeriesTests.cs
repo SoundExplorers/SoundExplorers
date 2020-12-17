@@ -1,7 +1,6 @@
 ﻿using System;
 using NUnit.Framework;
 using SoundExplorers.Data;
-using PropertyConstraintException = System.Data.PropertyConstraintException;
 
 namespace SoundExplorers.Tests.Data {
   [TestFixture]
