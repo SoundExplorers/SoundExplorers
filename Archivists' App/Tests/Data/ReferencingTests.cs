@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Data;
 using NUnit.Framework;
 using SoundExplorers.Data;
 
@@ -283,7 +282,7 @@ namespace SoundExplorers.Tests.Data {
         session.BeginUpdate();
         Mother1 = QueryHelper.Read<Mother>(Mother1Name, session);
         Daughter1 = QueryHelper.Read<Daughter>(Daughter1Name, session);
-        Assert.Throws<ConstraintException>(() =>
+        Assert.Throws<System.Data.ConstraintException>(() =>
             // ReSharper disable once AssignNullToNotNullAttribute
             Daughter1.Mother = null,
           "Cannot remove Daughter from mandatory link to Mother.");
@@ -331,7 +330,7 @@ namespace SoundExplorers.Tests.Data {
     public void T090_DisallowDeleteParentWithChildren() {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
-        Assert.Throws<ConstraintException>(() =>
+        Assert.Throws<System.Data.ConstraintException>(() =>
           Mother1.Unpersist(session));
         session.Commit();
       }
@@ -387,7 +386,7 @@ namespace SoundExplorers.Tests.Data {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
         Father1 = QueryHelper.Read<Father>(Father1Name, session);
-        Assert.Throws<ConstraintException>(() =>
+        Assert.Throws<System.Data.ConstraintException>(() =>
           // Cannot use [Children].Add, as it is an ambiguous reference 
           // when a null parameter is specified.
           // ReSharper disable once AssignNullToNotNullAttribute

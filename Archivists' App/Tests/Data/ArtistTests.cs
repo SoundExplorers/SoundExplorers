@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Data;
 using NUnit.Framework;
 using SoundExplorers.Data;
 
@@ -177,7 +176,7 @@ namespace SoundExplorers.Tests.Data {
     [Test]
     public void DisallowUnpersistArtistWithCredits() {
       Session.BeginUpdate();
-      Assert.Throws<ConstraintException>(() =>
+      Assert.Throws<System.Data.ConstraintException>(() =>
         RalphJenkins.Unpersist(Session));
       Session.Commit();
     }

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.Data;
 using System.Diagnostics.CodeAnalysis;
 
 namespace SoundExplorers.Data {
@@ -27,7 +26,8 @@ namespace SoundExplorers.Data {
       get => _creditNo;
       set {
         if (value == 0) {
-          throw new PropertyConstraintException("CreditNo '00' is not valid.");
+          throw new PropertyConstraintException("CreditNo '00' is not valid.",
+            nameof(CreditNo));
         }
         UpdateNonIndexField();
         _creditNo = value;

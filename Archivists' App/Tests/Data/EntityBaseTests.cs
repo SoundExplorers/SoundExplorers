@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Data;
 using JetBrains.Annotations;
 using NUnit.Framework;
 using SoundExplorers.Data;
@@ -43,7 +42,7 @@ namespace SoundExplorers.Tests.Data {
       var zoe = new DudDaughter(QueryHelper, typeof(Mother))
         {Name = "Zoe"};
       var mother = new Mother(QueryHelper) {Name = motherName};
-      Assert.Throws<ConstraintException>(
+      Assert.Throws<System.Data.ConstraintException>(
         () => xenia.Mother = mother,
         "IdentifyingParentType has not been specified");
       Assert.Throws<PropertyConstraintException>(

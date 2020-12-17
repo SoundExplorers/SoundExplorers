@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Data;
 using NUnit.Framework;
 using SoundExplorers.Data;
 
@@ -133,7 +132,7 @@ namespace SoundExplorers.Tests.Data {
     public void DisallowUnpersistLocationWithEvents() {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
-        Assert.Throws<ConstraintException>(() =>
+        Assert.Throws<System.Data.ConstraintException>(() =>
           Location1.Unpersist(session));
         session.Commit();
       }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Data;
 using NUnit.Framework;
 using SoundExplorers.Data;
 
@@ -226,7 +225,7 @@ namespace SoundExplorers.Tests.Data {
     public void DisallowChangePieceNoToDuplicate() {
       Session.BeginUpdate();
       Piece2.PieceNo = Piece2PieceNo;
-      Assert.Throws<ConstraintException>(() =>
+      Assert.Throws<System.Data.ConstraintException>(() =>
         Piece2.PieceNo = Piece1PieceNo);
       Session.Commit();
     }
@@ -315,14 +314,14 @@ namespace SoundExplorers.Tests.Data {
         PieceNo = Piece1PieceNo
       };
       Session.BeginUpdate();
-      Assert.Throws<ConstraintException>(() => duplicate.Set = Set1);
+      Assert.Throws<System.Data.ConstraintException>(() => duplicate.Set = Set1);
       Session.Commit();
     }
 
     [Test]
     public void DisallowUnpersistPieceWithCredits() {
       Session.BeginUpdate();
-      Assert.Throws<ConstraintException>(() =>
+      Assert.Throws<System.Data.ConstraintException>(() =>
         Piece1.Unpersist(Session));
       Session.Commit();
     }

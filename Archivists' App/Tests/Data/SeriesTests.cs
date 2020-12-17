@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Data;
 using NUnit.Framework;
 using SoundExplorers.Data;
 
@@ -97,7 +96,7 @@ namespace SoundExplorers.Tests.Data {
       };
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
-        Assert.Throws<PropertyConstraintException>(() =>
+        Assert.Throws<System.Data.PropertyConstraintException>(() =>
           session.Persist(duplicate), "Duplicate");
         session.Commit();
       }

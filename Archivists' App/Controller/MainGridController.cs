@@ -28,7 +28,7 @@ namespace SoundExplorers.Controller {
     [NotNull] protected IMainGrid Grid { get; }
 
     private bool IsDuplicateKeyException =>
-      List.LastDatabaseUpdateErrorException?.InnerException is DuplicateKeyException;
+      List.LastDatabaseUpdateErrorException?.InnerException is DuplicateNameException;
 
     private bool IsFormatException =>
       List.LastDatabaseUpdateErrorException?.InnerException is FormatException;
@@ -37,7 +37,7 @@ namespace SoundExplorers.Controller {
       List.LastDatabaseUpdateErrorException?.InnerException
         is RowNotInTableException;
 
-    protected virtual ChangeAction LastChangeAction =>
+    protected virtual StatementType LastChangeAction =>
       List.LastDatabaseUpdateErrorException.ChangeAction;
 
     /// <summary>
@@ -73,7 +73,7 @@ namespace SoundExplorers.Controller {
           List.LastDatabaseUpdateErrorException = databaseUpdateErrorException;
           EditorView.OnError();
           break;
-        case DuplicateKeyException duplicateKeyException:
+        case DuplicateNameException duplicateKeyException:
           List.OnValidationError(rowIndex, columnName, duplicateKeyException);
           EditorView.OnError();
           break;
@@ -184,7 +184,7 @@ namespace SoundExplorers.Controller {
       //   $"EditorController.ShowError: LastChangeAction == {LastChangeAction}");
       Grid.MakeCellCurrent(List.LastDatabaseUpdateErrorException.RowIndex,
         List.LastDatabaseUpdateErrorException.ColumnIndex);
-      if (LastChangeAction == ChangeAction.Delete) {
+      if (LastChangeAction == StatementType.Delete) {
         Grid.SelectCurrentRowOnly();
       }
       EditorView.ShowErrorMessage(List.LastDatabaseUpdateErrorException.Message);
@@ -193,7 +193,7 @@ namespace SoundExplorers.Controller {
         return;
       }
       if (IsDuplicateKeyException || IsReferencingValueNotFoundException) {
-        if (LastChangeAction == ChangeAction.Update) {
+        if (LastChangeAction == StatementType.Update) {
           List.RestoreReferencingPropertyOriginalValue(
             List.LastDatabaseUpdateErrorException.RowIndex,
             List.LastDatabaseUpdateErrorException.ColumnIndex);
@@ -201,12 +201,12 @@ namespace SoundExplorers.Controller {
         }
       }
       switch (LastChangeAction) {
-        case ChangeAction.Delete:
+        case StatementType.Delete:
           break;
-        case ChangeAction.Insert:
+        case StatementType.Insert:
           CancelInsertion();
           break;
-        case ChangeAction.Update:
+        case StatementType.Update:
           List.RestoreCurrentBindingItemOriginalValues();
           Grid.EditCurrentCell();
           Grid.RestoreCurrentRowCellErrorValue(

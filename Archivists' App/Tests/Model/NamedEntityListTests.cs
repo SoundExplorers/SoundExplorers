@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using System.Data;
-using System.Data.Linq;
 using JetBrains.Annotations;
 using NUnit.Framework;
 using SoundExplorers.Data;
@@ -113,7 +112,7 @@ namespace SoundExplorers.Tests.Model {
       var exception = Assert.Catch<DatabaseUpdateErrorException>(
         () => list.DeleteEntity(1),
         "DeleteEntity should have thrown DatabaseUpdateErrorException.");
-      Assert.AreEqual(ChangeAction.Delete, exception.ChangeAction, "ChangeAction");
+      Assert.AreEqual(StatementType.Delete, exception.ChangeAction, "ChangeAction");
       Assert.IsTrue(
         exception.Message.Contains("cannot be deleted because it is referenced by"),
         "Message");
@@ -147,10 +146,10 @@ namespace SoundExplorers.Tests.Model {
         "Duplicate name should have thrown DatabaseUpdateErrorException.");
       Assert.AreEqual("Another EventType with key 'Performance' already exists.",
         exception.Message, "Message");
-      Assert.AreEqual(ChangeAction.Insert, exception.ChangeAction, "ChangeAction");
+      Assert.AreEqual(StatementType.Insert, exception.ChangeAction, "ChangeAction");
       Assert.AreEqual(1, exception.RowIndex, "RowIndex");
       Assert.AreEqual(0, exception.ColumnIndex, "ColumnIndex");
-      Assert.IsInstanceOf(typeof(DuplicateKeyException), exception.InnerException,
+      Assert.IsInstanceOf(typeof(DuplicateNameException), exception.InnerException,
         "InnerException");
       Assert.AreSame(exception, list.LastDatabaseUpdateErrorException,
         "LastDatabaseUpdateErrorException");
@@ -177,13 +176,13 @@ namespace SoundExplorers.Tests.Model {
       list.OnRowEnter(1);
       item2.Name = name2;
       list.OnRowValidated(1);
-      var exception = Assert.Catch<DuplicateKeyException>(
+      var exception = Assert.Catch<DuplicateNameException>(
         () => item2.Name = name1,
-        "Rename name should have thrown DuplicateKeyException.");
+        "Rename name should have thrown DuplicateNameException.");
       Assert.AreEqual("Another EventType with key 'Performance' already exists.",
         exception.Message, "Message");
       list.OnValidationError(1, "Name", exception);
-      Assert.AreEqual(ChangeAction.Update,
+      Assert.AreEqual(StatementType.Update,
         list.LastDatabaseUpdateErrorException.ChangeAction, "ChangeAction");
       Assert.AreEqual(1, list.LastDatabaseUpdateErrorException.RowIndex, "RowIndex");
       Assert.AreEqual(0, list.LastDatabaseUpdateErrorException.ColumnIndex,

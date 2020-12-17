@@ -3,11 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Data.Linq;
 using System.Linq;
 using JetBrains.Annotations;
 using SoundExplorers.Data;
 using VelocityDb.Session;
+using PropertyConstraintException = SoundExplorers.Data.PropertyConstraintException;
 
 namespace SoundExplorers.Model {
   /// <summary>
@@ -52,7 +52,7 @@ namespace SoundExplorers.Model {
     private TBindingItem BindingItemToFix { get; set; }
     private EntityComparer<TEntity> EntityComparer { get; }
     private TBindingItem ErrorBindingItem { get; set; }
-    private ChangeAction LastDatabaseChangeAction { get; set; }
+    private StatementType LastDatabaseChangeAction { get; set; }
 
     /// <summary>
     ///   The setter should only be needed for testing.
@@ -151,7 +151,7 @@ namespace SoundExplorers.Model {
     public void DeleteEntity(int rowIndex) {
       // Debug.WriteLine(
       //   $"{nameof(DeleteEntity)}: IsInsertionRowCurrent = {IsInsertionRowCurrent}; BindingList.Count = {BindingList.Count}");
-      LastDatabaseChangeAction = ChangeAction.Delete;
+      LastDatabaseChangeAction = StatementType.Delete;
       Session.BeginUpdate();
       try {
         //throw new ConstraintException("Test error message");
@@ -244,7 +244,7 @@ namespace SoundExplorers.Model {
       Exception exception) {
       ErrorBindingItem = GetBindingItem(rowIndex);
       LastDatabaseChangeAction =
-        IsInsertionRowCurrent ? ChangeAction.Insert : ChangeAction.Update;
+        IsInsertionRowCurrent ? StatementType.Insert : StatementType.Update;
       int columnIndex;
       string message;
       if (propertyName != null) {
@@ -363,12 +363,12 @@ namespace SoundExplorers.Model {
     /// </exception>
     private void AddNewEntity(int rowIndex) {
       //Debug.WriteLine("EntityListBase.AddNewEntity");
-      LastDatabaseChangeAction = ChangeAction.Insert;
+      LastDatabaseChangeAction = StatementType.Insert;
       var bindingItem = GetBindingItem(rowIndex);
       bindingItem.Columns = Columns;
       try {
         CheckForDuplicateKey(bindingItem);
-      } catch (DuplicateKeyException duplicateKeyException) {
+      } catch (DuplicateNameException duplicateKeyException) {
         OnValidationError(rowIndex, null, duplicateKeyException);
         throw LastDatabaseUpdateErrorException;
       }
@@ -423,7 +423,7 @@ namespace SoundExplorers.Model {
       if ((from entity in this where entity.Key == newKey select entity).Any()) {
         var message =
           $"Another {EntityTypeName} with key '{newKey}' already exists.";
-        throw new DuplicateKeyException(bindingItem, message);
+        throw new DuplicateNameException(message);
       }
     }
 
@@ -501,7 +501,7 @@ namespace SoundExplorers.Model {
     private void UpdateExistingEntityProperty(
       int rowIndex, [NotNull] string propertyName) {
       //Debug.WriteLine($"EntityListBase.UpdateExistingEntityProperty: row {rowIndex}");
-      LastDatabaseChangeAction = ChangeAction.Update;
+      LastDatabaseChangeAction = StatementType.Update;
       var bindingItem = GetBindingItem(rowIndex);
       if (Columns[propertyName].IsInKey) {
         CheckForDuplicateKey(bindingItem);
