@@ -260,7 +260,7 @@ namespace SoundExplorers.View {
     }
 
     private void HelpAboutMenuItem_Click(object sender, EventArgs e) {
-      new AboutForm().ShowDialog();
+      new AboutView().ShowDialog();
     }
 
     /// <summary>

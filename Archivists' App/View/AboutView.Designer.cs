@@ -1,5 +1,5 @@
 namespace SoundExplorers.View {
-  partial class AboutForm {
+  partial class AboutView {
     /// <summary>
     /// Required designer variable.
     /// </summary>
@@ -115,7 +115,7 @@ namespace SoundExplorers.View {
       this.Panel1.Size = new System.Drawing.Size(732, 304);
       this.Panel1.TabIndex = 10;
       // 
-      // AboutForm
+      // AboutView
       // 
       this.AcceptButton = this.OKButtion;
       this.AutoScaleBaseSize = new System.Drawing.Size(11, 25);
@@ -127,7 +127,7 @@ namespace SoundExplorers.View {
       this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
       this.MaximizeBox = false;
       this.MinimizeBox = false;
-      this.Name = "AboutForm";
+      this.Name = "AboutView";
       this.ShowIcon = false;
       this.ShowInTaskbar = false;
       this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;

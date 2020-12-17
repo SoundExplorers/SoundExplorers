@@ -6,15 +6,15 @@ namespace SoundExplorers.View {
   /// <summary>
   ///   About <see cref="Form" />.
   /// </summary>
-  public partial class AboutForm : Form {
+  public partial class AboutView : Form {
     private static readonly Assembly EntryAssembly =
       Assembly.GetEntryAssembly();
 
     /// <summary>
     ///   Initialises a new instance of the
-    ///   <see cref="AboutForm" /> class.
+    ///   <see cref="AboutView" /> class.
     /// </summary>
-    public AboutForm() {
+    public AboutView() {
       // Required for Windows Form Designer support.
       InitializeComponent();
       // Add any constructor code after InitializeComponent call.
