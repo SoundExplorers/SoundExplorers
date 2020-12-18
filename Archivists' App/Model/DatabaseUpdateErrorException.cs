@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Data.Linq;
+using System.Data;
 
 namespace SoundExplorers.Model {
   /// <summary>
@@ -29,7 +29,7 @@ namespace SoundExplorers.Model {
     ///   error diagnostics.
     /// </param>
     public DatabaseUpdateErrorException(
-      ChangeAction changeAction,
+      StatementType changeAction,
       string message,
       int rowIndex,
       int columnIndex,
@@ -39,7 +39,7 @@ namespace SoundExplorers.Model {
       ColumnIndex = columnIndex;
     }
 
-    public ChangeAction ChangeAction { get; }
+    public StatementType ChangeAction { get; }
 
     /// <summary>
     ///   Gets the index of the column

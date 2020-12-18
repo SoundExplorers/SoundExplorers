@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.Data;
 using JetBrains.Annotations;
 
 namespace SoundExplorers.Data {
@@ -66,7 +65,8 @@ namespace SoundExplorers.Data {
       get => _setNo;
       set {
         if (value == 0) {
-          throw new PropertyConstraintException("SetNo '00' is not valid.");
+          throw new PropertyConstraintException("SetNo '00' is not valid.",
+            nameof(SetNo));
         }
         UpdateNonIndexField();
         _setNo = value;

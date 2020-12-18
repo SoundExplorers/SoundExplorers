@@ -127,7 +127,7 @@ namespace SoundExplorers.Controller {
     //   //   $"EditorController.ShowError: LastChangeAction == {LastChangeAction}");
     //   View.MakeCellCurrent(MainList.LastDatabaseUpdateErrorException.RowIndex,
     //     MainList.LastDatabaseUpdateErrorException.ColumnIndex);
-    //   if (LastChangeAction == ChangeAction.Delete) {
+    //   if (LastChangeAction == StatementType.Delete) {
     //     View.SelectCurrentRowOnly();
     //   }
     //   View.ShowErrorMessage(MainList.LastDatabaseUpdateErrorException.Message);
@@ -136,7 +136,7 @@ namespace SoundExplorers.Controller {
     //     return;
     //   }
     //   if (IsDuplicateKeyException || IsReferencingValueNotFoundException) {
-    //     if (LastChangeAction == ChangeAction.Update) {
+    //     if (LastChangeAction == StatementType.Update) {
     //       MainList.RestoreReferencingPropertyOriginalValue(
     //         MainList.LastDatabaseUpdateErrorException.RowIndex,
     //         MainList.LastDatabaseUpdateErrorException.ColumnIndex);
@@ -144,12 +144,12 @@ namespace SoundExplorers.Controller {
     //     }
     //   }
     //   switch (LastChangeAction) {
-    //     case ChangeAction.Delete:
+    //     case StatementType.Delete:
     //       break;
-    //     case ChangeAction.Insert:
+    //     case StatementType.Insert:
     //       CancelInsertion();
     //       break;
-    //     case ChangeAction.Update:
+    //     case StatementType.Update:
     //       MainList.RestoreCurrentBindingItemOriginalValues();
     //       View.EditCurrentCell();
     //       View.RestoreMainGridCurrentRowCellErrorValue(

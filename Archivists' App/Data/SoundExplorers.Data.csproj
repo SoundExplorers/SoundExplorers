@@ -103,6 +103,7 @@
     <Compile Include="Newsletter.cs" />
     <Compile Include="Piece.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="PropertyConstraintException.cs" />
     <Compile Include="QueryHelper.cs" />
     <Compile Include="RelationInfo.cs" />
     <Compile Include="Role.cs" />

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Data;
-using System.Data.Linq;
 using JetBrains.Annotations;
 using NUnit.Framework;
 using SoundExplorers.Controller;
@@ -211,9 +210,9 @@ namespace SoundExplorers.Tests.Controller {
       Assert.AreEqual(2, bindingList.Count, "editor.Count after FetchData #2");
       MainGridController.OnRowEnter(1);
       // Disallow rename to duplicate
-      var exception = Assert.Catch<DuplicateKeyException>(
+      var exception = Assert.Catch<DuplicateNameException>(
         () => bindingList[1].Name = name1,
-        "Rename name should have thrown DuplicateKeyException.");
+        "Rename name should have thrown DuplicateNameException.");
       Assert.AreEqual(name1, bindingList[1].Name,
         "Still duplicate name before error message shown for duplicate rename");
       MainGridController.OnExistingRowCellUpdateError(1, "Name", exception);

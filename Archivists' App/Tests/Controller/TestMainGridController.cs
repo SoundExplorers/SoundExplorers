@@ -1,4 +1,4 @@
-﻿using System.Data.Linq;
+﻿using System.Data;
 using JetBrains.Annotations;
 using SoundExplorers.Controller;
 using SoundExplorers.Model;
@@ -10,8 +10,8 @@ namespace SoundExplorers.Tests.Controller {
 
     internal bool AutoValidate { get; set; }
 
-    protected override ChangeAction LastChangeAction => TestUnsupportedLastChangeAction
-      ? ChangeAction.None
+    protected override StatementType LastChangeAction => TestUnsupportedLastChangeAction
+      ? StatementType.Select // Not used.
       : base.LastChangeAction;
 
     internal bool TestUnsupportedLastChangeAction { get; set; }
