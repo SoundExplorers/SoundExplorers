@@ -1,7 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Data;
-using System.Data.Linq;
 using JetBrains.Annotations;
 using SoundExplorers.Model;
 
@@ -216,7 +215,7 @@ namespace SoundExplorers.Controller {
           break;
         default:
           throw new NotSupportedException(
-            $"{nameof(ChangeAction)} '{LastChangeAction}' is not supported.");
+            $"{nameof(DatabaseUpdateErrorException.ChangeAction)} '{LastChangeAction}' is not supported.");
       }
     }
 

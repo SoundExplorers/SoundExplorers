@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using JetBrains.Annotations;
 using SoundExplorers.Model;
+using NotNullAttribute = JetBrains.Annotations.NotNullAttribute;
 
 namespace SoundExplorers.Controller {
   public class SizeableFormOptionsController {
