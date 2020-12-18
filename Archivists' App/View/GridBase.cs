@@ -23,7 +23,7 @@ namespace SoundExplorers.View {
       !SelectedRows.Contains(NewRow);
 
     [NotNull]
-    public new GridContextMenu ContextMenu =>
+    public GridContextMenu ContextMenu =>
       _contextMenu ?? (_contextMenu = new GridContextMenu(this));
 
     public bool IsTextBoxCellCurrent =>

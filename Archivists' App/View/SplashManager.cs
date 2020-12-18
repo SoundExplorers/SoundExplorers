@@ -257,7 +257,6 @@ namespace SoundExplorers.View {
       _splashFormType = splashFormType;
       _args = args;
       _splashThread = new Thread(ShowThread);
-      _splashThread.SetApartmentState(ApartmentState.STA);
       _splashThread.IsBackground = true;
       _splashThread.Name = typeof(SplashManager).Name;
       _splashThread.Start();

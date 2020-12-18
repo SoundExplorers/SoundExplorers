@@ -30,7 +30,8 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-  </ItemGroup>  <ItemGroup>
+  </ItemGroup>  
+  <ItemGroup>
     <ProjectReference Include="..\Controller\SoundExplorers.Controller.csproj" />
   </ItemGroup>
   <ItemGroup>
