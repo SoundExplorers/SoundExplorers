@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Reflection;
-using JetBrains.Annotations;
 using SoundExplorers.Data;
 using VelocityDb.Session;
+using NotNullAttribute = JetBrains.Annotations.NotNullAttribute;
 
 namespace SoundExplorers.Model {
   public static class Global {

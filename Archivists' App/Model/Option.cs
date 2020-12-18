@@ -1,9 +1,9 @@
 using System;
 using System.Data;
 using System.Diagnostics.CodeAnalysis;
-using JetBrains.Annotations;
 using SoundExplorers.Data;
 using VelocityDb.Session;
+using NotNullAttribute = JetBrains.Annotations.NotNullAttribute;
 
 namespace SoundExplorers.Model {
   /// <summary>

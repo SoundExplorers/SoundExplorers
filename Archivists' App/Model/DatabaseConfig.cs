@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Xml;
 using System.Xml.Linq;
 using JetBrains.Annotations;
+using NotNullAttribute = JetBrains.Annotations.NotNullAttribute;
 
 namespace SoundExplorers.Model {
   /// <summary>
