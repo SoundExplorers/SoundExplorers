@@ -3,7 +3,7 @@ using JetBrains.Annotations;
 
 namespace SoundExplorers.Data {
   /// <summary>
-  ///   Substitute for .Net Framework class that is not supported in .Net 5.
+  ///   Substitute for a .Net Framework class that is not supported in .Net 5.
   /// </summary>
   public class PropertyConstraintException : ConstraintException {
     public PropertyConstraintException([NotNull] string message,

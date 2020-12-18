@@ -25,7 +25,6 @@ namespace SoundExplorers.Tests {
       }
     }
 
-    [SuppressMessage("ReSharper", "UnusedMember.Local")]
     private static void Generate() {
       var queryHelper = new QueryHelper();
       var data = new TestData(queryHelper);
