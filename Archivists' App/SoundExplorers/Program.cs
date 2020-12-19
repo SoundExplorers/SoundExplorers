@@ -21,6 +21,7 @@ namespace SoundExplorers {
 #else // Release build
       AddGlobalExceptionHandlers();
 #endif
+      Application.SetHighDpiMode(HighDpiMode.SystemAware);
       Application.EnableVisualStyles();
       Application.SetCompatibleTextRenderingDefault(false);
       SplashManager.Show(typeof(SplashForm));

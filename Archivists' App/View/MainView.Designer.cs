@@ -26,7 +26,8 @@ namespace SoundExplorers.View {
         /// </summary>
         private void InitializeComponent() {
       this.components = new System.ComponentModel.Container();
-      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainView));
+      System.ComponentModel.ComponentResourceManager resources = 
+            new System.ComponentModel.ComponentResourceManager(typeof(MainView));
       this.MenuStrip = new System.Windows.Forms.MenuStrip();
       this.FileMenu = new System.Windows.Forms.ToolStripMenuItem();
       this.FileNewMenuItem = new System.Windows.Forms.ToolStripMenuItem();
