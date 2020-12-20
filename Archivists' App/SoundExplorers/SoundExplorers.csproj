@@ -1,14 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <TargetFramework>net5.0-windows</TargetFramework>
-    <UseWindowsForms>true</UseWindowsForms>
-    <ApplicationIcon>Fred Flintstone.ico</ApplicationIcon>
-  </PropertyGroup>
+    <PropertyGroup>
+        <OutputType>WinExe</OutputType>
+        <TargetFramework>net5.0-windows</TargetFramework>
+        <UseWindowsForms>true</UseWindowsForms>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\View\SoundExplorers.View.csproj" />
-  </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\View\SoundExplorers.View.csproj" />
+    </ItemGroup>
 
 </Project>
