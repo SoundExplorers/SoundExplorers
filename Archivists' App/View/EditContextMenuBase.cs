@@ -30,7 +30,8 @@ namespace SoundExplorers.View {
       // as their setters call the Items getter (implemented in derived classes),
       // which needs all the menu items to have been created.
       // With .Net 5, this was no longer sufficient,
-      // as TextBoxContextMenu.OnOpening still gets invoked before this constructor.
+      // as TextBoxContextMenu.OnOpening still gets invoked before this constructor
+      // (in the Options dialog though not the grid).
       // The fix is to make the menu items self-instantiating properties
       // instead of instantiating them in this constructor.
       Size = new Size(61, 4);
