@@ -35,11 +35,11 @@ namespace SoundExplorers.View {
       // DatabaseFolderLabel
       // 
       this.DatabaseFolderLabel.AutoSize = true;
-      this.DatabaseFolderLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.DatabaseFolderLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
       this.DatabaseFolderLabel.Location = new System.Drawing.Point(14, 12);
       this.DatabaseFolderLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
       this.DatabaseFolderLabel.Name = "DatabaseFolderLabel";
-      this.DatabaseFolderLabel.Size = new System.Drawing.Size(121, 18);
+      this.DatabaseFolderLabel.Size = new System.Drawing.Size(148, 22);
       this.DatabaseFolderLabel.TabIndex = 1;
       this.DatabaseFolderLabel.Text = "&Database Folder:";
       // 
@@ -47,13 +47,13 @@ namespace SoundExplorers.View {
       // 
       this.DatabaseFolderTextBox.BackColor = System.Drawing.SystemColors.ButtonFace;
       this.DatabaseFolderTextBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-      this.DatabaseFolderTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.DatabaseFolderTextBox.Location = new System.Drawing.Point(139, 12);
+      this.DatabaseFolderTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+      this.DatabaseFolderTextBox.Location = new System.Drawing.Point(161, 12);
       this.DatabaseFolderTextBox.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
       this.DatabaseFolderTextBox.Multiline = true;
       this.DatabaseFolderTextBox.Name = "DatabaseFolderTextBox";
       this.DatabaseFolderTextBox.ReadOnly = true;
-      this.DatabaseFolderTextBox.Size = new System.Drawing.Size(634, 38);
+      this.DatabaseFolderTextBox.Size = new System.Drawing.Size(601, 73);
       this.DatabaseFolderTextBox.TabIndex = 2;
       this.DatabaseFolderTextBox.Text = "E:\\Simon\\OneDrive\\Documents\\Software\\Sound Explorers Audio Archive\\Database E:\\Si" +
     "mon\\OneDrive\\Documents\\Software\\Sound Explorers Audio Archive\\Database";
@@ -61,8 +61,8 @@ namespace SoundExplorers.View {
       // OkButton
       // 
       this.OkButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-      this.OkButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.OkButton.Location = new System.Drawing.Point(673, 173);
+      this.OkButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+      this.OkButton.Location = new System.Drawing.Point(673, 260);
       this.OkButton.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
       this.OkButton.Name = "OkButton";
       this.OkButton.Size = new System.Drawing.Size(100, 45);
@@ -74,11 +74,11 @@ namespace SoundExplorers.View {
       // 
       this.MessageTextBox.BackColor = System.Drawing.SystemColors.ButtonFace;
       this.MessageTextBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-      this.MessageTextBox.Location = new System.Drawing.Point(139, 66);
+      this.MessageTextBox.Location = new System.Drawing.Point(161, 105);
       this.MessageTextBox.Multiline = true;
       this.MessageTextBox.Name = "MessageTextBox";
       this.MessageTextBox.ReadOnly = true;
-      this.MessageTextBox.Size = new System.Drawing.Size(512, 152);
+      this.MessageTextBox.Size = new System.Drawing.Size(498, 200);
       this.MessageTextBox.TabIndex = 3;
       this.MessageTextBox.Text = resources.GetString("MessageTextBox.Text");
       // 
@@ -86,15 +86,15 @@ namespace SoundExplorers.View {
       // 
       this.AcceptButton = this.OkButton;
       this.AllowDrop = true;
-      this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 17F);
+      this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 22F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.CancelButton = this.OkButton;
-      this.ClientSize = new System.Drawing.Size(784, 231);
+      this.ClientSize = new System.Drawing.Size(784, 317);
       this.Controls.Add(this.MessageTextBox);
       this.Controls.Add(this.OkButton);
       this.Controls.Add(this.DatabaseFolderTextBox);
       this.Controls.Add(this.DatabaseFolderLabel);
-      this.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
       this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
       this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
       this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
