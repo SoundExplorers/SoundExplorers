@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using JetBrains.Annotations;
 
 namespace SoundExplorers.View {
   /// <summary>
@@ -20,10 +21,18 @@ namespace SoundExplorers.View {
       // Return the type of the editing control that CalendarCell uses.
       typeof(CalendarEditingControl);
 
+    [NotNull]
+    private DateTimePicker DateTimePicker => (DateTimePicker)Grid.EditingControl;
+
+    [NotNull]
+    private DataGridView Grid =>
+      DataGridView
+      ?? throw new NullReferenceException(
+        "In CalendarCell.Grid, DataGridView is null.");
+
     public void RestoreErrorValue(object errorValue) {
       if (errorValue is DateTime dateTime) {
-        var dateTimePicker = (DateTimePicker)DataGridView.EditingControl;
-        dateTimePicker.Value = dateTime.Date;
+        DateTimePicker.Value = dateTime.Date;
       }
     }
 
@@ -34,15 +43,14 @@ namespace SoundExplorers.View {
       // Set the value of the editing control to the current cell value.
       base.InitializeEditingControl(rowIndex, initialFormattedValue,
         dataGridViewCellStyle);
-      var dateTimePicker = (DateTimePicker)DataGridView.EditingControl;
       // Use the default row value when Value property is null
       // or, more to the point in this case, empty.
       if (Value == null
           || Value == DBNull.Value) {
-        dateTimePicker.Value = DateTime.Now;
-        Value = dateTimePicker.Value;
+        DateTimePicker.Value = DateTime.Now;
+        Value = DateTimePicker.Value;
       } else {
-        dateTimePicker.Value = (DateTime)Value;
+        DateTimePicker.Value = (DateTime)Value;
       }
     }
   } //End of class

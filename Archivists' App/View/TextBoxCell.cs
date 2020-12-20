@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using JetBrains.Annotations;
 
 namespace SoundExplorers.View {
   /// <summary>
@@ -7,11 +8,17 @@ namespace SoundExplorers.View {
   /// </summary>
   internal class TextBoxCell : DataGridViewTextBoxCell, ICanRestoreErrorValue {
     private TextBoxContextMenu _cellTextBoxContextMenu;
-    private TextBox TextBox => (TextBox)DataGridView.EditingControl;
+
+    [NotNull]
+    private DataGridView Grid =>
+      DataGridView
+      ?? throw new NullReferenceException(
+        "In TextBoxCell.Grid, DataGridView is null.");
+
+    [NotNull] private TextBox TextBox => (TextBox)Grid.EditingControl;
 
     private TextBoxContextMenu TextBoxContextMenu =>
-      _cellTextBoxContextMenu ??
-      (_cellTextBoxContextMenu = new TextBoxContextMenu(TextBox));
+      _cellTextBoxContextMenu ??= new TextBoxContextMenu(TextBox);
 
     public override Type EditType => typeof(DataGridViewTextBoxEditingControl);
 
