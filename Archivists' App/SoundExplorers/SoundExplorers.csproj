@@ -4,6 +4,12 @@
         <OutputType>WinExe</OutputType>
         <TargetFramework>net5.0-windows</TargetFramework>
         <UseWindowsForms>true</UseWindowsForms>
+		<RootNamespace>SoundExplorers</RootNamespace>
+		<AssemblyName>SoundExplorers</AssemblyName>
+        <Title>Sound and Light Exploration Society</Title>
+        <Company>Sound and Light Exploration Society</Company>
+        <Product>Sound Explorers Audio Archive</Product>
+        <Copyright>Copyright © 2021 Sound and Light Exploration Society</Copyright>
     </PropertyGroup>
 
     <ItemGroup>
