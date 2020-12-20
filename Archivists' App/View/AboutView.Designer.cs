@@ -38,7 +38,7 @@ namespace SoundExplorers.View {
       this.OKButtion.BackColor = System.Drawing.Color.Firebrick;
       this.OKButtion.Cursor = System.Windows.Forms.Cursors.Default;
       this.OKButtion.DialogResult = System.Windows.Forms.DialogResult.OK;
-      this.OKButtion.Font = new System.Drawing.Font("Verdana", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.OKButtion.Font = new System.Drawing.Font("Verdana", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
       this.OKButtion.ForeColor = System.Drawing.Color.Gold;
       this.OKButtion.Location = new System.Drawing.Point(548, 238);
       this.OKButtion.Name = "OKButtion";
@@ -52,13 +52,13 @@ namespace SoundExplorers.View {
       this.CopyrightLabel.AutoSize = true;
       this.CopyrightLabel.BackColor = System.Drawing.Color.Firebrick;
       this.CopyrightLabel.Cursor = System.Windows.Forms.Cursors.Default;
-      this.CopyrightLabel.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.CopyrightLabel.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
       this.CopyrightLabel.ForeColor = System.Drawing.Color.Gold;
       this.CopyrightLabel.Location = new System.Drawing.Point(262, 158);
       this.CopyrightLabel.Name = "CopyrightLabel";
-      this.CopyrightLabel.Size = new System.Drawing.Size(93, 20);
+      this.CopyrightLabel.Size = new System.Drawing.Size(516, 20);
       this.CopyrightLabel.TabIndex = 7;
-      this.CopyrightLabel.Text = "Copyright";
+      this.CopyrightLabel.Text = "Copyright © 2021-22 Sound and Light Exploration Society";
       this.CopyrightLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
       // 
       // ProductNameLabel
@@ -66,13 +66,13 @@ namespace SoundExplorers.View {
       this.ProductNameLabel.AutoSize = true;
       this.ProductNameLabel.BackColor = System.Drawing.Color.Firebrick;
       this.ProductNameLabel.Cursor = System.Windows.Forms.Cursors.Default;
-      this.ProductNameLabel.Font = new System.Drawing.Font("Old English Text MT", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.ProductNameLabel.Font = new System.Drawing.Font("Old English Text MT", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
       this.ProductNameLabel.ForeColor = System.Drawing.Color.Gold;
       this.ProductNameLabel.Location = new System.Drawing.Point(262, 30);
       this.ProductNameLabel.Name = "ProductNameLabel";
-      this.ProductNameLabel.Size = new System.Drawing.Size(223, 40);
+      this.ProductNameLabel.Size = new System.Drawing.Size(460, 40);
       this.ProductNameLabel.TabIndex = 8;
-      this.ProductNameLabel.Text = "Product Name";
+      this.ProductNameLabel.Text = "Sound Explorers Audio Archive";
       this.ProductNameLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
       // 
       // VersionLabel
@@ -80,13 +80,13 @@ namespace SoundExplorers.View {
       this.VersionLabel.AutoSize = true;
       this.VersionLabel.BackColor = System.Drawing.Color.Firebrick;
       this.VersionLabel.Cursor = System.Windows.Forms.Cursors.Default;
-      this.VersionLabel.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.VersionLabel.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
       this.VersionLabel.ForeColor = System.Drawing.Color.Gold;
       this.VersionLabel.Location = new System.Drawing.Point(262, 100);
       this.VersionLabel.Name = "VersionLabel";
-      this.VersionLabel.Size = new System.Drawing.Size(72, 20);
+      this.VersionLabel.Size = new System.Drawing.Size(150, 20);
       this.VersionLabel.TabIndex = 9;
-      this.VersionLabel.Text = "Version";
+      this.VersionLabel.Text = "Version 2020.01";
       this.VersionLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
       // 
       // PictureBox1
@@ -94,7 +94,6 @@ namespace SoundExplorers.View {
       this.PictureBox1.BackColor = System.Drawing.SystemColors.Control;
       this.PictureBox1.Cursor = System.Windows.Forms.Cursors.Default;
       this.PictureBox1.ForeColor = System.Drawing.SystemColors.ControlText;
-      this.PictureBox1.Image = global::SoundExplorers.View.Properties.Resources.FredFlintstone;
       this.PictureBox1.Location = new System.Drawing.Point(29, 30);
       this.PictureBox1.Name = "PictureBox1";
       this.PictureBox1.Size = new System.Drawing.Size(200, 200);
@@ -110,9 +109,9 @@ namespace SoundExplorers.View {
       this.Panel1.Controls.Add(this.VersionLabel);
       this.Panel1.Controls.Add(this.CopyrightLabel);
       this.Panel1.Controls.Add(this.ProductNameLabel);
-      this.Panel1.Location = new System.Drawing.Point(16, 18);
+      this.Panel1.Location = new System.Drawing.Point(12, 12);
       this.Panel1.Name = "Panel1";
-      this.Panel1.Size = new System.Drawing.Size(732, 304);
+      this.Panel1.Size = new System.Drawing.Size(776, 319);
       this.Panel1.TabIndex = 10;
       // 
       // AboutView
@@ -121,9 +120,9 @@ namespace SoundExplorers.View {
       this.AutoScaleBaseSize = new System.Drawing.Size(11, 25);
       this.BackColor = System.Drawing.Color.Gold;
       this.CancelButton = this.OKButtion;
-      this.ClientSize = new System.Drawing.Size(767, 343);
+      this.ClientSize = new System.Drawing.Size(800, 343);
       this.Controls.Add(this.Panel1);
-      this.Font = new System.Drawing.Font("Verdana", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.Font = new System.Drawing.Font("Verdana", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
       this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
       this.MaximizeBox = false;
       this.MinimizeBox = false;
@@ -136,6 +135,7 @@ namespace SoundExplorers.View {
       this.Panel1.ResumeLayout(false);
       this.Panel1.PerformLayout();
       this.ResumeLayout(false);
+
     }
 
     public System.Windows.Forms.Label CopyrightLabel;
