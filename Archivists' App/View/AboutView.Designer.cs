@@ -94,6 +94,8 @@ namespace SoundExplorers.View {
       this.PictureBox1.BackColor = System.Drawing.SystemColors.Control;
       this.PictureBox1.Cursor = System.Windows.Forms.Cursors.Default;
       this.PictureBox1.ForeColor = System.Drawing.SystemColors.ControlText;
+      this.PictureBox1.Image =
+        global::SoundExplorers.View.Properties.Resources.FredFlintstone;
       this.PictureBox1.Location = new System.Drawing.Point(29, 30);
       this.PictureBox1.Name = "PictureBox1";
       this.PictureBox1.Size = new System.Drawing.Size(200, 200);
