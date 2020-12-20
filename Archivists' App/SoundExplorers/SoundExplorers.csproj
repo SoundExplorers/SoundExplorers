@@ -4,15 +4,11 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net5.0-windows</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <RootNamespace>SoundExplorers</RootNamespace>
-    <AssemblyName>SoundExplorers</AssemblyName>
     <ApplicationIcon>Fred Flintstone.ico</ApplicationIcon>
   </PropertyGroup>
-  <ItemGroup>
-    <Content Include="Fred Flintstone.ico" />
-  </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\View\SoundExplorers.View.csproj" />
   </ItemGroup>
+
 </Project>

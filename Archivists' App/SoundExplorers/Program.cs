@@ -1,4 +1,4 @@
-﻿#if DEBUG
+#if DEBUG
 #else // Release build
 using System.Threading;
 #endif
