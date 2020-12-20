@@ -5,41 +5,59 @@ using JetBrains.Annotations;
 
 namespace SoundExplorers.View {
   internal abstract class EditContextMenuBase : ContextMenuStrip {
+    private CopyMenuItem _copyMenuItem;
+    private CutMenuItem _cutMenuItem;
+    private DeleteMenuItem _deleteMenuItem;
+    private DeleteSelectedRowsMenuItem _deleteSelectedRowsMenuItem;
+    private PasteMenuItem _pasteMenuItem;
+    private SelectAllMenuItem _selectAllMenuItem;
+    private SelectRowMenuItem _selectRowMenuItem;
+    private UndoMenuItem _undoMenuItem;
+
     protected EditContextMenuBase() {
       // Using these custom menu items of the Edit menu on the main window menu bar 
       // caused display problems: items could become underlined or go missing.
       // That why equivalents have had to be duplicated in MainView.Designer.
-      UndoMenuItem = new UndoMenuItem();
       UndoMenuItem.Click += UndoMenuItem_Click;
-      CutMenuItem = new CutMenuItem();
       CutMenuItem.Click += CutMenuItem_Click;
-      CopyMenuItem = new CopyMenuItem();
       CopyMenuItem.Click += CopyMenuItem_Click;
-      PasteMenuItem = new PasteMenuItem();
       PasteMenuItem.Click += PasteMenuItem_Click;
-      DeleteMenuItem = new DeleteMenuItem();
       DeleteMenuItem.Click += DeleteMenuItem_Click;
-      SelectAllMenuItem = new SelectAllMenuItem();
       SelectAllMenuItem.Click += SelectAllMenuItem_Click;
-      SelectRowMenuItem = new SelectRowMenuItem();
       SelectRowMenuItem.Click += SelectRowMenuItem_Click;
-      DeleteSelectedRowsMenuItem = new DeleteSelectedRowsMenuItem();
       DeleteSelectedRowsMenuItem.Click += DeleteSelectedRowsMenuItem_Click;
       // The menu properties must be set after creating the menu items,
       // as their setters call the Items getter (implemented in derived classes),
       // which needs all the menu items to have been created.
+      // With .Net 5, this was no longer sufficient,
+      // as TextBoxContextMenu.OnOpening still gets invoked before this constructor.
+      // The fix is to make the menu items self-instantiating properties
+      // instead of instantiating them in this constructor.
       Size = new Size(61, 4);
       ShowImageMargin = false;
     }
 
-    [NotNull] protected UndoMenuItem UndoMenuItem { get; }
-    [NotNull] protected CutMenuItem CutMenuItem { get; }
-    [NotNull] protected CopyMenuItem CopyMenuItem { get; }
-    [NotNull] protected DeleteMenuItem DeleteMenuItem { get; }
-    [NotNull] protected PasteMenuItem PasteMenuItem { get; }
-    [NotNull] protected SelectAllMenuItem SelectAllMenuItem { get; }
-    [NotNull] protected SelectRowMenuItem SelectRowMenuItem { get; }
-    [NotNull] protected DeleteSelectedRowsMenuItem DeleteSelectedRowsMenuItem { get; }
+    [NotNull] protected UndoMenuItem UndoMenuItem => _undoMenuItem ??= new UndoMenuItem();
+    [NotNull] protected CutMenuItem CutMenuItem => _cutMenuItem ??= new CutMenuItem();
+    [NotNull] protected CopyMenuItem CopyMenuItem => _copyMenuItem ??= new CopyMenuItem();
+
+    [NotNull]
+    protected DeleteMenuItem DeleteMenuItem => _deleteMenuItem ??= new DeleteMenuItem();
+
+    [NotNull]
+    protected PasteMenuItem PasteMenuItem => _pasteMenuItem ??= new PasteMenuItem();
+
+    [NotNull]
+    protected SelectAllMenuItem SelectAllMenuItem =>
+      _selectAllMenuItem ??= new SelectAllMenuItem();
+
+    [NotNull]
+    protected SelectRowMenuItem SelectRowMenuItem =>
+      _selectRowMenuItem ??= new SelectRowMenuItem();
+
+    [NotNull]
+    protected DeleteSelectedRowsMenuItem DeleteSelectedRowsMenuItem =>
+      _deleteSelectedRowsMenuItem ??= new DeleteSelectedRowsMenuItem();
 
     protected static void DeleteTextBoxSelectedText([NotNull] TextBox textBox) {
       int selectionStart = textBox.SelectionStart;

@@ -106,13 +106,11 @@ namespace SoundExplorers.View {
       this.Text = "Options";
       this.ResumeLayout(false);
       this.PerformLayout();
-
     }
-    private System.Windows.Forms.Label DatabaseFolderLabel;
-    private System.Windows.Forms.TextBox DatabaseFolderTextBox;
-
     #endregion
 
+    private System.Windows.Forms.Label DatabaseFolderLabel;
+    private System.Windows.Forms.TextBox DatabaseFolderTextBox;
     private System.Windows.Forms.Button OkButton;
     private System.Windows.Forms.TextBox MessageTextBox;
   }
