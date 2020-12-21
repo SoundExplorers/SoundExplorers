@@ -6,12 +6,14 @@
         <UseWindowsForms>true</UseWindowsForms>
 		<RootNamespace>SoundExplorers</RootNamespace>
 		<AssemblyName>SoundExplorers</AssemblyName>
-        <Title>Sound and Light Exploration Society</Title>
+    </PropertyGroup>
+    <PropertyGroup>
+        <AssemblyVersion>2021.1.0</AssemblyVersion>
+        <Title>Sound Explorers Audio Archive</Title>
         <Company>Sound and Light Exploration Society</Company>
         <Product>Sound Explorers Audio Archive</Product>
         <Copyright>Copyright © 2021 Sound and Light Exploration Society</Copyright>
     </PropertyGroup>
-
     <ItemGroup>
       <ProjectReference Include="..\View\SoundExplorers.View.csproj" />
     </ItemGroup>

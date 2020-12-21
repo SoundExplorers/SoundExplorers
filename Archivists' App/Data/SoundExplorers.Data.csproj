@@ -1,14 +1,22 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net5.0-windows</TargetFramework>
-    <UseWindowsForms>true</UseWindowsForms>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-
+    <TargetFramework>net5.0</TargetFramework>
     <RootNamespace>SoundExplorers.Data</RootNamespace>
     <AssemblyName>SoundExplorers.Data</AssemblyName>
   </PropertyGroup>
-
+  <PropertyGroup>
+    <AssemblyVersion>2021.1.0</AssemblyVersion>
+    <Title>Sound Explorers Audio Archive (Data Library)</Title>
+    <Company>Sound and Light Exploration Society</Company>
+    <Product>Sound Explorers Audio Archive</Product>
+    <Copyright>Copyright © 2021 Sound and Light Exploration Society</Copyright>
+  </PropertyGroup>
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+      <_Parameter1>SoundExplorers.Tests</_Parameter1>
+    </AssemblyAttribute>
+  </ItemGroup>
   <ItemGroup>
     <None Include="Entity Relationship Diagram.cd" />
   </ItemGroup>

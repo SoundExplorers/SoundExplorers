@@ -3,26 +3,25 @@
   <PropertyGroup>
     <TargetFramework>net5.0-windows</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-
     <RootNamespace>SoundExplorers.View</RootNamespace>
     <AssemblyName>SoundExplorers.View</AssemblyName>
   </PropertyGroup>
-
+  <PropertyGroup>
+    <AssemblyVersion>2021.1.0</AssemblyVersion>
+    <Title>Sound Explorers Audio Archive (View Library)</Title>
+    <Company>Sound and Light Exploration Society</Company>
+    <Product>Sound Explorers Audio Archive</Product>
+    <Copyright>Copyright © 2021 Sound and Light Exploration Society</Copyright>
+  </PropertyGroup>
   <ItemGroup>
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <Compile Update="Properties\Resources.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Update="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -35,11 +34,5 @@
     <PackageReference Include="JetBrains.Profiler.Api">
       <Version>1.1.7</Version>
     </PackageReference>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Update="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
   </ItemGroup>
 </Project>
