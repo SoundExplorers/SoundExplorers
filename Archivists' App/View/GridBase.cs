@@ -24,7 +24,7 @@ namespace SoundExplorers.View {
 
     [NotNull]
     public GridContextMenu ContextMenu =>
-      _contextMenu ?? (_contextMenu = new GridContextMenu(this));
+      _contextMenu ??= new GridContextMenu(this);
 
     public bool IsTextBoxCellCurrent =>
       CurrentCell?.OwningColumn.CellTemplate is TextBoxCell;
@@ -36,7 +36,7 @@ namespace SoundExplorers.View {
     /// </summary>
     [NotNull]
     private DataGridViewRow NewRow => !ReadOnly
-      ? Rows[Rows.Count - 1]
+      ? Rows[^1]
       : throw new InvalidOperationException(
         "A read-only grid does not contain a new row.");
 
