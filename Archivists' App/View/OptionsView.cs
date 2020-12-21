@@ -8,10 +8,8 @@ namespace SoundExplorers.View {
       InitializeComponent();
       DatabaseFolderTextBox.ContextMenuStrip =
         new TextBoxContextMenu(DatabaseFolderTextBox);
-      DatabaseFolderTextBox.MouseDown += TextBox_MouseDown;
       MessageTextBox.ContextMenuStrip =
         new TextBoxContextMenu(MessageTextBox);
-      MessageTextBox.MouseDown += TextBox_MouseDown;
     }
 
     private OptionsController Controller { get; set; }
@@ -31,15 +29,6 @@ namespace SoundExplorers.View {
     [NotNull]
     public static OptionsView Create() {
       return (OptionsView)ViewFactory.Create<OptionsView, OptionsController>();
-    }
-
-    /// <summary>
-    ///   Allows right-clicking the TextBox to focus it and then show its context menu.
-    /// </summary>
-    private static void TextBox_MouseDown(object sender, MouseEventArgs e) {
-      if (e.Button == MouseButtons.Right) {
-        (sender as TextBox)?.Focus();
-      }
     }
   }
 }

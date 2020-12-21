@@ -6,6 +6,7 @@ namespace SoundExplorers.View {
   internal class TextBoxContextMenu : EditContextMenuBase {
     public TextBoxContextMenu([NotNull] TextBox textBox) {
       TextBox = textBox;
+      TextBox.MouseDown += TextBox_MouseDown;
     }
 
     private bool CanCutOrDelete => !TextBox.ReadOnly && TextBox.SelectedText.Length > 0;
@@ -77,6 +78,15 @@ namespace SoundExplorers.View {
     public override void SelectAll() {
       if (CanSelectAll) {
         TextBox.SelectAll();
+      }
+    }
+
+    /// <summary>
+    ///   Allows right-clicking the TextBox to focus it and then show its context menu.
+    /// </summary>
+    private void TextBox_MouseDown(object sender, MouseEventArgs e) {
+      if (e.Button == MouseButtons.Right && !TextBox.Focused) {
+        TextBox.Focus();
       }
     }
   }
