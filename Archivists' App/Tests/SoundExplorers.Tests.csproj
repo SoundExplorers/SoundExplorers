@@ -2,10 +2,12 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
     <RootNamespace>SoundExplorers.Tests</RootNamespace>
     <AssemblyName>SoundExplorers.Tests</AssemblyName>
   </PropertyGroup>
   <PropertyGroup>
+    <!-- Assembly properties. Before .Net 5, these were coded in AssemblyInfo.cs. -->
     <AssemblyVersion>2021.1.0</AssemblyVersion>
     <Title>Sound Explorers Audio Archive (Tests Library)</Title>
     <Company>Sound and Light Exploration Society</Company>

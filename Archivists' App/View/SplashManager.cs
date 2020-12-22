@@ -358,7 +358,7 @@ namespace SoundExplorers.View {
     private static void ShowThread() {
       try {
         _splashForm = _splashFormType.InvokeMember(
-          null,
+          "Dummy",
           BindingFlags.DeclaredOnly
           | BindingFlags.Public
           | BindingFlags.NonPublic

@@ -29,9 +29,9 @@ namespace SoundExplorers.View {
       this.ProductNameLabel = new System.Windows.Forms.Label();
       this.VersionLabel = new System.Windows.Forms.Label();
       this.Panel1 = new System.Windows.Forms.Panel();
-      this.pictureBox1 = new System.Windows.Forms.PictureBox();
+      this.PictureBox1 = new System.Windows.Forms.PictureBox();
       this.Panel1.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.PictureBox1)).BeginInit();
       this.SuspendLayout();
       // 
       // OKButtion
@@ -93,7 +93,7 @@ namespace SoundExplorers.View {
       // Panel1
       // 
       this.Panel1.BackColor = System.Drawing.Color.Firebrick;
-      this.Panel1.Controls.Add(this.pictureBox1);
+      this.Panel1.Controls.Add(this.PictureBox1);
       this.Panel1.Controls.Add(this.OKButtion);
       this.Panel1.Controls.Add(this.VersionLabel);
       this.Panel1.Controls.Add(this.CopyrightLabel);
@@ -103,14 +103,14 @@ namespace SoundExplorers.View {
       this.Panel1.Size = new System.Drawing.Size(776, 319);
       this.Panel1.TabIndex = 10;
       // 
-      // pictureBox1
+      // PictureBox1
       // 
-      this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
-      this.pictureBox1.Location = new System.Drawing.Point(23, 30);
-      this.pictureBox1.Name = "pictureBox1";
-      this.pictureBox1.Size = new System.Drawing.Size(200, 200);
-      this.pictureBox1.TabIndex = 10;
-      this.pictureBox1.TabStop = false;
+      this.PictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("PictureBox1.Image")));
+      this.PictureBox1.Location = new System.Drawing.Point(23, 30);
+      this.PictureBox1.Name = "PictureBox1";
+      this.PictureBox1.Size = new System.Drawing.Size(200, 200);
+      this.PictureBox1.TabIndex = 10;
+      this.PictureBox1.TabStop = false;
       // 
       // AboutView
       // 
@@ -131,19 +131,17 @@ namespace SoundExplorers.View {
       this.Text = "About MyApp";
       this.Panel1.ResumeLayout(false);
       this.Panel1.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.PictureBox1)).EndInit();
       this.ResumeLayout(false);
 
     }
-
+    #endregion
+    
     public System.Windows.Forms.Label CopyrightLabel;
     public System.Windows.Forms.Button OKButtion;
     public System.Windows.Forms.Panel Panel1;
+    private System.Windows.Forms.PictureBox PictureBox1;
     public System.Windows.Forms.Label ProductNameLabel;
     public System.Windows.Forms.Label VersionLabel;
-
-    #endregion
-
-    private System.Windows.Forms.PictureBox pictureBox1;
   }
 }

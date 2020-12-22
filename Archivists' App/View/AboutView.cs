@@ -18,30 +18,14 @@ namespace SoundExplorers.View {
       // Required for Windows Form Designer support.
       InitializeComponent();
       // Add any constructor code after InitializeComponent call.
-      CopyrightLabel.Text = AssemblyCopyright;
-      VersionLabel.Text = "Version " + Application.ProductVersion;
-      ProductNameLabel.Text = Application.ProductName;
       Load += OnLoad;
     }
 
     /// <summary>
-    ///   Gets the company specified for the assembly
-    ///   in AssemblyInfo.cs.
+    ///   Gets the copyright specified in the Copyright assembly property
+    ///   in the top-level project file.
     /// </summary>
-    public static string AssemblyCompany {
-      get {
-        var assemblyCompanyAttribute =
-          (AssemblyCompanyAttribute)EntryAssembly.GetCustomAttributes(
-            typeof(AssemblyCompanyAttribute), false)[0];
-        return assemblyCompanyAttribute.Company;
-      }
-    }
-
-    /// <summary>
-    ///   Gets the copyright specified for the assembly
-    ///   in AssemblyInfo.cs.
-    /// </summary>
-    public static string AssemblyCopyright {
+    private static string AssemblyCopyright {
       get {
         var assemblyCopyrightAttribute =
           (AssemblyCopyrightAttribute)EntryAssembly.GetCustomAttributes(
@@ -51,7 +35,12 @@ namespace SoundExplorers.View {
     }
 
     private void OnLoad(object sender, EventArgs e) {
-      Text = "About " + Application.ProductName;
+      ProductNameLabel.Text = Application.ProductName;
+      // In .Net 5, Application.ProductVersion comes from the
+      // InformationalVersion assembly property in the top-level project file,
+      // not the ProductVersion property.
+      VersionLabel.Text = "Version " + Application.ProductVersion; 
+      CopyrightLabel.Text = AssemblyCopyright;
     }
   } //End of class
 } //End of namespace
