@@ -32,9 +32,9 @@ namespace SoundExplorers.View {
       // Panel
       // 
       this.Panel.Dock = System.Windows.Forms.DockStyle.Bottom;
-      this.Panel.Location = new System.Drawing.Point(0, -50);
+      this.Panel.Location = new System.Drawing.Point(0, -48);
       this.Panel.Name = "Panel";
-      this.Panel.Size = new System.Drawing.Size(244, 100);
+      this.Panel.Size = new System.Drawing.Size(303, 100);
       this.Panel.TabIndex = 0;
       // 
       // RichTextBox
@@ -51,7 +51,7 @@ namespace SoundExplorers.View {
       this.RichTextBox.ReadOnly = true;
       this.RichTextBox.RightToLeft = System.Windows.Forms.RightToLeft.No;
       this.RichTextBox.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
-      this.RichTextBox.Size = new System.Drawing.Size(244, 22);
+      this.RichTextBox.Size = new System.Drawing.Size(303, 22);
       this.RichTextBox.TabIndex = 3;
       this.RichTextBox.Text = "";
       // 
@@ -59,7 +59,7 @@ namespace SoundExplorers.View {
       // 
       this.AutoScaleBaseSize = new System.Drawing.Size(9, 20);
       this.BackColor = System.Drawing.SystemColors.Control;
-      this.ClientSize = new System.Drawing.Size(244, 50);
+      this.ClientSize = new System.Drawing.Size(303, 52);
       this.Controls.Add(this.RichTextBox);
       this.Controls.Add(this.Panel);
       this.Cursor = System.Windows.Forms.Cursors.Default;

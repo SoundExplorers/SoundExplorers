@@ -10,7 +10,7 @@ namespace SoundExplorers.View {
   ///   are automatically determined to fit
   ///   the text that is to be shown on it.
   /// </summary>
-  internal abstract partial class TextViewBase : Form {
+  internal partial class TextViewBase : Form {
     private const int VerticalScrollBarWidth = 16;
     private string MyText { get; }
     private string MyTitle { get; }

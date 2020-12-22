@@ -56,11 +56,9 @@ namespace SoundExplorers {
     /// <summary>
     ///   Logs exception details and terminates the application.
     /// </summary>
-    private static void ShowExceptionDetails(Exception ex) {
-      MessageBox.Show(ex.ToString(),
-        $"{Application.ProductName} - Terminal Error - "
-        + "Press Ctrl+C to copy the diagnostics to the clipboard",
-        MessageBoxButtons.OK, MessageBoxIcon.Error);
+    private static void ShowExceptionDetails(Exception exception) {
+      MessageWindow.Show(exception.ToString(),
+        $"{Application.ProductName} - Terminal Error");
       Environment.Exit(0);
     }
 #endif
