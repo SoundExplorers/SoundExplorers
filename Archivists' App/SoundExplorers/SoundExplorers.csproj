@@ -9,7 +9,7 @@
 		<AssemblyName>SoundExplorers</AssemblyName>
     </PropertyGroup>
     <PropertyGroup>
-        <!-- Assembly properties. Before .Net 5, these were coded in AssemblyInfo.cs.
+        <!-- Assembly properties. Before .Net 5, these were coded in AssemblyInfo.cs.4
         In .Net 5, Application.ProductVersion comes from the InformationalVersion
         assembly property, not the ProductVersion property. -->
         <InformationalVersion>2021.1.0</InformationalVersion>
@@ -22,6 +22,11 @@
     </PropertyGroup>
     <ItemGroup>
       <ProjectReference Include="..\View\SoundExplorers.View.csproj" />
+    </ItemGroup>
+    <ItemGroup>
+      <EmbeddedResource Include="LICENCE.txt">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </EmbeddedResource>
     </ItemGroup>
 
 </Project>

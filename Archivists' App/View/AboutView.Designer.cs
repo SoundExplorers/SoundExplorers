@@ -29,6 +29,7 @@ namespace SoundExplorers.View {
       this.ProductNameLabel = new System.Windows.Forms.Label();
       this.VersionLabel = new System.Windows.Forms.Label();
       this.Panel1 = new System.Windows.Forms.Panel();
+      this.LicenceButton = new System.Windows.Forms.Button();
       this.PictureBox1 = new System.Windows.Forms.PictureBox();
       this.Panel1.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.PictureBox1)).BeginInit();
@@ -39,6 +40,7 @@ namespace SoundExplorers.View {
       this.OKButtion.BackColor = System.Drawing.Color.Firebrick;
       this.OKButtion.Cursor = System.Windows.Forms.Cursors.Default;
       this.OKButtion.DialogResult = System.Windows.Forms.DialogResult.OK;
+      this.OKButtion.FlatAppearance.BorderColor = System.Drawing.Color.Gold;
       this.OKButtion.Font = new System.Drawing.Font("Verdana", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
       this.OKButtion.ForeColor = System.Drawing.Color.Gold;
       this.OKButtion.Location = new System.Drawing.Point(605, 251);
@@ -93,6 +95,7 @@ namespace SoundExplorers.View {
       // Panel1
       // 
       this.Panel1.BackColor = System.Drawing.Color.Firebrick;
+      this.Panel1.Controls.Add(this.LicenceButton);
       this.Panel1.Controls.Add(this.PictureBox1);
       this.Panel1.Controls.Add(this.OKButtion);
       this.Panel1.Controls.Add(this.VersionLabel);
@@ -102,6 +105,20 @@ namespace SoundExplorers.View {
       this.Panel1.Name = "Panel1";
       this.Panel1.Size = new System.Drawing.Size(776, 319);
       this.Panel1.TabIndex = 10;
+      // 
+      // LicenceButton
+      // 
+      this.LicenceButton.BackColor = System.Drawing.Color.Firebrick;
+      this.LicenceButton.Cursor = System.Windows.Forms.Cursors.Default;
+      this.LicenceButton.FlatAppearance.BorderColor = System.Drawing.Color.Gold;
+      this.LicenceButton.Font = new System.Drawing.Font("Verdana", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+      this.LicenceButton.ForeColor = System.Drawing.Color.Gold;
+      this.LicenceButton.Location = new System.Drawing.Point(19, 251);
+      this.LicenceButton.Name = "LicenceButton";
+      this.LicenceButton.Size = new System.Drawing.Size(127, 42);
+      this.LicenceButton.TabIndex = 11;
+      this.LicenceButton.Text = "&Licence...";
+      this.LicenceButton.UseVisualStyleBackColor = false;
       // 
       // PictureBox1
       // 
@@ -138,6 +155,7 @@ namespace SoundExplorers.View {
     #endregion
     
     public System.Windows.Forms.Label CopyrightLabel;
+    public System.Windows.Forms.Button LicenceButton;
     public System.Windows.Forms.Button OKButtion;
     public System.Windows.Forms.Panel Panel1;
     private System.Windows.Forms.PictureBox PictureBox1;
