@@ -24,7 +24,7 @@
       <ProjectReference Include="..\View\SoundExplorers.View.csproj" />
     </ItemGroup>
     <ItemGroup>
-      <EmbeddedResource Include="LICENCE.txt">
+      <EmbeddedResource Include="Licence.txt">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </EmbeddedResource>
     </ItemGroup>

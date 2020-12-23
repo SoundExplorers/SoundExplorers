@@ -94,7 +94,7 @@ namespace SoundExplorers.View {
 
     private void LicenceButton_Click(object sender, EventArgs e) {
       MessageWindow.Show(this,
-        GetEmbeddedText("LICENCE.txt"),
+        GetEmbeddedText("Licence.txt"),
         $"{Application.ProductName} - Licence");
     }
   } //End of class
