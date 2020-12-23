@@ -1,24 +1,67 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Collections;
+using System.Diagnostics.CodeAnalysis;
+using JetBrains.Annotations;
+using NotNullAttribute = JetBrains.Annotations.NotNullAttribute;
 
 namespace SoundExplorers.Data {
+  /// <summary>
+  ///   An entity for persisting a user option for the application.
+  /// </summary>
+  public class UserOption : EntityBase {
+    private string _optionName;
+    private string _optionValue;
+    private string _userId;
+    public UserOption() : base(typeof(UserOption), nameof(SimpleKey), null) { }
 
-    /// <summary>
-    /// UserOption entity.
-    /// </summary>
-    internal class UserOption : Entity<UserOption> {
+    public string OptionName {
+      get => _optionName;
+      set {
+        if (string.IsNullOrWhiteSpace(value)) {
+          throw new PropertyConstraintException($"{nameof(OptionName)} may not be blank.",
+            nameof(OptionName));
+        }
+        UpdateNonIndexField();
+        SetSimpleKey(UserId, value);
+        _optionName = value;
+      }
+    }
 
-        #region Properties
-        [PrimaryKeyField]
-        public string UserId { get; set; }
+    [CanBeNull]
+    public string OptionValue {
+      get => _optionValue;
+      set {
+        UpdateNonIndexField();
+        _optionValue = value;
+      }
+    }
 
-        [PrimaryKeyField]
-        public string OptionName { get; set; }
+    public string UserId {
+      get => _userId;
+      set {
+        if (string.IsNullOrWhiteSpace(value)) {
+          throw new PropertyConstraintException($"{nameof(UserId)} may not be blank.",
+            nameof(UserId));
+        }
+        UpdateNonIndexField();
+        SetSimpleKey(value, OptionName);
+        _userId = value;
+      }
+    }
 
-        [Field]
-        public string OptionValue { get; set; }
-        #endregion Properties
-    }//End of class
-}//End of namespace
+    [ExcludeFromCodeCoverage]
+    protected override IDictionary GetChildren(Type childType) {
+      throw new NotSupportedException();
+    }
+
+    [ExcludeFromCodeCoverage]
+    protected override void SetNonIdentifyingParentField(Type parentEntityType,
+      EntityBase newParent) {
+      throw new NotSupportedException();
+    }
+
+    private void SetSimpleKey([NotNull] string userId, [NotNull] string optionName) {
+      SimpleKey = $"{userId}|{optionName}";
+    }
+  }
+}

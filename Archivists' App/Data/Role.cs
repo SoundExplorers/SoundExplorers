@@ -1,21 +1,37 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Collections;
+using System.Diagnostics.CodeAnalysis;
+using JetBrains.Annotations;
+using NotNullAttribute = JetBrains.Annotations.NotNullAttribute;
 
 namespace SoundExplorers.Data {
-
+  public class Role : EntityBase {
     /// <summary>
-    /// Role entity.
+    ///   Role entity, usually representing a musical instrument.
     /// </summary>
-    internal class Role : Entity<Role> {
+    public Role() : base(typeof(Role), nameof(Name), null) {
+      Credits = new SortedChildList<Credit>();
+    }
 
-        #region Properties
-        [PrimaryKeyField]
-        public string RoleId { get; set; }
+    [NotNull] public SortedChildList<Credit> Credits { get; }
 
-        [UniqueKeyField]
-        public string Name { get; set; }
-        #endregion Properties
-    }//End of class
-}//End of namespace
+    [CanBeNull]
+    public string Name {
+      get => SimpleKey;
+      set {
+        UpdateNonIndexField();
+        SimpleKey = value;
+      }
+    }
+
+    protected override IDictionary GetChildren(Type childType) {
+      return Credits;
+    }
+
+    [ExcludeFromCodeCoverage]
+    protected override void SetNonIdentifyingParentField(
+      Type parentEntityType, EntityBase newParent) {
+      throw new NotSupportedException();
+    }
+  }
+}

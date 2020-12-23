@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+    <RootNamespace>SoundExplorers.Controller</RootNamespace>
+    <AssemblyName>SoundExplorers.Controller</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup>
+    <!-- Assembly properties. Before .Net 5, these were coded in AssemblyInfo.cs. -->
+    <AssemblyVersion>2021.1.0</AssemblyVersion>
+    <Title>Sound Explorers Audio Archive (Controller Library)</Title>
+    <Company>Sound and Light Exploration Society</Company>
+    <Product>Sound Explorers Audio Archive</Product>
+    <Copyright>Copyright © 2021 Sound and Light Exploration Society</Copyright>
+  </PropertyGroup>
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+      <_Parameter1>SoundExplorers.Tests</_Parameter1>
+    </AssemblyAttribute>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Model\SoundExplorers.Model.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="JetBrains.Annotations">
+      <Version>2020.1.0</Version>
+    </PackageReference>
+  </ItemGroup>
+</Project>

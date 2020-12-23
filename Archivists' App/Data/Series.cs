@@ -1,24 +1,49 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Collections;
+using System.Diagnostics.CodeAnalysis;
+using JetBrains.Annotations;
+using NotNullAttribute = JetBrains.Annotations.NotNullAttribute;
 
 namespace SoundExplorers.Data {
+  /// <summary>
+  ///   An entity representing a series of Events.
+  ///   A festival, for example.
+  /// </summary>
+  public class Series : EntityBase, INotablyNamedEntity {
+    private string _notes;
 
-    /// <summary>
-    /// Series entity.
-    /// </summary>
-    internal class Series : PieceOwningEntity<Series> {
+    public Series() : base(typeof(Series), nameof(Name), null) {
+      Events = new SortedChildList<Event>();
+    }
 
-        #region Properties
-        [PrimaryKeyField]
-        public string SeriesId { get; set; }
+    [NotNull] public SortedChildList<Event> Events { get; }
 
-        [UniqueKeyField]
-        public string Name { get; set; }
+    [CanBeNull]
+    public string Name {
+      get => SimpleKey;
+      set {
+        UpdateNonIndexField();
+        SimpleKey = value;
+      }
+    }
 
-        [Field]
-        public string Comments { get; set; }
-        #endregion Properties
-    }//End of class
-}//End of namespace
+    [CanBeNull]
+    public string Notes {
+      get => _notes;
+      set {
+        UpdateNonIndexField();
+        _notes = value;
+      }
+    }
+
+    protected override IDictionary GetChildren(Type childType) {
+      return Events;
+    }
+
+    [ExcludeFromCodeCoverage]
+    protected override void SetNonIdentifyingParentField(
+      Type parentEntityType, EntityBase newParent) {
+      throw new NotSupportedException();
+    }
+  }
+}

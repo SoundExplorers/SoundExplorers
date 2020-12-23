@@ -1,70 +1,115 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
+using System.Collections;
+using System.Diagnostics.CodeAnalysis;
+using JetBrains.Annotations;
+using VelocityDb.Session;
+using NotNullAttribute = JetBrains.Annotations.NotNullAttribute;
 
 namespace SoundExplorers.Data {
+  /// <summary>
+  ///   An entity representing a newsletter that documents one or more Events.
+  /// </summary>
+  public class Newsletter : EntityBase {
+    private DateTime _date;
+    private string _url;
+
+    public Newsletter() : base(typeof(Newsletter), nameof(Date), null) {
+      _date = InitialDate;
+      Events = new SortedChildList<Event>();
+    }
 
     /// <summary>
-    /// Newsletter entity.
+    ///   The newsletter's publication date (email send date).
     /// </summary>
-    internal class Newsletter : PieceOwningEntity<Newsletter> {
-
-        #region Private Fields
-        private static DirectoryInfo _defaultFolder;
-        private static Option _defaultFolderOption;
-        #endregion Private Fields
-
-        #region Public Field Properties
-        [PrimaryKeyField]
-        public DateTime Date { get; set; }
-
-        [UniqueKeyField]
-        public string Path { get; set; }
-        #endregion Public Field Properties
-
-        #region Other Public Properties
-        /// <summary>
-        /// Gets or sets a default folder to be used,
-        /// if the folder of the path (if any) currently in 
-        /// the <see cref="Path"/> property
-        /// is not specified or does not exist,
-        /// as the initial folder for the Open dialogue that may be
-        /// shown to select a file to update the path in 
-        /// the <see cref="Path"/> property.
-        /// </summary>
-        public static DirectoryInfo DefaultFolder {
-            get {
-                if (_defaultFolder == null) {
-                    if (DefaultFolderOption.StringValue != string.Empty) {
-                        _defaultFolder = new DirectoryInfo(DefaultFolderOption.StringValue);
-                    }
-                    if (_defaultFolder == null
-                    || !_defaultFolder.Exists) {
-                        _defaultFolder = new DirectoryInfo(
-                            Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments));
-                    }
-                }
-                return _defaultFolder;
-            }
-            set {
-                _defaultFolder = value;
-                DefaultFolderOption.StringValue = value.FullName;
-            }
+    /// <exception cref="PropertyConstraintException"></exception>
+    public DateTime Date {
+      get => _date;
+      set {
+        if (value <= InitialDate) {
+          throw new PropertyConstraintException(
+            $"Newsletter Date must be later than {DateToSimpleKey(InitialDate)}.",
+            nameof(Date));
         }
-        #endregion Other Public Properties
+        UpdateNonIndexField();
+        _date = value.Date;
+        SimpleKey = DateToSimpleKey(_date);
+      }
+    }
 
-        #region Private Properties
-        private static Option DefaultFolderOption {
-            get {
-                if (_defaultFolderOption == null) {
-                    _defaultFolderOption = new Option(
-                       "Newsletter.DefaultFolder");
-                }
-                return _defaultFolderOption;
-            }
+    [NotNull] public SortedChildList<Event> Events { get; }
+
+    /// <summary>
+    ///   The URL where the newsletter is archived.
+    ///   Must be specified and unique.
+    /// </summary>
+    public string Url {
+      get => _url;
+      set {
+        CheckCanChangeUrl(_url, value);
+        UpdateNonIndexField();
+        _url = value;
+      }
+    }
+
+    private void CheckCanChangeUrl([CanBeNull] string oldUrl,
+      [CanBeNull] string newUrl) {
+      if (string.IsNullOrWhiteSpace(newUrl)) {
+        throw new PropertyConstraintException(
+          $"A valid URL has not been specified for Newsletter '{SimpleKey}'.",
+          nameof(Url));
+      }
+      try {
+        var dummy = new Uri(newUrl, UriKind.Absolute);
+      } catch (UriFormatException) {
+        throw new PropertyConstraintException(
+          $"Invalid URL format: '{newUrl}'.", nameof(Url));
+      }
+      if (IsPersistent && Session != null && newUrl != oldUrl) {
+        // If there's no session, which means we cannot check for a duplicate,
+        // EntityBase.UpdateNonIndexField will throw 
+        // an InvalidOperationException anyway.
+        var duplicate = FindDuplicateUrl(newUrl, Session);
+        if (duplicate != null) {
+          throw new PropertyConstraintException(
+            "URL cannot be set to " +
+            $"'{newUrl}'. Newsletter {duplicate.SimpleKey} " +
+            "already exists with that URL.", nameof(Url));
         }
-        #endregion Private Properties
-    }//End of class
-}//End of namespace
+      }
+    }
+
+    protected override void CheckCanPersist(SessionBase session) {
+      base.CheckCanPersist(session);
+      if (string.IsNullOrWhiteSpace(Url)) {
+        throw new PropertyConstraintException(
+          "Newsletter cannot be added because a URL has not been specified.",
+          nameof(Url));
+      }
+      var urlDuplicate = FindDuplicateUrl(Url, session);
+      if (urlDuplicate != null) {
+        throw new PropertyConstraintException(
+          "Newsletter cannot be added because Newsletter " +
+          $"'{urlDuplicate.SimpleKey}' " +
+          $"already exists with the same URL '{Url}'.", nameof(Url));
+      }
+    }
+
+    [CanBeNull]
+    private Newsletter FindDuplicateUrl([NotNull] string url,
+      [NotNull] SessionBase session) {
+      return QueryHelper.Find<Newsletter>(
+        newsletter => newsletter.Url.Equals(url) && !newsletter.Oid.Equals(Oid),
+        session);
+    }
+
+    protected override IDictionary GetChildren(Type childType) {
+      return Events;
+    }
+
+    [ExcludeFromCodeCoverage]
+    protected override void SetNonIdentifyingParentField(
+      Type parentEntityType, EntityBase newParent) {
+      throw new NotSupportedException();
+    }
+  }
+}

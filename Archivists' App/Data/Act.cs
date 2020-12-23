@@ -1,21 +1,48 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Collections;
+using System.Diagnostics.CodeAnalysis;
+using JetBrains.Annotations;
+using NotNullAttribute = JetBrains.Annotations.NotNullAttribute;
 
 namespace SoundExplorers.Data {
+  /// <summary>
+  ///   An entity representing an act that has performed at Events.
+  /// </summary>
+  public class Act : EntityBase, INotablyNamedEntity {
+    private string _notes;
 
-    /// <summary>
-    /// Act entity.
-    /// </summary>
-    internal class Act : PieceOwningMediaEntity<Act> {
+    public Act() : base(typeof(Act), nameof(Name), null) {
+      Sets = new SortedChildList<Set>();
+    }
 
-        #region Public Field Properties
-        [PrimaryKeyField]
-        public string Name { get; set; }
+    [NotNull] public SortedChildList<Set> Sets { get; }
 
-        [Field]
-        public string Comments { get; set; }
-        #endregion Public Field Properties
-    }//End of class
-}//End of namespace
+    [CanBeNull]
+    public string Name {
+      get => SimpleKey;
+      set {
+        UpdateNonIndexField();
+        SimpleKey = value;
+      }
+    }
+
+    [CanBeNull]
+    public string Notes {
+      get => _notes;
+      set {
+        UpdateNonIndexField();
+        _notes = value;
+      }
+    }
+
+    protected override IDictionary GetChildren(Type childType) {
+      return Sets;
+    }
+
+    [ExcludeFromCodeCoverage]
+    protected override void SetNonIdentifyingParentField(
+      Type parentEntityType, EntityBase newParent) {
+      throw new NotSupportedException();
+    }
+  }
+}

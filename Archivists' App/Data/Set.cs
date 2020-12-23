@@ -1,59 +1,94 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Collections;
+using JetBrains.Annotations;
 
 namespace SoundExplorers.Data {
+  /// <summary>
+  ///   An entity representing a set of Pieces (at least one)
+  ///   performed at or in some other way part of an Event.
+  /// </summary>
+  public class Set : EntityBase {
+    private Act _act;
+    private Genre _genre;
+    private string _notes;
+    private int _setNo;
+
+    public Set() : base(typeof(Set), nameof(SetNo), typeof(Event)) {
+      Pieces = new SortedChildList<Piece>();
+      IsPublic = true;
+    }
 
     /// <summary>
-    /// Set entity.
+    ///   Optionally specifies the Act that played the set.
     /// </summary>
-    internal class Set : PieceOwningMediaEntity<Set> {
+    [CanBeNull]
+    public Act Act {
+      get => _act;
+      set {
+        UpdateNonIndexField();
+        ChangeNonIdentifyingParent(typeof(Act), value);
+        _act = value;
+      }
+    }
 
-        #region Public Field Properties
-        [PrimaryKeyField]
-        public DateTime Date { get; set; }
+    public Event Event {
+      get => (Event)IdentifyingParent;
+      set {
+        UpdateNonIndexField();
+        IdentifyingParent = value;
+      }
+    }
 
-        [PrimaryKeyField]
-        [ReferencedField("Name")]
-        public string Location { get; set; }
+    public Genre Genre {
+      get => _genre;
+      set {
+        UpdateNonIndexField();
+        ChangeNonIdentifyingParent(typeof(Genre), value);
+        _genre = value;
+      }
+    }
 
-        [PrimaryKeyField]
-        public int SetNo { get; set; }
+    public bool IsPublic { get; set; }
 
-        [ReferencedField("Name")]
-        public string Act { get; set; }
+    [CanBeNull]
+    public string Notes {
+      get => _notes;
+      set {
+        UpdateNonIndexField();
+        _notes = value;
+      }
+    }
 
-        [ReferencedField("Date")]
-        public DateTime Newsletter { get; set; }
+    [NotNull] public SortedChildList<Piece> Pieces { get; }
 
-        [Field]
-        public string Comments { get; set; }
-        #endregion Public Field Properties
-
-        #region Constructor
-        /// <summary>
-        /// Initialises a new instance of the 
-        /// <see cref="Set"/> class.
-        /// </summary>
-        public Set() {
+    public int SetNo {
+      get => _setNo;
+      set {
+        if (value == 0) {
+          throw new PropertyConstraintException("SetNo '00' is not valid.",
+            nameof(SetNo));
         }
-        #endregion Constructor
+        UpdateNonIndexField();
+        _setNo = value;
+        SimpleKey = SetNoToSimpleKey(value);
+      }
+    }
 
-        #region Public Methods
-        /// <summary>
-        /// Fetches the Set's Newsletter (i.e. not just the Newsletter date)
-        /// from the database.
-        /// </summary>
-        /// <returns>
-        /// The Set's Newsletter.
-        /// </returns>
-        public virtual Newsletter FetchNewsletter() {
-            var newsletter = new Newsletter();
-            newsletter.Date = Newsletter;
-            newsletter.Fetch();
-            return newsletter;
-        }
-        #endregion Public Methods
-    }//End of class
-}//End of namespace
+    public static string SetNoToSimpleKey(int setNo) {
+      return setNo.ToString().PadLeft(2, '0');
+    }
+
+    protected override IDictionary GetChildren(Type childType) {
+      return Pieces;
+    }
+
+    protected override void SetNonIdentifyingParentField(
+      Type parentEntityType, EntityBase newParent) {
+      if (parentEntityType == typeof(Act)) {
+        _act = (Act)newParent;
+      } else {
+        _genre = (Genre)newParent;
+      }
+    }
+  }
+}
