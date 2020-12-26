@@ -1,21 +1,23 @@
-﻿using JetBrains.Annotations;
+﻿using System;
+using System.Collections;
+using JetBrains.Annotations;
+using SoundExplorers.Model;
 
 namespace SoundExplorers.Controller {
-  public class ParentGridController {
-    public ParentGridController([NotNull] EditorController editorController) {
-      EditorController = editorController;
-    }
-
-    private EditorController EditorController { get; }
+  public class ParentGridController : GridControllerBase {
+    public ParentGridController([NotNull] IEditorView editorView) : base(editorView) { }
 
     /// <summary>
-    ///   An existing row on the parent grid has been entered.
-    ///   So the main grid will be populated with the required
-    ///   child entities of the entity at the specified row index.
+    ///   Gets the list of entities represented in the grid.
     /// </summary>
-    public void OnRowEnter(int rowIndex) {
-      EditorController.MainList.Populate(
-        EditorController.ParentList?.GetChildrenForMainList(rowIndex));
+    protected override IEntityList List => EditorView.Controller.ParentList;
+    
+    [NotNull]
+    public IList GetChildrenForMainList(int rowIndex) {
+      return
+        List.GetChildrenForMainList(rowIndex)
+        ?? throw new InvalidOperationException(
+          $"List.GetChildrenForMainList({rowIndex}) unexpectedly returns null.");
     }
   }
 }

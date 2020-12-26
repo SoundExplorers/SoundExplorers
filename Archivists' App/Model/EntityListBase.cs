@@ -59,7 +59,8 @@ namespace SoundExplorers.Model {
     /// </summary>
     [NotNull]
     internal QueryHelper QueryHelper {
-      get => _queryHelper ?? (_queryHelper = QueryHelper.Instance);
+      get => _queryHelper ??= QueryHelper.Instance;
+      // ReSharper disable once PropertyCanBeMadeInitOnly.Global
       set => _queryHelper = value;
     }
 
@@ -80,7 +81,7 @@ namespace SoundExplorers.Model {
     ///   the list of entities.
     /// </summary>
     public BindingColumnList Columns =>
-      _columns ?? (_columns = CreateColumnsWithSession());
+      _columns ??= CreateColumnsWithSession();
 
     public string EntityTypeName => typeof(TEntity).Name;
     public bool HasRowBeenEdited { get; private set; }
@@ -134,7 +135,7 @@ namespace SoundExplorers.Model {
     ///   The setter should only be needed for testing.
     /// </summary>
     public SessionBase Session {
-      get => _session ?? (_session = Global.Session);
+      get => _session ??= Global.Session;
       set => _session = value;
     }
 
@@ -392,7 +393,7 @@ namespace SoundExplorers.Model {
     private void BindingList_ListChanged(object sender, ListChangedEventArgs e) {
       switch (e.ListChangedType) {
         case ListChangedType.ItemAdded: // Insertion row entered
-          // Debug.WriteLine("ListChangedType.ItemAdded: Insertion row entered");
+          //Debug.WriteLine("ListChangedType.ItemAdded: Insertion row entered");
           IsDataLoadComplete = true;
           IsInsertionRowCurrent = true;
           break;
@@ -457,7 +458,10 @@ namespace SoundExplorers.Model {
 
     [NotNull]
     private TBindingItem GetBindingItem(int rowIndex) {
-      return (TBindingItem)BindingList[rowIndex];
+      return BindingList[rowIndex] as TBindingItem 
+             ?? throw new InvalidOperationException(
+               "In EntityListBase.GetBindingItem, "+ 
+               "cannot cast BindingList[rowIndex] as TBindingItem");
     }
 
     /// <summary>

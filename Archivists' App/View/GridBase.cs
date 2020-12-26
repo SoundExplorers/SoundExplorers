@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections;
 using System.Windows.Forms;
 using JetBrains.Annotations;
+using SoundExplorers.Controller;
 
 namespace SoundExplorers.View {
   internal abstract class GridBase : DataGridView {
@@ -21,10 +23,17 @@ namespace SoundExplorers.View {
     public bool CanDeleteSelectedRows =>
       !ReadOnly && !IsCurrentCellInEditMode && SelectedRows.Count > 0 &&
       !SelectedRows.Contains(NewRow);
+    
+    protected GridControllerBase Controller { get; set; }
 
     [NotNull]
     public GridContextMenu ContextMenu =>
       _contextMenu ??= new GridContextMenu(this);
+    
+    // [NotNull] protected EditorView EditorView => 
+    //   Controller.EditorView as EditorView ?? 
+    //   throw new InvalidOperationException(
+    //     "Cannot cast Controller.EditorView to EditorView");
 
     public bool IsTextBoxCellCurrent =>
       CurrentCell?.OwningColumn.CellTemplate is TextBoxCell;
@@ -75,6 +84,8 @@ namespace SoundExplorers.View {
       deleteSelectedRowsMenuItem.Enabled = CanDeleteSelectedRows;
     }
 
+    protected abstract void ConfigureColumns();
+
     /// <summary>
     ///   Returns the cell that is at the specified client co-ordinates of the main grid.
     ///   Null if there is no cell at the coordinates.
@@ -115,6 +126,20 @@ namespace SoundExplorers.View {
         }
       }
       base.OnMouseDown(e);
+    }
+
+    /// <summary>
+    ///   Populates and sorts the grid.
+    /// </summary>
+    /// <param name="list">
+    ///   Optionally specifies the required list of entities that will populate the grid.
+    ///   If null, the default, all entities of the class's entity type
+    ///   will be fetched from the database.
+    /// </param>
+    public virtual void Populate(IList list = null) {
+      DataSource = list ?? Controller.BindingList;
+      ConfigureColumns();
+      AutoResizeColumns();
     }
 
     /// <summary>

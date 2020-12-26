@@ -9,7 +9,12 @@ namespace SoundExplorers.View {
     private new DataGridViewRow CurrentRow =>
       base.CurrentRow ?? throw new NullReferenceException(nameof(CurrentRow));
 
-    public MainGridController Controller { get; private set; }
+    public new MainGridController Controller {
+      get => (MainGridController)base.Controller;
+      private set => base.Controller = value;
+    }
+
+    private int FirstVisibleColumnIndex { get; set; }
 
     public TextBox TextBox =>
       (TextBox)EditingControl ??
@@ -37,7 +42,7 @@ namespace SoundExplorers.View {
     public void MakeRowCurrent(int rowIndex) {
       // This triggers OnRowEnter.
       // Debug.WriteLine($"EditorView.MakeRowCurrent: row {rowIndex}");
-      CurrentCell = Rows[rowIndex].Cells[0];
+      CurrentCell = Rows[rowIndex].Cells[FirstVisibleColumnIndex];
     }
 
     public void OnRowAddedOrDeleted() {
@@ -82,15 +87,24 @@ namespace SoundExplorers.View {
       }
     }
 
-    public void ConfigureColumns() {
+    protected override void ConfigureColumns() {
+      FirstVisibleColumnIndex = -1;
       foreach (DataGridViewColumn column in Columns) {
-        ConfigureColumn(column);
+        if (Controller.IsColumnToBeShown(column.Name)) {
+          ConfigureColumn(column);
+          if (FirstVisibleColumnIndex == -1) {
+            FirstVisibleColumnIndex = column.Index;
+          }
+        } else {
+          column.Visible = false;
+        }
       }
     }
 
     public void MakeInsertionRowCurrent() {
       // This triggers OnRowEnter.
       // Debug.WriteLine("EditorView.MakeMainGridInsertionRowCurrent");
+      //BeginInvoke((Action)delegate { MakeRowCurrent(Rows.Count - 1);});
       MakeRowCurrent(Rows.Count - 1);
     }
 
@@ -243,11 +257,13 @@ namespace SoundExplorers.View {
       Controller.OnRowEnter(e.RowIndex);
     }
 
+    /// <summary>
+    /// While a text box cell is being edited,
+    /// whether text can be cut or copied depends on
+    /// whether any text in the cell is selected.
+    /// </summary>
     private void OnTextBoxSelectionMayHaveChanged() {
       //Debug.WriteLine("MainGrid.OnTextBoxSelectionMayHaveChanged");
-      // While a text box cell is being edited,
-      // whether text can be cut or copied depends on
-      // whether any text in the cell is selected.
       MainView.CutToolStripButton.Enabled = CanCut;
       MainView.CopyToolStripButton.Enabled = CanCopy;
     }

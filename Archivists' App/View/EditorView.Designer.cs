@@ -150,12 +150,6 @@ namespace SoundExplorers.View {
       this.Margin = new System.Windows.Forms.Padding(4);
       this.Name = "EditorView";
       this.Text = "EditorView";
-      this.Activated += new System.EventHandler(this.EditorView_Activated);
-      this.Deactivate += new System.EventHandler(this.EditorView_Deactivate);
-      this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.EditorView_FormClosed);
-      this.Load += new System.EventHandler(this.EditorView_Load);
-      this.VisibleChanged += new System.EventHandler(this.EditorView_VisibleChanged);
-      this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.EditorView_KeyDown);
       this.ImageSplitContainer.Panel1.ResumeLayout(false);
       this.ImageSplitContainer.Panel2.ResumeLayout(false);
       ((System.ComponentModel.ISupportInitialize)(this.ImageSplitContainer)).EndInit();

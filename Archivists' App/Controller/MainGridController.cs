@@ -1,29 +1,17 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Data;
 using JetBrains.Annotations;
 using SoundExplorers.Model;
 
 namespace SoundExplorers.Controller {
-  public class MainGridController {
+  public class MainGridController : GridControllerBase {
     public MainGridController(
-      [NotNull] IMainGrid grid, [NotNull] IEditorView editorView) {
+      [NotNull] IMainGrid grid, [NotNull] IEditorView editorView) : base(editorView) {
       Grid = grid;
-      EditorView = editorView;
       CurrentRowIndex = -1;
     }
 
-    [CanBeNull] public IBindingList BindingList => List.BindingList;
-
-    /// <summary>
-    ///   Gets metadata about the database columns
-    ///   represented by the Entity's field properties.
-    /// </summary>
-    [NotNull]
-    internal BindingColumnList Columns => List.Columns;
-
     protected int CurrentRowIndex { get; private set; }
-    [NotNull] private IEditorView EditorView { get; }
     [NotNull] protected IMainGrid Grid { get; }
 
     private bool IsDuplicateKeyException =>
@@ -46,9 +34,9 @@ namespace SoundExplorers.Controller {
     public bool IsInsertionRowCurrent => List.IsInsertionRowCurrent;
 
     /// <summary>
-    ///   Gets or set the list of entities represented in the main table.
+    ///   Gets the list of entities represented in the grid.
     /// </summary>
-    protected IEntityList List => EditorView.Controller.MainList;
+    protected override IEntityList List => EditorView.Controller.MainList;
 
     [CanBeNull] public string TableName => List.EntityTypeName;
 
@@ -63,6 +51,10 @@ namespace SoundExplorers.Controller {
     public string GetColumnDisplayName([NotNull] string columnName) {
       var column = Columns[columnName];
       return column.DisplayName ?? columnName;
+    }
+
+    public bool IsColumnToBeShown([NotNull] string columnName) {
+      return Columns.ContainsKey(columnName);
     }
 
     public void OnExistingRowCellUpdateError(int rowIndex, [NotNull] string columnName,

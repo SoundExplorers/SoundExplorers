@@ -22,12 +22,10 @@ namespace SoundExplorers.Model {
     ///   The entity column with the specified name (case-insensitive).
     /// </returns>
     [NotNull]
-    public BindingColumn this[string name] =>
-    (
-      from BindingColumn bindingColumn in this
-      where string.Compare(bindingColumn.Name, name,
-        StringComparison.OrdinalIgnoreCase) == 0
-      select bindingColumn).First();
+    public BindingColumn this[[NotNull] string name] =>
+      FindColumn(name) ?? 
+    throw new InvalidOperationException(
+      $"In BindingColumnList.Item, cannot find '{name}' column.");
 
     /// <summary>
     ///   Add the specified entity column to the list,
@@ -60,11 +58,17 @@ namespace SoundExplorers.Model {
     ///   Whether the list contains
     ///   an entity column with the specified name.
     /// </returns>
-    private bool ContainsKey(string name) {
+    public bool ContainsKey(string name) {
+      return FindColumn(name) != null;
+    }
+
+    [CanBeNull]
+    private BindingColumn FindColumn([NotNull] string name) {
       return (
         from BindingColumn bindingColumn in this
-        where bindingColumn.Name == name
-        select bindingColumn).Any();
+        where string.Compare(bindingColumn.Name, name,
+          StringComparison.OrdinalIgnoreCase) == 0
+        select bindingColumn).FirstOrDefault();
     }
 
     public int GetIndex([NotNull] string propertyName) {

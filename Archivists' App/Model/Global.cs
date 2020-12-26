@@ -25,7 +25,9 @@ namespace SoundExplorers.Model {
     [NotNull]
     public static IEntityList CreateEntityList([NotNull] Type type) {
       try {
-        return (IEntityList)Activator.CreateInstance(type);
+        return (IEntityList)Activator.CreateInstance(type) 
+               ?? throw new InvalidOperationException(
+                 "In Global.CreateEntityList, cannot create IEntityList.");
       } catch (TargetInvocationException ex) {
         throw ex.InnerException ?? ex;
       }
@@ -84,7 +86,7 @@ namespace SoundExplorers.Model {
         throw new NullReferenceException(
           "In Global.GetProductName, cannot find entry assembly.");
       return ((AssemblyProductAttribute)Attribute.GetCustomAttribute(entryAssembly,
-        typeof(AssemblyProductAttribute), false)).Product;
+        typeof(AssemblyProductAttribute), false))?.Product;
     }
   }
 }

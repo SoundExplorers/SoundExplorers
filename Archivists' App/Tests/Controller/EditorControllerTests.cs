@@ -188,7 +188,7 @@ namespace SoundExplorers.Tests.Controller {
       const string name1 = "Auntie";
       const string name2 = "Uncle";
       var controller = CreateController(typeof(LocationList));
-      Assert.IsFalse(controller.IsParentTableToBeShown, "IsParentTableToBeShown");
+      Assert.IsFalse(controller.IsParentGridToBeShown, "IsParentGridToBeShown");
       controller.FetchData(); // The grid will be empty initially
       Assert.AreEqual("Location", MainGridController.TableName, "Main TableName");
       var bindingList =
@@ -460,8 +460,9 @@ namespace SoundExplorers.Tests.Controller {
       Assert.AreEqual(2, controller.ParentBindingList?.Count, "Parent list count");
       Assert.AreEqual(3, MainGridController.BindingList?.Count,
         "Main list count initially");
-      var parentGridController = new ParentGridController(controller);
-      parentGridController.OnRowEnter(1);
+      // TODO Fix EditorControllerTests.OnParentGridRowEntered.
+      // var parentGridController = new ParentGridController(controller);
+      // parentGridController.OnRowEnter(1);
       Assert.AreEqual(5, MainGridController.BindingList?.Count,
         "Main list count when 2nd parent selected");
     }

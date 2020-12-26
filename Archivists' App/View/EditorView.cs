@@ -13,8 +13,6 @@ namespace SoundExplorers.View {
     /// </summary>
     public EditorView() {
       InitializeComponent();
-      Move += EditorView_Move;
-      Resize += EditorView_Resize;
       // Allow things to be dropped on to the PictureBox.
       FittedPictureBox1.AllowDrop = true;
       GridSplitContainer.GotFocus += SplitContainerOnGotFocus;
@@ -43,7 +41,6 @@ namespace SoundExplorers.View {
 
     public void SetController(EditorController controller) {
       Controller = controller;
-      GridSplitContainer.Panel1Collapsed = !Controller.IsParentTableToBeShown;
     }
 
     /// <summary>
@@ -79,10 +76,8 @@ namespace SoundExplorers.View {
     ///   and any child controls.
     /// </summary>
     public override void Refresh() {
-      PopulateGrid();
-      if (Controller.IsParentTableToBeShown) {
-        // A read-only related grid for the parent table is shown
-        // above the main grid.
+      Populate();
+      if (Controller.IsParentGridToBeShown) {
         FocusGrid(ParentGrid);
       } else {
         MainGrid.Focus();
@@ -93,158 +88,10 @@ namespace SoundExplorers.View {
 
     private void AfterPopulateAsync() {
       MainGrid.MakeInsertionRowCurrent();
-      if (Controller.IsParentTableToBeShown) {
-        // A read-only related grid for the parent table is to be shown
-        // above the main grid.
+      if (Controller.IsParentGridToBeShown) {
         ParentGrid.Focus();
       } else { // No parent grid
         MainGrid.Focus();
-      }
-    }
-
-    /// <summary>
-    ///   Enables and focuses the grid
-    ///   when the window is activated.
-    /// </summary>
-    /// <param name="sender">Event sender.</param>
-    /// <param name="e">Event arguments.</param>
-    /// <remarks>
-    ///   This is necessary because of the
-    ///   workaround implemented in EditorView_Deactivate.
-    /// </remarks>
-    private void EditorView_Activated(object sender, EventArgs e) {
-      //Debug.WriteLine("EditorView_Activated: " + this.Text);
-      MainGrid.Enabled = true;
-      if (Controller.IsParentTableToBeShown) {
-        // A read-only related grid for the parent table is shown
-        // above the main grid.
-        FocusGrid(ParentGrid);
-      } else {
-        MainGrid.Focus();
-        FocusedGrid = MainGrid;
-      }
-    }
-
-    /// <summary>
-    ///   Disable the grid when another table window
-    ///   is activated.
-    /// </summary>
-    /// <param name="sender">Event sender.</param>
-    /// <param name="e">Event arguments.</param>
-    /// <remarks>
-    ///   For unknown reason,
-    ///   without this workaround,
-    ///   when a table window with date columns is
-    ///   deactivated and another table window is activated,
-    ///   it is impossible to navigate or edit the grid
-    ///   on the active window.
-    ///   To be safe, disable the grid even if there aren't date columns:
-    ///   maybe there are other data types that would cause similar problems.
-    /// </remarks>
-    private void EditorView_Deactivate(object sender, EventArgs e) {
-      //Debug.WriteLine("EditorView_Deactivate: " + this.Text);
-      MainGrid.Enabled = false;
-      if (Controller.IsParentTableToBeShown) {
-        // A read-only related grid for the parent table is shown
-        // above the main grid.
-        ParentGrid.Enabled = false;
-      }
-    }
-
-    private void EditorView_FormClosed(object sender, FormClosedEventArgs e) {
-      //MainGrid.RowValidated -= new DataGridViewCellEventHandler(MainGrid_RowValidated);
-      //MainGrid.ReadOnly = true;
-      //Refresh();
-      SizeableFormOptions.Save();
-      // if (Entities is ArtistInImageList
-      //     || Entities is ImageList) {
-      //   Controller.ImageSplitterDistance = ImageSplitContainer.SplitterDistance;
-      // }
-      if (Controller.IsParentTableToBeShown) {
-        // A read-only related grid for the parent table is shown
-        // above the main grid.
-        Controller.GridSplitterDistance = GridSplitContainer.SplitterDistance;
-      }
-    }
-
-    /// <summary>
-    ///   Handles the <see cref="Form" />'s
-    ///   <see cref="Control.KeyDown" /> event.
-    /// </summary>
-    /// <remarks>
-    ///   In order for this event handler to be triggered,
-    ///   the <see cref="Form" />'s <see cref="Form.KeyPreview" />
-    ///   property must be set to <b>True</b>.
-    /// </remarks>
-    private void EditorView_KeyDown(object sender, KeyEventArgs e) {
-      switch (e.KeyData) {
-        case Keys.F6:
-          if (Controller.IsParentTableToBeShown) {
-            FocusGrid(FocusedGrid == ParentGrid ? (GridBase)MainGrid : ParentGrid);
-          }
-          break;
-      } //End of switch
-    }
-
-    private void EditorView_Load(object sender, EventArgs e) {
-      MainGrid.SetController(new MainGridController(MainGrid, this));
-      MainGrid.MainView = MainView;
-      // Has to be done here rather than in constructor
-      // in order to tell that this is an MDI child form.
-      SizeableFormOptions = SizeableFormOptions.Create(this);
-      // And better to do this here than in SetController,
-      // where any exception would be indirectly reported,
-      // due to being thrown in the controller's constructor.
-      OpenTable();
-      MainGrid.AutoResizeColumns();
-      if (Controller.IsParentTableToBeShown) {
-        // TODO Check setting GridSplitContainer.SplitterDistance works.
-        // Previous comment says 'Does not work if done in EditorView_Load.'
-        GridSplitContainer.SplitterDistance = Controller.GridSplitterDistance;
-        ParentGrid.SetController(new ParentGridController(Controller));
-        ParentGrid.MainView = MainView;
-        ParentGrid.MainGrid = MainGrid;
-        ParentGrid.AutoResizeColumns();
-      }
-    }
-
-    private void EditorView_Move(object sender, EventArgs e) {
-      // Stop ghost border lines appearing on main window background.
-      ParentForm?.Refresh();
-    }
-
-    private void EditorView_Resize(object sender, EventArgs e) {
-      // Stop ghost border lines appearing on main window background.
-      ParentForm?.Refresh();
-    }
-
-    private void EditorView_VisibleChanged(object sender, EventArgs e) {
-      if (Visible) {
-        //Debug.WriteLine("EditorView_VisibleChanged: " + this.Text);
-        MainView.Cursor = Cursors.Default;
-        //ImageSplitContainer.Panel2Collapsed = true;
-        // We need to work out whether we need the image panel
-        // before we position the grid splitter.
-        // Otherwise the grid splitter gets out of kilter.
-        // if (Entities is ArtistInImageList
-        //     || Entities is ImageList) {
-        //   ImageSplitContainer.Panel2Collapsed = false;
-        //   ImageSplitContainer.SplitterDistance = Controller.ImageSplitterDistance;
-        //   ShowImageOrMessage(null); // Force image refresh
-        //   if (Entities is ImageList) {
-        //     if (Entities.Count > 0) {
-        //       ShowImageOrMessage(
-        //         MainGrid.Rows[0].Cells["Path"].Value.ToString());
-        //     }
-        //   } else { // ArtistInImageList
-        //     if (Controller.ParentList.Count > 0) {
-        //       ShowImageOrMessage(
-        //         ParentGrid.Rows[0].Cells["Path"].Value.ToString());
-        //     }
-        //   }
-        // } else {
-        //   ImageSplitContainer.Panel2Collapsed = true;
-        // }
       }
     }
 
@@ -332,7 +179,7 @@ namespace SoundExplorers.View {
     ///   on the other grid.
     /// </remarks>
     private void FocusGrid(GridBase grid) {
-      if (!Controller.IsParentTableToBeShown) {
+      if (!Controller.IsParentGridToBeShown) {
         grid.Focus();
         return;
       }
@@ -471,55 +318,170 @@ namespace SoundExplorers.View {
       MainGrid.Controller.OnRowValidated(e.RowIndex);
     }
 
-    private void OpenTable() {
-      InvertGridColors(ParentGrid); // Will revert when focused.
-      PopulateGrid();
+    /// <summary>
+    ///   Enables and focuses the grid
+    ///   when the window is activated.
+    /// </summary>
+    /// <remarks>
+    ///   This is necessary because of the
+    ///   workaround implemented in OnDeactivate.
+    /// </remarks>
+    protected override void OnActivated(EventArgs e) {
+      base.OnActivated(e);
+      //Debug.WriteLine("EditorView.OnActivated: " + this.Text);
+      MainGrid.Enabled = true;
+      if (Controller.IsParentGridToBeShown) {
+        // A read-only related grid for the parent table is shown
+        // above the main grid.
+        FocusGrid(ParentGrid);
+      } else {
+        MainGrid.Focus();
+        FocusedGrid = MainGrid;
+      }
     }
 
-    private void PopulateGrid() {
-      MainGrid.CellBeginEdit -= MainGrid_CellBeginEdit;
-      MainGrid.DataError -= MainGrid_DataError;
-      MainGrid.MouseDown -= Grid_MouseDown;
-      MainGrid.RowsRemoved -= MainGrid_RowsRemoved;
-      MainGrid.RowValidated -= MainGrid_RowValidated;
-      Controller.FetchData();
-      Text = MainGrid.Controller.TableName;
-      if (Controller.IsParentTableToBeShown) {
-        PopulateParentGrid();
+    /// <summary>
+    ///   Disable the grid when another table window
+    ///   is activated.
+    /// </summary>
+    /// <remarks>
+    ///   For unknown reason,
+    ///   without this workaround,
+    ///   when a table window with date columns is
+    ///   deactivated and another table window is activated,
+    ///   it is impossible to navigate or edit the grid
+    ///   on the active window.
+    ///   To be safe, disable the grid even if there aren't date columns:
+    ///   maybe there are other data types that would cause similar problems.
+    /// </remarks>
+    protected override void OnDeactivate(EventArgs e) {
+      base.OnDeactivate(e);
+      //Debug.WriteLine("EditorView.OnDeactivate: " + this.Text);
+      MainGrid.Enabled = false;
+      if (Controller.IsParentGridToBeShown) {
+        // A read-only related grid for the parent table is shown
+        // above the main grid.
+        ParentGrid.Enabled = false;
       }
-      MainGrid.DataSource = MainGrid.Controller.BindingList;
-      MainGrid.ConfigureColumns();
+    }
+
+    protected override void OnFormClosed(FormClosedEventArgs e) {
+      base.OnFormClosed(e);
+      //MainGrid.RowValidated -= new DataGridViewCellEventHandler(MainGrid_RowValidated);
+      //MainGrid.ReadOnly = true;
+      //Refresh();
+      SizeableFormOptions.Save();
+      // if (Entities is ArtistInImageList
+      //     || Entities is ImageList) {
+      //   Controller.ImageSplitterDistance = ImageSplitContainer.SplitterDistance;
+      // }
+      if (Controller.IsParentGridToBeShown) {
+        // A read-only related grid for the parent table is shown
+        // above the main grid.
+        Controller.GridSplitterDistance = GridSplitContainer.SplitterDistance;
+      }
+    }
+
+    protected override void OnKeyDown(KeyEventArgs e) {
+      base.OnKeyDown(e);
+      switch (e.KeyData) {
+        case Keys.F6:
+          if (Controller.IsParentGridToBeShown) {
+            FocusGrid(FocusedGrid == ParentGrid ? (GridBase)MainGrid : ParentGrid);
+          }
+          break;
+      } //End of switch
+    }
+
+    protected override void OnLoad(EventArgs e) {
+      base.OnLoad(e);
+      MainGrid.SetController(new MainGridController(MainGrid, this));
+      MainGrid.MainView = MainView;
       MainGrid.CellBeginEdit += MainGrid_CellBeginEdit;
       MainGrid.DataError += MainGrid_DataError;
       MainGrid.MouseDown += Grid_MouseDown;
       MainGrid.RowsRemoved += MainGrid_RowsRemoved;
       MainGrid.RowValidated += MainGrid_RowValidated;
-      // Has to be done when visible.
-      // So can't be done when called from constructor.
-      if (Visible) {
-        MainGrid.AutoResizeColumns();
-        BeginInvoke((Action)AfterPopulateAsync);
+      if (Controller.IsParentGridToBeShown) {
+        ParentGrid.SetController(new ParentGridController(this));
+        ParentGrid.MainView = MainView;
+        ParentGrid.MainGrid = MainGrid;
+        ParentGrid.MouseDown += Grid_MouseDown;
+      }
+      // Has to be done here rather than in constructor
+      // in order to tell that this is an MDI child form.
+      SizeableFormOptions = SizeableFormOptions.Create(this);
+      // And better to do this here than in SetController,
+      // where any exception would be indirectly reported,
+      // due to being thrown in the controller's constructor.
+      OpenTable();
+      //MainGrid.AutoResizeColumns();
+      if (Controller.IsParentGridToBeShown) {
+        // TODO Check setting GridSplitContainer.SplitterDistance works.
+        // Previous comment says 'Does not work if done in EditorView_Load.'
+        GridSplitContainer.SplitterDistance = Controller.GridSplitterDistance;
+        //ParentGrid.AutoResizeColumns();
       }
     }
 
-    private void PopulateParentGrid() {
-      ParentGrid.MouseDown -= Grid_MouseDown;
-      ParentGrid.DataSource = Controller.ParentBindingList;
-      foreach (DataGridViewColumn column in ParentGrid.Columns) {
-        if (column.ValueType == typeof(DateTime)) {
-          column.DefaultCellStyle.Format = EditorController.DateFormat;
-        }
-      } // End of foreach
-      // Has to be done when visible.
-      // So can't be done when called from constructor.
+    protected override void OnMove(EventArgs e) {
+      base.OnMove(e);
+      // Stop ghost border lines appearing on main window background.
+      ParentForm?.Refresh();
+    }
+
+    protected override void OnResize(EventArgs e) {
+      base.OnResize(e);
+      // Stop ghost border lines appearing on main window background.
+      ParentForm?.Refresh();
+    }
+
+    protected override void OnVisibleChanged(EventArgs e) {
+      base.OnVisibleChanged(e);
       if (Visible) {
-        ParentGrid.AutoResizeColumns();
+        //Debug.WriteLine("EditorView_VisibleChanged: " + this.Text);
+        MainView.Cursor = Cursors.Default;
+        //ImageSplitContainer.Panel2Collapsed = true;
+        // We need to work out whether we need the image panel
+        // before we position the grid splitter.
+        // Otherwise the grid splitter gets out of kilter.
+        // if (Entities is ArtistInImageList
+        //     || Entities is ImageList) {
+        //   ImageSplitContainer.Panel2Collapsed = false;
+        //   ImageSplitContainer.SplitterDistance = Controller.ImageSplitterDistance;
+        //   ShowImageOrMessage(null); // Force image refresh
+        //   if (Entities is ImageList) {
+        //     if (Entities.Count > 0) {
+        //       ShowImageOrMessage(
+        //         MainGrid.Rows[0].Cells["Path"].Value.ToString());
+        //     }
+        //   } else { // ArtistInImageList
+        //     if (Controller.ParentList.Count > 0) {
+        //       ShowImageOrMessage(
+        //         ParentGrid.Rows[0].Cells["Path"].Value.ToString());
+        //     }
+        //   }
+        // } else {
+        //   ImageSplitContainer.Panel2Collapsed = true;
+        // }
       }
-      ParentGrid.MouseDown += Grid_MouseDown;
-      if (ParentGrid.RowCount > 0) {
-        ParentGrid.CurrentCell =
-          ParentGrid.Rows[0].Cells[0]; // Triggers ParentGrid_RowEnter
+    }
+
+    private void OpenTable() {
+      InvertGridColors(ParentGrid); // Will revert when focused.
+      Populate();
+    }
+
+    private void Populate() {
+      Controller.FetchData();
+      Text = MainGrid.Controller.TableName;
+      GridSplitContainer.Panel1Collapsed = !Controller.IsParentGridToBeShown;
+      if (Controller.IsParentGridToBeShown) {
+        ParentGrid.Populate(); // Will populate the main grid too.
+      } else {
+        MainGrid.Populate();
       }
+      BeginInvoke((Action)AfterPopulateAsync);
     }
 
     private void ShowMessage([NotNull] string text, MessageBoxIcon icon) {
