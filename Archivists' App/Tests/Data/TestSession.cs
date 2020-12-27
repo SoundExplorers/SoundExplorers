@@ -8,6 +8,9 @@ namespace SoundExplorers.Tests.Data {
   internal class TestSession : SessionNoServer {
     public const string DatabaseParentFolderPath = "C:\\Simon\\Databases";
 
+    public const string VelocityDbLicenceFilePath =
+      @"E:\Simon\OneDrive\Documents\My Installers\VelocityDB\License Database\4.odb";
+
     public TestSession() : base(CreateDatabaseFolder()) {
       BeginUpdate();
       new Schema().RegisterEntityTypes(this);
@@ -17,9 +20,9 @@ namespace SoundExplorers.Tests.Data {
     public TestSession(string databaseFolderPath) : base(databaseFolderPath) { }
     [NotNull] private string DatabaseFolderPath => SystemDirectory;
 
-    private static void CopyLicenceToDatabaseFolder(string databaseFolderPath) {
+    public static void CopyLicenceToDatabaseFolder(string databaseFolderPath) {
       File.Copy(
-        @"E:\Simon\OneDrive\Documents\My Installers\VelocityDB\License Database\4.odb",
+        VelocityDbLicenceFilePath,
         databaseFolderPath + @"\4.odb");
     }
 

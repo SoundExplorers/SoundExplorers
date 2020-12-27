@@ -30,6 +30,7 @@ namespace SoundExplorers.Tests {
       var data = new TestData(queryHelper);
       TestSession.DeleteFolderIfExists(DatabaseConfig.DefaultDatabaseFolderPath);
       Directory.CreateDirectory(DatabaseConfig.DefaultDatabaseFolderPath);
+      TestSession.CopyLicenceToDatabaseFolder(DatabaseConfig.DefaultDatabaseFolderPath);
       var session = new TestSession(DatabaseConfig.DefaultDatabaseFolderPath);
       session.BeginUpdate();
       data.AddActsPersisted(10, session);

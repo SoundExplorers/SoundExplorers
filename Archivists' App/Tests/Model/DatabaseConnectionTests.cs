@@ -32,9 +32,6 @@ namespace SoundExplorers.Tests.Model {
     private TestDatabaseConnection Connection { get; set; }
     private string DatabaseFolderPath { get; set; }
 
-    private const string VelocityDbLicenceFilePath =
-      @"E:\Simon\OneDrive\Documents\My Installers\VelocityDB\License Database\4.odb";
-
     [Test]
     public void TheTest() {
       // Neither the configuration file nor the database folder exist.
@@ -124,7 +121,7 @@ namespace SoundExplorers.Tests.Model {
       }
       using (var writer = new StreamWriter(ConfigFilePath)) {
         writer.Write(configText.Replace("For developer use only",
-          VelocityDbLicenceFilePath));
+           TestSession.VelocityDbLicenceFilePath));
       }
     }
   }

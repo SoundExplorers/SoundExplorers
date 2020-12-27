@@ -21,7 +21,7 @@ namespace SoundExplorers.Model {
     internal const string DefaultDatabaseFolderPath =
       @"E:\Simon\OneDrive\Documents\Software\Sound Explorers Audio Archive\Database";
 
-    private string _configFilePath;
+    private readonly string _configFilePath;
     private XElement Data { get; set; }
     private XmlWriter XmlWriter { get; set; }
 
@@ -37,7 +37,7 @@ namespace SoundExplorers.Model {
       get => _configFilePath ??
              Global.GetApplicationFolderPath() +
              Path.DirectorySeparatorChar + "DatabaseConfig.xml";
-      protected set => _configFilePath = value;
+      protected init => _configFilePath = value;
     }
 
     [Description(@"Database folder path. Example: C:\Folder\Subfolder")]
@@ -103,7 +103,8 @@ namespace SoundExplorers.Model {
     private string GetPropertyDescription([NotNull] string name) {
       return
         GetType().GetProperty(name)?
-          .GetCustomAttribute<DescriptionAttribute>().Description;
+          .GetCustomAttribute<DescriptionAttribute>()
+          ?.Description;
     }
 
     private XElement LoadData() {
