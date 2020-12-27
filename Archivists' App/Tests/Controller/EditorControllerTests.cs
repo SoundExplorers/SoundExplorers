@@ -463,6 +463,8 @@ namespace SoundExplorers.Tests.Controller {
       // TODO Fix EditorControllerTests.OnParentGridRowEntered.
       // var parentGridController = new ParentGridController(controller);
       // parentGridController.OnRowEnter(1);
+      var parentGridController = new ParentGridController(View);
+      parentGridController.GetChildrenForMainList(1);
       Assert.AreEqual(5, MainGridController.BindingList?.Count,
         "Main list count when 2nd parent selected");
     }
