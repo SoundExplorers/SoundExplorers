@@ -11,6 +11,7 @@ namespace SoundExplorers.View {
     protected GridBase() {
       AllowUserToOrderColumns = true;
       ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+      ShowCellToolTips = false;
     }
 
     public bool CanCut => CanSelectAll && CopyableText.Length > 0;
@@ -30,10 +31,10 @@ namespace SoundExplorers.View {
     public GridContextMenu ContextMenu =>
       _contextMenu ??= new GridContextMenu(this);
     
-    // [NotNull] protected EditorView EditorView => 
-    //   Controller.EditorView as EditorView ?? 
-    //   throw new InvalidOperationException(
-    //     "Cannot cast Controller.EditorView to EditorView");
+    [NotNull] protected EditorView EditorView => 
+      Controller.EditorView as EditorView ?? 
+      throw new InvalidOperationException(
+        "Cannot cast Controller.EditorView to EditorView");
 
     public bool IsTextBoxCellCurrent =>
       CurrentCell?.OwningColumn.CellTemplate is TextBoxCell;
@@ -106,6 +107,20 @@ namespace SoundExplorers.View {
       return null;
     }
 
+    /// <summary>
+    ///   Inverts the foreground and background colours
+    ///   of both selected and unselected cells
+    ///   in the grid.
+    /// </summary>
+    public void InvertColors() {
+      var swapColor = DefaultCellStyle.BackColor;
+      DefaultCellStyle.BackColor = DefaultCellStyle.ForeColor;
+      DefaultCellStyle.ForeColor = swapColor;
+      swapColor = DefaultCellStyle.SelectionBackColor;
+      DefaultCellStyle.SelectionBackColor = DefaultCellStyle.SelectionForeColor;
+      DefaultCellStyle.SelectionForeColor = swapColor;
+    }
+
     protected override void OnCurrentCellChanged(EventArgs e) {
       base.OnCurrentCellChanged(e);
       if (CurrentCell != null) {
@@ -137,7 +152,8 @@ namespace SoundExplorers.View {
     ///   will be fetched from the database.
     /// </param>
     public virtual void Populate(IList list = null) {
-      DataSource = list ?? Controller.BindingList;
+      Controller.Populate(list);
+      DataSource = Controller.BindingList;
       ConfigureColumns();
       AutoResizeColumns();
     }

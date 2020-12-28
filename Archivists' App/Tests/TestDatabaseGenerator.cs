@@ -12,7 +12,7 @@ namespace SoundExplorers.Tests {
     /// <summary>
     ///   1 to enable generate
     /// </summary>
-    private static int DoIt => 1;
+    private static int DoIt => 0;
 
     /// <summary>
     ///   If the main test database folder already exists,
@@ -60,7 +60,18 @@ namespace SoundExplorers.Tests {
         data.Events[i].Location = data.Locations[i - 8];
         data.Events[i].Series = data.Series[i - 8];
       }
-      data.AddSetsPersisted(24, session);
+      for (var i = 0; i < 5; i++) {
+        data.AddSetsPersisted(i + 1, session, data.Events[i], data.Genres[i]);
+      }
+      for (var i = 5; i < 10; i++) {
+        data.AddSetsPersisted(i - 4, session, data.Events[i], data.Genres[i]);
+      }
+      for (var i = 10; i < 15; i++) {
+        data.AddSetsPersisted(i - 9, session, data.Events[i], data.Genres[i -10]);
+      }
+      for (var i = 15; i < 18; i++) {
+        data.AddSetsPersisted(i - 9, session, data.Events[i]);
+      }
       session.Commit();
     }
   }

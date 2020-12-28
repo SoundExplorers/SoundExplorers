@@ -7,9 +7,14 @@ namespace SoundExplorers.Tests.Controller {
     public int ShowErrorMessageCount { get; private set; }
     public int ShowWarningMessageCount { get; private set; }
     public EditorController Controller { get; private set; }
+    public IMainGrid MainGrid { get; set; }
 
     public void SetController(EditorController controller) {
       Controller = controller;
+    }
+
+    public void OnMainGridPopulated() {
+      throw new System.NotImplementedException();
     }
 
     public void OnError() {

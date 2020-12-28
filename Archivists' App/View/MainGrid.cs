@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Drawing;
 using System.Windows.Forms;
 using JetBrains.Annotations;
@@ -247,13 +248,9 @@ namespace SoundExplorers.View {
     /// </remarks>
     protected override void OnRowEnter(DataGridViewCellEventArgs e) {
       base.OnRowEnter(e);
-      // This is the safe way of checking whether we have entered the insertion (new) row:
-      //if (e.RowIndex == MainGrid.RowCount - 1) {
-      //   // Controller.OnEnteringInsertionRow();
-      //   // // if (Entities is ImageList) {
-      //   // //   ShowImageOrMessage(null);
-      //   // // }
-      //}
+      if (EditorView.IsFocusingParentGrid) {
+        return;
+      }
       Controller.OnRowEnter(e.RowIndex);
     }
 
@@ -266,6 +263,11 @@ namespace SoundExplorers.View {
       //Debug.WriteLine("MainGrid.OnTextBoxSelectionMayHaveChanged");
       MainView.CutToolStripButton.Enabled = CanCut;
       MainView.CopyToolStripButton.Enabled = CanCopy;
+    }
+
+    public override void Populate(IList list = null) {
+      base.Populate(list);
+      EditorView.OnMainGridPopulated();
     }
 
     private void TextBox_KeyUp(object sender, KeyEventArgs e) {

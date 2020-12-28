@@ -293,7 +293,7 @@ namespace SoundExplorers.Tests.Controller {
         "ShowErrorMessageCount after valid Newsletter selection");
       Assert.AreEqual(selectedNewsletterDate, bindingList[0].Newsletter,
         "Newsletter in editor after valid Newsletter selection");
-      Assert.AreSame(selectedNewsletter, ((Event)controller.MainList[0]).Newsletter,
+      Assert.AreSame(selectedNewsletter, ToEvent(controller.MainList[0]).Newsletter,
         "Newsletter entity after valid Newsletter selection");
       var notFoundDate = DateTime.Parse("2345/12/31");
       MainGridController.OnRowEnter(0);
@@ -312,7 +312,7 @@ namespace SoundExplorers.Tests.Controller {
         "LastErrorMessage after not-found Newsletter pasted");
       Assert.AreEqual(selectedNewsletterDate, bindingList[0].Newsletter,
         "Newsletter in editor after not-found Newsletter pasted");
-      Assert.AreSame(selectedNewsletter, ((Event)controller.MainList[0]).Newsletter,
+      Assert.AreSame(selectedNewsletter, ToEvent(controller.MainList[0]).Newsletter,
         "Newsletter entity after not-found Newsletter pasted");
       // Series
       var selectedSeries = Data.Series[0];
@@ -324,7 +324,7 @@ namespace SoundExplorers.Tests.Controller {
         "ShowErrorMessageCount after valid Series selection");
       Assert.AreEqual(selectedSeriesName, bindingList[0].Series,
         "Series in editor after valid Series selection");
-      Assert.AreSame(selectedSeries, ((Event)controller.MainList[0]).Series,
+      Assert.AreSame(selectedSeries, ToEvent(controller.MainList[0]).Series,
         "Series entity after valid Series selection");
       const string notFoundName = "Not-Found Name";
       MainGridController.OnRowEnter(0);
@@ -343,7 +343,7 @@ namespace SoundExplorers.Tests.Controller {
         "LastErrorMessage after not-found Series pasted");
       Assert.AreEqual(selectedSeriesName, bindingList[0].Series,
         "Series in editor after not-found Series pasted");
-      Assert.AreSame(selectedSeries, ((Event)controller.MainList[0]).Series,
+      Assert.AreSame(selectedSeries, ToEvent(controller.MainList[0]).Series,
         "Series entity after not-found Series pasted");
     }
 
@@ -458,15 +458,12 @@ namespace SoundExplorers.Tests.Controller {
       var controller = CreateController(typeof(SetList));
       controller.FetchData(); // Populate grid
       Assert.AreEqual(2, controller.ParentBindingList?.Count, "Parent list count");
-      Assert.AreEqual(3, MainGridController.BindingList?.Count,
-        "Main list count initially");
-      // TODO Fix EditorControllerTests.OnParentGridRowEntered.
-      // var parentGridController = new ParentGridController(controller);
-      // parentGridController.OnRowEnter(1);
-      var parentGridController = new ParentGridController(View);
-      parentGridController.GetChildrenForMainList(1);
       Assert.AreEqual(5, MainGridController.BindingList?.Count,
-        "Main list count when 2nd parent selected");
+        "Main list count initially");
+      var parentGridController = new ParentGridController(View);
+      parentGridController.OnRowEnter(0);
+      Assert.AreEqual(3, MainGridController.BindingList?.Count,
+        "Main list count when 1st parent selected");
     }
 
     [Test]
@@ -477,8 +474,15 @@ namespace SoundExplorers.Tests.Controller {
 
     [NotNull]
     private TestEditorController CreateController([NotNull] Type mainListType) {
-      return new TestEditorController(mainListType,
+      return new (mainListType,
         View, QueryHelper, Session);
     }
+
+    [NotNull]
+    private static Event ToEvent([CanBeNull] object value) {
+      return 
+        value as Event 
+        ?? throw new InvalidOperationException($"{value} is not an Event.");
+    } 
   }
 }

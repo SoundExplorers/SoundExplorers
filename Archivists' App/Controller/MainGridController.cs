@@ -104,8 +104,11 @@ namespace SoundExplorers.Controller {
 
     public virtual void OnRowEnter(int rowIndex) {
       // Debug.WriteLine(
-      //   "EditorController.OnMainGridRowEnter:  Any row entered (after ItemAdded if insertion row)");
-      // Debug.WriteLine($"EditorController.OnMainGridRowEnter: row {rowIndex}");
+      //   "MainGridController.OnRowEnter:  Any row entered (after ItemAdded if insertion row)");
+      // Debug.WriteLine($"MainGridController.OnRowEnter: row {rowIndex}");
+      if (!List.IsDataLoadComplete) {
+        return;
+      }
       CurrentRowIndex = rowIndex;
       List.OnRowEnter(rowIndex);
     }
@@ -115,7 +118,7 @@ namespace SoundExplorers.Controller {
     ///   from the database and removes it from the list.
     /// </summary>
     public void OnRowRemoved(int rowIndex) {
-      //Debug.WriteLine("EditorController.OnMainGridRowRemoved");
+      //Debug.WriteLine("MainGridController.OnRowRemoved");
       // Debug.WriteLine(
       //   $"{nameof(OnMainGridRowRemoved)}:  2 or 3 times on opening a table before 1st ItemAdded (insertion row entered); existing row removed");
       // For unknown reason, the grid's RowsRemoved event is raised 2 or 3 times
@@ -154,11 +157,12 @@ namespace SoundExplorers.Controller {
     ///   reopening a 'validated' insertion.
     /// </remarks>
     public void OnRowValidated(int rowIndex) {
-      //Debug.WriteLine("EditorController.OnMainGridRowValidated:  Any row left, after final ItemChanged, if any");
+      //Debug.WriteLine("MainGridController.OnRowValidated:  Any row left, after final ItemChanged, if any");
       // Debug.WriteLine(
-      //   $"EditorController.OnMainGridRowValidated: row {rowIndex}, IsRemovingInvalidInsertionRow == {MainList.IsRemovingInvalidInsertionRow}");
+      //   $"MainGridController.OnRowValidated: row {rowIndex}, IsRemovingInvalidInsertionRow == {MainList.IsRemovingInvalidInsertionRow}");
       CurrentRowIndex = -1;
-      if (List.IsRemovingInvalidInsertionRow || EditorView.Controller.IsClosing ||
+      if (List.IsRemovingInvalidInsertionRow || EditorView.IsFocusingParentGrid || 
+          EditorView.Controller.IsClosing ||
           EditorView.Controller.MainController.IsClosing) {
         return;
       }

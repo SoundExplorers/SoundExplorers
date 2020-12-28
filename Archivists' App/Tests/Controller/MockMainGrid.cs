@@ -1,4 +1,5 @@
-﻿using SoundExplorers.Controller;
+﻿using System.Collections;
+using SoundExplorers.Controller;
 
 namespace SoundExplorers.Tests.Controller {
   public class MockMainGrid : IMainGrid {
@@ -36,6 +37,10 @@ namespace SoundExplorers.Tests.Controller {
 
     public void OnRowAddedOrDeleted() {
       OnRowAddedOrDeletedCount++;
+    }
+
+    public void Populate(IList list = null) {
+      throw new System.NotImplementedException();
     }
 
     public void RestoreCurrentRowCellErrorValue(int columnIndex,

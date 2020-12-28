@@ -22,12 +22,18 @@ namespace SoundExplorers.View {
     public GridBase FocusedGrid { get; private set; }
     private MainView MainView => (MainView)MdiParent;
     private SizeableFormOptions SizeableFormOptions { get; set; }
+    public bool IsFocusingParentGrid { get; set; }
+    IMainGrid IEditorView.MainGrid => MainGrid;
     public EditorController Controller { get; private set; }
 
     public void OnError() {
       // Debug.WriteLine("EditorView.OnError");
       MainView.Cursor = Cursors.WaitCursor;
       BeginInvoke((Action)MainGrid.OnError);
+    }
+    
+    public void OnMainGridPopulated() {
+      BeginInvoke((Action)OnMainGridPopulatedAsync);
     }
 
     public void ShowErrorMessage(string text) {
@@ -84,15 +90,6 @@ namespace SoundExplorers.View {
         FocusedGrid = MainGrid;
       }
       base.Refresh();
-    }
-
-    private void AfterPopulateAsync() {
-      MainGrid.MakeInsertionRowCurrent();
-      if (Controller.IsParentGridToBeShown) {
-        ParentGrid.Focus();
-      } else { // No parent grid
-        MainGrid.Focus();
-      }
     }
 
     /// <summary>
@@ -229,23 +226,6 @@ namespace SoundExplorers.View {
     }
 
     /// <summary>
-    ///   Inverts the foreground and background colours
-    ///   of both selected and unselected cells
-    ///   in the specified grid.
-    /// </summary>
-    /// <param name="grid">
-    ///   The grid whose colours are to be inverted.
-    /// </param>
-    private static void InvertGridColors(DataGridView grid) {
-      var swapColor = grid.DefaultCellStyle.BackColor;
-      grid.DefaultCellStyle.BackColor = grid.DefaultCellStyle.ForeColor;
-      grid.DefaultCellStyle.ForeColor = swapColor;
-      swapColor = grid.DefaultCellStyle.SelectionBackColor;
-      grid.DefaultCellStyle.SelectionBackColor = grid.DefaultCellStyle.SelectionForeColor;
-      grid.DefaultCellStyle.SelectionForeColor = swapColor;
-    }
-
-    /// <summary>
     ///   Handles the main grid's
     ///   <see cref="DataGridView.CellBeginEdit" /> event,
     ///   which occurs when edit mode starts for the currently selected cell,
@@ -376,8 +356,6 @@ namespace SoundExplorers.View {
       //   Controller.ImageSplitterDistance = ImageSplitContainer.SplitterDistance;
       // }
       if (Controller.IsParentGridToBeShown) {
-        // A read-only related grid for the parent table is shown
-        // above the main grid.
         Controller.GridSplitterDistance = GridSplitContainer.SplitterDistance;
       }
     }
@@ -405,7 +383,6 @@ namespace SoundExplorers.View {
       if (Controller.IsParentGridToBeShown) {
         ParentGrid.SetController(new ParentGridController(this));
         ParentGrid.MainView = MainView;
-        ParentGrid.MainGrid = MainGrid;
         ParentGrid.MouseDown += Grid_MouseDown;
       }
       // Has to be done here rather than in constructor
@@ -415,12 +392,16 @@ namespace SoundExplorers.View {
       // where any exception would be indirectly reported,
       // due to being thrown in the controller's constructor.
       OpenTable();
-      //MainGrid.AutoResizeColumns();
+    }
+
+    private void OnMainGridPopulatedAsync() {
+      MainGrid.MakeInsertionRowCurrent();
+      MainGrid.Focus();
       if (Controller.IsParentGridToBeShown) {
-        // TODO Check setting GridSplitContainer.SplitterDistance works.
-        // Previous comment says 'Does not work if done in EditorView_Load.'
-        GridSplitContainer.SplitterDistance = Controller.GridSplitterDistance;
-        //ParentGrid.AutoResizeColumns();
+        IsFocusingParentGrid = true;
+        ParentGrid.Focus();
+      } else { // No parent grid
+        MainGrid.Focus();
       }
     }
 
@@ -438,37 +419,42 @@ namespace SoundExplorers.View {
 
     protected override void OnVisibleChanged(EventArgs e) {
       base.OnVisibleChanged(e);
-      if (Visible) {
-        //Debug.WriteLine("EditorView_VisibleChanged: " + this.Text);
-        MainView.Cursor = Cursors.Default;
-        //ImageSplitContainer.Panel2Collapsed = true;
-        // We need to work out whether we need the image panel
-        // before we position the grid splitter.
-        // Otherwise the grid splitter gets out of kilter.
-        // if (Entities is ArtistInImageList
-        //     || Entities is ImageList) {
-        //   ImageSplitContainer.Panel2Collapsed = false;
-        //   ImageSplitContainer.SplitterDistance = Controller.ImageSplitterDistance;
-        //   ShowImageOrMessage(null); // Force image refresh
-        //   if (Entities is ImageList) {
-        //     if (Entities.Count > 0) {
-        //       ShowImageOrMessage(
-        //         MainGrid.Rows[0].Cells["Path"].Value.ToString());
-        //     }
-        //   } else { // ArtistInImageList
-        //     if (Controller.ParentList.Count > 0) {
-        //       ShowImageOrMessage(
-        //         ParentGrid.Rows[0].Cells["Path"].Value.ToString());
-        //     }
-        //   }
-        // } else {
-        //   ImageSplitContainer.Panel2Collapsed = true;
-        // }
+      if (!Visible) {
+        return;
       }
+      //Debug.WriteLine("EditorView_VisibleChanged: " + this.Text);
+      if (Controller.IsParentGridToBeShown) {
+        // Does not work if done in EditorView_Load.'
+        GridSplitContainer.SplitterDistance = Controller.GridSplitterDistance;
+      }
+      MainView.Cursor = Cursors.Default;
+      //ImageSplitContainer.Panel2Collapsed = true;
+      // We need to work out whether we need the image panel
+      // before we position the grid splitter.
+      // Otherwise the grid splitter gets out of kilter.
+      // if (Entities is ArtistInImageList
+      //     || Entities is ImageList) {
+      //   ImageSplitContainer.Panel2Collapsed = false;
+      //   ImageSplitContainer.SplitterDistance = Controller.ImageSplitterDistance;
+      //   ShowImageOrMessage(null); // Force image refresh
+      //   if (Entities is ImageList) {
+      //     if (Entities.Count > 0) {
+      //       ShowImageOrMessage(
+      //         MainGrid.Rows[0].Cells["Path"].Value.ToString());
+      //     }
+      //   } else { // ArtistInImageList
+      //     if (Controller.ParentList.Count > 0) {
+      //       ShowImageOrMessage(
+      //         ParentGrid.Rows[0].Cells["Path"].Value.ToString());
+      //     }
+      //   }
+      // } else {
+      //   ImageSplitContainer.Panel2Collapsed = true;
+      // }
     }
 
     private void OpenTable() {
-      InvertGridColors(ParentGrid); // Will revert when focused.
+      MainGrid.InvertColors();
       Populate();
     }
 
@@ -481,7 +467,6 @@ namespace SoundExplorers.View {
       } else {
         MainGrid.Populate();
       }
-      BeginInvoke((Action)AfterPopulateAsync);
     }
 
     private void ShowMessage([NotNull] string text, MessageBoxIcon icon) {

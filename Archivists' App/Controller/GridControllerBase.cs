@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System.Collections;
+using System.ComponentModel;
 using JetBrains.Annotations;
 using SoundExplorers.Model;
 
@@ -17,11 +18,15 @@ namespace SoundExplorers.Controller {
     [NotNull]
     internal BindingColumnList Columns => List.Columns;
     
-    [NotNull] protected IEditorView EditorView { get; }
+    [NotNull] public IEditorView EditorView { get; }
 
     /// <summary>
     ///   Gets the list of entities represented in the grid.
     /// </summary>
     protected abstract IEntityList List { get; }
+
+    public virtual void Populate(IList list = null) {
+      List.Populate(list);
+    }
   }
 }
