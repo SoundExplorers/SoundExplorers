@@ -183,7 +183,7 @@ namespace SoundExplorers.View {
       // A read-only related grid for the parent table is shown
       // above the main grid.
       if (grid != FocusedGrid) {
-        MainGrid.SwapColorsWith(ParentGrid);
+        ParentGrid.SwapColorsWith(MainGrid);
       }
       // By trial an error,
       // I found that this complicated rigmarole was required to
@@ -454,7 +454,7 @@ namespace SoundExplorers.View {
     }
 
     private void OpenTable() {
-      MainGrid.InvertColors();
+      ParentGrid.InvertColors();
       Populate();
     }
 

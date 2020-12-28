@@ -67,10 +67,16 @@ namespace SoundExplorers.Tests {
         data.AddSetsPersisted(i - 4, session, data.Events[i], data.Genres[i]);
       }
       for (var i = 10; i < 15; i++) {
-        data.AddSetsPersisted(i - 9, session, data.Events[i], data.Genres[i -10]);
+        data.AddSetsPersisted(i - 9, session, data.Events[i], data.Genres[i - 10]);
       }
       for (var i = 15; i < 18; i++) {
         data.AddSetsPersisted(i - 9, session, data.Events[i]);
+      }
+      for (var i = 0; i < 10; i++) {
+        data.Sets[i].Act = data.Acts[i];
+      }
+      for (var i = 10; i < 15; i++) {
+        data.Sets[i].Act = data.Acts[i - 10];
       }
       session.Commit();
     }
