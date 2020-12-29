@@ -28,6 +28,7 @@ namespace SoundExplorers.Controller {
       if (rowIndex == PreviousRowIndex) {
         return;
       }
+      // Debug.WriteLine($"ParentGridController.OnRowEnter: row {rowIndex}, populating main grid.");
       EditorView.MainGrid.Populate(List.GetChildrenForMainList(rowIndex));
       PreviousRowIndex = rowIndex;
     }

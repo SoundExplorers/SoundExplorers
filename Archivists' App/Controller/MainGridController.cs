@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Data;
-using System.Diagnostics;
 using JetBrains.Annotations;
 using SoundExplorers.Model;
 
@@ -106,14 +105,12 @@ namespace SoundExplorers.Controller {
     public override void OnRowEnter(int rowIndex) {
       // Debug.WriteLine(
       //   "MainGridController.OnRowEnter:  Any row entered (after ItemAdded if insertion row)");
+      // Debug.WriteLine($"MainGridController.OnRowEnter: row {rowIndex} of {List.Count}");
       base.OnRowEnter(rowIndex);
       if (IsPopulating) {
         return;
       }
-      Debug.WriteLine($"MainGridController.OnRowEnter: row {rowIndex} of {List.Count}");
-      // if (!List.IsDataLoadComplete) {
-      //   return;
-      // }
+      // Debug.WriteLine("MainGridController.OnRowEnter: populated");
       CurrentRowIndex = rowIndex;
       List.OnRowEnter(rowIndex);
     }

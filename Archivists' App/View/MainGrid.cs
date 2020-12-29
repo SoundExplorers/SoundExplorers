@@ -17,6 +17,7 @@ namespace SoundExplorers.View {
     }
 
     private int FirstVisibleColumnIndex { get; set; }
+    private bool IsJustPopulated { get; set; }
 
     public TextBox TextBox =>
       (TextBox)EditingControl ??
@@ -33,7 +34,7 @@ namespace SoundExplorers.View {
 
     public void MakeCellCurrent(int rowIndex, int columnIndex) {
       // This triggers OnRowEnter.
-      // Debug.WriteLine("EditorView.MakeCellCurrent");
+      // Debug.WriteLine("MainGrid.MakeCellCurrent");
       try {
         CurrentCell = Rows[rowIndex].Cells[columnIndex];
       } catch {
@@ -43,7 +44,7 @@ namespace SoundExplorers.View {
 
     public void MakeRowCurrent(int rowIndex) {
       // This triggers OnRowEnter.
-      // Debug.WriteLine($"EditorView.MakeRowCurrent: row {rowIndex}");
+      // Debug.WriteLine($"MainGrid.MakeRowCurrent: row {rowIndex}");
       CurrentCell = Rows[rowIndex].Cells[FirstVisibleColumnIndex];
     }
 
@@ -103,9 +104,9 @@ namespace SoundExplorers.View {
       }
     }
 
-    public void MakeInsertionRowCurrent() {
+    public void MakeNewRowCurrent() {
       // This triggers OnRowEnter.
-      // Debug.WriteLine("EditorView.MakeMainGridInsertionRowCurrent");
+      Debug.WriteLine("MainGrid.MakeNewRowCurrent");
       //BeginInvoke((Action)delegate { MakeRowCurrent(Rows.Count - 1);});
       MakeRowCurrent(Rows.Count - 1);
     }
@@ -185,6 +186,16 @@ namespace SoundExplorers.View {
     public void OnError() {
       CancelEdit();
       Controller.ShowError();
+    }
+
+    protected override void OnGotFocus(EventArgs e) {
+      base.OnGotFocus(e);
+      if (IsJustPopulated) {
+        IsJustPopulated = false;
+        if (EditorView.Controller.IsParentGridToBeShown) {
+          BeginInvoke((Action)MakeNewRowCurrent);
+        }
+      }
     }
 
     protected override void OnKeyDown(KeyEventArgs e) {
@@ -269,6 +280,7 @@ namespace SoundExplorers.View {
     public override void Populate(IList list = null) {
       base.Populate(list);
       EditorView.OnMainGridPopulated();
+      IsJustPopulated = true;
     }
 
     private void TextBox_KeyUp(object sender, KeyEventArgs e) {

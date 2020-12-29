@@ -131,6 +131,7 @@ namespace SoundExplorers.View {
     ///   for this re-population of the the main grid to work.
     /// </summary>
     protected override void OnBindingContextChanged(EventArgs e) {
+      // Debug.WriteLine($"GridBase.OnBindingContextChanged: {Name}");
     }
 
     protected override void OnCurrentCellChanged(EventArgs e) {
@@ -139,6 +140,10 @@ namespace SoundExplorers.View {
         MainView.CopyToolStripButton.Enabled = CanCopy;
       }
     }
+
+    // protected override void OnDataBindingComplete(DataGridViewBindingCompleteEventArgs e) {
+    //   Debug.WriteLine($"GridBase.OnDataBindingComplete: {Name}");
+    // }
 
     /// <summary>
     ///   When mouse button 2 is clicked on a cell,

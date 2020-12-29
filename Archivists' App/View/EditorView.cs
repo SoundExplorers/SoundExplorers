@@ -194,6 +194,9 @@ namespace SoundExplorers.View {
       unfocusedGrid.Enabled = false;
       grid.Enabled = true;
       base.Refresh(); // Don't want to repopulate grid, which this.Refresh would do!
+      // if (grid.Equals(ParentGrid)) {
+      //   IsFocusingParentGrid = true;
+      // }
       grid.Focus();
       base.Refresh(); // Don't want to repopulate grid, which this.Refresh would do!
       unfocusedGrid.Enabled = true;
@@ -221,6 +224,9 @@ namespace SoundExplorers.View {
     private void Grid_MouseDown(object sender, MouseEventArgs e) {
       var grid = (GridBase)sender;
       if (grid != FocusedGrid) {
+        if (grid.Equals(ParentGrid)) {
+          IsFocusingParentGrid = true;
+        }
         FocusGrid(grid);
       }
     }
@@ -365,6 +371,9 @@ namespace SoundExplorers.View {
       switch (e.KeyData) {
         case Keys.F6:
           if (Controller.IsParentGridToBeShown) {
+            if (!FocusedGrid.Equals(ParentGrid)) {
+              IsFocusingParentGrid = true;
+            }
             FocusGrid(FocusedGrid == ParentGrid ? (GridBase)MainGrid : ParentGrid);
           }
           break;
@@ -395,12 +404,11 @@ namespace SoundExplorers.View {
     }
 
     private void OnMainGridPopulatedAsync() {
-      MainGrid.MakeInsertionRowCurrent();
-      MainGrid.Focus();
       if (Controller.IsParentGridToBeShown) {
         IsFocusingParentGrid = true;
         ParentGrid.Focus();
       } else { // No parent grid
+        MainGrid.MakeNewRowCurrent();
         MainGrid.Focus();
       }
     }
@@ -454,7 +462,9 @@ namespace SoundExplorers.View {
     }
 
     private void OpenTable() {
-      MainGrid.InvertColors();
+      if (Controller.IsParentGridToBeShown) {
+        MainGrid.InvertColors();
+      }
       Populate();
     }
 
