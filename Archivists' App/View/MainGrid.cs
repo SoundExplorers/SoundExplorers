@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using JetBrains.Annotations;
@@ -106,8 +105,7 @@ namespace SoundExplorers.View {
 
     public void MakeNewRowCurrent() {
       // This triggers OnRowEnter.
-      Debug.WriteLine("MainGrid.MakeNewRowCurrent");
-      //BeginInvoke((Action)delegate { MakeRowCurrent(Rows.Count - 1);});
+      // Debug.WriteLine("MainGrid.MakeNewRowCurrent");
       MakeRowCurrent(Rows.Count - 1);
     }
 
