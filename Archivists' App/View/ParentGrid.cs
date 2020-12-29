@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Diagnostics;
 using System.Windows.Forms;
 using SoundExplorers.Controller;
 
@@ -28,23 +29,6 @@ namespace SoundExplorers.View {
         }
       } // End of foreach
     }
-
-    // /// <summary>
-    // ///   Resizes the main grid when its contents are automatically
-    // ///   kept in step with the parent grid row change.
-    // /// </summary>
-    // /// <remarks>
-    // ///   This really only needs to be done when the current row changes.
-    // ///   But there's no event for that.  The RowEnter event is raised
-    // ///   just before the row becomes current.  So it is too early
-    // ///   to work:  I tried.
-    // /// </remarks>
-    // protected override void OnCurrentCellChanged(EventArgs e) {
-    //   base.OnCurrentCellChanged(e);
-    //   if (CurrentCell != null) {
-    //     MainGrid.AutoResizeColumns();
-    //   }
-    // }
 
     /// <summary>
     ///   An existing row on the parent grid has been entered.

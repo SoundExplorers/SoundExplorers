@@ -454,7 +454,7 @@ namespace SoundExplorers.View {
     }
 
     private void OpenTable() {
-      ParentGrid.InvertColors();
+      MainGrid.InvertColors();
       Populate();
     }
 

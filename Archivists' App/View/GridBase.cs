@@ -120,6 +120,18 @@ namespace SoundExplorers.View {
       DefaultCellStyle.SelectionBackColor = DefaultCellStyle.SelectionForeColor;
       DefaultCellStyle.SelectionForeColor = swapColor;
     }
+    
+    /// <summary>
+    ///   Blocks execution of the base method, which calls the internal method
+    ///   DataGridView.MakeFirstDisplayedCellCurrentCell,
+    ///   thus triggering a RowEnter on what would usually be the wrong row,
+    ///   which in turn wrecks
+    ///   the re-population of the the main grid on change of parent row.
+    ///   We need to have full control of row currencies on the two grids
+    ///   for this re-population of the the main grid to work.
+    /// </summary>
+    protected override void OnBindingContextChanged(EventArgs e) {
+    }
 
     protected override void OnCurrentCellChanged(EventArgs e) {
       base.OnCurrentCellChanged(e);

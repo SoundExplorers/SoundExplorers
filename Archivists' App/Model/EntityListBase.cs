@@ -397,7 +397,7 @@ namespace SoundExplorers.Model {
           IsDataLoadComplete = true;
           IsInsertionRowCurrent = true;
           break;
-        case ListChangedType.ItemChanged: // Cell edit completed 
+        case ListChangedType.ItemChanged: // Cell edit completed
           // Debug.WriteLine(
           //   $"EntityListBase.BindingList_ListChanged: ItemChanged, row {e.NewIndex}");
           // Debug.WriteLine(

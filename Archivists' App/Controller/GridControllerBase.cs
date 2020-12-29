@@ -24,8 +24,19 @@ namespace SoundExplorers.Controller {
     ///   Gets the list of entities represented in the grid.
     /// </summary>
     protected abstract IEntityList List { get; }
+    
+    protected bool IsPopulating { get; set; }
+    protected int PreviousRowIndex { get; set; }
 
-    public virtual void Populate(IList list = null) {
+    public virtual void OnRowEnter(int rowIndex) {
+      if (IsPopulating && rowIndex == List.Count -1) {
+        IsPopulating = false;
+      }
+    }
+
+    public void Populate(IList list = null) {
+      IsPopulating = true;
+      PreviousRowIndex = -1;
       List.Populate(list);
     }
   }
