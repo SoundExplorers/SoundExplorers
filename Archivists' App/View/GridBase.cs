@@ -125,10 +125,11 @@ namespace SoundExplorers.View {
     ///   Blocks execution of the base method, which calls the internal method
     ///   DataGridView.MakeFirstDisplayedCellCurrentCell,
     ///   thus triggering a RowEnter on what would usually be the wrong row,
-    ///   which in turn wrecks
-    ///   the re-population of the the main grid on change of parent row.
+    ///   in which case the population of the the main grid on change of parent row
+    ///   happens an unwanted extra time and for the wrong row:
+    ///   see ParentGridController.OnRowEnter.
     ///   We need to have full control of row currencies on the two grids
-    ///   for this re-population of the the main grid to work.
+    ///   for this population of the the main grid to work.
     /// </summary>
     protected override void OnBindingContextChanged(EventArgs e) {
       // Debug.WriteLine($"GridBase.OnBindingContextChanged: {Name}");
@@ -140,10 +141,6 @@ namespace SoundExplorers.View {
         MainView.CopyToolStripButton.Enabled = CanCopy;
       }
     }
-
-    // protected override void OnDataBindingComplete(DataGridViewBindingCompleteEventArgs e) {
-    //   Debug.WriteLine($"GridBase.OnDataBindingComplete: {Name}");
-    // }
 
     /// <summary>
     ///   When mouse button 2 is clicked on a cell,
