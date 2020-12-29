@@ -31,7 +31,7 @@ namespace SoundExplorers.View {
       MainView.Cursor = Cursors.WaitCursor;
       BeginInvoke((Action)MainGrid.OnError);
     }
-    
+
     public void OnMainGridPopulated() {
       BeginInvoke((Action)OnMainGridPopulatedAsync);
     }
@@ -432,8 +432,7 @@ namespace SoundExplorers.View {
       }
       //Debug.WriteLine("EditorView_VisibleChanged: " + this.Text);
       if (Controller.IsParentGridToBeShown) {
-        // Does not work if done in EditorView_Load.'
-        GridSplitContainer.SplitterDistance = Controller.GridSplitterDistance;
+        SetInitialGridSplitterDistance();
       }
       MainView.Cursor = Cursors.Default;
       //ImageSplitContainer.Panel2Collapsed = true;
@@ -477,6 +476,21 @@ namespace SoundExplorers.View {
       } else {
         MainGrid.Populate();
       }
+    }
+
+    /// <summary>
+    ///   Sets the position of the horizontal splitter between the two grids to
+    ///   previously saved value or, if this is the first time the user has opened
+    ///   an editor window, a default.
+    /// </summary>
+    /// <remarks>
+    ///   This has to be called from <see cref="OnVisibleChanged"/>,
+    ///   as it doers not work in <see cref="OnLoad"/>.
+    /// </remarks>
+    private void SetInitialGridSplitterDistance() { 
+     int savedGridSplitterDistance = Controller.GridSplitterDistance;
+      GridSplitContainer.SplitterDistance =
+        savedGridSplitterDistance > 0 ? savedGridSplitterDistance : 180;
     }
 
     private void ShowMessage([NotNull] string text, MessageBoxIcon icon) {

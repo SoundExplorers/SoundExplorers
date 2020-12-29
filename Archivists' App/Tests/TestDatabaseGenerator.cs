@@ -78,6 +78,24 @@ namespace SoundExplorers.Tests {
       for (var i = 10; i < 15; i++) {
         data.Sets[i].Act = data.Acts[i - 10];
       }
+      for (var i = 15; i < 20; i++) {
+        data.Sets[i].Act = data.Acts[i - 15];
+      }
+      for (var i = 20; i < 25; i++) {
+        data.Sets[i].Act = data.Acts[i - 20];
+      }
+      for (var i = 25; i < 30; i++) {
+        data.Sets[i].Act = data.Acts[i - 25];
+      }
+      for (var i = 30; i < 35; i++) {
+        data.Sets[i].Act = data.Acts[i - 30];
+      }
+      for (var i = 35; i < 40; i++) {
+        data.Sets[i].Act = data.Acts[i - 35];
+      }
+      for (var i = 40; i < 45; i++) {
+        data.Sets[i].Act = data.Acts[i - 40];
+      }
       session.Commit();
     }
   }
