@@ -20,9 +20,7 @@ namespace SoundExplorers.View {
       WindowsMenu.DropDown.Opening += WindowsMenu_DropDown_Opening;
     }
 
-    internal EditorView EditorView => ActiveMdiChild as EditorView ??
-                                      throw new NullReferenceException(
-                                        nameof(EditorView));
+    private EditorView EditorView => ActiveMdiChild as EditorView;
 
     private MainController Controller { get; set; }
     private SelectEditorView SelectEditorView { get; set; }
@@ -38,8 +36,6 @@ namespace SoundExplorers.View {
         SplashManager.Status = "Getting options...";
         SelectEditorView = CreateSelectEditorView();
         ToolStrip.Visible = Controller.IsToolBarVisible;
-        // throw new InvalidOperationException(
-        //   "It was not just the landscape that changed, but society also changed and often quite noticeably. But this was a proposition unacceptable to colonial perceptions that insisted on the unchanging character of Indian history and society. The concentration on dynastic histories in the early studies was due to the assumption that in ‘Oriental’ societies the power of the ruler was supreme even in the day-to-day functioning of the government. Yet authority for routine functions was rarely entirely concentrated at the centre in the Indian political systems. Much that was seen as essentially centralized in theories such as ‘Oriental Despotism’ was in actual fact localized through the functions of caste and of other organizations. The understanding of political power in India involves analyses of caste relationships and institutions, such as the guilds and rural and urban councils, and not merely a survey of dynasties. That the study of institutions did not receive much emphasis was in part due to the belief that they did not undergo much change: an idea derived from the conviction that Indian culture had been static, largely owing to the lethargy of the Indian and his gloomy, fatalistic attitude to life. Yet even a superficial analysis of the changes in social relationships within the caste structure, or the links between politics and economic systems, or the vigorous mercantile activities of Indians throughout the centuries, points to anything but static behaviour or an unchanging socio-economic pattern. At certain levels there are aspects of cultural traditions in India that can be traced to roots as far back as a few thousand years, but such continuity should not be confused with stagnation. The chanting of the gayatri hymn has a history of three millennia, but its current context can hardly be said to have remained unchanged from earlier times, and for the historian the context is as important as the content of the hymn.");
       } catch (Exception exception) {
         if (exception is ApplicationException) {
           MessageBox.Show(
@@ -117,7 +113,7 @@ namespace SoundExplorers.View {
 
     private void EditMenu_DropDown_Opening(object sender, CancelEventArgs e) {
       if (MdiChildren.Any()) {
-        EditorView.FocusedGrid.EnableOrDisableMenuItems(
+        EditorView?.FocusedGrid?.EnableOrDisableMenuItems(
           EditCutMenuItem, EditCopyMenuItem, EditPasteMenuItem,
           EditDeleteMenuItem,
           EditSelectAllMenuItem, EditSelectRowMenuItem, EditDeleteSelectedRowsMenuItem);
@@ -129,31 +125,31 @@ namespace SoundExplorers.View {
     }
 
     private void EditCutMenuItem_Click(object sender, EventArgs e) {
-      EditorView.FocusedGrid.ContextMenu.Cut();
+      EditorView?.FocusedGrid?.ContextMenu.Cut();
     }
 
     private void EditCopyMenuItem_Click(object sender, EventArgs e) {
-      EditorView.FocusedGrid.ContextMenu.Copy();
+      EditorView?.FocusedGrid?.ContextMenu.Copy();
     }
 
     private void EditPasteMenuItem_Click(object sender, EventArgs e) {
-      EditorView.FocusedGrid.ContextMenu.Paste();
+      EditorView?.FocusedGrid?.ContextMenu.Paste();
     }
 
     private void EditDeleteMenuItem_Click(object sender, EventArgs e) {
-      EditorView.FocusedGrid.ContextMenu.Delete();
+      EditorView?.FocusedGrid?.ContextMenu.Delete();
     }
 
     private void EditSelectAllMenuItem_Click(object sender, EventArgs e) {
-      EditorView.FocusedGrid.ContextMenu.SelectAll();
+      EditorView?.FocusedGrid?.ContextMenu.SelectAll();
     }
 
     private void EditSelectRowMenuItem_Click(object sender, EventArgs e) {
-      EditorView.FocusedGrid.ContextMenu.SelectRow();
+      EditorView?.FocusedGrid?.ContextMenu.SelectRow();
     }
 
     private void EditDeleteSelectedRowsMenuItem_Click(object sender, EventArgs e) {
-      EditorView.FocusedGrid.ContextMenu.DeleteSelectedRows();
+      EditorView?.FocusedGrid?.ContextMenu.DeleteSelectedRows();
     }
 
     private void FileMenu_DropDown_Opening(object sender, CancelEventArgs e) {
@@ -181,8 +177,6 @@ namespace SoundExplorers.View {
           MessageBoxButtons.OK,
           MessageBoxIcon.Error);
       }
-      //throw new InvalidOperationException(
-      //  "It was not just the landscape that changed, but society also changed and often quite noticeably. But this was a proposition unacceptable to colonial perceptions that insisted on the unchanging character of Indian history and society. The concentration on dynastic histories in the early studies was due to the assumption that in ‘Oriental’ societies the power of the ruler was supreme even in the day-to-day functioning of the government. Yet authority for routine functions was rarely entirely concentrated at the centre in the Indian political systems. Much that was seen as essentially centralized in theories such as ‘Oriental Despotism’ was in actual fact localized through the functions of caste and of other organizations. The understanding of political power in India involves analyses of caste relationships and institutions, such as the guilds and rural and urban councils, and not merely a survey of dynasties. That the study of institutions did not receive much emphasis was in part due to the belief that they did not undergo much change: an idea derived from the conviction that Indian culture had been static, largely owing to the lethargy of the Indian and his gloomy, fatalistic attitude to life. Yet even a superficial analysis of the changes in social relationships within the caste structure, or the links between politics and economic systems, or the vigorous mercantile activities of Indians throughout the centuries, points to anything but static behaviour or an unchanging socio-economic pattern. At certain levels there are aspects of cultural traditions in India that can be traced to roots as far back as a few thousand years, but such continuity should not be confused with stagnation. The chanting of the gayatri hymn has a history of three millennia, but its current context can hardly be said to have remained unchanged from earlier times, and for the historian the context is as important as the content of the hymn.");
     }
 
     private void FileOpenMenuItem_Click(object sender, EventArgs e) {
