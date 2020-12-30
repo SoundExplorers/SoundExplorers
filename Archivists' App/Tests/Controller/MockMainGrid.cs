@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using SoundExplorers.Controller;
 
 namespace SoundExplorers.Tests.Controller {
   public class MockMainGrid : IMainGrid {
-    private TestMainGridController Controller { get; set; } = null!;
+    public TestMainGridController Controller { get; set; } = null!;
     public int EditCurrentCellCount { get; private set; }
     public int MakeCellCurrentCount { get; private set; }
     public int MakeCellCurrentColumnIndex { get; private set; }
@@ -41,7 +40,7 @@ namespace SoundExplorers.Tests.Controller {
     }
 
     public void Populate(IList? list = null) {
-      throw new NotImplementedException();
+      Controller.Populate(list);
     }
 
     public void RestoreCurrentRowCellErrorValue(int columnIndex,

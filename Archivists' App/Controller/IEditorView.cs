@@ -5,6 +5,7 @@ namespace SoundExplorers.Controller {
     EditorController Controller { get; }
     bool IsFocusingParentGrid { get; set; }
     IMainGrid MainGrid { get; }
+    IParentGrid ParentGrid { get; }
     void OnError();
     void OnMainGridPopulated();
     void ShowErrorMessage([NotNull] string text);

@@ -10,6 +10,7 @@ namespace SoundExplorers.Tests.Controller {
     public EditorController Controller { get; private set; } = null!;
     public bool IsFocusingParentGrid { get; set; }
     public IMainGrid MainGrid { get; set; } = null!;
+    public IParentGrid ParentGrid { get; set; } = null!;
 
     public void SetController(EditorController controller) {
       Controller = controller;

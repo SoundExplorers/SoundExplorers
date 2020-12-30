@@ -84,7 +84,7 @@ namespace SoundExplorers.Controller {
     ///   Gets the list of entities represented in the main table.
     /// </summary>
     /// <remarks>
-    ///   <see cref="FetchData"/> populates the list.
+    ///   <see cref="Populate"/> populates the list.
     /// </remarks>
     [NotNull]
     internal IEntityList MainList => _mainList ??= CreateEntityList(MainListType);  
@@ -96,7 +96,7 @@ namespace SoundExplorers.Controller {
     ///   Gets the list of entities represented in the parent table, if any.
     /// </summary>
     /// <remarks>
-    ///   <see cref="FetchData"/> populates the list, if required.
+    ///   <see cref="Populate"/> populates the list, if required.
     /// </remarks>
     internal IEntityList ParentList => IsParentGridToBeShown
       ? _parentList ??= CreateEntityList(
@@ -105,7 +105,7 @@ namespace SoundExplorers.Controller {
           "MainList.ParentListType is unexpectedly null."))
       : null; 
 
-    [NotNull] private IEditorView View { get; }
+    [NotNull] protected IEditorView View { get; }
 
     /// <summary>
     ///   Edit the tags of the audio file, if found,
@@ -120,18 +120,6 @@ namespace SoundExplorers.Controller {
     public void EditAudioFileTags() {
       // string path = GetMediumPath(Medium.Audio);
       // var dummy = new AudioFile(path);
-    }
-
-    public void FetchData() {
-      if (IsParentGridToBeShown) {
-        ParentList.IsParentList = true;
-        ParentList.Populate();
-        if (ParentList.BindingList?.Count > 0) {
-          MainList.Populate(ParentList.GetChildrenForMainList(ParentList.Count - 1));
-        }
-      } else {
-        MainList.Populate();
-      }
     }
 
     [NotNull]
@@ -169,6 +157,15 @@ namespace SoundExplorers.Controller {
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public void PlayVideo() {
       //Process.Start(GetMediumPath(Medium.Video));
+    }
+
+    public virtual void Populate() {
+      if (IsParentGridToBeShown) {
+        ParentList.IsParentList = true;
+        ParentList.Populate(); // Will populate the main grid too.
+      } else {
+        MainList.Populate();
+      }
     }
 
     /// <summary>

@@ -55,7 +55,7 @@ namespace SoundExplorers.Tests.Controller {
       Assert.IsNotNull(validLocationName, "validLocationName");
       Assert.IsNotNull(validSeriesName, "validSeriesName");
       var controller = CreateController(typeof(EventList));
-      controller.FetchData(); // Show an empty grid
+      controller.Populate(); // Show an empty grid
       var bindingList =
         (TypedBindingList<Event, EventBindingItem>)controller.MainList.BindingList;
       MainGridController.CreateAndGoToInsertionRow();
@@ -104,7 +104,7 @@ namespace SoundExplorers.Tests.Controller {
       const string name = "Boogie woogie";
       var controller = CreateController(typeof(GenreList));
       var mainController = controller.MainController;
-      controller.FetchData(); // Show an empty grid
+      controller.Populate(); // Show an empty grid
       var mainList = controller.MainList;
       var bindingList =
         (TypedBindingList<Genre, NamedBindingItem<Genre>>)controller.MainList.BindingList;
@@ -135,7 +135,7 @@ namespace SoundExplorers.Tests.Controller {
       }
       // The second Location cannot be deleted because it is a parent of 3 child Events.
       var controller = CreateController(typeof(LocationList));
-      controller.FetchData(); // Populate grid
+      controller.Populate(); // Populate grid
       MainGridController.CreateAndGoToInsertionRow();
       MainGridController.OnRowRemoved(1);
       Assert.AreEqual(1, MainGrid.OnRowAddedOrDeletedCount, "OnRowAddedOrDeletedCount");
@@ -152,7 +152,7 @@ namespace SoundExplorers.Tests.Controller {
       }
       var controller = CreateController(typeof(GenreList));
       MainGridController.AutoValidate = true;
-      controller.FetchData();
+      controller.Populate();
       var bindingList =
         (TypedBindingList<Genre, NamedBindingItem<Genre>>)controller.MainList.BindingList;
       MainGridController.CreateAndGoToInsertionRow();
@@ -169,7 +169,7 @@ namespace SoundExplorers.Tests.Controller {
     [Test]
     public void DisallowAddWithoutIdentifyingParent() {
       var controller = CreateController(typeof(EventList));
-      controller.FetchData(); // Show an empty grid
+      controller.Populate(); // Show an empty grid
       var bindingList =
         (TypedBindingList<Event, EventBindingItem>)controller.MainList.BindingList;
       MainGridController.CreateAndGoToInsertionRow();
@@ -188,7 +188,7 @@ namespace SoundExplorers.Tests.Controller {
       const string name2 = "Uncle";
       var controller = CreateController(typeof(LocationList));
       Assert.IsFalse(controller.IsParentGridToBeShown, "IsParentGridToBeShown");
-      controller.FetchData(); // The grid will be empty initially
+      controller.Populate(); // The grid will be empty initially
       Assert.AreEqual("Location", MainGridController.TableName, "Main TableName");
       var bindingList =
         (TypedBindingList<Location, NotablyNamedBindingItem<Location>>)controller.MainList
@@ -202,11 +202,11 @@ namespace SoundExplorers.Tests.Controller {
       bindingList[1].Notes = "Bob";
       MainGridController.OnRowValidated(1);
       Assert.AreEqual(2, MainGrid.OnRowAddedOrDeletedCount, "OnRowAddedOrDeletedCount");
-      controller.FetchData(); // Refresh grid
+      controller.Populate(); // Refresh grid
       bindingList =
         (TypedBindingList<Location, NotablyNamedBindingItem<Location>>)controller.MainList
           .BindingList;
-      Assert.AreEqual(2, bindingList.Count, "editor.Count after FetchData #2");
+      Assert.AreEqual(2, bindingList.Count, "editor.Count after Populate #2");
       MainGridController.OnRowEnter(1);
       // Disallow rename to duplicate
       var exception = Assert.Catch<DuplicateNameException>(
@@ -252,7 +252,7 @@ namespace SoundExplorers.Tests.Controller {
       }
       // The second Location cannot be deleted because it is a parent of 3 child Events.
       var controller = CreateController(typeof(LocationList));
-      controller.FetchData(); // Populate grid
+      controller.Populate(); // Populate grid
       MainGridController.CreateAndGoToInsertionRow();
       MainGridController.OnRowRemoved(1);
       Assert.AreEqual(1, View.ShowErrorMessageCount,
@@ -278,7 +278,7 @@ namespace SoundExplorers.Tests.Controller {
         Session.Commit();
       }
       var controller = CreateController(typeof(EventList));
-      controller.FetchData(); // Populate grid
+      controller.Populate(); // Populate grid
       Assert.IsTrue(MainGridController.DoesColumnReferenceAnotherEntity("Newsletter"),
         "Newsletter DoesColumnReferenceAnotherEntity");
       var bindingList =
@@ -355,7 +355,7 @@ namespace SoundExplorers.Tests.Controller {
         Session.Commit();
       }
       var controller = CreateController(typeof(NewsletterList));
-      controller.FetchData(); // Populate grid
+      controller.Populate(); // Populate grid
       MainGridController.CreateAndGoToInsertionRow();
       var exception = new FormatException("Potato is not a valid DateTime.");
       MainGridController.OnExistingRowCellUpdateError(3, "Date", exception);
@@ -375,7 +375,7 @@ namespace SoundExplorers.Tests.Controller {
         Session.Commit();
       }
       var controller = CreateController(typeof(EventList));
-      controller.FetchData(); // Populate grid
+      controller.Populate(); // Populate grid
       var bindingList =
         (TypedBindingList<Event, EventBindingItem>)controller.MainList.BindingList;
       MainGridController.OnRowEnter(2);
@@ -406,7 +406,7 @@ namespace SoundExplorers.Tests.Controller {
       Data.AddNewslettersPersisted(1, Session);
       Session.Commit();
       var controller = CreateController(typeof(NewsletterList));
-      controller.FetchData(); // Populate grid
+      controller.Populate(); // Populate grid
       Assert.AreEqual("Date", MainGridController.GetColumnDisplayName("Date"), "Date");
       Assert.AreEqual("URL", MainGridController.GetColumnDisplayName("Url"), "Url");
     }
@@ -415,7 +415,7 @@ namespace SoundExplorers.Tests.Controller {
     public void GridSplitterDistance() {
       const int distance = 123;
       var controller = CreateController(typeof(EventList));
-      controller.FetchData();
+      controller.Populate();
       controller.GridSplitterDistance = distance;
       Assert.AreEqual(distance, controller.GridSplitterDistance);
     }
@@ -426,7 +426,7 @@ namespace SoundExplorers.Tests.Controller {
       Data.AddNewslettersPersisted(2, Session);
       Session.Commit();
       var controller = CreateController(typeof(NewsletterList));
-      controller.FetchData(); // Populate grid
+      controller.Populate(); // Populate grid
       var bindingList =
         (TypedBindingList<Newsletter, NewsletterBindingItem>)controller.MainList
           .BindingList;
@@ -455,12 +455,13 @@ namespace SoundExplorers.Tests.Controller {
         Session.Commit();
       }
       var controller = CreateController(typeof(SetList));
-      controller.FetchData(); // Populate grid
+      View.MainGrid = new MockMainGrid {Controller = MainGridController};
+      View.ParentGrid = new MockParentGrid {Controller = new ParentGridController(View)};
+      controller.Populate(); // Populate grid
       Assert.AreEqual(2, controller.ParentBindingList?.Count, "Parent list count");
       Assert.AreEqual(5, MainGridController.BindingList?.Count,
         "Main list count initially");
-      var parentGridController = new ParentGridController(View);
-      parentGridController.OnRowEnter(0);
+      View.ParentGrid.Controller.OnRowEnter(0);
       Assert.AreEqual(3, MainGridController.BindingList?.Count,
         "Main list count when 1st parent selected");
     }

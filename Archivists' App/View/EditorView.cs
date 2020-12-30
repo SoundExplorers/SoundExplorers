@@ -23,6 +23,7 @@ namespace SoundExplorers.View {
     private SizeableFormOptions SizeableFormOptions { get; set; } = null!;
     public bool IsFocusingParentGrid { get; set; }
     IMainGrid IEditorView.MainGrid => MainGrid;
+    IParentGrid IEditorView.ParentGrid => ParentGrid;
     public EditorController Controller { get; private set; } = null!;
 
     public void OnError() {
@@ -467,7 +468,7 @@ namespace SoundExplorers.View {
     }
 
     private void Populate() {
-      Controller.FetchData();
+      Controller.Populate();
       Text = MainGrid.Controller.TableName;
       GridSplitContainer.Panel1Collapsed = !Controller.IsParentGridToBeShown;
       if (Controller.IsParentGridToBeShown) {

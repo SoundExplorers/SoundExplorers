@@ -27,7 +27,7 @@ namespace SoundExplorers.Tests.Controller {
       } finally {
         Session.Commit();
       }
-      EditorController.FetchData(); // Populate grid
+      EditorController.Populate(); // Populate grid
     }
 
     [TearDown]
