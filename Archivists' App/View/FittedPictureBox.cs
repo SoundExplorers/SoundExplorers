@@ -86,10 +86,10 @@ namespace SoundExplorers.View {
           && sourceHeight == ClientSize.Height) {
         return original as Bitmap;
       }
-      var sourceX = 0;
-      var sourceY = 0;
-      var destX = 0;
-      var destY = 0;
+      int sourceX = 0;
+      int sourceY = 0;
+      int destX = 0;
+      int destY = 0;
       float nPercent;
       float nPercentW = ClientSize.Width / (float)sourceWidth;
       float nPercentH = ClientSize.Height / (float)sourceHeight;
@@ -102,8 +102,8 @@ namespace SoundExplorers.View {
         destY = Convert.ToInt16((ClientSize.Height -
                                  sourceHeight * nPercent) / 2);
       }
-      var destWidth = (int)(sourceWidth * nPercent);
-      var destHeight = (int)(sourceHeight * nPercent);
+      int destWidth = (int)(sourceWidth * nPercent);
+      int destHeight = (int)(sourceHeight * nPercent);
       var newBitmap = new Bitmap(
         ClientSize.Width,
         ClientSize.Height,

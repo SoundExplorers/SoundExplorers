@@ -54,7 +54,7 @@ namespace SoundExplorers.Model {
     [NotNull]
     public static RowNotInTableException CreateReferencedEntityNotFoundException(
       [NotNull] string columnName, [NotNull] string simpleKey) {
-      var message = $"{columnName} not found: '{Format(simpleKey)}'";
+      string message = $"{columnName} not found: '{Format(simpleKey)}'";
       // Debug.WriteLine("ReferenceableItemList.CreateReferencedEntityNotFoundException");
       // Debug.WriteLine($"    {message}");
       return new RowNotInTableException(message);

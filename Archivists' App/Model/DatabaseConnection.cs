@@ -72,7 +72,7 @@ namespace SoundExplorers.Model {
     }
 
     private void CopyLicenceToDatabaseFolderIfAbsent() {
-      var destinationPath =
+      string destinationPath =
         $"{DatabaseConfig.DatabaseFolderPath}{Path.DirectorySeparatorChar}4.odb";
       if (File.Exists(destinationPath)) {
         return;

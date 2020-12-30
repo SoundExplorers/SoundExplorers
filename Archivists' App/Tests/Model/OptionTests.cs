@@ -36,7 +36,7 @@ namespace SoundExplorers.Tests.Model {
       option = CreateTestOption("Int32");
       Assert.AreEqual(1, option.Int32Value, "Int32Value retrieved");
       option = CreateTestOption("String");
-      var simpleKey = $"{Environment.UserName}|String";
+      string simpleKey = $"{Environment.UserName}|String";
       Session.BeginRead();
       Assert.IsNull(
         QueryHelper.Find<UserOption>(simpleKey, Session),

@@ -422,7 +422,7 @@ namespace SoundExplorers.Model {
       // But it would be a big job to do and I don't think there will be
       // a performance problem.
       if ((from entity in this where entity.Key == newKey select entity).Any()) {
-        var message =
+        string message =
           $"Another {EntityTypeName} with key '{newKey}' already exists.";
         throw new DuplicateNameException(message);
       }

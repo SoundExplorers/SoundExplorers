@@ -46,14 +46,14 @@ namespace SoundExplorers.Tests.Model {
       var pair1 = (KeyValuePair<object, object>)item1;
       Assert.IsInstanceOf<string>(pair1.Key, "Key 1");
       Assert.IsNull(pair1.Value, "Value 1");
-      var formattedDate1 = pair1.Key.ToString();
+      string? formattedDate1 = pair1.Key.ToString();
       Assert.AreEqual("01 Jan 1900", formattedDate1, "formattedDate1");
       var item2 = items[1];
       Assert.IsInstanceOf<KeyValuePair<object, object>>(item2, "item2");
       var pair2 = (KeyValuePair<object, object>)item2;
       Assert.IsInstanceOf<string>(pair2.Key, "Key 2");
       Assert.IsInstanceOf<Newsletter>(pair2.Value, "Value 2");
-      var formattedDate2 = pair2.Key.ToString();
+      string? formattedDate2 = pair2.Key.ToString();
       Assert.AreEqual("06 Jan 2020", formattedDate2, "formattedDate2");
     }
 

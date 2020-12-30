@@ -75,7 +75,7 @@ namespace SoundExplorers.Tests.Data {
     private static IList<string> SeriesNames { get; }
 
     public void AddActsPersisted(int count, [NotNull] SessionBase session) {
-      for (var i = 0; i < count; i++) {
+      for (int i = 0; i < count; i++) {
         var act = new Act {
           QueryHelper = QueryHelper,
           Name = Acts.Count < ActNames.Count
@@ -92,7 +92,7 @@ namespace SoundExplorers.Tests.Data {
     public void AddEventsPersisted(int count, [NotNull] SessionBase session,
       Location location = null, EventType eventType = null) {
       var date = DateTime.Parse("2020/01/09");
-      for (var i = 0; i < count; i++) {
+      for (int i = 0; i < count; i++) {
         var @event = new Event {
           QueryHelper = QueryHelper,
           Date = date,
@@ -107,7 +107,7 @@ namespace SoundExplorers.Tests.Data {
     }
 
     public void AddEventTypesPersisted(int count, [NotNull] SessionBase session) {
-      for (var i = 0; i < count; i++) {
+      for (int i = 0; i < count; i++) {
         var eventType = new EventType {
           QueryHelper = QueryHelper,
           Name = EventTypes.Count < EventTypeNames.Count
@@ -121,7 +121,7 @@ namespace SoundExplorers.Tests.Data {
     }
 
     public void AddGenresPersisted(int count, [NotNull] SessionBase session) {
-      for (var i = 0; i < count; i++) {
+      for (int i = 0; i < count; i++) {
         var genre = new Genre {
           QueryHelper = QueryHelper,
           Name = Genres.Count < GenreNames.Count
@@ -135,7 +135,7 @@ namespace SoundExplorers.Tests.Data {
     }
 
     public void AddLocationsPersisted(int count, [NotNull] SessionBase session) {
-      for (var i = 0; i < count; i++) {
+      for (int i = 0; i < count; i++) {
         var location = new Location {
           QueryHelper = QueryHelper,
           Name = Locations.Count < LocationNames.Count
@@ -151,7 +151,7 @@ namespace SoundExplorers.Tests.Data {
 
     public void AddNewslettersPersisted(int count, [NotNull] SessionBase session) {
       var date = DateTime.Parse("2020/01/06");
-      for (var i = 0; i < count; i++) {
+      for (int i = 0; i < count; i++) {
         var newsletter = new Newsletter {
           QueryHelper = QueryHelper,
           Date = date,
@@ -165,8 +165,8 @@ namespace SoundExplorers.Tests.Data {
 
     public void AddPiecesPersisted(int count, [NotNull] SessionBase session,
       Set set = null) {
-      var pieceNo = 1;
-      for (var i = 0; i < count; i++) {
+      int pieceNo = 1;
+      for (int i = 0; i < count; i++) {
         var piece = new Piece {
           QueryHelper = QueryHelper,
           PieceNo = pieceNo,
@@ -183,7 +183,7 @@ namespace SoundExplorers.Tests.Data {
     }
 
     public void AddSeriesPersisted(int count, [NotNull] SessionBase session) {
-      for (var i = 0; i < count; i++) {
+      for (int i = 0; i < count; i++) {
         var series = new Series {
           QueryHelper = QueryHelper,
           Name = Series.Count < SeriesNames.Count
@@ -199,8 +199,8 @@ namespace SoundExplorers.Tests.Data {
 
     public void AddSetsPersisted(int count, [NotNull] SessionBase session,
       Event @event = null, Genre genre = null) {
-      var setNo = 1;
-      for (var i = 0; i < count; i++) {
+      int setNo = 1;
+      for (int i = 0; i < count; i++) {
         var set = new Set {
           QueryHelper = QueryHelper,
           SetNo = setNo,
@@ -251,14 +251,14 @@ namespace SoundExplorers.Tests.Data {
     }
 
     private static string GenerateUniqueName(int size) {
-      var data = new byte[4 * size];
+      byte[] data = new byte[4 * size];
       using (var crypto = new RNGCryptoServiceProvider()) {
         crypto.GetBytes(data);
       }
       var result = new StringBuilder(size);
-      for (var i = 0; i < size; i++) {
-        var rnd = BitConverter.ToUInt32(data, i * 4);
-        var idx = Convert.ToUInt32(rnd % Chars.Length);
+      for (int i = 0; i < size; i++) {
+        uint rnd = BitConverter.ToUInt32(data, i * 4);
+        uint idx = Convert.ToUInt32(rnd % Chars.Length);
         result.Append(Chars[idx]);
       }
       return result.ToString();

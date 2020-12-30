@@ -370,7 +370,7 @@ namespace SoundExplorers.Data {
       var writer = new StringWriter();
       writer.Write(
         $"{EntityType.Name} '{Key}' cannot be deleted because it is referenced by ");
-      for (var i = 0; i < list.Count; i++) {
+      for (int i = 0; i < list.Count; i++) {
         writer.Write($"{list.Values[i]:N0} {list.Keys[i]}s");
         writer.Write(i < list.Count - 1 ? ", " : ".");
       }
