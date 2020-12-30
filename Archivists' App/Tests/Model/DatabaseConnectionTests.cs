@@ -120,7 +120,7 @@ namespace SoundExplorers.Tests.Model {
       }
       using (var writer = new StreamWriter(ConfigFilePath)) {
         writer.Write(configText.Replace("For developer use only",
-           TestSession.VelocityDbLicenceFilePath));
+          TestSession.VelocityDbLicenceFilePath));
       }
     }
   }

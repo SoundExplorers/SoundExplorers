@@ -39,12 +39,12 @@ namespace SoundExplorers.View {
       Controller.OnRowEnter(e.RowIndex);
     }
 
-    public override void Populate(IList list = null) {
+    public override void Populate(IList? list = null) {
       base.Populate(list);
       if (RowCount > 0) {
         // Make the last row current.
         // This triggers OnRowEnter, which will populate the main grid.
-        CurrentCell = Rows[^1].Cells[0]; 
+        CurrentCell = Rows[^1].Cells[0];
       }
     }
   }

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using SoundExplorers.Controller;
 
 namespace SoundExplorers.Tests.Controller {
@@ -40,7 +41,7 @@ namespace SoundExplorers.Tests.Controller {
     }
 
     public void Populate(IList? list = null) {
-      throw new System.NotImplementedException();
+      throw new NotImplementedException();
     }
 
     public void RestoreCurrentRowCellErrorValue(int columnIndex,

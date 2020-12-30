@@ -17,7 +17,7 @@ namespace SoundExplorers.View {
       Load += SelectEditorView_Load;
     }
 
-    public SelectEditorController Controller { get; private set; }
+    public SelectEditorController Controller { get; private set; } = null!;
 
     public void SetController(SelectEditorController controller) {
       Controller = controller;

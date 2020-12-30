@@ -19,12 +19,12 @@ namespace SoundExplorers.View {
       ImageSplitContainer.GotFocus += SplitContainerOnGotFocus;
     }
 
-    public GridBase FocusedGrid { get; private set; }
+    public GridBase? FocusedGrid { get; private set; }
     private MainView MainView => (MainView)MdiParent;
-    private SizeableFormOptions SizeableFormOptions { get; set; }
+    private SizeableFormOptions SizeableFormOptions { get; set; } = null!;
     public bool IsFocusingParentGrid { get; set; }
     IMainGrid IEditorView.MainGrid => MainGrid;
-    public EditorController Controller { get; private set; }
+    public EditorController Controller { get; private set; } = null!;
 
     public void OnError() {
       // Debug.WriteLine("EditorView.OnError");
@@ -371,7 +371,7 @@ namespace SoundExplorers.View {
       switch (e.KeyData) {
         case Keys.F6:
           if (Controller.IsParentGridToBeShown) {
-            if (!FocusedGrid.Equals(ParentGrid)) {
+            if (FocusedGrid != null && !FocusedGrid.Equals(ParentGrid)) {
               IsFocusingParentGrid = true;
             }
             FocusGrid(FocusedGrid == ParentGrid ? (GridBase)MainGrid : ParentGrid);
@@ -484,11 +484,11 @@ namespace SoundExplorers.View {
     ///   an editor window, a default.
     /// </summary>
     /// <remarks>
-    ///   This has to be called from <see cref="OnVisibleChanged"/>,
-    ///   as it doers not work in <see cref="OnLoad"/>.
+    ///   This has to be called from <see cref="OnVisibleChanged" />,
+    ///   as it doers not work in <see cref="OnLoad" />.
     /// </remarks>
-    private void SetInitialGridSplitterDistance() { 
-     int savedGridSplitterDistance = Controller.GridSplitterDistance;
+    private void SetInitialGridSplitterDistance() {
+      int savedGridSplitterDistance = Controller.GridSplitterDistance;
       GridSplitContainer.SplitterDistance =
         savedGridSplitterDistance > 0 ? savedGridSplitterDistance : 180;
     }

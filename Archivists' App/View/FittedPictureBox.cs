@@ -11,8 +11,8 @@ namespace SoundExplorers.View {
   ///   while retaining image's original aspect ratio.
   /// </summary>
   internal class FittedPictureBox : PictureBox {
-    private string _imageLocation;
-    private Bitmap _original;
+    private string? _imageLocation;
+    private Bitmap? _original;
 
     /// <summary>
     ///   Gets or sets the path of the image that is to be displayed
@@ -23,7 +23,7 @@ namespace SoundExplorers.View {
     ///   The specified file is not an image file.
     /// </exception>
     public new virtual string ImageLocation {
-      get => _imageLocation;
+      get => _imageLocation!;
       set {
         _imageLocation = value;
         try {
@@ -60,7 +60,7 @@ namespace SoundExplorers.View {
     protected override void OnResize(EventArgs e) {
       base.OnResize(e);
       if (Image != null) {
-        Image = ResizeImage(_original);
+        Image = ResizeImage(_original!);
       }
     }
 
@@ -81,10 +81,10 @@ namespace SoundExplorers.View {
     private Bitmap ResizeImage(Image original) {
       int sourceWidth = original.Width;
       int sourceHeight = original.Height;
-      if (original is Bitmap
+      if (original is Bitmap bitmap
           && sourceWidth == ClientSize.Width
           && sourceHeight == ClientSize.Height) {
-        return original as Bitmap;
+        return bitmap;
       }
       int sourceX = 0;
       int sourceY = 0;

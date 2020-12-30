@@ -4,7 +4,7 @@ using System.Windows.Forms;
 namespace SoundExplorers.View {
   public class CutMenuItem : ToolStripMenuItem {
     private Size _size;
-    private string _text;
+    private string? _text;
 
     public CutMenuItem() {
       ImageTransparentColor = Color.Black;

@@ -62,6 +62,12 @@ namespace SoundExplorers.View {
       CurrentRow.Selected = true;
     }
 
+    public override void Populate(IList? list = null) {
+      base.Populate(list);
+      EditorView.OnMainGridPopulated();
+      IsJustPopulated = true;
+    }
+
     private void ConfigureColumn([NotNull] DataGridViewColumn column) {
       // Making every column explicitly not sortable prevents the program
       // from crashing if F3 in pressed while the grid is focused.
@@ -265,20 +271,14 @@ namespace SoundExplorers.View {
     }
 
     /// <summary>
-    /// While a text box cell is being edited,
-    /// whether text can be cut or copied depends on
-    /// whether any text in the cell is selected.
+    ///   While a text box cell is being edited,
+    ///   whether text can be cut or copied depends on
+    ///   whether any text in the cell is selected.
     /// </summary>
     private void OnTextBoxSelectionMayHaveChanged() {
       //Debug.WriteLine("MainGrid.OnTextBoxSelectionMayHaveChanged");
       MainView.CutToolStripButton.Enabled = CanCut;
       MainView.CopyToolStripButton.Enabled = CanCopy;
-    }
-
-    public override void Populate(IList list = null) {
-      base.Populate(list);
-      EditorView.OnMainGridPopulated();
-      IsJustPopulated = true;
     }
 
     private void TextBox_KeyUp(object sender, KeyEventArgs e) {

@@ -3,7 +3,6 @@ using System.Data;
 using JetBrains.Annotations;
 using NUnit.Framework;
 using SoundExplorers.Data;
-using PropertyConstraintException = SoundExplorers.Data.PropertyConstraintException;
 
 namespace SoundExplorers.Tests.Data {
   [TestFixture]

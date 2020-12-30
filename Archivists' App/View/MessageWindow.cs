@@ -32,7 +32,8 @@ namespace SoundExplorers.View {
 		/// <remarks>
 		///   The window will be shown centred on the primary screen's working area.
 		/// </remarks>
-		public static void Show([NotNull] string message, string title = null) {
+		[PublicAPI]
+    public static void Show([NotNull] string message, string? title = null) {
       Show(null, message, title);
     }
 
@@ -55,8 +56,8 @@ namespace SoundExplorers.View {
 		///   Optionally specifies the title to be shown in the window's title bar.
 		///   Default: the application product name will be shown in the title bar.
 		/// </param>
-		public static void Show([CanBeNull] Form owner, [NotNull] string message,
-      string title = null) {
+		public static void Show(Form? owner, [NotNull] string message,
+      string? title = null) {
       var messageForm = new MessageView(message, title ?? Application.ProductName)
         {Owner = owner};
       messageForm.ShowDialog();

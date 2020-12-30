@@ -60,7 +60,7 @@ namespace SoundExplorers.View {
       Form = form;
     }
 
-    private SizeableFormOptionsController Controller { get; set; }
+    private SizeableFormOptionsController Controller { get; set; } = null!;
     private Form Form { get; }
     private Rectangle InitialScreenBounds { get; set; }
 

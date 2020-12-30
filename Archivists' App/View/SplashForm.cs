@@ -1,5 +1,4 @@
 namespace SoundExplorers.View {
-  
   public partial class SplashForm : SplashFormBase {
     public SplashForm() {
       // When migrating the application to .Net 5.0,

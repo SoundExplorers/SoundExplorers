@@ -3,14 +3,13 @@ using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using JetBrains.Annotations;
 using SoundExplorers.Data;
-using NotNullAttribute = JetBrains.Annotations.NotNullAttribute;
 
 namespace SoundExplorers.Tests.Data {
   public class Daughter : EntityBase {
     private Father _father = null!;
     private Mother _mother = null!;
 
-    public Daughter([NotNull] QueryHelper queryHelper,
+    public Daughter([JetBrains.Annotations.NotNull] QueryHelper queryHelper,
       Type? identifyingParentType = null) : base(typeof(Daughter),
       nameof(Name), identifyingParentType) {
       QueryHelper = queryHelper ??

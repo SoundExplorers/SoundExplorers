@@ -12,10 +12,6 @@ namespace SoundExplorers.View {
   /// </summary>
   internal partial class TextViewBase : Form {
     private const int VerticalScrollBarWidth = 16;
-    private string MyText { get; }
-    private string MyTitle { get; }
-    private int X { get; }
-    private int Y { get; }
 
     /// <overloads>
     ///   Initialises a new instance of the
@@ -69,6 +65,11 @@ namespace SoundExplorers.View {
       X = x;
       Y = y;
     }
+
+    private string MyText { get; }
+    private string MyTitle { get; }
+    private int X { get; }
+    private int Y { get; }
 
     /// <summary>
     ///   Handles the <see cref="Form" />'s
@@ -129,7 +130,9 @@ namespace SoundExplorers.View {
       // properties.
       // The form will be shown on the screen of the owner form,
       // if specified, otherwise on the primary screen.
-      var screen = Owner != null ? Screen.FromPoint(Owner.Location) : Screen.PrimaryScreen;
+      var screen = Owner != null
+        ? Screen.FromPoint(Owner.Location)
+        : Screen.PrimaryScreen;
       //Debug.WriteLine(screen.WorkingArea.Left);
       //Debug.WriteLine(screen.WorkingArea.Top);
       Height = screen.WorkingArea.Height;
@@ -178,7 +181,7 @@ namespace SoundExplorers.View {
       RichTextBox.WordWrap = false;
       var reader = new StringReader(text);
       while (reader.Peek() >= 0) {
-        string line = reader.ReadLine();
+        string line = reader.ReadLine()!;
         // Evidently we need to add an extra character to calculate
         // a line width that is safely big enough.  
         // Presumably this is to allow

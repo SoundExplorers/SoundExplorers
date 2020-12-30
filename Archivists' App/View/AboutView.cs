@@ -9,7 +9,7 @@ namespace SoundExplorers.View {
   ///   About <see cref="Form" />.
   /// </summary>
   public partial class AboutView : Form {
-    private Assembly _entryAssembly;
+    private Assembly? _entryAssembly;
 
     /// <summary>
     ///   Initialises a new instance of the
@@ -42,7 +42,7 @@ namespace SoundExplorers.View {
     }
 
     [NotNull]
-    private Assembly EntryAssembly => _entryAssembly ??= Assembly.GetEntryAssembly();
+    private Assembly EntryAssembly => _entryAssembly ??= Assembly.GetEntryAssembly()!;
 
     /// <summary>
     ///   Returns the text contained in the
@@ -74,7 +74,7 @@ namespace SoundExplorers.View {
     ///   cannot be found in the executing assembly.
     /// </exception>
     private string GetEmbeddedText([NotNull] string filename) {
-      string assemblyName = EntryAssembly.GetName().Name;
+      string assemblyName = EntryAssembly.GetName().Name!;
       var stream =
         EntryAssembly.GetManifestResourceStream($"{assemblyName}.{filename}")
         ??

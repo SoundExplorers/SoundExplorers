@@ -5,14 +5,14 @@ using JetBrains.Annotations;
 
 namespace SoundExplorers.View {
   internal abstract class EditContextMenuBase : ContextMenuStrip {
-    private CopyMenuItem _copyMenuItem;
-    private CutMenuItem _cutMenuItem;
-    private DeleteMenuItem _deleteMenuItem;
-    private DeleteSelectedRowsMenuItem _deleteSelectedRowsMenuItem;
-    private PasteMenuItem _pasteMenuItem;
-    private SelectAllMenuItem _selectAllMenuItem;
-    private SelectRowMenuItem _selectRowMenuItem;
-    private UndoMenuItem _undoMenuItem;
+    private CopyMenuItem? _copyMenuItem;
+    private CutMenuItem? _cutMenuItem;
+    private DeleteMenuItem? _deleteMenuItem;
+    private DeleteSelectedRowsMenuItem? _deleteSelectedRowsMenuItem;
+    private PasteMenuItem? _pasteMenuItem;
+    private SelectAllMenuItem? _selectAllMenuItem;
+    private SelectRowMenuItem? _selectRowMenuItem;
+    private UndoMenuItem? _undoMenuItem;
 
     protected EditContextMenuBase() {
       // Using these custom menu items of the Edit menu on the main window menu bar 

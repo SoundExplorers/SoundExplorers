@@ -36,7 +36,7 @@ namespace SoundExplorers.View {
     /// <summary>
     ///   Gets or sets the System.Windows.Forms.DataGridView that contains the cell.
     /// </summary>
-    public DataGridView EditingControlDataGridView { get; set; }
+    public DataGridView EditingControlDataGridView { get; set; } = null!;
 
     /// <summary>
     ///   Gets or sets the formatted value of the cell being modified by the editor.

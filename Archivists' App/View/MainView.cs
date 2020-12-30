@@ -20,11 +20,10 @@ namespace SoundExplorers.View {
       WindowsMenu.DropDown.Opening += WindowsMenu_DropDown_Opening;
     }
 
-    private EditorView EditorView => ActiveMdiChild as EditorView;
-
-    private MainController Controller { get; set; }
-    private SelectEditorView SelectEditorView { get; set; }
-    private SizeableFormOptions SizeableFormOptions { get; set; }
+    private EditorView? EditorView => ActiveMdiChild as EditorView;
+    private MainController Controller { get; set; } = null!;
+    private SelectEditorView SelectEditorView { get; set; } = null!;
+    private SizeableFormOptions SizeableFormOptions { get; set; } = null!;
 
     public void SetController(MainController controller) {
       Controller = controller;
@@ -65,7 +64,7 @@ namespace SoundExplorers.View {
     [NotNull]
     private EditorView CreateEditorView() {
       WindowsSeparator3.Visible = true; // See comment in EditorView_FormClosed 
-      var result = EditorView.Create(SelectEditorView.Controller.SelectedEntityListType,
+      var result = EditorView.Create(SelectEditorView.Controller.SelectedEntityListType!,
         Controller);
       result.FormClosed += EditorView_FormClosed;
       return result;
@@ -203,7 +202,7 @@ namespace SoundExplorers.View {
       // with the same location and size.
       //EditorView.OpenTable(
       //    SelectTableForm.EntityTypeName);
-      var oldEditorView = EditorView;
+      var oldEditorView = EditorView!;
       try {
         var newEditorView = CreateEditorView();
         newEditorView.Location = oldEditorView.Location;
@@ -245,7 +244,7 @@ namespace SoundExplorers.View {
 
     private void FileRefreshMenuItem_Click(object sender, EventArgs e) {
       if (MdiChildren.Any()) {
-        EditorView.Refresh();
+        EditorView?.Refresh();
       }
     }
 
@@ -269,7 +268,7 @@ namespace SoundExplorers.View {
     private void MainView_FormClosed(object sender, FormClosedEventArgs e) {
       Controller.IsToolBarVisible = ToolStrip.Visible;
       Controller.TableName = MdiChildren.Any()
-        ? EditorView.MainGrid.Controller.TableName
+        ? EditorView?.MainGrid.Controller.TableName
         : SelectEditorView.Controller.SelectedTableName;
       // Explicitly closing all the MIDI child forms
       // fixes a problem where, 
@@ -391,7 +390,7 @@ namespace SoundExplorers.View {
     private void
       WindowsCloseCurrentTableEditorMenuItem_Click(object sender, EventArgs e) {
       if (MdiChildren.Any()) {
-        EditorView.Close();
+        EditorView?.Close();
       }
     }
 

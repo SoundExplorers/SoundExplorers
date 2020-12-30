@@ -474,15 +474,15 @@ namespace SoundExplorers.Tests.Controller {
 
     [NotNull]
     private TestEditorController CreateController([NotNull] Type mainListType) {
-      return new (mainListType,
+      return new(mainListType,
         View, QueryHelper, Session);
     }
 
     [NotNull]
     private static Event ToEvent([CanBeNull] object value) {
-      return 
-        value as Event 
+      return
+        value as Event
         ?? throw new InvalidOperationException($"{value} is not an Event.");
-    } 
+    }
   }
 }

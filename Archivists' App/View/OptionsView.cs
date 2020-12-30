@@ -12,7 +12,7 @@ namespace SoundExplorers.View {
         new TextBoxContextMenu(MessageTextBox);
     }
 
-    private OptionsController Controller { get; set; }
+    private OptionsController Controller { get; set; } = null!;
 
     public void SetController(OptionsController controller) {
       Controller = controller;

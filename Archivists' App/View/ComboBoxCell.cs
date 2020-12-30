@@ -21,12 +21,12 @@ namespace SoundExplorers.View {
     /// <summary>
     ///   Gets the cell's combo box.
     /// </summary>
-    private ComboBox ComboBox => (ComboBox)DataGridView.EditingControl;
+    private ComboBox ComboBox => (ComboBox)DataGridView!.EditingControl;
 
     public ComboBoxCellController Controller => (ComboBoxCellController)Tag;
 
     public void RestoreErrorValue(object errorValue) {
-      string key =
+      string? key =
         ComboBoxCellController.GetKey(errorValue);
       int foundIndex = ComboBox.FindStringExact(key);
       ComboBox.SelectedIndex = foundIndex;

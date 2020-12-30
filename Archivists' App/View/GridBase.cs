@@ -6,7 +6,7 @@ using SoundExplorers.Controller;
 
 namespace SoundExplorers.View {
   internal abstract class GridBase : DataGridView {
-    private GridContextMenu _contextMenu;
+    private GridContextMenu? _contextMenu;
 
     protected GridBase() {
       AllowUserToOrderColumns = true;
@@ -24,22 +24,23 @@ namespace SoundExplorers.View {
     public bool CanDeleteSelectedRows =>
       !ReadOnly && !IsCurrentCellInEditMode && SelectedRows.Count > 0 &&
       !SelectedRows.Contains(NewRow);
-    
-    protected GridControllerBase Controller { get; set; }
+
+    protected GridControllerBase Controller { get; set; } = null!;
 
     [NotNull]
     public GridContextMenu ContextMenu =>
       _contextMenu ??= new GridContextMenu(this);
-    
-    [NotNull] protected EditorView EditorView => 
-      Controller.EditorView as EditorView ?? 
+
+    [NotNull]
+    protected EditorView EditorView =>
+      Controller.EditorView as EditorView ??
       throw new InvalidOperationException(
         "Cannot cast Controller.EditorView to EditorView");
 
     public bool IsTextBoxCellCurrent =>
       CurrentCell?.OwningColumn.CellTemplate is TextBoxCell;
 
-    public MainView MainView { get; set; }
+    public MainView MainView { get; set; } = null!;
 
     /// <summary>
     ///   Gets the new (i.e. empty) row at the bottom of an editable grid.
@@ -97,7 +98,7 @@ namespace SoundExplorers.View {
     /// <param name="y">
     ///   The y co-ordinate relative to the main grid's client rectangle.
     /// </param>
-    private DataGridViewCell GetCellAtClientCoOrdinates(int x, int y) {
+    private DataGridViewCell? GetCellAtClientCoOrdinates(int x, int y) {
       var hitTestInfo = HitTest(x, y);
       if (hitTestInfo.Type == DataGridViewHitTestType.Cell) {
         return Rows[
@@ -120,7 +121,7 @@ namespace SoundExplorers.View {
       DefaultCellStyle.SelectionBackColor = DefaultCellStyle.SelectionForeColor;
       DefaultCellStyle.SelectionForeColor = swapColor;
     }
-    
+
     /// <summary>
     ///   Blocks execution of the base method, which calls the internal method
     ///   DataGridView.MakeFirstDisplayedCellCurrentCell,
@@ -165,7 +166,7 @@ namespace SoundExplorers.View {
     ///   If null, the default, all entities of the class's entity type
     ///   will be fetched from the database.
     /// </param>
-    public virtual void Populate(IList list = null) {
+    public virtual void Populate(IList? list = null) {
       Controller.Populate(list);
       DataSource = Controller.BindingList;
       ConfigureColumns();

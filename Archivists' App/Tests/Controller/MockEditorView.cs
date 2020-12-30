@@ -1,4 +1,5 @@
-﻿using SoundExplorers.Controller;
+﻿using System;
+using SoundExplorers.Controller;
 
 namespace SoundExplorers.Tests.Controller {
   public class MockEditorView : IEditorView {
@@ -15,7 +16,7 @@ namespace SoundExplorers.Tests.Controller {
     }
 
     public void OnMainGridPopulated() {
-      throw new System.NotImplementedException();
+      throw new NotImplementedException();
     }
 
     public void OnError() {

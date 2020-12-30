@@ -14,6 +14,7 @@ using System;
 using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
+using JetBrains.Annotations;
 
 namespace SoundExplorers.View {
   /// <summary>
@@ -79,7 +80,7 @@ namespace SoundExplorers.View {
   /// 	    // Required for Windows Form Designer support
   /// 	    InitializeComponent();
   /// 	    // Do some fake startup, showing progress
-  /// 	    // on the splah window.
+  /// 	    // on the splash window.
   /// 	    SplashManager.Status = "Loading Files...";
   /// 	    System.Threading.Thread.Sleep(2000);
   /// 	    SplashManager.Status = "Loading Plug/Ins...";
@@ -99,28 +100,23 @@ namespace SoundExplorers.View {
   ///  }
   ///  </code>
   /// </example>
-  public class SplashManager {
-    private static object[] _args;
+  public static class SplashManager {
+    private static object[]? _args;
     private static bool _isSplashFormBeingShown;
 
     /// <summary>
     ///   The splash form.
     /// </summary>
-    private static Form _splashForm;
+    private static Form? _splashForm;
 
-    private static Type _splashFormType;
+    private static Type _splashFormType = null!;
 
     /// <summary>
     ///   A background thread to run the splash form in.
     /// </summary>
-    private static Thread _splashThread;
+    private static Thread? _splashThread;
 
-    private static string _status;
-
-    /// <summary>
-    ///   Private Constructor - All methods are static
-    /// </summary>
-    private SplashManager() { }
+    private static string? _status;
 
     /// <summary>
     ///   Gets the Splash <see cref="Form" />.
@@ -130,7 +126,7 @@ namespace SoundExplorers.View {
     ///   showing the splash form, a null reference
     ///   (<b>Nothing</b> in Visual Basic) will be returned.
     /// </remarks>
-    public static Form SplashForm => _splashForm;
+    public static Form SplashForm => _splashForm!;
 
     /// <summary>
     ///   Gets or sets the application load status information
@@ -152,7 +148,7 @@ namespace SoundExplorers.View {
     ///   does not implement the <see cref="IMessageUpdater" /> interface.
     /// </exception>
     public static string Status {
-      get => _status;
+      get => _status!;
       set {
         _status = value;
         if (_splashForm == null) {
@@ -191,7 +187,7 @@ namespace SoundExplorers.View {
     ///   showing the splash form, <b>False</b>
     ///   will be returned.
     /// </remarks>
-    public static bool Visible => _splashForm != null && _splashForm.Visible;
+    private static bool Visible => _splashForm != null && _splashForm.Visible;
 
     /// <summary>
     ///   Closes the Splash <see cref="Form" /> if one is shown.
@@ -246,7 +242,7 @@ namespace SoundExplorers.View {
     ///   The arguments for the form constructor.
     ///   Can be a null reference (<b>Nothing</b> in Visual Basic).
     /// </param>
-    public static void Show(Type splashFormType, params object[] args) {
+    private static void Show(Type splashFormType, params object[]? args) {
       if (_splashThread != null) {
         return;
       }
@@ -256,9 +252,9 @@ namespace SoundExplorers.View {
       _isSplashFormBeingShown = true;
       _splashFormType = splashFormType;
       _args = args;
-      _splashThread = new Thread(ShowThread);
-      _splashThread.IsBackground = true;
-      _splashThread.Name = typeof(SplashManager).Name;
+      _splashThread = new Thread(ShowThread) {
+        IsBackground = true, Name = nameof(SplashManager)
+      };
       _splashThread.Start();
     }
 
@@ -287,6 +283,7 @@ namespace SoundExplorers.View {
     ///   The message box will be brought into
     ///   the foreground/focus.
     /// </remarks>
+    [PublicAPI]
     public static DialogResult ShowMessageBox(
       string text,
       MessageBoxButtons buttons,
@@ -323,6 +320,7 @@ namespace SoundExplorers.View {
     ///   The message box will be brought into
     ///   the foreground/focus.
     /// </remarks>
+    [PublicAPI]
     public static DialogResult ShowMessageBox(
       string text,
       string caption,
@@ -330,7 +328,7 @@ namespace SoundExplorers.View {
       MessageBoxIcon icon) {
       if (Visible) {
         // The splash window is shown on a separate thread.
-        // So we need to do a cross-thread invokation.
+        // So we need to do a cross-thread invocation.
         if (SplashForm.InvokeRequired) {
           return (DialogResult)SplashForm.Invoke(
             new ShowMessageBoxDelegate(ShowMessageBox), text, caption, buttons,

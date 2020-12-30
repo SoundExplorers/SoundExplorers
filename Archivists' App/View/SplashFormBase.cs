@@ -70,12 +70,12 @@ namespace SoundExplorers.View {
 	///   </para>
 	/// </remarks>
 	public class SplashFormBase : Form, IMessageUpdater {
-    private string _status = "";
+    private string? _status = "";
 
     /// <summary>
     ///   Required designer variable.
     /// </summary>
-    private IContainer components;
+    private IContainer? components;
 
     /// <summary>
     ///   A <see cref="System.Windows.Forms.Panel" />
@@ -83,14 +83,14 @@ namespace SoundExplorers.View {
     ///   <see cref="System.Windows.Forms.Control" />s
     ///   for the splash form can be placed.
     /// </summary>
-    public Panel SplashPanel;
+    public Panel SplashPanel = null!;
 
     /// <summary>
     ///   A <see cref="System.Windows.Forms.Label" />
     ///   where information about the application
     ///   load status can be shown.
     /// </summary>
-    public Label StatusLabel;
+    public Label StatusLabel = null!;
 
     /// <summary>
     ///   Creates a new instance of the <see cref="SplashFormBase" /> class.
@@ -144,9 +144,7 @@ namespace SoundExplorers.View {
     /// </summary>
     protected override void Dispose(bool disposing) {
       if (disposing) {
-        if (components != null) {
-          components.Dispose();
-        }
+        components?.Dispose();
       }
       base.Dispose(disposing);
     }
