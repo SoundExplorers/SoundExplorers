@@ -92,7 +92,7 @@ namespace SoundExplorers.View {
       return reader.ReadToEnd();
     }
 
-    private void LicenceButton_Click(object sender, EventArgs e) {
+    private void LicenceButton_Click(object? sender, EventArgs e) {
       MessageWindow.Show(this,
         GetEmbeddedText("Licence.txt"),
         $"{Application.ProductName} - Licence");

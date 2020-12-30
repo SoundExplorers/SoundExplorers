@@ -77,7 +77,7 @@ namespace SoundExplorers.View {
     /// </summary>
     /// <param name="sender">Event sender.</param>
     /// <param name="e">Event arguments.</param>
-    private void TextViewBase_Load(object sender, EventArgs e) {
+    private void TextViewBase_Load(object? sender, EventArgs e) {
       if (DesignMode) {
         return;
       }

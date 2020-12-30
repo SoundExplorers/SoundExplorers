@@ -50,7 +50,7 @@ namespace SoundExplorers {
     /// </summary>
     private static void CurrentDomain_UnhandledException
       (object sender, UnhandledExceptionEventArgs e) {
-      ShowExceptionDetails(e.ExceptionObject as Exception);
+      ShowExceptionDetails((Exception)e.ExceptionObject);
     }
 
     /// <summary>

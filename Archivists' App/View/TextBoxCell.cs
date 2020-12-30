@@ -22,8 +22,8 @@ namespace SoundExplorers.View {
 
     public override Type EditType => typeof(DataGridViewTextBoxEditingControl);
 
-    public void RestoreErrorValue(object errorValue) {
-      TextBox.Text = errorValue.ToString();
+    public void RestoreErrorValue(object? errorValue) {
+      TextBox.Text = errorValue?.ToString();
       TextBox.SelectAll();
     }
 
@@ -39,7 +39,7 @@ namespace SoundExplorers.View {
       TextBox.KeyUp += TextBox_KeyUp;
     }
 
-    private void TextBox_KeyUp(object sender, KeyEventArgs e) {
+    private void TextBox_KeyUp(object? sender, KeyEventArgs e) {
       // Debug.WriteLine(
       //   $"{nameof(TextBoxCell)}.{nameof(TextBoxOnKeyUp)}: KeyCode = {e.KeyCode}");
       if (e.Modifiers == Keys.Control && e.KeyCode == Keys.A) {

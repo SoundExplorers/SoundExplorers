@@ -25,7 +25,7 @@ namespace SoundExplorers.View {
     /// </summary>
     /// <param name="sender">Event sender.</param>
     /// <param name="e">Event arguments.</param>
-    private void CopyButton_Click(object sender, EventArgs e) {
+    private void CopyButton_Click(object? sender, EventArgs e) {
       if (RichTextBox.SelectionLength == 0) {
         Clipboard.SetDataObject(RichTextBox.Text, true);
         StatusLabel.Text = "Text copied to clipboard";
@@ -38,7 +38,7 @@ namespace SoundExplorers.View {
       }
     }
 
-    private void OKButton_Click(object sender, EventArgs e) {
+    private void OKButton_Click(object? sender, EventArgs e) {
       Close();
     }
   }

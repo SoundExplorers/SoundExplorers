@@ -281,17 +281,17 @@ namespace SoundExplorers.View {
       MainView.CopyToolStripButton.Enabled = CanCopy;
     }
 
-    private void TextBox_KeyUp(object sender, KeyEventArgs e) {
+    private void TextBox_KeyUp(object? sender, KeyEventArgs e) {
       //Debug.WriteLine("MainGrid.TextBox_KeyUp");
       OnTextBoxSelectionMayHaveChanged();
     }
 
-    private void TextBox_MouseClick(object sender, MouseEventArgs e) {
+    private void TextBox_MouseClick(object? sender, MouseEventArgs e) {
       //Debug.WriteLine("MainGrid.TextBox_MouseClick");
       OnTextBoxSelectionMayHaveChanged();
     }
 
-    private void TextBox_TextChanged(object sender, EventArgs e) {
+    private void TextBox_TextChanged(object? sender, EventArgs e) {
       //Debug.WriteLine("MainGrid.TextBox_TextChanged");
       OnTextBoxSelectionMayHaveChanged();
     }

@@ -30,7 +30,7 @@ namespace SoundExplorers.View {
       ?? throw new NullReferenceException(
         "In CalendarCell.Grid, DataGridView is null.");
 
-    public void RestoreErrorValue(object errorValue) {
+    public void RestoreErrorValue(object? errorValue) {
       if (errorValue is DateTime dateTime) {
         DateTimePicker.Value = dateTime.Date;
       }

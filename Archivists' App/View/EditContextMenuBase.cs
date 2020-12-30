@@ -85,35 +85,35 @@ namespace SoundExplorers.View {
       throw new NotSupportedException();
     }
 
-    private void UndoMenuItem_Click(object sender, EventArgs e) {
+    private void UndoMenuItem_Click(object? sender, EventArgs e) {
       Undo();
     }
 
-    private void CutMenuItem_Click(object sender, EventArgs e) {
+    private void CutMenuItem_Click(object? sender, EventArgs e) {
       Cut();
     }
 
-    private void CopyMenuItem_Click(object sender, EventArgs e) {
+    private void CopyMenuItem_Click(object? sender, EventArgs e) {
       Copy();
     }
 
-    private void PasteMenuItem_Click(object sender, EventArgs e) {
+    private void PasteMenuItem_Click(object? sender, EventArgs e) {
       Paste();
     }
 
-    private void DeleteMenuItem_Click(object sender, EventArgs e) {
+    private void DeleteMenuItem_Click(object? sender, EventArgs e) {
       Delete();
     }
 
-    private void SelectAllMenuItem_Click(object sender, EventArgs e) {
+    private void SelectAllMenuItem_Click(object? sender, EventArgs e) {
       SelectAll();
     }
 
-    private void SelectRowMenuItem_Click(object sender, EventArgs e) {
+    private void SelectRowMenuItem_Click(object? sender, EventArgs e) {
       SelectRow();
     }
 
-    private void DeleteSelectedRowsMenuItem_Click(object sender, EventArgs e) {
+    private void DeleteSelectedRowsMenuItem_Click(object? sender, EventArgs e) {
       DeleteSelectedRows();
     }
   }

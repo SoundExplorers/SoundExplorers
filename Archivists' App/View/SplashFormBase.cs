@@ -127,7 +127,7 @@ namespace SoundExplorers.View {
       ChangeStatusText();
     }
 
-    private void OnLoad(object sender, EventArgs e) {
+    private void OnLoad(object? sender, EventArgs e) {
       Text = Application.ProductName;
     }
 

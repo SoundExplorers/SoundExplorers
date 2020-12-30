@@ -84,7 +84,7 @@ namespace SoundExplorers.View {
     /// <summary>
     ///   Allows right-clicking the TextBox to focus it and then show its context menu.
     /// </summary>
-    private void TextBox_MouseDown(object sender, MouseEventArgs e) {
+    private void TextBox_MouseDown(object? sender, MouseEventArgs e) {
       if (e.Button == MouseButtons.Right && !TextBox.Focused) {
         TextBox.Focus();
       }

@@ -89,7 +89,7 @@ namespace SoundExplorers.View {
   /// 	    System.Threading.Thread.Sleep(2000);
   ///  }
   /// 
-  ///  private void MainForm_VisibleChanged(object sender, System.EventArgs e) {
+  ///  private void MainForm_VisibleChanged(object? sender, System.EventArgs e) {
   /// 	    // Bring the form to the foreground when the load is complete.
   /// 	    // If you do not do this before closing the splash window,
   /// 	    // the main window will not show in foreground

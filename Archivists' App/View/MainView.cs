@@ -97,7 +97,7 @@ namespace SoundExplorers.View {
       RefreshToolStripButton.Enabled = true;
     }
 
-    private void EditorView_FormClosed(object sender, FormClosedEventArgs e) {
+    private void EditorView_FormClosed(object? sender, FormClosedEventArgs e) {
       BeginInvoke((Action)OnEditorClosed);
       // RefreshToolStripButton.Enabled = CanRefresh;
       // // Creating and then manually showing and hiding the separator above
@@ -110,7 +110,7 @@ namespace SoundExplorers.View {
       // );
     }
 
-    private void EditMenu_DropDown_Opening(object sender, CancelEventArgs e) {
+    private void EditMenu_DropDown_Opening(object? sender, CancelEventArgs e) {
       if (MdiChildren.Any()) {
         EditorView?.FocusedGrid?.EnableOrDisableMenuItems(
           EditCutMenuItem, EditCopyMenuItem, EditPasteMenuItem,
@@ -123,43 +123,43 @@ namespace SoundExplorers.View {
       }
     }
 
-    private void EditCutMenuItem_Click(object sender, EventArgs e) {
+    private void EditCutMenuItem_Click(object? sender, EventArgs e) {
       EditorView?.FocusedGrid?.ContextMenu.Cut();
     }
 
-    private void EditCopyMenuItem_Click(object sender, EventArgs e) {
+    private void EditCopyMenuItem_Click(object? sender, EventArgs e) {
       EditorView?.FocusedGrid?.ContextMenu.Copy();
     }
 
-    private void EditPasteMenuItem_Click(object sender, EventArgs e) {
+    private void EditPasteMenuItem_Click(object? sender, EventArgs e) {
       EditorView?.FocusedGrid?.ContextMenu.Paste();
     }
 
-    private void EditDeleteMenuItem_Click(object sender, EventArgs e) {
+    private void EditDeleteMenuItem_Click(object? sender, EventArgs e) {
       EditorView?.FocusedGrid?.ContextMenu.Delete();
     }
 
-    private void EditSelectAllMenuItem_Click(object sender, EventArgs e) {
+    private void EditSelectAllMenuItem_Click(object? sender, EventArgs e) {
       EditorView?.FocusedGrid?.ContextMenu.SelectAll();
     }
 
-    private void EditSelectRowMenuItem_Click(object sender, EventArgs e) {
+    private void EditSelectRowMenuItem_Click(object? sender, EventArgs e) {
       EditorView?.FocusedGrid?.ContextMenu.SelectRow();
     }
 
-    private void EditDeleteSelectedRowsMenuItem_Click(object sender, EventArgs e) {
+    private void EditDeleteSelectedRowsMenuItem_Click(object? sender, EventArgs e) {
       EditorView?.FocusedGrid?.ContextMenu.DeleteSelectedRows();
     }
 
-    private void FileMenu_DropDown_Opening(object sender, CancelEventArgs e) {
+    private void FileMenu_DropDown_Opening(object? sender, CancelEventArgs e) {
       FileRefreshMenuItem.Enabled = MdiChildren.Any();
     }
 
-    private void FileExitMenuItem_Click(object sender, EventArgs e) {
+    private void FileExitMenuItem_Click(object? sender, EventArgs e) {
       Close();
     }
 
-    private void FileNewMenuItem_Click(object sender, EventArgs e) {
+    private void FileNewMenuItem_Click(object? sender, EventArgs e) {
       SelectEditorView.Text = "Select Table for New Editor";
       if (SelectEditorView.ShowDialog(this) == DialogResult.Cancel) {
         return;
@@ -178,7 +178,7 @@ namespace SoundExplorers.View {
       }
     }
 
-    private void FileOpenMenuItem_Click(object sender, EventArgs e) {
+    private void FileOpenMenuItem_Click(object? sender, EventArgs e) {
       if (!MdiChildren.Any()) {
         FileNewMenuItem_Click(sender, e);
         return;
@@ -242,13 +242,13 @@ namespace SoundExplorers.View {
       }
     }
 
-    private void FileRefreshMenuItem_Click(object sender, EventArgs e) {
+    private void FileRefreshMenuItem_Click(object? sender, EventArgs e) {
       if (MdiChildren.Any()) {
         EditorView?.Refresh();
       }
     }
 
-    private void HelpAboutMenuItem_Click(object sender, EventArgs e) {
+    private void HelpAboutMenuItem_Click(object? sender, EventArgs e) {
       new AboutView().ShowDialog();
     }
 
@@ -265,7 +265,7 @@ namespace SoundExplorers.View {
       }
     }
 
-    private void MainView_FormClosed(object sender, FormClosedEventArgs e) {
+    private void MainView_FormClosed(object? sender, FormClosedEventArgs e) {
       Controller.IsToolBarVisible = ToolStrip.Visible;
       Controller.TableName = MdiChildren.Any()
         ? EditorView?.MainGrid.Controller.TableName
@@ -295,7 +295,7 @@ namespace SoundExplorers.View {
     ///   unless a message box has previously been shown
     ///   in front of the splash form.
     /// </remarks>
-    private void MainView_VisibleChanged(object sender, EventArgs e) {
+    private void MainView_VisibleChanged(object? sender, EventArgs e) {
       Activate();
       SplashManager.Close();
     }
@@ -311,22 +311,22 @@ namespace SoundExplorers.View {
     /// <remarks>
     ///   http://social.msdn.microsoft.com/forums/en-US/winforms/thread/3c7c1bea-7f37-4786-acb4-5685f827f8f2/
     /// </remarks>
-    private void MenuStrip_ItemAdded(object sender, ToolStripItemEventArgs e) {
+    private void MenuStrip_ItemAdded(object? sender, ToolStripItemEventArgs e) {
       if (e.Item.Text == string.Empty) {
         e.Item.Visible = false;
       }
     }
 
-    private void ToolsOptionsMenuItem_Click(object sender, EventArgs e) {
+    private void ToolsOptionsMenuItem_Click(object? sender, EventArgs e) {
       var optionsView = OptionsView.Create();
       optionsView.ShowDialog();
     }
 
-    private void ViewToolBarMenuItem_Click(object sender, EventArgs e) {
+    private void ViewToolBarMenuItem_Click(object? sender, EventArgs e) {
       ToolStrip.Visible = ViewToolBarMenuItem.Checked;
     }
 
-    private void WindowsMenu_DropDown_Opening(object sender, CancelEventArgs e) {
+    private void WindowsMenu_DropDown_Opening(object? sender, CancelEventArgs e) {
       bool hasChildren = MdiChildren.Any();
       foreach (ToolStripItem item in WindowsMenu.DropDownItems) {
         item.Enabled = hasChildren;
@@ -343,23 +343,23 @@ namespace SoundExplorers.View {
         WindowsPreviousMenuItem.Enabled = MdiChildren.Length > 1;
     }
 
-    private void WindowsCascadeMenuItem_Click(object sender, EventArgs e) {
+    private void WindowsCascadeMenuItem_Click(object? sender, EventArgs e) {
       LayoutMdi(MdiLayout.Cascade);
     }
 
-    private void WindowsTileSideBySideMenuItem_Click(object sender, EventArgs e) {
+    private void WindowsTileSideBySideMenuItem_Click(object? sender, EventArgs e) {
       LayoutMdi(MdiLayout.TileVertical);
     }
 
-    private void WindowsTileStackedMenuItem_Click(object sender, EventArgs e) {
+    private void WindowsTileStackedMenuItem_Click(object? sender, EventArgs e) {
       LayoutMdi(MdiLayout.TileHorizontal);
     }
 
-    private void WindowsArrangeIconsMenuItem_Click(object sender, EventArgs e) {
+    private void WindowsArrangeIconsMenuItem_Click(object? sender, EventArgs e) {
       LayoutMdi(MdiLayout.ArrangeIcons);
     }
 
-    private void WindowsNextMenuItem_Click(object sender, EventArgs e) {
+    private void WindowsNextMenuItem_Click(object? sender, EventArgs e) {
       // Just emulating the MDI's built-in Next behaviour (Ctrl+F6),
       // which backtracks through the child editor windows
       // in the order in which they were opened.
@@ -378,7 +378,7 @@ namespace SoundExplorers.View {
       childList[nextChildIndex].Activate();
     }
 
-    private void WindowsPreviousMenuItem_Click(object sender, EventArgs e) {
+    private void WindowsPreviousMenuItem_Click(object? sender, EventArgs e) {
       // Se comment in WindowsNextMenuItem_Click.
       var childList = MdiChildren.ToList();
       int currentChildIndex = childList.IndexOf(ActiveMdiChild);
@@ -388,13 +388,13 @@ namespace SoundExplorers.View {
     }
 
     private void
-      WindowsCloseCurrentTableEditorMenuItem_Click(object sender, EventArgs e) {
+      WindowsCloseCurrentTableEditorMenuItem_Click(object? sender, EventArgs e) {
       if (MdiChildren.Any()) {
         EditorView?.Close();
       }
     }
 
-    private void WindowsCloseAllMenuItem_Click(object sender, EventArgs e) {
+    private void WindowsCloseAllMenuItem_Click(object? sender, EventArgs e) {
       foreach (var childForm in MdiChildren) {
         childForm.Close();
       }

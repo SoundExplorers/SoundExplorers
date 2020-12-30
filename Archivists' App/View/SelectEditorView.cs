@@ -40,7 +40,7 @@ namespace SoundExplorers.View {
           tableName);
     }
 
-    private void OKButton_Click(object sender, EventArgs e) {
+    private void OKButton_Click(object? sender, EventArgs e) {
       Controller.SelectedEntityListType = (Type)tableComboBox.SelectedValue;
       Controller.SelectedTableName = tableComboBox.Text;
       DialogResult = DialogResult.OK;
@@ -56,7 +56,7 @@ namespace SoundExplorers.View {
       tableComboBox.ValueMember = "Value";
     }
 
-    private void SelectEditorView_Load(object sender, EventArgs e) {
+    private void SelectEditorView_Load(object? sender, EventArgs e) {
       PopulateEditorComboBox();
       if (Controller.SelectedEntityListType != null) {
         tableComboBox.SelectedValue = Controller.SelectedEntityListType;

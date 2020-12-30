@@ -25,7 +25,7 @@ namespace SoundExplorers.View {
 
     public ComboBoxCellController Controller => (ComboBoxCellController)Tag;
 
-    public void RestoreErrorValue(object errorValue) {
+    public void RestoreErrorValue(object? errorValue) {
       string? key =
         ComboBoxCellController.GetKey(errorValue);
       int foundIndex = ComboBox.FindStringExact(key);

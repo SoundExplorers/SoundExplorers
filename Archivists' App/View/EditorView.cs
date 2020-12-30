@@ -109,7 +109,7 @@ namespace SoundExplorers.View {
     ///   this will not work while the main grid
     ///   is in edit mode.
     /// </remarks>
-    private void FittedPictureBox1_DragDrop(object sender, DragEventArgs e) {
+    private void FittedPictureBox1_DragDrop(object? sender, DragEventArgs e) {
       // if (Controller.Entities is ImageList
       //     && !MainGrid.IsCurrentCellInEditMode
       //     && e.Data.GetDataPresent(DataFormats.FileDrop)) {
@@ -135,7 +135,7 @@ namespace SoundExplorers.View {
     ///   To save confusion,
     ///   path dropping is not supported while the main grid is in edit mode.
     /// </remarks>
-    private void FittedPictureBox1_DragOver(object sender, DragEventArgs e) {
+    private void FittedPictureBox1_DragOver(object? sender, DragEventArgs e) {
       // if (Entities is ImageList
       //     && !MainGrid.IsCurrentCellInEditMode
       //     && e.Data.GetDataPresent(DataFormats.FileDrop)) {
@@ -154,7 +154,7 @@ namespace SoundExplorers.View {
     /// </summary>
     /// <param name="sender">Event sender.</param>
     /// <param name="e">Event arguments.</param>
-    private void FittedPictureBox1_MouseDown(object sender, MouseEventArgs e) {
+    private void FittedPictureBox1_MouseDown(object? sender, MouseEventArgs e) {
       var data = new DataObject(
         DataFormats.FileDrop,
         new[] {FittedPictureBox1.ImageLocation});
@@ -221,8 +221,8 @@ namespace SoundExplorers.View {
     ///     on Control + mouse button 1.
     ///   </para>
     /// </remarks>
-    private void Grid_MouseDown(object sender, MouseEventArgs e) {
-      var grid = (GridBase)sender;
+    private void Grid_MouseDown(object? sender, MouseEventArgs e) {
+      var grid = (GridBase)sender!;
       if (grid != FocusedGrid) {
         if (grid.Equals(ParentGrid)) {
           IsFocusingParentGrid = true;
@@ -263,7 +263,7 @@ namespace SoundExplorers.View {
     ///   Overriding the corresponding protected method in <see cref="MainGrid" />
     ///   does not work.
     /// </remarks>
-    private void MainGrid_DataError(object sender, DataGridViewDataErrorEventArgs e) {
+    private void MainGrid_DataError(object? sender, DataGridViewDataErrorEventArgs e) {
       // Debug.WriteLine("MainGrid_DataError");
       // Debug.WriteLine("Context = " + e.Context);
       // Debug.WriteLine("ColumnIndex = " + e.ColumnIndex);
@@ -286,7 +286,7 @@ namespace SoundExplorers.View {
     ///   does not work. The event has to be handled, otherwise the program will crash
     ///   in some circumstances.
     /// </remarks>
-    private void MainGrid_RowsRemoved(object sender, DataGridViewRowsRemovedEventArgs e) {
+    private void MainGrid_RowsRemoved(object? sender, DataGridViewRowsRemovedEventArgs e) {
       MainGrid.Controller.OnRowValidated(e.RowIndex);
     }
 
@@ -300,7 +300,7 @@ namespace SoundExplorers.View {
     ///   does not work. The event has to be handled, otherwise the program will crash
     ///   in some circumstances.
     /// </remarks>
-    private void MainGrid_RowValidated(object sender, DataGridViewCellEventArgs e) {
+    private void MainGrid_RowValidated(object? sender, DataGridViewCellEventArgs e) {
       MainGrid.Controller.OnRowValidated(e.RowIndex);
     }
 
@@ -513,7 +513,7 @@ namespace SoundExplorers.View {
     ///   In any case, we want focus to return to the current
     ///   grid after the user has grabbed the splitter.
     /// </remarks>
-    private void SplitContainerOnGotFocus(object sender, EventArgs e) {
+    private void SplitContainerOnGotFocus(object? sender, EventArgs e) {
       BeginInvoke((Action)delegate { FocusGrid(FocusedGrid ?? ParentGrid); });
     }
 
