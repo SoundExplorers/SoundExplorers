@@ -45,27 +45,23 @@ namespace SoundExplorers.Model {
     /// </summary>
     protected Option([NotNull] QueryHelper queryHelper, [NotNull] SessionBase session,
       [NotNull] string name, object defaultValue = null) {
+      QueryHelper = queryHelper;
+      OptionName = name;
       Session = session;
       DefaultValue = defaultValue;
-      var temp = new UserOption {UserId = Environment.UserName, OptionName = name};
-      Session.BeginUpdate();
-      UserOption = queryHelper.Find<UserOption>(temp.SimpleKey, Session);
-      if (UserOption == null) {
-        UserOption = temp;
-        UserOption.OptionValue = !string.IsNullOrWhiteSpace(DefaultValue?.ToString())
-          ? DefaultValue.ToString()
-          : string.Empty;
-      }
-      Session.Commit();
+      UserOption = FetchUserOption();
     }
 
+    private object DefaultValue { get; }
+    private string OptionName { get; }
+    private QueryHelper QueryHelper { get; }
     private SessionBase Session { get; }
 
     /// <summary>
     ///   Gets or sets the entity that represents the
     ///   data for the UserOption database record.
     /// </summary>
-    private UserOption UserOption { get; }
+    private UserOption UserOption { get; set; }
 
     /// <summary>
     ///   Gets or sets the current value of the option as a boolean.
@@ -90,11 +86,6 @@ namespace SoundExplorers.Model {
       }
       set => StringValue = value.ToString();
     }
-
-    /// <summary>
-    ///   Default value.
-    /// </summary>
-    private object DefaultValue { get; }
 
     /// <summary>
     ///   Gets or sets the current value of the option as an integer.
@@ -142,6 +133,12 @@ namespace SoundExplorers.Model {
     public string StringValue {
       get => UserOption.OptionValue;
       set {
+        // We need to try to fetch the UserOption from the database again,
+        // as it might have been persisted, updated deleted on the database
+        // by another procedure.
+        // This happens when two concurrently open Editor windows save
+        // their positions on being closed.
+        UserOption = FetchUserOption();
         if (value == UserOption.OptionValue) {
           return;
         }
@@ -157,6 +154,24 @@ namespace SoundExplorers.Model {
         }
         Session.Commit();
       }
+    }
+
+    /// <summary>
+    ///   Returns the required UserOption from the database or, if not found,
+    ///   a new UserOption with the required key and defaulted value.
+    /// </summary>
+    private UserOption FetchUserOption() {
+      var temp = new UserOption {UserId = Environment.UserName, OptionName = OptionName};
+      Session.BeginUpdate();
+      var result = QueryHelper.Find<UserOption>(temp.SimpleKey, Session);
+      if (result == null) {
+        result = temp;
+        result.OptionValue = !string.IsNullOrWhiteSpace(DefaultValue?.ToString())
+          ? DefaultValue.ToString()
+          : string.Empty;
+      }
+      Session.Commit();
+      return result;
     }
   } //End of class
 } //End of namespace
