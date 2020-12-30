@@ -43,17 +43,17 @@ namespace SoundExplorers.Tests.Model {
       Assert.IsTrue(items.ContainsKey("2020/01/06"), "Contains real Newsletter");
       var item1 = items[0];
       Assert.IsInstanceOf<KeyValuePair<object, object>>(item1, "item1");
-      var pair1 = (KeyValuePair<object, object>)item1;
-      Assert.IsInstanceOf<string>(pair1.Key, "Key 1");
-      Assert.IsNull(pair1.Value, "Value 1");
-      string? formattedDate1 = pair1.Key.ToString();
+      var (key1, value1) = (KeyValuePair<object, object>)item1;
+      Assert.IsInstanceOf<string>(key1, "Key 1");
+      Assert.IsNull(value1, "Value 1");
+      string formattedDate1 = key1.ToString();
       Assert.AreEqual("01 Jan 1900", formattedDate1, "formattedDate1");
       var item2 = items[1];
       Assert.IsInstanceOf<KeyValuePair<object, object>>(item2, "item2");
-      var pair2 = (KeyValuePair<object, object>)item2;
-      Assert.IsInstanceOf<string>(pair2.Key, "Key 2");
-      Assert.IsInstanceOf<Newsletter>(pair2.Value, "Value 2");
-      string? formattedDate2 = pair2.Key.ToString();
+      var (key2, value2) = (KeyValuePair<object, object>)item2;
+      Assert.IsInstanceOf<string>(key2, "Key 2");
+      Assert.IsInstanceOf<Newsletter>(value2, "Value 2");
+      string formattedDate2 = key2.ToString();
       Assert.AreEqual("06 Jan 2020", formattedDate2, "formattedDate2");
     }
 
