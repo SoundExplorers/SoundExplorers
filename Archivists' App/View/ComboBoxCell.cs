@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Windows.Forms;
-using JetBrains.Annotations;
 using SoundExplorers.Controller;
 
 namespace SoundExplorers.View {
@@ -51,9 +50,8 @@ namespace SoundExplorers.View {
     /// <param name="columnName">
     ///   The name of the column that is edited with the combo box cell.
     /// </param>
-    [NotNull]
-    public static ComboBoxCell Create([NotNull] MainGridController mainGridController,
-      [NotNull] string columnName) {
+    public static ComboBoxCell Create(MainGridController mainGridController,
+      string columnName) {
       return (ComboBoxCell)ViewFactory.Create<ComboBoxCell, ComboBoxCellController>(
         mainGridController, columnName);
     }

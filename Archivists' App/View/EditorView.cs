@@ -1,6 +1,5 @@
 using System;
 using System.Windows.Forms;
-using JetBrains.Annotations;
 using SoundExplorers.Controller;
 
 namespace SoundExplorers.View {
@@ -61,9 +60,8 @@ namespace SoundExplorers.View {
     /// <param name="mainController">
     ///   Controller for the main window.
     /// </param>
-    [NotNull]
-    public static EditorView Create([CanBeNull] Type entityListType,
-      [NotNull] MainController mainController) {
+    public static EditorView Create(Type? entityListType,
+      MainController mainController) {
       return (EditorView)ViewFactory.Create<EditorView, EditorController>(
         entityListType, mainController);
       // EditorView result;
@@ -286,7 +284,8 @@ namespace SoundExplorers.View {
     ///   does not work. The event has to be handled, otherwise the program will crash
     ///   in some circumstances.
     /// </remarks>
-    private void MainGrid_RowsRemoved(object? sender, DataGridViewRowsRemovedEventArgs e) {
+    private void
+      MainGrid_RowsRemoved(object? sender, DataGridViewRowsRemovedEventArgs e) {
       MainGrid.Controller.OnRowValidated(e.RowIndex);
     }
 
@@ -493,7 +492,7 @@ namespace SoundExplorers.View {
         savedGridSplitterDistance > 0 ? savedGridSplitterDistance : 180;
     }
 
-    private void ShowMessage([NotNull] string text, MessageBoxIcon icon) {
+    private void ShowMessage(string text, MessageBoxIcon icon) {
       MainView.Cursor = Cursors.Default;
       MessageBox.Show(
         this, text, Application.ProductName, MessageBoxButtons.OK, icon);

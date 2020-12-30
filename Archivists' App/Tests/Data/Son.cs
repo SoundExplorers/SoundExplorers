@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections;
 using System.Diagnostics.CodeAnalysis;
-using JetBrains.Annotations;
 using SoundExplorers.Data;
 
 namespace SoundExplorers.Tests.Data {
   public class Son : EntityBase {
-    private Father _father = null!;
-    private Mother _mother = null!;
+    private Father? _father;
+    private Mother? _mother;
 
     public Son([JetBrains.Annotations.NotNull] QueryHelper queryHelper) : base(
       typeof(Son),
@@ -17,8 +16,7 @@ namespace SoundExplorers.Tests.Data {
       Schema = TestSchema.Instance;
     }
 
-    [CanBeNull]
-    public Father Father {
+    public Father? Father {
       get => _father;
       set {
         UpdateNonIndexField();
@@ -27,8 +25,7 @@ namespace SoundExplorers.Tests.Data {
       }
     }
 
-    [CanBeNull]
-    public Mother Mother {
+    public Mother? Mother {
       get => _mother;
       set {
         UpdateNonIndexField();

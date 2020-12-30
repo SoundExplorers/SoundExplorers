@@ -2,7 +2,6 @@
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
-using JetBrains.Annotations;
 using SoundExplorers.Controller;
 
 namespace SoundExplorers.View {
@@ -56,12 +55,10 @@ namespace SoundExplorers.View {
     ///   as per the Model-View-Controller design pattern,
     ///   returning the view instance created.
     /// </summary>
-    [NotNull]
     public static MainView Create() {
       return (MainView)ViewFactory.Create<MainView, MainController>();
     }
 
-    [NotNull]
     private EditorView CreateEditorView() {
       WindowsSeparator3.Visible = true; // See comment in EditorView_FormClosed 
       var result = EditorView.Create(SelectEditorView.Controller.SelectedEntityListType!,
@@ -70,7 +67,6 @@ namespace SoundExplorers.View {
       return result;
     }
 
-    [NotNull]
     private SelectEditorView CreateSelectEditorView() {
       return SelectEditorView.Create(Controller.TableName);
     }

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Windows.Forms;
-using JetBrains.Annotations;
 
 namespace SoundExplorers.View {
   /// <summary>
@@ -21,10 +20,8 @@ namespace SoundExplorers.View {
       // Return the type of the editing control that CalendarCell uses.
       typeof(CalendarEditingControl);
 
-    [NotNull]
     private DateTimePicker DateTimePicker => (DateTimePicker)Grid.EditingControl;
 
-    [NotNull]
     private DataGridView Grid =>
       DataGridView
       ?? throw new NullReferenceException(

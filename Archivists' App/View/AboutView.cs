@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
@@ -41,7 +40,6 @@ namespace SoundExplorers.View {
       }
     }
 
-    [NotNull]
     private Assembly EntryAssembly => _entryAssembly ??= Assembly.GetEntryAssembly()!;
 
     /// <summary>
@@ -73,7 +71,7 @@ namespace SoundExplorers.View {
     ///   The specified embedded resource file
     ///   cannot be found in the executing assembly.
     /// </exception>
-    private string GetEmbeddedText([NotNull] string filename) {
+    private string GetEmbeddedText(string filename) {
       string assemblyName = EntryAssembly.GetName().Name!;
       var stream =
         EntryAssembly.GetManifestResourceStream($"{assemblyName}.{filename}")

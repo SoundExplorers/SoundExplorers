@@ -1,10 +1,9 @@
 ﻿using System.ComponentModel;
 using System.Windows.Forms;
-using JetBrains.Annotations;
 
 namespace SoundExplorers.View {
   internal class TextBoxContextMenu : EditContextMenuBase {
-    public TextBoxContextMenu([NotNull] TextBox textBox) {
+    public TextBoxContextMenu(TextBox textBox) {
       TextBox = textBox;
       TextBox.MouseDown += TextBox_MouseDown;
     }

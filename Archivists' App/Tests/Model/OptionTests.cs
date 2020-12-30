@@ -1,5 +1,4 @@
 ﻿using System;
-using JetBrains.Annotations;
 using NUnit.Framework;
 using SoundExplorers.Data;
 using SoundExplorers.Tests.Data;
@@ -73,9 +72,8 @@ namespace SoundExplorers.Tests.Model {
       option.StringValue = "Hello"; // Unchanged, so does not need to be saved
     }
 
-    [NotNull]
     private TestOption CreateTestOption(
-      [NotNull] string name, object? defaultValue = null) {
+      string name, object? defaultValue = null) {
       return new(QueryHelper, Session, name, defaultValue);
     }
   }

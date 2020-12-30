@@ -1,5 +1,4 @@
-﻿using JetBrains.Annotations;
-using SoundExplorers.Controller;
+﻿using SoundExplorers.Controller;
 using SoundExplorers.Data;
 using SoundExplorers.Model;
 using SoundExplorers.Tests.Model;
@@ -7,8 +6,8 @@ using VelocityDb.Session;
 
 namespace SoundExplorers.Tests.Controller {
   public class TestMainController : MainController {
-    public TestMainController([NotNull] IView<MainController> view,
-      [NotNull] QueryHelper queryHelper, [NotNull] SessionBase session) : base(view) {
+    public TestMainController(IView<MainController> view,
+      QueryHelper queryHelper, SessionBase session) : base(view) {
       QueryHelper = queryHelper;
       Session = session;
     }

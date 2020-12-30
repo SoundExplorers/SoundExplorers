@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using System.Data;
-using JetBrains.Annotations;
 using NUnit.Framework;
 using SoundExplorers.Data;
 using SoundExplorers.Model;
@@ -30,7 +29,7 @@ namespace SoundExplorers.Tests.Model {
       A010_Initial<EventTypeList>("EventType");
     }
 
-    private void A010_Initial<TEntityList>([NotNull] string tableName)
+    private void A010_Initial<TEntityList>(string tableName)
       where TEntityList : IEntityList, new() {
       var list = new TEntityList {IsParentList = true};
       Assert.AreEqual(tableName, list.EntityTypeName, "EntityName");
@@ -106,7 +105,7 @@ namespace SoundExplorers.Tests.Model {
       ErrorOnDelete<EventTypeList>((IList)Data.EventTypes);
     }
 
-    private void ErrorOnDelete<TEntityList>([NotNull] IList entities)
+    private void ErrorOnDelete<TEntityList>(IList entities)
       where TEntityList : IEntityList, new() {
       var list = new TEntityList {Session = Session};
       list.Populate(entities);

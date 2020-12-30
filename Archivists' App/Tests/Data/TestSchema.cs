@@ -1,13 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using JetBrains.Annotations;
 using SoundExplorers.Data;
 
 namespace SoundExplorers.Tests.Data {
   public class TestSchema : Schema {
     private static TestSchema? _instance;
 
-    [NotNull]
     public new static TestSchema Instance =>
       _instance ??= new TestSchema();
 

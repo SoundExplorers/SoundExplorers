@@ -1,11 +1,10 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Windows.Forms;
-using JetBrains.Annotations;
 
 namespace SoundExplorers.View {
   internal class GridContextMenu : EditContextMenuBase {
-    public GridContextMenu([NotNull] GridBase grid) {
+    public GridContextMenu(GridBase grid) {
       Grid = grid;
     }
 

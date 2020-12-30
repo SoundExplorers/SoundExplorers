@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Data;
-using JetBrains.Annotations;
 using NUnit.Framework;
 using SoundExplorers.Data;
 
@@ -13,11 +12,11 @@ namespace SoundExplorers.Tests.Data {
     }
 
     private class DudDaughter : Daughter {
-      public DudDaughter([NotNull] QueryHelper queryHelper,
+      public DudDaughter(QueryHelper queryHelper,
         Type? identifyingParentType = null) :
         base(queryHelper, identifyingParentType) { }
 
-      public override Mother Mother {
+      public override Mother? Mother {
         get => (IdentifyingParent as Mother)!;
         set {
           UpdateNonIndexField();

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using JetBrains.Annotations;
 using SoundExplorers.Data;
 using VelocityDb.Session;
 
@@ -40,7 +39,7 @@ namespace SoundExplorers.Tests.Data {
       };
     }
 
-    public TestData([NotNull] QueryHelper queryHelper) {
+    public TestData(QueryHelper queryHelper) {
       QueryHelper = queryHelper;
       Acts = new List<Act>();
       Events = new List<Event>();
@@ -71,10 +70,10 @@ namespace SoundExplorers.Tests.Data {
     private static IList<string> EventTypeNames { get; }
     private static IList<string> GenreNames { get; }
     private static IList<string> LocationNames { get; }
-    [NotNull] private QueryHelper QueryHelper { get; }
+    private QueryHelper QueryHelper { get; }
     private static IList<string> SeriesNames { get; }
 
-    public void AddActsPersisted(int count, [NotNull] SessionBase session) {
+    public void AddActsPersisted(int count, SessionBase session) {
       for (int i = 0; i < count; i++) {
         var act = new Act {
           QueryHelper = QueryHelper,
@@ -89,7 +88,7 @@ namespace SoundExplorers.Tests.Data {
       Sort(Acts);
     }
 
-    public void AddEventsPersisted(int count, [NotNull] SessionBase session,
+    public void AddEventsPersisted(int count, SessionBase session,
       Location? location = null, EventType? eventType = null) {
       var date = DateTime.Parse("2020/01/09");
       for (int i = 0; i < count; i++) {
@@ -106,7 +105,7 @@ namespace SoundExplorers.Tests.Data {
       }
     }
 
-    public void AddEventTypesPersisted(int count, [NotNull] SessionBase session) {
+    public void AddEventTypesPersisted(int count, SessionBase session) {
       for (int i = 0; i < count; i++) {
         var eventType = new EventType {
           QueryHelper = QueryHelper,
@@ -120,7 +119,7 @@ namespace SoundExplorers.Tests.Data {
       Sort(EventTypes);
     }
 
-    public void AddGenresPersisted(int count, [NotNull] SessionBase session) {
+    public void AddGenresPersisted(int count, SessionBase session) {
       for (int i = 0; i < count; i++) {
         var genre = new Genre {
           QueryHelper = QueryHelper,
@@ -134,7 +133,7 @@ namespace SoundExplorers.Tests.Data {
       Sort(Genres);
     }
 
-    public void AddLocationsPersisted(int count, [NotNull] SessionBase session) {
+    public void AddLocationsPersisted(int count, SessionBase session) {
       for (int i = 0; i < count; i++) {
         var location = new Location {
           QueryHelper = QueryHelper,
@@ -149,7 +148,7 @@ namespace SoundExplorers.Tests.Data {
       Sort(Locations);
     }
 
-    public void AddNewslettersPersisted(int count, [NotNull] SessionBase session) {
+    public void AddNewslettersPersisted(int count, SessionBase session) {
       var date = DateTime.Parse("2020/01/06");
       for (int i = 0; i < count; i++) {
         var newsletter = new Newsletter {
@@ -163,7 +162,7 @@ namespace SoundExplorers.Tests.Data {
       }
     }
 
-    public void AddPiecesPersisted(int count, [NotNull] SessionBase session,
+    public void AddPiecesPersisted(int count, SessionBase session,
       Set? set = null) {
       int pieceNo = 1;
       for (int i = 0; i < count; i++) {
@@ -182,7 +181,7 @@ namespace SoundExplorers.Tests.Data {
       }
     }
 
-    public void AddSeriesPersisted(int count, [NotNull] SessionBase session) {
+    public void AddSeriesPersisted(int count, SessionBase session) {
       for (int i = 0; i < count; i++) {
         var series = new Series {
           QueryHelper = QueryHelper,
@@ -197,7 +196,7 @@ namespace SoundExplorers.Tests.Data {
       Sort(Series);
     }
 
-    public void AddSetsPersisted(int count, [NotNull] SessionBase session,
+    public void AddSetsPersisted(int count, SessionBase session,
       Event? @event = null, Genre? genre = null) {
       int setNo = 1;
       for (int i = 0; i < count; i++) {
@@ -214,14 +213,12 @@ namespace SoundExplorers.Tests.Data {
       }
     }
 
-    [NotNull]
     private Event GetDefaultEvent() {
       return Events.Count >= 0
         ? Events[0]
         : throw new InvalidOperationException("An Event must be added first.");
     }
 
-    [NotNull]
     private EventType GetDefaultEventType() {
       return EventTypes.Count >= 0
         ? (from eventType in EventTypes
@@ -236,14 +233,12 @@ namespace SoundExplorers.Tests.Data {
         : throw new InvalidOperationException("A Genre must be added first.");
     }
 
-    [NotNull]
     private Location GetDefaultLocation() {
       return Locations.Count >= 0
         ? Locations[0]
         : throw new InvalidOperationException("A Location must be added first.");
     }
 
-    [NotNull]
     private Set GetDefaultSet() {
       return Sets.Count >= 0
         ? Sets[0]

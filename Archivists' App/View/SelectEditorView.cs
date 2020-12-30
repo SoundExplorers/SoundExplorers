@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Windows.Forms;
-using JetBrains.Annotations;
 using SoundExplorers.Controller;
 
 namespace SoundExplorers.View {
@@ -33,8 +32,7 @@ namespace SoundExplorers.View {
     ///   The name of the table that is to be initially selected.
     ///   An empty string for no table to be initially selected.
     /// </param>
-    [NotNull]
-    public static SelectEditorView Create([NotNull] string tableName) {
+    public static SelectEditorView Create(string tableName) {
       return (SelectEditorView)ViewFactory
         .Create<SelectEditorView, SelectEditorController>(
           tableName);

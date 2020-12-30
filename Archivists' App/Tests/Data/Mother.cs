@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Diagnostics.CodeAnalysis;
-using JetBrains.Annotations;
 using SoundExplorers.Data;
 
 namespace SoundExplorers.Tests.Data {
@@ -18,8 +17,7 @@ namespace SoundExplorers.Tests.Data {
 
     [JetBrains.Annotations.NotNull] public SortedChildList<Daughter> Daughters { get; }
 
-    [CanBeNull]
-    public string Name {
+    public string? Name {
       get => SimpleKey;
       set {
         UpdateNonIndexField();

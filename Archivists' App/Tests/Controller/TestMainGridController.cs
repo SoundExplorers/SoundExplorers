@@ -1,11 +1,10 @@
 ﻿using System.Data;
-using JetBrains.Annotations;
 using SoundExplorers.Controller;
 using SoundExplorers.Model;
 
 namespace SoundExplorers.Tests.Controller {
   public class TestMainGridController : MainGridController {
-    public TestMainGridController([NotNull] IEditorView editorView) :
+    public TestMainGridController(IEditorView editorView) :
       base(new MockMainGrid(), editorView) { }
 
     internal bool AutoValidate { get; set; }
@@ -35,16 +34,15 @@ namespace SoundExplorers.Tests.Controller {
     }
 
     internal void SetComboBoxCellValue(
-      int rowIndex, [NotNull] string columnName, [NotNull] object value) {
+      int rowIndex, string columnName, object value) {
       var comboBoxCellController =
         CreateComboBoxCellControllerWithItems(columnName);
       ((IBindingItem)List.BindingList[rowIndex]!).SetPropertyValue(columnName, value);
       comboBoxCellController.OnCellValueChanged(0, value);
     }
 
-    [NotNull]
     private ComboBoxCellController CreateComboBoxCellControllerWithItems(
-      [NotNull] string columnName) {
+      string columnName) {
       var comboBoxCell = new MockView<ComboBoxCellController>();
       var comboBoxCellController =
         new ComboBoxCellController(comboBoxCell, this, columnName);

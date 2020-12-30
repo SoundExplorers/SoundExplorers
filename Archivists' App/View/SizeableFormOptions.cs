@@ -2,7 +2,6 @@ using System;
 using System.Drawing;
 using System.Reflection;
 using System.Windows.Forms;
-using JetBrains.Annotations;
 using SoundExplorers.Controller;
 
 namespace SoundExplorers.View {
@@ -56,7 +55,7 @@ namespace SoundExplorers.View {
     ///   The <see cref="Form" /> whose size, position and state are
     ///   to be saved and restored.
     /// </param>
-    private SizeableFormOptions([NotNull] Form form) {
+    private SizeableFormOptions(Form form) {
       Form = form;
     }
 
@@ -83,8 +82,7 @@ namespace SoundExplorers.View {
     ///   The <see cref="Form" /> whose size, position and state are
     ///   to be saved and restored.
     /// </param>
-    [NotNull]
-    public static SizeableFormOptions Create([NotNull] Form form) {
+    public static SizeableFormOptions Create(Form form) {
       // ViewFactory cannot be used to create the view and controller in this case,
       // as the view constructor requires the form parameter.
       SizeableFormOptions result;

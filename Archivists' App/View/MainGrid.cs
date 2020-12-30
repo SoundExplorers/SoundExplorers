@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Drawing;
 using System.Windows.Forms;
-using JetBrains.Annotations;
 using SoundExplorers.Controller;
 
 namespace SoundExplorers.View {
@@ -68,7 +67,7 @@ namespace SoundExplorers.View {
       IsJustPopulated = true;
     }
 
-    private void ConfigureColumn([NotNull] DataGridViewColumn column) {
+    private void ConfigureColumn(DataGridViewColumn column) {
       // Making every column explicitly not sortable prevents the program
       // from crashing if F3 in pressed while the grid is focused.
       // TODO Check whether F3 crashes program when PARENT grid is focused.

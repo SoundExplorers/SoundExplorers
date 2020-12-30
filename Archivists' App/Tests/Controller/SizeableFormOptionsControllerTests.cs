@@ -1,5 +1,4 @@
-﻿using JetBrains.Annotations;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using SoundExplorers.Controller;
 using SoundExplorers.Data;
 using SoundExplorers.Tests.Data;
@@ -46,8 +45,7 @@ namespace SoundExplorers.Tests.Controller {
       Assert.AreEqual(windowState, Controller.WindowState, "WindowState");
     }
 
-    [NotNull]
-    private SizeableFormOptionsController CreateController([NotNull] string formName) {
+    private SizeableFormOptionsController CreateController(string formName) {
       return new TestSizeableFormOptionsController(View, formName, QueryHelper, Session);
     }
   }

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Data;
-using JetBrains.Annotations;
 using NUnit.Framework;
 using SoundExplorers.Controller;
 using SoundExplorers.Data;
@@ -472,14 +471,12 @@ namespace SoundExplorers.Tests.Controller {
       Assert.AreEqual(1, View.ShowWarningMessageCount);
     }
 
-    [NotNull]
-    private TestEditorController CreateController([NotNull] Type mainListType) {
+    private TestEditorController CreateController(Type mainListType) {
       return new(mainListType,
         View, QueryHelper, Session);
     }
 
-    [NotNull]
-    private static Event ToEvent([CanBeNull] object value) {
+    private static Event ToEvent(object? value) {
       return
         value as Event
         ?? throw new InvalidOperationException($"{value} is not an Event.");

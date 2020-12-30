@@ -1,5 +1,4 @@
 ﻿using System;
-using JetBrains.Annotations;
 using NUnit.Framework;
 using SoundExplorers.Controller;
 using SoundExplorers.Data;
@@ -75,14 +74,12 @@ namespace SoundExplorers.Tests.Controller {
       Assert.AreEqual(keyValue, key);
     }
 
-    [NotNull]
-    private ComboBoxCellController CreateCellController([NotNull] string columnName) {
+    private ComboBoxCellController CreateCellController(string columnName) {
       return new(CellView, MainGridController, columnName);
     }
 
-    [NotNull]
     private TestEditorController CreateEditorController(
-      [NotNull] Type mainListType) {
+      Type mainListType) {
       return new(mainListType,
         EditorView, QueryHelper, Session);
     }

@@ -1,5 +1,4 @@
 ﻿using System.Windows.Forms;
-using JetBrains.Annotations;
 using SoundExplorers.Controller;
 
 namespace SoundExplorers.View {
@@ -26,7 +25,6 @@ namespace SoundExplorers.View {
     ///   as per the Model-View-Controller design pattern,
     ///   returning the view instance created.
     /// </summary>
-    [NotNull]
     public static OptionsView Create() {
       return (OptionsView)ViewFactory.Create<OptionsView, OptionsController>();
     }

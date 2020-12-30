@@ -9,7 +9,7 @@ namespace SoundExplorers.Tests.Controller {
     [UsedImplicitly]
     private class ConstructorExceptionThrowingController {
       public ConstructorExceptionThrowingController(
-        [NotNull] IView<ConstructorExceptionThrowingController> view) {
+        IView<ConstructorExceptionThrowingController> view) {
         throw new InvalidOperationException();
       }
     }

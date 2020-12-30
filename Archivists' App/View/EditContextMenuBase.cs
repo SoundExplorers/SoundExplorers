@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
-using JetBrains.Annotations;
 
 namespace SoundExplorers.View {
   internal abstract class EditContextMenuBase : ContextMenuStrip {
@@ -38,29 +37,22 @@ namespace SoundExplorers.View {
       ShowImageMargin = false;
     }
 
-    [NotNull] protected UndoMenuItem UndoMenuItem => _undoMenuItem ??= new UndoMenuItem();
-    [NotNull] protected CutMenuItem CutMenuItem => _cutMenuItem ??= new CutMenuItem();
-    [NotNull] protected CopyMenuItem CopyMenuItem => _copyMenuItem ??= new CopyMenuItem();
-
-    [NotNull]
+    protected UndoMenuItem UndoMenuItem => _undoMenuItem ??= new UndoMenuItem();
+    protected CutMenuItem CutMenuItem => _cutMenuItem ??= new CutMenuItem();
+    protected CopyMenuItem CopyMenuItem => _copyMenuItem ??= new CopyMenuItem();
     protected DeleteMenuItem DeleteMenuItem => _deleteMenuItem ??= new DeleteMenuItem();
-
-    [NotNull]
     protected PasteMenuItem PasteMenuItem => _pasteMenuItem ??= new PasteMenuItem();
 
-    [NotNull]
     protected SelectAllMenuItem SelectAllMenuItem =>
       _selectAllMenuItem ??= new SelectAllMenuItem();
 
-    [NotNull]
     protected SelectRowMenuItem SelectRowMenuItem =>
       _selectRowMenuItem ??= new SelectRowMenuItem();
 
-    [NotNull]
     protected DeleteSelectedRowsMenuItem DeleteSelectedRowsMenuItem =>
       _deleteSelectedRowsMenuItem ??= new DeleteSelectedRowsMenuItem();
 
-    protected static void DeleteTextBoxSelectedText([NotNull] TextBox textBox) {
+    protected static void DeleteTextBoxSelectedText(TextBox textBox) {
       int selectionStart = textBox.SelectionStart;
       int count = textBox.SelectionLength;
       textBox.Text = textBox.Text.Remove(selectionStart, count);

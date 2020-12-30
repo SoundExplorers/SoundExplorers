@@ -1,5 +1,4 @@
 ﻿using System;
-using JetBrains.Annotations;
 using SoundExplorers.Controller;
 using SoundExplorers.Data;
 using SoundExplorers.Model;
@@ -9,16 +8,16 @@ using VelocityDb.Session;
 namespace SoundExplorers.Tests.Controller {
   internal class TestEditorController : EditorController {
     public TestEditorController(
-      [NotNull] Type mainListType, IEditorView view,
-      [NotNull] QueryHelper queryHelper, [NotNull] SessionBase session) :
+      Type mainListType, IEditorView view,
+      QueryHelper queryHelper, SessionBase session) :
       base(view, mainListType,
         new TestMainController(new MockView<MainController>(), queryHelper, session)) {
       QueryHelper = queryHelper;
       Session = session;
     }
 
-    [NotNull] private QueryHelper QueryHelper { get; }
-    [NotNull] private SessionBase Session { get; }
+    private QueryHelper QueryHelper { get; }
+    private SessionBase Session { get; }
 
     protected override IEntityList CreateEntityList(Type type) {
       var result = base.CreateEntityList(type);

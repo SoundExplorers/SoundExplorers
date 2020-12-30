@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using JetBrains.Annotations;
 using SoundExplorers.Data;
 using VelocityDb.Session;
 
@@ -18,7 +17,7 @@ namespace SoundExplorers.Tests.Data {
     }
 
     public TestSession(string databaseFolderPath) : base(databaseFolderPath) { }
-    [NotNull] private string DatabaseFolderPath => SystemDirectory;
+    private string DatabaseFolderPath => SystemDirectory;
 
     public static void CopyLicenceToDatabaseFolder(string databaseFolderPath) {
       File.Copy(
@@ -26,7 +25,6 @@ namespace SoundExplorers.Tests.Data {
         databaseFolderPath + @"\4.odb");
     }
 
-    [NotNull]
     public static string CreateDatabaseFolder() {
       string databaseFolderPath = GenerateDatabaseFolderPath();
       Directory.CreateDirectory(databaseFolderPath);
@@ -38,7 +36,7 @@ namespace SoundExplorers.Tests.Data {
       DeleteFolderIfExists(DatabaseFolderPath);
     }
 
-    public static void DeleteFolderIfExists([NotNull] string folderPath) {
+    public static void DeleteFolderIfExists(string folderPath) {
       if (Directory.Exists(folderPath)) {
         foreach (string filePath in Directory.GetFiles(folderPath)) {
           File.Delete(filePath);

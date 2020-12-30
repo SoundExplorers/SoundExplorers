@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Windows.Forms;
-using JetBrains.Annotations;
 using SoundExplorers.Controller;
 
 namespace SoundExplorers.View {
@@ -27,11 +26,9 @@ namespace SoundExplorers.View {
 
     protected GridControllerBase Controller { get; set; } = null!;
 
-    [NotNull]
     public GridContextMenu ContextMenu =>
       _contextMenu ??= new GridContextMenu(this);
 
-    [NotNull]
     protected EditorView EditorView =>
       Controller.EditorView as EditorView ??
       throw new InvalidOperationException(
@@ -45,7 +42,6 @@ namespace SoundExplorers.View {
     /// <summary>
     ///   Gets the new (i.e. empty) row at the bottom of an editable grid.
     /// </summary>
-    [NotNull]
     private DataGridViewRow NewRow => !ReadOnly
       ? Rows[^1]
       : throw new InvalidOperationException(
@@ -55,7 +51,6 @@ namespace SoundExplorers.View {
     ///   Gets the cell text that can be copied to the clipboard or, if there is none,
     ///   an empty string.
     /// </summary>
-    [NotNull]
     public string CopyableText {
       get {
         if (IsTextBoxCellCurrent && IsCurrentCellInEditMode) {
@@ -70,13 +65,13 @@ namespace SoundExplorers.View {
     ///   or the corresponding items of the Edit menu on the main window menu bar.
     /// </summary>
     public void EnableOrDisableMenuItems(
-      [NotNull] ToolStripMenuItem cutMenuItem,
-      [NotNull] ToolStripMenuItem copyMenuItem,
-      [NotNull] ToolStripMenuItem pasteMenuItem,
-      [NotNull] ToolStripMenuItem deleteMenuItem,
-      [NotNull] ToolStripMenuItem selectAllMenuItem,
-      [NotNull] ToolStripMenuItem selectRowMenuItem,
-      [NotNull] ToolStripMenuItem deleteSelectedRowsMenuItem) {
+      ToolStripMenuItem cutMenuItem,
+      ToolStripMenuItem copyMenuItem,
+      ToolStripMenuItem pasteMenuItem,
+      ToolStripMenuItem deleteMenuItem,
+      ToolStripMenuItem selectAllMenuItem,
+      ToolStripMenuItem selectRowMenuItem,
+      ToolStripMenuItem deleteSelectedRowsMenuItem) {
       selectAllMenuItem.Enabled = CanSelectAll;
       cutMenuItem.Enabled = CanCut;
       deleteMenuItem.Enabled = CanDelete;
@@ -176,7 +171,7 @@ namespace SoundExplorers.View {
     /// <summary>
     ///   Swaps the colour schemes of the two grids.
     /// </summary>
-    public void SwapColorsWith([NotNull] DataGridView otherGrid) {
+    public void SwapColorsWith(DataGridView otherGrid) {
       var swapColor = DefaultCellStyle.BackColor;
       DefaultCellStyle.BackColor = otherGrid.DefaultCellStyle.BackColor;
       otherGrid.DefaultCellStyle.BackColor = swapColor;

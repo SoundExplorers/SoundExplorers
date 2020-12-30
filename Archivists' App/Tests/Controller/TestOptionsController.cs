@@ -1,12 +1,11 @@
-﻿using JetBrains.Annotations;
-using SoundExplorers.Controller;
+﻿using SoundExplorers.Controller;
 using SoundExplorers.Model;
 using SoundExplorers.Tests.Model;
 
 namespace SoundExplorers.Tests.Controller {
   public class TestOptionsController : OptionsController {
-    public TestOptionsController([NotNull] IView<OptionsController> view,
-      [NotNull] MockDatabaseConfig mockDatabaseConfig) : base(view) {
+    public TestOptionsController(IView<OptionsController> view,
+      MockDatabaseConfig mockDatabaseConfig) : base(view) {
       MockDatabaseConfig = mockDatabaseConfig;
     }
 
