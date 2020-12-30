@@ -20,10 +20,10 @@ namespace SoundExplorers.Tests.Model {
       Session.DeleteDatabaseFolderIfExists();
     }
 
-    private TestData Data { get; set; }
-    private NewsletterList List { get; set; }
-    private QueryHelper QueryHelper { get; set; }
-    private TestSession Session { get; set; }
+    private TestData Data { get; set; } = null!;
+    private NewsletterList List { get; set; } = null!;
+    private QueryHelper QueryHelper { get; set; } = null!;
+    private TestSession Session { get; set; } = null!;
 
     [Test]
     public void A010_Initial() {

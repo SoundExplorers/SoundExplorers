@@ -124,17 +124,17 @@ namespace SoundExplorers.Tests.Data {
     private const string Piece2SimpleKey = "02";
     private const int Set1SetNo = 1;
     private const int Set2SetNo = 2;
-    private string DatabaseFolderPath { get; set; }
-    private QueryHelper QueryHelper { get; set; }
-    private TestSession Session { get; set; }
-    private TestData Data { get; set; }
-    private Artist Baker { get; set; }
-    private Credit Credit1 { get; set; }
-    private Credit Credit2 { get; set; }
-    private Event Event1 { get; set; }
+    private string DatabaseFolderPath { get; set; } = null!;
+    private QueryHelper QueryHelper { get; set; } = null!;
+    private TestSession Session { get; set; } = null!;
+    private TestData Data { get; set; } = null!;
+    private Artist Baker { get; set; } = null!;
+    private Credit Credit1 { get; set; } = null!;
+    private Credit Credit2 { get; set; } = null!;
+    private Event Event1 { get; set; } = null!;
     private static DateTime Event1Date => DateTime.Today.AddDays(-1);
-    private Location Location1 { get; set; }
-    private Piece Piece1 { get; set; }
+    private Location Location1 { get; set; } = null!;
+    private Piece Piece1 { get; set; } = null!;
 
     private static string Piece1AudioUrl =>
       "https://archive.org/details/geometry_dash_1.9/Geometry+Dash+OST/BaseAfterBase.mp3";
@@ -142,11 +142,11 @@ namespace SoundExplorers.Tests.Data {
     private static string Piece1VideoUrl =>
       "https://archive.org/details/nikopivx/niko-pivx-xoxo-hd.mp4";
 
-    private Piece Piece1AtSet2 { get; set; }
-    private Piece Piece2 { get; set; }
-    private Role Drums { get; set; }
-    private Set Set1 { get; set; }
-    private Set Set2 { get; set; }
+    private Piece Piece1AtSet2 { get; set; } = null!;
+    private Piece Piece2 { get; set; } = null!;
+    private Role Drums { get; set; } = null!;
+    private Set Set1 { get; set; } = null!;
+    private Set Set2 { get; set; } = null!;
 
     [Test]
     public void A010_Initial() {

@@ -34,10 +34,10 @@ namespace SoundExplorers.Tests.Data {
     private const string UserOption1OptionValue = "Cheese, please.";
     private const string UserOptionSimpleKey = "Alice|ChalkOrCheese";
     private const string UserOption1UserId = "Alice";
-    private string DatabaseFolderPath { get; set; }
-    private QueryHelper QueryHelper { get; set; }
-    private TestSession Session { get; set; }
-    private UserOption UserOption1 { get; set; }
+    private string DatabaseFolderPath { get; set; } = null!;
+    private QueryHelper QueryHelper { get; set; } = null!;
+    private TestSession Session { get; set; } = null!;
+    private UserOption UserOption1 { get; set; } = null!;
 
     [Test]
     public void A010_Initial() {

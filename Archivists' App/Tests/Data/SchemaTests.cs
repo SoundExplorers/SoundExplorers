@@ -16,9 +16,9 @@ namespace SoundExplorers.Tests.Data {
       TestSession.DeleteFolderIfExists(DatabaseFolderPath);
     }
 
-    private string DatabaseFolderPath { get; set; }
-    private QueryHelper QueryHelper { get; set; }
-    private TestSession Session { get; set; }
+    private string DatabaseFolderPath { get; set; } = null!;
+    private QueryHelper QueryHelper { get; set; } = null!;
+    private TestSession Session { get; set; } = null!;
 
     [Test]
     public void NewSchema() {
@@ -38,7 +38,7 @@ namespace SoundExplorers.Tests.Data {
       schema = Schema.Find(QueryHelper, Session);
       Session.Commit();
       Assert.IsNotNull(schema, "Schema after finding persisted occurence");
-      Assert.AreEqual(1, schema.Version, "Version finding persisted occurence");
+      Assert.AreEqual(1, schema?.Version, "Version finding persisted occurence");
     }
 
     [Test]

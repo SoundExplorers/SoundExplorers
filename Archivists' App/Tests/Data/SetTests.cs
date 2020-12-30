@@ -124,23 +124,23 @@ namespace SoundExplorers.Tests.Data {
     private const int Set1SetNo = 1;
     private const int Set2SetNo = 2;
     private const string Set2SimpleKey = "02";
-    private string DatabaseFolderPath { get; set; }
-    private QueryHelper QueryHelper { get; set; }
-    private TestSession Session { get; set; }
-    private Act Act1 { get; set; }
-    private Act Act2 { get; set; }
-    private Event Event1 { get; set; }
+    private string DatabaseFolderPath { get; set; } = null!;
+    private QueryHelper QueryHelper { get; set; } = null!;
+    private TestSession Session { get; set; } = null!;
+    private Act Act1 { get; set; } = null!;
+    private Act Act2 { get; set; } = null!;
+    private Event Event1 { get; set; } = null!;
     private static DateTime Event1Date => DateTime.Today.AddDays(-1);
-    private Event Event2 { get; set; }
+    private Event Event2 { get; set; } = null!;
     private static DateTime Event2Date => DateTime.Today;
-    private EventType EventType1 { get; set; }
-    private Genre Genre1 { get; set; }
-    private Location Location1 { get; set; }
-    private Piece Piece1 { get; set; }
-    private Piece Piece2 { get; set; }
-    private Set Set1 { get; set; }
-    private Set Set1AtEvent2 { get; set; }
-    private Set Set2 { get; set; }
+    private EventType EventType1 { get; set; } = null!;
+    private Genre Genre1 { get; set; } = null!;
+    private Location Location1 { get; set; } = null!;
+    private Piece Piece1 { get; set; } = null!;
+    private Piece Piece2 { get; set; } = null!;
+    private Set Set1 { get; set; } = null!;
+    private Set Set1AtEvent2 { get; set; } = null!;
+    private Set Set2 { get; set; } = null!;
 
     [Test]
     public void A010_Initial() {

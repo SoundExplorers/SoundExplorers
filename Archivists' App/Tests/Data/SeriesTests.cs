@@ -31,21 +31,20 @@ namespace SoundExplorers.Tests.Data {
         QueryHelper = QueryHelper,
         Date = Event2Date
       };
-      using (var session = new TestSession(DatabaseFolderPath)) {
-        session.BeginUpdate();
-        session.Persist(Location1);
-        session.Persist(Series1);
-        session.Persist(Series2);
-        Event1.Location = Location1;
-        Event1.Series = Series1;
-        Event2.Location = Location1;
-        Data.AddEventTypesPersisted(1, session);
-        Event1.EventType = Data.EventTypes[0];
-        Event2.EventType = Event1.EventType;
-        session.Persist(Event1);
-        session.Persist(Event2);
-        session.Commit();
-      }
+      using var session = new TestSession(DatabaseFolderPath);
+      session.BeginUpdate();
+      session.Persist(Location1);
+      session.Persist(Series1);
+      session.Persist(Series2);
+      Event1.Location = Location1;
+      Event1.Series = Series1;
+      Event2.Location = Location1;
+      Data.AddEventTypesPersisted(1, session);
+      Event1.EventType = Data.EventTypes[0];
+      Event2.EventType = Event1.EventType;
+      session.Persist(Event1);
+      session.Persist(Event2);
+      session.Commit();
     }
 
     [TearDown]
@@ -57,16 +56,16 @@ namespace SoundExplorers.Tests.Data {
     private const string Series1Name = "Jazz Festival 2014";
     private const string Series1Notes = "My notes.";
     private const string Series2Name = "Field Recordings";
-    private string DatabaseFolderPath { get; set; }
-    private QueryHelper QueryHelper { get; set; }
-    private TestData Data { get; set; }
-    private Event Event1 { get; set; }
+    private string DatabaseFolderPath { get; set; } = null!;
+    private QueryHelper QueryHelper { get; set; } = null!;
+    private TestData Data { get; set; } = null!;
+    private Event Event1 { get; set; } = null!;
     private static DateTime Event1Date => DateTime.Today.AddDays(-1);
-    private Event Event2 { get; set; }
+    private Event Event2 { get; set; } = null!;
     private static DateTime Event2Date => DateTime.Today;
-    private Location Location1 { get; set; }
-    private Series Series1 { get; set; }
-    private Series Series2 { get; set; }
+    private Location Location1 { get; set; } = null!;
+    private Series Series1 { get; set; } = null!;
+    private Series Series2 { get; set; } = null!;
 
     [Test]
     public void T010_Initial() {
@@ -94,12 +93,11 @@ namespace SoundExplorers.Tests.Data {
         QueryHelper = QueryHelper,
         Name = Series1Name
       };
-      using (var session = new TestSession(DatabaseFolderPath)) {
-        session.BeginUpdate();
-        Assert.Throws<PropertyConstraintException>(() =>
-          session.Persist(duplicate), "Duplicate");
-        session.Commit();
-      }
+      using var session = new TestSession(DatabaseFolderPath);
+      session.BeginUpdate();
+      Assert.Throws<PropertyConstraintException>(() =>
+        session.Persist(duplicate), "Duplicate");
+      session.Commit();
     }
   }
 }

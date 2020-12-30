@@ -5,18 +5,18 @@ using SoundExplorers.Data;
 
 namespace SoundExplorers.Tests.Data {
   public class TestSchema : Schema {
-    private static TestSchema _instance;
+    private static TestSchema? _instance;
 
     [NotNull]
     public new static TestSchema Instance =>
-      _instance ?? (_instance = new TestSchema());
+      _instance ??= new TestSchema();
 
     protected override IEnumerable<RelationInfo> CreateRelations() {
       var list = new List<RelationInfo> {
-        new RelationInfo(typeof(Father), typeof(Daughter), false),
-        new RelationInfo(typeof(Father), typeof(Son), false),
-        new RelationInfo(typeof(Mother), typeof(Daughter), true),
-        new RelationInfo(typeof(Mother), typeof(Son), false)
+        new(typeof(Father), typeof(Daughter), false),
+        new(typeof(Father), typeof(Son), false),
+        new(typeof(Mother), typeof(Daughter), true),
+        new(typeof(Mother), typeof(Son), false)
       };
       return new ReadOnlyCollection<RelationInfo>(list);
     }

@@ -28,9 +28,9 @@ namespace SoundExplorers.Tests.Model {
       TestSession.DeleteFolderIfExists(DatabaseFolderPath);
     }
 
-    private string ConfigFilePath { get; set; }
-    private TestDatabaseConnection Connection { get; set; }
-    private string DatabaseFolderPath { get; set; }
+    private string ConfigFilePath { get; set; } = null!;
+    private TestDatabaseConnection Connection { get; set; } = null!;
+    private string DatabaseFolderPath { get; set; } = null!;
 
     [Test]
     public void TheTest() {
@@ -88,9 +88,8 @@ namespace SoundExplorers.Tests.Model {
     }
 
     private void MakeXmlError() {
-      using (var writer = new StreamWriter(ConfigFilePath)) {
-        writer.Write("This is not an XML file.");
-      }
+      using var writer = new StreamWriter(ConfigFilePath);
+      writer.Write("This is not an XML file.");
     }
 
     private void RemoveXmlElement() {
@@ -108,7 +107,7 @@ namespace SoundExplorers.Tests.Model {
     private void ResetSchemaVersionToZero() {
       var session = new SessionNoServer(DatabaseFolderPath);
       session.BeginUpdate();
-      var schema = Schema.Find(QueryHelper.Instance, session);
+      var schema = Schema.Find(QueryHelper.Instance, session)!;
       Assert.IsNotNull(schema, "schema");
       schema.Version = 0;
       session.Commit();

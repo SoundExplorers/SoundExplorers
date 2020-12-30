@@ -25,7 +25,7 @@ namespace SoundExplorers.Tests.Model {
       }
     }
 
-    private TestSession Session { get; set; }
+    private TestSession Session { get; set; } = null!;
 
     [Test]
     public void RethrowDudError() {

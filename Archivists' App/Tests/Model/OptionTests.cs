@@ -20,8 +20,8 @@ namespace SoundExplorers.Tests.Model {
       Session.DeleteDatabaseFolderIfExists();
     }
 
-    private QueryHelper QueryHelper { get; set; }
-    private TestSession Session { get; set; }
+    private QueryHelper QueryHelper { get; set; } = null!;
+    private TestSession Session { get; set; } = null!;
 
     [Test]
     public void DefaultsDefaulted() {
@@ -75,8 +75,8 @@ namespace SoundExplorers.Tests.Model {
 
     [NotNull]
     private TestOption CreateTestOption(
-      [NotNull] string name, object defaultValue = null) {
-      return new TestOption(QueryHelper, Session, name, defaultValue);
+      [NotNull] string name, object? defaultValue = null) {
+      return new(QueryHelper, Session, name, defaultValue);
     }
   }
 }

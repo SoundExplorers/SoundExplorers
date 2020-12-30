@@ -32,21 +32,20 @@ namespace SoundExplorers.Tests.Data {
         QueryHelper = QueryHelper,
         Date = Event2Date
       };
-      using (var session = new TestSession(DatabaseFolderPath)) {
-        session.BeginUpdate();
-        session.Persist(Location1);
-        session.Persist(Newsletter1);
-        session.Persist(Newsletter2);
-        Event1.Location = Location1;
-        Event1.Newsletter = Newsletter1;
-        Event2.Location = Location1;
-        Data.AddEventTypesPersisted(1, session);
-        Event1.EventType = Data.EventTypes[0];
-        Event2.EventType = Event1.EventType;
-        session.Persist(Event1);
-        session.Persist(Event2);
-        session.Commit();
-      }
+      using var session = new TestSession(DatabaseFolderPath);
+      session.BeginUpdate();
+      session.Persist(Location1);
+      session.Persist(Newsletter1);
+      session.Persist(Newsletter2);
+      Event1.Location = Location1;
+      Event1.Newsletter = Newsletter1;
+      Event2.Location = Location1;
+      Data.AddEventTypesPersisted(1, session);
+      Event1.EventType = Data.EventTypes[0];
+      Event2.EventType = Event1.EventType;
+      session.Persist(Event1);
+      session.Persist(Event2);
+      session.Commit();
     }
 
     [TearDown]
@@ -57,21 +56,21 @@ namespace SoundExplorers.Tests.Data {
     private const string Location1Name = "Pyramid Club";
     private const string Newsletter1SimpleKey = "2013/04/11";
     private const string Newsletter2SimpleKey = "2013/04/22";
-    private string DatabaseFolderPath { get; set; }
-    private QueryHelper QueryHelper { get; set; }
-    private TestData Data { get; set; }
-    private Event Event1 { get; set; }
+    private string DatabaseFolderPath { get; set; } = null!;
+    private QueryHelper QueryHelper { get; set; } = null!;
+    private TestData Data { get; set; } = null!;
+    private Event Event1 { get; set; } = null!;
     private static DateTime Event1Date => DateTime.Today.AddDays(-1);
-    private Event Event2 { get; set; }
+    private Event Event2 { get; set; } = null!;
     private static DateTime Event2Date => DateTime.Today;
-    private Location Location1 { get; set; }
-    private Newsletter Newsletter1 { get; set; }
+    private Location Location1 { get; set; } = null!;
+    private Newsletter Newsletter1 { get; set; } = null!;
     private static DateTime Newsletter1Date => DateTime.Parse(Newsletter1SimpleKey);
 
     private static string Newsletter1Url =>
       "https://archive.org/details/simpsons-lat.375923";
 
-    private Newsletter Newsletter2 { get; set; }
+    private Newsletter Newsletter2 { get; set; } = null!;
     private static DateTime Newsletter2Date => DateTime.Parse(Newsletter2SimpleKey);
 
     private static string Newsletter2Url =>
@@ -117,39 +116,36 @@ namespace SoundExplorers.Tests.Data {
     public void ChangeUrl() {
       const string newUrl =
         "https://docs.microsoft.com/en-us/dotnet/api/system.tuple?view=netcore-3.1";
-      using (var session = new TestSession(DatabaseFolderPath)) {
-        session.BeginUpdate();
-        Newsletter1 =
-          QueryHelper.Read<Newsletter>(Newsletter1SimpleKey, session);
-        Assert.DoesNotThrow(() => Newsletter1.Url = newUrl);
-        session.Commit();
-      }
+      using var session = new TestSession(DatabaseFolderPath);
+      session.BeginUpdate();
+      Newsletter1 =
+        QueryHelper.Read<Newsletter>(Newsletter1SimpleKey, session);
+      Assert.DoesNotThrow(() => Newsletter1.Url = newUrl);
+      session.Commit();
     }
 
     [Test]
     public void DisallowChangeDateToDuplicate() {
-      using (var session = new TestSession(DatabaseFolderPath)) {
-        session.BeginUpdate();
-        Newsletter2 =
-          QueryHelper.Read<Newsletter>(Newsletter2SimpleKey, session);
-        Newsletter2.Date = Newsletter2Date;
-        Assert.Throws<PropertyConstraintException>(() =>
-          Newsletter2.Date = Newsletter1Date);
-        session.Commit();
-      }
+      using var session = new TestSession(DatabaseFolderPath);
+      session.BeginUpdate();
+      Newsletter2 =
+        QueryHelper.Read<Newsletter>(Newsletter2SimpleKey, session);
+      Newsletter2.Date = Newsletter2Date;
+      Assert.Throws<PropertyConstraintException>(() =>
+        Newsletter2.Date = Newsletter1Date);
+      session.Commit();
     }
 
     [Test]
     public void DisallowChangeUrlToDuplicate() {
-      using (var session = new TestSession(DatabaseFolderPath)) {
-        session.BeginUpdate();
-        Newsletter2 =
-          QueryHelper.Read<Newsletter>(Newsletter2SimpleKey, session);
-        Newsletter2.Url = Newsletter2Url;
-        Assert.Throws<PropertyConstraintException>(() =>
-          Newsletter2.Url = Newsletter1Url);
-        session.Commit();
-      }
+      using var session = new TestSession(DatabaseFolderPath);
+      session.BeginUpdate();
+      Newsletter2 =
+        QueryHelper.Read<Newsletter>(Newsletter2SimpleKey, session);
+      Newsletter2.Url = Newsletter2Url;
+      Assert.Throws<PropertyConstraintException>(() =>
+        Newsletter2.Url = Newsletter1Url);
+      session.Commit();
     }
 
     [Test]
@@ -167,12 +163,11 @@ namespace SoundExplorers.Tests.Data {
         Date = date,
         Url = url2
       };
-      using (var session = new TestSession(DatabaseFolderPath)) {
-        session.BeginUpdate();
-        session.Persist(original);
-        Assert.Throws<PropertyConstraintException>(() => session.Persist(duplicate));
-        session.Commit();
-      }
+      using var session = new TestSession(DatabaseFolderPath);
+      session.BeginUpdate();
+      session.Persist(original);
+      Assert.Throws<PropertyConstraintException>(() => session.Persist(duplicate));
+      session.Commit();
     }
 
     [Test]
@@ -190,12 +185,11 @@ namespace SoundExplorers.Tests.Data {
         Date = date2,
         Url = url
       };
-      using (var session = new TestSession(DatabaseFolderPath)) {
-        session.BeginUpdate();
-        session.Persist(original);
-        Assert.Throws<PropertyConstraintException>(() => session.Persist(duplicate));
-        session.Commit();
-      }
+      using var session = new TestSession(DatabaseFolderPath);
+      session.BeginUpdate();
+      session.Persist(original);
+      Assert.Throws<PropertyConstraintException>(() => session.Persist(duplicate));
+      session.Commit();
     }
 
     [Test]
@@ -205,11 +199,10 @@ namespace SoundExplorers.Tests.Data {
         QueryHelper = QueryHelper,
         Url = url
       };
-      using (var session = new TestSession(DatabaseFolderPath)) {
-        session.BeginUpdate();
-        Assert.Throws<PropertyConstraintException>(() => session.Persist(noDate));
-        session.Commit();
-      }
+      using var session = new TestSession(DatabaseFolderPath);
+      session.BeginUpdate();
+      Assert.Throws<PropertyConstraintException>(() => session.Persist(noDate));
+      session.Commit();
     }
 
     [Test]
@@ -219,11 +212,10 @@ namespace SoundExplorers.Tests.Data {
         QueryHelper = QueryHelper,
         Date = date
       };
-      using (var session = new TestSession(DatabaseFolderPath)) {
-        session.BeginUpdate();
-        Assert.Throws<PropertyConstraintException>(() => session.Persist(noUrl));
-        session.Commit();
-      }
+      using var session = new TestSession(DatabaseFolderPath);
+      session.BeginUpdate();
+      Assert.Throws<PropertyConstraintException>(() => session.Persist(noUrl));
+      session.Commit();
     }
 
     [Test]

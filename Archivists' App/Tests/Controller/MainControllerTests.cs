@@ -19,9 +19,9 @@ namespace SoundExplorers.Tests.Controller {
       Session.DeleteDatabaseFolderIfExists();
     }
 
-    private MockDatabaseConnection Connection { get; set; }
-    private QueryHelper QueryHelper { get; set; }
-    private TestSession Session { get; set; }
+    private MockDatabaseConnection Connection { get; set; } = null!;
+    private QueryHelper QueryHelper { get; set; } = null!;
+    private TestSession Session { get; set; } = null!;
 
     [Test]
     public void TheTest() {

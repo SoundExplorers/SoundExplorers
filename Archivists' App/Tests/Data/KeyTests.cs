@@ -16,8 +16,8 @@ namespace SoundExplorers.Tests.Data {
       TestSession.DeleteFolderIfExists(DatabaseFolderPath);
     }
 
-    private string DatabaseFolderPath { get; set; }
-    private TestData Data { get; set; }
+    private string DatabaseFolderPath { get; set; } = null!;
+    private TestData Data { get; set; } = null!;
 
     [Test]
     public void ConvertToString() {
@@ -102,7 +102,7 @@ namespace SoundExplorers.Tests.Data {
       Assert.IsTrue(event3.Key != event4.Key, "event3.Key != event4.Key");
       Assert.IsTrue(event3.Key < event4.Key, "event3.Key < event4.Key");
       Assert.IsTrue(event4.Key > event3.Key, "event4.Key > event3.Key");
-      Key nullKey = null;
+      Key? nullKey = null;
       Assert.IsTrue(event3.Key > nullKey, "event3.Key > nullKey");
       Assert.IsTrue(nullKey < event3.Key, "event3.Key < nullKey");
       Assert.IsTrue(event5.Key < event6.Key, "event5.Key < event6.Key");
@@ -128,7 +128,7 @@ namespace SoundExplorers.Tests.Data {
         "key4.GetHashCode()");
       Assert.AreEqual(key3, key4, "key4");
       Assert.IsTrue(key3 == key4, "key3 == key4");
-      string nullSimpleKey = null;
+      string? nullSimpleKey = null;
       // ReSharper disable once ExpressionIsAlwaysNull
       var key5 = new Key(nullSimpleKey, location1);
       // ReSharper disable once ExpressionIsAlwaysNull

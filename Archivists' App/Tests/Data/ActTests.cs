@@ -67,16 +67,16 @@ namespace SoundExplorers.Tests.Data {
     private const string Location1Name = "Pyramid Club";
     private const int Set1SetNo = 1;
     private const int Set2SetNo = 2;
-    private string DatabaseFolderPath { get; set; }
-    private QueryHelper QueryHelper { get; set; }
-    private TestData Data { get; set; }
-    private Act Act1 { get; set; }
-    private Act Act2 { get; set; }
-    private Event Event1 { get; set; }
+    private string DatabaseFolderPath { get; set; } = null!;
+    private QueryHelper QueryHelper { get; set; } = null!;
+    private TestData Data { get; set; } = null!;
+    private Act Act1 { get; set; } = null!;
+    private Act Act2 { get; set; } = null!;
+    private Event Event1 { get; set; } = null!;
     private static DateTime Event1Date => DateTime.Parse(Event1Key);
-    private Location Location1 { get; set; }
-    private Set Set1 { get; set; }
-    private Set Set2 { get; set; }
+    private Location Location1 { get; set; } = null!;
+    private Set Set1 { get; set; } = null!;
+    private Set Set2 { get; set; } = null!;
 
     [Test]
     public void A010_Initial() {

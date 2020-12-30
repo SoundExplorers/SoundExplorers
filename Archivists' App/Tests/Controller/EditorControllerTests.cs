@@ -26,12 +26,12 @@ namespace SoundExplorers.Tests.Controller {
       Session.DeleteDatabaseFolderIfExists();
     }
 
-    private TestData Data { get; set; }
-    private MockMainGrid MainGrid { get; set; }
-    private TestMainGridController MainGridController { get; set; }
-    private QueryHelper QueryHelper { get; set; }
-    private TestSession Session { get; set; }
-    private MockEditorView View { get; set; }
+    private TestData Data { get; set; } = null!;
+    private MockMainGrid MainGrid { get; set; } = null!;
+    private TestMainGridController MainGridController { get; set; } = null!;
+    private QueryHelper QueryHelper { get; set; } = null!;
+    private TestSession Session { get; set; } = null!;
+    private MockEditorView View { get; set; } = null!;
 
     [Test]
     public void AddEvents() {
@@ -48,11 +48,11 @@ namespace SoundExplorers.Tests.Controller {
         Session.Commit();
       }
       var validLocation = Data.Locations[0];
-      string validLocationName = validLocation.Name;
+      string validLocationName = validLocation.Name!;
       var validNewsletter = Data.Newsletters[0];
       var validNewsletterDate = validNewsletter.Date;
       var validSeries = Data.Series[0];
-      string validSeriesName = validSeries.Name;
+      string validSeriesName = validSeries.Name!;
       Assert.IsNotNull(validLocationName, "validLocationName");
       Assert.IsNotNull(validSeriesName, "validSeriesName");
       var controller = CreateController(typeof(EventList));
@@ -293,7 +293,7 @@ namespace SoundExplorers.Tests.Controller {
         "ShowErrorMessageCount after valid Newsletter selection");
       Assert.AreEqual(selectedNewsletterDate, bindingList[0].Newsletter,
         "Newsletter in editor after valid Newsletter selection");
-      Assert.AreSame(selectedNewsletter, ToEvent(controller.MainList[0]).Newsletter,
+      Assert.AreSame(selectedNewsletter, ToEvent(controller.MainList[0]!).Newsletter,
         "Newsletter entity after valid Newsletter selection");
       var notFoundDate = DateTime.Parse("2345/12/31");
       MainGridController.OnRowEnter(0);
@@ -312,19 +312,19 @@ namespace SoundExplorers.Tests.Controller {
         "LastErrorMessage after not-found Newsletter pasted");
       Assert.AreEqual(selectedNewsletterDate, bindingList[0].Newsletter,
         "Newsletter in editor after not-found Newsletter pasted");
-      Assert.AreSame(selectedNewsletter, ToEvent(controller.MainList[0]).Newsletter,
+      Assert.AreSame(selectedNewsletter, ToEvent(controller.MainList[0]!).Newsletter,
         "Newsletter entity after not-found Newsletter pasted");
       // Series
       var selectedSeries = Data.Series[0];
-      string selectedSeriesName = selectedSeries.Name;
+      string selectedSeriesName = selectedSeries.Name!;
       Assert.IsNotNull(selectedSeriesName, "selectedSeriesName");
       MainGridController.OnRowEnter(0);
-      MainGridController.SetComboBoxCellValue(0, "Series", selectedSeriesName);
+      MainGridController.SetComboBoxCellValue(0, "Series", selectedSeriesName!);
       Assert.AreEqual(1, View.ShowErrorMessageCount,
         "ShowErrorMessageCount after valid Series selection");
       Assert.AreEqual(selectedSeriesName, bindingList[0].Series,
         "Series in editor after valid Series selection");
-      Assert.AreSame(selectedSeries, ToEvent(controller.MainList[0]).Series,
+      Assert.AreSame(selectedSeries, ToEvent(controller.MainList[0]!).Series,
         "Series entity after valid Series selection");
       const string notFoundName = "Not-Found Name";
       MainGridController.OnRowEnter(0);
@@ -343,7 +343,7 @@ namespace SoundExplorers.Tests.Controller {
         "LastErrorMessage after not-found Series pasted");
       Assert.AreEqual(selectedSeriesName, bindingList[0].Series,
         "Series in editor after not-found Series pasted");
-      Assert.AreSame(selectedSeries, ToEvent(controller.MainList[0]).Series,
+      Assert.AreSame(selectedSeries, ToEvent(controller.MainList[0]!).Series,
         "Series entity after not-found Series pasted");
     }
 

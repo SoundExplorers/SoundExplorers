@@ -3,7 +3,7 @@ using SoundExplorers.Controller;
 
 namespace SoundExplorers.Tests.Controller {
   public class MockMainGrid : IMainGrid {
-    private TestMainGridController Controller { get; set; }
+    private TestMainGridController Controller { get; set; } = null!;
     public int EditCurrentCellCount { get; private set; }
     public int MakeCellCurrentCount { get; private set; }
     public int MakeCellCurrentColumnIndex { get; private set; }
@@ -39,7 +39,7 @@ namespace SoundExplorers.Tests.Controller {
       OnRowAddedOrDeletedCount++;
     }
 
-    public void Populate(IList list = null) {
+    public void Populate(IList? list = null) {
       throw new System.NotImplementedException();
     }
 

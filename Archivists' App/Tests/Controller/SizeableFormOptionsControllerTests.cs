@@ -19,10 +19,10 @@ namespace SoundExplorers.Tests.Controller {
       Session.DeleteDatabaseFolderIfExists();
     }
 
-    private SizeableFormOptionsController Controller { get; set; }
-    private QueryHelper QueryHelper { get; set; }
-    private TestSession Session { get; set; }
-    private MockView<SizeableFormOptionsController> View { get; set; }
+    private SizeableFormOptionsController Controller { get; set; } = null!;
+    private QueryHelper QueryHelper { get; set; } = null!;
+    private TestSession Session { get; set; } = null!;
+    private MockView<SizeableFormOptionsController> View { get; set; } = null!;
 
     [Test]
     public void TheTest() {

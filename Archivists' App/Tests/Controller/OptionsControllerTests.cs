@@ -16,9 +16,9 @@ namespace SoundExplorers.Tests.Controller {
       Controller = new TestOptionsController(View, DatabaseConfig);
     }
 
-    private TestOptionsController Controller { get; set; }
-    private MockDatabaseConfig DatabaseConfig { get; set; }
-    private MockView<OptionsController> View { get; set; }
+    private TestOptionsController Controller { get; set; } = null!;
+    private MockDatabaseConfig DatabaseConfig { get; set; } = null!;
+    private MockView<OptionsController> View { get; set; } = null!;
 
     [Test]
     public void A010_Initial() {

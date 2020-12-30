@@ -7,11 +7,11 @@ using NotNullAttribute = JetBrains.Annotations.NotNullAttribute;
 
 namespace SoundExplorers.Tests.Data {
   public class Daughter : EntityBase {
-    private Father _father;
-    private Mother _mother;
+    private Father _father = null!;
+    private Mother _mother = null!;
 
     public Daughter([NotNull] QueryHelper queryHelper,
-      Type identifyingParentType = null) : base(typeof(Daughter),
+      Type? identifyingParentType = null) : base(typeof(Daughter),
       nameof(Name), identifyingParentType) {
       QueryHelper = queryHelper ??
                     throw new ArgumentNullException(nameof(queryHelper));
@@ -38,8 +38,7 @@ namespace SoundExplorers.Tests.Data {
       }
     }
 
-    [CanBeNull]
-    public string Name {
+    public string? Name {
       get => SimpleKey;
       set {
         UpdateNonIndexField();

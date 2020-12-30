@@ -110,21 +110,21 @@ namespace SoundExplorers.Tests.Data {
     private const int Piece1PieceNo = 1;
     private const string Role1Name = "Banjo";
     private const int Set1SetNo = 1;
-    private string DatabaseFolderPath { get; set; }
-    private QueryHelper QueryHelper { get; set; }
-    private TestData Data { get; set; }
-    private TestSession Session { get; set; }
-    private Artist RalphJenkins { get; set; }
-    private Artist Clarissa { get; set; }
-    private Artist Baker { get; set; }
-    private Credit Credit1 { get; set; }
-    private Credit Credit2 { get; set; }
-    private Event Event1 { get; set; }
+    private string DatabaseFolderPath { get; set; } = null!;
+    private QueryHelper QueryHelper { get; set; } = null!;
+    private TestData Data { get; set; } = null!;
+    private TestSession Session { get; set; } = null!;
+    private Artist RalphJenkins { get; set; } = null!;
+    private Artist Clarissa { get; set; } = null!;
+    private Artist Baker { get; set; } = null!;
+    private Credit Credit1 { get; set; } = null!;
+    private Credit Credit2 { get; set; } = null!;
+    private Event Event1 { get; set; } = null!;
     private static DateTime Event1Date => DateTime.Today.AddDays(-1);
-    private Location Location1 { get; set; }
-    private Piece Piece1 { get; set; }
-    private Role Role1 { get; set; }
-    private Set Set1 { get; set; }
+    private Location Location1 { get; set; } = null!;
+    private Piece Piece1 { get; set; } = null!;
+    private Role Role1 { get; set; } = null!;
+    private Set Set1 { get; set; } = null!;
 
     [Test]
     public void A010_Initial() {

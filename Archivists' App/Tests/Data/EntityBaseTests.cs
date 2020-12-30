@@ -15,11 +15,11 @@ namespace SoundExplorers.Tests.Data {
 
     private class DudDaughter : Daughter {
       public DudDaughter([NotNull] QueryHelper queryHelper,
-        Type identifyingParentType = null) :
+        Type? identifyingParentType = null) :
         base(queryHelper, identifyingParentType) { }
 
       public override Mother Mother {
-        get => IdentifyingParent as Mother;
+        get => (IdentifyingParent as Mother)!;
         set {
           UpdateNonIndexField();
           IdentifyingParent = value;
@@ -27,7 +27,7 @@ namespace SoundExplorers.Tests.Data {
       }
     }
 
-    private QueryHelper QueryHelper { get; set; }
+    private QueryHelper QueryHelper { get; set; } = null!;
 
     [Test]
     public void A010_Initial() {

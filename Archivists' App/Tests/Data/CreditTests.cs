@@ -127,23 +127,23 @@ namespace SoundExplorers.Tests.Data {
     private const string Credit2SimpleKey = "02";
     private const int Credit3CreditNo = 3;
     private const string Credit3SimpleKey = "03";
-    private string DatabaseFolderPath { get; set; }
-    private QueryHelper QueryHelper { get; set; }
-    private TestSession Session { get; set; }
-    private TestData Data { get; set; }
-    private Artist Clarissa { get; set; }
-    private Artist Baker { get; set; }
-    private Role Drums { get; set; }
-    private Role ElectricGuitar { get; set; }
-    private Location Location1 { get; set; }
-    private Event Event1 { get; set; }
+    private string DatabaseFolderPath { get; set; } = null!;
+    private QueryHelper QueryHelper { get; set; } = null!;
+    private TestSession Session { get; set; } = null!;
+    private TestData Data { get; set; } = null!;
+    private Artist Clarissa { get; set; } = null!;
+    private Artist Baker { get; set; } = null!;
+    private Role Drums { get; set; } = null!;
+    private Role ElectricGuitar { get; set; } = null!;
+    private Location Location1 { get; set; } = null!;
+    private Event Event1 { get; set; } = null!;
     private static DateTime Event1Date => DateTime.Today.AddDays(-1);
-    private Set Set1 { get; set; }
-    private Piece Piece1 { get; set; }
-    private Piece Piece2 { get; set; }
-    private Credit Credit1 { get; set; }
-    private Credit Credit2 { get; set; }
-    private Credit Credit3 { get; set; }
+    private Set Set1 { get; set; } = null!;
+    private Piece Piece1 { get; set; } = null!;
+    private Piece Piece2 { get; set; } = null!;
+    private Credit Credit1 { get; set; } = null!;
+    private Credit Credit2 { get; set; } = null!;
+    private Credit Credit3 { get; set; } = null!;
 
     [Test]
     public void A010_Initial() {

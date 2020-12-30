@@ -38,7 +38,7 @@ namespace SoundExplorers.Tests.Controller {
       int rowIndex, [NotNull] string columnName, [NotNull] object value) {
       var comboBoxCellController =
         CreateComboBoxCellControllerWithItems(columnName);
-      ((IBindingItem)List.BindingList[rowIndex]).SetPropertyValue(columnName, value);
+      ((IBindingItem)List.BindingList[rowIndex]!).SetPropertyValue(columnName, value);
       comboBoxCellController.OnCellValueChanged(0, value);
     }
 

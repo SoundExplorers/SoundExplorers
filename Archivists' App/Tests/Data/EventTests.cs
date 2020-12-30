@@ -66,36 +66,35 @@ namespace SoundExplorers.Tests.Data {
         QueryHelper = QueryHelper,
         SetNo = Set2SetNo
       };
-      using (var session = new TestSession(DatabaseFolderPath)) {
-        session.BeginUpdate();
-        session.Persist(EventType1);
-        session.Persist(Genre1);
-        session.Persist(Location1);
-        session.Persist(Location2);
-        session.Persist(Newsletter1);
-        session.Persist(Newsletter2);
-        session.Persist(Series1);
-        session.Persist(Series2);
-        Event1.Location = Location1;
-        Event1AtLocation2.Location = Location2;
-        Event2.Location = Location1;
-        Event1.EventType = EventType1;
-        Event1AtLocation2.EventType = EventType1;
-        Event2.EventType = EventType1;
-        session.Persist(Event1);
-        session.Persist(Event1AtLocation2);
-        session.Persist(Event2);
-        Event1.Newsletter = Newsletter1;
-        Event1AtLocation2.Newsletter = Newsletter2;
-        Event1AtLocation2.Series = Series2;
-        Set1.Event = Event1;
-        Set1.Genre = Genre1;
-        Set2.Event = Event1;
-        Set2.Genre = Genre1;
-        session.Persist(Set1);
-        session.Persist(Set2);
-        session.Commit();
-      }
+      using var session = new TestSession(DatabaseFolderPath);
+      session.BeginUpdate();
+      session.Persist(EventType1);
+      session.Persist(Genre1);
+      session.Persist(Location1);
+      session.Persist(Location2);
+      session.Persist(Newsletter1);
+      session.Persist(Newsletter2);
+      session.Persist(Series1);
+      session.Persist(Series2);
+      Event1.Location = Location1;
+      Event1AtLocation2.Location = Location2;
+      Event2.Location = Location1;
+      Event1.EventType = EventType1;
+      Event1AtLocation2.EventType = EventType1;
+      Event2.EventType = EventType1;
+      session.Persist(Event1);
+      session.Persist(Event1AtLocation2);
+      session.Persist(Event2);
+      Event1.Newsletter = Newsletter1;
+      Event1AtLocation2.Newsletter = Newsletter2;
+      Event1AtLocation2.Series = Series2;
+      Set1.Event = Event1;
+      Set1.Genre = Genre1;
+      Set2.Event = Event1;
+      Set2.Genre = Genre1;
+      session.Persist(Set1);
+      session.Persist(Set2);
+      session.Commit();
     }
 
     [TearDown]
@@ -116,18 +115,18 @@ namespace SoundExplorers.Tests.Data {
     private const string Series2Name = "Field Recordings";
     private const int Set1SetNo = 1;
     private const int Set2SetNo = 2;
-    private string DatabaseFolderPath { get; set; }
-    private QueryHelper QueryHelper { get; set; }
-    private Event Event1 { get; set; }
+    private string DatabaseFolderPath { get; set; } = null!;
+    private QueryHelper QueryHelper { get; set; } = null!;
+    private Event Event1 { get; set; } = null!;
     private static DateTime Event1Date => DateTime.Parse(Event1SimpleKey);
-    private Event Event1AtLocation2 { get; set; }
-    private Event Event2 { get; set; }
+    private Event Event1AtLocation2 { get; set; } = null!;
+    private Event Event2 { get; set; } = null!;
     private static DateTime Event2Date => DateTime.Parse(Event2SimpleKey);
-    private EventType EventType1 { get; set; }
-    private Genre Genre1 { get; set; }
-    private Location Location1 { get; set; }
-    private Location Location2 { get; set; }
-    private Newsletter Newsletter1 { get; set; }
+    private EventType EventType1 { get; set; } = null!;
+    private Genre Genre1 { get; set; } = null!;
+    private Location Location1 { get; set; } = null!;
+    private Location Location2 { get; set; } = null!;
+    private Newsletter Newsletter1 { get; set; } = null!;
 
     private static DateTime Newsletter1Date =>
       DateTime.Parse(Newsletter1SimpleKey);
@@ -135,7 +134,7 @@ namespace SoundExplorers.Tests.Data {
     private static string Newsletter1Url =>
       "https://archive.org/details/simpsons-lat.375923";
 
-    private Newsletter Newsletter2 { get; set; }
+    private Newsletter Newsletter2 { get; set; } = null!;
 
     private static DateTime Newsletter2Date =>
       DateTime.Parse(Newsletter2SimpleKey);
@@ -143,10 +142,10 @@ namespace SoundExplorers.Tests.Data {
     private static string Newsletter2Url =>
       "https://archive.org/details/BDChaurasiasHumanAnatomyVolume1MedicosTimes";
 
-    private Series Series1 { get; set; }
-    private Series Series2 { get; set; }
-    private Set Set1 { get; set; }
-    private Set Set2 { get; set; }
+    private Series Series1 { get; set; } = null!;
+    private Series Series2 { get; set; } = null!;
+    private Set Set1 { get; set; } = null!;
+    private Set Set2 { get; set; } = null!;
 
     [Test]
     public void A010_Initial() {
@@ -269,13 +268,12 @@ namespace SoundExplorers.Tests.Data {
 
     [Test]
     public void ChangeLocationToSame() {
-      using (var session = new TestSession(DatabaseFolderPath)) {
-        session.BeginUpdate();
-        Location1 = QueryHelper.Read<Location>(Location1Name, session);
-        Event1 = Location1.Events[0];
-        Assert.DoesNotThrow(() => Event1.Location = Location1);
-        session.Commit();
-      }
+      using var session = new TestSession(DatabaseFolderPath);
+      session.BeginUpdate();
+      Location1 = QueryHelper.Read<Location>(Location1Name, session);
+      Event1 = Location1.Events[0];
+      Assert.DoesNotThrow(() => Event1.Location = Location1);
+      session.Commit();
     }
 
     /// <summary>
@@ -323,47 +321,43 @@ namespace SoundExplorers.Tests.Data {
 
     [Test]
     public void DisallowChangeDateToDuplicate() {
-      using (var session = new TestSession(DatabaseFolderPath)) {
-        session.BeginUpdate();
-        Event2 =
-          QueryHelper.Read<Event>(Event2SimpleKey, Location1, session);
-        Event2.Date = Event2Date;
-        Assert.Throws<ConstraintException>(() => Event2.Date = Event1Date);
-        session.Commit();
-      }
+      using var session = new TestSession(DatabaseFolderPath);
+      session.BeginUpdate();
+      Event2 =
+        QueryHelper.Read<Event>(Event2SimpleKey, Location1, session);
+      Event2.Date = Event2Date;
+      Assert.Throws<ConstraintException>(() => Event2.Date = Event1Date);
+      session.Commit();
     }
 
     [Test]
     public void DisallowChangeDateToMinimum() {
-      using (var session = new TestSession(DatabaseFolderPath)) {
-        session.BeginUpdate();
-        Event2 = QueryHelper.Read<Event>(Event2SimpleKey, Location1, session);
-        Assert.Throws<PropertyConstraintException>(() =>
-          Event2.Date = DateTime.MinValue);
-        session.Commit();
-      }
+      using var session = new TestSession(DatabaseFolderPath);
+      session.BeginUpdate();
+      Event2 = QueryHelper.Read<Event>(Event2SimpleKey, Location1, session);
+      Assert.Throws<PropertyConstraintException>(() =>
+        Event2.Date = DateTime.MinValue);
+      session.Commit();
     }
 
     [Test]
     public void DisallowChangeEventTypeToNull() {
-      using (var session = new TestSession(DatabaseFolderPath)) {
-        session.BeginUpdate();
-        EventType1 = QueryHelper.Read<EventType>(EventType1Name, session);
-        Event1 = QueryHelper.Read<Event>(Event1SimpleKey, Location1, session);
-        Assert.Throws<ConstraintException>(() => Event1.EventType = null);
-        session.Commit();
-      }
+      using var session = new TestSession(DatabaseFolderPath);
+      session.BeginUpdate();
+      EventType1 = QueryHelper.Read<EventType>(EventType1Name, session);
+      Event1 = QueryHelper.Read<Event>(Event1SimpleKey, Location1, session);
+      Assert.Throws<ConstraintException>(() => Event1.EventType = null);
+      session.Commit();
     }
 
     [Test]
     public void DisallowChangeLocationToNull() {
-      using (var session = new TestSession(DatabaseFolderPath)) {
-        session.BeginUpdate();
-        Location1 = QueryHelper.Read<Location>(Location1Name, session);
-        Event1 = QueryHelper.Read<Event>(Event1SimpleKey, Location1, session);
-        Assert.Throws<PropertyConstraintException>(() => Event1.Location = null);
-        session.Commit();
-      }
+      using var session = new TestSession(DatabaseFolderPath);
+      session.BeginUpdate();
+      Location1 = QueryHelper.Read<Location>(Location1Name, session);
+      Event1 = QueryHelper.Read<Event>(Event1SimpleKey, Location1, session);
+      Assert.Throws<PropertyConstraintException>(() => Event1.Location = null);
+      session.Commit();
     }
 
     [Test]
@@ -371,13 +365,12 @@ namespace SoundExplorers.Tests.Data {
       var noDate = new Event {
         QueryHelper = QueryHelper
       };
-      using (var session = new TestSession(DatabaseFolderPath)) {
-        session.BeginUpdate();
-        Location1 = QueryHelper.Read<Location>(Location1.SimpleKey, session);
-        noDate.Location = Location1;
-        Assert.Throws<PropertyConstraintException>(() => session.Persist(noDate));
-        session.Abort();
-      }
+      using var session = new TestSession(DatabaseFolderPath);
+      session.BeginUpdate();
+      Location1 = QueryHelper.Read<Location>(Location1.SimpleKey, session);
+      noDate.Location = Location1;
+      Assert.Throws<PropertyConstraintException>(() => session.Persist(noDate));
+      session.Abort();
     }
 
     [Test]
@@ -386,24 +379,22 @@ namespace SoundExplorers.Tests.Data {
         QueryHelper = QueryHelper,
         Date = Event1Date
       };
-      using (var session = new TestSession(DatabaseFolderPath)) {
-        session.BeginUpdate();
-        Location1 = QueryHelper.Read<Location>(Location1Name, session);
-        Assert.Throws<ConstraintException>(() =>
-          duplicate.Location = Location1);
-        session.Commit();
-      }
+      using var session = new TestSession(DatabaseFolderPath);
+      session.BeginUpdate();
+      Location1 = QueryHelper.Read<Location>(Location1Name, session);
+      Assert.Throws<ConstraintException>(() =>
+        duplicate.Location = Location1);
+      session.Commit();
     }
 
     [Test]
     public void DisallowUnpersistEventWithSets() {
-      using (var session = new TestSession(DatabaseFolderPath)) {
-        session.BeginUpdate();
-        Event1 = QueryHelper.Read<Event>(Event1SimpleKey, Location1, session);
-        Assert.Throws<ConstraintException>(() =>
-          Event1.Unpersist(session));
-        session.Commit();
-      }
+      using var session = new TestSession(DatabaseFolderPath);
+      session.BeginUpdate();
+      Event1 = QueryHelper.Read<Event>(Event1SimpleKey, Location1, session);
+      Assert.Throws<ConstraintException>(() =>
+        Event1.Unpersist(session));
+      session.Commit();
     }
 
     [Test]
@@ -475,7 +466,7 @@ namespace SoundExplorers.Tests.Data {
         "Newsletter1.Events.Count after deleting Event1");
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
-        Event1 = QueryHelper.Find<Event>(Event1SimpleKey, Location1, session);
+        Event1 = QueryHelper.Find<Event>(Event1SimpleKey, Location1, session)!;
         EventType1 = QueryHelper.Read<EventType>(EventType1Name, session);
         Location1 = QueryHelper.Read<Location>(Location1Name, session);
         Newsletter1 =

@@ -16,7 +16,7 @@ namespace SoundExplorers.Tests.Controller {
     private QueryHelper QueryHelper { get; }
     private SessionBase Session { get; }
 
-    protected override Option CreateOption(string name, object defaultValue = null) {
+    protected override Option CreateOption(string name, object? defaultValue = null) {
       return new TestOption(QueryHelper, Session, name, defaultValue);
     }
   }

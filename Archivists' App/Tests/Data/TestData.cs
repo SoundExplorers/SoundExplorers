@@ -9,7 +9,7 @@ using VelocityDb.Session;
 
 namespace SoundExplorers.Tests.Data {
   public class TestData {
-    private EventType _defaultEventType;
+    private EventType? _defaultEventType;
 
     static TestData() {
       // ReSharper disable once StringLiteralTypo
@@ -56,7 +56,7 @@ namespace SoundExplorers.Tests.Data {
     public IList<Act> Acts { get; }
 
     private EventType DefaultEventType =>
-      _defaultEventType ?? (_defaultEventType = GetDefaultEventType());
+      _defaultEventType ??= GetDefaultEventType();
 
     public IList<Event> Events { get; }
     public IList<EventType> EventTypes { get; }
@@ -90,7 +90,7 @@ namespace SoundExplorers.Tests.Data {
     }
 
     public void AddEventsPersisted(int count, [NotNull] SessionBase session,
-      Location location = null, EventType eventType = null) {
+      Location? location = null, EventType? eventType = null) {
       var date = DateTime.Parse("2020/01/09");
       for (int i = 0; i < count; i++) {
         var @event = new Event {
@@ -164,7 +164,7 @@ namespace SoundExplorers.Tests.Data {
     }
 
     public void AddPiecesPersisted(int count, [NotNull] SessionBase session,
-      Set set = null) {
+      Set? set = null) {
       int pieceNo = 1;
       for (int i = 0; i < count; i++) {
         var piece = new Piece {
@@ -198,7 +198,7 @@ namespace SoundExplorers.Tests.Data {
     }
 
     public void AddSetsPersisted(int count, [NotNull] SessionBase session,
-      Event @event = null, Genre genre = null) {
+      Event? @event = null, Genre? genre = null) {
       int setNo = 1;
       for (int i = 0; i < count; i++) {
         var set = new Set {

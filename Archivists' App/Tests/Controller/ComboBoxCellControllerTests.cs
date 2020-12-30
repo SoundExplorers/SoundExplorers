@@ -36,23 +36,23 @@ namespace SoundExplorers.Tests.Controller {
       Session.DeleteDatabaseFolderIfExists();
     }
 
-    private ComboBoxCellController CellController { get; set; }
-    private MockView<ComboBoxCellController> CellView { get; set; }
-    private TestMainGridController MainGridController { get; set; }
-    private MockEditorView EditorView { get; set; }
-    private TestData Data { get; set; }
-    private TestEditorController EditorController { get; set; }
-    private QueryHelper QueryHelper { get; set; }
-    private TestSession Session { get; set; }
+    private ComboBoxCellController CellController { get; set; } = null!;
+    private MockView<ComboBoxCellController> CellView { get; set; } = null!;
+    private TestMainGridController MainGridController { get; set; } = null!;
+    private MockEditorView EditorView { get; set; } = null!;
+    private TestData Data { get; set; } = null!;
+    private TestEditorController EditorController { get; set; } = null!;
+    private QueryHelper QueryHelper { get; set; } = null!;
+    private TestSession Session { get; set; } = null!;
 
     [Test]
     public void FetchItems() {
-      string key = ComboBoxCellController.GetKey(null);
+      string key = ComboBoxCellController.GetKey(null)!;
       Assert.IsNull(key, "Null key");
       Session.BeginUpdate();
       Data.Newsletters[0].Date = DateTime.Parse("1960-09-13");
       Session.Commit();
-      key = ComboBoxCellController.GetKey(Data.Newsletters[0]);
+      key = ComboBoxCellController.GetKey(Data.Newsletters[0])!;
       Assert.AreEqual("1960/09/13", key, "Date key");
       CellController = CreateCellController("Series");
       Assert.AreEqual("Event", CellController.TableName, "TableName");
@@ -71,19 +71,19 @@ namespace SoundExplorers.Tests.Controller {
     [Test]
     public void StringKeyValue() {
       const string keyValue = "ABC";
-      string key = ComboBoxCellController.GetKey(keyValue);
+      string key = ComboBoxCellController.GetKey(keyValue)!;
       Assert.AreEqual(keyValue, key);
     }
 
     [NotNull]
     private ComboBoxCellController CreateCellController([NotNull] string columnName) {
-      return new ComboBoxCellController(CellView, MainGridController, columnName);
+      return new(CellView, MainGridController, columnName);
     }
 
     [NotNull]
     private TestEditorController CreateEditorController(
       [NotNull] Type mainListType) {
-      return new TestEditorController(mainListType,
+      return new(mainListType,
         EditorView, QueryHelper, Session);
     }
   }
