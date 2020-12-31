@@ -21,6 +21,7 @@ namespace SoundExplorers.View {
     public GridBase? FocusedGrid { get; private set; }
     private MainView MainView => (MainView)MdiParent;
     private SizeableFormOptions SizeableFormOptions { get; set; } = null!;
+    private bool IsClosed { get; set; }
     public bool IsFocusingParentGrid { get; set; }
     IMainGrid IEditorView.MainGrid => MainGrid;
     IParentGrid IEditorView.ParentGrid => ParentGrid;
@@ -352,6 +353,7 @@ namespace SoundExplorers.View {
     }
 
     protected override void OnFormClosed(FormClosedEventArgs e) {
+      IsClosed = true;
       base.OnFormClosed(e);
       //MainGrid.RowValidated -= new DataGridViewCellEventHandler(MainGrid_RowValidated);
       //MainGrid.ReadOnly = true;
@@ -521,6 +523,15 @@ namespace SoundExplorers.View {
       // ReSharper disable once InconsistentNaming
       const int WM_CLOSE = 0x0010;
       if (m.Msg == WM_CLOSE) {
+        if (IsClosed) {
+          // The editor window has already been closed programatically
+          // (in MainView.WindowsCloseAllMenuItem_Click,
+          // when the main window is closed while the editor window is still open).
+          // As a result,
+          // the WM_CLOSE message is not received till AFTER the window has closed.
+          // So we need to block the editor closure procedures from being run again.
+          return;
+        }
         // Attempting to close Form
         Controller.IsClosing = true;
       }
