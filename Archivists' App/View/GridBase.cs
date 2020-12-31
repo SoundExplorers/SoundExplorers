@@ -10,6 +10,7 @@ namespace SoundExplorers.View {
     protected GridBase() {
       AllowUserToOrderColumns = true;
       ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+      ShowCellErrors = false;
       ShowCellToolTips = false;
     }
 

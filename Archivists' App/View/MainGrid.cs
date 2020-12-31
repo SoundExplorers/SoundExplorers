@@ -193,6 +193,7 @@ namespace SoundExplorers.View {
     }
 
     protected override void OnGotFocus(EventArgs e) {
+      //Debug.WriteLine("MainGrid.OnGotFocus");
       base.OnGotFocus(e);
       if (IsJustPopulated) {
         IsJustPopulated = false;
