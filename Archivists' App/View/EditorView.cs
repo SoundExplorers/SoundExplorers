@@ -355,9 +355,6 @@ namespace SoundExplorers.View {
     protected override void OnFormClosed(FormClosedEventArgs e) {
       IsClosed = true;
       base.OnFormClosed(e);
-      //MainGrid.RowValidated -= new DataGridViewCellEventHandler(MainGrid_RowValidated);
-      //MainGrid.ReadOnly = true;
-      //Refresh();
       SizeableFormOptions.Save();
       // if (Entities is ArtistInImageList
       //     || Entities is ImageList) {
