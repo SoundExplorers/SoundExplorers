@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Drawing;
 using System.Windows.Forms;
@@ -167,10 +167,11 @@ namespace SoundExplorers.View {
     /// </remarks>
     protected override void OnCurrentCellDirtyStateChanged(EventArgs e) {
       base.OnCurrentCellDirtyStateChanged(e);
-      //Debug.WriteLine($"MainGrid_CurrentCellDirtyStateChanged: IsCurrentCellDirty = {MainGrid.IsCurrentCellDirty}");
+      // Debug.WriteLine(
+      //   $"MainGrid.CurrentCellDirtyStateChanged: IsCurrentCellDirty = {IsCurrentCellDirty}");
       if (CurrentCell is ComboBoxCell && IsCurrentCellDirty) {
         // Debug.WriteLine(
-        //   "MainGrid_CurrentCellDirtyStateChanged: ComboBoxCell, IsCurrentCellDirty");
+        //   "MainGrid.OnCurrentCellDirtyStateChanged: ComboBoxCell, IsCurrentCellDirty");
         // This fires the cell value changed handler MainGrid_CellValueChanged.
         CommitEdit(DataGridViewDataErrorContexts.CurrentCellChange);
       }
