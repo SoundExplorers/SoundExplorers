@@ -269,7 +269,7 @@ namespace SoundExplorers.View {
       // Debug.WriteLine("ColumnIndex = " + e.ColumnIndex);
       // Debug.WriteLine("RowIndex = " + e.RowIndex);
       string columnName = MainGrid.Columns[e.ColumnIndex].Name;
-      MainGrid.Controller.OnExistingRowCellUpdateError(e.RowIndex, columnName,
+      MainGrid.Controller.OnExistingRowCellEditError(e.RowIndex, columnName,
         e.Exception);
     }
 

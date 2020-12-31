@@ -10,10 +10,10 @@ namespace SoundExplorers.View {
     protected GridBase() {
       AllowUserToOrderColumns = true;
       ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-      // Fixes a problem where, when the user cancelled (by pressing Esc) an edit of a
-      // text cell on the insertion row after typing text, the program would crash.
+      // Fixes a .Net 5 problem where, when the user cancelled (by pressing Esc) an edit
+      // of a text cell on the insertion row after typing text, the program would crash.
       ShowCellErrors = false;
-      ShowCellToolTips = false;
+      ShowCellToolTips = false; // Before .Net 5, tooltips were off by default.
     }
 
     public bool CanCut => CanSelectAll && CopyableText.Length > 0;

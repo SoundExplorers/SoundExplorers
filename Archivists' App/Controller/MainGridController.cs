@@ -57,7 +57,7 @@ namespace SoundExplorers.Controller {
       return Columns.ContainsKey(columnName);
     }
 
-    public void OnExistingRowCellUpdateError(int rowIndex, [NotNull] string columnName,
+    public void OnExistingRowCellEditError(int rowIndex, [NotNull] string columnName,
       [CanBeNull] Exception exception) {
       switch (exception) {
         case DatabaseUpdateErrorException databaseUpdateErrorException:
