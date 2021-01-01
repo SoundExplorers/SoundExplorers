@@ -141,6 +141,11 @@ namespace SoundExplorers.View {
       }
     }
 
+    protected override void OnGotFocus(EventArgs e) {
+      base.OnGotFocus(e);
+      MainView.Cursor = Cursors.Default;
+    }
+
     /// <summary>
     ///   When mouse button 2 is clicked on a cell,
     ///   the cell will become the current cell.

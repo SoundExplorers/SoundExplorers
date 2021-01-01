@@ -160,12 +160,18 @@ namespace SoundExplorers.View {
       if (SelectEditorView.ShowDialog(this) == DialogResult.Cancel) {
         return;
       }
+      Cursor = Cursors.WaitCursor;
+      BeginInvoke((Action)NewEditorAsync);
+    }
+
+    private void NewEditorAsync() {
       try {
         var editorView = CreateEditorView();
         editorView.MdiParent = this;
         editorView.Show();
         BeginInvoke((Action)OnNewEditorOpened);
       } catch (ApplicationException ex) {
+        Cursor = Cursors.Default;
         MessageBox.Show(
           ex.Message,
           Application.ProductName,
@@ -183,6 +189,11 @@ namespace SoundExplorers.View {
       if (SelectEditorView.ShowDialog(this) == DialogResult.Cancel) {
         return;
       }
+      Cursor = Cursors.WaitCursor;
+      BeginInvoke((Action)OpenEditorAsync);
+    }
+
+    private void OpenEditorAsync() {
       // When the grid is bound to a second or subsequent table,
       // the type of each cell, which determines the cell editor to be used,
       // is always DataGridViewTextBoxCell,
@@ -224,23 +235,19 @@ namespace SoundExplorers.View {
         //newTableForm.Location = oldLocation;
         //oldTableForm.Dispose();
       } catch (ApplicationException ex) {
+        Cursor = Cursors.Default;
         MessageBox.Show(
           ex.Message,
           Application.ProductName,
           MessageBoxButtons.OK,
           MessageBoxIcon.Error);
-        //} catch (Exception ex) {
-        //    MessageBox.Show(
-        //        ex.ToString(),
-        //        Application.ProductName,
-        //        MessageBoxButtons.OK,
-        //        MessageBoxIcon.Error);
       }
     }
 
     private void FileRefreshMenuItem_Click(object? sender, EventArgs e) {
       if (MdiChildren.Any()) {
-        EditorView?.Refresh();
+        Cursor = Cursors.WaitCursor;
+        BeginInvoke((Action)delegate { EditorView?.Refresh(); });
       }
     }
 

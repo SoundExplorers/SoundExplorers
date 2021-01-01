@@ -433,7 +433,6 @@ namespace SoundExplorers.View {
       if (Controller.IsParentGridToBeShown) {
         SetInitialGridSplitterDistance();
       }
-      MainView.Cursor = Cursors.Default;
       //ImageSplitContainer.Panel2Collapsed = true;
       // We need to work out whether we need the image panel
       // before we position the grid splitter.

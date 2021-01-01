@@ -194,13 +194,13 @@ namespace SoundExplorers.View {
 
     protected override void OnGotFocus(EventArgs e) {
       //Debug.WriteLine("MainGrid.OnGotFocus");
-      base.OnGotFocus(e);
       if (IsJustPopulated) {
         IsJustPopulated = false;
         if (EditorView.Controller.IsParentGridToBeShown) {
           BeginInvoke((Action)MakeNewRowCurrent);
         }
       }
+      base.OnGotFocus(e);
     }
 
     protected override void OnKeyDown(KeyEventArgs e) {
