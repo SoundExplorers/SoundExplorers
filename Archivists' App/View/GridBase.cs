@@ -10,6 +10,8 @@ namespace SoundExplorers.View {
     protected GridBase() {
       AllowUserToOrderColumns = true;
       ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+      Margin = new Padding(4);
+      RowHeadersWidth = 51;
       // Fixes a .Net 5 problem where, when the user cancelled (by pressing Esc) an edit
       // of a text cell on the insertion row after typing text, the program would crash.
       ShowCellErrors = false;
