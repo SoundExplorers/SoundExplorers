@@ -132,12 +132,12 @@ namespace SoundExplorers.View {
       // Before a form is displayed, the WindowState property is
       // always set to Normal (0), regardless of its initial setting.
       // So we need to store the UserOption in WindowStateOption and
-      // then set Me.WindowState to WindowStateOption.  Otherwise
+      // then set Form.WindowState to WindowStateOption.  Otherwise
       // WindowStateOption will always be 0, which would cause the
       // following error:
       // When the window is closed maximised and then reopened, it would
       // be impossible to set the UserOption back to Normal because
-      // Form_Unload will not update the UserOption if Me.WindowState
+      // Form_Unload will not update the UserOption if Form.WindowState
       // = WindowStateOption.
       Form.WindowState = (FormWindowState)Controller.WindowState;
     }
@@ -194,17 +194,19 @@ namespace SoundExplorers.View {
     /// </summary>
     private void SizeChildForm() {
       if (Form.MdiParent.MdiChildren.Length > 1) {
-        var lastActiveChildForm = Form.MdiParent.ActiveMdiChild ??
-                                  throw new NullReferenceException(
-                                    nameof(Form.MdiParent.ActiveMdiChild));
+        var lastActiveChildForm = Form.MdiParent.ActiveMdiChild!;
         Form.Size = new Size(lastActiveChildForm.Width,
           lastActiveChildForm.Height);
-      } else if (Controller.Height >= Form.MinimumSize.Height
-                 && Controller.Height > 0
-                 && Controller.Width >= Form.MinimumSize.Width
-                 && Controller.Width > 0) {
-        Form.Size = new Size(Controller.Width, Controller.Height);
-        Form.WindowState = (FormWindowState)Controller.WindowState;
+      } else {
+        if (Controller.Height >= Form.MinimumSize.Height
+            && Controller.Height > 0
+            && Controller.Width >= Form.MinimumSize.Width
+            && Controller.Width > 0) {
+          Form.Size = new Size(Controller.Width, Controller.Height);
+        }
+        Form.BeginInvoke((Action)delegate {
+          Form.WindowState = (FormWindowState)Controller.WindowState;
+        });
       }
     }
   } //End of class
