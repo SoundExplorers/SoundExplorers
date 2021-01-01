@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Drawing;
 using System.Windows.Forms;
 using SoundExplorers.Controller;
 
@@ -148,9 +149,36 @@ namespace SoundExplorers.View {
       MainView.Cursor = Cursors.Default;
     }
 
+    protected override void OnKeyDown(KeyEventArgs e) {
+      switch (e.KeyData) {
+        case Keys.Apps: // Context menu key
+        case Keys.Shift | Keys.F10: // Alternate context menu keyboard shortcut
+          var cellRectangle = GetCellDisplayRectangle(
+            CurrentCell.ColumnIndex,
+            CurrentRow!.Index, true);
+          var point = new Point(cellRectangle.Right, cellRectangle.Bottom);
+          ContextMenu.Show(this, point);
+          // When base.ContextMenuStrip was set to RowContextMenu,
+          // neither e.Handled nor e.SuppressKeyPress nor not calling base.OnKeyDown
+          // stopped the context menu from being shown a second time
+          // immediately afterwards in the default wrong position.
+          // The solution is not to set
+          // base.ContextMenuStrip to RowContextMenu and instead to
+          // show the context menu in grid event handlers:
+          // here when shown with one of the two standard keyboard shortcuts:
+          // EditorView.Grid_MouseDown when shown with a right mouse click.
+          e.Handled = e.SuppressKeyPress = true;
+          break;
+        default:
+          base.OnKeyDown(e);
+          break;
+      } //End of switch
+    }
+
     /// <summary>
     ///   When mouse button 2 is clicked on a cell,
-    ///   the cell will become the current cell.
+    ///   the cell will become the current cell
+    ///   and, unless the cell is already being edited, the context menu will be shown.
     /// </summary>
     protected override void OnMouseDown(MouseEventArgs e) {
       if (e.Button == MouseButtons.Right) {
@@ -158,6 +186,9 @@ namespace SoundExplorers.View {
         var cell = GetCellAtClientCoOrdinates(e.X, e.Y);
         if (cell != null) { // Cell found
           CurrentCell = cell;
+          if (!IsCurrentCellInEditMode) {
+            ContextMenu.Show(this, e.Location);
+          }
         }
       }
       base.OnMouseDown(e);

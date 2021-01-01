@@ -1,14 +1,10 @@
 using System;
 using System.Collections;
-using System.Drawing;
 using System.Windows.Forms;
 using SoundExplorers.Controller;
 
 namespace SoundExplorers.View {
   internal class MainGrid : GridBase, IMainGrid {
-    private new DataGridViewRow CurrentRow =>
-      base.CurrentRow ?? throw new NullReferenceException(nameof(CurrentRow));
-
     public new MainGridController Controller {
       get => (MainGridController)base.Controller;
       private set => base.Controller = value;
@@ -52,13 +48,13 @@ namespace SoundExplorers.View {
     }
 
     public void RestoreCurrentRowCellErrorValue(int columnIndex, object errorValue) {
-      ((ICanRestoreErrorValue)CurrentRow.Cells[columnIndex]).RestoreErrorValue(
+      ((ICanRestoreErrorValue)CurrentRow!.Cells[columnIndex]).RestoreErrorValue(
         errorValue);
     }
 
     public void SelectCurrentRowOnly() {
       ClearSelection();
-      CurrentRow.Selected = true;
+      CurrentRow!.Selected = true;
     }
 
     public override void Populate(IList? list = null) {
@@ -146,7 +142,7 @@ namespace SoundExplorers.View {
       if (CurrentCell is ComboBoxCell comboBoxCell) {
         // Debug.WriteLine("MainGrid_CellValueChanged, ComboBoxCell");
         var cellValue = CurrentCell.Value;
-        int rowIndex = CurrentRow.Index;
+        int rowIndex = CurrentRow!.Index;
         comboBoxCell.Controller.OnCellValueChanged(rowIndex, cellValue);
       }
     }
@@ -210,45 +206,10 @@ namespace SoundExplorers.View {
             BeginEdit(false);
           }
           break;
-        case Keys.Apps: // Context menu key
-        case Keys.Shift | Keys.F10: // Alternate context menu keyboard shortcut
-          var cellRectangle = GetCellDisplayRectangle(
-            CurrentCell.ColumnIndex,
-            CurrentRow.Index, true);
-          var point = new Point(cellRectangle.Right, cellRectangle.Bottom);
-          ContextMenu.Show(this, point);
-          // When base.ContextMenuStrip was set to RowContextMenu,
-          // neither e.Handled nor e.SuppressKeyPress nor not calling base.OnKeyDown
-          // stopped the context menu from being shown a second time
-          // immediately afterwards in the default wrong position.
-          // The solution is not to set
-          // base.ContextMenuStrip to RowContextMenu and instead to
-          // show the context menu in grid event handlers:
-          // here when shown with one of the two standard keyboard shortcuts:
-          // EditorView.Grid_MouseDown when shown with a right mouse click.
-          e.Handled = e.SuppressKeyPress = true;
-          break;
         default:
           base.OnKeyDown(e);
           break;
       } //End of switch
-    }
-
-    /// <summary>
-    ///   When mouse button 2 is clicked on a cell
-    ///   and unless the cell is being edited,
-    ///   the context menu will be shown:
-    ///   the base method will already have made
-    ///   that cell the current cell.
-    /// </summary>
-    protected override void OnMouseDown(MouseEventArgs e) {
-      if (e.Button == MouseButtons.Right) {
-        if (!IsCurrentCellInEditMode) {
-          ContextMenu.Show(this, e.Location);
-        }
-      } else {
-        base.OnMouseDown(e);
-      }
     }
 
     /// <summary>
