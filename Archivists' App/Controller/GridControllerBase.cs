@@ -25,7 +25,7 @@ namespace SoundExplorers.Controller {
     /// </summary>
     protected abstract IEntityList List { get; }
     
-    protected bool IsPopulating { get; set; }
+    protected bool IsPopulating { get; private set; }
     protected int PreviousRowIndex { get; set; }
 
     public virtual void OnRowEnter(int rowIndex) {

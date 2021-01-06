@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Diagnostics;
 using System.Windows.Forms;
 using SoundExplorers.Controller;
 
@@ -12,6 +13,7 @@ namespace SoundExplorers.View {
 
     private int FirstVisibleColumnIndex { get; set; }
     private bool IsJustPopulated { get; set; }
+    private bool IsPopulating { get; set; }
 
     public TextBox TextBox =>
       (TextBox)EditingControl ??
@@ -58,9 +60,13 @@ namespace SoundExplorers.View {
     }
 
     public override void Populate(IList? list = null) {
+      Debug.WriteLine("MainGrid.Populate");
+      IsPopulating = true;
       base.Populate(list);
       EditorView.OnMainGridPopulated();
       IsJustPopulated = true;
+      IsPopulating = false;
+      Debug.WriteLine("MainGrid.Populate END");
     }
 
     private void ConfigureColumn(DataGridViewColumn column) {
@@ -108,6 +114,28 @@ namespace SoundExplorers.View {
       // This triggers OnRowEnter.
       // Debug.WriteLine("MainGrid.MakeNewRowCurrent");
       MakeRowCurrent(Rows.Count - 1);
+    }
+
+    /// <summary>
+    ///   Blocks execution of the base method, which calls the internal method
+    ///   DataGridView.MakeFirstDisplayedCellCurrentCell,
+    ///   thus triggering a RowEnter on what would usually be the wrong row,
+    ///   in which case the population of the the main grid on change of parent row
+    ///   happens an unwanted extra time and for the wrong row:
+    ///   see ParentGridController.OnRowEnter.
+    ///   We need to have full control of row currencies on the two grids
+    ///   for this population of the the main grid to work.
+    /// </summary>
+    protected override void OnBindingContextChanged(EventArgs e) {
+      Debug.WriteLine($"MainGrid.OnBindingContextChanged: IsPopulating = {IsPopulating}; IsJustPopulated = {IsJustPopulated}");
+      base.OnBindingContextChanged(e);
+      // if (IsPopulating) {
+      //   if (!EditorView.Controller.IsParentGridToBeShown) {
+      //     base.OnBindingContextChanged(e);
+      //   }
+      // } else {
+      //   base.OnBindingContextChanged(e);
+      // }
     }
 
     protected override void OnCellBeginEdit(DataGridViewCellCancelEventArgs e) {
