@@ -25,9 +25,10 @@ metadata and other documents available to the public.  So the archivists' applic
 a facility to export the data to the web application's data store.
 
 The archivists' application, development of which is well underway, is written in C# for .Net 5.0,
-with a Windows Forms graphical user interface.  Data is saved to a PC-based VelocityDB
-object-oriented database.  A facility will be provided to export the data to the web application's
-data store.
+with a Windows Forms graphical user interface.  Data is saved to a VelocityDB object-oriented
+database.  As .Net 5.0 and VelocityDB support multiple operating systems, there is potential for
+enhancing the application to run on operating systems other than Windows,
+by implementing another type of user interface.
 
 DATA ANALYSIS
 
