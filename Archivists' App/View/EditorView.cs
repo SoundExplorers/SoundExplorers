@@ -441,6 +441,7 @@ namespace SoundExplorers.View {
       if (ParentGrid.RowCount > 0) {
         ParentGrid.MakeRowCurrent(ParentGrid.RowCount - 1);
       }
+      OnPopulatedAsync();
     }
 
     private void OnPopulatedAsync() {
@@ -461,9 +462,9 @@ namespace SoundExplorers.View {
         return;
       }
       //Debug.WriteLine("EditorView_VisibleChanged: " + this.Text);
-      if (Controller.IsParentGridToBeShown) {
-        BeginInvoke((Action)OnParentGridShownAsync);
-      }
+      // if (Controller.IsParentGridToBeShown) {
+      //   BeginInvoke((Action)OnParentGridShownAsync);
+      // }
       //ImageSplitContainer.Panel2Collapsed = true;
       // We need to work out whether we need the image panel
       // before we position the grid splitter.
@@ -500,22 +501,28 @@ namespace SoundExplorers.View {
         if (ParentGrid.RowCount > 0) {
           MainGrid.Populate(ParentGrid.Controller.GetChildrenForMainList(
             ParentGrid.RowCount - 1));
+          if (MainGrid.RowCount > 0) {
+            MainGrid.MakeRowCurrent(MainGrid.RowCount - 1);
+          }
           // If the editor window is being loaded,
           // the parent grid's current row is set asynchronously
           // in OnParentGridShownAsync to ensure that it is scrolled into view.
           // Otherwise, i.e. if the grid contents are being refreshed,
           // we need to do it here.
-          if (!Visible) {
+          if (Visible) { // Refreshing
             ParentGrid.MakeRowCurrent(ParentGrid.RowCount - 1);
+            BeginInvoke((Action)OnPopulatedAsync);
+          } else { // Showing for first time
+            BeginInvoke((Action)OnParentGridShownAsync);
           }
         }
       } else {
         MainGrid.Populate();
+        if (MainGrid.RowCount > 0) {
+          MainGrid.MakeRowCurrent(MainGrid.RowCount - 1);
+        }
+        BeginInvoke((Action)OnPopulatedAsync);
       }
-      if (MainGrid.RowCount > 0) {
-        MainGrid.MakeRowCurrent(MainGrid.RowCount - 1);
-      }
-      BeginInvoke((Action)OnPopulatedAsync);
       Debug.WriteLine("EditorView.Populate END");
     }
 
