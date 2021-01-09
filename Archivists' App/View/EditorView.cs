@@ -432,7 +432,7 @@ namespace SoundExplorers.View {
       }
       //Debug.WriteLine("EditorView_VisibleChanged: " + this.Text);
       if (Controller.IsParentGridToBeShown) {
-        SetInitialGridSplitterDistance();
+        BeginInvoke((Action)SetInitialGridSplitterDistance);
       }
       //ImageSplitContainer.Panel2Collapsed = true;
       // We need to work out whether we need the image panel
