@@ -69,6 +69,7 @@ namespace SoundExplorers.View {
         return;
       }
       // Column will be shown
+      base.ConfigureColumn(column);
       if (FirstVisibleColumnIndex == -1) {
         FirstVisibleColumnIndex = column.Index;
       }
