@@ -158,7 +158,7 @@ namespace SoundExplorers.Controller {
       //   $"MainGridController.OnRowValidated: row {rowIndex}, IsRemovingInvalidInsertionRow == {MainList.IsRemovingInvalidInsertionRow}");
       CurrentRowIndex = -1;
       if (List.IsRemovingInvalidInsertionRow || EditorView.IsFocusingParentGrid || 
-          EditorView.Controller.IsClosing ||
+          EditorView.IsPopulating || EditorView.Controller.IsClosing ||
           EditorView.Controller.MainController.IsClosing) {
         return;
       }
