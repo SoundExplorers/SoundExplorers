@@ -476,13 +476,11 @@ namespace SoundExplorers.View {
           ParentGrid.MakeRowCurrent(ParentGrid.RowCount - 1);
         }
       } else {
-        MainGrid.CellColorScheme.RestoreToDefault();
         MainGrid.Populate();
         if (MainGrid.RowCount > 0) {
           MainGrid.MakeRowCurrent(MainGrid.RowCount - 1);
         }
       }
-      // Controller.Populate();
       Text = MainGrid.Controller.TableName;
       BeginInvoke((Action)delegate {
         Debug.WriteLine("Async setting EditorView.IsPopulating to false");
