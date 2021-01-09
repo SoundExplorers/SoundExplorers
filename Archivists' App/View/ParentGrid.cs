@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Diagnostics;
 using System.Windows.Forms;
 using SoundExplorers.Controller;
 
@@ -16,17 +17,17 @@ namespace SoundExplorers.View {
       get => (ParentGridController)base.Controller;
       private set => base.Controller = value;
     }
+    
+    private int PreviousRowIndex { get; set; }
 
     public void SetController(ParentGridController controller) {
       Controller = controller;
     }
 
-    protected override void ConfigureColumns() {
-      foreach (DataGridViewColumn column in Columns) {
-        if (column.ValueType == typeof(DateTime)) {
-          column.DefaultCellStyle.Format = EditorController.DateFormat;
-        }
-      } // End of foreach
+    protected override void OnGotFocus(EventArgs e) {
+      Debug.WriteLine("ParentGrid.OnGotFocus");
+      EditorView.IsFocusingParentGrid = false;
+      base.OnGotFocus(e);
     }
 
     /// <summary>
@@ -35,17 +36,30 @@ namespace SoundExplorers.View {
     ///   child entities of the entity at the specified row index.
     /// </summary>
     protected override void OnRowEnter(DataGridViewCellEventArgs e) {
+      Debug.WriteLine($"ParentGrid.OnRowEnter: row {e.RowIndex}");
       base.OnRowEnter(e);
-      Controller.OnRowEnter(e.RowIndex);
+      //Controller.OnRowEnter(e.RowIndex);
+      if (EditorView.IsPopulating || e.RowIndex == PreviousRowIndex) {
+        return;
+      }
+      EditorView.MainGrid.Populate(Controller.GetChildrenForMainList(e.RowIndex));
+      if (EditorView.MainGrid.RowCount > 0) {
+        EditorView.MainGrid.MakeRowCurrent(EditorView.MainGrid.RowCount - 1);
+      }
+      // BeginInvoke((Action)delegate {
+      //   EditorView.MainGrid.Populate(Controller.GetChildrenForMainList(e.RowIndex));
+      //   if (EditorView.MainGrid.RowCount > 0) {
+      //     EditorView.MainGrid.MakeRowCurrent(EditorView.MainGrid.RowCount - 1);
+      //   }
+      // });
+      PreviousRowIndex = e.RowIndex;
     }
 
     public override void Populate(IList? list = null) {
+      Debug.WriteLine("ParentGrid.Populate");
+      PreviousRowIndex = -1;
       base.Populate(list);
-      if (RowCount > 0) {
-        // Make the last row current.
-        // This triggers OnRowEnter, which will populate the main grid.
-        CurrentCell = Rows[^1].Cells[0];
-      }
+      Debug.WriteLine("ParentGrid.Populate: END");
     }
   }
 }

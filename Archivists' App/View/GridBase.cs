@@ -17,6 +17,7 @@ namespace SoundExplorers.View {
       // of a text cell on the insertion row after typing text, the program would crash.
       ShowCellErrors = false;
       ShowCellToolTips = false; // Before .Net 5, tooltips were off by default.
+      CellColorScheme = new CellColorScheme(this);
     }
 
     public bool CanCut => CanSelectAll && CopyableText.Length > 0;
@@ -30,6 +31,8 @@ namespace SoundExplorers.View {
       !ReadOnly && !IsCurrentCellInEditMode && SelectedRows.Count > 0 &&
       !SelectedRows.Contains(NewRow);
 
+    public CellColorScheme CellColorScheme { get; }
+
     protected GridControllerBase Controller { get; set; } = null!;
 
     public GridContextMenu ContextMenu =>
@@ -39,6 +42,8 @@ namespace SoundExplorers.View {
       Controller.EditorView as EditorView ??
       throw new InvalidOperationException(
         "Cannot cast Controller.EditorView to EditorView");
+    
+    protected int FirstVisibleColumnIndex { get; set; }
 
     public bool IsTextBoxCellCurrent =>
       CurrentCell?.OwningColumn.CellTemplate is TextBoxCell;
@@ -87,7 +92,21 @@ namespace SoundExplorers.View {
       deleteSelectedRowsMenuItem.Enabled = CanDeleteSelectedRows;
     }
 
-    protected abstract void ConfigureColumns();
+    protected virtual void ConfigureColumn(DataGridViewColumn column) {
+      // Making every column explicitly not sortable prevents the program
+      // from crashing if F3 in pressed while the grid is focused.
+      column.SortMode = DataGridViewColumnSortMode.NotSortable;
+      column.HeaderText = Controller.GetColumnDisplayName(column.Name);
+      if (column.ValueType == typeof(DateTime)) {
+        column.DefaultCellStyle.Format = EditorController.DateFormat;
+      }
+    }
+
+    private void ConfigureColumns() {
+      foreach (DataGridViewColumn column in Columns) {
+        ConfigureColumn(column);
+      }
+    }
 
     /// <summary>
     ///   Returns the cell that is at the specified client co-ordinates of the main grid.
@@ -109,33 +128,11 @@ namespace SoundExplorers.View {
       return null;
     }
 
-    /// <summary>
-    ///   Inverts the foreground and background colours
-    ///   of both selected and unselected cells
-    ///   in the grid.
-    /// </summary>
-    public void InvertColors() {
-      var swapColor = DefaultCellStyle.BackColor;
-      DefaultCellStyle.BackColor = DefaultCellStyle.ForeColor;
-      DefaultCellStyle.ForeColor = swapColor;
-      swapColor = DefaultCellStyle.SelectionBackColor;
-      DefaultCellStyle.SelectionBackColor = DefaultCellStyle.SelectionForeColor;
-      DefaultCellStyle.SelectionForeColor = swapColor;
+    public void MakeRowCurrent(int rowIndex) {
+      // This triggers OnRowEnter.
+      // Debug.WriteLine($"MainGrid.MakeRowCurrent: row {rowIndex}");
+      CurrentCell = Rows[rowIndex].Cells[FirstVisibleColumnIndex];
     }
-    //
-    // /// <summary>
-    // ///   Blocks execution of the base method, which calls the internal method
-    // ///   DataGridView.MakeFirstDisplayedCellCurrentCell,
-    // ///   thus triggering a RowEnter on what would usually be the wrong row,
-    // ///   in which case the population of the the main grid on change of parent row
-    // ///   happens an unwanted extra time and for the wrong row:
-    // ///   see ParentGridController.OnRowEnter.
-    // ///   We need to have full control of row currencies on the two grids
-    // ///   for this population of the the main grid to work.
-    // /// </summary>
-    // protected override void OnBindingContextChanged(EventArgs e) {
-    //   // Debug.WriteLine($"GridBase.OnBindingContextChanged: {Name}");
-    // }
 
     protected override void OnCurrentCellChanged(EventArgs e) {
       base.OnCurrentCellChanged(e);
@@ -146,6 +143,7 @@ namespace SoundExplorers.View {
 
     protected override void OnGotFocus(EventArgs e) {
       base.OnGotFocus(e);
+      EditorView.FocusedGrid = this;
       MainView.Cursor = Cursors.Default;
     }
 
@@ -207,26 +205,6 @@ namespace SoundExplorers.View {
       DataSource = Controller.BindingList;
       ConfigureColumns();
       AutoResizeColumns();
-    }
-
-    /// <summary>
-    ///   Swaps the colour schemes of the two grids.
-    /// </summary>
-    public void SwapColorsWith(DataGridView otherGrid) {
-      var swapColor = DefaultCellStyle.BackColor;
-      DefaultCellStyle.BackColor = otherGrid.DefaultCellStyle.BackColor;
-      otherGrid.DefaultCellStyle.BackColor = swapColor;
-      swapColor = DefaultCellStyle.ForeColor;
-      DefaultCellStyle.ForeColor = otherGrid.DefaultCellStyle.ForeColor;
-      otherGrid.DefaultCellStyle.ForeColor = swapColor;
-      swapColor = DefaultCellStyle.SelectionBackColor;
-      DefaultCellStyle.SelectionBackColor =
-        otherGrid.DefaultCellStyle.SelectionBackColor;
-      otherGrid.DefaultCellStyle.SelectionBackColor = swapColor;
-      swapColor = DefaultCellStyle.SelectionForeColor;
-      DefaultCellStyle.SelectionForeColor =
-        otherGrid.DefaultCellStyle.SelectionForeColor;
-      otherGrid.DefaultCellStyle.SelectionForeColor = swapColor;
     }
   }
 }

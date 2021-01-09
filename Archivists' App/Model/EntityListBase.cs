@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Linq;
 using JetBrains.Annotations;
 using SoundExplorers.Data;
@@ -230,8 +231,8 @@ namespace SoundExplorers.Model {
     ///   A database update error occured.
     /// </exception>
     public void OnRowValidated(int rowIndex) {
-      // Debug.WriteLine(
-      //   $"EntityListBase.OnRowValidated: HasRowBeenEdited == {HasRowBeenEdited}; IsRemovingInvalidInsertionRow = {IsRemovingInvalidInsertionRow}");
+      Debug.WriteLine(
+        $"EntityListBase.OnRowValidated: row {rowIndex}; HasRowBeenEdited == {HasRowBeenEdited}");
       if (!HasRowBeenEdited) {
         IsInsertionRowCurrent = false;
         return;
