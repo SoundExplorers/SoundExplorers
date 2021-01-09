@@ -11,7 +11,6 @@ namespace SoundExplorers.View {
       private set => base.Controller = value;
     }
 
-    private int FirstVisibleColumnIndex { get; set; }
     private bool IsJustPopulated { get; set; }
     private bool IsPopulating { get; set; }
 
@@ -38,12 +37,6 @@ namespace SoundExplorers.View {
       }
     }
 
-    public void MakeRowCurrent(int rowIndex) {
-      // This triggers OnRowEnter.
-      // Debug.WriteLine($"MainGrid.MakeRowCurrent: row {rowIndex}");
-      CurrentCell = Rows[rowIndex].Cells[FirstVisibleColumnIndex];
-    }
-
     public void OnRowAddedOrDeleted() {
       AutoResizeColumns();
       Focus();
@@ -62,6 +55,7 @@ namespace SoundExplorers.View {
     public override void Populate(IList? list = null) {
       Debug.WriteLine("MainGrid.Populate");
       IsPopulating = true;
+      FirstVisibleColumnIndex = -1;
       base.Populate(list);
       EditorView.OnMainGridPopulated();
       IsJustPopulated = true;
@@ -69,14 +63,14 @@ namespace SoundExplorers.View {
       Debug.WriteLine("MainGrid.Populate END");
     }
 
-    private void ConfigureColumn(DataGridViewColumn column) {
-      // Making every column explicitly not sortable prevents the program
-      // from crashing if F3 in pressed while the grid is focused.
-      // TODO Check whether F3 crashes program when PARENT grid is focused.
-      column.SortMode = DataGridViewColumnSortMode.NotSortable;
-      column.HeaderText = Controller.GetColumnDisplayName(column.Name);
-      if (column.ValueType == typeof(DateTime)) {
-        column.DefaultCellStyle.Format = EditorController.DateFormat;
+    protected override void ConfigureColumn(DataGridViewColumn column) {
+      if (!Controller.IsColumnToBeShown(column.Name)) {
+        column.Visible = false;
+        return;
+      }
+      // Column will be shown
+      if (FirstVisibleColumnIndex == -1) {
+        FirstVisibleColumnIndex = column.Index;
       }
       if (Controller.DoesColumnReferenceAnotherEntity(column.Name)) {
         column.CellTemplate = ComboBoxCell.Create(Controller, column.Name);
@@ -93,20 +87,6 @@ namespace SoundExplorers.View {
         // if that is relevant,
         // the program would crash with a NullReferenceException.
         column.DefaultCellStyle.DataSourceNullValue = string.Empty;
-      }
-    }
-
-    protected override void ConfigureColumns() {
-      FirstVisibleColumnIndex = -1;
-      foreach (DataGridViewColumn column in Columns) {
-        if (Controller.IsColumnToBeShown(column.Name)) {
-          ConfigureColumn(column);
-          if (FirstVisibleColumnIndex == -1) {
-            FirstVisibleColumnIndex = column.Index;
-          }
-        } else {
-          column.Visible = false;
-        }
       }
     }
 

@@ -143,7 +143,7 @@ namespace SoundExplorers.View {
 
     protected override void OnGotFocus(EventArgs e) {
       base.OnGotFocus(e);
-      EditorView.FocusedGrid = this;
+      //EditorView.FocusedGrid = this;
       MainView.Cursor = Cursors.Default;
     }
 

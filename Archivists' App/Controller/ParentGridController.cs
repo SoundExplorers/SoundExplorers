@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.Collections;
+using System.Diagnostics;
 using JetBrains.Annotations;
 using SoundExplorers.Model;
 
@@ -11,6 +12,10 @@ namespace SoundExplorers.Controller {
     ///   Gets the list of entities represented in the grid.
     /// </summary>
     protected override IEntityList List => EditorView.Controller.ParentList;
+
+    public IList GetChildrenForMainList(int rowIndex) {
+      return List.GetChildrenForMainList(rowIndex);
+    }
 
     /// <summary>
     ///   An existing row on the parent grid has been entered.

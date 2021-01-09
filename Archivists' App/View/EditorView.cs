@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Windows.Forms;
 using SoundExplorers.Controller;
 
@@ -23,6 +24,7 @@ namespace SoundExplorers.View {
     private SizeableFormOptions SizeableFormOptions { get; set; } = null!;
     private bool IsClosed { get; set; }
     public bool IsFocusingParentGrid { get; set; }
+    public bool IsPopulating { get; private set; }
     IMainGrid IEditorView.MainGrid => MainGrid;
     IParentGrid IEditorView.ParentGrid => ParentGrid;
     public EditorController Controller { get; private set; } = null!;
@@ -182,9 +184,7 @@ namespace SoundExplorers.View {
       }
       // A read-only related grid for the parent table is shown
       // above the main grid.
-      if (grid != FocusedGrid) {
-        ParentGrid.SwapColorsWith(MainGrid);
-      }
+      grid.CellColorScheme.RestoreToDefault();
       // By trial an error,
       // I found that this complicated rigmarole was required to
       // properly shift the focus programatically, 
@@ -192,6 +192,7 @@ namespace SoundExplorers.View {
       var unfocusedGrid =
         grid == MainGrid ? (GridBase)ParentGrid : MainGrid;
       unfocusedGrid.Enabled = false;
+      unfocusedGrid.CellColorScheme.Invert();
       grid.Enabled = true;
       base.Refresh(); // Don't want to repopulate grid, which this.Refresh would do!
       // if (grid.Equals(ParentGrid)) {
@@ -399,7 +400,7 @@ namespace SoundExplorers.View {
       // And better to do this here than in SetController,
       // where any exception would be indirectly reported,
       // due to being thrown in the controller's constructor.
-      OpenTable();
+      Populate();
     }
 
     private void OnMainGridPopulatedAsync() {
@@ -458,22 +459,36 @@ namespace SoundExplorers.View {
       // }
     }
 
-    private void OpenTable() {
-      if (Controller.IsParentGridToBeShown) {
-        MainGrid.InvertColors();
-      }
-      Populate();
-    }
-
     private void Populate() {
-      Controller.Populate();
-      Text = MainGrid.Controller.TableName;
+      Debug.WriteLine("EditorView.Populate");
+      IsPopulating = true;
       GridSplitContainer.Panel1Collapsed = !Controller.IsParentGridToBeShown;
       if (Controller.IsParentGridToBeShown) {
-        ParentGrid.Populate(); // Will populate the main grid too.
+        ParentGrid.CellColorScheme.RestoreToDefault();
+        MainGrid.CellColorScheme.Invert();
+        ParentGrid.Populate();
+        if (ParentGrid.RowCount > 0) {
+          MainGrid.Populate(ParentGrid.Controller.GetChildrenForMainList(
+            ParentGrid.RowCount - 1));
+          if (MainGrid.RowCount > 0) {
+            MainGrid.MakeRowCurrent(MainGrid.RowCount - 1);
+          }
+          ParentGrid.MakeRowCurrent(ParentGrid.RowCount - 1);
+        }
       } else {
+        MainGrid.CellColorScheme.RestoreToDefault();
         MainGrid.Populate();
+        if (MainGrid.RowCount > 0) {
+          MainGrid.MakeRowCurrent(MainGrid.RowCount - 1);
+        }
       }
+      // Controller.Populate();
+      Text = MainGrid.Controller.TableName;
+      BeginInvoke((Action)delegate {
+        Debug.WriteLine("Async setting EditorView.IsPopulating to false");
+        IsPopulating = false;
+      });
+      Debug.WriteLine("EditorView.Populate END");
     }
 
     /// <summary>

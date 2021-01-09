@@ -47,12 +47,6 @@ namespace SoundExplorers.Controller {
       return !string.IsNullOrWhiteSpace(Columns[columnName].ReferencedPropertyName);
     }
 
-    [NotNull]
-    public string GetColumnDisplayName([NotNull] string columnName) {
-      var column = Columns[columnName];
-      return column.DisplayName ?? columnName;
-    }
-
     public bool IsColumnToBeShown([NotNull] string columnName) {
       return Columns.ContainsKey(columnName);
     }

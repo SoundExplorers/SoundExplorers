@@ -28,6 +28,12 @@ namespace SoundExplorers.Controller {
     protected bool IsPopulating { get; private set; }
     protected int PreviousRowIndex { get; set; }
 
+    [NotNull]
+    public string GetColumnDisplayName([NotNull] string columnName) {
+      var column = Columns[columnName];
+      return column.DisplayName ?? columnName;
+    }
+
     public virtual void OnRowEnter(int rowIndex) {
       if (IsPopulating && rowIndex == List.Count -1) {
         IsPopulating = false;
