@@ -401,6 +401,7 @@ namespace SoundExplorers.View {
       // where any exception would be indirectly reported,
       // due to being thrown in the controller's constructor.
       Populate();
+      Text = MainGrid.Controller.TableName;
     }
 
     private void OnMainGridPopulatedAsync() {
@@ -419,6 +420,35 @@ namespace SoundExplorers.View {
       ParentForm?.Refresh();
     }
 
+    /// <summary>
+    ///   Sets the position of the horizontal splitter between the two grids to
+    ///   previously saved value or, if this is the first time the user has opened
+    ///   an editor window, a default.  Then sets the parent grid's current row,
+    ///   ensuring that the row is scrolled into view.
+    /// </summary>
+    /// <remarks>
+    ///   Setting the horizontal splitter position has to be called asynchronously
+    ///   to ensure it is positioned correctly if the editor window is opened maximised.
+    ///   Setting the parent grid's current row
+    ///   after the grid splitter has been positioned
+    ///   ensures that the row is scrolled into view.
+    /// </remarks>
+    private void OnParentGridShownAsync() {
+      Debug.WriteLine("EditorView.OnParentGridShownAsync");
+      int savedGridSplitterDistance = Controller.GridSplitterDistance;
+      GridSplitContainer.SplitterDistance =
+        savedGridSplitterDistance > 0 ? savedGridSplitterDistance : 180;
+      if (ParentGrid.RowCount > 0) {
+        ParentGrid.MakeRowCurrent(ParentGrid.RowCount - 1);
+      }
+    }
+
+    private void OnPopulatedAsync() {
+      Debug.WriteLine("EditorView.OnPopulatedAsync");
+      IsPopulating = false;
+      MainView.Cursor = Cursors.Default;
+    }
+
     protected override void OnResize(EventArgs e) {
       base.OnResize(e);
       // Stop ghost border lines appearing on main window background.
@@ -432,7 +462,7 @@ namespace SoundExplorers.View {
       }
       //Debug.WriteLine("EditorView_VisibleChanged: " + this.Text);
       if (Controller.IsParentGridToBeShown) {
-        BeginInvoke((Action)SetInitialGridSplitterDistance);
+        BeginInvoke((Action)OnParentGridShownAsync);
       }
       //ImageSplitContainer.Panel2Collapsed = true;
       // We need to work out whether we need the image panel
@@ -470,38 +500,23 @@ namespace SoundExplorers.View {
         if (ParentGrid.RowCount > 0) {
           MainGrid.Populate(ParentGrid.Controller.GetChildrenForMainList(
             ParentGrid.RowCount - 1));
-          if (MainGrid.RowCount > 0) {
-            MainGrid.MakeRowCurrent(MainGrid.RowCount - 1);
+          // If the editor window is being loaded
+          // The parent grid's current row is set asynchronously
+          // in OnParentGridShownAsync to ensure that it is scrolled into view.
+          // Otherwise, i.e. if the grid contents are being refreshed,
+          // we need to do it here.
+          if (!Visible) {
+            ParentGrid.MakeRowCurrent(ParentGrid.RowCount - 1);
           }
-          ParentGrid.MakeRowCurrent(ParentGrid.RowCount - 1);
         }
       } else {
         MainGrid.Populate();
-        if (MainGrid.RowCount > 0) {
-          MainGrid.MakeRowCurrent(MainGrid.RowCount - 1);
-        }
       }
-      Text = MainGrid.Controller.TableName;
-      BeginInvoke((Action)delegate {
-        Debug.WriteLine("Async setting EditorView.IsPopulating to false");
-        IsPopulating = false;
-      });
+      if (MainGrid.RowCount > 0) {
+        MainGrid.MakeRowCurrent(MainGrid.RowCount - 1);
+      }
+      BeginInvoke((Action)OnPopulatedAsync);
       Debug.WriteLine("EditorView.Populate END");
-    }
-
-    /// <summary>
-    ///   Sets the position of the horizontal splitter between the two grids to
-    ///   previously saved value or, if this is the first time the user has opened
-    ///   an editor window, a default.
-    /// </summary>
-    /// <remarks>
-    ///   This has to be called from <see cref="OnVisibleChanged" />,
-    ///   as it doers not work in <see cref="OnLoad" />.
-    /// </remarks>
-    private void SetInitialGridSplitterDistance() {
-      int savedGridSplitterDistance = Controller.GridSplitterDistance;
-      GridSplitContainer.SplitterDistance =
-        savedGridSplitterDistance > 0 ? savedGridSplitterDistance : 180;
     }
 
     private void ShowMessage(string text, MessageBoxIcon icon) {

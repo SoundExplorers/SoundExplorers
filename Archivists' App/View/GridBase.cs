@@ -141,12 +141,6 @@ namespace SoundExplorers.View {
       }
     }
 
-    protected override void OnGotFocus(EventArgs e) {
-      base.OnGotFocus(e);
-      //EditorView.FocusedGrid = this;
-      MainView.Cursor = Cursors.Default;
-    }
-
     protected override void OnKeyDown(KeyEventArgs e) {
       switch (e.KeyData) {
         case Keys.Apps: // Context menu key
