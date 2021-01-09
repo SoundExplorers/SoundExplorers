@@ -500,8 +500,8 @@ namespace SoundExplorers.View {
         if (ParentGrid.RowCount > 0) {
           MainGrid.Populate(ParentGrid.Controller.GetChildrenForMainList(
             ParentGrid.RowCount - 1));
-          // If the editor window is being loaded
-          // The parent grid's current row is set asynchronously
+          // If the editor window is being loaded,
+          // the parent grid's current row is set asynchronously
           // in OnParentGridShownAsync to ensure that it is scrolled into view.
           // Otherwise, i.e. if the grid contents are being refreshed,
           // we need to do it here.
