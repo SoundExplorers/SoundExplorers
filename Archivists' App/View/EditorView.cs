@@ -25,6 +25,7 @@ namespace SoundExplorers.View {
     private bool IsClosed { get; set; }
     public bool IsFocusingParentGrid { get; set; }
     public bool IsPopulating { get; private set; }
+    private bool IsRefreshing { get; set; }
     IMainGrid IEditorView.MainGrid => MainGrid;
     IParentGrid IEditorView.ParentGrid => ParentGrid;
     public EditorController Controller { get; private set; } = null!;
@@ -84,6 +85,7 @@ namespace SoundExplorers.View {
     ///   and any child controls.
     /// </summary>
     public override void Refresh() {
+      IsRefreshing = true;
       Populate();
       if (Controller.IsParentGridToBeShown) {
         FocusGrid(ParentGrid);
@@ -92,6 +94,7 @@ namespace SoundExplorers.View {
         FocusedGrid = MainGrid;
       }
       base.Refresh();
+      IsRefreshing = false;
     }
 
     /// <summary>
@@ -509,7 +512,7 @@ namespace SoundExplorers.View {
           // in OnParentGridShownAsync to ensure that it is scrolled into view.
           // Otherwise, i.e. if the grid contents are being refreshed,
           // we need to do it here.
-          if (Visible) { // Refreshing
+          if (IsRefreshing) { 
             ParentGrid.MakeRowCurrent(ParentGrid.RowCount - 1);
             BeginInvoke((Action)OnPopulatedAsync);
           } else { // Showing for first time
