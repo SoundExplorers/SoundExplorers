@@ -97,28 +97,6 @@ namespace SoundExplorers.View {
       MakeRowCurrent(Rows.Count - 1);
     }
 
-    /// <summary>
-    ///   Blocks execution of the base method, which calls the internal method
-    ///   DataGridView.MakeFirstDisplayedCellCurrentCell,
-    ///   thus triggering a RowEnter on what would usually be the wrong row,
-    ///   in which case the population of the the main grid on change of parent row
-    ///   happens an unwanted extra time and for the wrong row:
-    ///   see ParentGridController.OnRowEnter.
-    ///   We need to have full control of row currencies on the two grids
-    ///   for this population of the the main grid to work.
-    /// </summary>
-    protected override void OnBindingContextChanged(EventArgs e) {
-      Debug.WriteLine($"MainGrid.OnBindingContextChanged: IsPopulating = {IsPopulating}; IsJustPopulated = {IsJustPopulated}");
-      base.OnBindingContextChanged(e);
-      // if (IsPopulating) {
-      //   if (!EditorView.Controller.IsParentGridToBeShown) {
-      //     base.OnBindingContextChanged(e);
-      //   }
-      // } else {
-      //   base.OnBindingContextChanged(e);
-      // }
-    }
-
     protected override void OnCellBeginEdit(DataGridViewCellCancelEventArgs e) {
       base.OnCellBeginEdit(e);
       if (IsTextBoxCellCurrent) {
