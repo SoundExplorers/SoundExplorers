@@ -69,29 +69,25 @@ namespace SoundExplorers.Controller {
           EditorView.OnError();
           break;
         case RowNotInTableException referencedEntityNotFoundException:
-          // A combo box cell value 
-          // does not match any of it's embedded combo box's items.
-          // So the combo box's selected index and text could not be updated.
-          // As the combo boxes are all dropdown lists,
-          // the only way this can have happened is that
-          // the unmatched value was pasted into the cell.
-          // If the cell value had been changed
-          // by selecting an item on the embedded combo box,
-          // it could only be a matching value.
-          // MainList.OnReferencedEntityNotFound(rowIndex, columnName, 
+          // A combo box cell value does not match any of it's embedded combo box's
+          // items. So the combo box's selected index and text could not be updated. As
+          // the combo boxes are all dropdown lists, the only way this can have happened
+          // is that the unmatched value was pasted into the cell. If the cell value had
+          // been changed by selecting an item on the embedded combo box, it could only
+          // be a matching value.
           List.OnValidationError(rowIndex, columnName,
             referencedEntityNotFoundException);
           EditorView.OnError();
           break;
         case null:
-          // For unknown reason, the way I've got the error handling set up,
-          // this event gets raise twice if there's a DatabaseUpdateErrorException,
-          // the second time with a null exception.
-          // It does not seem to do any harm, so long as it is trapped like this.
+          // For unknown reason, the way I've got the error handling set up, this event
+          // gets raise twice if there's a DatabaseUpdateErrorException, the second time
+          // with a null exception. It does not seem to do any harm, so long as it is
+          // trapped like this.
           break;
         default:
-          // Terminal error.  In the Release compilation,
-          // the stack trace will be shown by the terminal error handler in Program.cs.
+          // Terminal error. In the Release compilation, the stack trace will be shown by
+          // the terminal error handler in Program.cs.
           throw exception;
       }
     }
@@ -111,17 +107,17 @@ namespace SoundExplorers.Controller {
     }
 
     /// <summary>
-    ///   Deletes the entity at the specified row index
-    ///   from the database and removes it from the list.
+    ///   Deletes the entity at the specified row index from the database and removes it
+    ///   from the list.
     /// </summary>
     public void OnRowRemoved(int rowIndex) {
       //Debug.WriteLine("MainGridController.OnRowRemoved");
       // Debug.WriteLine(
       //   $"{nameof(OnMainGridRowRemoved)}:  2 or 3 times on opening a table before 1st ItemAdded (insertion row entered); existing row removed");
-      // For unknown reason, the grid's RowsRemoved event is raised 2 or 3 times
-      // while data is being loaded into the grid.
-      // Also, the grid row might have been removed because of an insertion error,
-      // in which case the entity will not have been persisted (rowIndex == Count).
+      // For unknown reason, the grid's RowsRemoved event is raised 2 or 3 times while
+      // data is being loaded into the grid. Also, the grid row might have been removed
+      // because of an insertion error, in which case the entity will not have been
+      // persisted (rowIndex == Count).
       if (List.IsDataLoadComplete && rowIndex < List.Count) {
         try {
           List.DeleteEntity(rowIndex);
@@ -133,25 +129,20 @@ namespace SoundExplorers.Controller {
     }
 
     /// <summary>
-    ///   Handles the main grid's RowValidated event,
-    ///   which is raised when the user exits a row on the grid.
-    ///   If the specified table row is new,
-    ///   inserts an entity on the database with the table row data.
-    ///   For an existing row, there should be nothing to do,
-    ///   as any edits will have been committed on a cell by cell basis.
+    ///   Handles the main grid's RowValidated event, which is raised when the user exits
+    ///   a row on the grid. If the specified table row is new, inserts an entity on the
+    ///   database with the table row data. For an existing row, there should be nothing
+    ///   to do, as any edits will have been committed on a cell by cell basis.
     /// </summary>
     /// <remarks>
-    ///   The RowValidated event is also raised when the editor window or main window
-    ///   is closed.  If the insertion row is being edited when this happens,
-    ///   no insertion to the database will take place.
-    ///   Ao attempt a database insert in this scenario
-    ///   would result in an exception at an unpredictable point,
-    ///   due to the closure process already being underway.
-    ///   Ideally, the user would instead be given the options of
-    ///   committing the insertion or cancelling the close and returning to the editor.
-    ///   But see the XML comments for <see cref="CancelInsertion" />
-    ///   for the difficulties that would be involved in
-    ///   reopening a 'validated' insertion.
+    ///   The RowValidated event is also raised when the editor window or main window is
+    ///   closed. If the insertion row is being edited when this happens, no insertion to
+    ///   the database will take place. An attempt a database insert in this scenario
+    ///   would result in an exception at an unpredictable point, due to the closure
+    ///   process already being underway. Ideally, the user would instead be given the
+    ///   options of committing the insertion or cancelling the close and returning to
+    ///   the editor. But see the XML comments for <see cref="CancelInsertion" /> for the
+    ///   difficulties that would be involved in reopening a 'validated' insertion.
     /// </remarks>
     public void OnRowValidated(int rowIndex) {
       //Debug.WriteLine("MainGridController.OnRowValidated:  Any row left, after final ItemChanged, if any");
@@ -218,14 +209,11 @@ namespace SoundExplorers.Controller {
     }
 
     /// <summary>
-    ///   A combo box cell value on the main grid's insertion row
-    ///   does not match any of it's embedded combo box's items.
-    ///   So the combo box's selected index and text could not be updated.
-    ///   As the combo boxes are all dropdown lists,
-    ///   the only way this can have happened is that
-    ///   the unmatched value was pasted into the cell.
-    ///   If the cell value had been changed
-    ///   by selecting an item on the embedded combo box,
+    ///   A combo box cell value on the main grid's insertion row does not match any of
+    ///   it's embedded combo box's items. So the combo box's selected index and text
+    ///   could not be updated. As the combo boxes are all dropdown lists, the only way
+    ///   this can have happened is that the unmatched value was pasted into the cell. If
+    ///   the cell value had been changed by selecting an item on the embedded combo box,
     ///   it could only be a matching value.
     /// </summary>
     internal void OnInsertionRowReferencedEntityNotFound(
@@ -240,62 +228,50 @@ namespace SoundExplorers.Controller {
     }
 
     /// <summary>
-    ///   Invoked when the user clicks OK on an insert error message box.
-    ///   If the insertion row is not the only row,
-    ///   the row above the insertion row is temporarily made current,
-    ///   which allows the insertion row to be removed.
-    ///   The insertion row is then removed,
-    ///   forcing a new empty insertion row to be created.
-    ///   Finally the new empty insertion row is made current.
-    ///   The net effect is that, after the error message has been shown,
-    ///   the insertion row remains current, from the perspective of the user,
-    ///   but all its cells have been blanked out or, where applicable,
-    ///   reverted to default values.
+    ///   Invoked when the user clicks OK on an insert error message box. If the
+    ///   insertion row is not the only row, the row above the insertion row is
+    ///   temporarily made current, which allows the insertion row to be removed. The
+    ///   insertion row is then removed, forcing a new empty insertion row to be created.
+    ///   Finally the new empty insertion row is made current. The net effect is that,
+    ///   after the error message has been shown, the insertion row remains current, from
+    ///   the perspective of the user, but all its cells have been blanked out or, where
+    ///   applicable, reverted to default values.
     /// </summary>
     /// <remarks>
-    ///   The disadvantage is that the user's work on the insertion row is lost
-    ///   and, if still needed, has to be restarted from scratch.
-    ///   So why is this done?
+    ///   The disadvantage is that the user's work on the insertion row is lost and, if
+    ///   still needed, has to be restarted from scratch. So why is this done?
     ///   <para>
-    ///     If the insertion row were to be left with the error values,
-    ///     the user would no way of cancelling out of the insertion
-    ///     short of closing the application.
-    ///     And, as the most probable or only error type is a duplicate key,
-    ///     the user would quite likely want to cancel the insertion and
-    ///     edit the existing row with that key instead.
+    ///     If the insertion row were to be left with the error values, the user would
+    ///     have no way of cancelling out of the insertion short of closing the
+    ///     application. And, as the most probable or only error type is a duplicate key,
+    ///     the user would quite likely want to cancel the insertion and edit the
+    ///     existing row with that key instead.
     ///   </para>
     ///   <para>
-    ///     There is no way of selectively reverting just the erroneous cell values
-    ///     of an insertion row to blank or default.
-    ///     So I spent an inordinate amount of effort trying to get
-    ///     another option to work.
-    ///     The idea was to convert the insertion row into an 'existing' row
-    ///     without updating the database, resetting just the erroneous cell values
-    ///     to blank or default.
-    ///     While I still think that would be possible,
-    ///     it turned out to add a great deal of complexity
-    ///     just to get it not working reliably.
-    ///     So I gave up and went for this relatively simple
-    ///     and hopefully robust solution instead.
+    ///     There is no way of selectively reverting just the erroneous cell values of an
+    ///     insertion row to blank or default. So I spent an inordinate amount of effort
+    ///     trying to get another option to work. The idea was to convert the insertion
+    ///     row into an 'existing' row without updating the database, resetting just the
+    ///     erroneous cell values to blank or default. While I still think that would be
+    ///     possible, it turned out to add a great deal of complexity just to get it not
+    ///     working reliably! So I gave up and went for this relatively simple and
+    ///     hopefully robust solution instead.
     ///   </para>
     ///   <para>
-    ///     If in future we want to allow the insertion row to be re-edited,
-    ///     perhaps the insertion row could to be replaced with
-    ///     a new one based on a special binding item pre-populated
-    ///     with the changed values (apart from the property corresponding to a
-    ///     FormatException, which would be impossible,
-    ///     or a reference not found paste error, which would be pointless).
+    ///     If in future we want to allow the insertion row to be re-edited, perhaps the
+    ///     insertion row could to be replaced with a new one based on a special binding
+    ///     item pre-populated with the changed values (apart from the property
+    ///     corresponding to a FormatException, which would be impossible, or a reference
+    ///     not found paste error, which would be pointless).
     ///   </para>
     /// </remarks>
     private void CancelInsertion() {
       // Debug.WriteLine("EditorController.CancelInsertion");
       int insertionRowIndex = List.BindingList.Count - 1;
       if (insertionRowIndex > 0) {
-        // Currently, it is not anticipated that there can be an insertion row error
-        // at this point 
-        // when the insertion row is the only row on the table,
-        // as the only anticipated error type that should get to this point
-        // is a duplicate key.
+        // Currently, it is not anticipated that there can be an insertion row error at
+        // this point when the insertion row is the only row on the table, as the only
+        // anticipated error type that should get to this point is a duplicate key.
         // Format errors are handled differently and should not get here.
         List.IsRemovingInvalidInsertionRow = true;
         Grid.MakeRowCurrent(insertionRowIndex - 1);

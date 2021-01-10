@@ -25,16 +25,27 @@ namespace SoundExplorers.View {
     private bool IsClosed { get; set; }
 
     /// <summary>
-    ///   An unwanted feature of DataGridView.OnBindingContextChanged
-    ///   is that it can call internal method
-    ///   DataGridView.MakeFirstDisplayedCellCurrentCell,
-    ///   thus triggering a RowEnter on row 0, which would usually be the wrong row,
-    ///   of the main grid.  This flag is used in a workaround.
+    ///   This flag is used in a workaround for an unwanted feature of
+    ///   <see cref="DataGridView.OnBindingContextChanged" />.  In some of the multiple
+    ///   times that event method occurs per <see cref="Populate" />, it makes row 0 of
+    ///   the main grid current (by calling internal method
+    ///   DataGridView.MakeFirstDisplayedCellCurrentCell). In this application, that
+    ///   would usually be the wrong row, as we want the new row to be current on
+    ///   population of the main grid. Normally, the unwanted behaviour would trigger
+    ///   <see cref="DataGridView.OnRowEnter" /> for row 0, which <see cref="MainGrid" />
+    ///   overrides. The workaround that stops OnRowEnter from being called in this case.
     /// </summary>
+    /// <remarks>
+    ///   Another workaround I looked at was to override OnBindingContextChanged to stop
+    ///   the base method from being called.  That is not practicable, as it prevents
+    ///   editor controls from appearing in grid cells when they are edited!
+    /// </remarks>
     private bool IsFixingFocus { get; set; }
+
+    private bool IsRefreshingData { get; set; }
+
     // public bool IsFocusingParentGrid { get; set; }
     public bool IsPopulating { get; private set; }
-    private bool IsRefreshingData { get; set; }
     IMainGrid IEditorView.MainGrid => MainGrid;
     IParentGrid IEditorView.ParentGrid => ParentGrid;
     public EditorController Controller { get; private set; } = null!;
@@ -59,25 +70,22 @@ namespace SoundExplorers.View {
     }
 
     /// <summary>
-    ///   Set's the view's controller.
+    ///   Sets the view's controller.
     /// </summary>
     /// <remarks>
-    ///   Avoid putting any additional code here,
-    ///   as any exception would be indirectly reported,
-    ///   due to being thrown in the controller's constructor,
-    ///   where <see cref="SetController"/> is called.
-    ///   Any code that can be executed once the controller has been set
-    ///   should instead be in <see cref="OnLoad"/>.
+    ///   Avoid putting any additional code here, as any exception would be indirectly
+    ///   reported, due to being thrown in the controller's constructor, where
+    ///   <see cref="SetController" /> is called. Any code that can be executed once the
+    ///   controller has been set should instead be in <see cref="OnLoad" />.
     /// </remarks>
     public void SetController(EditorController controller) {
       Controller = controller;
     }
 
     /// <summary>
-    ///   Creates a EditorView and its associated controller,
-    ///   as per the Model-View-Controller design pattern,
-    ///   returning the view instance created.
-    ///   The parameter is passed to the controller's constructor.
+    ///   Creates a EditorView and its associated controller, as per the
+    ///   Model-View-Controller design pattern, returning the view instance created. The
+    ///   parameter is passed to the controller's constructor.
     /// </summary>
     /// <param name="entityListType">
     ///   The type of entity list whose data is to be displayed.
@@ -116,21 +124,13 @@ namespace SoundExplorers.View {
     }
 
     /// <summary>
-    ///   Handles both the missing image label's
-    ///   and the picture box's
-    ///   <see cref="Control.DragDrop" /> event
-    ///   to drop a file path on the label or picture box,
-    ///   whichever is shown,
-    ///   updating the corresponding Image.Path cell,
-    ///   focusing the main grid
-    ///   and making the updated cell the current cell.
+    ///   Handles both the missing image label's and the picture box's
+    ///   <see cref="Control.DragDrop" /> event to drop a file path on the label or
+    ///   picture box, whichever is shown, updating the corresponding Image.Path cell,
+    ///   focusing the main grid and making the updated cell the current cell.
     /// </summary>
-    /// <param name="sender">Event sender.</param>
-    /// <param name="e">Event arguments.</param>
     /// <remarks>
-    ///   To save confusion,
-    ///   this will not work while the main grid
-    ///   is in edit mode.
+    ///   To save confusion, this will not work while the main grid is in edit mode.
     /// </remarks>
     private void FittedPictureBox1_DragDrop(object? sender, DragEventArgs e) {
       // if (Controller.Entities is ImageList
@@ -145,18 +145,13 @@ namespace SoundExplorers.View {
     }
 
     /// <summary>
-    ///   Handles both the missing image label's
-    ///   and the picture box's
-    ///   <see cref="Control.DragOver" /> event
-    ///   to show that a file path can be dropped on the label or picture box,
-    ///   whichever is shown,
-    ///   if the main grid shows the Image table and is not in edit mode.
+    ///   Handles both the missing image label's and the picture box's
+    ///   <see cref="Control.DragOver" /> event to show that a file path can be dropped
+    ///   on the label or picture box, whichever is shown, if the main grid shows the
+    ///   Image table and is not in edit mode.
     /// </summary>
-    /// <param name="sender">Event sender.</param>
-    /// <param name="e">Event arguments.</param>
     /// <remarks>
-    ///   To save confusion,
-    ///   path dropping is not supported while the main grid is in edit mode.
+    ///   To save confusion, path dropping is not supported while the main grid is in edit mode.
     /// </remarks>
     private void FittedPictureBox1_DragOver(object? sender, DragEventArgs e) {
       // if (Entities is ImageList
@@ -169,14 +164,10 @@ namespace SoundExplorers.View {
     }
 
     /// <summary>
-    ///   Handles the picture box's
-    ///   <see cref="Control.MouseDown" /> event to
-    ///   initiate a drag-and-drop operation
-    ///   to allow the path of the image displayed in the picture box
-    ///   to be dropped on another application.
+    ///   Handles the picture box's <see cref="Control.MouseDown" /> event to initiate a
+    ///   drag-and-drop operation to allow the path of the image displayed in the picture
+    ///   box to be dropped on another application.
     /// </summary>
-    /// <param name="sender">Event sender.</param>
-    /// <param name="e">Event arguments.</param>
     private void FittedPictureBox1_MouseDown(object? sender, MouseEventArgs e) {
       var data = new DataObject(
         DataFormats.FileDrop,
@@ -192,28 +183,24 @@ namespace SoundExplorers.View {
     ///   The grid to be focused.
     /// </param>
     /// <remarks>
-    ///   Where two grids are shown,
-    ///   their colour schemes are swapped round,
-    ///   indicating which is now the current grid
-    ///   by having the usual colour scheme inverted
-    ///   on the other grid.
+    ///   Where two grids are shown, their colour schemes are swapped round, indicating
+    ///   which is now the current grid by having the usual colour scheme inverted on the
+    ///   other grid.
     /// </remarks>
     private void FocusGrid(GridBase grid) {
       if (!Controller.IsParentGridToBeShown) {
         grid.Focus();
         return;
       }
-      // A read-only related grid for the parent table is shown
-      // above the main grid.
+      // A read-only related grid for the parent table is shown above the main grid.
       grid.CellColorScheme.RestoreToDefault();
-      // By trial an error,
-      // I found that this complicated rigmarole was required to
-      // properly shift the focus programatically, 
-      // i.e. in EditorView_KeyDown to implement doing it with the F6 key.
       var unfocusedGrid =
         grid == MainGrid ? (GridBase)ParentGrid : MainGrid;
-      unfocusedGrid.Enabled = false;
       unfocusedGrid.CellColorScheme.Invert();
+      // By trial an error, I found that this complicated rigmarole was required to
+      // properly shift the focus programatically, i.e. in EditorView_KeyDown to
+      // implement doing it with the F6 key.
+      unfocusedGrid.Enabled = false;
       grid.Enabled = true;
       Refresh();
       // if (grid.Equals(ParentGrid)) {
@@ -226,21 +213,16 @@ namespace SoundExplorers.View {
     }
 
     /// <summary>
-    ///   Handles the
-    ///   <see cref="Control.MouseDown" /> event
-    ///   of either of the two grids.
+    ///   Handles the <see cref="Control.MouseDown" /> event of either of the two grids.
     /// </summary>
     /// <remarks>
-    ///   When either mouse button is clicked,
-    ///   the grid will be focused if it is not already.
+    ///   When either mouse button is clicked, the grid will be focused if it is not
+    ///   already.
     ///   <para>
-    ///     I tried to initiate a drag-and-drop operation
-    ///     when a cell is clicked with the mouse button 1.
-    ///     But it did not work, possibly because it
-    ///     puts the cell into edit mode and also,
-    ///     when dragged, selects multiple rows.
-    ///     Perhaps we could initiate a drag-and-drop operation
-    ///     on Control + mouse button 1.
+    ///     I tried to initiate a drag-and-drop operation when a cell is clicked with the
+    ///     mouse button 1. But it did not work, possibly because it puts the cell into
+    ///     edit mode and also, when dragged, selects multiple rows. Perhaps we could
+    ///     initiate a drag-and-drop operation on Control + mouse button 1.
     ///   </para>
     /// </remarks>
     private void Grid_MouseDown(object? sender, MouseEventArgs e) {
@@ -254,22 +236,18 @@ namespace SoundExplorers.View {
     }
 
     /// <summary>
-    ///   Handles the main grid's
-    ///   <see cref="DataGridView.CellBeginEdit" /> event,
-    ///   which occurs when edit mode starts for the currently selected cell,
-    ///   to hide the Missing Image label (if visible).
+    ///   Handles the main grid's <see cref="DataGridView.CellBeginEdit" /> event, which
+    ///   occurs when edit mode starts for the currently selected cell, to hide the
+    ///   Missing Image label (if visible).
     /// </summary>
-    /// <param name="sender">Event sender.</param>
-    /// <param name="e">Event arguments.</param>
     /// <remarks>
-    ///   This is only relevant if the Path cell of an Image row is being edited.
-    ///   If the Missing Image label was visible just before entering edit mode,
-    ///   it will have been because the file was not specified or can't be found or is not an image file.
-    ///   That's presumably about to be rectified.
-    ///   So the message to that effect in the Missing Image label could be misleading.
-    ///   Also, the advice in the Missing Image label that an image file can
-    ///   be dragged onto the label will not apply, as dragging and dropping is disabled
-    ///   while the Path cell is being edited.
+    ///   This is only relevant if the Path cell of an Image row is being edited. If the
+    ///   Missing Image label was visible just before entering edit mode, it will have
+    ///   been because the file was not specified or can't be found or is not an image
+    ///   file. That's presumably about to be rectified. So the message to that effect in
+    ///   the Missing Image label could be misleading. Also, the advice in the Missing
+    ///   Image label that an image file can be dragged onto the label will not apply, as
+    ///   dragging and dropping is disabled while the Path cell is being edited.
     /// </remarks>
     private void MainGrid_CellBeginEdit(
       object sender, DataGridViewCellCancelEventArgs e) {
@@ -277,13 +255,12 @@ namespace SoundExplorers.View {
     }
 
     /// <summary>
-    ///   Occurs when an external data-parsing or validation operation
-    ///   in an existing row (not the insertion row) throws an exception.
+    ///   Occurs when an external data-parsing or validation operation in an existing row
+    ///   (not the insertion row) throws an exception.
     /// </summary>
     /// <remarks>
-    ///   The event has to be handled for error handling to work.
-    ///   Overriding the corresponding protected method in <see cref="MainGrid" />
-    ///   does not work.
+    ///   The event has to be handled for error handling to work. Overriding the
+    ///   corresponding protected method in <see cref="MainGrid" /> does not work.
     /// </remarks>
     private void MainGrid_DataError(object? sender, DataGridViewDataErrorEventArgs e) {
       // Debug.WriteLine("MainGrid_DataError");
@@ -296,17 +273,17 @@ namespace SoundExplorers.View {
     }
 
     /// <summary>
-    ///   Actually called once for each row removed,
-    ///   even when multiple selected rows are removed at once.
+    ///   Actually called once for each row removed, even when multiple selected rows are
+    ///   removed at once.
     /// </summary>
     /// <remarks>
-    ///   For unknown reason, the RowsRemoved event is raised 2 or 3 times
-    ///   while data is being loaded into the grid.
-    /// </remarks>
-    /// <remarks>
-    ///   Overriding the corresponding protected method in <see cref="MainGrid" />
-    ///   does not work. The event has to be handled, otherwise the program will crash
-    ///   in some circumstances.
+    ///   For unknown reason, the RowsRemoved event is raised 2 or 3 times while data is
+    ///   being loaded into the grid.
+    ///   <para>
+    ///     Overriding the corresponding protected method in   <see cref="MainGrid" />
+    ///     does not work. The event has to be handled, otherwise the program will crash
+    ///     in some circumstances.
+    ///   </para>
     /// </remarks>
     private void
       MainGrid_RowsRemoved(object? sender, DataGridViewRowsRemovedEventArgs e) {
@@ -314,14 +291,13 @@ namespace SoundExplorers.View {
     }
 
     /// <summary>
-    ///   Handles the main grid's RowValidated event,
-    ///   which is raised when the user exits a row on the grid,
-    ///   even when nothing has changed.
+    ///   Handles the main grid's RowValidated event, which is raised when the user exits
+    ///   a row on the grid, even when nothing has changed.
     /// </summary>
     /// <remarks>
-    ///   Overriding the corresponding protected method in <see cref="MainGrid" />
-    ///   does not work. The event has to be handled, otherwise the program will crash
-    ///   in some circumstances.
+    ///   Overriding the corresponding protected method in <see cref="MainGrid" /> does
+    ///   not work. The event has to be handled, otherwise the program will crash in some
+    ///   circumstances.
     /// </remarks>
     private void MainGrid_RowValidated(object? sender, DataGridViewCellEventArgs e) {
       Debug.WriteLine($"EditorView.MainGrid_RowValidated: row {e.RowIndex}");
@@ -333,12 +309,11 @@ namespace SoundExplorers.View {
     }
 
     /// <summary>
-    ///   Enables and focuses the grid
-    ///   when the window is activated.
+    ///   Enables and focuses the grid when the window is activated.
     /// </summary>
     /// <remarks>
-    ///   This is necessary because of the
-    ///   workaround implemented in OnDeactivate.
+    ///   This is necessary because of the workaround implemented in
+    ///   <see cref="OnDeactivate" />.
     /// </remarks>
     protected override void OnActivated(EventArgs e) {
       base.OnActivated(e);
@@ -355,18 +330,14 @@ namespace SoundExplorers.View {
     }
 
     /// <summary>
-    ///   Disable the grid when another table window
-    ///   is activated.
+    ///   Disable the grid when another table window is activated.
     /// </summary>
     /// <remarks>
-    ///   For unknown reason,
-    ///   without this workaround,
-    ///   when a table window with date columns is
-    ///   deactivated and another table window is activated,
-    ///   it is impossible to navigate or edit the grid
-    ///   on the active window.
-    ///   To be safe, disable the grid even if there aren't date columns:
-    ///   maybe there are other data types that would cause similar problems.
+    ///   For unknown reason, without this workaround, when an editor window with date
+    ///   columns is deactivated and another table window is activated, it is impossible
+    ///   to navigate or edit the grid on the active window. To be safe, disable the grid
+    ///   even if there aren't date columns: maybe there are other data types that would
+    ///   cause similar problems.
     /// </remarks>
     protected override void OnDeactivate(EventArgs e) {
       base.OnDeactivate(e);
@@ -420,12 +391,11 @@ namespace SoundExplorers.View {
         ParentGrid.MainView = MainView;
         ParentGrid.MouseDown += Grid_MouseDown;
       }
-      // Has to be done here rather than in constructor
-      // in order to tell that this is an MDI child form.
+      // Has to be done here rather than in constructor in order to tell that this is an
+      // MDI child form.
       SizeableFormOptions = SizeableFormOptions.Create(this);
-      // And better to do this here than in SetController,
-      // where any exception would be indirectly reported,
-      // due to being thrown in the controller's constructor.
+      // And better to do this here than in SetController, where any exception would be
+      // indirectly reported, due to being thrown in the controller's constructor.
       ShowData();
     }
 
@@ -446,17 +416,16 @@ namespace SoundExplorers.View {
     }
 
     /// <summary>
-    ///   Sets the position of the horizontal splitter between the two grids to
-    ///   previously saved value or, if this is the first time the user has opened
-    ///   an editor window, a default.  Then sets the parent grid's current row,
-    ///   ensuring that the row is scrolled into view.
+    ///   Sets the position of the horizontal splitter between the two grids to the
+    ///   previously saved value or, if this is the first time the user has opened an
+    ///   editor window, a default.  Then sets the parent grid's current row, ensuring
+    ///   that the row is scrolled into view.
     /// </summary>
     /// <remarks>
-    ///   Setting the horizontal splitter position has to be called asynchronously
-    ///   to ensure it is positioned correctly if the editor window is opened maximised.
-    ///   Setting the parent grid's current row
-    ///   after the grid splitter has been positioned
-    ///   ensures that the row is scrolled into view.
+    ///   Setting the horizontal splitter position has to be called asynchronously to
+    ///   ensure it is positioned correctly if the editor window is opened maximised.
+    ///   Setting the parent grid's current row after the grid splitter has been
+    ///   positioned ensures that the row is scrolled into view.
     /// </remarks>
     private void OnParentAndMainGridsShownAsync() {
       Debug.WriteLine("EditorView.OnParentAndMainGridsShownAsync");
@@ -481,8 +450,8 @@ namespace SoundExplorers.View {
         //   MainView.Cursor = Cursors.Default;
         // });
         MainGrid.MakeRowCurrent(MainGrid.RowCount - 1);
-      // } else {
-      //   MainView.Cursor = Cursors.Default;
+        // } else {
+        //   MainView.Cursor = Cursors.Default;
       }
       MainView.Cursor = Cursors.Default;
     }
@@ -503,12 +472,11 @@ namespace SoundExplorers.View {
         if (ParentGrid.RowCount > 0) {
           MainGrid.Populate(ParentGrid.Controller.GetChildrenForMainList(
             ParentGrid.RowCount - 1));
-          // If the editor window is being loaded,
-          // the parent grid's current row is set asynchronously
-          // in OnParentAndMainGridsShownAsync to ensure that it is scrolled into view.
-          // Otherwise, i.e. if the grid contents are being refreshed,
-          // we need to do it here.
-          if (IsRefreshingData) { 
+          // If the editor window is being loaded, the parent grid's current row is set
+          // asynchronously in OnParentAndMainGridsShownAsync to ensure that it is
+          // scrolled into view. Otherwise, i.e. if the grid contents are being
+          // refreshed, we need to do it here.
+          if (IsRefreshingData) {
             ParentGrid.MakeRowCurrent(ParentGrid.RowCount - 1);
             BeginInvoke((Action)OnPopulatedAsync);
           } else { // Showing for first time
@@ -523,7 +491,8 @@ namespace SoundExplorers.View {
     }
 
     public void PopulateMainGridOnParentRowChanged(int parentRowIndex) {
-      Debug.WriteLine($"EditView.PopulateMainGridOnParentRowChanged: parent row {parentRowIndex}");
+      Debug.WriteLine(
+        $"EditView.PopulateMainGridOnParentRowChanged: parent row {parentRowIndex}");
       IsPopulating = true;
       MainGrid.Populate(ParentGrid.Controller.GetChildrenForMainList(parentRowIndex));
       IsFixingFocus = true;
@@ -546,18 +515,13 @@ namespace SoundExplorers.View {
     }
 
     /// <summary>
-    ///   Handle's a SplitContainer's GotFocus event
-    ///   to shift the focus to the current grid
-    ///   when the SplitContainer gets the focus.
+    ///   Handle's a SplitContainer's GotFocus event to shift the focus to the current
+    ///   grid when the SplitContainer gets the focus.
     /// </summary>
-    /// <param name="sender">Event sender.</param>
-    /// <param name="e">Event arguments.</param>
     /// <remarks>
-    ///   For unknown reason,
-    ///   when an existing table form is activated,
-    ///   the grid SplitContainer gets focused.
-    ///   In any case, we want focus to return to the current
-    ///   grid after the user has grabbed the splitter.
+    ///   For unknown reason, when an existing table form is activated,the grid
+    ///   SplitContainer gets focused. In any case, we want focus to return to the
+    ///   current grid after the user has grabbed the splitter.
     /// </remarks>
     private void SplitContainerOnGotFocus(object? sender, EventArgs e) {
       BeginInvoke((Action)delegate { FocusGrid(FocusedGrid ?? ParentGrid); });
@@ -568,12 +532,11 @@ namespace SoundExplorers.View {
       const int WM_CLOSE = 0x0010;
       if (m.Msg == WM_CLOSE) {
         if (IsClosed) {
-          // The editor window has already been closed programatically
-          // (in MainView.WindowsCloseAllMenuItem_Click,
-          // when the main window is closed while the editor window is still open).
-          // As a result,
-          // the WM_CLOSE message is not received till AFTER the window has closed.
-          // So we need to block the editor closure procedures from being run again.
+          // The editor window has already been closed programatically (in
+          // MainView.WindowsCloseAllMenuItem_Click), when the main window is closed
+          // while the editor window is still open). As a result, the WM_CLOSE message is
+          // not received till AFTER the window has closed. So we need to block the
+          // editor closure procedures from being run again.
           return;
         }
         // Attempting to close Form

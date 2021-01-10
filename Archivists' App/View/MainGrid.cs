@@ -32,7 +32,8 @@ namespace SoundExplorers.View {
       try {
         CurrentCell = Rows[rowIndex].Cells[columnIndex];
       } catch {
-        // Can happen if insertion row is left before error message is shown.
+        // An ignorable exception can happen if the insertion row is left before an error
+        // message is shown.
       }
     }
 

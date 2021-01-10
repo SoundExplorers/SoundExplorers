@@ -151,15 +151,13 @@ namespace SoundExplorers.View {
             CurrentRow!.Index, true);
           var point = new Point(cellRectangle.Right, cellRectangle.Bottom);
           ContextMenu.Show(this, point);
-          // When base.ContextMenuStrip was set to ContextMenu,
-          // neither e.Handled nor e.SuppressKeyPress nor not calling base.OnKeyDown
-          // stopped the context menu from being shown a second time
-          // immediately afterwards in the default wrong position.
-          // The solution is not to set
-          // base.ContextMenuStrip to ContextMenu and instead to
-          // show the context menu in grid event handlers:
-          // here when shown with one of the two standard keyboard shortcuts:
-          // EditorView.Grid_MouseDown when shown with a right mouse click.
+          // When base.ContextMenuStrip was set to ContextMenu, neither e.Handled nor
+          // e.SuppressKeyPress nor not calling base.OnKeyDown stopped the context menu
+          // from being shown a second time immediately afterwards in the default wrong
+          // position. The solution is not to set base.ContextMenuStrip to ContextMenu
+          // and instead to show the context menu in grid event handlers: here when shown
+          // with one of the two standard keyboard shortcuts; EditorView.Grid_MouseDown
+          // when shown with a right mouse click.
           e.Handled = e.SuppressKeyPress = true;
           break;
         default:
