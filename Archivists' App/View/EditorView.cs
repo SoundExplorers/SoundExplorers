@@ -25,7 +25,7 @@ namespace SoundExplorers.View {
     private bool IsClosed { get; set; }
     public bool IsFocusingParentGrid { get; set; }
     public bool IsPopulating { get; private set; }
-    private bool IsRefreshing { get; set; }
+    private bool IsRefreshingData { get; set; }
     IMainGrid IEditorView.MainGrid => MainGrid;
     IParentGrid IEditorView.ParentGrid => ParentGrid;
     public EditorController Controller { get; private set; } = null!;
@@ -49,6 +49,17 @@ namespace SoundExplorers.View {
       ShowMessage(text, MessageBoxIcon.Warning);
     }
 
+    /// <summary>
+    ///   Set's the view's controller.
+    /// </summary>
+    /// <remarks>
+    ///   Avoid putting any additional code here,
+    ///   as any exception would be indirectly reported,
+    ///   due to being thrown in the controller's constructor,
+    ///   where <see cref="SetController"/> is called.
+    ///   Any code that can be executed once the controller has been set
+    ///   should instead be in <see cref="OnLoad"/>.
+    /// </remarks>
     public void SetController(EditorController controller) {
       Controller = controller;
     }
@@ -80,12 +91,10 @@ namespace SoundExplorers.View {
     }
 
     /// <summary>
-    ///   Refreshes the contents of the grid from the database and
-    ///   forces the form to invalidate its client area and immediately redraw itself
-    ///   and any child controls.
+    ///   Refreshes the contents of the existing grid or grids from the database.
     /// </summary>
-    public override void Refresh() {
-      IsRefreshing = true;
+    public void RefreshData() {
+      IsRefreshingData = true;
       Populate();
       if (Controller.IsParentGridToBeShown) {
         FocusGrid(ParentGrid);
@@ -93,8 +102,8 @@ namespace SoundExplorers.View {
         MainGrid.Focus();
         FocusedGrid = MainGrid;
       }
-      base.Refresh();
-      IsRefreshing = false;
+      Refresh();
+      IsRefreshingData = false;
     }
 
     /// <summary>
@@ -197,12 +206,12 @@ namespace SoundExplorers.View {
       unfocusedGrid.Enabled = false;
       unfocusedGrid.CellColorScheme.Invert();
       grid.Enabled = true;
-      base.Refresh(); // Don't want to repopulate grid, which this.Refresh would do!
+      Refresh();
       // if (grid.Equals(ParentGrid)) {
       //   IsFocusingParentGrid = true;
       // }
       grid.Focus();
-      base.Refresh(); // Don't want to repopulate grid, which this.Refresh would do!
+      Refresh();
       unfocusedGrid.Enabled = true;
       FocusedGrid = grid;
     }
@@ -403,8 +412,7 @@ namespace SoundExplorers.View {
       // And better to do this here than in SetController,
       // where any exception would be indirectly reported,
       // due to being thrown in the controller's constructor.
-      Populate();
-      Text = MainGrid.Controller.TableName;
+      ShowData();
     }
 
     private void OnMainGridPopulatedAsync() {
@@ -465,7 +473,6 @@ namespace SoundExplorers.View {
     private void Populate() {
       Debug.WriteLine("EditorView.Populate");
       IsPopulating = true;
-      GridSplitContainer.Panel1Collapsed = !Controller.IsParentGridToBeShown;
       if (Controller.IsParentGridToBeShown) {
         ParentGrid.CellColorScheme.RestoreToDefault();
         MainGrid.CellColorScheme.Invert();
@@ -478,7 +485,7 @@ namespace SoundExplorers.View {
           // in OnParentGridShownAsync to ensure that it is scrolled into view.
           // Otherwise, i.e. if the grid contents are being refreshed,
           // we need to do it here.
-          if (IsRefreshing) { 
+          if (IsRefreshingData) { 
             ParentGrid.MakeRowCurrent(ParentGrid.RowCount - 1);
             BeginInvoke((Action)OnPopulatedAsync);
           } else { // Showing for first time
@@ -490,6 +497,15 @@ namespace SoundExplorers.View {
         BeginInvoke((Action)OnPopulatedAsync);
       }
       Debug.WriteLine("EditorView.Populate END");
+    }
+
+    /// <summary>
+    ///   Shows the data for the first time, on an new grid or grids.
+    /// </summary>
+    private void ShowData() {
+      GridSplitContainer.Panel1Collapsed = !Controller.IsParentGridToBeShown;
+      Populate();
+      Text = MainGrid.Controller.TableName;
     }
 
     private void ShowMessage(string text, MessageBoxIcon icon) {

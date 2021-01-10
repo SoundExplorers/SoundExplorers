@@ -247,7 +247,7 @@ namespace SoundExplorers.View {
     private void FileRefreshMenuItem_Click(object? sender, EventArgs e) {
       if (MdiChildren.Any()) {
         Cursor = Cursors.WaitCursor;
-        BeginInvoke((Action)delegate { EditorView?.Refresh(); });
+        BeginInvoke((Action)delegate { EditorView?.RefreshData(); });
       }
     }
 
