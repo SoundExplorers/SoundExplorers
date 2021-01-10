@@ -12,7 +12,6 @@ namespace SoundExplorers.View {
     }
 
     private bool IsJustPopulated { get; set; }
-    private bool IsPopulating { get; set; }
 
     public TextBox TextBox =>
       (TextBox)EditingControl ??
@@ -54,12 +53,10 @@ namespace SoundExplorers.View {
 
     public override void Populate(IList? list = null) {
       Debug.WriteLine("MainGrid.Populate");
-      IsPopulating = true;
       FirstVisibleColumnIndex = -1;
       base.Populate(list);
       EditorView.OnMainGridPopulated();
       IsJustPopulated = true;
-      IsPopulating = false;
       Debug.WriteLine("MainGrid.Populate END");
     }
 
@@ -212,6 +209,7 @@ namespace SoundExplorers.View {
     ///   a Missing Image label containing an appropriate message will be displayed.
     /// </remarks>
     protected override void OnRowEnter(DataGridViewCellEventArgs e) {
+      Debug.WriteLine($"MainGrid.OnRowEnter: row {e.RowIndex}");
       base.OnRowEnter(e);
       if (EditorView.IsFocusingParentGrid) {
         return;

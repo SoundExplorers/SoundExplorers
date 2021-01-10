@@ -197,7 +197,7 @@ namespace SoundExplorers.Model {
     ///   of the BindingList's ListChanged event.
     /// </remarks>
     public void OnRowEnter(int rowIndex) {
-      //Debug.WriteLine($"EntityListBase.OnRowEnter: row {rowIndex}");
+      Debug.WriteLine($"EntityListBase.OnRowEnter: row {rowIndex}");
       // Debug.WriteLine(
       //   $"{nameof(OnRowEnter)}:  Any row entered (after ItemAdded if insertion row)");
       HasRowBeenEdited = false;
