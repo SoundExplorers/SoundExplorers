@@ -24,6 +24,13 @@ namespace SoundExplorers.View {
     private SizeableFormOptions SizeableFormOptions { get; set; } = null!;
     private bool IsClosed { get; set; }
 
+    /// <summary>
+    ///   An unwanted feature of DataGridView.OnBindingContextChanged
+    ///   is that it can call internal method
+    ///   DataGridView.MakeFirstDisplayedCellCurrentCell,
+    ///   thus triggering a RowEnter on row 0, which would usually be the wrong row,
+    ///   of the main grid.  This flag is used in a workaround.
+    /// </summary>
     private bool IsFixingFocus { get; set; }
     // public bool IsFocusingParentGrid { get; set; }
     public bool IsPopulating { get; private set; }
