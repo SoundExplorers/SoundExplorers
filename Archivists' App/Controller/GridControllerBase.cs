@@ -25,7 +25,7 @@ namespace SoundExplorers.Controller {
     /// </summary>
     protected abstract IEntityList List { get; }
     
-    protected bool IsPopulating { get; private set; }
+    // protected bool IsPopulating { get; private set; }
     protected int PreviousRowIndex { get; set; }
 
     [NotNull]
@@ -34,14 +34,14 @@ namespace SoundExplorers.Controller {
       return column.DisplayName ?? columnName;
     }
 
-    public virtual void OnRowEnter(int rowIndex) {
-      if (IsPopulating && rowIndex == List.Count -1) {
-        IsPopulating = false;
-      }
-    }
+    // public virtual void OnRowEnter(int rowIndex) {
+    //   if (IsPopulating && rowIndex == List.Count -1) {
+    //     IsPopulating = false;
+    //   }
+    // }
 
     public void Populate(IList list = null) {
-      IsPopulating = true;
+      // IsPopulating = true;
       PreviousRowIndex = -1;
       List.Populate(list);
     }

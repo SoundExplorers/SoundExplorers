@@ -22,13 +22,14 @@ namespace SoundExplorers.Controller {
     ///   So the main grid will be populated with the required
     ///   child entities of the entity at the specified row index.
     /// </summary>
-    public override void OnRowEnter(int rowIndex) {
-      base.OnRowEnter(rowIndex);
-      if (IsPopulating) {
-        return;
-      }
-      if (EditorView.IsFocusingParentGrid) {
-        EditorView.IsFocusingParentGrid = false;
+    public void OnRowEnter(int rowIndex) {
+      // base.OnRowEnter(rowIndex);
+      // if (IsPopulating) {
+      //   return;
+      // }
+      // if (EditorView.IsFocusingParentGrid) {
+      //   EditorView.IsFocusingParentGrid = false;
+      if (EditorView.IsPopulating) {
         return;
       }
       if (rowIndex == PreviousRowIndex) {

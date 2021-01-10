@@ -206,7 +206,8 @@ namespace SoundExplorers.Model {
       if (BackupBindingItemToRestoreFrom == null) {
         // Not forced to reenter row to fix an update error
         //Debug.WriteLine("    Creating BackupBindingItem");
-        BackupBindingItem = !IsInsertionRowCurrent
+        // BackupBindingItem = !IsInsertionRowCurrent
+        BackupBindingItem = rowIndex < Count // !IsInsertionRowCurrent is not reliable here
           ? GetBindingItem(rowIndex).CreateBackup()
           : new TBindingItem();
       }

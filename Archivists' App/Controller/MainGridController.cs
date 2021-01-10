@@ -96,12 +96,13 @@ namespace SoundExplorers.Controller {
       }
     }
 
-    public override void OnRowEnter(int rowIndex) {
+    public void OnRowEnter(int rowIndex) {
       // Debug.WriteLine(
       //   "MainGridController.OnRowEnter:  Any row entered (after ItemAdded if insertion row)");
       // Debug.WriteLine($"MainGridController.OnRowEnter: row {rowIndex} of {List.Count}");
-      base.OnRowEnter(rowIndex);
-      if (IsPopulating) {
+      // base.OnRowEnter(rowIndex);
+      // if (IsPopulating) {
+      if (EditorView.IsPopulating) {
         return;
       }
       // Debug.WriteLine("MainGridController.OnRowEnter: populated");
@@ -157,7 +158,8 @@ namespace SoundExplorers.Controller {
       // Debug.WriteLine(
       //   $"MainGridController.OnRowValidated: row {rowIndex}, IsRemovingInvalidInsertionRow == {MainList.IsRemovingInvalidInsertionRow}");
       CurrentRowIndex = -1;
-      if (List.IsRemovingInvalidInsertionRow || EditorView.IsFocusingParentGrid || 
+      // if (List.IsRemovingInvalidInsertionRow || EditorView.IsFocusingParentGrid || 
+      if (List.IsRemovingInvalidInsertionRow ||  
           EditorView.IsPopulating || EditorView.Controller.IsClosing ||
           EditorView.Controller.MainController.IsClosing) {
         return;

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using SoundExplorers.Controller;
@@ -130,7 +131,7 @@ namespace SoundExplorers.View {
 
     public void MakeRowCurrent(int rowIndex) {
       // This triggers OnRowEnter.
-      // Debug.WriteLine($"MainGrid.MakeRowCurrent: row {rowIndex}");
+      Debug.WriteLine($"GridBase.MakeRowCurrent: {Name} row {rowIndex}");
       CurrentCell = Rows[rowIndex].Cells[FirstVisibleColumnIndex];
     }
 

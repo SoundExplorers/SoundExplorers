@@ -11,7 +11,7 @@ namespace SoundExplorers.View {
       private set => base.Controller = value;
     }
 
-    private bool IsJustPopulated { get; set; }
+    // private bool IsJustPopulated { get; set; }
 
     public TextBox TextBox =>
       (TextBox)EditingControl ??
@@ -56,7 +56,7 @@ namespace SoundExplorers.View {
       FirstVisibleColumnIndex = -1;
       base.Populate(list);
       EditorView.OnMainGridPopulated();
-      IsJustPopulated = true;
+      // IsJustPopulated = true;
       Debug.WriteLine("MainGrid.Populate END");
     }
 
@@ -173,14 +173,18 @@ namespace SoundExplorers.View {
     }
 
     protected override void OnGotFocus(EventArgs e) {
-      //Debug.WriteLine("MainGrid.OnGotFocus");
-      if (IsJustPopulated) {
-        IsJustPopulated = false;
-        if (EditorView.Controller.IsParentGridToBeShown) {
-          BeginInvoke((Action)MakeNewRowCurrent);
-        }
-      }
+      Debug.WriteLine("MainGrid.OnGotFocus");
+      // if (IsJustPopulated) {
+      //   IsJustPopulated = false;
+      //   if (EditorView.Controller.IsParentGridToBeShown) {
+      //     BeginInvoke((Action)MakeNewRowCurrent);
+      //   }
+      // }
       base.OnGotFocus(e);
+      // if (EditorView.IsFixingFocus) {
+      //   BeginInvoke((Action)delegate { EditorView.ParentGrid.Focus(); });
+      //   // EditorView.ParentGrid.Focus();
+      // }
     }
 
     protected override void OnKeyDown(KeyEventArgs e) {
@@ -211,9 +215,10 @@ namespace SoundExplorers.View {
     protected override void OnRowEnter(DataGridViewCellEventArgs e) {
       Debug.WriteLine($"MainGrid.OnRowEnter: row {e.RowIndex}");
       base.OnRowEnter(e);
-      if (EditorView.IsFocusingParentGrid) {
-        return;
-      }
+      // if (EditorView.IsFocusingParentGrid) {
+      // if (EditorView.IsFixingFocus) {
+      //   return;
+      // }
       Controller.OnRowEnter(e.RowIndex);
     }
 

@@ -26,8 +26,11 @@ namespace SoundExplorers.View {
 
     protected override void OnGotFocus(EventArgs e) {
       Debug.WriteLine("ParentGrid.OnGotFocus");
-      EditorView.IsFocusingParentGrid = false;
+      // EditorView.IsFocusingParentGrid = false;
       base.OnGotFocus(e);
+      // if (EditorView.IsFixingFocus) {
+      //   EditorView.IsFixingFocus = false;
+      // }
     }
 
     /// <summary>
@@ -42,16 +45,11 @@ namespace SoundExplorers.View {
       if (EditorView.IsPopulating || e.RowIndex == PreviousRowIndex) {
         return;
       }
-      EditorView.MainGrid.Populate(Controller.GetChildrenForMainList(e.RowIndex));
-      if (EditorView.MainGrid.RowCount > 0) {
-        EditorView.MainGrid.MakeRowCurrent(EditorView.MainGrid.RowCount - 1);
-      }
-      // BeginInvoke((Action)delegate {
-      //   EditorView.MainGrid.Populate(Controller.GetChildrenForMainList(e.RowIndex));
-      //   if (EditorView.MainGrid.RowCount > 0) {
-      //     EditorView.MainGrid.MakeRowCurrent(EditorView.MainGrid.RowCount - 1);
-      //   }
-      // });
+      EditorView.PopulateMainGridOnParentRowChanged(e.RowIndex);
+      // EditorView.MainGrid.Populate(Controller.GetChildrenForMainList(e.RowIndex));
+      // if (EditorView.MainGrid.RowCount > 0) {
+      //   EditorView.MainGrid.MakeRowCurrent(EditorView.MainGrid.RowCount - 1);
+      // }
       PreviousRowIndex = e.RowIndex;
     }
 

@@ -23,7 +23,9 @@ namespace SoundExplorers.View {
     private MainView MainView => (MainView)MdiParent;
     private SizeableFormOptions SizeableFormOptions { get; set; } = null!;
     private bool IsClosed { get; set; }
-    public bool IsFocusingParentGrid { get; set; }
+
+    private bool IsFixingFocus { get; set; }
+    // public bool IsFocusingParentGrid { get; set; }
     public bool IsPopulating { get; private set; }
     private bool IsRefreshingData { get; set; }
     IMainGrid IEditorView.MainGrid => MainGrid;
@@ -237,9 +239,9 @@ namespace SoundExplorers.View {
     private void Grid_MouseDown(object? sender, MouseEventArgs e) {
       var grid = (GridBase)sender!;
       if (grid != FocusedGrid) {
-        if (grid.Equals(ParentGrid)) {
-          IsFocusingParentGrid = true;
-        }
+        // if (grid.Equals(ParentGrid)) {
+        //   IsFocusingParentGrid = true;
+        // }
         FocusGrid(grid);
       }
     }
@@ -315,6 +317,11 @@ namespace SoundExplorers.View {
     ///   in some circumstances.
     /// </remarks>
     private void MainGrid_RowValidated(object? sender, DataGridViewCellEventArgs e) {
+      Debug.WriteLine($"EditorView.MainGrid_RowValidated: row {e.RowIndex}");
+      if (IsFixingFocus) {
+        IsFixingFocus = false;
+        return;
+      }
       MainGrid.Controller.OnRowValidated(e.RowIndex);
     }
 
@@ -383,9 +390,9 @@ namespace SoundExplorers.View {
       switch (e.KeyData) {
         case Keys.F6:
           if (Controller.IsParentGridToBeShown) {
-            if (FocusedGrid != null && !FocusedGrid.Equals(ParentGrid)) {
-              IsFocusingParentGrid = true;
-            }
+            // if (FocusedGrid != null && !FocusedGrid.Equals(ParentGrid)) {
+            //   IsFocusingParentGrid = true;
+            // }
             FocusGrid(FocusedGrid == ParentGrid ? (GridBase)MainGrid : ParentGrid);
           }
           break;
@@ -417,7 +424,7 @@ namespace SoundExplorers.View {
 
     private void OnMainGridPopulatedAsync() {
       if (Controller.IsParentGridToBeShown) {
-        IsFocusingParentGrid = true;
+        //IsFocusingParentGrid = true;
         ParentGrid.Focus();
       } else { // No parent grid
         MainGrid.MakeNewRowCurrent();
@@ -444,23 +451,32 @@ namespace SoundExplorers.View {
     ///   after the grid splitter has been positioned
     ///   ensures that the row is scrolled into view.
     /// </remarks>
-    private void OnParentGridShownAsync() {
-      Debug.WriteLine("EditorView.OnParentGridShownAsync");
+    private void OnParentAndMainGridsShownAsync() {
+      Debug.WriteLine("EditorView.OnParentAndMainGridsShownAsync");
       int savedGridSplitterDistance = Controller.GridSplitterDistance;
       GridSplitContainer.SplitterDistance =
         savedGridSplitterDistance > 0 ? savedGridSplitterDistance : 180;
       if (ParentGrid.RowCount > 0) {
         ParentGrid.MakeRowCurrent(ParentGrid.RowCount - 1);
       }
+      // FocusGrid(ParentGrid);
+      // BeginInvoke((Action)OnPopulatedAsync);
+      IsFixingFocus = true;
       OnPopulatedAsync();
     }
 
     private void OnPopulatedAsync() {
       Debug.WriteLine("EditorView.OnPopulatedAsync");
-      if (MainGrid.RowCount > 0) {
-        MainGrid.MakeRowCurrent(MainGrid.RowCount - 1);
-      }
       IsPopulating = false;
+      if (MainGrid.RowCount > 0) {
+        // BeginInvoke((Action)delegate {
+        //   MainGrid.MakeRowCurrent(MainGrid.RowCount - 1);
+        //   MainView.Cursor = Cursors.Default;
+        // });
+        MainGrid.MakeRowCurrent(MainGrid.RowCount - 1);
+      // } else {
+      //   MainView.Cursor = Cursors.Default;
+      }
       MainView.Cursor = Cursors.Default;
     }
 
@@ -482,14 +498,14 @@ namespace SoundExplorers.View {
             ParentGrid.RowCount - 1));
           // If the editor window is being loaded,
           // the parent grid's current row is set asynchronously
-          // in OnParentGridShownAsync to ensure that it is scrolled into view.
+          // in OnParentAndMainGridsShownAsync to ensure that it is scrolled into view.
           // Otherwise, i.e. if the grid contents are being refreshed,
           // we need to do it here.
           if (IsRefreshingData) { 
             ParentGrid.MakeRowCurrent(ParentGrid.RowCount - 1);
             BeginInvoke((Action)OnPopulatedAsync);
           } else { // Showing for first time
-            BeginInvoke((Action)OnParentGridShownAsync);
+            BeginInvoke((Action)OnParentAndMainGridsShownAsync);
           }
         }
       } else {
@@ -497,6 +513,14 @@ namespace SoundExplorers.View {
         BeginInvoke((Action)OnPopulatedAsync);
       }
       Debug.WriteLine("EditorView.Populate END");
+    }
+
+    public void PopulateMainGridOnParentRowChanged(int parentRowIndex) {
+      Debug.WriteLine($"EditView.PopulateMainGridOnParentRowChanged: parent row {parentRowIndex}");
+      IsPopulating = true;
+      MainGrid.Populate(ParentGrid.Controller.GetChildrenForMainList(parentRowIndex));
+      IsFixingFocus = true;
+      BeginInvoke((Action)OnPopulatedAsync);
     }
 
     /// <summary>
