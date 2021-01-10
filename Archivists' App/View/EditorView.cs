@@ -15,13 +15,12 @@ namespace SoundExplorers.View {
       InitializeComponent();
       // Allow things to be dropped on to the PictureBox.
       FittedPictureBox1.AllowDrop = true;
-      GridSplitContainer.GotFocus += SplitContainerOnGotFocus;
-      ImageSplitContainer.GotFocus += SplitContainerOnGotFocus;
+      GridSplitContainer.GotFocus += SplitContainer_GotFocus;
+      ImageSplitContainer.GotFocus += SplitContainer_GotFocus;
     }
 
     public GridBase? FocusedGrid { get; private set; }
     private MainView MainView => (MainView)MdiParent;
-    private SizeableFormOptions SizeableFormOptions { get; set; } = null!;
     private bool IsClosed { get; set; }
 
     /// <summary>
@@ -43,6 +42,7 @@ namespace SoundExplorers.View {
     private bool IsFixingFocus { get; set; }
 
     private bool IsRefreshingData { get; set; }
+    private SizeableFormOptions SizeableFormOptions { get; set; } = null!;
 
     // public bool IsFocusingParentGrid { get; set; }
     public bool IsPopulating { get; private set; }
@@ -523,7 +523,8 @@ namespace SoundExplorers.View {
     ///   SplitContainer gets focused. In any case, we want focus to return to the
     ///   current grid after the user has grabbed the splitter.
     /// </remarks>
-    private void SplitContainerOnGotFocus(object? sender, EventArgs e) {
+    private void SplitContainer_GotFocus(object? sender, EventArgs e) {
+      Debug.WriteLine("EditorView.GridSplitContainer_GotFocus");
       BeginInvoke((Action)delegate { FocusGrid(FocusedGrid ?? ParentGrid); });
     }
 

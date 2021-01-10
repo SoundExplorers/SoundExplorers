@@ -40,9 +40,11 @@ namespace SoundExplorers.View {
     /// </summary>
     protected override void OnRowEnter(DataGridViewCellEventArgs e) {
       Debug.WriteLine($"ParentGrid.OnRowEnter: row {e.RowIndex}");
+      Debug.WriteLine($"    PreviousRowIndex = {PreviousRowIndex}; IsPopulating = {EditorView.IsPopulating}");
       base.OnRowEnter(e);
       //Controller.OnRowEnter(e.RowIndex);
       if (EditorView.IsPopulating || e.RowIndex == PreviousRowIndex) {
+        PreviousRowIndex = e.RowIndex;
         return;
       }
       EditorView.PopulateMainGridOnParentRowChanged(e.RowIndex);
