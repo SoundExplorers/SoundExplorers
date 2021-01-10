@@ -473,9 +473,6 @@ namespace SoundExplorers.View {
         if (ParentGrid.RowCount > 0) {
           MainGrid.Populate(ParentGrid.Controller.GetChildrenForMainList(
             ParentGrid.RowCount - 1));
-          // if (MainGrid.RowCount > 0) {
-          //   MainGrid.MakeRowCurrent(MainGrid.RowCount - 1);
-          // }
           // If the editor window is being loaded,
           // the parent grid's current row is set asynchronously
           // in OnParentGridShownAsync to ensure that it is scrolled into view.
@@ -490,9 +487,6 @@ namespace SoundExplorers.View {
         }
       } else {
         MainGrid.Populate();
-        // if (MainGrid.RowCount > 0) {
-        //   MainGrid.MakeRowCurrent(MainGrid.RowCount - 1);
-        // }
         BeginInvoke((Action)OnPopulatedAsync);
       }
       Debug.WriteLine("EditorView.Populate END");
