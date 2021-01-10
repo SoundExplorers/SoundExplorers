@@ -462,40 +462,6 @@ namespace SoundExplorers.View {
       ParentForm?.Refresh();
     }
 
-    protected override void OnVisibleChanged(EventArgs e) {
-      base.OnVisibleChanged(e);
-      if (!Visible) {
-        return;
-      }
-      //Debug.WriteLine("EditorView_VisibleChanged: " + this.Text);
-      // if (Controller.IsParentGridToBeShown) {
-      //   BeginInvoke((Action)OnParentGridShownAsync);
-      // }
-      //ImageSplitContainer.Panel2Collapsed = true;
-      // We need to work out whether we need the image panel
-      // before we position the grid splitter.
-      // Otherwise the grid splitter gets out of kilter.
-      // if (Entities is ArtistInImageList
-      //     || Entities is ImageList) {
-      //   ImageSplitContainer.Panel2Collapsed = false;
-      //   ImageSplitContainer.SplitterDistance = Controller.ImageSplitterDistance;
-      //   ShowImageOrMessage(null); // Force image refresh
-      //   if (Entities is ImageList) {
-      //     if (Entities.Count > 0) {
-      //       ShowImageOrMessage(
-      //         MainGrid.Rows[0].Cells["Path"].Value.ToString());
-      //     }
-      //   } else { // ArtistInImageList
-      //     if (Controller.ParentList.Count > 0) {
-      //       ShowImageOrMessage(
-      //         ParentGrid.Rows[0].Cells["Path"].Value.ToString());
-      //     }
-      //   }
-      // } else {
-      //   ImageSplitContainer.Panel2Collapsed = true;
-      // }
-    }
-
     private void Populate() {
       Debug.WriteLine("EditorView.Populate");
       IsPopulating = true;
