@@ -7,10 +7,8 @@ namespace SoundExplorers.Controller {
     public MainGridController(
       IMainGrid grid, IEditorView editorView) : base(editorView) {
       Grid = grid;
-      CurrentRowIndex = -1;
     }
 
-    protected int CurrentRowIndex { get; private set; }
     protected IMainGrid Grid { get; }
 
     private bool IsDuplicateKeyException =>
@@ -97,7 +95,6 @@ namespace SoundExplorers.Controller {
       if (EditorView.IsPopulating) {
         return;
       }
-      CurrentRowIndex = rowIndex;
       List.OnRowEnter(rowIndex);
     }
 
@@ -139,11 +136,10 @@ namespace SoundExplorers.Controller {
     ///   the editor. But see the XML comments for <see cref="CancelInsertion" /> for the
     ///   difficulties that would be involved in reopening a 'validated' insertion.
     /// </remarks>
-    public void OnRowValidated(int rowIndex) {
+    public virtual void OnRowValidated(int rowIndex) {
       //Debug.WriteLine("MainGridController.OnRowValidated:  Any row left, after final ItemChanged, if any");
       // Debug.WriteLine(
       //   $"MainGridController.OnRowValidated: row {rowIndex}, IsRemovingInvalidInsertionRow == {MainList.IsRemovingInvalidInsertionRow}");
-      CurrentRowIndex = -1;
       if (List.IsRemovingInvalidInsertionRow ||
           EditorView.IsPopulating || EditorView.Controller.IsClosing ||
           EditorView.Controller.MainController.IsClosing) {

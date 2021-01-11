@@ -5,9 +5,12 @@ using SoundExplorers.Model;
 namespace SoundExplorers.Tests.Controller {
   public class TestMainGridController : MainGridController {
     public TestMainGridController(IEditorView editorView) :
-      base(new MockMainGrid(), editorView) { }
+      base(new MockMainGrid(), editorView) {
+      CurrentRowIndex = -1;
+    }
 
     internal bool AutoValidate { get; set; }
+    private int CurrentRowIndex { get; set; }
 
     protected override StatementType LastChangeAction => TestUnsupportedLastChangeAction
       ? StatementType.Select // Not used.
@@ -17,6 +20,10 @@ namespace SoundExplorers.Tests.Controller {
     public new MockMainGrid Grid => (MockMainGrid)base.Grid;
 
     public override void OnRowEnter(int rowIndex) {
+      CurrentRowIndex = rowIndex;
+      // if (!EditorView.IsPopulating) { // Is this condition needed?
+      //   CurrentRowIndex = rowIndex;
+      // }
       if (AutoValidate) {
         if (List.HasRowBeenEdited) {
           OnRowValidated(CurrentRowIndex);
@@ -26,6 +33,11 @@ namespace SoundExplorers.Tests.Controller {
         }
       }
       base.OnRowEnter(rowIndex);
+    }
+
+    public override void OnRowValidated(int rowIndex) {
+      CurrentRowIndex = -1;
+      base.OnRowValidated(rowIndex);
     }
 
     internal void CreateAndGoToInsertionRow() {
