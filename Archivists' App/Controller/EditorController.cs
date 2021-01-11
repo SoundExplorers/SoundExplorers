@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using JetBrains.Annotations;
 using SoundExplorers.Model;
@@ -77,6 +78,7 @@ namespace SoundExplorers.Controller {
     /// </summary>
     public bool IsParentGridToBeShown => MainList.ParentListType != null;
 
+    internal bool IsPopulating { get; private set; }
     internal MainController MainController { get; }
 
     /// <summary>
@@ -122,6 +124,36 @@ namespace SoundExplorers.Controller {
     protected virtual Option CreateOption(string name) {
       return new(name);
     }
+    
+
+    private void Populate() {
+      Debug.WriteLine("EditorView.Populate");
+      IsPopulating = true;
+      if (IsParentGridToBeShown) {
+        View.ParentGrid.RestoreCellColorSchemeToDefault();
+        View.MainGrid.InvertCellColorScheme();
+        View.ParentGrid.Populate();
+        if (ParentGrid.RowCount > 0) {
+          MainGrid.Populate(ParentGrid.Controller.GetChildrenForMainList(
+            ParentGrid.RowCount - 1));
+          // If the editor window is being loaded, the parent grid's current row is set
+          // asynchronously in OnParentAndMainGridsShownAsync to ensure that it is
+          // scrolled into view. Otherwise, i.e. if the grid contents are being
+          // refreshed, we need to do it here.
+          if (IsRefreshingData) {
+            ParentGrid.MakeRowCurrent(ParentGrid.RowCount - 1);
+            BeginInvoke((Action)OnPopulatedAsync);
+          } else { // Showing for first time
+            BeginInvoke((Action)OnParentAndMainGridsShownAsync);
+          }
+        }
+      } else {
+        MainGrid.Populate();
+        BeginInvoke((Action)OnPopulatedAsync);
+      }
+      Debug.WriteLine("EditorView.Populate END");
+    }
+    
 
     /// <summary>
     ///   Plays the audio, if found,

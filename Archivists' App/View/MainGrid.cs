@@ -55,7 +55,6 @@ namespace SoundExplorers.View {
       FirstVisibleColumnIndex = -1;
       base.Populate(list);
       EditorView.OnMainGridPopulated();
-      // IsJustPopulated = true;
       Debug.WriteLine("MainGrid.Populate END");
     }
 

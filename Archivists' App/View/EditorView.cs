@@ -44,7 +44,6 @@ namespace SoundExplorers.View {
     private bool IsRefreshingData { get; set; }
     private SizeableFormOptions SizeableFormOptions { get; set; } = null!;
     public EditorController Controller { get; private set; } = null!;
-    public bool IsPopulating { get; private set; }
     IMainGrid IEditorView.MainGrid => MainGrid;
     IParentGrid IEditorView.ParentGrid => ParentGrid;
 

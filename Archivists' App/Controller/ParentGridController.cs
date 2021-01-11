@@ -4,7 +4,7 @@ using SoundExplorers.Model;
 
 namespace SoundExplorers.Controller {
   public class ParentGridController : GridControllerBase {
-    public ParentGridController(IEditorView editorView) : base(editorView) { }
+    public ParentGridController(EditorView editorView) : base(editorView) { }
 
     /// <summary>
     ///   Gets the list of entities represented in the grid.

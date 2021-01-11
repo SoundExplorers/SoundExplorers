@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 
 namespace SoundExplorers.Controller {
-  public interface IMainGrid : IView<MainGridController> {
+  public interface IMainGrid : IGrid, IView<MainGridController> {
     void EditCurrentCell();
     void MakeCellCurrent(int rowIndex, int columnIndex);
     void MakeRowCurrent(int rowIndex);

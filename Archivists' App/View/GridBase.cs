@@ -6,7 +6,7 @@ using System.Windows.Forms;
 using SoundExplorers.Controller;
 
 namespace SoundExplorers.View {
-  internal abstract class GridBase : DataGridView {
+  internal abstract class GridBase : DataGridView, IGrid {
     private GridContextMenu? _contextMenu;
 
     protected GridBase() {
@@ -196,6 +196,14 @@ namespace SoundExplorers.View {
       DataSource = Controller.BindingList;
       ConfigureColumns();
       AutoResizeColumns();
+    }
+
+    public void InvertCellColorScheme() {
+      CellColorScheme.Invert();
+    }
+
+    public void RestoreCellColorSchemeToDefault() {
+      CellColorScheme.RestoreToDefault();
     }
   }
 }

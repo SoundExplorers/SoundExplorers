@@ -13,8 +13,6 @@ namespace SoundExplorers.View {
       ReadOnly = true;
     }
 
-    private int PreviousRowIndex { get; set; }
-
     public new ParentGridController Controller {
       get => (ParentGridController)base.Controller;
       private set => base.Controller = value;
@@ -45,13 +43,6 @@ namespace SoundExplorers.View {
       }
       EditorView.PopulateMainGridOnParentRowChanged(e.RowIndex);
       PreviousRowIndex = e.RowIndex;
-    }
-
-    public override void Populate(IList? list = null) {
-      Debug.WriteLine("ParentGrid.Populate");
-      PreviousRowIndex = -1;
-      base.Populate(list);
-      Debug.WriteLine("ParentGrid.Populate: END");
     }
   }
 }
