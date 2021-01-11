@@ -55,6 +55,7 @@ namespace SoundExplorers.View {
     }
 
     public void OnMainGridPopulated() {
+      MainGrid.MakeNewRowCurrent();
       BeginInvoke((Action)OnMainGridPopulatedAsync);
     }
 
@@ -392,7 +393,6 @@ namespace SoundExplorers.View {
       if (Controller.IsParentGridToBeShown) {
         ParentGrid.Focus();
       } else { // No parent grid
-        MainGrid.MakeNewRowCurrent();
         MainGrid.Focus();
       }
     }
