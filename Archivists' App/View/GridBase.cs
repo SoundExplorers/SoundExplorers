@@ -73,8 +73,8 @@ namespace SoundExplorers.View {
     }
 
     /// <summary>
-    ///   Enables or disables the menu items of the grid's context menu
-    ///   or the corresponding items of the Edit menu on the main window menu bar.
+    ///   Enables or disables the menu items of the grid's context menu or the
+    ///   corresponding items of the Edit menu on the main window menu bar.
     /// </summary>
     public void EnableOrDisableMenuItems(
       ToolStripMenuItem cutMenuItem,
@@ -167,8 +167,7 @@ namespace SoundExplorers.View {
     }
 
     /// <summary>
-    ///   When mouse button 2 is clicked on a cell,
-    ///   the cell will become the current cell
+    ///   When mouse button 2 is clicked on a cell, the cell will become the current cell
     ///   and, unless the cell is already being edited, the context menu will be shown.
     /// </summary>
     protected override void OnMouseDown(MouseEventArgs e) {
@@ -190,8 +189,8 @@ namespace SoundExplorers.View {
     /// </summary>
     /// <param name="list">
     ///   Optionally specifies the required list of entities that will populate the grid.
-    ///   If null, the default, all entities of the class's entity type
-    ///   will be fetched from the database.
+    ///   If null, the default, all entities of the class's entity type will be fetched
+    ///   from the database.
     /// </param>
     public virtual void Populate(IList? list = null) {
       Controller.Populate(list);

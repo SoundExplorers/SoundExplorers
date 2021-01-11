@@ -24,9 +24,6 @@ namespace SoundExplorers.Controller {
     ///   Gets the list of entities represented in the grid.
     /// </summary>
     protected abstract IEntityList List { get; }
-    
-    // protected bool IsPopulating { get; private set; }
-    protected int PreviousRowIndex { get; set; }
 
     [NotNull]
     public string GetColumnDisplayName([NotNull] string columnName) {
@@ -34,15 +31,7 @@ namespace SoundExplorers.Controller {
       return column.DisplayName ?? columnName;
     }
 
-    // public virtual void OnRowEnter(int rowIndex) {
-    //   if (IsPopulating && rowIndex == List.Count -1) {
-    //     IsPopulating = false;
-    //   }
-    // }
-
-    public void Populate(IList list = null) {
-      // IsPopulating = true;
-      PreviousRowIndex = -1;
+    public virtual void Populate(IList list = null) {
       List.Populate(list);
     }
   }

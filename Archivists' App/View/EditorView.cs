@@ -43,12 +43,10 @@ namespace SoundExplorers.View {
 
     private bool IsRefreshingData { get; set; }
     private SizeableFormOptions SizeableFormOptions { get; set; } = null!;
-
-    // public bool IsFocusingParentGrid { get; set; }
+    public EditorController Controller { get; private set; } = null!;
     public bool IsPopulating { get; private set; }
     IMainGrid IEditorView.MainGrid => MainGrid;
     IParentGrid IEditorView.ParentGrid => ParentGrid;
-    public EditorController Controller { get; private set; } = null!;
 
     public void OnError() {
       // Debug.WriteLine("EditorView.OnError");
@@ -203,9 +201,6 @@ namespace SoundExplorers.View {
       unfocusedGrid.Enabled = false;
       grid.Enabled = true;
       Refresh();
-      // if (grid.Equals(ParentGrid)) {
-      //   IsFocusingParentGrid = true;
-      // }
       grid.Focus();
       Refresh();
       unfocusedGrid.Enabled = true;
@@ -228,9 +223,6 @@ namespace SoundExplorers.View {
     private void Grid_MouseDown(object? sender, MouseEventArgs e) {
       var grid = (GridBase)sender!;
       if (grid != FocusedGrid) {
-        // if (grid.Equals(ParentGrid)) {
-        //   IsFocusingParentGrid = true;
-        // }
         FocusGrid(grid);
       }
     }
@@ -368,9 +360,6 @@ namespace SoundExplorers.View {
       switch (e.KeyData) {
         case Keys.F6:
           if (Controller.IsParentGridToBeShown) {
-            // if (FocusedGrid != null && !FocusedGrid.Equals(ParentGrid)) {
-            //   IsFocusingParentGrid = true;
-            // }
             FocusGrid(FocusedGrid == ParentGrid ? (GridBase)MainGrid : ParentGrid);
           }
           break;
@@ -401,7 +390,6 @@ namespace SoundExplorers.View {
 
     private void OnMainGridPopulatedAsync() {
       if (Controller.IsParentGridToBeShown) {
-        //IsFocusingParentGrid = true;
         ParentGrid.Focus();
       } else { // No parent grid
         MainGrid.MakeNewRowCurrent();
@@ -435,8 +423,6 @@ namespace SoundExplorers.View {
       if (ParentGrid.RowCount > 0) {
         ParentGrid.MakeRowCurrent(ParentGrid.RowCount - 1);
       }
-      // FocusGrid(ParentGrid);
-      // BeginInvoke((Action)OnPopulatedAsync);
       IsFixingFocus = true;
       OnPopulatedAsync();
     }
@@ -445,13 +431,7 @@ namespace SoundExplorers.View {
       Debug.WriteLine("EditorView.OnPopulatedAsync");
       IsPopulating = false;
       if (MainGrid.RowCount > 0) {
-        // BeginInvoke((Action)delegate {
-        //   MainGrid.MakeRowCurrent(MainGrid.RowCount - 1);
-        //   MainView.Cursor = Cursors.Default;
-        // });
         MainGrid.MakeRowCurrent(MainGrid.RowCount - 1);
-        // } else {
-        //   MainView.Cursor = Cursors.Default;
       }
       MainView.Cursor = Cursors.Default;
     }

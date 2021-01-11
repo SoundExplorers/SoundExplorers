@@ -65,7 +65,6 @@ namespace SoundExplorers.Controller {
         case FormatException formatException:
           // An invalid value was pasted into a cell, e.g. text into a date.
           List.OnValidationError(rowIndex, columnName, formatException);
-          //MainList.OnFormatException(rowIndex, columnName, formatException);
           EditorView.OnError();
           break;
         case RowNotInTableException referencedEntityNotFoundException:
@@ -92,16 +91,13 @@ namespace SoundExplorers.Controller {
       }
     }
 
-    public void OnRowEnter(int rowIndex) {
+    public virtual void OnRowEnter(int rowIndex) {
       // Debug.WriteLine(
       //   "MainGridController.OnRowEnter:  Any row entered (after ItemAdded if insertion row)");
       // Debug.WriteLine($"MainGridController.OnRowEnter: row {rowIndex} of {List.Count}");
-      // base.OnRowEnter(rowIndex);
-      // if (IsPopulating) {
       if (EditorView.IsPopulating) {
         return;
       }
-      // Debug.WriteLine("MainGridController.OnRowEnter: populated");
       CurrentRowIndex = rowIndex;
       List.OnRowEnter(rowIndex);
     }
@@ -149,7 +145,6 @@ namespace SoundExplorers.Controller {
       // Debug.WriteLine(
       //   $"MainGridController.OnRowValidated: row {rowIndex}, IsRemovingInvalidInsertionRow == {MainList.IsRemovingInvalidInsertionRow}");
       CurrentRowIndex = -1;
-      // if (List.IsRemovingInvalidInsertionRow || EditorView.IsFocusingParentGrid || 
       if (List.IsRemovingInvalidInsertionRow ||  
           EditorView.IsPopulating || EditorView.Controller.IsClosing ||
           EditorView.Controller.MainController.IsClosing) {

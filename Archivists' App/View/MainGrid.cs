@@ -11,8 +11,6 @@ namespace SoundExplorers.View {
       private set => base.Controller = value;
     }
 
-    // private bool IsJustPopulated { get; set; }
-
     public TextBox TextBox =>
       (TextBox)EditingControl ??
       throw new InvalidOperationException(
@@ -77,14 +75,11 @@ namespace SoundExplorers.View {
         column.CellTemplate = new CalendarCell();
       } else if (column.ValueType == typeof(string)) {
         column.CellTemplate = new TextBoxCell();
-        // Interpret blanking a cell as an empty string, not null.
-        // Null is not a problem for the object-oriented database to handle.
-        // But this fixes an error where,
-        // when a text cell was edited to blank
-        // and then Tab was pressed to proceed to the next cell,
-        // which happened to be the first cell of the insertion row,
-        // if that is relevant,
-        // the program would crash with a NullReferenceException.
+        // Interpret blanking a cell as an empty string, not null. Null is not a problem
+        // for the object-oriented database to handle. But this fixes an error where,
+        // when a text cell was edited to blank and then Tab was pressed to proceed to
+        // the next cell, which happened to be the first cell of the insertion row, if
+        // that is relevant, the program would crash with a NullReferenceException.
         column.DefaultCellStyle.DataSourceNullValue = string.Empty;
       }
     }
@@ -175,17 +170,7 @@ namespace SoundExplorers.View {
 
     protected override void OnGotFocus(EventArgs e) {
       Debug.WriteLine("MainGrid.OnGotFocus");
-      // if (IsJustPopulated) {
-      //   IsJustPopulated = false;
-      //   if (EditorView.Controller.IsParentGridToBeShown) {
-      //     BeginInvoke((Action)MakeNewRowCurrent);
-      //   }
-      // }
       base.OnGotFocus(e);
-      // if (EditorView.IsFixingFocus) {
-      //   BeginInvoke((Action)delegate { EditorView.ParentGrid.Focus(); });
-      //   // EditorView.ParentGrid.Focus();
-      // }
     }
 
     protected override void OnKeyDown(KeyEventArgs e) {
@@ -216,10 +201,6 @@ namespace SoundExplorers.View {
     protected override void OnRowEnter(DataGridViewCellEventArgs e) {
       Debug.WriteLine($"MainGrid.OnRowEnter: row {e.RowIndex}");
       base.OnRowEnter(e);
-      // if (EditorView.IsFocusingParentGrid) {
-      // if (EditorView.IsFixingFocus) {
-      //   return;
-      // }
       Controller.OnRowEnter(e.RowIndex);
     }
 
