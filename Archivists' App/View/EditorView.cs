@@ -91,7 +91,7 @@ namespace SoundExplorers.View {
     /// <param name="mainController">
     ///   Controller for the main window.
     /// </param>
-    public static EditorView Create(Type? entityListType,
+    public static EditorView Create(Type entityListType,
       MainController mainController) {
       return (EditorView)ViewFactory.Create<EditorView, EditorController>(
         entityListType, mainController);

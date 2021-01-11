@@ -1,16 +1,15 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using JetBrains.Annotations;
 using SoundExplorers.Model;
-using NotNullAttribute = JetBrains.Annotations.NotNullAttribute;
 
 namespace SoundExplorers.Controller {
   [UsedImplicitly]
   public class MainController {
-    private IOpen _databaseConnection;
-    private Option _tableOption;
-    private Option _toolBarOption;
+    private IOpen? _databaseConnection;
+    private Option? _tableOption;
+    private Option? _toolBarOption;
 
-    public MainController([NotNull] IView<MainController> view) {
+    public MainController(IView<MainController> view) {
       view.SetController(this);
     }
 
@@ -35,21 +34,17 @@ namespace SoundExplorers.Controller {
       set => TableOption.StringValue = value;
     }
 
-    private Option TableOption => _tableOption ??
-                                  (_tableOption = CreateOption("Table"));
-
-    private Option ToolBarOption => _toolBarOption ??
-                                    (_toolBarOption = CreateOption("ToolBar", true));
+    private Option TableOption => _tableOption ??= CreateOption("Table");
+    private Option ToolBarOption => _toolBarOption ??= CreateOption("ToolBar", true);
 
     public void ConnectToDatabase() {
       DatabaseConnection.Open();
     }
 
     [ExcludeFromCodeCoverage]
-    [NotNull]
-    protected virtual Option CreateOption([NotNull] string name,
-      object defaultValue = null) {
-      return new Option(name, defaultValue);
+    protected virtual Option CreateOption(string name,
+      object? defaultValue = null) {
+      return new(name, defaultValue);
     }
   }
 }

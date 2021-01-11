@@ -40,7 +40,7 @@ namespace SoundExplorers.View {
       Focus();
     }
 
-    public void RestoreCurrentRowCellErrorValue(int columnIndex, object errorValue) {
+    public void RestoreCurrentRowCellErrorValue(int columnIndex, object? errorValue) {
       ((ICanRestoreErrorValue)CurrentRow!.Cells[columnIndex]).RestoreErrorValue(
         errorValue);
     }

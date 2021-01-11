@@ -1,18 +1,17 @@
 ﻿using System;
 using System.Data;
-using JetBrains.Annotations;
 using SoundExplorers.Model;
 
 namespace SoundExplorers.Controller {
   public class MainGridController : GridControllerBase {
     public MainGridController(
-      [NotNull] IMainGrid grid, [NotNull] IEditorView editorView) : base(editorView) {
+      IMainGrid grid, IEditorView editorView) : base(editorView) {
       Grid = grid;
       CurrentRowIndex = -1;
     }
 
     protected int CurrentRowIndex { get; private set; }
-    [NotNull] protected IMainGrid Grid { get; }
+    protected IMainGrid Grid { get; }
 
     private bool IsDuplicateKeyException =>
       List.LastDatabaseUpdateErrorException?.InnerException is DuplicateNameException;
@@ -38,21 +37,21 @@ namespace SoundExplorers.Controller {
     /// </summary>
     protected override IEntityList List => EditorView.Controller.MainList;
 
-    [CanBeNull] public string TableName => List.EntityTypeName;
+    public string TableName => List.EntityTypeName;
 
     /// <summary>
     ///   Returns whether the specified column references another entity.
     /// </summary>
-    public bool DoesColumnReferenceAnotherEntity([NotNull] string columnName) {
+    public bool DoesColumnReferenceAnotherEntity(string columnName) {
       return !string.IsNullOrWhiteSpace(Columns[columnName].ReferencedPropertyName);
     }
 
-    public bool IsColumnToBeShown([NotNull] string columnName) {
+    public bool IsColumnToBeShown(string columnName) {
       return Columns.ContainsKey(columnName);
     }
 
-    public void OnExistingRowCellEditError(int rowIndex, [NotNull] string columnName,
-      [CanBeNull] Exception exception) {
+    public void OnExistingRowCellEditError(int rowIndex, string columnName,
+      Exception? exception) {
       switch (exception) {
         case DatabaseUpdateErrorException databaseUpdateErrorException:
           List.LastDatabaseUpdateErrorException = databaseUpdateErrorException;
@@ -145,7 +144,7 @@ namespace SoundExplorers.Controller {
       // Debug.WriteLine(
       //   $"MainGridController.OnRowValidated: row {rowIndex}, IsRemovingInvalidInsertionRow == {MainList.IsRemovingInvalidInsertionRow}");
       CurrentRowIndex = -1;
-      if (List.IsRemovingInvalidInsertionRow ||  
+      if (List.IsRemovingInvalidInsertionRow ||
           EditorView.IsPopulating || EditorView.Controller.IsClosing ||
           EditorView.Controller.MainController.IsClosing) {
         return;
@@ -212,8 +211,8 @@ namespace SoundExplorers.Controller {
     ///   it could only be a matching value.
     /// </summary>
     internal void OnInsertionRowReferencedEntityNotFound(
-      int rowIndex, [NotNull] string columnName,
-      [NotNull] string simpleKey) {
+      int rowIndex, string columnName,
+      string simpleKey) {
       var referencedEntityNotFoundException =
         ReferenceableItemList.CreateReferencedEntityNotFoundException(
           columnName, simpleKey);

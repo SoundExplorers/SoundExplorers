@@ -270,9 +270,9 @@ namespace SoundExplorers.View {
 
     private void MainView_FormClosed(object? sender, FormClosedEventArgs e) {
       Controller.IsToolBarVisible = ToolStrip.Visible;
-      Controller.TableName = MdiChildren.Any()
+      Controller.TableName = (MdiChildren.Any()
         ? EditorView?.MainGrid.Controller.TableName
-        : SelectEditorView.Controller.SelectedTableName;
+        : SelectEditorView.Controller.SelectedTableName)!;
       // Explicitly closing all the MIDI child forms
       // fixes a problem where, 
       // if multiple child forms were open and maximized
@@ -363,6 +363,7 @@ namespace SoundExplorers.View {
     }
 
     private void WindowsNextMenuItem_Click(object? sender, EventArgs e) {
+      // ReSharper disable once CommentTypo
       // Just emulating the MDI's built-in Next behaviour (Ctrl+F6),
       // which backtracks through the child editor windows
       // in the order in which they were opened.

@@ -1,7 +1,5 @@
-﻿using JetBrains.Annotations;
-
-namespace SoundExplorers.Controller {
+﻿namespace SoundExplorers.Controller {
   public interface IView<in TController> {
-    void SetController([NotNull] TController controller);
+    void SetController(TController controller);
   }
 }

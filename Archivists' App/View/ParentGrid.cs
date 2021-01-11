@@ -13,12 +13,12 @@ namespace SoundExplorers.View {
       ReadOnly = true;
     }
 
+    private int PreviousRowIndex { get; set; }
+
     public new ParentGridController Controller {
       get => (ParentGridController)base.Controller;
       private set => base.Controller = value;
     }
-    
-    private int PreviousRowIndex { get; set; }
 
     public void SetController(ParentGridController controller) {
       Controller = controller;
@@ -36,7 +36,8 @@ namespace SoundExplorers.View {
     /// </summary>
     protected override void OnRowEnter(DataGridViewCellEventArgs e) {
       Debug.WriteLine($"ParentGrid.OnRowEnter: row {e.RowIndex}");
-      Debug.WriteLine($"    PreviousRowIndex = {PreviousRowIndex}; IsPopulating = {EditorView.IsPopulating}");
+      Debug.WriteLine(
+        $"    PreviousRowIndex = {PreviousRowIndex}; IsPopulating = {EditorView.IsPopulating}");
       base.OnRowEnter(e);
       if (EditorView.IsPopulating || e.RowIndex == PreviousRowIndex) {
         PreviousRowIndex = e.RowIndex;

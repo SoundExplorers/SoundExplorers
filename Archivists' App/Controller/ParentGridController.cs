@@ -1,22 +1,20 @@
 ﻿using System.Collections;
 using System.Diagnostics;
-using JetBrains.Annotations;
 using SoundExplorers.Model;
 
 namespace SoundExplorers.Controller {
   public class ParentGridController : GridControllerBase {
-    public ParentGridController([NotNull] IEditorView editorView) : base(editorView) {
-    }
+    public ParentGridController(IEditorView editorView) : base(editorView) { }
 
     /// <summary>
     ///   Gets the list of entities represented in the grid.
     /// </summary>
-    protected override IEntityList List => EditorView.Controller.ParentList;
-    
+    protected override IEntityList List => EditorView.Controller.ParentList!;
+
     private int PreviousRowIndex { get; set; }
 
     public IList GetChildrenForMainList(int rowIndex) {
-      return List.GetChildrenForMainList(rowIndex);
+      return List.GetChildrenForMainList(rowIndex)!;
     }
 
     /// <summary>
@@ -30,12 +28,13 @@ namespace SoundExplorers.Controller {
       if (rowIndex == PreviousRowIndex) {
         return;
       }
-      Debug.WriteLine($"ParentGridController.OnRowEnter: row {rowIndex}, populating main grid.");
-      EditorView.MainGrid.Populate(List.GetChildrenForMainList(rowIndex));
+      Debug.WriteLine(
+        $"ParentGridController.OnRowEnter: row {rowIndex}, populating main grid.");
+      EditorView.MainGrid.Populate(List.GetChildrenForMainList(rowIndex)!);
       PreviousRowIndex = rowIndex;
     }
 
-    public override void Populate(IList list = null) {
+    public override void Populate(IList? list = null) {
       PreviousRowIndex = -1;
       base.Populate(list);
     }

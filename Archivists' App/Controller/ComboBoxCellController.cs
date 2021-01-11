@@ -19,9 +19,9 @@ namespace SoundExplorers.Controller {
     /// <param name="columnName">
     ///   The name of the column that is edited with the combo box cell.
     /// </param>
-    public ComboBoxCellController([NotNull] IView<ComboBoxCellController> view,
-      [NotNull] MainGridController mainGridController,
-      [NotNull] string columnName) : base(
+    public ComboBoxCellController(IView<ComboBoxCellController> view,
+      MainGridController mainGridController,
+      string columnName) : base(
       mainGridController, columnName) {
       view.SetController(this);
     }
@@ -34,7 +34,6 @@ namespace SoundExplorers.Controller {
              $"{Column.ReferencedTableName} for a {TableName}.";
     }
 
-    [NotNull]
     public object[] GetItems() {
       if (Column.ReferenceableItems.Count == 0) {
         MainGridController.ShowWarningMessage(CreateNoAvailableReferencesMessage());
@@ -42,13 +41,12 @@ namespace SoundExplorers.Controller {
       return Column.ReferenceableItems.ToArray();
     }
 
-    [CanBeNull]
-    public static string GetKey([CanBeNull] object value) {
+    public static string? GetKey(object? value) {
       return ReferenceableItemList.ToSimpleKey(value);
     }
 
     public void OnCellValueChanged(int rowIndex,
-      [NotNull] object cellValue) {
+      object cellValue) {
       if (!MainGridController.IsInsertionRowCurrent) {
         return;
       }

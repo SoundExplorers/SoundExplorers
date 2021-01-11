@@ -32,7 +32,7 @@ namespace SoundExplorers.Tests.Controller {
       Controller.LoadDatabaseConfig();
       Assert.IsEmpty(Controller.DatabaseFolderPath, "DatabaseFolderPath");
       Assert.IsTrue(
-        Controller.Message.StartsWith(DatabaseConfig
+        Controller.Message!.StartsWith(DatabaseConfig
           .ApplicationExceptionOnLoad.Message),
         "Message");
     }
@@ -43,7 +43,7 @@ namespace SoundExplorers.Tests.Controller {
       Assert.AreEqual(DatabaseConfig.TestDatabaseFolderPath,
         Controller.DatabaseFolderPath, "DatabaseFolderPath");
       Assert.IsTrue(
-        Controller.Message.Contains(DatabaseConfig.TestConfigFilePath),
+        Controller.Message!.Contains(DatabaseConfig.TestConfigFilePath),
         "Message");
     }
   }

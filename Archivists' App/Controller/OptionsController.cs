@@ -2,7 +2,6 @@
 using System.Diagnostics.CodeAnalysis;
 using JetBrains.Annotations;
 using SoundExplorers.Model;
-using NotNullAttribute = JetBrains.Annotations.NotNullAttribute;
 
 namespace SoundExplorers.Controller {
   /// <summary>
@@ -16,12 +15,12 @@ namespace SoundExplorers.Controller {
     /// <param name="view">
     ///   The view to be shown.
     /// </param>
-    public OptionsController([NotNull] IView<OptionsController> view) {
+    public OptionsController(IView<OptionsController> view) {
       view.SetController(this);
     }
 
-    public string DatabaseFolderPath { get; private set; }
-    public string Message { get; private set; }
+    public string? DatabaseFolderPath { get; private set; }
+    public string? Message { get; private set; }
 
     public void LoadDatabaseConfig() {
       var config = CreateDatabaseConfig();

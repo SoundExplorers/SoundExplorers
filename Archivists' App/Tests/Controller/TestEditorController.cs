@@ -35,7 +35,7 @@ namespace SoundExplorers.Tests.Controller {
         // Emulates the parent grid behaviour where, after it has been populated,
         // it makes its last row current current,
         // which triggers the population of the main grid with that parent's children.
-        View.ParentGrid.Controller.OnRowEnter(ParentList.Count - 1);
+        View.ParentGrid.Controller.OnRowEnter(ParentList!.Count - 1);
       }
     }
   }

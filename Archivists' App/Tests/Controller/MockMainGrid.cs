@@ -44,7 +44,7 @@ namespace SoundExplorers.Tests.Controller {
     }
 
     public void RestoreCurrentRowCellErrorValue(int columnIndex,
-      object errorValue) {
+      object? errorValue) {
       RestoreCurrentRowCellErrorValueCount++;
     }
 

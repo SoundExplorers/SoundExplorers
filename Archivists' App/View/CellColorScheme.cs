@@ -12,9 +12,8 @@ namespace SoundExplorers.View {
     private Color DefaultForeColor { get; set; }
     private Color DefaultSelectionForeColor { get; set; }
     private Color DefaultSelectionBackColor { get; set; }
-
     private DataGridView Grid { get; }
-    
+
     /// <summary>
     ///   Inverts the foreground and background colours
     ///   of both selected and unselected cells
@@ -26,7 +25,7 @@ namespace SoundExplorers.View {
       Grid.DefaultCellStyle.SelectionBackColor = DefaultSelectionForeColor;
       Grid.DefaultCellStyle.SelectionForeColor = DefaultSelectionBackColor;
     }
-    
+
     /// <summary>
     ///   Restores the foreground and background colours
     ///   of both selected and unselected cells

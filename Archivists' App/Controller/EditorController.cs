@@ -3,7 +3,6 @@ using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using JetBrains.Annotations;
 using SoundExplorers.Model;
-using NotNullAttribute = JetBrains.Annotations.NotNullAttribute;
 
 namespace SoundExplorers.Controller {
   /// <summary>
@@ -16,10 +15,10 @@ namespace SoundExplorers.Controller {
     /// </summary>
     public const string DateFormat = Global.DateFormat;
 
-    private Option _gridSplitterDistanceOption;
-    private Option _imageSplitterDistanceOption;
-    private IEntityList _mainList;
-    private IEntityList _parentList;
+    private Option? _gridSplitterDistanceOption;
+    private Option? _imageSplitterDistanceOption;
+    private IEntityList? _mainList;
+    private IEntityList? _parentList;
 
     /// <summary>
     ///   Initialises a new instance of the <see cref="EditorController" /> class.
@@ -33,8 +32,8 @@ namespace SoundExplorers.Controller {
     /// <param name="mainController">
     ///   Controller for the main window.
     /// </param>
-    public EditorController([NotNull] IEditorView view,
-      [NotNull] Type mainListType, [NotNull] MainController mainController) {
+    public EditorController(IEditorView view,
+      Type mainListType, MainController mainController) {
       View = view;
       MainListType = mainListType;
       MainController = mainController;
@@ -51,7 +50,7 @@ namespace SoundExplorers.Controller {
     }
 
     private Option GridSplitterDistanceOption =>
-      _gridSplitterDistanceOption ??= 
+      _gridSplitterDistanceOption ??=
         CreateOption($"{MainList.EntityTypeName}.GridSplitterDistance");
 
     /// <summary>
@@ -67,7 +66,7 @@ namespace SoundExplorers.Controller {
 
     [ExcludeFromCodeCoverage]
     private Option ImageSplitterDistanceOption =>
-      _imageSplitterDistanceOption ??= 
+      _imageSplitterDistanceOption ??=
         new Option($"{MainList.EntityTypeName}.ImageSplitterDistance");
 
     public bool IsClosing { get; set; }
@@ -76,36 +75,35 @@ namespace SoundExplorers.Controller {
     ///   Gets whether a read-only related grid for a parent table is to be shown
     ///   above the main grid.
     /// </summary>
-    public bool IsParentGridToBeShown => MainList.ParentListType != null; 
+    public bool IsParentGridToBeShown => MainList.ParentListType != null;
 
-    [NotNull] internal MainController MainController { get; }
+    internal MainController MainController { get; }
 
     /// <summary>
     ///   Gets the list of entities represented in the main table.
     /// </summary>
     /// <remarks>
-    ///   <see cref="Populate"/> populates the list.
+    ///   <see cref="Populate" /> populates the list.
     /// </remarks>
-    [NotNull]
-    internal IEntityList MainList => _mainList ??= CreateEntityList(MainListType);  
+    internal IEntityList MainList => _mainList ??= CreateEntityList(MainListType);
 
-    [NotNull] private Type MainListType { get; }
-    [CanBeNull] public IBindingList ParentBindingList => ParentList?.BindingList;
+    private Type MainListType { get; }
+    public IBindingList? ParentBindingList => ParentList?.BindingList;
 
     /// <summary>
     ///   Gets the list of entities represented in the parent table, if any.
     /// </summary>
     /// <remarks>
-    ///   <see cref="Populate"/> populates the list, if required.
+    ///   <see cref="Populate" /> populates the list, if required.
     /// </remarks>
-    internal IEntityList ParentList => IsParentGridToBeShown
+    internal IEntityList? ParentList => IsParentGridToBeShown
       ? _parentList ??= CreateEntityList(
-        MainList.ParentListType ?? 
+        MainList.ParentListType ??
         throw new InvalidOperationException(
           "MainList.ParentListType is unexpectedly null."))
-      : null; 
+      : null;
 
-    [NotNull] protected IEditorView View { get; }
+    protected IEditorView View { get; }
 
     /// <summary>
     ///   Edit the tags of the audio file, if found,
@@ -122,15 +120,13 @@ namespace SoundExplorers.Controller {
       // var dummy = new AudioFile(path);
     }
 
-    [NotNull]
-    protected virtual IEntityList CreateEntityList([NotNull] Type type) {
+    protected virtual IEntityList CreateEntityList(Type type) {
       return Global.CreateEntityList(type);
     }
 
     [ExcludeFromCodeCoverage]
-    [NotNull]
-    protected virtual Option CreateOption([NotNull] string name) {
-      return new Option(name);
+    protected virtual Option CreateOption(string name) {
+      return new(name);
     }
 
     /// <summary>
@@ -161,7 +157,7 @@ namespace SoundExplorers.Controller {
 
     public virtual void Populate() {
       if (IsParentGridToBeShown) {
-        ParentList.IsParentList = true;
+        ParentList!.IsParentList = true;
         ParentList.Populate(); // Will populate the main grid too.
       } else {
         MainList.Populate();

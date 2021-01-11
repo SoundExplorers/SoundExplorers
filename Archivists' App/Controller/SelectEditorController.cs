@@ -16,12 +16,11 @@ namespace SoundExplorers.Controller {
     ///   The view to be shown.
     /// </param>
     /// <param name="initiallySelectedTableName">
-    ///   The name of the table that is to be initially selected.
-    ///   If an empty string or an unsupported table name,
-    ///   for no table to be initially selected.
+    ///   The name of the table that is to be initially selected. If an empty string or
+    ///   an unsupported table name, no table to be initially selected.
     /// </param>
-    public SelectEditorController([NotNull] IView<SelectEditorController> view,
-      [NotNull] string initiallySelectedTableName) {
+    public SelectEditorController(IView<SelectEditorController> view,
+      string initiallySelectedTableName) {
       EntityListTypeDictionary = Global.CreateEntityListTypeDictionary();
       if (EntityListTypeDictionary.ContainsKey(initiallySelectedTableName)) {
         SelectedEntityListType = EntityListTypeDictionary[initiallySelectedTableName];
@@ -33,8 +32,8 @@ namespace SoundExplorers.Controller {
       view.SetController(this);
     }
 
-    [NotNull] public SortedDictionary<string, Type> EntityListTypeDictionary { get; }
-    [CanBeNull] public Type SelectedEntityListType { get; set; }
-    [NotNull] public string SelectedTableName { get; set; }
+    public SortedDictionary<string, Type> EntityListTypeDictionary { get; }
+    public Type? SelectedEntityListType { get; set; }
+    public string SelectedTableName { get; set; }
   }
 }

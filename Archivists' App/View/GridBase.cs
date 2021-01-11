@@ -33,7 +33,6 @@ namespace SoundExplorers.View {
       !SelectedRows.Contains(NewRow);
 
     public CellColorScheme CellColorScheme { get; }
-
     protected GridControllerBase Controller { get; set; } = null!;
 
     public GridContextMenu ContextMenu =>
@@ -43,7 +42,7 @@ namespace SoundExplorers.View {
       Controller.EditorView as EditorView ??
       throw new InvalidOperationException(
         "Cannot cast Controller.EditorView to EditorView");
-    
+
     protected int FirstVisibleColumnIndex { get; set; }
 
     public bool IsTextBoxCellCurrent =>
