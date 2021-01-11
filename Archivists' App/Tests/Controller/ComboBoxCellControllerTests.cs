@@ -16,7 +16,7 @@ namespace SoundExplorers.Tests.Controller {
       EditorView = new MockEditorView();
       MainGridController = EditorView.MainGridController =
         new TestMainGridController(EditorView);
-      EditorController = CreateEditorController(typeof(EventList));
+      var dummy = CreateEditorController(typeof(EventList));
       CellView = new MockView<ComboBoxCellController>();
       Session.BeginUpdate();
       try {
@@ -27,7 +27,7 @@ namespace SoundExplorers.Tests.Controller {
       } finally {
         Session.Commit();
       }
-      EditorController.Populate(); // Populate grid
+      MainGridController.Populate(); // Populate grid
     }
 
     [TearDown]
@@ -40,7 +40,6 @@ namespace SoundExplorers.Tests.Controller {
     private TestMainGridController MainGridController { get; set; } = null!;
     private MockEditorView EditorView { get; set; } = null!;
     private TestData Data { get; set; } = null!;
-    private TestEditorController EditorController { get; set; } = null!;
     private QueryHelper QueryHelper { get; set; } = null!;
     private TestSession Session { get; set; } = null!;
 

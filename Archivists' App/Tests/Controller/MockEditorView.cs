@@ -1,5 +1,4 @@
-﻿using System;
-using SoundExplorers.Controller;
+﻿using SoundExplorers.Controller;
 
 namespace SoundExplorers.Tests.Controller {
   public class MockEditorView : IEditorView {
@@ -8,17 +7,12 @@ namespace SoundExplorers.Tests.Controller {
     public int ShowErrorMessageCount { get; private set; }
     public int ShowWarningMessageCount { get; private set; }
     public EditorController Controller { get; private set; } = null!;
-    //public bool IsFocusingParentGrid { get; set; }
     public bool IsPopulating { get; private set; } = false; 
     public IMainGrid MainGrid { get; set; } = null!;
     public IParentGrid ParentGrid { get; set; } = null!;
 
     public void SetController(EditorController controller) {
       Controller = controller;
-    }
-
-    public void OnMainGridPopulated() {
-      throw new NotImplementedException();
     }
 
     public void OnError() {

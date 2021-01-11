@@ -7,7 +7,6 @@
     IMainGrid MainGrid { get; }
     IParentGrid ParentGrid { get; }
     void OnError();
-    void OnMainGridPopulated();
     void ShowErrorMessage(string text);
     void ShowWarningMessage(string text);
   }

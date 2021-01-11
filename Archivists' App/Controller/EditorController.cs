@@ -82,9 +82,6 @@ namespace SoundExplorers.Controller {
     /// <summary>
     ///   Gets the list of entities represented in the main table.
     /// </summary>
-    /// <remarks>
-    ///   <see cref="Populate" /> populates the list.
-    /// </remarks>
     internal IEntityList MainList => _mainList ??= CreateEntityList(MainListType);
 
     private Type MainListType { get; }
@@ -93,9 +90,6 @@ namespace SoundExplorers.Controller {
     /// <summary>
     ///   Gets the list of entities represented in the parent table, if any.
     /// </summary>
-    /// <remarks>
-    ///   <see cref="Populate" /> populates the list, if required.
-    /// </remarks>
     internal IEntityList? ParentList => IsParentGridToBeShown
       ? _parentList ??= CreateEntityList(
         MainList.ParentListType ??
@@ -153,15 +147,6 @@ namespace SoundExplorers.Controller {
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public void PlayVideo() {
       //Process.Start(GetMediumPath(Medium.Video));
-    }
-
-    public virtual void Populate() {
-      if (IsParentGridToBeShown) {
-        ParentList!.IsParentList = true;
-        ParentList.Populate(); // Will populate the main grid too.
-      } else {
-        MainList.Populate();
-      }
     }
 
     /// <summary>
