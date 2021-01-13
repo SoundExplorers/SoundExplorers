@@ -420,10 +420,10 @@ namespace SoundExplorers.View {
       int savedGridSplitterDistance = Controller.GridSplitterDistance;
       GridSplitContainer.SplitterDistance =
         savedGridSplitterDistance > 0 ? savedGridSplitterDistance : 180;
+      IsFixingFocus = true;
       if (ParentGrid.RowCount > 0) {
         ParentGrid.MakeRowCurrent(ParentGrid.RowCount - 1);
       }
-      IsFixingFocus = true;
       OnPopulatedAsync();
     }
 
