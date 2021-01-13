@@ -19,7 +19,8 @@ namespace SoundExplorers.View {
       ImageSplitContainer.GotFocus += SplitContainer_GotFocus;
     }
 
-    public GridBase? FocusedGrid { get; private set; }
+    public GridBase? FocusedGrid { get; internal set; }
+    
     private MainView MainView => (MainView)MdiParent;
     private bool IsClosed { get; set; }
 
@@ -32,7 +33,7 @@ namespace SoundExplorers.View {
     ///   would usually be the wrong row, as we want the new row to be current on
     ///   population of the main grid. Normally, the unwanted behaviour would trigger
     ///   <see cref="DataGridView.OnRowEnter" /> for row 0, which <see cref="MainGrid" />
-    ///   overrides. The workaround that stops OnRowEnter from being called in this case.
+    ///   overrides. The workaround stops OnRowEnter from being called in this case.
     /// </summary>
     /// <remarks>
     ///   Another workaround I looked at was to override OnBindingContextChanged to stop
@@ -41,11 +42,16 @@ namespace SoundExplorers.View {
     /// </remarks>
     private bool IsFixingFocus { get; set; }
 
-    private bool IsRefreshingData { get; set; }
+    // private bool IsRefreshingData { get; set; }
     private SizeableFormOptions SizeableFormOptions { get; set; } = null!;
-    public EditorController Controller { get; private set; } = null!;
-    IMainGrid IEditorView.MainGrid => MainGrid;
-    IParentGrid IEditorView.ParentGrid => ParentGrid;
+
+    private EditorController Controller { get; set; } = null!;
+    // IMainGrid IEditorView.MainGrid => MainGrid;
+    // IParentGrid IEditorView.ParentGrid => ParentGrid;
+
+    public void AsyncInvoke(Action method) {
+      BeginInvoke(method);
+    }
 
     public void OnError() {
       // Debug.WriteLine("EditorView.OnError");
@@ -53,11 +59,15 @@ namespace SoundExplorers.View {
       BeginInvoke((Action)MainGrid.OnError);
     }
 
-    public void OnMainGridPopulated() {
-      MainGrid.MakeNewRowCurrent();
-      BeginInvoke((Action)OnMainGridPopulatedAsync);
+    public void OnParentAndMainGridsShown() {
+      BeginInvoke((Action)OnParentAndMainGridsShownAsync);
     }
 
+    public void SetCursorToDefault() {
+      Debug.WriteLine("EditorView.SetCursorToDefault");
+      MainView.Cursor = Cursors.Default;
+    }
+    
     public void ShowErrorMessage(string text) {
       //MeasureProfiler.SaveData();
       ShowMessage(text, MessageBoxIcon.Error);
@@ -109,16 +119,15 @@ namespace SoundExplorers.View {
     ///   Refreshes the contents of the existing grid or grids from the database.
     /// </summary>
     public void RefreshData() {
-      IsRefreshingData = true;
+      Controller.IsRefreshingData = true;
       Populate();
       if (Controller.IsParentGridToBeShown) {
         FocusGrid(ParentGrid);
       } else {
         MainGrid.Focus();
-        FocusedGrid = MainGrid;
       }
       Refresh();
-      IsRefreshingData = false;
+      Controller.IsRefreshingData = false;
     }
 
     /// <summary>
@@ -185,7 +194,7 @@ namespace SoundExplorers.View {
     ///   which is now the current grid by having the usual colour scheme inverted on the
     ///   other grid.
     /// </remarks>
-    private void FocusGrid(GridBase grid) {
+    internal void FocusGrid(GridBase grid) {
       if (!Controller.IsParentGridToBeShown) {
         grid.Focus();
         return;
@@ -204,46 +213,6 @@ namespace SoundExplorers.View {
       grid.Focus();
       Refresh();
       unfocusedGrid.Enabled = true;
-      FocusedGrid = grid;
-    }
-
-    /// <summary>
-    ///   Handles the <see cref="Control.MouseDown" /> event of either of the two grids.
-    /// </summary>
-    /// <remarks>
-    ///   When either mouse button is clicked, the grid will be focused if it is not
-    ///   already.
-    ///   <para>
-    ///     I tried to initiate a drag-and-drop operation when a cell is clicked with the
-    ///     mouse button 1. But it did not work, possibly because it puts the cell into
-    ///     edit mode and also, when dragged, selects multiple rows. Perhaps we could
-    ///     initiate a drag-and-drop operation on Control + mouse button 1.
-    ///   </para>
-    /// </remarks>
-    private void Grid_MouseDown(object? sender, MouseEventArgs e) {
-      var grid = (GridBase)sender!;
-      if (grid != FocusedGrid) {
-        FocusGrid(grid);
-      }
-    }
-
-    /// <summary>
-    ///   Handles the main grid's <see cref="DataGridView.CellBeginEdit" /> event, which
-    ///   occurs when edit mode starts for the currently selected cell, to hide the
-    ///   Missing Image label (if visible).
-    /// </summary>
-    /// <remarks>
-    ///   This is only relevant if the Path cell of an Image row is being edited. If the
-    ///   Missing Image label was visible just before entering edit mode, it will have
-    ///   been because the file was not specified or can't be found or is not an image
-    ///   file. That's presumably about to be rectified. So the message to that effect in
-    ///   the Missing Image label could be misleading. Also, the advice in the Missing
-    ///   Image label that an image file can be dragged onto the label will not apply, as
-    ///   dragging and dropping is disabled while the Path cell is being edited.
-    /// </remarks>
-    private void MainGrid_CellBeginEdit(
-      object sender, DataGridViewCellCancelEventArgs e) {
-      MissingImageLabel.Visible = false;
     }
 
     /// <summary>
@@ -317,7 +286,6 @@ namespace SoundExplorers.View {
         FocusGrid(ParentGrid);
       } else {
         MainGrid.Focus();
-        FocusedGrid = MainGrid;
       }
     }
 
@@ -368,17 +336,18 @@ namespace SoundExplorers.View {
 
     protected override void OnLoad(EventArgs e) {
       base.OnLoad(e);
-      MainGrid.SetController(new MainGridController(MainGrid, this));
+      Controller.MainGrid = MainGrid;
+      MainGrid.SetController(new MainGridController(MainGrid, Controller));
+      MainGrid.EditorView = this;
       MainGrid.MainView = MainView;
-      MainGrid.CellBeginEdit += MainGrid_CellBeginEdit;
       MainGrid.DataError += MainGrid_DataError;
-      MainGrid.MouseDown += Grid_MouseDown;
       MainGrid.RowsRemoved += MainGrid_RowsRemoved;
       MainGrid.RowValidated += MainGrid_RowValidated;
       if (Controller.IsParentGridToBeShown) {
-        ParentGrid.SetController(new ParentGridController(this));
+        Controller.ParentGrid = ParentGrid;
+        ParentGrid.SetController(new ParentGridController(Controller));
+        ParentGrid.EditorView = this;
         ParentGrid.MainView = MainView;
-        ParentGrid.MouseDown += Grid_MouseDown;
       }
       // Has to be done here rather than in constructor in order to tell that this is an
       // MDI child form.
@@ -388,13 +357,13 @@ namespace SoundExplorers.View {
       ShowData();
     }
 
-    private void OnMainGridPopulatedAsync() {
-      if (Controller.IsParentGridToBeShown) {
-        ParentGrid.Focus();
-      } else { // No parent grid
-        MainGrid.Focus();
-      }
-    }
+    // private void OnMainGridPopulatedAsync() {
+    //   if (Controller.IsParentGridToBeShown) {
+    //     ParentGrid.Focus();
+    //   } else { // No parent grid
+    //     MainGrid.Focus();
+    //   }
+    // }
 
     protected override void OnMove(EventArgs e) {
       base.OnMove(e);
@@ -426,14 +395,14 @@ namespace SoundExplorers.View {
       OnPopulatedAsync();
     }
 
-    private void OnPopulatedAsync() {
-      Debug.WriteLine("EditorView.OnPopulatedAsync");
-      IsPopulating = false;
-      if (MainGrid.RowCount > 0) {
-        MainGrid.MakeRowCurrent(MainGrid.RowCount - 1);
-      }
-      MainView.Cursor = Cursors.Default;
-    }
+    // private void OnPopulatedAsync() {
+    //   Debug.WriteLine("EditorView.OnPopulatedAsync");
+    //   IsPopulating = false;
+    //   if (MainGrid.RowCount > 0) {
+    //     MainGrid.MakeRowCurrent(MainGrid.RowCount - 1);
+    //   }
+    //   MainView.Cursor = Cursors.Default;
+    // }
 
     protected override void OnResize(EventArgs e) {
       base.OnResize(e);
@@ -441,33 +410,33 @@ namespace SoundExplorers.View {
       ParentForm?.Refresh();
     }
 
-    private void Populate() {
-      Debug.WriteLine("EditorView.Populate");
-      IsPopulating = true;
-      if (Controller.IsParentGridToBeShown) {
-        ParentGrid.CellColorScheme.RestoreToDefault();
-        MainGrid.CellColorScheme.Invert();
-        ParentGrid.Populate();
-        if (ParentGrid.RowCount > 0) {
-          MainGrid.Populate(ParentGrid.Controller.GetChildrenForMainList(
-            ParentGrid.RowCount - 1));
-          // If the editor window is being loaded, the parent grid's current row is set
-          // asynchronously in OnParentAndMainGridsShownAsync to ensure that it is
-          // scrolled into view. Otherwise, i.e. if the grid contents are being
-          // refreshed, we need to do it here.
-          if (IsRefreshingData) {
-            ParentGrid.MakeRowCurrent(ParentGrid.RowCount - 1);
-            BeginInvoke((Action)OnPopulatedAsync);
-          } else { // Showing for first time
-            BeginInvoke((Action)OnParentAndMainGridsShownAsync);
-          }
-        }
-      } else {
-        MainGrid.Populate();
-        BeginInvoke((Action)OnPopulatedAsync);
-      }
-      Debug.WriteLine("EditorView.Populate END");
-    }
+    // private void Populate() {
+    //   Debug.WriteLine("EditorView.Populate");
+    //   IsPopulating = true;
+    //   if (Controller.IsParentGridToBeShown) {
+    //     ParentGrid.CellColorScheme.RestoreToDefault();
+    //     MainGrid.CellColorScheme.Invert();
+    //     ParentGrid.Populate();
+    //     if (ParentGrid.RowCount > 0) {
+    //       MainGrid.Populate(ParentGrid.Controller.GetChildrenForMainList(
+    //         ParentGrid.RowCount - 1));
+    //       // If the editor window is being loaded, the parent grid's current row is set
+    //       // asynchronously in OnParentAndMainGridsShownAsync to ensure that it is
+    //       // scrolled into view. Otherwise, i.e. if the grid contents are being
+    //       // refreshed, we need to do it here.
+    //       if (IsRefreshingData) {
+    //         ParentGrid.MakeRowCurrent(ParentGrid.RowCount - 1);
+    //         BeginInvoke((Action)OnPopulatedAsync);
+    //       } else { // Showing for first time
+    //         BeginInvoke((Action)OnParentAndMainGridsShownAsync);
+    //       }
+    //     }
+    //   } else {
+    //     MainGrid.Populate();
+    //     BeginInvoke((Action)OnPopulatedAsync);
+    //   }
+    //   Debug.WriteLine("EditorView.Populate END");
+    // }
 
     public void PopulateMainGridOnParentRowChanged(int parentRowIndex) {
       Debug.WriteLine(

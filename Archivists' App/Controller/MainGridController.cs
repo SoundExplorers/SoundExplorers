@@ -1,11 +1,13 @@
 ﻿using System;
+using System.Collections;
 using System.Data;
+using System.Diagnostics;
 using SoundExplorers.Model;
 
 namespace SoundExplorers.Controller {
   public class MainGridController : GridControllerBase {
     public MainGridController(
-      IMainGrid grid, IEditorView editorView) : base(editorView) {
+      IMainGrid grid, EditorController editorController) : base(editorController) {
       Grid = grid;
     }
 
@@ -33,7 +35,7 @@ namespace SoundExplorers.Controller {
     /// <summary>
     ///   Gets the list of entities represented in the grid.
     /// </summary>
-    protected override IEntityList List => EditorView.Controller.MainList;
+    protected override IEntityList List => EditorController.MainList;
 
     public string TableName => List.EntityTypeName;
 
@@ -88,11 +90,11 @@ namespace SoundExplorers.Controller {
       }
     }
 
-    public virtual void OnRowEnter(int rowIndex) {
+    public override void OnRowEnter(int rowIndex) {
       // Debug.WriteLine(
       //   "MainGridController.OnRowEnter:  Any row entered (after ItemAdded if insertion row)");
       // Debug.WriteLine($"MainGridController.OnRowEnter: row {rowIndex} of {List.Count}");
-      if (EditorView.IsPopulating) {
+      if (EditorController.IsPopulating) {
         return;
       }
       List.OnRowEnter(rowIndex);
@@ -141,8 +143,8 @@ namespace SoundExplorers.Controller {
       // Debug.WriteLine(
       //   $"MainGridController.OnRowValidated: row {rowIndex}, IsRemovingInvalidInsertionRow == {MainList.IsRemovingInvalidInsertionRow}");
       if (List.IsRemovingInvalidInsertionRow ||
-          EditorView.IsPopulating || EditorView.Controller.IsClosing ||
-          EditorView.Controller.MainController.IsClosing) {
+          EditorController.IsPopulating || EditorController.IsClosing ||
+          EditorController.MainController.IsClosing) {
         return;
       }
       try {
@@ -151,6 +153,14 @@ namespace SoundExplorers.Controller {
       } catch (DatabaseUpdateErrorException) {
         EditorView.OnError();
       }
+    }
+
+    public override void Populate(IList? list = null) {
+      Debug.WriteLine("MainGridController.Populate");
+      base.Populate(list);
+      Grid.MakeNewRowCurrent();
+      EditorController.View.AsyncInvoke(EditorController.OnMainGridPopulatedAsync);
+      Debug.WriteLine("MainGridController.Populate END");
     }
 
     public void ShowError() {
@@ -215,6 +225,15 @@ namespace SoundExplorers.Controller {
       List.OnValidationError(
         rowIndex, columnName, referencedEntityNotFoundException);
       EditorView.OnError();
+    }
+
+    protected override int GetFirstVisibleColumnIndex() {
+      for (int i = 0; i < Columns.Count; i++) {
+        if (IsColumnToBeShown(Columns[i].Name)) {
+          return i;
+        }
+      }
+      return -1;
     }
 
     /// <summary>

@@ -38,12 +38,8 @@ namespace SoundExplorers.View {
     public GridContextMenu ContextMenu =>
       _contextMenu ??= new GridContextMenu(this);
 
-    protected EditorView EditorView =>
-      Controller.EditorView as EditorView ??
-      throw new InvalidOperationException(
-        "Cannot cast Controller.EditorView to EditorView");
-
-    protected int FirstVisibleColumnIndex { get; set; }
+    public EditorView EditorView { get; set; } = null!;
+    // protected int FirstVisibleColumnIndex { get; set; }
 
     public bool IsTextBoxCellCurrent =>
       CurrentCell?.OwningColumn.CellTemplate is TextBoxCell;
@@ -69,6 +65,37 @@ namespace SoundExplorers.View {
         }
         return CurrentCell.Value?.ToString() ?? string.Empty;
       }
+    }
+
+    void IGrid.Focus(bool async) {
+      if (async) {
+        BeginInvoke((Action)delegate { EditorView.FocusGrid(this); });
+      } else {
+        EditorView.FocusGrid(this);
+      }
+    }
+
+    /// <summary>
+    ///   Populates and sorts the grid.
+    /// </summary>
+    /// <param name="list">
+    ///   Optionally specifies the required list of entities that will populate the grid.
+    ///   If null, the default, all entities of the class's entity type will be fetched
+    ///   from the database.
+    /// </param>
+    public virtual void Populate(IList? list = null) {
+      Controller.Populate(list);
+      DataSource = Controller.BindingList;
+      ConfigureColumns();
+      AutoResizeColumns();
+    }
+
+    public void InvertCellColorScheme() {
+      CellColorScheme.Invert();
+    }
+
+    public void RestoreCellColorSchemeToDefault() {
+      CellColorScheme.RestoreToDefault();
     }
 
     /// <summary>
@@ -131,7 +158,8 @@ namespace SoundExplorers.View {
     public void MakeRowCurrent(int rowIndex) {
       // This triggers OnRowEnter.
       Debug.WriteLine($"GridBase.MakeRowCurrent: {Name} row {rowIndex}");
-      CurrentCell = Rows[rowIndex].Cells[FirstVisibleColumnIndex];
+      // CurrentCell = Rows[rowIndex].Cells[FirstVisibleColumnIndex];
+      CurrentCell = Rows[rowIndex].Cells[Controller.FirstVisibleColumnIndex];
     }
 
     protected override void OnCurrentCellChanged(EventArgs e) {
@@ -139,6 +167,12 @@ namespace SoundExplorers.View {
       if (CurrentCell != null) {
         MainView.CopyToolStripButton.Enabled = CanCopy;
       }
+    }
+
+    protected override void OnGotFocus(EventArgs e) {
+      Debug.WriteLine($"GridBase.OnFocus: {Name}");
+      base.OnGotFocus(e);
+      EditorView.FocusedGrid = this;
     }
 
     protected override void OnKeyDown(KeyEventArgs e) {
@@ -166,10 +200,22 @@ namespace SoundExplorers.View {
     }
 
     /// <summary>
-    ///   When mouse button 2 is clicked on a cell, the cell will become the current cell
-    ///   and, unless the cell is already being edited, the context menu will be shown.
+    ///   When either mouse button is clicked, the grid will be focused if it is not
+    ///   already. When mouse button 2 is clicked on a cell, the cell will become the
+    ///   current cell and, unless the cell is already being edited, the context menu
+    ///   will be shown.
     /// </summary>
+    /// <remarks>
+    ///   THE FOLLOWING RELATES TO A FEATURE THAT IS NOT YET IN USE BUT MAY BE LATER:
+    ///   I tried to initiate a drag-and-drop operation when a cell is clicked with the
+    ///   mouse button 1. But it did not work, possibly because it puts the cell into
+    ///   edit mode and also, when dragged, selects multiple rows. Perhaps we could
+    ///   initiate a drag-and-drop operation on Control + mouse button 1.
+    /// </remarks>
     protected override void OnMouseDown(MouseEventArgs e) {
+      if (this != EditorView.FocusedGrid) {
+        EditorView.FocusGrid(this);
+      }
       if (e.Button == MouseButtons.Right) {
         // Find the cell, if any, that mouse button 2 clicked.
         var cell = GetCellAtClientCoOrdinates(e.X, e.Y);
@@ -183,27 +229,10 @@ namespace SoundExplorers.View {
       base.OnMouseDown(e);
     }
 
-    /// <summary>
-    ///   Populates and sorts the grid.
-    /// </summary>
-    /// <param name="list">
-    ///   Optionally specifies the required list of entities that will populate the grid.
-    ///   If null, the default, all entities of the class's entity type will be fetched
-    ///   from the database.
-    /// </param>
-    public virtual void Populate(IList? list = null) {
-      Controller.Populate(list);
-      DataSource = Controller.BindingList;
-      ConfigureColumns();
-      AutoResizeColumns();
-    }
-
-    public void InvertCellColorScheme() {
-      CellColorScheme.Invert();
-    }
-
-    public void RestoreCellColorSchemeToDefault() {
-      CellColorScheme.RestoreToDefault();
+    protected override void OnRowEnter(DataGridViewCellEventArgs e) {
+      Debug.WriteLine($"GridBase.OnRowEnter: {Name}, row {e.RowIndex}");
+      base.OnRowEnter(e);
+      Controller.OnRowEnter(e.RowIndex);
     }
   }
 }

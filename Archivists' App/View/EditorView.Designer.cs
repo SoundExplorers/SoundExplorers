@@ -157,7 +157,7 @@ namespace SoundExplorers.View {
         internal SoundExplorers.View.ParentGrid ParentGrid;
         internal SoundExplorers.View.MainGrid MainGrid;
         private FittedPictureBox FittedPictureBox1;
-        private System.Windows.Forms.Label MissingImageLabel;
+        internal System.Windows.Forms.Label MissingImageLabel;
 
     }
 }

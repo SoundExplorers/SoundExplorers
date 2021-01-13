@@ -73,13 +73,16 @@ namespace SoundExplorers.Controller {
     public bool IsClosing { get; set; }
 
     /// <summary>
-    ///   Gets whether a read-only related grid for a parent table is to be shown
-    ///   above the main grid.
+    ///   Gets whether a read-only related grid for a parent table is to be shown above
+    ///   the main grid.
     /// </summary>
     public bool IsParentGridToBeShown => MainList.ParentListType != null;
 
     internal bool IsPopulating { get; private set; }
+    public bool IsRefreshingData { get; set; }
     internal MainController MainController { get; }
+    public IMainGrid MainGrid { get; set; } = null!;
+    public IParentGrid ParentGrid { get; set; } = null!;
 
     /// <summary>
     ///   Gets the list of entities represented in the main table.
@@ -99,7 +102,7 @@ namespace SoundExplorers.Controller {
           "MainList.ParentListType is unexpectedly null."))
       : null;
 
-    protected IEditorView View { get; }
+    internal IEditorView View { get; }
 
     /// <summary>
     ///   Edit the tags of the audio file, if found,
@@ -124,15 +127,35 @@ namespace SoundExplorers.Controller {
     protected virtual Option CreateOption(string name) {
       return new(name);
     }
+
+    public void OnMainGridPopulatedAsync() {
+      if (IsParentGridToBeShown) {
+        ParentGrid.Focus(false);
+      } else { // No parent grid
+        MainGrid.Focus(false);
+      }
+    }
+
+    private void OnParentAndMainGridsShownAsync() {
+    }
+
+    private void OnPopulatedAsync() {
+      Debug.WriteLine("EditorController.OnPopulatedAsync");
+      IsPopulating = false;
+      if (MainGrid.RowCount > 0) {
+        MainGrid.MakeRowCurrent(MainGrid.RowCount - 1);
+      }
+      View.SetCursorToDefault();
+    }
     
 
-    private void Populate() {
-      Debug.WriteLine("EditorView.Populate");
+    public void Populate() {
+      Debug.WriteLine("EditorController.Populate");
       IsPopulating = true;
       if (IsParentGridToBeShown) {
-        View.ParentGrid.RestoreCellColorSchemeToDefault();
-        View.MainGrid.InvertCellColorScheme();
-        View.ParentGrid.Populate();
+        ParentGrid.RestoreCellColorSchemeToDefault();
+        MainGrid.InvertCellColorScheme();
+        ParentGrid.Populate();
         if (ParentGrid.RowCount > 0) {
           MainGrid.Populate(ParentGrid.Controller.GetChildrenForMainList(
             ParentGrid.RowCount - 1));
@@ -142,18 +165,17 @@ namespace SoundExplorers.Controller {
           // refreshed, we need to do it here.
           if (IsRefreshingData) {
             ParentGrid.MakeRowCurrent(ParentGrid.RowCount - 1);
-            BeginInvoke((Action)OnPopulatedAsync);
+            View.AsyncInvoke(OnPopulatedAsync);
           } else { // Showing for first time
-            BeginInvoke((Action)OnParentAndMainGridsShownAsync);
+            View.OnParentAndMainGridsShown();
           }
         }
       } else {
         MainGrid.Populate();
-        BeginInvoke((Action)OnPopulatedAsync);
+        View.AsyncInvoke(OnPopulatedAsync);
       }
-      Debug.WriteLine("EditorView.Populate END");
+      Debug.WriteLine("EditorController.Populate END");
     }
-    
 
     /// <summary>
     ///   Plays the audio, if found,

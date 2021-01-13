@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Windows.Forms;
 using SoundExplorers.Controller;
 
@@ -22,27 +20,9 @@ namespace SoundExplorers.View {
       Controller = controller;
     }
 
-    protected override void OnGotFocus(EventArgs e) {
-      Debug.WriteLine("ParentGrid.OnGotFocus");
-      base.OnGotFocus(e);
-    }
-
-    /// <summary>
-    ///   An existing row on the parent grid has been entered. So the main grid will be
-    ///   populated with the required child entities of the entity at the specified row
-    ///   index.
-    /// </summary>
     protected override void OnRowEnter(DataGridViewCellEventArgs e) {
       Debug.WriteLine($"ParentGrid.OnRowEnter: row {e.RowIndex}");
-      Debug.WriteLine(
-        $"    PreviousRowIndex = {PreviousRowIndex}; IsPopulating = {EditorView.IsPopulating}");
-      base.OnRowEnter(e);
-      if (EditorView.IsPopulating || e.RowIndex == PreviousRowIndex) {
-        PreviousRowIndex = e.RowIndex;
-        return;
-      }
-      EditorView.PopulateMainGridOnParentRowChanged(e.RowIndex);
-      PreviousRowIndex = e.RowIndex;
+      Controller.OnRowEnter(e.RowIndex);
     }
   }
 }

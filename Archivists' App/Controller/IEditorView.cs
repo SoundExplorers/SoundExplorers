@@ -1,11 +1,9 @@
-﻿namespace SoundExplorers.Controller {
-  public interface IEditorView : IView<EditorController> {
-    EditorController Controller { get; }
+﻿using System;
 
-    IMainGrid MainGrid { get; }
-    IParentGrid ParentGrid { get; }
-    void OnError();
-    void ShowErrorMessage(string text);
-    void ShowWarningMessage(string text);
+namespace SoundExplorers.Controller {
+  public interface IEditorView : IView<EditorController> {
+    void AsyncInvoke(Action method);
+    void OnParentAndMainGridsShown();
+    void SetCursorToDefault();
   }
 }

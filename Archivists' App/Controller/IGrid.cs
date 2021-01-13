@@ -2,8 +2,12 @@
 
 namespace SoundExplorers.Controller {
   public interface IGrid {
-    void InvertCellColorScheme();
+    int RowCount { get; }
     
+    void Focus(bool async);
+    void InvertCellColorScheme();
+    void MakeRowCurrent(int rowIndex);
+
     /// <summary>
     ///   Populates and sorts the grid.
     /// </summary>

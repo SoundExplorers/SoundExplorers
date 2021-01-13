@@ -4,8 +4,8 @@ using SoundExplorers.Model;
 
 namespace SoundExplorers.Controller {
   public abstract class GridControllerBase {
-    protected GridControllerBase(IEditorView editorView) {
-      EditorView = editorView;
+    protected GridControllerBase(EditorController editorController) {
+      EditorController = editorController;
     }
 
     public IBindingList? BindingList => List.BindingList;
@@ -16,7 +16,8 @@ namespace SoundExplorers.Controller {
     /// </summary>
     internal BindingColumnList Columns => List.Columns;
 
-    public IEditorView EditorView { get; }
+    protected EditorController EditorController { get; }
+    public int FirstVisibleColumnIndex { get; private set; }
 
     /// <summary>
     ///   Gets the list of entities represented in the grid.
@@ -28,8 +29,15 @@ namespace SoundExplorers.Controller {
       return column.DisplayName ?? columnName;
     }
 
+    public abstract void OnRowEnter(int rowIndex);
+
     public virtual void Populate(IList? list = null) {
       List.Populate(list);
+      FirstVisibleColumnIndex = GetFirstVisibleColumnIndex();
+    }
+
+    protected virtual int GetFirstVisibleColumnIndex() {
+      return 0;
     }
   }
 }

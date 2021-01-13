@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.Diagnostics;
 using System.Windows.Forms;
 using SoundExplorers.Controller;
 
@@ -35,6 +33,12 @@ namespace SoundExplorers.View {
       }
     }
 
+    public void MakeNewRowCurrent() {
+      // This triggers OnRowEnter.
+      // Debug.WriteLine("MainGrid.MakeNewRowCurrent");
+      MakeRowCurrent(Rows.Count - 1);
+    }
+
     public void OnRowAddedOrDeleted() {
       AutoResizeColumns();
       Focus();
@@ -49,14 +53,15 @@ namespace SoundExplorers.View {
       ClearSelection();
       CurrentRow!.Selected = true;
     }
-
-    public override void Populate(IList? list = null) {
-      Debug.WriteLine("MainGrid.Populate");
-      FirstVisibleColumnIndex = -1;
-      base.Populate(list);
-      EditorView.OnMainGridPopulated();
-      Debug.WriteLine("MainGrid.Populate END");
-    }
+    //
+    // public override void Populate(IList? list = null) {
+    //   Debug.WriteLine("MainGrid.Populate");
+    //   FirstVisibleColumnIndex = -1;
+    //   base.Populate(list);
+    //   MakeNewRowCurrent();
+    //   EditorView.OnMainGridPopulated();
+    //   Debug.WriteLine("MainGrid.Populate END");
+    // }
 
     protected override void ConfigureColumn(DataGridViewColumn column) {
       if (!Controller.IsColumnToBeShown(column.Name)) {
@@ -65,9 +70,9 @@ namespace SoundExplorers.View {
       }
       // Column will be shown
       base.ConfigureColumn(column);
-      if (FirstVisibleColumnIndex == -1) {
-        FirstVisibleColumnIndex = column.Index;
-      }
+      // if (FirstVisibleColumnIndex == -1) {
+      //   FirstVisibleColumnIndex = column.Index;
+      // }
       if (Controller.DoesColumnReferenceAnotherEntity(column.Name)) {
         column.CellTemplate = ComboBoxCell.Create(Controller, column.Name);
       } else if (column.ValueType == typeof(DateTime)) {
@@ -83,26 +88,20 @@ namespace SoundExplorers.View {
       }
     }
 
-    public void MakeNewRowCurrent() {
-      // This triggers OnRowEnter.
-      // Debug.WriteLine("MainGrid.MakeNewRowCurrent");
-      MakeRowCurrent(Rows.Count - 1);
-    }
-
     protected override void OnCellBeginEdit(DataGridViewCellCancelEventArgs e) {
       base.OnCellBeginEdit(e);
       if (IsTextBoxCellCurrent) {
-        //Debug.WriteLine("MainGrid.OnCellBeginEdit: TextBox cell");
-        BeginInvoke((Action)delegate {
-          TextBox.KeyUp -= TextBox_KeyUp;
-          TextBox.MouseClick -= TextBox_MouseClick;
-          TextBox.TextChanged -= TextBox_TextChanged;
-          OnTextBoxSelectionMayHaveChanged();
-          TextBox.KeyUp += TextBox_KeyUp;
-          TextBox.MouseClick += TextBox_MouseClick;
-          TextBox.TextChanged += TextBox_TextChanged;
-        });
+        BeginInvoke((Action)OnTextBoxCellBeginEditAsync);
       }
+      // THE FOLLOWING IS NOT YET IN USE BUT MAY BE LATER:
+      // This is only relevant if the Path cell of an Image row is being edited. If the
+      // Missing Image label was visible just before entering edit mode, it will have
+      // been because the file was not specified or can't be found or is not an image
+      // file. That's presumably about to be rectified. So the message to that effect in
+      // the Missing Image label could be misleading. Also, the advice in the Missing
+      // Image label that an image file can be dragged onto the label will not apply, as
+      // dragging and dropping is disabled while the Path cell is being edited.
+      EditorView.MissingImageLabel.Visible = false;
     }
 
     protected override void OnCellEndEdit(DataGridViewCellEventArgs e) {
@@ -167,11 +166,6 @@ namespace SoundExplorers.View {
       Controller.ShowError();
     }
 
-    protected override void OnGotFocus(EventArgs e) {
-      Debug.WriteLine("MainGrid.OnGotFocus");
-      base.OnGotFocus(e);
-    }
-
     protected override void OnKeyDown(KeyEventArgs e) {
       switch (e.KeyData) {
         case Keys.F2:
@@ -185,28 +179,20 @@ namespace SoundExplorers.View {
       } //End of switch
     }
 
-    /// <summary>
-    ///   The initial state of the row will be saved to a detached row
-    ///   to allow comparison with any changes if the row gets edited.
-    /// </summary>
-    /// <remarks>
-    ///   If the row represents an Image whose Path
-    ///   specifies a valid image file,
-    ///   the image will be shown below the main grid.
-    ///   If the row represents an Image whose Path
-    ///   does not specifies a valid image file,
-    ///   a Missing Image label containing an appropriate message will be displayed.
-    /// </remarks>
-    protected override void OnRowEnter(DataGridViewCellEventArgs e) {
-      Debug.WriteLine($"MainGrid.OnRowEnter: row {e.RowIndex}");
-      base.OnRowEnter(e);
-      Controller.OnRowEnter(e.RowIndex);
+    private void OnTextBoxCellBeginEditAsync() {
+      //Debug.WriteLine("MainGrid.OnTextBoxCellBeginEditAsync");
+      TextBox.KeyUp -= TextBox_KeyUp;
+      TextBox.MouseClick -= TextBox_MouseClick;
+      TextBox.TextChanged -= TextBox_TextChanged;
+      OnTextBoxSelectionMayHaveChanged();
+      TextBox.KeyUp += TextBox_KeyUp;
+      TextBox.MouseClick += TextBox_MouseClick;
+      TextBox.TextChanged += TextBox_TextChanged;
     }
 
     /// <summary>
-    ///   While a text box cell is being edited,
-    ///   whether text can be cut or copied depends on
-    ///   whether any text in the cell is selected.
+    ///   While a text box cell is being edited, whether text can be cut or copied
+    ///   depends on whether any text in the cell is selected.
     /// </summary>
     private void OnTextBoxSelectionMayHaveChanged() {
       //Debug.WriteLine("MainGrid.OnTextBoxSelectionMayHaveChanged");
