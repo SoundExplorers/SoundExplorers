@@ -79,7 +79,7 @@ namespace SoundExplorers.Controller {
     public bool IsParentGridToBeShown => MainList.ParentListType != null;
 
     internal bool IsPopulating { get; private set; }
-    public bool IsRefreshingData { get; set; }
+    private bool IsRefreshingData { get; set; }
     internal MainController MainController { get; }
     public IMainGrid MainGrid { get; set; } = null!;
     public IParentGrid ParentGrid { get; set; } = null!;
@@ -129,17 +129,23 @@ namespace SoundExplorers.Controller {
     }
 
     public void OnMainGridPopulatedAsync() {
+      Debug.WriteLine("EditorController.OnMainGridPopulatedAsync");
       if (IsParentGridToBeShown) {
-        ParentGrid.Focus(false);
+        ParentGrid.Focus();
       } else { // No parent grid
-        MainGrid.Focus(false);
+        MainGrid.Focus();
       }
     }
 
-    private void OnParentAndMainGridsShownAsync() {
+    public void OnParentAndMainGridsShownAsync() {
+      Debug.WriteLine("EditorController.OnParentAndMainGridsShownAsync");
+      if (ParentGrid.RowCount > 0) {
+        ParentGrid.MakeRowCurrent(ParentGrid.RowCount - 1);
+      }
+      OnPopulatedAsync();
     }
 
-    private void OnPopulatedAsync() {
+    public void OnPopulatedAsync() {
       Debug.WriteLine("EditorController.OnPopulatedAsync");
       IsPopulating = false;
       if (MainGrid.RowCount > 0) {
@@ -147,7 +153,6 @@ namespace SoundExplorers.Controller {
       }
       View.SetCursorToDefault();
     }
-    
 
     public void Populate() {
       Debug.WriteLine("EditorController.Populate");
@@ -165,16 +170,39 @@ namespace SoundExplorers.Controller {
           // refreshed, we need to do it here.
           if (IsRefreshingData) {
             ParentGrid.MakeRowCurrent(ParentGrid.RowCount - 1);
-            View.AsyncInvoke(OnPopulatedAsync);
+            View.OnPopulated();
           } else { // Showing for first time
             View.OnParentAndMainGridsShown();
           }
         }
       } else {
         MainGrid.Populate();
-        View.AsyncInvoke(OnPopulatedAsync);
+        View.OnPopulated();
       }
       Debug.WriteLine("EditorController.Populate END");
+    }
+
+    public void PopulateMainGridOnParentRowChanged(int parentRowIndex) {
+      Debug.WriteLine(
+        $"EditorController.PopulateMainGridOnParentRowChanged: parent row {parentRowIndex}");
+      IsPopulating = true;
+      MainGrid.Populate(ParentGrid.Controller.GetChildrenForMainList(parentRowIndex));
+      View.OnPopulated();
+    }
+
+    /// <summary>
+    ///   Refreshes the contents of the existing grid or grids from the database.
+    /// </summary>
+    public void RefreshDataAsync() {
+      IsRefreshingData = true;
+      Populate();
+      if (IsParentGridToBeShown) {
+        ParentGrid.Focus();
+      } else {
+        MainGrid.Focus();
+      }
+      View.Refresh();
+      IsRefreshingData = false;
     }
 
     /// <summary>

@@ -55,16 +55,16 @@ namespace SoundExplorers.Controller {
       switch (exception) {
         case DatabaseUpdateErrorException databaseUpdateErrorException:
           List.LastDatabaseUpdateErrorException = databaseUpdateErrorException;
-          EditorView.OnError();
+          EditorController.View.OnError();
           break;
         case DuplicateNameException duplicateKeyException:
           List.OnValidationError(rowIndex, columnName, duplicateKeyException);
-          EditorView.OnError();
+          EditorController.View.OnError();
           break;
         case FormatException formatException:
           // An invalid value was pasted into a cell, e.g. text into a date.
           List.OnValidationError(rowIndex, columnName, formatException);
-          EditorView.OnError();
+          EditorController.View.OnError();
           break;
         case RowNotInTableException referencedEntityNotFoundException:
           // A combo box cell value does not match any of it's embedded combo box's
@@ -75,7 +75,7 @@ namespace SoundExplorers.Controller {
           // be a matching value.
           List.OnValidationError(rowIndex, columnName,
             referencedEntityNotFoundException);
-          EditorView.OnError();
+          EditorController.View.OnError();
           break;
         case null:
           // For unknown reason, the way I've got the error handling set up, this event
@@ -117,7 +117,7 @@ namespace SoundExplorers.Controller {
           List.DeleteEntity(rowIndex);
           Grid.OnRowAddedOrDeleted();
         } catch (DatabaseUpdateErrorException) {
-          EditorView.OnError();
+          EditorController.View.OnError();
         }
       }
     }
@@ -151,27 +151,27 @@ namespace SoundExplorers.Controller {
         List.OnRowValidated(rowIndex);
         Grid.OnRowAddedOrDeleted();
       } catch (DatabaseUpdateErrorException) {
-        EditorView.OnError();
+        EditorController.View.OnError();
       }
     }
 
     public override void Populate(IList? list = null) {
       Debug.WriteLine("MainGridController.Populate");
       base.Populate(list);
-      Grid.MakeNewRowCurrent();
-      EditorController.View.AsyncInvoke(EditorController.OnMainGridPopulatedAsync);
+      EditorController.View.OnMainGridPopulated();
       Debug.WriteLine("MainGridController.Populate END");
     }
 
     public void ShowError() {
       // Debug.WriteLine(
-      //   $"EditorController.ShowError: LastChangeAction == {LastChangeAction}");
+      //   $"MainGridController.ShowError: LastChangeAction == {LastChangeAction}");
       Grid.MakeCellCurrent(List.LastDatabaseUpdateErrorException.RowIndex,
         List.LastDatabaseUpdateErrorException.ColumnIndex);
       if (LastChangeAction == StatementType.Delete) {
         Grid.SelectCurrentRowOnly();
       }
-      EditorView.ShowErrorMessage(List.LastDatabaseUpdateErrorException.Message);
+      EditorController.View.ShowErrorMessage(
+        List.LastDatabaseUpdateErrorException.Message);
       // Debug.WriteLine("Error message shown");
       if (IsFormatException) {
         return;
@@ -205,7 +205,7 @@ namespace SoundExplorers.Controller {
     }
 
     public void ShowWarningMessage(string message) {
-      EditorView.ShowWarningMessage(message);
+      EditorController.View.ShowWarningMessage(message);
     }
 
     /// <summary>
@@ -224,17 +224,17 @@ namespace SoundExplorers.Controller {
           columnName, simpleKey);
       List.OnValidationError(
         rowIndex, columnName, referencedEntityNotFoundException);
-      EditorView.OnError();
+      EditorController.View.OnError();
     }
 
-    protected override int GetFirstVisibleColumnIndex() {
-      for (int i = 0; i < Columns.Count; i++) {
-        if (IsColumnToBeShown(Columns[i].Name)) {
-          return i;
-        }
-      }
-      return -1;
-    }
+    // protected override int GetFirstVisibleColumnIndex() {
+    //   for (int i = 0; i < Columns.Count; i++) {
+    //     if (IsColumnToBeShown(Columns[i].Name)) {
+    //       return i;
+    //     }
+    //   }
+    //   return -1;
+    // }
 
     /// <summary>
     ///   Invoked when the user clicks OK on an insert error message box. If the

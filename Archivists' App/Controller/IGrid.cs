@@ -3,8 +3,7 @@
 namespace SoundExplorers.Controller {
   public interface IGrid {
     int RowCount { get; }
-    
-    void Focus(bool async);
+    void Focus();
     void InvertCellColorScheme();
     void MakeRowCurrent(int rowIndex);
 
@@ -17,7 +16,7 @@ namespace SoundExplorers.Controller {
     ///   from the database.
     /// </param>
     void Populate(IList? list = null);
-    
+
     void RestoreCellColorSchemeToDefault();
   }
 }

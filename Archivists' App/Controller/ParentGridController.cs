@@ -4,7 +4,8 @@ using SoundExplorers.Model;
 
 namespace SoundExplorers.Controller {
   public class ParentGridController : GridControllerBase {
-    public ParentGridController(EditorController editorController) : base(editorController) { }
+    public ParentGridController(EditorController editorController) : base(
+      editorController) { }
 
     /// <summary>
     ///   Gets the list of entities represented in the grid.
@@ -24,7 +25,7 @@ namespace SoundExplorers.Controller {
       }
       Debug.WriteLine(
         $"ParentGridController.OnRowEnter: row {rowIndex}, populating main grid.");
-      EditorController.MainGrid.Populate(List.GetChildrenForMainList(rowIndex)!);
+      EditorController.View.PopulateMainGridOnParentRowChanged(rowIndex);
       PreviousRowIndex = rowIndex;
     }
 

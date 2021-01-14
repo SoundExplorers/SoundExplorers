@@ -1,4 +1,6 @@
 using System;
+using System.Collections;
+using System.Diagnostics;
 using System.Windows.Forms;
 using SoundExplorers.Controller;
 
@@ -53,15 +55,13 @@ namespace SoundExplorers.View {
       ClearSelection();
       CurrentRow!.Selected = true;
     }
-    //
-    // public override void Populate(IList? list = null) {
-    //   Debug.WriteLine("MainGrid.Populate");
-    //   FirstVisibleColumnIndex = -1;
-    //   base.Populate(list);
-    //   MakeNewRowCurrent();
-    //   EditorView.OnMainGridPopulated();
-    //   Debug.WriteLine("MainGrid.Populate END");
-    // }
+    
+    public override void Populate(IList? list = null) {
+      Debug.WriteLine("MainGrid.Populate");
+      FirstVisibleColumnIndex = -1;
+      base.Populate(list);
+      Debug.WriteLine("MainGrid.Populate END");
+    }
 
     protected override void ConfigureColumn(DataGridViewColumn column) {
       if (!Controller.IsColumnToBeShown(column.Name)) {
@@ -70,9 +70,9 @@ namespace SoundExplorers.View {
       }
       // Column will be shown
       base.ConfigureColumn(column);
-      // if (FirstVisibleColumnIndex == -1) {
-      //   FirstVisibleColumnIndex = column.Index;
-      // }
+      if (FirstVisibleColumnIndex == -1) {
+        FirstVisibleColumnIndex = column.Index;
+      }
       if (Controller.DoesColumnReferenceAnotherEntity(column.Name)) {
         column.CellTemplate = ComboBoxCell.Create(Controller, column.Name);
       } else if (column.ValueType == typeof(DateTime)) {

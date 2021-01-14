@@ -34,6 +34,7 @@ namespace SoundExplorers.View {
 
     public CellColorScheme CellColorScheme { get; }
     protected GridControllerBase Controller { get; set; } = null!;
+    protected int FirstVisibleColumnIndex { get; set; }
 
     public GridContextMenu ContextMenu =>
       _contextMenu ??= new GridContextMenu(this);
@@ -67,12 +68,8 @@ namespace SoundExplorers.View {
       }
     }
 
-    void IGrid.Focus(bool async) {
-      if (async) {
-        BeginInvoke((Action)delegate { EditorView.FocusGrid(this); });
-      } else {
-        EditorView.FocusGrid(this);
-      }
+    void IGrid.Focus() {
+      EditorView.FocusGrid(this);
     }
 
     /// <summary>
@@ -96,6 +93,12 @@ namespace SoundExplorers.View {
 
     public void RestoreCellColorSchemeToDefault() {
       CellColorScheme.RestoreToDefault();
+    }
+
+    public void MakeRowCurrent(int rowIndex) {
+      // This triggers OnRowEnter.
+      Debug.WriteLine($"GridBase.MakeRowCurrent: {Name} row {rowIndex}");
+      CurrentCell = Rows[rowIndex].Cells[FirstVisibleColumnIndex];
     }
 
     /// <summary>
@@ -153,13 +156,6 @@ namespace SoundExplorers.View {
           hitTestInfo.ColumnIndex];
       }
       return null;
-    }
-
-    public void MakeRowCurrent(int rowIndex) {
-      // This triggers OnRowEnter.
-      Debug.WriteLine($"GridBase.MakeRowCurrent: {Name} row {rowIndex}");
-      // CurrentCell = Rows[rowIndex].Cells[FirstVisibleColumnIndex];
-      CurrentCell = Rows[rowIndex].Cells[Controller.FirstVisibleColumnIndex];
     }
 
     protected override void OnCurrentCellChanged(EventArgs e) {

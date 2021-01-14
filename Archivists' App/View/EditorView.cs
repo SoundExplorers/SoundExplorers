@@ -20,15 +20,14 @@ namespace SoundExplorers.View {
     }
 
     public GridBase? FocusedGrid { get; internal set; }
-    
     private MainView MainView => (MainView)MdiParent;
     private bool IsClosed { get; set; }
 
     /// <summary>
     ///   This flag is used in a workaround for an unwanted feature of
     ///   <see cref="DataGridView.OnBindingContextChanged" />.  In some of the multiple
-    ///   times that event method occurs per <see cref="Populate" />, it makes row 0 of
-    ///   the main grid current (by calling internal method
+    ///   times that event method occurs per <see cref="EditorController.Populate" />, it
+    ///   makes row 0 of the main grid current (by calling internal method
     ///   DataGridView.MakeFirstDisplayedCellCurrentCell). In this application, that
     ///   would usually be the wrong row, as we want the new row to be current on
     ///   population of the main grid. Normally, the unwanted behaviour would trigger
@@ -44,14 +43,13 @@ namespace SoundExplorers.View {
 
     // private bool IsRefreshingData { get; set; }
     private SizeableFormOptions SizeableFormOptions { get; set; } = null!;
-
     private EditorController Controller { get; set; } = null!;
+
+    void IEditorView.Refresh() {
+      Refresh();
+    }
     // IMainGrid IEditorView.MainGrid => MainGrid;
     // IParentGrid IEditorView.ParentGrid => ParentGrid;
-
-    public void AsyncInvoke(Action method) {
-      BeginInvoke(method);
-    }
 
     public void OnError() {
       // Debug.WriteLine("EditorView.OnError");
@@ -59,7 +57,18 @@ namespace SoundExplorers.View {
       BeginInvoke((Action)MainGrid.OnError);
     }
 
+    public void OnMainGridPopulated() {
+      Debug.WriteLine("EditorView.OnMainGridPopulated");
+      BeginInvoke((Action)Controller.OnMainGridPopulatedAsync);
+    }
+
+    public void OnPopulated() {
+      Debug.WriteLine("EditorView.OnPopulated");
+      BeginInvoke((Action)Controller.OnPopulatedAsync);
+    }
+
     public void OnParentAndMainGridsShown() {
+      Debug.WriteLine("EditorView.OnParentAndMainGridsShown");
       BeginInvoke((Action)OnParentAndMainGridsShownAsync);
     }
 
@@ -67,7 +76,7 @@ namespace SoundExplorers.View {
       Debug.WriteLine("EditorView.SetCursorToDefault");
       MainView.Cursor = Cursors.Default;
     }
-    
+
     public void ShowErrorMessage(string text) {
       //MeasureProfiler.SaveData();
       ShowMessage(text, MessageBoxIcon.Error);
@@ -88,6 +97,41 @@ namespace SoundExplorers.View {
     /// </remarks>
     public void SetController(EditorController controller) {
       Controller = controller;
+    }
+
+    // private void Populate() {
+    //   Debug.WriteLine("EditorView.Populate");
+    //   IsPopulating = true;
+    //   if (Controller.IsParentGridToBeShown) {
+    //     ParentGrid.CellColorScheme.RestoreToDefault();
+    //     MainGrid.CellColorScheme.Invert();
+    //     ParentGrid.Populate();
+    //     if (ParentGrid.RowCount > 0) {
+    //       MainGrid.Populate(ParentGrid.Controller.GetChildrenForMainList(
+    //         ParentGrid.RowCount - 1));
+    //       // If the editor window is being loaded, the parent grid's current row is set
+    //       // asynchronously in OnParentAndMainGridsShownAsync to ensure that it is
+    //       // scrolled into view. Otherwise, i.e. if the grid contents are being
+    //       // refreshed, we need to do it here.
+    //       if (IsRefreshingData) {
+    //         ParentGrid.MakeRowCurrent(ParentGrid.RowCount - 1);
+    //         BeginInvoke((Action)OnPopulatedAsync);
+    //       } else { // Showing for first time
+    //         BeginInvoke((Action)OnParentAndMainGridsShownAsync);
+    //       }
+    //     }
+    //   } else {
+    //     MainGrid.Populate();
+    //     BeginInvoke((Action)OnPopulatedAsync);
+    //   }
+    //   Debug.WriteLine("EditorView.Populate END");
+    // }
+
+    public void PopulateMainGridOnParentRowChanged(int parentRowIndex) {
+      Debug.WriteLine(
+        $"EditView.PopulateMainGridOnParentRowChanged: parent row {parentRowIndex}");
+      IsFixingFocus = true;
+      Controller.PopulateMainGridOnParentRowChanged(parentRowIndex);
     }
 
     /// <summary>
@@ -115,20 +159,20 @@ namespace SoundExplorers.View {
       // return result;
     }
 
-    /// <summary>
-    ///   Refreshes the contents of the existing grid or grids from the database.
-    /// </summary>
-    public void RefreshData() {
-      Controller.IsRefreshingData = true;
-      Populate();
-      if (Controller.IsParentGridToBeShown) {
-        FocusGrid(ParentGrid);
-      } else {
-        MainGrid.Focus();
-      }
-      Refresh();
-      Controller.IsRefreshingData = false;
-    }
+    // /// <summary>
+    // ///   Refreshes the contents of the existing grid or grids from the database.
+    // /// </summary>
+    // public void RefreshData() {
+    //   Controller.IsRefreshingData = true;
+    //   Populate();
+    //   if (Controller.IsParentGridToBeShown) {
+    //     FocusGrid(ParentGrid);
+    //   } else {
+    //     MainGrid.Focus();
+    //   }
+    //   Refresh();
+    //   Controller.IsRefreshingData = false;
+    // }
 
     /// <summary>
     ///   Handles both the missing image label's and the picture box's
@@ -389,10 +433,11 @@ namespace SoundExplorers.View {
       GridSplitContainer.SplitterDistance =
         savedGridSplitterDistance > 0 ? savedGridSplitterDistance : 180;
       IsFixingFocus = true;
-      if (ParentGrid.RowCount > 0) {
-        ParentGrid.MakeRowCurrent(ParentGrid.RowCount - 1);
-      }
-      OnPopulatedAsync();
+      Controller.OnParentAndMainGridsShownAsync();
+      // if (ParentGrid.RowCount > 0) {
+      //   ParentGrid.MakeRowCurrent(ParentGrid.RowCount - 1);
+      // }
+      // OnPopulatedAsync();
     }
 
     // private void OnPopulatedAsync() {
@@ -410,41 +455,8 @@ namespace SoundExplorers.View {
       ParentForm?.Refresh();
     }
 
-    // private void Populate() {
-    //   Debug.WriteLine("EditorView.Populate");
-    //   IsPopulating = true;
-    //   if (Controller.IsParentGridToBeShown) {
-    //     ParentGrid.CellColorScheme.RestoreToDefault();
-    //     MainGrid.CellColorScheme.Invert();
-    //     ParentGrid.Populate();
-    //     if (ParentGrid.RowCount > 0) {
-    //       MainGrid.Populate(ParentGrid.Controller.GetChildrenForMainList(
-    //         ParentGrid.RowCount - 1));
-    //       // If the editor window is being loaded, the parent grid's current row is set
-    //       // asynchronously in OnParentAndMainGridsShownAsync to ensure that it is
-    //       // scrolled into view. Otherwise, i.e. if the grid contents are being
-    //       // refreshed, we need to do it here.
-    //       if (IsRefreshingData) {
-    //         ParentGrid.MakeRowCurrent(ParentGrid.RowCount - 1);
-    //         BeginInvoke((Action)OnPopulatedAsync);
-    //       } else { // Showing for first time
-    //         BeginInvoke((Action)OnParentAndMainGridsShownAsync);
-    //       }
-    //     }
-    //   } else {
-    //     MainGrid.Populate();
-    //     BeginInvoke((Action)OnPopulatedAsync);
-    //   }
-    //   Debug.WriteLine("EditorView.Populate END");
-    // }
-
-    public void PopulateMainGridOnParentRowChanged(int parentRowIndex) {
-      Debug.WriteLine(
-        $"EditView.PopulateMainGridOnParentRowChanged: parent row {parentRowIndex}");
-      IsPopulating = true;
-      MainGrid.Populate(ParentGrid.Controller.GetChildrenForMainList(parentRowIndex));
-      IsFixingFocus = true;
-      BeginInvoke((Action)OnPopulatedAsync);
+    public void RefreshData() {
+      BeginInvoke((Action)Controller.RefreshDataAsync);
     }
 
     /// <summary>
@@ -452,7 +464,8 @@ namespace SoundExplorers.View {
     /// </summary>
     private void ShowData() {
       GridSplitContainer.Panel1Collapsed = !Controller.IsParentGridToBeShown;
-      Populate();
+      // Populate();
+      Controller.Populate();
       Text = MainGrid.Controller.TableName;
     }
 
