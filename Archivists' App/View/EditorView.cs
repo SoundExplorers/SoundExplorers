@@ -41,15 +41,12 @@ namespace SoundExplorers.View {
     /// </remarks>
     private bool IsFixingFocus { get; set; }
 
-    // private bool IsRefreshingData { get; set; }
     private SizeableFormOptions SizeableFormOptions { get; set; } = null!;
     private EditorController Controller { get; set; } = null!;
 
     void IEditorView.Refresh() {
       Refresh();
     }
-    // IMainGrid IEditorView.MainGrid => MainGrid;
-    // IParentGrid IEditorView.ParentGrid => ParentGrid;
 
     public void OnError() {
       // Debug.WriteLine("EditorView.OnError");
@@ -99,34 +96,6 @@ namespace SoundExplorers.View {
       Controller = controller;
     }
 
-    // private void Populate() {
-    //   Debug.WriteLine("EditorView.Populate");
-    //   IsPopulating = true;
-    //   if (Controller.IsParentGridToBeShown) {
-    //     ParentGrid.CellColorScheme.RestoreToDefault();
-    //     MainGrid.CellColorScheme.Invert();
-    //     ParentGrid.Populate();
-    //     if (ParentGrid.RowCount > 0) {
-    //       MainGrid.Populate(ParentGrid.Controller.GetChildrenForMainList(
-    //         ParentGrid.RowCount - 1));
-    //       // If the editor window is being loaded, the parent grid's current row is set
-    //       // asynchronously in OnParentAndMainGridsShownAsync to ensure that it is
-    //       // scrolled into view. Otherwise, i.e. if the grid contents are being
-    //       // refreshed, we need to do it here.
-    //       if (IsRefreshingData) {
-    //         ParentGrid.MakeRowCurrent(ParentGrid.RowCount - 1);
-    //         BeginInvoke((Action)OnPopulatedAsync);
-    //       } else { // Showing for first time
-    //         BeginInvoke((Action)OnParentAndMainGridsShownAsync);
-    //       }
-    //     }
-    //   } else {
-    //     MainGrid.Populate();
-    //     BeginInvoke((Action)OnPopulatedAsync);
-    //   }
-    //   Debug.WriteLine("EditorView.Populate END");
-    // }
-
     public void PopulateMainGridOnParentRowChanged(int parentRowIndex) {
       Debug.WriteLine(
         $"EditView.PopulateMainGridOnParentRowChanged: parent row {parentRowIndex}");
@@ -149,6 +118,7 @@ namespace SoundExplorers.View {
       MainController mainController) {
       return (EditorView)ViewFactory.Create<EditorView, EditorController>(
         entityListType, mainController);
+      // THIS CAN BE USED INSTEAD FOR EASE OF EXCEPTION HANDLING:
       // EditorView result;
       // try {
       //   result = new EditorView();
@@ -159,22 +129,8 @@ namespace SoundExplorers.View {
       // return result;
     }
 
-    // /// <summary>
-    // ///   Refreshes the contents of the existing grid or grids from the database.
-    // /// </summary>
-    // public void RefreshData() {
-    //   Controller.IsRefreshingData = true;
-    //   Populate();
-    //   if (Controller.IsParentGridToBeShown) {
-    //     FocusGrid(ParentGrid);
-    //   } else {
-    //     MainGrid.Focus();
-    //   }
-    //   Refresh();
-    //   Controller.IsRefreshingData = false;
-    // }
-
     /// <summary>
+    ///   THE FOLLOWING RELATES TO A FEATURE THAT IS NOT YET IN USE BUT MAY BE LATER:
     ///   Handles both the missing image label's and the picture box's
     ///   <see cref="Control.DragDrop" /> event to drop a file path on the label or
     ///   picture box, whichever is shown, updating the corresponding Image.Path cell,
@@ -196,6 +152,7 @@ namespace SoundExplorers.View {
     }
 
     /// <summary>
+    ///   THE FOLLOWING RELATES TO A FEATURE THAT IS NOT YET IN USE BUT MAY BE LATER:
     ///   Handles both the missing image label's and the picture box's
     ///   <see cref="Control.DragOver" /> event to show that a file path can be dropped
     ///   on the label or picture box, whichever is shown, if the main grid shows the
@@ -358,6 +315,7 @@ namespace SoundExplorers.View {
       IsClosed = true;
       base.OnFormClosed(e);
       SizeableFormOptions.Save();
+      // THE FOLLOWING RELATES TO A FEATURE THAT IS NOT YET IN USE BUT MAY BE LATER:
       // if (Entities is ArtistInImageList
       //     || Entities is ImageList) {
       //   Controller.ImageSplitterDistance = ImageSplitContainer.SplitterDistance;
@@ -401,14 +359,6 @@ namespace SoundExplorers.View {
       ShowData();
     }
 
-    // private void OnMainGridPopulatedAsync() {
-    //   if (Controller.IsParentGridToBeShown) {
-    //     ParentGrid.Focus();
-    //   } else { // No parent grid
-    //     MainGrid.Focus();
-    //   }
-    // }
-
     protected override void OnMove(EventArgs e) {
       base.OnMove(e);
       // Stop ghost border lines appearing on main window background.
@@ -434,20 +384,7 @@ namespace SoundExplorers.View {
         savedGridSplitterDistance > 0 ? savedGridSplitterDistance : 180;
       IsFixingFocus = true;
       Controller.OnParentAndMainGridsShownAsync();
-      // if (ParentGrid.RowCount > 0) {
-      //   ParentGrid.MakeRowCurrent(ParentGrid.RowCount - 1);
-      // }
-      // OnPopulatedAsync();
     }
-
-    // private void OnPopulatedAsync() {
-    //   Debug.WriteLine("EditorView.OnPopulatedAsync");
-    //   IsPopulating = false;
-    //   if (MainGrid.RowCount > 0) {
-    //     MainGrid.MakeRowCurrent(MainGrid.RowCount - 1);
-    //   }
-    //   MainView.Cursor = Cursors.Default;
-    // }
 
     protected override void OnResize(EventArgs e) {
       base.OnResize(e);

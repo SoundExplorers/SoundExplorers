@@ -201,6 +201,7 @@ namespace SoundExplorers.Controller {
     }
 
     /// <summary>
+    ///   THE FOLLOWING RELATES TO A FEATURE THAT IS NOT YET IN USE BUT MAY BE LATER:
     ///   Plays the audio, if found,
     ///   of the current Piece, if any.
     /// </summary>
@@ -214,6 +215,7 @@ namespace SoundExplorers.Controller {
     }
 
     /// <summary>
+    ///   THE FOLLOWING RELATES TO A FEATURE THAT IS NOT YET IN USE BUT MAY BE LATER:
     ///   Plays the video, if found,
     ///   of the current Piece, if any.
     /// </summary>
@@ -227,6 +229,7 @@ namespace SoundExplorers.Controller {
     }
 
     /// <summary>
+    ///   THE FOLLOWING RELATES TO A FEATURE THAT IS NOT YET IN USE BUT MAY BE LATER:
     ///   Shows the newsletter, if any, associated with the current row.
     /// </summary>
     /// <exception cref="ApplicationException">
