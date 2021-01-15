@@ -11,7 +11,7 @@ namespace SoundExplorers.Controller {
       Grid = grid;
     }
 
-    protected IMainGrid Grid { get; }
+    private IMainGrid Grid { get; }
 
     private bool IsDuplicateKeyException =>
       List.LastDatabaseUpdateErrorException?.InnerException is DuplicateNameException;
@@ -94,10 +94,9 @@ namespace SoundExplorers.Controller {
       // Debug.WriteLine(
       //   "MainGridController.OnRowEnter:  Any row entered (after ItemAdded if insertion row)");
       // Debug.WriteLine($"MainGridController.OnRowEnter: row {rowIndex} of {List.Count}");
-      if (EditorController.IsPopulating) {
-        return;
+      if (!EditorController.IsPopulating) {
+        List.OnRowEnter(rowIndex);
       }
-      List.OnRowEnter(rowIndex);
     }
 
     /// <summary>

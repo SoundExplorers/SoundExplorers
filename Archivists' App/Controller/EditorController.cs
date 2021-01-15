@@ -196,11 +196,6 @@ namespace SoundExplorers.Controller {
     public void RefreshDataAsync() {
       IsRefreshingData = true;
       Populate();
-      if (IsParentGridToBeShown) {
-        ParentGrid.Focus();
-      } else {
-        MainGrid.Focus();
-      }
       View.Refresh();
       IsRefreshingData = false;
     }

@@ -58,13 +58,13 @@ namespace SoundExplorers.Tests.Controller {
       Assert.IsNotNull(validSeriesName, "validSeriesName");
       CreateControllers(typeof(EventList));
       Controller.Populate(); // Show an empty grid
-      Assert.AreEqual(1, MainGrid.FocusCount, 
+      Assert.AreEqual(1, MainGrid.FocusCount,
         "FocusCount after Populate");
       Assert.AreEqual(1, MainGrid.MakeRowCurrentCount,
         "MakeRowCurrentCount after Populate");
       Assert.AreEqual(0, MainGrid.MakeRowCurrentRowIndex,
         "MakeRowCurrentRowIndex after Populate");
-      Assert.AreEqual(1, View.SetCursorToDefaultCount, 
+      Assert.AreEqual(1, View.SetCursorToDefaultCount,
         "SetCursorToDefaultCount after Populate");
       var bindingList =
         (TypedBindingList<Event, EventBindingItem>)Controller.MainList.BindingList;
@@ -206,6 +206,7 @@ namespace SoundExplorers.Tests.Controller {
       CreateControllers(typeof(LocationList));
       Assert.IsFalse(Controller.IsParentGridToBeShown, "IsParentGridToBeShown");
       Controller.Populate(); // The grid will be empty initially
+      Assert.AreEqual(1, MainGrid.FocusCount, "FocusCount after Populate");
       Assert.AreEqual("Location", MainGridController.TableName, "Main TableName");
       var bindingList =
         (TypedBindingList<Location, NotablyNamedBindingItem<Location>>)Controller.MainList
@@ -221,6 +222,7 @@ namespace SoundExplorers.Tests.Controller {
       Assert.AreEqual(2, MainGrid.OnRowAddedOrDeletedCount, "OnRowAddedOrDeletedCount");
       Controller.RefreshDataAsync(); // Refresh grid
       Assert.AreEqual(1, View.RefreshCount, "RefreshCount after Refresh");
+      Assert.AreEqual(2, MainGrid.FocusCount, "FocusCount after Refresh");
       bindingList =
         (TypedBindingList<Location, NotablyNamedBindingItem<Location>>)Controller.MainList
           .BindingList;
@@ -474,17 +476,26 @@ namespace SoundExplorers.Tests.Controller {
         Session.Commit();
       }
       CreateControllers(typeof(SetList));
+      Assert.IsFalse(MainGridController.IsColumnToBeShown(nameof(SetBindingItem.Date)),
+        "Is Date column to be shown?");
+      Assert.IsTrue(MainGridController.IsColumnToBeShown(nameof(SetBindingItem.SetNo)),
+        "Is SetNo column to be shown?");
       Controller.Populate(); // Populate grid
       Assert.AreEqual(1, MainGrid.InvertCellColorSchemeCount,
         "MainGrid.InvertCellColorSchemeCount");
+      Assert.AreEqual(1, ParentGrid.FocusCount, "FocusCount after Populate");
       Assert.AreEqual(1, ParentGrid.RestoreCellColorSchemeToDefaultCount,
         "ParentGrid.RestoreCellColorSchemeToDefaultCount");
       Assert.AreEqual(2, Controller.ParentBindingList?.Count, "Parent list count");
       Assert.AreEqual(5, MainGridController.BindingList?.Count,
         "Main list count initially");
       ParentGridController.OnRowEnter(0);
+      Assert.AreEqual(2, ParentGrid.FocusCount, "FocusCount when 1st parent selected");
       Assert.AreEqual(3, MainGridController.BindingList?.Count,
         "Main list count when 1st parent selected");
+      Controller.RefreshDataAsync(); // Refresh grid
+      Assert.AreEqual(1, View.RefreshCount, "RefreshCount after Refresh");
+      Assert.AreEqual(3, ParentGrid.FocusCount, "FocusCount after Refresh");
     }
 
     [Test]
