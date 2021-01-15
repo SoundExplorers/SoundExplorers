@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-using System.Windows.Forms;
-using SoundExplorers.Controller;
+﻿using SoundExplorers.Controller;
 
 namespace SoundExplorers.View {
   internal class ParentGrid : GridBase, IParentGrid, IView<ParentGridController> {
@@ -18,11 +16,6 @@ namespace SoundExplorers.View {
 
     public void SetController(ParentGridController controller) {
       Controller = controller;
-    }
-
-    protected override void OnRowEnter(DataGridViewCellEventArgs e) {
-      Debug.WriteLine($"ParentGrid.OnRowEnter: row {e.RowIndex}");
-      Controller.OnRowEnter(e.RowIndex);
     }
   }
 }

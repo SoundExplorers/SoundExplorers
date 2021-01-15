@@ -1,7 +1,12 @@
 ﻿using SoundExplorers.Controller;
 
 namespace SoundExplorers.Tests.Controller {
-  public class MockParentGrid : IParentGrid {
-    public ParentGridController Controller { get; init; } = null!;
+  public class MockParentGrid : MockGridBase, IParentGrid {
+    public override int RowCount => Controller.BindingList!.Count;
+
+    public new ParentGridController Controller {
+      get => (ParentGridController)base.Controller;
+      set => base.Controller = value;
+    }
   }
 }

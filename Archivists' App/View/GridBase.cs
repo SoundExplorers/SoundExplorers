@@ -68,6 +68,8 @@ namespace SoundExplorers.View {
       }
     }
 
+    int IGrid.RowCount => RowCount;
+
     void IGrid.Focus() {
       EditorView.FocusGrid(this);
     }

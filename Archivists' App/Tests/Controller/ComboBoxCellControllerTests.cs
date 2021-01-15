@@ -14,9 +14,7 @@ namespace SoundExplorers.Tests.Controller {
       Data = new TestData(QueryHelper);
       Session = new TestSession();
       EditorView = new MockEditorView();
-      MainGridController = EditorView.MainGridController =
-        new TestMainGridController(EditorView);
-      var dummy = CreateEditorController(typeof(EventList));
+      CreateControllers(typeof(EventList));
       CellView = new MockView<ComboBoxCellController>();
       Session.BeginUpdate();
       try {
@@ -27,7 +25,7 @@ namespace SoundExplorers.Tests.Controller {
       } finally {
         Session.Commit();
       }
-      MainGridController.Populate(); // Populate grid
+      EditorController.Populate(); // Populate grid
     }
 
     [TearDown]
@@ -38,6 +36,7 @@ namespace SoundExplorers.Tests.Controller {
     private ComboBoxCellController CellController { get; set; } = null!;
     private MockView<ComboBoxCellController> CellView { get; set; } = null!;
     private TestMainGridController MainGridController { get; set; } = null!;
+    private TestEditorController EditorController { get; set; } = null!;
     private MockEditorView EditorView { get; set; } = null!;
     private TestData Data { get; set; } = null!;
     private QueryHelper QueryHelper { get; set; } = null!;
@@ -77,10 +76,14 @@ namespace SoundExplorers.Tests.Controller {
       return new(CellView, MainGridController, columnName);
     }
 
-    private TestEditorController CreateEditorController(
+    private void CreateControllers(
       Type mainListType) {
-      return new(mainListType,
-        EditorView, QueryHelper, Session);
+      var mainGrid = new MockMainGrid();
+      EditorController = new TestEditorController(mainListType,
+        EditorView, mainGrid, QueryHelper, Session);
+      MainGridController = EditorView.MainGridController =
+        new TestMainGridController(mainGrid, EditorController);
+      mainGrid.Controller = MainGridController;
     }
   }
 }

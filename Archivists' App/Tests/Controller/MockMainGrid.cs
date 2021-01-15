@@ -1,18 +1,25 @@
-﻿using System.Collections;
+﻿using System;
 using SoundExplorers.Controller;
 
 namespace SoundExplorers.Tests.Controller {
-  public class MockMainGrid : IMainGrid {
-    public TestMainGridController Controller { get; set; } = null!;
+  public class MockMainGrid : MockGridBase, IMainGrid {
+    public new TestMainGridController Controller {
+      get => (TestMainGridController)base.Controller;
+      set => base.Controller = value;
+    }
+
     public int EditCurrentCellCount { get; private set; }
     public int MakeCellCurrentCount { get; private set; }
     public int MakeCellCurrentColumnIndex { get; private set; }
     public int MakeCellCurrentRowIndex { get; private set; }
-    public int MakeRowCurrentCount { get; private set; }
-    public int MakeRowCurrentRowIndex { get; private set; }
     public int OnRowAddedOrDeletedCount { get; private set; }
     public int RestoreCurrentRowCellErrorValueCount { get; private set; }
     public int SelectCurrentRowOnlyCount { get; private set; }
+
+    /// <summary>
+    ///   Gets the grid row count including the new row.
+    /// </summary>
+    public override int RowCount => Controller.BindingList!.Count + 1;
 
     public void SetController(MainGridController controller) {
       Controller = (TestMainGridController)controller;
@@ -28,19 +35,12 @@ namespace SoundExplorers.Tests.Controller {
       MakeCellCurrentRowIndex = rowIndex;
     }
 
-    public void MakeRowCurrent(int rowIndex) {
-      //Debug.WriteLine($"MockEditorView.MakeRowCurrent: row {rowIndex}");
-      MakeRowCurrentCount++;
-      MakeRowCurrentRowIndex = rowIndex;
-      Controller.OnRowEnter(rowIndex);
+    public void MakeNewRowCurrent() {
+      throw new NotImplementedException();
     }
 
     public void OnRowAddedOrDeleted() {
       OnRowAddedOrDeletedCount++;
-    }
-
-    public void Populate(IList? list = null) {
-      Controller.Populate(list);
     }
 
     public void RestoreCurrentRowCellErrorValue(int columnIndex,
