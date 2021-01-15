@@ -35,12 +35,6 @@ namespace SoundExplorers.View {
       }
     }
 
-    public void MakeNewRowCurrent() {
-      // This triggers OnRowEnter.
-      // Debug.WriteLine("MainGrid.MakeNewRowCurrent");
-      MakeRowCurrent(Rows.Count - 1);
-    }
-
     public void OnRowAddedOrDeleted() {
       AutoResizeColumns();
       Focus();

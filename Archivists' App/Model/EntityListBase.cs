@@ -210,9 +210,9 @@ namespace SoundExplorers.Model {
         // IsInsertionRowCurrent is not reliable here:
         // it does not work if we are entering the main grid from the parent grid.
         // BackupBindingItem = !IsInsertionRowCurrent
-        BackupBindingItem = rowIndex < Count 
+        BackupBindingItem = rowIndex < Count
           ? GetBindingItem(rowIndex).CreateBackup()
-          : new TBindingItem();
+          : new TBindingItem {Columns = Columns};
       }
     }
 

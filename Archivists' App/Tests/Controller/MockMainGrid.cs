@@ -1,5 +1,4 @@
-﻿using System;
-using SoundExplorers.Controller;
+﻿using SoundExplorers.Controller;
 
 namespace SoundExplorers.Tests.Controller {
   public class MockMainGrid : MockGridBase, IMainGrid {
@@ -8,13 +7,13 @@ namespace SoundExplorers.Tests.Controller {
       set => base.Controller = value;
     }
 
-    public int EditCurrentCellCount { get; private set; }
-    public int MakeCellCurrentCount { get; private set; }
-    public int MakeCellCurrentColumnIndex { get; private set; }
-    public int MakeCellCurrentRowIndex { get; private set; }
-    public int OnRowAddedOrDeletedCount { get; private set; }
-    public int RestoreCurrentRowCellErrorValueCount { get; private set; }
-    public int SelectCurrentRowOnlyCount { get; private set; }
+    internal int EditCurrentCellCount { get; private set; }
+    internal int MakeCellCurrentCount { get; private set; }
+    internal int MakeCellCurrentColumnIndex { get; private set; }
+    internal int MakeCellCurrentRowIndex { get; private set; }
+    internal int OnRowAddedOrDeletedCount { get; private set; }
+    internal int RestoreCurrentRowCellErrorValueCount { get; private set; }
+    internal int SelectCurrentRowOnlyCount { get; private set; }
 
     /// <summary>
     ///   Gets the grid row count including the new row.
@@ -33,10 +32,6 @@ namespace SoundExplorers.Tests.Controller {
       MakeCellCurrentCount++;
       MakeCellCurrentColumnIndex = columnIndex;
       MakeCellCurrentRowIndex = rowIndex;
-    }
-
-    public void MakeNewRowCurrent() {
-      throw new NotImplementedException();
     }
 
     public void OnRowAddedOrDeleted() {

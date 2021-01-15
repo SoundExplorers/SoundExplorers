@@ -2,12 +2,13 @@
 
 namespace SoundExplorers.Tests.Controller {
   public class MockEditorView : IEditorView {
-    public string LastErrorMessage { get; private set; } = null!;
-    public TestMainGridController MainGridController { get; set; } = null!;
-    public int SetCursorToDefaultCount { get; private set; }
-    public int ShowErrorMessageCount { get; private set; }
-    public int ShowWarningMessageCount { get; private set; }
-    private EditorController Controller { get; set; } = null!;
+    internal string LastErrorMessage { get; private set; } = null!;
+    internal TestMainGridController MainGridController { get; set; } = null!;
+    internal int RefreshCount { get; private set; }
+    internal int SetCursorToDefaultCount { get; private set; }
+    internal int ShowErrorMessageCount { get; private set; }
+    internal int ShowWarningMessageCount { get; private set; }
+    internal EditorController Controller { get; set; } = null!;
 
     public void SetController(EditorController controller) {
       Controller = controller;
@@ -34,7 +35,7 @@ namespace SoundExplorers.Tests.Controller {
     }
 
     public void Refresh() {
-      throw new System.NotImplementedException();
+      RefreshCount++;
     }
 
     public void SetCursorToDefault() {

@@ -219,11 +219,12 @@ namespace SoundExplorers.Tests.Controller {
       bindingList[1].Notes = "Bob";
       MainGridController.OnRowValidated(1);
       Assert.AreEqual(2, MainGrid.OnRowAddedOrDeletedCount, "OnRowAddedOrDeletedCount");
-      Controller.Populate(); // Refresh grid
+      Controller.RefreshDataAsync(); // Refresh grid
+      Assert.AreEqual(1, View.RefreshCount, "RefreshCount after Refresh");
       bindingList =
         (TypedBindingList<Location, NotablyNamedBindingItem<Location>>)Controller.MainList
           .BindingList;
-      Assert.AreEqual(2, bindingList.Count, "editor.Count after Populate #2");
+      Assert.AreEqual(2, bindingList.Count, "editor.Count after Refresh");
       MainGridController.OnRowEnter(1);
       // Disallow rename to duplicate
       var exception = Assert.Catch<DuplicateNameException>(
