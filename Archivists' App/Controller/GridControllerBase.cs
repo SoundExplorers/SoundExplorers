@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.ComponentModel;
 using SoundExplorers.Model;
 
@@ -17,7 +17,6 @@ namespace SoundExplorers.Controller {
     internal BindingColumnList Columns => List.Columns;
 
     protected EditorController EditorController { get; }
-    // public int FirstVisibleColumnIndex { get; private set; }
 
     /// <summary>
     ///   Gets the list of entities represented in the grid.
@@ -33,11 +32,6 @@ namespace SoundExplorers.Controller {
 
     public virtual void Populate(IList? list = null) {
       List.Populate(list);
-      //   FirstVisibleColumnIndex = GetFirstVisibleColumnIndex();
     }
-
-    // protected virtual int GetFirstVisibleColumnIndex() {
-    //   return 0;
-    // }
   }
 }

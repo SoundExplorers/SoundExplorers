@@ -201,10 +201,8 @@ namespace SoundExplorers.View {
         return;
       }
       // A read-only related grid for the parent table is shown above the main grid.
-      grid.CellColorScheme.RestoreToDefault();
-      var unfocusedGrid =
-        grid == MainGrid ? (GridBase)ParentGrid : MainGrid;
-      unfocusedGrid.CellColorScheme.Invert();
+      var unfocusedGrid = GetOtherGrid(grid);
+      SetGridCellColorSchemes(grid, unfocusedGrid);
       // By trial an error, I found that this complicated rigmarole was required to
       // properly shift the focus programatically, i.e. in EditorView_KeyDown to
       // implement doing it with the F6 key.
@@ -214,6 +212,16 @@ namespace SoundExplorers.View {
       grid.Focus();
       Refresh();
       unfocusedGrid.Enabled = true;
+    }
+
+    internal GridBase GetOtherGrid(GridBase grid) {
+      return grid == MainGrid ? (GridBase)ParentGrid : MainGrid;
+    }
+
+    internal static void SetGridCellColorSchemes(GridBase focusedGrid,
+      GridBase unfocusedGrid) {
+      focusedGrid.CellColorScheme.RestoreToDefault();
+      unfocusedGrid.CellColorScheme.Invert();
     }
 
     /// <summary>
