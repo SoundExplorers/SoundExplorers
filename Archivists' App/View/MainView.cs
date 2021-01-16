@@ -215,12 +215,18 @@ namespace SoundExplorers.View {
       // To get round this, emulate repopulating the existing table form by replacing it
       // with a new table form with the same location and size.
       var oldEditorView = EditorView!;
+      if (oldEditorView.WindowState == FormWindowState.Maximized) {
+        oldEditorView.Close();
+        oldEditorView.Dispose();
+        NewEditorAsync();
+        return;
+      }
       var newEditorView = CreateEditorView();
-      newEditorView.Location = oldEditorView.Location;
       newEditorView.WindowState = oldEditorView.WindowState;
       oldEditorView.Close();
       newEditorView.MdiParent = this;
       newEditorView.Show();
+      newEditorView.Location = oldEditorView.Location;
       newEditorView.Size = oldEditorView.Size;
       oldEditorView.Dispose();
       // This won't always work, because SizeableFormOptions copies the size and state of
