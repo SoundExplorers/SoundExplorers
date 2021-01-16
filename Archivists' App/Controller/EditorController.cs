@@ -133,10 +133,14 @@ namespace SoundExplorers.Controller {
       // It is worth checking to see whether a grid needs to be focused: when a parent
       // grid is shown, focusing a grid involves additional processing; and it is more
       // logical for unit testing.
-      if (IsParentGridToBeShown && !ParentGrid.Focused) {
-        ParentGrid.Focus();
-      } else if (!MainGrid.Focused) {
-        MainGrid.Focus();
+      if (IsParentGridToBeShown) {
+        if (!ParentGrid.Focused) {
+          ParentGrid.Focus();
+        }
+      } else { // No parent grid
+        if (!MainGrid.Focused) {
+          MainGrid.Focus();
+        }
       }
     }
 
