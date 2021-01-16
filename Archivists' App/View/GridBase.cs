@@ -68,6 +68,7 @@ namespace SoundExplorers.View {
       }
     }
 
+    bool IGrid.Focused => Focused;
     int IGrid.RowCount => RowCount;
 
     void IGrid.Focus() {

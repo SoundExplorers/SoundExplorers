@@ -83,7 +83,7 @@ namespace SoundExplorers.Tests.Controller {
         EditorView, mainGrid, QueryHelper, Session);
       MainGridController = EditorView.MainGridController =
         new TestMainGridController(mainGrid, EditorController);
-      mainGrid.Controller = MainGridController;
+      mainGrid.SetController(MainGridController);
     }
   }
 }

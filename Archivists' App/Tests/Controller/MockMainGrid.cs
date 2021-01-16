@@ -2,11 +2,12 @@
 
 namespace SoundExplorers.Tests.Controller {
   public class MockMainGrid : MockGridBase, IMainGrid {
-    public new TestMainGridController Controller {
+    private new TestMainGridController Controller {
       get => (TestMainGridController)base.Controller;
       set => base.Controller = value;
     }
 
+    //protected override EditorController EditorController => Controller.EditorController;
     internal int EditCurrentCellCount { get; private set; }
     internal int MakeCellCurrentCount { get; private set; }
     internal int MakeCellCurrentColumnIndex { get; private set; }
@@ -23,15 +24,21 @@ namespace SoundExplorers.Tests.Controller {
     ///   in the DataGridView but not the BindingList, unless the last DataGridView row
     ///   is current.  In the application, one use of RowCount is to make the new row
     ///   current, which adds it to the BindingList: see
-    ///   <see cref="EditorController.OnPopulatedAsync" />. We have to support that here.
-    ///   When the new row is no longer the current row, it is removed from the
-    ///   BindingList.  
+    ///   EditorController.OnPopulatedAsync. We have to support that here. When the new
+    ///   row is no longer the current row, it is removed from the BindingList.
     ///   <para>
     ///     So the use of RowCount in tests should be avoided. Use
     ///     EditorController.BindingList.Count instead.
     ///   </para>
     /// </summary>
     public override int RowCount => Controller.BindingList!.Count + 1;
+
+    public override void Focus() {
+      base.Focus();
+      if (Controller.EditorController.IsParentGridToBeShown) {
+        ((MockGridBase)Controller.EditorController.ParentGrid).Focused = false;
+      }
+    }
 
     public void SetController(MainGridController controller) {
       Controller = (TestMainGridController)controller;

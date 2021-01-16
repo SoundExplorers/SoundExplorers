@@ -1,7 +1,7 @@
 ﻿using SoundExplorers.Controller;
 
 namespace SoundExplorers.View {
-  internal class ParentGrid : GridBase, IParentGrid, IView<ParentGridController> {
+  internal class ParentGrid : GridBase, IParentGrid {
     public ParentGrid() {
       AllowUserToAddRows = false;
       AllowUserToDeleteRows = false;

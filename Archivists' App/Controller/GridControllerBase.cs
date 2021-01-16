@@ -33,7 +33,7 @@ namespace SoundExplorers.Controller {
 
     public virtual void Populate(IList? list = null) {
       List.Populate(list);
-    //   FirstVisibleColumnIndex = GetFirstVisibleColumnIndex();
+      //   FirstVisibleColumnIndex = GetFirstVisibleColumnIndex();
     }
 
     // protected virtual int GetFirstVisibleColumnIndex() {

@@ -5,13 +5,13 @@ using SoundExplorers.Model;
 namespace SoundExplorers.Tests.Controller {
   public class TestMainGridController : MainGridController {
     public TestMainGridController(IMainGrid grid, EditorController editorController) :
-      base(grid, editorController) {
-    }
+      base(grid, editorController) { }
 
     protected override StatementType LastChangeAction => TestUnsupportedLastChangeAction
       ? StatementType.Select // Not used.
       : base.LastChangeAction;
 
+    internal new EditorController EditorController => base.EditorController;
     internal bool TestUnsupportedLastChangeAction { get; set; }
 
     internal void CreateAndGoToInsertionRow() {

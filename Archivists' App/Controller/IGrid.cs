@@ -2,6 +2,7 @@
 
 namespace SoundExplorers.Controller {
   public interface IGrid {
+    bool Focused { get; }
     int RowCount { get; }
     void Focus();
     void InvertCellColorScheme();

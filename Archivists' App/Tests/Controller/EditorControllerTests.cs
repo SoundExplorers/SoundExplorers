@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Data;
 using NUnit.Framework;
-using SoundExplorers.Controller;
 using SoundExplorers.Data;
 using SoundExplorers.Model;
 using SoundExplorers.Tests.Data;
@@ -29,7 +28,7 @@ namespace SoundExplorers.Tests.Controller {
     private MockMainGrid MainGrid { get; set; } = null!;
     private TestMainGridController MainGridController { get; set; } = null!;
     private MockParentGrid ParentGrid { get; set; } = null!;
-    private ParentGridController ParentGridController { get; set; } = null!;
+    private TestParentGridController ParentGridController { get; set; } = null!;
     private QueryHelper QueryHelper { get; set; } = null!;
     private TestSession Session { get; set; } = null!;
     private MockEditorView View { get; set; } = null!;
@@ -58,8 +57,8 @@ namespace SoundExplorers.Tests.Controller {
       Assert.IsNotNull(validSeriesName, "validSeriesName");
       CreateControllers(typeof(EventList));
       Controller.Populate(); // Show an empty grid
-      Assert.AreEqual(1, MainGrid.FocusCount,
-        "FocusCount after Populate");
+      Assert.AreEqual(1, MainGrid.FocusCount, "FocusCount after Populate");
+      Assert.IsTrue(MainGrid.Focused, "MainGrid.Focused after Populate");
       Assert.AreEqual(1, MainGrid.MakeRowCurrentCount,
         "MakeRowCurrentCount after Populate");
       Assert.AreEqual(0, MainGrid.MakeRowCurrentRowIndex,
@@ -222,7 +221,8 @@ namespace SoundExplorers.Tests.Controller {
       Assert.AreEqual(2, MainGrid.OnRowAddedOrDeletedCount, "OnRowAddedOrDeletedCount");
       Controller.RefreshDataAsync(); // Refresh grid
       Assert.AreEqual(1, View.RefreshCount, "RefreshCount after Refresh");
-      Assert.AreEqual(2, MainGrid.FocusCount, "FocusCount after Refresh");
+      Assert.AreEqual(1, MainGrid.FocusCount, "FocusCount after Refresh");
+      Assert.IsTrue(MainGrid.Focused, "MainGrid.Focused after Refresh");
       bindingList =
         (TypedBindingList<Location, NotablyNamedBindingItem<Location>>)Controller.MainList
           .BindingList;
@@ -481,21 +481,29 @@ namespace SoundExplorers.Tests.Controller {
       Assert.IsTrue(MainGridController.IsColumnToBeShown(nameof(SetBindingItem.SetNo)),
         "Is SetNo column to be shown?");
       Controller.Populate(); // Populate grid
+      Assert.IsFalse(MainGrid.Focused, "MainGrid.Focused after Populate");
       Assert.AreEqual(1, MainGrid.InvertCellColorSchemeCount,
         "MainGrid.InvertCellColorSchemeCount");
-      Assert.AreEqual(1, ParentGrid.FocusCount, "FocusCount after Populate");
+      Assert.AreEqual(1, ParentGrid.FocusCount, "ParentGrid.FocusCount after Populate");
+      Assert.IsTrue(ParentGrid.Focused, "ParentGrid.Focused after Populate");
       Assert.AreEqual(1, ParentGrid.RestoreCellColorSchemeToDefaultCount,
         "ParentGrid.RestoreCellColorSchemeToDefaultCount");
       Assert.AreEqual(2, Controller.ParentBindingList?.Count, "Parent list count");
       Assert.AreEqual(5, MainGridController.BindingList?.Count,
         "Main list count initially");
+      MainGrid.Focus();
       ParentGridController.OnRowEnter(0);
+      Assert.IsFalse(MainGrid.Focused, "MainGrid.Focused when 1st parent selected");
       Assert.AreEqual(2, ParentGrid.FocusCount, "FocusCount when 1st parent selected");
+      Assert.IsTrue(ParentGrid.Focused, "ParentGrid.Focused when 1st parent selected");
       Assert.AreEqual(3, MainGridController.BindingList?.Count,
         "Main list count when 1st parent selected");
+      MainGrid.Focus();
       Controller.RefreshDataAsync(); // Refresh grid
+      Assert.IsFalse(MainGrid.Focused, "MainGrid.Focused after Refresh");
       Assert.AreEqual(1, View.RefreshCount, "RefreshCount after Refresh");
       Assert.AreEqual(3, ParentGrid.FocusCount, "FocusCount after Refresh");
+      Assert.IsTrue(ParentGrid.Focused, "ParentGrid.Focused after Refresh");
     }
 
     [Test]
@@ -511,11 +519,11 @@ namespace SoundExplorers.Tests.Controller {
         View, MainGrid, QueryHelper, Session);
       MainGridController = View.MainGridController =
         new TestMainGridController(MainGrid, Controller);
-      MainGrid.Controller = MainGridController;
+      MainGrid.SetController(MainGridController);
       if (Controller.IsParentGridToBeShown) {
         Controller.ParentGrid = ParentGrid;
-        ParentGridController = new ParentGridController(Controller);
-        ParentGrid.Controller = ParentGridController;
+        ParentGridController = new TestParentGridController(Controller);
+        ParentGrid.SetController(ParentGridController);
       }
     }
 

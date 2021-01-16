@@ -3,14 +3,17 @@ using SoundExplorers.Controller;
 
 namespace SoundExplorers.Tests.Controller {
   public abstract class MockGridBase : IGrid {
-    public abstract int RowCount { get; }
     internal int FocusCount { get; private set; }
     internal int InvertCellColorSchemeCount { get; private set; }
     internal int MakeRowCurrentCount { get; private set; }
     internal int MakeRowCurrentRowIndex { get; private set; }
     internal int RestoreCellColorSchemeToDefaultCount { get; private set; }
     protected GridControllerBase Controller { get; set; } = null!;
-    public void Focus() {
+    public bool Focused { get; internal set; }
+    public abstract int RowCount { get; }
+
+    public virtual void Focus() {
+      Focused = true;
       FocusCount++;
     }
 
