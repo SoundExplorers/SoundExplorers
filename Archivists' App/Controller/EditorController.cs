@@ -128,6 +128,24 @@ namespace SoundExplorers.Controller {
       return new(name);
     }
 
+    public void FocusDefaultGrid() {
+      if (IsParentGridToBeShown) {
+        ParentGrid.Focus();
+      } else {
+        MainGrid.Focus();
+      }
+    }
+
+    public void FocusUnfocusedGridIfAny() {
+      if (IsParentGridToBeShown) {
+        if (ParentGrid.Focused) {
+          MainGrid.Focus();
+        } else {
+          ParentGrid.Focus();
+        }
+      }
+    }
+
     public void OnMainGridPopulatedAsync() {
       Debug.WriteLine("EditorController.OnMainGridPopulatedAsync");
       // It is worth checking to see whether a grid needs to be focused: when a parent

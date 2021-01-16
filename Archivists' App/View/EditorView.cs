@@ -281,13 +281,7 @@ namespace SoundExplorers.View {
       base.OnActivated(e);
       //Debug.WriteLine("EditorView.OnActivated: " + this.Text);
       MainGrid.Enabled = true;
-      if (Controller.IsParentGridToBeShown) {
-        // A read-only related grid for the parent table is shown
-        // above the main grid.
-        FocusGrid(ParentGrid);
-      } else {
-        MainGrid.Focus();
-      }
+      Controller.FocusDefaultGrid();
     }
 
     /// <summary>
@@ -329,9 +323,7 @@ namespace SoundExplorers.View {
       base.OnKeyDown(e);
       switch (e.KeyData) {
         case Keys.F6:
-          if (Controller.IsParentGridToBeShown) {
-            FocusGrid(FocusedGrid == ParentGrid ? (GridBase)MainGrid : ParentGrid);
-          }
+          Controller.FocusUnfocusedGridIfAny();
           break;
       } //End of switch
     }
