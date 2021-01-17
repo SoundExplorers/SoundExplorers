@@ -45,7 +45,7 @@ namespace SoundExplorers.View {
       CurrentCell?.OwningColumn.CellTemplate is TextBoxCell;
 
     public MainView MainView { get; set; } = null!;
-    private bool IsFocusingViaEditorController { get; set; }
+    // private bool IsFocusingViaEditorController { get; set; }
 
     /// <summary>
     ///   Gets the new (i.e. empty) row at the bottom of an editable grid.
@@ -73,7 +73,7 @@ namespace SoundExplorers.View {
 
     void IGrid.Focus() {
       Debug.WriteLine($"GridBase.IGrid.Focus: {Name}");
-      IsFocusingViaEditorController = true;
+      //IsFocusingViaEditorController = true;
       EditorView.FocusGrid(this);
     }
 
@@ -174,7 +174,7 @@ namespace SoundExplorers.View {
       Debug.WriteLine($"GridBase.OnGotFocus: {Name}");
       base.OnGotFocus(e);
       EditorView.FocusedGrid = this;
-      IsFocusingViaEditorController = false;
+      //IsFocusingViaEditorController = false;
     }
 
     protected override void OnKeyDown(KeyEventArgs e) {
@@ -237,26 +237,25 @@ namespace SoundExplorers.View {
       Controller.OnRowEnter(e.RowIndex);
     }
 
-    // protected override void WndProc(ref Message m) {
-    //   // ReSharper disable once InconsistentNaming
-    //   // ReSharper disable once IdentifierTypo
-    //   const int WM_SETFOCUS = 0x0007;
-    //   if (m.Msg == WM_SETFOCUS) {
-    //     // ReSharper disable once StringLiteralTypo
-    //     Debug.WriteLine(
-    //       $"GridBase.WndProc: {Name} WM_SETFOCUS; IsFocusingViaEditorController = {IsFocusingViaEditorController}");
-    //     // if (!IsFocusingViaEditorController) {
-    //     //   ((IGrid)this).Focus();
-    //     // }
-    //     // Debug.WriteLine($"GridBase.WndProc: {Name} WM_SETFOCUS");
-    //     // ((IGrid)this).Focus();
-    //     // Debug.WriteLine(
-    //     //   $"GridBase.WndProc: {Name} WM_SETFOCUS; IsFocusingViaEditorController = {IsFocusingViaEditorController}");
-    //     // if (!IsFocusingViaEditorController) {
-    //     //   EditorView.SetGridCellColorSchemes(this, EditorView.GetOtherGrid(this));
-    //     // }
-    //   }
-    //   base.WndProc(ref m);
-    // }
+    protected override void WndProc(ref Message m) {
+      // ReSharper disable once InconsistentNaming
+      // ReSharper disable once IdentifierTypo
+      const int WM_SETFOCUS = 0x0007;
+      if (m.Msg == WM_SETFOCUS) {
+        // ReSharper disable once StringLiteralTypo
+        Debug.WriteLine($"GridBase.WndProc: {Name} WM_SETFOCUS");
+        // We need to make sure we can switch the grid cell colour schemes when switching
+        // focus between two grids.  To get this to work even when focus is changed by a
+        // mouse click, we would ideally like to override the Focus method.
+        // As that method does not support overriding, we intercept the corresponding
+        // Windows message here instead, which has the same effect.
+        // A disadvantage of setting the cell colour schemes this way is that the colours
+        // flicker between the grids when the parent grid is being focused.
+        if (EditorView.Controller.IsParentGridToBeShown) {
+          EditorView.SetGridCellColorSchemes(this, EditorView.GetOtherGrid(this));
+        }
+      }
+      base.WndProc(ref m);
+    }
   }
 }

@@ -42,7 +42,7 @@ namespace SoundExplorers.View {
     private bool IsFixingFocus { get; set; }
 
     private SizeableFormOptions SizeableFormOptions { get; set; } = null!;
-    private EditorController Controller { get; set; } = null!;
+    internal EditorController Controller { get; set; } = null!;
 
     void IEditorView.Refresh() {
       Refresh();
@@ -197,7 +197,7 @@ namespace SoundExplorers.View {
       }
       // A read-only related grid for the parent table is shown above the main grid.
       var unfocusedGrid = GetOtherGrid(grid);
-      SetGridCellColorSchemes(grid, unfocusedGrid);
+      //SetGridCellColorSchemes(grid, unfocusedGrid);
       // By trial an error, I found that this complicated rigmarole was required to
       // properly shift the focus programatically, i.e. in EditorView_KeyDown to
       // implement doing it with the F6 key.
