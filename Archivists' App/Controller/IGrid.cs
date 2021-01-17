@@ -1,11 +1,19 @@
 ﻿using System.Collections;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SoundExplorers.Controller {
   public interface IGrid {
+    // int CurrentRowIndex { get; }
     bool Focused { get; }
+    
+    /// <summary>
+    ///   The grid's name. Useful for debugging. 
+    /// </summary>
+    [SuppressMessage("ReSharper", "UnusedMember.Global")] 
+    string Name { get; }
+    
     int RowCount { get; }
     void Focus();
-    void InvertCellColorScheme();
     void MakeRowCurrent(int rowIndex);
 
     /// <summary>
@@ -17,7 +25,5 @@ namespace SoundExplorers.Controller {
     ///   from the database.
     /// </param>
     void Populate(IList? list = null);
-
-    void RestoreCellColorSchemeToDefault();
   }
 }

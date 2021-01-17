@@ -42,7 +42,7 @@ namespace SoundExplorers.View {
     private bool IsFixingFocus { get; set; }
 
     private SizeableFormOptions SizeableFormOptions { get; set; } = null!;
-    internal EditorController Controller { get; set; } = null!;
+    private EditorController Controller { get; set; } = null!;
 
     void IEditorView.Refresh() {
       Refresh();
@@ -197,7 +197,6 @@ namespace SoundExplorers.View {
       }
       // A read-only related grid for the parent table is shown above the main grid.
       var unfocusedGrid = GetOtherGrid(grid);
-      //SetGridCellColorSchemes(grid, unfocusedGrid);
       // By trial an error, I found that this complicated rigmarole was required to
       // properly shift the focus programatically, i.e. in EditorView_KeyDown to
       // implement doing it with the F6 key.
@@ -209,14 +208,8 @@ namespace SoundExplorers.View {
       unfocusedGrid.Enabled = true;
     }
 
-    internal GridBase GetOtherGrid(GridBase grid) {
+    private GridBase GetOtherGrid(GridBase grid) {
       return grid == MainGrid ? (GridBase)ParentGrid : MainGrid;
-    }
-
-    internal static void SetGridCellColorSchemes(GridBase focusedGrid,
-      GridBase unfocusedGrid) {
-      focusedGrid.CellColorScheme.RestoreToDefault();
-      unfocusedGrid.CellColorScheme.Invert();
     }
 
     /// <summary>
@@ -342,7 +335,7 @@ namespace SoundExplorers.View {
       MainGrid.RowValidated += MainGrid_RowValidated;
       if (Controller.IsParentGridToBeShown) {
         Controller.ParentGrid = ParentGrid;
-        ParentGrid.SetController(new ParentGridController(Controller));
+        ParentGrid.SetController(new ParentGridController(ParentGrid, Controller));
         ParentGrid.EditorView = this;
         ParentGrid.MainView = MainView;
       }
@@ -378,7 +371,6 @@ namespace SoundExplorers.View {
       GridSplitContainer.SplitterDistance =
         savedGridSplitterDistance > 0 ? savedGridSplitterDistance : 180;
       IsFixingFocus = true;
-      Controller.OnParentAndMainGridsShownAsync();
     }
 
     protected override void OnResize(EventArgs e) {
@@ -388,7 +380,9 @@ namespace SoundExplorers.View {
     }
 
     public void RefreshData() {
-      BeginInvoke((Action)Controller.RefreshDataAsync);
+      Controller.Populate();
+      // Refresh();
+      // BeginInvoke((Action)Controller.RefreshDataAsync);
     }
 
     /// <summary>

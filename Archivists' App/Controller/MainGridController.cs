@@ -7,11 +7,11 @@ using SoundExplorers.Model;
 namespace SoundExplorers.Controller {
   public class MainGridController : GridControllerBase {
     public MainGridController(
-      IMainGrid grid, EditorController editorController) : base(editorController) {
-      Grid = grid;
+      // ReSharper disable once SuggestBaseTypeForParameter
+      IMainGrid grid, EditorController editorController) : base(grid, editorController) {
     }
 
-    private IMainGrid Grid { get; }
+    private new IMainGrid Grid => (IMainGrid)base.Grid; 
 
     private bool IsDuplicateKeyException =>
       List.LastDatabaseUpdateErrorException?.InnerException is DuplicateNameException;

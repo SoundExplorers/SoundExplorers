@@ -78,8 +78,7 @@ namespace SoundExplorers.Controller {
     /// </summary>
     public bool IsParentGridToBeShown => MainList.ParentListType != null;
 
-    internal bool IsPopulating { get; private set; }
-    private bool IsRefreshingData { get; set; }
+    internal bool IsPopulating { get; set; }
     internal MainController MainController { get; }
     public IMainGrid MainGrid { get; set; } = null!;
     public IParentGrid ParentGrid { get; set; } = null!;
@@ -146,20 +145,8 @@ namespace SoundExplorers.Controller {
       }
     }
 
-    public void OnParentAndMainGridsShownAsync() {
-      Debug.WriteLine("EditorController.OnParentAndMainGridsShownAsync");
-      if (ParentGrid.RowCount > 0) {
-        ParentGrid.MakeRowCurrent(ParentGrid.RowCount - 1);
-      }
-      OnPopulatedAsync();
-    }
-
     public void OnPopulatedAsync() {
       Debug.WriteLine("EditorController.OnPopulatedAsync");
-      IsPopulating = false;
-      if (MainGrid.RowCount > 0) {
-        MainGrid.MakeRowCurrent(MainGrid.RowCount - 1);
-      }
       // It is worth checking to see whether a grid needs to be focused: when a parent
       // grid is shown, focusing a grid involves additional processing; and it is more
       // logical for unit testing.
@@ -172,34 +159,21 @@ namespace SoundExplorers.Controller {
           MainGrid.Focus();
         }
       }
-      View.SetCursorToDefault();
     }
 
     public void Populate() {
       Debug.WriteLine("EditorController.Populate");
       IsPopulating = true;
       if (IsParentGridToBeShown) {
-        ParentGrid.RestoreCellColorSchemeToDefault();
-        MainGrid.InvertCellColorScheme();
         ParentGrid.Populate();
         if (ParentGrid.RowCount > 0) {
           MainGrid.Populate(ParentGrid.Controller.GetChildrenForMainList(
             ParentGrid.RowCount - 1));
-          // If the editor window is being loaded, the parent grid's current row is set
-          // asynchronously in OnParentAndMainGridsShownAsync to ensure that it is
-          // scrolled into view. Otherwise, i.e. if the grid contents are being
-          // refreshed, we need to do it here.
-          if (IsRefreshingData) {
-            ParentGrid.MakeRowCurrent(ParentGrid.RowCount - 1);
-            View.OnPopulated();
-          } else { // Showing for first time
-            View.OnParentAndMainGridsShown();
-          }
         }
       } else {
         MainGrid.Populate();
-        View.OnPopulated();
       }
+      View.OnPopulated();
       Debug.WriteLine("EditorController.Populate END");
     }
 
@@ -211,15 +185,13 @@ namespace SoundExplorers.Controller {
       View.OnPopulated();
     }
 
-    /// <summary>
-    ///   Refreshes the contents of the existing grid or grids from the database.
-    /// </summary>
-    public void RefreshDataAsync() {
-      IsRefreshingData = true;
-      Populate();
-      View.Refresh();
-      IsRefreshingData = false;
-    }
+    // /// <summary>
+    // ///   Refreshes the contents of the existing grid or grids from the database.
+    // /// </summary>
+    // public void RefreshDataAsync() {
+    //   Populate();
+    //   View.Refresh();
+    // }
 
     /// <summary>
     ///   THE FOLLOWING RELATES TO A FEATURE THAT IS NOT YET IN USE BUT MAY BE LATER:

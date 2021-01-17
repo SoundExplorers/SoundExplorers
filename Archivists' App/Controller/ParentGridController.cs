@@ -4,34 +4,33 @@ using SoundExplorers.Model;
 
 namespace SoundExplorers.Controller {
   public class ParentGridController : GridControllerBase {
-    public ParentGridController(EditorController editorController) : base(
-      editorController) { }
+    public ParentGridController(
+      // ReSharper disable once SuggestBaseTypeForParameter
+      IParentGrid grid, EditorController editorController) : base(
+      grid, editorController) { }
 
     /// <summary>
     ///   Gets the list of entities represented in the grid.
     /// </summary>
     protected override IEntityList List => EditorController.ParentList!;
 
-    private int PreviousRowIndex { get; set; }
-
     public IList GetChildrenForMainList(int rowIndex) {
       return List.GetChildrenForMainList(rowIndex)!;
     }
 
     public override void OnRowEnter(int rowIndex) {
-      if (EditorController.IsPopulating || rowIndex == PreviousRowIndex) {
-        PreviousRowIndex = rowIndex;
-        return;
+      Debug.WriteLine($"ParentGridController.OnRowEnter: row {rowIndex}");
+      if (!EditorController.IsPopulating && rowIndex != PreviousRowIndex) {
+        Debug.WriteLine("    Populating main grid");
+        EditorController.View.PopulateMainGridOnParentRowChanged(rowIndex);
       }
-      Debug.WriteLine(
-        $"ParentGridController.OnRowEnter: row {rowIndex}, populating main grid.");
-      EditorController.View.PopulateMainGridOnParentRowChanged(rowIndex);
-      PreviousRowIndex = rowIndex;
+      base.OnRowEnter(rowIndex);
     }
 
     public override void Populate(IList? list = null) {
-      PreviousRowIndex = -1;
+      Debug.WriteLine("ParentGridController.Populate");
       base.Populate(list);
+      Debug.WriteLine("ParentGridController.Populate END");
     }
   }
 }
