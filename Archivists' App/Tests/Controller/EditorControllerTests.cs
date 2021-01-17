@@ -204,6 +204,7 @@ namespace SoundExplorers.Tests.Controller {
       const string name2 = "Uncle";
       CreateControllers(typeof(LocationList));
       Assert.IsFalse(Controller.IsParentGridToBeShown, "IsParentGridToBeShown");
+      Assert.IsFalse(MainGrid.Focused, "MainGrid.Focused initially");
       Controller.Populate(); // The grid will be empty initially
       Assert.AreEqual(1, MainGrid.FocusCount, "FocusCount after Populate");
       Assert.AreEqual("Location", MainGridController.TableName, "Main TableName");
@@ -219,9 +220,10 @@ namespace SoundExplorers.Tests.Controller {
       bindingList[1].Notes = "Bob";
       MainGridController.OnRowValidated(1);
       Assert.AreEqual(2, MainGrid.OnRowAddedOrDeletedCount, "OnRowAddedOrDeletedCount");
+      MainGrid.Focused = false;
       Controller.RefreshDataAsync(); // Refresh grid
       Assert.AreEqual(1, View.RefreshCount, "RefreshCount after Refresh");
-      Assert.AreEqual(1, MainGrid.FocusCount, "FocusCount after Refresh");
+      Assert.AreEqual(2, MainGrid.FocusCount, "FocusCount after Refresh");
       Assert.IsTrue(MainGrid.Focused, "MainGrid.Focused after Refresh");
       bindingList =
         (TypedBindingList<Location, NotablyNamedBindingItem<Location>>)Controller.MainList
@@ -368,6 +370,46 @@ namespace SoundExplorers.Tests.Controller {
     }
 
     [Test]
+    public void FocusDefaultGridMain() {
+      CreateControllers(typeof(NewsletterList));
+      Assert.False(MainGrid.Focused, "MainGrid.Focused initially");
+      Controller.FocusDefaultGrid();
+      Assert.AreEqual(1, MainGrid.FocusCount,
+        "MainGrid.FocusCount after FocusDefaultGrid");
+      Assert.IsTrue(MainGrid.Focused, "MainGrid.Focused after FocusDefaultGrid");
+    }
+
+    [Test]
+    public void FocusDefaultGridParent() {
+      CreateControllers(typeof(SetList));
+      Assert.False(ParentGrid.Focused, "ParentGrid.Focused initially");
+      Controller.FocusDefaultGrid();
+      Assert.AreEqual(1, ParentGrid.FocusCount,
+        "ParentGrid.FocusCount after FocusDefaultGrid");
+      Assert.IsTrue(ParentGrid.Focused, "ParentGrid.Focused after FocusDefaultGrid");
+    }
+
+    [Test]
+    public void FocusUnfocusedGridIfAny() {
+      CreateControllers(typeof(SetList));
+      ParentGrid.Focus();
+      Assert.IsFalse(MainGrid.Focused,
+        "MainGrid.Focused after ParentGrid.Focus");
+      Assert.IsTrue(ParentGrid.Focused,
+        "ParentGrid.Focused after ParentGrid.Focus");
+      Controller.FocusUnfocusedGridIfAny();
+      Assert.IsTrue(MainGrid.Focused,
+        "MainGrid.Focused after FocusUnfocusedGridIfAny #1");
+      Assert.IsFalse(ParentGrid.Focused,
+        "ParentGrid.Focused after FocusUnfocusedGridIfAny #1");
+      Controller.FocusUnfocusedGridIfAny();
+      Assert.IsFalse(MainGrid.Focused,
+        "MainGrid.Focused after FocusUnfocusedGridIfAny #2");
+      Assert.IsTrue(ParentGrid.Focused,
+        "ParentGrid.Focused after FocusUnfocusedGridIfAny #2");
+    }
+
+    [Test]
     public void FormatExceptionOnInsert() {
       Session.BeginUpdate();
       try {
@@ -476,6 +518,8 @@ namespace SoundExplorers.Tests.Controller {
         Session.Commit();
       }
       CreateControllers(typeof(SetList));
+      Assert.IsFalse(MainGrid.Focused, "MainGrid.Focused initially");
+      Assert.IsFalse(ParentGrid.Focused, "ParentGrid.Focused initially");
       Assert.IsFalse(MainGridController.IsColumnToBeShown(nameof(SetBindingItem.Date)),
         "Is Date column to be shown?");
       Assert.IsTrue(MainGridController.IsColumnToBeShown(nameof(SetBindingItem.SetNo)),
