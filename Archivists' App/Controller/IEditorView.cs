@@ -1,7 +1,6 @@
 ﻿namespace SoundExplorers.Controller {
   public interface IEditorView : IView<EditorController> {
     void OnError();
-    void OnMainGridPopulated();
     void OnPopulated();
     void OnParentAndMainGridsShown();
     void PopulateMainGridOnParentRowChanged(int parentRowIndex);

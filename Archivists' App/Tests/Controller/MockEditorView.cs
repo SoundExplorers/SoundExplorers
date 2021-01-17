@@ -18,10 +18,6 @@ namespace SoundExplorers.Tests.Controller {
       MainGridController.ShowError();
     }
 
-    public void OnMainGridPopulated() {
-      Controller.OnMainGridPopulatedAsync();
-    }
-
     public void OnPopulated() {
       Controller.OnPopulatedAsync();
     }

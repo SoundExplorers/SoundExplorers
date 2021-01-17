@@ -171,7 +171,7 @@ namespace SoundExplorers.View {
     }
 
     protected override void OnGotFocus(EventArgs e) {
-      Debug.WriteLine($"GridBase.OnFocus: {Name}");
+      Debug.WriteLine($"GridBase.OnGotFocus: {Name}");
       base.OnGotFocus(e);
       EditorView.FocusedGrid = this;
       IsFocusingViaEditorController = false;

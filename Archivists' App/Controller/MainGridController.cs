@@ -157,7 +157,6 @@ namespace SoundExplorers.Controller {
     public override void Populate(IList? list = null) {
       Debug.WriteLine("MainGridController.Populate");
       base.Populate(list);
-      EditorController.View.OnMainGridPopulated();
       Debug.WriteLine("MainGridController.Populate END");
     }
 

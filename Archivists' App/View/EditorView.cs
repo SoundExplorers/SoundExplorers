@@ -54,11 +54,6 @@ namespace SoundExplorers.View {
       BeginInvoke((Action)MainGrid.OnError);
     }
 
-    public void OnMainGridPopulated() {
-      Debug.WriteLine("EditorView.OnMainGridPopulated");
-      BeginInvoke((Action)Controller.OnMainGridPopulatedAsync);
-    }
-
     public void OnPopulated() {
       Debug.WriteLine("EditorView.OnPopulated");
       BeginInvoke((Action)Controller.OnPopulatedAsync);

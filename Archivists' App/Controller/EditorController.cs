@@ -146,22 +146,6 @@ namespace SoundExplorers.Controller {
       }
     }
 
-    public void OnMainGridPopulatedAsync() {
-      Debug.WriteLine("EditorController.OnMainGridPopulatedAsync");
-      // It is worth checking to see whether a grid needs to be focused: when a parent
-      // grid is shown, focusing a grid involves additional processing; and it is more
-      // logical for unit testing.
-      if (IsParentGridToBeShown) {
-        if (!ParentGrid.Focused) {
-          ParentGrid.Focus();
-        }
-      } else { // No parent grid
-        if (!MainGrid.Focused) {
-          MainGrid.Focus();
-        }
-      }
-    }
-
     public void OnParentAndMainGridsShownAsync() {
       Debug.WriteLine("EditorController.OnParentAndMainGridsShownAsync");
       if (ParentGrid.RowCount > 0) {
@@ -175,6 +159,18 @@ namespace SoundExplorers.Controller {
       IsPopulating = false;
       if (MainGrid.RowCount > 0) {
         MainGrid.MakeRowCurrent(MainGrid.RowCount - 1);
+      }
+      // It is worth checking to see whether a grid needs to be focused: when a parent
+      // grid is shown, focusing a grid involves additional processing; and it is more
+      // logical for unit testing.
+      if (IsParentGridToBeShown) {
+        if (!ParentGrid.Focused) {
+          ParentGrid.Focus();
+        }
+      } else { // No parent grid
+        if (!MainGrid.Focused) {
+          MainGrid.Focus();
+        }
       }
       View.SetCursorToDefault();
     }
