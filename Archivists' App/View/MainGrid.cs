@@ -49,7 +49,7 @@ namespace SoundExplorers.View {
       ClearSelection();
       CurrentRow!.Selected = true;
     }
-    
+
     public override void Populate(IList? list = null) {
       Debug.WriteLine("MainGrid.Populate");
       FirstVisibleColumnIndex = -1;

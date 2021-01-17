@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Diagnostics;
 using System.Drawing;
@@ -40,12 +40,12 @@ namespace SoundExplorers.View {
       _contextMenu ??= new GridContextMenu(this);
 
     public EditorView EditorView { get; set; } = null!;
-    // protected int FirstVisibleColumnIndex { get; set; }
 
     public bool IsTextBoxCellCurrent =>
       CurrentCell?.OwningColumn.CellTemplate is TextBoxCell;
 
     public MainView MainView { get; set; } = null!;
+    private bool IsFocusingViaEditorController { get; set; }
 
     /// <summary>
     ///   Gets the new (i.e. empty) row at the bottom of an editable grid.
@@ -72,6 +72,8 @@ namespace SoundExplorers.View {
     int IGrid.RowCount => RowCount;
 
     void IGrid.Focus() {
+      Debug.WriteLine($"GridBase.IGrid.Focus: {Name}");
+      IsFocusingViaEditorController = true;
       EditorView.FocusGrid(this);
     }
 
@@ -172,6 +174,7 @@ namespace SoundExplorers.View {
       Debug.WriteLine($"GridBase.OnFocus: {Name}");
       base.OnGotFocus(e);
       EditorView.FocusedGrid = this;
+      IsFocusingViaEditorController = false;
     }
 
     protected override void OnKeyDown(KeyEventArgs e) {
@@ -233,5 +236,27 @@ namespace SoundExplorers.View {
       base.OnRowEnter(e);
       Controller.OnRowEnter(e.RowIndex);
     }
+
+    // protected override void WndProc(ref Message m) {
+    //   // ReSharper disable once InconsistentNaming
+    //   // ReSharper disable once IdentifierTypo
+    //   const int WM_SETFOCUS = 0x0007;
+    //   if (m.Msg == WM_SETFOCUS) {
+    //     // ReSharper disable once StringLiteralTypo
+    //     Debug.WriteLine(
+    //       $"GridBase.WndProc: {Name} WM_SETFOCUS; IsFocusingViaEditorController = {IsFocusingViaEditorController}");
+    //     // if (!IsFocusingViaEditorController) {
+    //     //   ((IGrid)this).Focus();
+    //     // }
+    //     // Debug.WriteLine($"GridBase.WndProc: {Name} WM_SETFOCUS");
+    //     // ((IGrid)this).Focus();
+    //     // Debug.WriteLine(
+    //     //   $"GridBase.WndProc: {Name} WM_SETFOCUS; IsFocusingViaEditorController = {IsFocusingViaEditorController}");
+    //     // if (!IsFocusingViaEditorController) {
+    //     //   EditorView.SetGridCellColorSchemes(this, EditorView.GetOtherGrid(this));
+    //     // }
+    //   }
+    //   base.WndProc(ref m);
+    // }
   }
 }

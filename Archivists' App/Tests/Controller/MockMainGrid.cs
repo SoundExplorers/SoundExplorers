@@ -7,7 +7,6 @@ namespace SoundExplorers.Tests.Controller {
       set => base.Controller = value;
     }
 
-    //protected override EditorController EditorController => Controller.EditorController;
     internal int EditCurrentCellCount { get; private set; }
     internal int MakeCellCurrentCount { get; private set; }
     internal int MakeCellCurrentColumnIndex { get; private set; }
