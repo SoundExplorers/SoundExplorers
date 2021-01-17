@@ -250,7 +250,8 @@ namespace SoundExplorers.View {
         // As that method does not support overriding, we intercept the corresponding
         // Windows message here instead, which has the same effect.
         // A disadvantage of setting the cell colour schemes this way is that the colours
-        // flicker between the grids when the parent grid is being focused.
+        // flicker between the grids when the parent grid row changes and the grid's
+        // colour scheme has to be reestablished.
         if (EditorView.Controller.IsParentGridToBeShown) {
           EditorView.SetGridCellColorSchemes(this, EditorView.GetOtherGrid(this));
         }
