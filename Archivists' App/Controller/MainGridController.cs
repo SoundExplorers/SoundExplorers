@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Data;
 using System.Diagnostics;
 using SoundExplorers.Model;
@@ -18,6 +17,8 @@ namespace SoundExplorers.Controller {
 
     private bool IsFormatException =>
       List.LastDatabaseUpdateErrorException?.InnerException is FormatException;
+    
+    private bool IsJustPopulated { get; set; }
 
     private bool IsReferencingValueNotFoundException =>
       List.LastDatabaseUpdateErrorException?.InnerException
@@ -84,18 +85,34 @@ namespace SoundExplorers.Controller {
           // trapped like this.
           break;
         default:
-          // Terminal error. In the Release compilation, the stack trace will be shown by
+          // Terminal error. In the Release build, the stack trace will be shown by
           // the terminal error handler in Program.cs.
           throw exception;
       }
     }
 
+    public override void OnPopulatedAsync() {
+      Debug.WriteLine("MainGridController.OnPopulatedAsync");
+      IsJustPopulated = true;
+      if (EditorController.IsParentGridToBeShown) {
+        EditorController.View.OnParentAndMainGridsShownAsync();
+      }
+      base.OnPopulatedAsync();
+    }
+
     public override void OnRowEnter(int rowIndex) {
       // Debug.WriteLine(
       //   "MainGridController.OnRowEnter:  Any row entered (after ItemAdded if insertion row)");
-      // Debug.WriteLine($"MainGridController.OnRowEnter: row {rowIndex} of {List.Count}");
-      if (!EditorController.IsPopulating) {
+      Debug.WriteLine($"MainGridController.OnRowEnter: row {rowIndex} of {List.Count}");
+      if (!IsPopulating) {
         List.OnRowEnter(rowIndex);
+      }
+      if (IsJustPopulated) {
+        if (EditorController.IsParentGridToBeShown) {
+          Grid.CellColorScheme.Invert();
+        }
+        IsJustPopulated = false;
+        EditorController.View.SetCursorToDefault();
       }
     }
 
@@ -137,12 +154,13 @@ namespace SoundExplorers.Controller {
     ///   the editor. But see the XML comments for <see cref="CancelInsertion" /> for the
     ///   difficulties that would be involved in reopening a 'validated' insertion.
     /// </remarks>
-    public virtual void OnRowValidated(int rowIndex) {
+    public void OnRowValidated(int rowIndex) {
+      Debug.WriteLine($"MainGridController.OnRowValidated: row {rowIndex}");
       //Debug.WriteLine("MainGridController.OnRowValidated:  Any row left, after final ItemChanged, if any");
       // Debug.WriteLine(
       //   $"MainGridController.OnRowValidated: row {rowIndex}, IsRemovingInvalidInsertionRow == {MainList.IsRemovingInvalidInsertionRow}");
       if (List.IsRemovingInvalidInsertionRow ||
-          EditorController.IsPopulating || EditorController.IsClosing ||
+          IsPopulating || EditorController.IsClosing ||
           EditorController.MainController.IsClosing) {
         return;
       }
@@ -152,12 +170,6 @@ namespace SoundExplorers.Controller {
       } catch (DatabaseUpdateErrorException) {
         EditorController.View.OnError();
       }
-    }
-
-    public override void Populate(IList? list = null) {
-      Debug.WriteLine("MainGridController.Populate");
-      base.Populate(list);
-      Debug.WriteLine("MainGridController.Populate END");
     }
 
     public void ShowError() {
@@ -224,15 +236,6 @@ namespace SoundExplorers.Controller {
         rowIndex, columnName, referencedEntityNotFoundException);
       EditorController.View.OnError();
     }
-
-    // protected override int GetFirstVisibleColumnIndex() {
-    //   for (int i = 0; i < Columns.Count; i++) {
-    //     if (IsColumnToBeShown(Columns[i].Name)) {
-    //       return i;
-    //     }
-    //   }
-    //   return -1;
-    // }
 
     /// <summary>
     ///   Invoked when the user clicks OK on an insert error message box. If the

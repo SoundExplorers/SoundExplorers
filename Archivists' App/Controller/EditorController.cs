@@ -78,10 +78,7 @@ namespace SoundExplorers.Controller {
     /// </summary>
     public bool IsParentGridToBeShown => MainList.ParentListType != null;
 
-    internal bool IsPopulating { get; set; }
     internal MainController MainController { get; }
-    public IMainGrid MainGrid { get; set; } = null!;
-    public IParentGrid ParentGrid { get; set; } = null!;
 
     /// <summary>
     ///   Gets the list of entities represented in the main table.
@@ -104,6 +101,7 @@ namespace SoundExplorers.Controller {
     internal IEditorView View { get; }
 
     /// <summary>
+    ///   THE FOLLOWING RELATES TO A FEATURE THAT IS NOT YET IN USE BUT MAY BE LATER:
     ///   Edit the tags of the audio file, if found,
     ///   of the current Piece, if any,
     ///   Otherwise shows an informative message box.
@@ -127,71 +125,32 @@ namespace SoundExplorers.Controller {
       return new(name);
     }
 
-    public void FocusDefaultGrid() {
-      if (IsParentGridToBeShown) {
-        ParentGrid.Focus();
-      } else {
-        MainGrid.Focus();
-      }
-    }
-
     public void FocusUnfocusedGridIfAny() {
       if (IsParentGridToBeShown) {
-        if (ParentGrid.Focused) {
-          MainGrid.Focus();
+        if (View.ParentGrid.Focused) {
+          View.MainGrid.Focus();
         } else {
-          ParentGrid.Focus();
-        }
-      }
-    }
-
-    public void OnPopulatedAsync() {
-      Debug.WriteLine("EditorController.OnPopulatedAsync");
-      // It is worth checking to see whether a grid needs to be focused: when a parent
-      // grid is shown, focusing a grid involves additional processing; and it is more
-      // logical for unit testing.
-      if (IsParentGridToBeShown) {
-        if (!ParentGrid.Focused) {
-          ParentGrid.Focus();
-        }
-      } else { // No parent grid
-        if (!MainGrid.Focused) {
-          MainGrid.Focus();
+          View.ParentGrid.Focus();
         }
       }
     }
 
     public void Populate() {
       Debug.WriteLine("EditorController.Populate");
-      IsPopulating = true;
       if (IsParentGridToBeShown) {
-        ParentGrid.Populate();
-        if (ParentGrid.RowCount > 0) {
-          MainGrid.Populate(ParentGrid.Controller.GetChildrenForMainList(
-            ParentGrid.RowCount - 1));
-        }
+        View.ParentGrid.Populate();
       } else {
-        MainGrid.Populate();
+        View.MainGrid.Populate();
       }
-      View.OnPopulated();
       Debug.WriteLine("EditorController.Populate END");
     }
 
     public void PopulateMainGridOnParentRowChanged(int parentRowIndex) {
       Debug.WriteLine(
         $"EditorController.PopulateMainGridOnParentRowChanged: parent row {parentRowIndex}");
-      IsPopulating = true;
-      MainGrid.Populate(ParentGrid.Controller.GetChildrenForMainList(parentRowIndex));
-      View.OnPopulated();
+      View.MainGrid.Populate(
+        View.ParentGrid.Controller.GetChildrenForMainList(parentRowIndex));
     }
-
-    // /// <summary>
-    // ///   Refreshes the contents of the existing grid or grids from the database.
-    // /// </summary>
-    // public void RefreshDataAsync() {
-    //   Populate();
-    //   View.Refresh();
-    // }
 
     /// <summary>
     ///   THE FOLLOWING RELATES TO A FEATURE THAT IS NOT YET IN USE BUT MAY BE LATER:

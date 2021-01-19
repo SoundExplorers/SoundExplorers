@@ -12,7 +12,8 @@ namespace SoundExplorers.Controller {
 
     public IBindingList? BindingList => List.BindingList;
     protected IGrid Grid { get; }
-    public int PreviousRowIndex { get; private set; }
+    protected bool IsPopulating { get; private set; }
+    protected int PreviousRowIndex { get; private set; }
 
     /// <summary>
     ///   Gets metadata about the database columns represented by the Entity's field
@@ -32,13 +33,11 @@ namespace SoundExplorers.Controller {
       return column.DisplayName ?? columnName;
     }
 
-    public void OnGotFocus() {
-      Debug.WriteLine($"GridControllerBase.OnGotFocus {Grid.Name}");
-      if (EditorController.IsPopulating) {
-        EditorController.IsPopulating = false;
-      }
-      if (PreviousRowIndex < 0) {
-        Grid.MakeRowCurrent(Grid.RowCount - 1);
+    public void OnFocusing() {
+      Debug.WriteLine($"GridControllerBase.OnFocusing {Grid.Name}");
+      if (EditorController.IsParentGridToBeShown && !IsPopulating) {
+        Grid.CellColorScheme.RestoreToDefault();
+        EditorController.View.GetOtherGrid(Grid).CellColorScheme.Invert();
       }
     }
 
@@ -47,10 +46,20 @@ namespace SoundExplorers.Controller {
       PreviousRowIndex = rowIndex;
     }
 
-    public virtual void Populate(IList? list = null) {
+    public virtual void OnPopulatedAsync() {
+      Debug.WriteLine($"GridControllerBase.OnPopulatedAsync {Grid.Name}");
+      IsPopulating = false;
+      if (Grid.RowCount > 0) {
+        Grid.MakeRowCurrent(Grid.RowCount - 1);
+      }
+    }
+
+    public void Populate(IList? list = null) {
       Debug.WriteLine($"GridControllerBase.Populate {Grid.Name}");
+      IsPopulating = true;
       PreviousRowIndex = -1;
       List.Populate(list);
+      Grid.OnPopulated();
     }
   }
 }

@@ -32,7 +32,7 @@ namespace SoundExplorers.View {
       !ReadOnly && !IsCurrentCellInEditMode && SelectedRows.Count > 0 &&
       !SelectedRows.Contains(NewRow);
 
-    private CellColorScheme CellColorScheme { get; }
+    public ICellColorScheme CellColorScheme { get; }
     protected GridControllerBase Controller { get; set; } = null!;
     protected int FirstVisibleColumnIndex { get; set; }
 
@@ -67,19 +67,27 @@ namespace SoundExplorers.View {
       }
     }
 
-    // public int CurrentRowIndex => CurrentCell?.RowIndex ?? -1;
     bool IGrid.Focused => Focused;
     string IGrid.Name => Name;
     int IGrid.RowCount => RowCount;
 
     void IGrid.Focus() {
-      Debug.WriteLine($"GridBase.IGrid.Focus: {Name}");
+      Debug.WriteLine($"GridBase.IGrid.Focus {Name}");
       EditorView.FocusGrid(this);
     }
 
+    /// <summary>
+    ///   Makes the specified row current, which will set focus and raise
+    ///   <see cref="OnRowEnter"/>.
+    /// </summary>
     public void MakeRowCurrent(int rowIndex) {
-      Debug.WriteLine($"GridBase.MakeRowCurrent: {Name} row {rowIndex}");
-      BeginInvoke((Action)delegate { MakeRowCurrentAsync(rowIndex); });
+      Debug.WriteLine($"GridBase.MakeRowCurrent {Name}: row {rowIndex}");
+      CurrentCell = Rows[rowIndex].Cells[FirstVisibleColumnIndex];
+    }
+
+    public virtual void OnPopulated() {
+      Debug.WriteLine($"GridBase.OnPopulated {Name}");
+      BeginInvoke((Action)Controller.OnPopulatedAsync);
     }
 
     /// <summary>
@@ -91,21 +99,11 @@ namespace SoundExplorers.View {
     ///   from the database.
     /// </param>
     public virtual void Populate(IList? list = null) {
+      Debug.WriteLine($"GridBase.Populate {Name}");
       Controller.Populate(list);
       DataSource = Controller.BindingList;
       ConfigureColumns();
       AutoResizeColumns();
-    }
-
-    /// <summary>
-    ///   Makes the specified row current asynchronously so that it will scroll into
-    ///   view.
-    /// </summary>
-    private void MakeRowCurrentAsync(int rowIndex) {
-      Debug.WriteLine($"GridBase.MakeRowCurrentAsync: {Name} row {rowIndex}");
-      // This triggers OnRowEnter.
-      CurrentCell = Rows[rowIndex].Cells[FirstVisibleColumnIndex];
-      EditorView.SetCursorToDefault();
     }
 
     /// <summary>
@@ -173,14 +171,9 @@ namespace SoundExplorers.View {
     }
 
     protected override void OnGotFocus(EventArgs e) {
-      Debug.WriteLine($"GridBase.OnGotFocus: {Name}");
+      Debug.WriteLine($"GridBase.OnGotFocus {Name}");
       base.OnGotFocus(e);
-      CellColorScheme.RestoreToDefault();
       EditorView.FocusedGrid = this;
-      Controller.OnGotFocus();
-      // if (Controller.PreviousRowIndex >= 0 && Controller.PreviousRowIndex) {
-      //   MakeRowCurrent(Controller.PreviousRowIndex);
-      // }
     }
 
     protected override void OnKeyDown(KeyEventArgs e) {
@@ -205,11 +198,6 @@ namespace SoundExplorers.View {
           base.OnKeyDown(e);
           break;
       } //End of switch
-    }
-
-    protected override void OnLostFocus(EventArgs e) {
-      base.OnLostFocus(e);
-      CellColorScheme.Invert();
     }
 
     /// <summary>
@@ -243,9 +231,26 @@ namespace SoundExplorers.View {
     }
 
     protected override void OnRowEnter(DataGridViewCellEventArgs e) {
-      Debug.WriteLine($"GridBase.OnRowEnter: {Name}, row {e.RowIndex}");
+      Debug.WriteLine($"GridBase.OnRowEnter {Name}: row {e.RowIndex}");
       base.OnRowEnter(e);
       Controller.OnRowEnter(e.RowIndex);
+    }
+
+    protected override void WndProc(ref Message m) {
+      // ReSharper disable once InconsistentNaming
+      // ReSharper disable once IdentifierTypo
+      const int WM_SETFOCUS = 0x0007;
+      if (m.Msg == WM_SETFOCUS) {
+        // ReSharper disable once StringLiteralTypo
+        Debug.WriteLine($"GridBase.WndProc {Name}: WM_SETFOCUS");
+        // We need to make sure we can switch the grid cell colour schemes when switching
+        // focus between two grids.  To get this to work even when focus is changed by a
+        // mouse click, we would ideally like to override the Focus method.
+        // As that method does not support overriding, we intercept the corresponding
+        // Windows message here instead, which has the same effect.
+        Controller.OnFocusing();
+      }
+      base.WndProc(ref m);
     }
   }
 }

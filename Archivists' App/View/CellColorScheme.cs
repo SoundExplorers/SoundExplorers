@@ -1,8 +1,9 @@
 ﻿using System.Drawing;
 using System.Windows.Forms;
+using SoundExplorers.Controller;
 
 namespace SoundExplorers.View {
-  internal class CellColorScheme {
+  internal class CellColorScheme : ICellColorScheme {
     public CellColorScheme(DataGridView grid) {
       Grid = grid;
       SaveDefault();
@@ -15,9 +16,8 @@ namespace SoundExplorers.View {
     private DataGridView Grid { get; }
 
     /// <summary>
-    ///   Inverts the foreground and background colours
-    ///   of both selected and unselected cells
-    ///   in the grid, relative to their defaults.
+    ///   Inverts the foreground and background colours of both selected and unselected
+    ///   cells in the grid, relative to their defaults.
     /// </summary>
     public void Invert() {
       Grid.DefaultCellStyle.BackColor = DefaultForeColor;
@@ -27,9 +27,8 @@ namespace SoundExplorers.View {
     }
 
     /// <summary>
-    ///   Restores the foreground and background colours
-    ///   of both selected and unselected cells
-    ///   in the grid to their defaults.
+    ///   Restores the foreground and background colours of both selected and unselected
+    ///   cells in the grid to their defaults.
     /// </summary>
     public void RestoreToDefault() {
       Grid.DefaultCellStyle.BackColor = DefaultBackColor;

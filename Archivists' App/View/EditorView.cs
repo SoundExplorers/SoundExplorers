@@ -43,9 +43,11 @@ namespace SoundExplorers.View {
 
     private SizeableFormOptions SizeableFormOptions { get; set; } = null!;
     private EditorController Controller { get; set; } = null!;
+    IMainGrid IEditorView.MainGrid => MainGrid;
+    IParentGrid IEditorView.ParentGrid => ParentGrid;
 
-    void IEditorView.Refresh() {
-      Refresh();
+    IGrid IEditorView.GetOtherGrid(IGrid grid) {
+      return GetOtherGrid((GridBase)grid);
     }
 
     public void OnError() {
@@ -54,14 +56,21 @@ namespace SoundExplorers.View {
       BeginInvoke((Action)MainGrid.OnError);
     }
 
-    public void OnPopulated() {
-      Debug.WriteLine("EditorView.OnPopulated");
-      BeginInvoke((Action)Controller.OnPopulatedAsync);
-    }
-
-    public void OnParentAndMainGridsShown() {
-      Debug.WriteLine("EditorView.OnParentAndMainGridsShown");
-      BeginInvoke((Action)OnParentAndMainGridsShownAsync);
+    /// <summary>
+    ///   Sets the position of the horizontal splitter between the two grids to the
+    ///   previously saved value or, if this is the first time the user has opened an
+    ///   editor window, a default.
+    /// </summary>
+    /// <remarks>
+    ///   Setting the horizontal splitter position has to be called asynchronously to
+    ///   ensure it is positioned correctly if the editor window is opened maximised.
+    /// </remarks>
+    public void OnParentAndMainGridsShownAsync() {
+      Debug.WriteLine("EditorView.OnParentAndMainGridsShownAsync");
+      int savedGridSplitterDistance = Controller.GridSplitterDistance;
+      GridSplitContainer.SplitterDistance =
+        savedGridSplitterDistance > 0 ? savedGridSplitterDistance : 180;
+      IsFixingFocus = true;
     }
 
     public void SetCursorToDefault() {
@@ -93,7 +102,7 @@ namespace SoundExplorers.View {
 
     public void PopulateMainGridOnParentRowChanged(int parentRowIndex) {
       Debug.WriteLine(
-        $"EditView.PopulateMainGridOnParentRowChanged: parent row {parentRowIndex}");
+        $"EditorView.PopulateMainGridOnParentRowChanged: parent row {parentRowIndex}");
       IsFixingFocus = true;
       Controller.PopulateMainGridOnParentRowChanged(parentRowIndex);
     }
@@ -243,8 +252,8 @@ namespace SoundExplorers.View {
     ///     in some circumstances.
     ///   </para>
     /// </remarks>
-    private void
-      MainGrid_RowsRemoved(object? sender, DataGridViewRowsRemovedEventArgs e) {
+    private void MainGrid_RowsRemoved(
+      object? sender, DataGridViewRowsRemovedEventArgs e) {
       MainGrid.Controller.OnRowValidated(e.RowIndex);
     }
 
@@ -277,7 +286,9 @@ namespace SoundExplorers.View {
       base.OnActivated(e);
       //Debug.WriteLine("EditorView.OnActivated: " + this.Text);
       MainGrid.Enabled = true;
-      Controller.FocusDefaultGrid();
+      if (Controller.IsParentGridToBeShown) {
+        ParentGrid.Enabled = true;
+      }
     }
 
     /// <summary>
@@ -295,8 +306,6 @@ namespace SoundExplorers.View {
       //Debug.WriteLine("EditorView.OnDeactivate: " + this.Text);
       MainGrid.Enabled = false;
       if (Controller.IsParentGridToBeShown) {
-        // A read-only related grid for the parent table is shown
-        // above the main grid.
         ParentGrid.Enabled = false;
       }
     }
@@ -326,7 +335,6 @@ namespace SoundExplorers.View {
 
     protected override void OnLoad(EventArgs e) {
       base.OnLoad(e);
-      Controller.MainGrid = MainGrid;
       MainGrid.SetController(new MainGridController(MainGrid, Controller));
       MainGrid.EditorView = this;
       MainGrid.MainView = MainView;
@@ -334,7 +342,6 @@ namespace SoundExplorers.View {
       MainGrid.RowsRemoved += MainGrid_RowsRemoved;
       MainGrid.RowValidated += MainGrid_RowValidated;
       if (Controller.IsParentGridToBeShown) {
-        Controller.ParentGrid = ParentGrid;
         ParentGrid.SetController(new ParentGridController(ParentGrid, Controller));
         ParentGrid.EditorView = this;
         ParentGrid.MainView = MainView;
@@ -353,26 +360,6 @@ namespace SoundExplorers.View {
       ParentForm?.Refresh();
     }
 
-    /// <summary>
-    ///   Sets the position of the horizontal splitter between the two grids to the
-    ///   previously saved value or, if this is the first time the user has opened an
-    ///   editor window, a default.  Then sets the parent grid's current row, ensuring
-    ///   that the row is scrolled into view.
-    /// </summary>
-    /// <remarks>
-    ///   Setting the horizontal splitter position has to be called asynchronously to
-    ///   ensure it is positioned correctly if the editor window is opened maximised.
-    ///   Setting the parent grid's current row after the grid splitter has been
-    ///   positioned ensures that the row is scrolled into view.
-    /// </remarks>
-    private void OnParentAndMainGridsShownAsync() {
-      Debug.WriteLine("EditorView.OnParentAndMainGridsShownAsync");
-      int savedGridSplitterDistance = Controller.GridSplitterDistance;
-      GridSplitContainer.SplitterDistance =
-        savedGridSplitterDistance > 0 ? savedGridSplitterDistance : 180;
-      IsFixingFocus = true;
-    }
-
     protected override void OnResize(EventArgs e) {
       base.OnResize(e);
       // Stop ghost border lines appearing on main window background.
@@ -381,8 +368,6 @@ namespace SoundExplorers.View {
 
     public void RefreshData() {
       Controller.Populate();
-      // Refresh();
-      // BeginInvoke((Action)Controller.RefreshDataAsync);
     }
 
     /// <summary>

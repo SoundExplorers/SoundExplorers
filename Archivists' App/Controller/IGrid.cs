@@ -3,7 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace SoundExplorers.Controller {
   public interface IGrid {
-    // int CurrentRowIndex { get; }
+    ICellColorScheme CellColorScheme { get; }
     bool Focused { get; }
     
     /// <summary>
@@ -14,7 +14,12 @@ namespace SoundExplorers.Controller {
     
     int RowCount { get; }
     void Focus();
+    
+    /// <summary>
+    ///   Makes the specified row current, which will set focus and raise OnRowEnter.
+    /// </summary>
     void MakeRowCurrent(int rowIndex);
+    void OnPopulated();
 
     /// <summary>
     ///   Populates and sorts the grid.

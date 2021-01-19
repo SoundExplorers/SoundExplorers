@@ -15,22 +15,25 @@ namespace SoundExplorers.Controller {
     protected override IEntityList List => EditorController.ParentList!;
 
     public IList GetChildrenForMainList(int rowIndex) {
+      Debug.WriteLine($"ParentGridController.GetChildrenForMainList: row {rowIndex}");
       return List.GetChildrenForMainList(rowIndex)!;
     }
+    
+    // public void OnGotFocus() {
+    //   Debug.WriteLine("ParentGridController.OnGotFocus");
+    //   if (EditorController.View.MainGrid.Controller.IsJustPopulated) {
+    //     EditorController.View.MainGrid.Controller.IsJustPopulated = false;
+    //     EditorController.View.SetCursorToDefault();
+    //   }
+    // }
 
     public override void OnRowEnter(int rowIndex) {
       Debug.WriteLine($"ParentGridController.OnRowEnter: row {rowIndex}");
-      if (!EditorController.IsPopulating && rowIndex != PreviousRowIndex) {
+      if (!IsPopulating && rowIndex != PreviousRowIndex) {
         Debug.WriteLine("    Populating main grid");
         EditorController.View.PopulateMainGridOnParentRowChanged(rowIndex);
       }
       base.OnRowEnter(rowIndex);
-    }
-
-    public override void Populate(IList? list = null) {
-      Debug.WriteLine("ParentGridController.Populate");
-      base.Populate(list);
-      Debug.WriteLine("ParentGridController.Populate END");
     }
   }
 }

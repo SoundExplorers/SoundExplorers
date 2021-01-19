@@ -149,8 +149,8 @@ namespace SoundExplorers.View {
       base.OnCurrentCellChanged(e);
       if (CurrentCell != null) {
         MainView.CutToolStripButton.Enabled = CanCut;
-        // I don't it is practicable to continually enable or disable the Paste button
-        // depending on the change in whether to clipboard contain text.
+        // I don't think it is practicable to continually enable or disable the Paste
+        // button depending on the change in whether to clipboard contain text.
         MainView.PasteToolStripButton.Enabled = !CurrentCell.ReadOnly;
       }
     }
