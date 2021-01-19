@@ -37,7 +37,7 @@ namespace SoundExplorers.Controller {
       Debug.WriteLine($"GridControllerBase.OnFocusing {Grid.Name}");
       if (EditorController.IsParentGridToBeShown && !IsPopulating) {
         Grid.CellColorScheme.RestoreToDefault();
-        EditorController.View.GetOtherGrid(Grid).CellColorScheme.Invert();
+        EditorController.GetOtherGrid(Grid).CellColorScheme.Invert();
       }
     }
 

@@ -135,6 +135,10 @@ namespace SoundExplorers.Controller {
       }
     }
 
+    public IGrid GetOtherGrid(IGrid grid) {
+      return grid == View.MainGrid ? (IGrid)View.ParentGrid : View.MainGrid;
+    }
+
     public void Populate() {
       Debug.WriteLine("EditorController.Populate");
       if (IsParentGridToBeShown) {

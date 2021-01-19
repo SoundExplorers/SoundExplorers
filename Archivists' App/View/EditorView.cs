@@ -46,10 +46,6 @@ namespace SoundExplorers.View {
     IMainGrid IEditorView.MainGrid => MainGrid;
     IParentGrid IEditorView.ParentGrid => ParentGrid;
 
-    IGrid IEditorView.GetOtherGrid(IGrid grid) {
-      return GetOtherGrid((GridBase)grid);
-    }
-
     public void OnError() {
       // Debug.WriteLine("EditorView.OnError");
       MainView.Cursor = Cursors.WaitCursor;
@@ -217,8 +213,8 @@ namespace SoundExplorers.View {
       unfocusedGrid.Enabled = true;
     }
 
-    private GridBase GetOtherGrid(GridBase grid) {
-      return grid == MainGrid ? (GridBase)ParentGrid : MainGrid;
+    private GridBase GetOtherGrid(IGrid grid) {
+      return (GridBase)Controller.GetOtherGrid(grid);
     }
 
     /// <summary>
