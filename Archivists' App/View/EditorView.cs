@@ -371,7 +371,6 @@ namespace SoundExplorers.View {
     /// </summary>
     private void ShowData() {
       GridSplitContainer.Panel1Collapsed = !Controller.IsParentGridToBeShown;
-      // Populate();
       Controller.Populate();
       Text = MainGrid.Controller.TableName;
     }
