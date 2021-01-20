@@ -3,8 +3,8 @@ using System.Windows.Forms;
 using SoundExplorers.Controller;
 
 namespace SoundExplorers.View {
-  internal class CellColorScheme : ICellColorScheme {
-    public CellColorScheme(DataGridView grid) {
+  internal class GridCellColorScheme : IGridCellColorScheme {
+    public GridCellColorScheme(DataGridView grid) {
       Grid = grid;
       SaveDefault();
     }

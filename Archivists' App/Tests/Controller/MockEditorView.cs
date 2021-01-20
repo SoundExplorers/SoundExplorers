@@ -2,13 +2,20 @@
 
 namespace SoundExplorers.Tests.Controller {
   public class MockEditorView : IEditorView {
+    public MockEditorView(IMainGrid mainGrid, IParentGrid parentGrid) {
+      MainGrid = mainGrid;
+      ParentGrid = parentGrid;
+    }
+
     internal string LastErrorMessage { get; private set; } = null!;
     internal TestMainGridController MainGridController { get; set; } = null!;
-    internal int RefreshCount { get; private set; }
+    internal int OnParentAndMainGridsShownAsyncCount { get; private set; }
     internal int SetCursorToDefaultCount { get; private set; }
     internal int ShowErrorMessageCount { get; private set; }
     internal int ShowWarningMessageCount { get; private set; }
-    internal EditorController Controller { get; set; } = null!;
+    private EditorController Controller { get; set; } = null!;
+    public IMainGrid MainGrid { get; }
+    public IParentGrid ParentGrid { get; }
 
     public void SetController(EditorController controller) {
       Controller = controller;
@@ -18,20 +25,12 @@ namespace SoundExplorers.Tests.Controller {
       MainGridController.ShowError();
     }
 
-    public void OnPopulated() {
-      Controller.OnPopulatedAsync();
-    }
-
-    public void OnParentAndMainGridsShown() {
-      Controller.OnParentAndMainGridsShownAsync();
+    public void OnParentAndMainGridsShownAsync() {
+      OnParentAndMainGridsShownAsyncCount++;
     }
 
     public void PopulateMainGridOnParentRowChanged(int parentRowIndex) {
       Controller.PopulateMainGridOnParentRowChanged(parentRowIndex);
-    }
-
-    public void Refresh() {
-      RefreshCount++;
     }
 
     public void SetCursorToDefault() {

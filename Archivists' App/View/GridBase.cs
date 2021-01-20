@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Windows.Forms;
 using SoundExplorers.Controller;
@@ -18,7 +19,7 @@ namespace SoundExplorers.View {
       // of a text cell on the insertion row after typing text, the program would crash.
       ShowCellErrors = false;
       ShowCellToolTips = false; // Before .Net 5, tooltips were off by default.
-      CellColorScheme = new CellColorScheme(this);
+      CellColorScheme = new GridCellColorScheme(this);
     }
 
     public bool CanCut => CanSelectAll && CopyableText.Length > 0;
@@ -32,7 +33,7 @@ namespace SoundExplorers.View {
       !ReadOnly && !IsCurrentCellInEditMode && SelectedRows.Count > 0 &&
       !SelectedRows.Contains(NewRow);
 
-    public ICellColorScheme CellColorScheme { get; }
+    public IGridCellColorScheme CellColorScheme { get; }
     protected GridControllerBase Controller { get; set; } = null!;
     protected int FirstVisibleColumnIndex { get; set; }
 
@@ -68,7 +69,14 @@ namespace SoundExplorers.View {
     }
 
     bool IGrid.Focused => Focused;
+    
+    /// <summary>
+    ///   The grid's name. Useful for debugging. 
+    /// </summary>
+    [SuppressMessage("ReSharper", "UnusedMember.Global")] 
+    [ExcludeFromCodeCoverage]
     string IGrid.Name => Name;
+    
     int IGrid.RowCount => RowCount;
 
     void IGrid.Focus() {

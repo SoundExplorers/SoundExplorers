@@ -8,11 +8,10 @@ using VelocityDb.Session;
 namespace SoundExplorers.Tests.Controller {
   public class TestEditorController : EditorController {
     public TestEditorController(
-      Type mainListType, IEditorView view, IMainGrid mainGrid,
+      Type mainListType, IEditorView view,
       QueryHelper queryHelper, SessionBase session) :
       base(view, mainListType,
         new TestMainController(new MockView<MainController>(), queryHelper, session)) {
-      MainGrid = mainGrid;
       QueryHelper = queryHelper;
       Session = session;
     }

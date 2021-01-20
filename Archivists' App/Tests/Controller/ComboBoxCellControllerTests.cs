@@ -13,7 +13,7 @@ namespace SoundExplorers.Tests.Controller {
       QueryHelper = new QueryHelper();
       Data = new TestData(QueryHelper);
       Session = new TestSession();
-      EditorView = new MockEditorView();
+      EditorView = new MockEditorView(new MockMainGrid(), new MockParentGrid());
       CreateControllers(typeof(EventList));
       CellView = new MockView<ComboBoxCellController>();
       Session.BeginUpdate();
@@ -76,14 +76,12 @@ namespace SoundExplorers.Tests.Controller {
       return new(CellView, MainGridController, columnName);
     }
 
-    private void CreateControllers(
-      Type mainListType) {
-      var mainGrid = new MockMainGrid();
-      EditorController = new TestEditorController(mainListType,
-        EditorView, mainGrid, QueryHelper, Session);
+    private void CreateControllers(Type mainListType) {
+      EditorController = new TestEditorController(mainListType, EditorView, QueryHelper,
+        Session);
       MainGridController = EditorView.MainGridController =
-        new TestMainGridController(mainGrid, EditorController);
-      mainGrid.SetController(MainGridController);
+        new TestMainGridController(EditorView.MainGrid, EditorController);
+      EditorView.MainGrid.SetController(MainGridController);
     }
   }
 }

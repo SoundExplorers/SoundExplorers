@@ -13,9 +13,9 @@ namespace SoundExplorers.Tests.Controller {
       QueryHelper = new QueryHelper();
       Data = new TestData(QueryHelper);
       Session = new TestSession();
-      View = new MockEditorView();
       MainGrid = new MockMainGrid();
       ParentGrid = new MockParentGrid();
+      View = new MockEditorView(MainGrid, ParentGrid);
     }
 
     [TearDown]
@@ -57,8 +57,6 @@ namespace SoundExplorers.Tests.Controller {
       Assert.IsNotNull(validSeriesName, "validSeriesName");
       CreateControllers(typeof(EventList));
       Controller.Populate(); // Show an empty grid
-      Assert.AreEqual(1, MainGrid.FocusCount, "FocusCount after Populate");
-      Assert.IsTrue(MainGrid.Focused, "MainGrid.Focused after Populate");
       Assert.AreEqual(1, MainGrid.MakeRowCurrentCount,
         "MakeRowCurrentCount after Populate");
       Assert.AreEqual(0, MainGrid.MakeRowCurrentRowIndex,
@@ -206,7 +204,6 @@ namespace SoundExplorers.Tests.Controller {
       Assert.IsFalse(Controller.IsParentGridToBeShown, "IsParentGridToBeShown");
       Assert.IsFalse(MainGrid.Focused, "MainGrid.Focused initially");
       Controller.Populate(); // The grid will be empty initially
-      Assert.AreEqual(1, MainGrid.FocusCount, "FocusCount after Populate");
       Assert.AreEqual("Location", MainGridController.TableName, "Main TableName");
       var bindingList =
         (TypedBindingList<Location, NotablyNamedBindingItem<Location>>)Controller.MainList
@@ -221,10 +218,7 @@ namespace SoundExplorers.Tests.Controller {
       MainGridController.OnRowValidated(1);
       Assert.AreEqual(2, MainGrid.OnRowAddedOrDeletedCount, "OnRowAddedOrDeletedCount");
       MainGrid.Focused = false;
-      Controller.RefreshDataAsync(); // Refresh grid
-      Assert.AreEqual(1, View.RefreshCount, "RefreshCount after Refresh");
-      Assert.AreEqual(2, MainGrid.FocusCount, "FocusCount after Refresh");
-      Assert.IsTrue(MainGrid.Focused, "MainGrid.Focused after Refresh");
+      Controller.Populate(); // Refresh grid
       bindingList =
         (TypedBindingList<Location, NotablyNamedBindingItem<Location>>)Controller.MainList
           .BindingList;
@@ -370,43 +364,35 @@ namespace SoundExplorers.Tests.Controller {
     }
 
     [Test]
-    public void FocusDefaultGridMain() {
-      CreateControllers(typeof(NewsletterList));
-      Assert.False(MainGrid.Focused, "MainGrid.Focused initially");
-      Controller.FocusDefaultGrid();
-      Assert.AreEqual(1, MainGrid.FocusCount,
-        "MainGrid.FocusCount after FocusDefaultGrid");
-      Assert.IsTrue(MainGrid.Focused, "MainGrid.Focused after FocusDefaultGrid");
-    }
-
-    [Test]
-    public void FocusDefaultGridParent() {
-      CreateControllers(typeof(SetList));
-      Assert.False(ParentGrid.Focused, "ParentGrid.Focused initially");
-      Controller.FocusDefaultGrid();
-      Assert.AreEqual(1, ParentGrid.FocusCount,
-        "ParentGrid.FocusCount after FocusDefaultGrid");
-      Assert.IsTrue(ParentGrid.Focused, "ParentGrid.Focused after FocusDefaultGrid");
-    }
-
-    [Test]
-    public void FocusUnfocusedGridIfAny() {
+    public void FocusGrids() {
       CreateControllers(typeof(SetList));
       ParentGrid.Focus();
       Assert.IsFalse(MainGrid.Focused,
         "MainGrid.Focused after ParentGrid.Focus");
+      Assert.AreEqual(1, MainGrid.CellColorScheme.InvertCount,
+        "MainGrid.CellColorScheme.InvertCount after ParentGrid.Focus");
       Assert.IsTrue(ParentGrid.Focused,
         "ParentGrid.Focused after ParentGrid.Focus");
+      Assert.AreEqual(1, ParentGrid.CellColorScheme.RestoreToDefaultCount,
+        "ParentGrid.CellColorScheme.RestoreToDefaultCount after ParentGrid.Focus");
       Controller.FocusUnfocusedGridIfAny();
       Assert.IsTrue(MainGrid.Focused,
         "MainGrid.Focused after FocusUnfocusedGridIfAny #1");
+      Assert.AreEqual(1, MainGrid.CellColorScheme.RestoreToDefaultCount,
+        "MainGrid.CellColorScheme.RestoreToDefaultCount after FocusUnfocusedGridIfAny #1");
       Assert.IsFalse(ParentGrid.Focused,
         "ParentGrid.Focused after FocusUnfocusedGridIfAny #1");
+      Assert.AreEqual(1, ParentGrid.CellColorScheme.InvertCount,
+        "ParentGrid.CellColorScheme.InvertCount after FocusUnfocusedGridIfAny #1");
       Controller.FocusUnfocusedGridIfAny();
       Assert.IsFalse(MainGrid.Focused,
         "MainGrid.Focused after FocusUnfocusedGridIfAny #2");
+      Assert.AreEqual(2, MainGrid.CellColorScheme.InvertCount,
+        "MainGrid.CellColorScheme.InvertCount after FocusUnfocusedGridIfAny #2");
       Assert.IsTrue(ParentGrid.Focused,
         "ParentGrid.Focused after FocusUnfocusedGridIfAny #2");
+      Assert.AreEqual(2, ParentGrid.CellColorScheme.RestoreToDefaultCount,
+        "ParentGrid.CellColorScheme.RestoreToDefaultCount after FocusUnfocusedGridIfAny #2");
     }
 
     [Test]
@@ -525,29 +511,20 @@ namespace SoundExplorers.Tests.Controller {
       Assert.IsTrue(MainGridController.IsColumnToBeShown(nameof(SetBindingItem.SetNo)),
         "Is SetNo column to be shown?");
       Controller.Populate(); // Populate grid
+      Assert.AreEqual(1, View.OnParentAndMainGridsShownAsyncCount,
+        "OnParentAndMainGridsShownAsyncCount after Populate");
       Assert.IsFalse(MainGrid.Focused, "MainGrid.Focused after Populate");
-      Assert.AreEqual(1, MainGrid.InvertCellColorSchemeCount,
-        "MainGrid.InvertCellColorSchemeCount");
-      Assert.AreEqual(1, ParentGrid.FocusCount, "ParentGrid.FocusCount after Populate");
-      Assert.IsTrue(ParentGrid.Focused, "ParentGrid.Focused after Populate");
-      Assert.AreEqual(1, ParentGrid.RestoreCellColorSchemeToDefaultCount,
-        "ParentGrid.RestoreCellColorSchemeToDefaultCount");
+      Assert.AreEqual(1, MainGrid.CellColorScheme.InvertCount,
+        "MainGrid.CellColorScheme.InvertCount after Populate");
+      // Assert.AreEqual(1, ParentGrid.CellColorScheme.RestoreToDefaultCount,
+      //   "ParentGrid.CellColorScheme.RestoreToDefaultCount after Populate");
       Assert.AreEqual(2, Controller.ParentBindingList?.Count, "Parent list count");
       Assert.AreEqual(5, MainGridController.BindingList?.Count,
         "Main list count initially");
       MainGrid.Focus();
       ParentGridController.OnRowEnter(0);
-      Assert.IsFalse(MainGrid.Focused, "MainGrid.Focused when 1st parent selected");
-      Assert.AreEqual(2, ParentGrid.FocusCount, "FocusCount when 1st parent selected");
-      Assert.IsTrue(ParentGrid.Focused, "ParentGrid.Focused when 1st parent selected");
       Assert.AreEqual(3, MainGridController.BindingList?.Count,
         "Main list count when 1st parent selected");
-      MainGrid.Focus();
-      Controller.RefreshDataAsync(); // Refresh grid
-      Assert.IsFalse(MainGrid.Focused, "MainGrid.Focused after Refresh");
-      Assert.AreEqual(1, View.RefreshCount, "RefreshCount after Refresh");
-      Assert.AreEqual(3, ParentGrid.FocusCount, "FocusCount after Refresh");
-      Assert.IsTrue(ParentGrid.Focused, "ParentGrid.Focused after Refresh");
     }
 
     [Test]
@@ -557,16 +534,13 @@ namespace SoundExplorers.Tests.Controller {
       Assert.AreEqual(1, View.ShowWarningMessageCount);
     }
 
-    private void CreateControllers(
-      Type mainListType) {
-      Controller = new TestEditorController(mainListType,
-        View, MainGrid, QueryHelper, Session);
+    private void CreateControllers(Type mainListType) {
+      Controller = new TestEditorController(mainListType, View, QueryHelper, Session);
       MainGridController = View.MainGridController =
         new TestMainGridController(MainGrid, Controller);
       MainGrid.SetController(MainGridController);
       if (Controller.IsParentGridToBeShown) {
-        Controller.ParentGrid = ParentGrid;
-        ParentGridController = new TestParentGridController(Controller);
+        ParentGridController = new TestParentGridController(ParentGrid, Controller);
         ParentGrid.SetController(ParentGridController);
       }
     }

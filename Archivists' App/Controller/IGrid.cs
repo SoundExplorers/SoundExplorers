@@ -3,7 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace SoundExplorers.Controller {
   public interface IGrid {
-    ICellColorScheme CellColorScheme { get; }
+    IGridCellColorScheme CellColorScheme { get; }
     bool Focused { get; }
     
     /// <summary>

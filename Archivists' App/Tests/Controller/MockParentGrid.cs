@@ -7,14 +7,13 @@ namespace SoundExplorers.Tests.Controller {
       set => base.Controller = value;
     }
 
+    ParentGridController IParentGrid.Controller => Controller;
     public override int RowCount => Controller.BindingList!.Count;
 
     public override void Focus() {
       base.Focus();
-      ((MockGridBase)Controller.EditorController.MainGrid).Focused = false;
+      ((MockGridBase)Controller.EditorController.View.MainGrid).Focused = false;
     }
-
-    ParentGridController IParentGrid.Controller => Controller;
 
     public void SetController(ParentGridController controller) {
       Controller = (TestParentGridController)controller;

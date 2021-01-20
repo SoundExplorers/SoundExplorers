@@ -1,5 +1,5 @@
 ﻿namespace SoundExplorers.Controller {
-  public interface ICellColorScheme {
+  public interface IGridCellColorScheme {
     /// <summary>
     ///   Inverts the foreground and background colours of both selected and unselected
     ///   cells in the grid, relative to their defaults.
