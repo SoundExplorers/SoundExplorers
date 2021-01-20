@@ -13,6 +13,9 @@ namespace SoundExplorers.Tests {
     ///   1 to enable generate
     /// </summary>
     private static int DoIt => 0;
+    
+    private TestData Data { get; set; } = null!;
+    private TestSession Session { get; set; } = null!;
 
     /// <summary>
     ///   If the main test database folder already exists,
@@ -25,61 +28,68 @@ namespace SoundExplorers.Tests {
       }
     }
 
-    private static void Generate() {
-      var queryHelper = new QueryHelper();
-      var data = new TestData(queryHelper);
+    private void Generate() {
+      Data = new TestData(new QueryHelper());
       TestSession.DeleteFolderIfExists(DatabaseConfig.DefaultDatabaseFolderPath);
       Directory.CreateDirectory(DatabaseConfig.DefaultDatabaseFolderPath);
       TestSession.CopyLicenceToDatabaseFolder(DatabaseConfig.DefaultDatabaseFolderPath);
-      var session = new TestSession(DatabaseConfig.DefaultDatabaseFolderPath);
-      session.BeginUpdate();
-      data.AddActsPersisted(10, session);
-      data.AddEventTypesPersisted(5, session);
-      data.AddGenresPersisted(10, session);
-      data.AddLocationsPersisted(8, session);
-      data.AddNewslettersPersisted(64, session);
-      data.AddSeriesPersisted(8, session);
-      data.AddEventsPersisted(18, session);
+      Session = new TestSession(DatabaseConfig.DefaultDatabaseFolderPath);
+      Session.BeginUpdate();
+      Data.AddActsPersisted(10, Session);
+      Data.AddEventTypesPersisted(5, Session);
+      Data.AddGenresPersisted(10, Session);
+      Data.AddLocationsPersisted(8, Session);
+      Data.AddNewslettersPersisted(64, Session);
+      Data.AddSeriesPersisted(8, Session);
+      AddEvents();
+      AddSets();
+      Session.Commit();
+    }
+
+    private void AddEvents() {
+      Data.AddEventsPersisted(18, Session);
       for (int i = 0; i < 5; i++) {
-        data.Events[i].EventType = data.EventTypes[i];
+        Data.Events[i].EventType = Data.EventTypes[i];
       }
       for (int i = 5; i < 10; i++) {
-        data.Events[i].EventType = data.EventTypes[i - 5];
+        Data.Events[i].EventType = Data.EventTypes[i - 5];
       }
       for (int i = 10; i < 15; i++) {
-        data.Events[i].EventType = data.EventTypes[i - 10];
+        Data.Events[i].EventType = Data.EventTypes[i - 10];
       }
       for (int i = 0; i < 16; i++) {
-        data.Events[i].Newsletter = data.Newsletters[i];
+        Data.Events[i].Newsletter = Data.Newsletters[i];
       }
       for (int i = 0; i < 8; i++) {
-        data.Events[i].Location = data.Locations[i];
-        data.Events[i].Series = data.Series[i];
+        Data.Events[i].Location = Data.Locations[i];
+        Data.Events[i].Series = Data.Series[i];
       }
       for (int i = 8; i < 16; i++) {
-        data.Events[i].Location = data.Locations[i - 8];
-        data.Events[i].Series = data.Series[i - 8];
+        Data.Events[i].Location = Data.Locations[i - 8];
+        Data.Events[i].Series = Data.Series[i - 8];
       }
+    }
+
+    private void AddSets() {
       for (int i = 0; i < 5; i++) {
-        data.AddSetsPersisted(i + 1, session, data.Events[i], data.Genres[i]);
+        Data.AddSetsPersisted(i + 1, Session, Data.Events[i], Data.Genres[i]);
       }
       for (int i = 5; i < 10; i++) {
-        data.AddSetsPersisted(i - 4, session, data.Events[i], data.Genres[i]);
+        Data.AddSetsPersisted(i - 4, Session, Data.Events[i], Data.Genres[i]);
       }
       for (int i = 10; i < 15; i++) {
-        data.AddSetsPersisted(i - 9, session, data.Events[i], data.Genres[i - 10]);
+        Data.AddSetsPersisted(i - 9, Session, Data.Events[i], Data.Genres[i - 10]);
       }
       for (int i = 15; i < 18; i++) {
-        data.AddSetsPersisted(i - 9, session, data.Events[i]);
+        Data.AddSetsPersisted(i - 9, Session, Data.Events[i]);
       }
-      for (int i = 0; i < data.Events.Count; i++) {
-        var @event = data.Events[i];
+      for (int i = 0; i < Data.Events.Count; i++) {
+        var @event = Data.Events[i];
         bool isEventIndexEven = i % 2 == 0;
         for (int j = 0; j < @event.Sets.Count; j++) {
-          @event.Sets[j].Act = isEventIndexEven ? data.Acts[j] : data.Acts[j + 2];
+          @event.Sets[j].Act = isEventIndexEven ? Data.Acts[j] : Data.Acts[j + 2];
         }
       }
-      session.Commit();
     }
   }
 }

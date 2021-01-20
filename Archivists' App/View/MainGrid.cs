@@ -84,8 +84,15 @@ namespace SoundExplorers.View {
 
     protected override void OnCellBeginEdit(DataGridViewCellCancelEventArgs e) {
       base.OnCellBeginEdit(e);
-      if (IsTextBoxCellCurrent) {
-        BeginInvoke((Action)OnTextBoxCellBeginEditAsync);
+      if (IsTextBoxCellCurrent
+          // On pasting into or deleting the contents of a cell that is not yet in edit
+          // mode, the cell temporarily goes into edit mode but the EditingControl is
+          // null instead of a TextBox. So we cannot subscribe to the TextBox's events.
+          // However, as the cell comes out of edit mode immediately the deletion or
+          // paste is done. So in those cases there is no need to subscribe to the
+          // TextBox events anyway.
+          && EditingControl is TextBox) {
+        BeginInvoke((Action)SubscribeToTextBoxEvents);
       }
       // THE FOLLOWING IS NOT YET IN USE BUT MAY BE LATER:
       // This is only relevant if the Path cell of an Image row is being edited. If the
@@ -173,17 +180,6 @@ namespace SoundExplorers.View {
       } //End of switch
     }
 
-    private void OnTextBoxCellBeginEditAsync() {
-      //Debug.WriteLine("MainGrid.OnTextBoxCellBeginEditAsync");
-      TextBox.KeyUp -= TextBox_KeyUp;
-      TextBox.MouseClick -= TextBox_MouseClick;
-      TextBox.TextChanged -= TextBox_TextChanged;
-      OnTextBoxSelectionMayHaveChanged();
-      TextBox.KeyUp += TextBox_KeyUp;
-      TextBox.MouseClick += TextBox_MouseClick;
-      TextBox.TextChanged += TextBox_TextChanged;
-    }
-
     /// <summary>
     ///   While a text box cell is being edited, whether text can be cut or copied
     ///   depends on whether any text in the cell is selected.
@@ -192,6 +188,17 @@ namespace SoundExplorers.View {
       //Debug.WriteLine("MainGrid.OnTextBoxSelectionMayHaveChanged");
       MainView.CutToolStripButton.Enabled = CanCut;
       MainView.CopyToolStripButton.Enabled = CanCopy;
+    }
+
+    private void SubscribeToTextBoxEvents() {
+      //Debug.WriteLine("MainGrid.SubscribeToTextBoxEvents");
+      TextBox.KeyUp -= TextBox_KeyUp;
+      TextBox.MouseClick -= TextBox_MouseClick;
+      TextBox.TextChanged -= TextBox_TextChanged;
+      OnTextBoxSelectionMayHaveChanged();
+      TextBox.KeyUp += TextBox_KeyUp;
+      TextBox.MouseClick += TextBox_MouseClick;
+      TextBox.TextChanged += TextBox_TextChanged;
     }
 
     private void TextBox_KeyUp(object? sender, KeyEventArgs e) {
