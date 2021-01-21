@@ -7,7 +7,8 @@ namespace SoundExplorers.View {
     internal const int ItemHeight = 24;
 
     /// <summary>
-    ///   If the items are not wide enough, the text including keyboard shortcut will be
+    ///   This is effectively the <i>maximum</i> width of the context menu.
+    ///   If it is not wide enough, the text including keyboard shortcut will be
     ///   truncated. However, if the specified width is bigger than necessary, the actual
     ///   width will only be the minimum required, including the standard right margin.
     /// </summary>
