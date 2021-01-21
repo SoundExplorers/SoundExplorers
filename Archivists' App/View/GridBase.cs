@@ -88,9 +88,13 @@ namespace SoundExplorers.View {
     ///   Makes the specified row current, which will set focus and raise
     ///   <see cref="OnRowEnter" />.
     /// </summary>
-    public void MakeRowCurrent(int rowIndex) {
+    public void MakeRowCurrent(int rowIndex, bool async = false) {
       Debug.WriteLine($"GridBase.MakeRowCurrent {Name}: row {rowIndex}");
-      CurrentCell = Rows[rowIndex].Cells[FirstVisibleColumnIndex];
+      if (async) {
+        BeginInvoke((Action)delegate { MakeRowCurrentAsync(rowIndex); });
+      } else {
+        CurrentCell = Rows[rowIndex].Cells[FirstVisibleColumnIndex];
+      }
     }
 
     public virtual void OnPopulated() {
@@ -169,6 +173,11 @@ namespace SoundExplorers.View {
           hitTestInfo.ColumnIndex];
       }
       return null;
+    }
+    
+    private void MakeRowCurrentAsync(int rowIndex) {
+      Debug.WriteLine($"GridBase.MakeRowCurrentAsync {Name}: row {rowIndex}");
+      MakeRowCurrent(rowIndex);
     }
 
     protected override void OnCurrentCellChanged(EventArgs e) {

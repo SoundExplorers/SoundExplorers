@@ -13,7 +13,6 @@ namespace SoundExplorers.Controller {
     public IBindingList? BindingList => List.BindingList;
     protected IGrid Grid { get; }
     protected bool IsPopulating { get; private set; }
-    protected int PreviousRowIndex { get; private set; }
 
     /// <summary>
     ///   Gets metadata about the database columns represented by the Entity's field
@@ -41,10 +40,7 @@ namespace SoundExplorers.Controller {
       }
     }
 
-    public virtual void OnRowEnter(int rowIndex) {
-      Debug.WriteLine($"GridControllerBase.OnRowEnter {Grid.Name}: row {rowIndex}");
-      PreviousRowIndex = rowIndex;
-    }
+    public abstract void OnRowEnter(int rowIndex);
 
     public virtual void OnPopulatedAsync() {
       Debug.WriteLine($"GridControllerBase.OnPopulatedAsync {Grid.Name}");
@@ -52,13 +48,11 @@ namespace SoundExplorers.Controller {
       if (Grid.RowCount > 1) {
         Grid.MakeRowCurrent(Grid.RowCount - 1);
       }
-      EditorController.View.SetCursorToDefault();
     }
 
-    public void Populate(IList? list = null) {
+    public virtual void Populate(IList? list = null) {
       Debug.WriteLine($"GridControllerBase.Populate {Grid.Name}");
       IsPopulating = true;
-      PreviousRowIndex = -1;
       List.Populate(list);
       Grid.OnPopulated();
     }

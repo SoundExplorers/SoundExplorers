@@ -48,7 +48,7 @@ namespace SoundExplorers.View {
 
     public void OnError() {
       // Debug.WriteLine("EditorView.OnError");
-      MainView.Cursor = Cursors.WaitCursor;
+      SetCursorToWait();
       BeginInvoke((Action)MainGrid.OnError);
     }
 
@@ -72,6 +72,11 @@ namespace SoundExplorers.View {
     public void SetCursorToDefault() {
       Debug.WriteLine("EditorView.SetCursorToDefault");
       MainView.Cursor = Cursors.Default;
+    }
+
+    public void SetCursorToWait() {
+      Debug.WriteLine("EditorView.SetCursorToWait");
+      MainView.Cursor = Cursors.WaitCursor;
     }
 
     public void ShowErrorMessage(string text) {

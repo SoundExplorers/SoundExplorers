@@ -18,7 +18,7 @@ namespace SoundExplorers.Controller {
     /// <summary>
     ///   Makes the specified row current, which will set focus and raise OnRowEnter.
     /// </summary>
-    void MakeRowCurrent(int rowIndex);
+    void MakeRowCurrent(int rowIndex, bool async = false);
     void OnPopulated();
 
     /// <summary>

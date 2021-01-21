@@ -7,10 +7,10 @@ namespace SoundExplorers.Controller {
   public class MainGridController : GridControllerBase {
     public MainGridController(
       // ReSharper disable once SuggestBaseTypeForParameter
-      IMainGrid grid, EditorController editorController) : base(grid, editorController) {
-    }
+      IMainGrid grid, EditorController editorController) :
+      base(grid, editorController) { }
 
-    private new IMainGrid Grid => (IMainGrid)base.Grid; 
+    private new IMainGrid Grid => (IMainGrid)base.Grid;
 
     private bool IsDuplicateKeyException =>
       List.LastDatabaseUpdateErrorException?.InnerException is DuplicateNameException;
@@ -93,11 +93,16 @@ namespace SoundExplorers.Controller {
       Debug.WriteLine("MainGridController.OnPopulatedAsync");
       if (EditorController.IsParentGridToBeShown) {
         EditorController.View.OnParentAndMainGridsShownAsync();
-      }
-      if (EditorController.IsParentGridToBeShown) {
         Grid.CellColorScheme.Invert();
       }
       base.OnPopulatedAsync();
+      if (EditorController.IsParentGridToBeShown && 
+          EditorController.View.ParentGrid.Controller.LastRowNeedsToBeScrolledIntoView) {
+        EditorController.View.ParentGrid.Controller.ScrollLastRowIntoView();
+      } else {
+        // Show that the population process is finished.
+        EditorController.View.SetCursorToDefault();
+      }
     }
 
     public override void OnRowEnter(int rowIndex) {
