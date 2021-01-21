@@ -85,7 +85,7 @@ namespace SoundExplorers.Model {
       _columns ??= CreateColumnsWithSession();
 
     public string EntityTypeName => typeof(TEntity).Name;
-    public bool HasRowBeenEdited { get; private set; }
+    private bool HasRowBeenEdited { get; set; }
 
     /// <summary>
     ///   For unknown reason, the grid's RowRemoved event is raised 2 or 3 times
@@ -119,8 +119,9 @@ namespace SoundExplorers.Model {
     /// <summary>
     ///   Gets or sets whether this is a (read-only) parent list.
     ///   False (the default) if this is the (updatable) main (and maybe only) list.
+    ///   TODO Set EntityListBase.IsParentList (currently just done in tests)
     /// </summary>
-    public bool IsParentList { get; set; }
+    public bool IsParentList { get; init; }
 
     public bool IsRemovingInvalidInsertionRow { get; set; }
     public DatabaseUpdateErrorException LastDatabaseUpdateErrorException { get; set; }

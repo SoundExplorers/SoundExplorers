@@ -23,7 +23,6 @@ namespace SoundExplorers.Model {
     BindingColumnList Columns { get; }
 
     [NotNull] string EntityTypeName { get; }
-    bool HasRowBeenEdited { get; }
 
     /// <summary>
     ///   For unknown reason, the grid's RowRemoved event is raised 2 or 3 times
@@ -44,7 +43,7 @@ namespace SoundExplorers.Model {
     ///   Gets or sets whether this is a (read-only) parent list.
     ///   False (the default) if this is the (updatable) main (and maybe only) list.
     /// </summary>
-    bool IsParentList { get; set; }
+    bool IsParentList { get; init; }
 
     bool IsRemovingInvalidInsertionRow { get; set; }
     DatabaseUpdateErrorException LastDatabaseUpdateErrorException { get; set; }
