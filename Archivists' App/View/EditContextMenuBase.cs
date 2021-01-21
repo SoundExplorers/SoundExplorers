@@ -13,8 +13,9 @@ namespace SoundExplorers.View {
     /// </summary>
     /// <remarks>
     ///   I measured 240 to be the minimum width to fit the items without truncation, as
-    ///   at the time I checked.  So I've specified what will hopefully be plenty more to
-    ///   allow for items with longer texts in future.
+    ///   at the time I checked, on the GridContextMenu, which has some longer item texts
+    ///   than the TextBoxContextMenu. So I have specified what will hopefully be plenty
+    ///   more to allow for items with longer texts in future.
     /// </remarks>
     internal const int ItemWidth = 350;
 
