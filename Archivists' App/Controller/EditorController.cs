@@ -139,6 +139,11 @@ namespace SoundExplorers.Controller {
       return grid == View.MainGrid ? (IGrid)View.ParentGrid : View.MainGrid;
     }
 
+    /// <summary>
+    ///   Populates the grid or grids. If the parent grid is to be shown, the main grid
+    ///   will be populated with the children of the last parent when the parent grid has
+    ///   been populated.
+    /// </summary>
     public void Populate() {
       Debug.WriteLine("EditorController.Populate");
       if (IsParentGridToBeShown) {

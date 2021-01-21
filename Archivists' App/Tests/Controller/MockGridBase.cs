@@ -29,7 +29,7 @@ namespace SoundExplorers.Tests.Controller {
       Controller.OnFocusing();
     }
 
-    public void MakeRowCurrent(int rowIndex) {
+    public void MakeRowCurrent(int rowIndex, bool async = false) {
       //Debug.WriteLine($"MockGridBase.MakeRowCurrent: row {rowIndex}");
       MakeRowCurrentCount++;
       MakeRowCurrentRowIndex = rowIndex;

@@ -57,12 +57,11 @@ namespace SoundExplorers.Tests.Controller {
       Assert.IsNotNull(validSeriesName, "validSeriesName");
       CreateControllers(typeof(EventList));
       Controller.Populate(); // Show an empty grid
-      Assert.AreEqual(1, MainGrid.MakeRowCurrentCount,
+      // No need to make last row current when there is only the new row.
+      Assert.AreEqual(0, MainGrid.MakeRowCurrentCount,
         "MakeRowCurrentCount after Populate");
-      Assert.AreEqual(0, MainGrid.MakeRowCurrentRowIndex,
-        "MakeRowCurrentRowIndex after Populate");
-      Assert.AreEqual(1, View.SetCursorToDefaultCount,
-        "SetCursorToDefaultCount after Populate");
+      Assert.AreEqual(1, View.SetMouseCursorToDefaultCount,
+        "SetMouseCursorToDefaultCount after Populate");
       var bindingList =
         (TypedBindingList<Event, EventBindingItem>)Controller.MainList.BindingList;
       MainGridController.CreateAndGoToInsertionRow();
@@ -516,11 +515,14 @@ namespace SoundExplorers.Tests.Controller {
       Assert.IsFalse(MainGrid.Focused, "MainGrid.Focused after Populate");
       Assert.AreEqual(1, MainGrid.CellColorScheme.InvertCount,
         "MainGrid.CellColorScheme.InvertCount after Populate");
-      // Assert.AreEqual(1, ParentGrid.CellColorScheme.RestoreToDefaultCount,
-      //   "ParentGrid.CellColorScheme.RestoreToDefaultCount after Populate");
-      Assert.AreEqual(2, Controller.ParentBindingList?.Count, "Parent list count");
+      Assert.AreEqual(2, Controller.ParentBindingList?.Count, 
+        "Parent list count after Populate");
       Assert.AreEqual(5, MainGridController.BindingList?.Count,
-        "Main list count initially");
+        "Main list count after Populate");
+      Assert.AreEqual(1, View.SetMouseCursorToWaitCount,
+        "SetMouseCursorToWaitCount after Populate");
+      Assert.AreEqual(1, View.SetMouseCursorToDefaultCount,
+        "SetMouseCursorToDefaultCount after Populate");
       MainGrid.Focus();
       ParentGridController.OnRowEnter(0);
       Assert.AreEqual(3, MainGridController.BindingList?.Count,

@@ -45,7 +45,7 @@ namespace SoundExplorers.Controller {
           IsScrollingLastRowIntoView = false;
           IsJustPopulated = false;
           // Show that the population process for the two grids is finished.
-          EditorController.View.SetCursorToDefault();
+          EditorController.View.SetMouseCursorToDefault();
         } else {
           Grid.MakeRowCurrent(List.Count - 1, true);
         }
@@ -54,7 +54,7 @@ namespace SoundExplorers.Controller {
       }
       if (!IsPopulating && rowIndex != PreviousRowIndex) {
         Debug.WriteLine("    Populating main grid");
-        EditorController.View.SetCursorToWait();
+        EditorController.View.SetMouseCursorToWait();
         EditorController.View.PopulateMainGridOnParentRowChanged(rowIndex);
       }
       PreviousRowIndex = rowIndex;

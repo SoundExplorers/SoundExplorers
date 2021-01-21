@@ -10,7 +10,8 @@ namespace SoundExplorers.Tests.Controller {
     internal string LastErrorMessage { get; private set; } = null!;
     internal TestMainGridController MainGridController { get; set; } = null!;
     internal int OnParentAndMainGridsShownAsyncCount { get; private set; }
-    internal int SetCursorToDefaultCount { get; private set; }
+    internal int SetMouseCursorToDefaultCount { get; private set; }
+    internal int SetMouseCursorToWaitCount { get; private set; }
     internal int ShowErrorMessageCount { get; private set; }
     internal int ShowWarningMessageCount { get; private set; }
     private EditorController Controller { get; set; } = null!;
@@ -33,8 +34,12 @@ namespace SoundExplorers.Tests.Controller {
       Controller.PopulateMainGridOnParentRowChanged(parentRowIndex);
     }
 
-    public void SetCursorToDefault() {
-      SetCursorToDefaultCount++;
+    public void SetMouseCursorToDefault() {
+      SetMouseCursorToDefaultCount++;
+    }
+
+    public void SetMouseCursorToWait() {
+      SetMouseCursorToWaitCount++;
     }
 
     public void ShowErrorMessage(string text) {

@@ -101,7 +101,7 @@ namespace SoundExplorers.Controller {
         EditorController.View.ParentGrid.Controller.ScrollLastRowIntoView();
       } else {
         // Show that the population process is finished.
-        EditorController.View.SetCursorToDefault();
+        EditorController.View.SetMouseCursorToDefault();
       }
     }
 

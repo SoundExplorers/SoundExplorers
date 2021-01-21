@@ -48,7 +48,7 @@ namespace SoundExplorers.View {
 
     public void OnError() {
       // Debug.WriteLine("EditorView.OnError");
-      SetCursorToWait();
+      SetMouseCursorToWait();
       BeginInvoke((Action)MainGrid.OnError);
     }
 
@@ -69,13 +69,13 @@ namespace SoundExplorers.View {
       IsFixingFocus = true;
     }
 
-    public void SetCursorToDefault() {
-      Debug.WriteLine("EditorView.SetCursorToDefault");
+    public void SetMouseCursorToDefault() {
+      Debug.WriteLine("EditorView.SetMouseCursorToDefault");
       MainView.Cursor = Cursors.Default;
     }
 
-    public void SetCursorToWait() {
-      Debug.WriteLine("EditorView.SetCursorToWait");
+    public void SetMouseCursorToWait() {
+      Debug.WriteLine("EditorView.SetMouseCursorToWait");
       MainView.Cursor = Cursors.WaitCursor;
     }
 
