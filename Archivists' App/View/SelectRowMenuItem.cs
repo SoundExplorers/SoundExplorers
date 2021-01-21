@@ -15,7 +15,10 @@ namespace SoundExplorers.View {
     }
 
     public override Size Size {
-      get => _size != Size.Empty ? _size : base.Size = _size = new Size(198, 24);
+      get => _size != Size.Empty
+        ? _size
+        : base.Size = _size = new Size(EditContextMenuBase.ItemWidth,
+          EditContextMenuBase.ItemHeight);
       set => base.Size = value;
     }
 

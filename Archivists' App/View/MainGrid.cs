@@ -6,15 +6,15 @@ using SoundExplorers.Controller;
 
 namespace SoundExplorers.View {
   internal class MainGrid : GridBase, IMainGrid {
-    public new MainGridController Controller {
-      get => (MainGridController)base.Controller;
-      private set => base.Controller = value;
-    }
-
     public TextBox TextBox =>
       (TextBox)EditingControl ??
       throw new InvalidOperationException(
         "The current cell is not in edit mode or its editor is not a TextBox.");
+
+    public new MainGridController Controller {
+      get => (MainGridController)base.Controller;
+      private set => base.Controller = value;
+    }
 
     public void SetController(MainGridController controller) {
       Controller = controller;

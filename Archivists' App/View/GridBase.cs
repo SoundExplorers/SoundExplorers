@@ -33,7 +33,6 @@ namespace SoundExplorers.View {
       !ReadOnly && !IsCurrentCellInEditMode && SelectedRows.Count > 0 &&
       !SelectedRows.Contains(NewRow);
 
-    public IGridCellColorScheme CellColorScheme { get; }
     protected GridControllerBase Controller { get; set; } = null!;
     protected int FirstVisibleColumnIndex { get; set; }
 
@@ -68,15 +67,16 @@ namespace SoundExplorers.View {
       }
     }
 
+    public IGridCellColorScheme CellColorScheme { get; }
     bool IGrid.Focused => Focused;
-    
+
     /// <summary>
-    ///   The grid's name. Useful for debugging. 
+    ///   The grid's name. Useful for debugging.
     /// </summary>
-    [SuppressMessage("ReSharper", "UnusedMember.Global")] 
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
     [ExcludeFromCodeCoverage]
     string IGrid.Name => Name;
-    
+
     int IGrid.RowCount => RowCount;
 
     void IGrid.Focus() {
@@ -86,7 +86,7 @@ namespace SoundExplorers.View {
 
     /// <summary>
     ///   Makes the specified row current, which will set focus and raise
-    ///   <see cref="OnRowEnter"/>.
+    ///   <see cref="OnRowEnter" />.
     /// </summary>
     public void MakeRowCurrent(int rowIndex) {
       Debug.WriteLine($"GridBase.MakeRowCurrent {Name}: row {rowIndex}");

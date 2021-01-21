@@ -4,6 +4,20 @@ using System.Windows.Forms;
 
 namespace SoundExplorers.View {
   internal abstract class EditContextMenuBase : ContextMenuStrip {
+    internal const int ItemHeight = 24;
+
+    /// <summary>
+    ///   If the items are not wide enough, the text including keyboard shortcut will be
+    ///   truncated. However, if the specified width is bigger than necessary, the actual
+    ///   width will only be the minimum required, including the standard right margin.
+    /// </summary>
+    /// <remarks>
+    ///   I measured 240 to be the minimum width to fit the items without truncation, as
+    ///   at the time I checked.  So I've specified what will hopefully be plenty more to
+    ///   allow for items with longer texts in future.
+    /// </remarks>
+    internal const int ItemWidth = 350;
+
     private CopyMenuItem? _copyMenuItem;
     private CutMenuItem? _cutMenuItem;
     private DeleteMenuItem? _deleteMenuItem;
@@ -15,8 +29,8 @@ namespace SoundExplorers.View {
 
     protected EditContextMenuBase() {
       // Using these custom menu items of the Edit menu on the main window menu bar 
-      // caused display problems: items could become underlined or go missing.
-      // That why equivalents have had to be duplicated in MainView.Designer.
+      // caused display problems: items could become underlined or go missing. That is
+      // why equivalents have had to be duplicated in MainView.Designer.
       UndoMenuItem.Click += UndoMenuItem_Click;
       CutMenuItem.Click += CutMenuItem_Click;
       CopyMenuItem.Click += CopyMenuItem_Click;
@@ -25,14 +39,12 @@ namespace SoundExplorers.View {
       SelectAllMenuItem.Click += SelectAllMenuItem_Click;
       SelectRowMenuItem.Click += SelectRowMenuItem_Click;
       DeleteSelectedRowsMenuItem.Click += DeleteSelectedRowsMenuItem_Click;
-      // The menu properties must be set after creating the menu items,
-      // as their setters call the Items getter (implemented in derived classes),
-      // which needs all the menu items to have been created.
-      // With .Net 5, this was no longer sufficient,
-      // as TextBoxContextMenu.OnOpening still gets invoked before this constructor
-      // (in the Options dialog though not the grid).
-      // The fix is to make the menu items self-instantiating properties
-      // instead of instantiating them in this constructor.
+      // The menu properties must be set after creating the menu items, as their setters
+      // call the Items getter (implemented in derived classes), which needs all the menu
+      // items to have been created. With .Net 5, this was no longer sufficient, as
+      // TextBoxContextMenu.OnOpening still gets invoked before this constructor (in the
+      // Options dialog though not the grid). The fix is to make the menu items
+      // self-instantiating properties instead of instantiating them in this constructor.
       Size = new Size(61, 4);
       ShowImageMargin = false;
     }
