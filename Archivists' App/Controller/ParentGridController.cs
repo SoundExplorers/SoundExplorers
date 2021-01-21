@@ -18,14 +18,6 @@ namespace SoundExplorers.Controller {
       Debug.WriteLine($"ParentGridController.GetChildrenForMainList: row {rowIndex}");
       return List.GetChildrenForMainList(rowIndex)!;
     }
-    
-    // public void OnGotFocus() {
-    //   Debug.WriteLine("ParentGridController.OnGotFocus");
-    //   if (EditorController.View.MainGrid.Controller.IsJustPopulated) {
-    //     EditorController.View.MainGrid.Controller.IsJustPopulated = false;
-    //     EditorController.View.SetCursorToDefault();
-    //   }
-    // }
 
     public override void OnRowEnter(int rowIndex) {
       Debug.WriteLine($"ParentGridController.OnRowEnter: row {rowIndex}");

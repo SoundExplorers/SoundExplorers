@@ -17,8 +17,6 @@ namespace SoundExplorers.Controller {
 
     private bool IsFormatException =>
       List.LastDatabaseUpdateErrorException?.InnerException is FormatException;
-    
-    private bool IsJustPopulated { get; set; }
 
     private bool IsReferencingValueNotFoundException =>
       List.LastDatabaseUpdateErrorException?.InnerException
@@ -93,9 +91,11 @@ namespace SoundExplorers.Controller {
 
     public override void OnPopulatedAsync() {
       Debug.WriteLine("MainGridController.OnPopulatedAsync");
-      IsJustPopulated = true;
       if (EditorController.IsParentGridToBeShown) {
         EditorController.View.OnParentAndMainGridsShownAsync();
+      }
+      if (EditorController.IsParentGridToBeShown) {
+        Grid.CellColorScheme.Invert();
       }
       base.OnPopulatedAsync();
     }
@@ -106,13 +106,6 @@ namespace SoundExplorers.Controller {
       Debug.WriteLine($"MainGridController.OnRowEnter: row {rowIndex} of {List.Count}");
       if (!IsPopulating) {
         List.OnRowEnter(rowIndex);
-      }
-      if (IsJustPopulated) {
-        if (EditorController.IsParentGridToBeShown) {
-          Grid.CellColorScheme.Invert();
-        }
-        IsJustPopulated = false;
-        EditorController.View.SetCursorToDefault();
       }
     }
 

@@ -49,9 +49,10 @@ namespace SoundExplorers.Controller {
     public virtual void OnPopulatedAsync() {
       Debug.WriteLine($"GridControllerBase.OnPopulatedAsync {Grid.Name}");
       IsPopulating = false;
-      if (Grid.RowCount > 0) {
+      if (Grid.RowCount > 1) {
         Grid.MakeRowCurrent(Grid.RowCount - 1);
       }
+      EditorController.View.SetCursorToDefault();
     }
 
     public void Populate(IList? list = null) {
