@@ -25,15 +25,6 @@ namespace SoundExplorers.Model {
     [NotNull] string EntityTypeName { get; }
 
     /// <summary>
-    ///   For unknown reason, the grid's RowRemoved event is raised 2 or 3 times
-    ///   while data is being loaded into the grid.
-    ///   So this indicates whether the data has been completely loaded
-    ///   and that it the RowRemoved event may indicate that
-    ///   an entity deletion is required.
-    /// </summary>
-    bool IsDataLoadComplete { get; }
-
-    /// <summary>
     ///   Gets whether the current grid row is the insertion row,
     ///   which is for adding new entities and is located at the bottom of the grid.
     /// </summary>

@@ -88,15 +88,6 @@ namespace SoundExplorers.Model {
     private bool HasRowBeenEdited { get; set; }
 
     /// <summary>
-    ///   For unknown reason, the grid's RowRemoved event is raised 2 or 3 times
-    ///   while data is being loaded into the grid.
-    ///   So this indicates whether the data has been completely loaded
-    ///   and that it the RowRemoved event may indicate that
-    ///   an entity deletion is required.
-    /// </summary>
-    public bool IsDataLoadComplete { get; private set; }
-
-    /// <summary>
     ///   Gets whether the current grid row is the insertion row,
     ///   which is for adding new entities and is located at the bottom of the grid.
     /// </summary>
@@ -400,7 +391,6 @@ namespace SoundExplorers.Model {
       switch (e.ListChangedType) {
         case ListChangedType.ItemAdded: // Insertion row entered
           //Debug.WriteLine("ListChangedType.ItemAdded: Insertion row entered");
-          IsDataLoadComplete = true;
           IsInsertionRowCurrent = true;
           break;
         case ListChangedType.ItemChanged: // Cell edit completed

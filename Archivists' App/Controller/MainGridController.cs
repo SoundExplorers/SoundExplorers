@@ -129,7 +129,7 @@ namespace SoundExplorers.Controller {
       // data is being loaded into the grid. Also, the grid row might have been removed
       // because of an insertion error, in which case the entity will not have been
       // persisted (rowIndex == Count).
-      if (List.IsDataLoadComplete && rowIndex < List.Count) {
+      if (!IsPopulating && rowIndex < List.Count) {
         try {
           List.DeleteEntity(rowIndex);
           Grid.OnRowAddedOrDeleted();
