@@ -31,9 +31,9 @@ namespace SoundExplorers.Model {
     ///   Base constructor for derived entity list classes.
     /// </summary>
     /// <param name="parentListType">
-    ///   The type of (read-only) parent list (IEntityList)
-    ///   required when this is the (updatable) main list.
-    ///   Null if a parent list is not required when this is the main list.
+    ///   The type of (read-only) parent list (IEntityList) required when this is the
+    ///   (updatable) main list. Null if a parent list is not required when this is the
+    ///   main list.
     /// </param>
     protected EntityListBase(Type parentListType = null) {
       if (parentListType != null) {
@@ -72,14 +72,13 @@ namespace SoundExplorers.Model {
       (TypedBindingList<TEntity, TBindingItem>)BindingList;
 
     /// <summary>
-    ///   Gets the binding list representing the list of entities
-    ///   and bound to the grid.
+    ///   Gets the binding list representing the list of entities and bound to the grid.
     /// </summary>
     public IBindingList BindingList { get; private set; }
 
     /// <summary>
-    ///   Gets metadata for the columns of the editor grid that represents
-    ///   the list of entities.
+    ///   Gets metadata for the columns of the editor grid that represents the list of
+    ///   entities.
     /// </summary>
     public BindingColumnList Columns =>
       _columns ??= CreateColumnsWithSession();
@@ -88,28 +87,26 @@ namespace SoundExplorers.Model {
     private bool HasRowBeenEdited { get; set; }
 
     /// <summary>
-    ///   Gets whether the current grid row is the insertion row,
-    ///   which is for adding new entities and is located at the bottom of the grid.
+    ///   Gets whether the current grid row is the insertion row, which is for adding new
+    ///   entities and is located at the bottom of the grid.
     /// </summary>
     /// <remarks>
-    ///   What we here call the insertion row
-    ///   is nor necessarily the grid's new (i.e. empty) row.
-    ///   Rather it is the row that, if committed, will provide the data for an entity
-    ///   to be inserted into the database.
-    ///   The new row becomes the insertion row when entered
-    ///   (see <see cref="BindingList_ListChanged" />)
-    ///   and ceases to be the insertion row
-    ///   when and if it is left without having been edited.
-    ///   The insertion row ceases to be the new row once any of its cells is edited:
+    ///   TODO: Check reliability of IsInsertionRowCurrent throughout when the main grid has been entered from the parent grid.  
+    ///   What we here call the insertion row is not necessarily the grid's new (i.e.
+    ///   empty) row. Rather it is the row that, if committed, will provide the data for
+    ///   an entity to be inserted into the database. The new row becomes the insertion
+    ///   row when entered (see <see cref="BindingList_ListChanged" />) and ceases to be
+    ///   the insertion row when and if it is left without having been edited. The
+    ///   insertion row ceases to be the new row once any of its cells has been edited:
     ///   at that point, an empty new row is automatically added below the insertion row.
-    ///   Therefore although the insertion row, if it exists,
-    ///   is not necessarily the new row, it is always the current row.
+    ///   Therefore although the insertion row, if it exists, is not necessarily the new
+    ///   row, it is always the current row.
     /// </remarks>
     public bool IsInsertionRowCurrent { get; private set; }
 
     /// <summary>
-    ///   Gets or sets whether this is a (read-only) parent list.
-    ///   False (the default) if this is the (updatable) main (and maybe only) list.
+    ///   Gets or sets whether this is a (read-only) parent list. False (the default) if
+    ///   this is the (updatable) main (and maybe only) list.
     ///   TODO Set EntityListBase.IsParentList (currently just done in tests)
     /// </summary>
     public bool IsParentList { get; init; }
@@ -124,8 +121,8 @@ namespace SoundExplorers.Model {
     public Type ParentListType { get; }
 
     /// <summary>
-    ///   Gets or sets the session to be used for accessing the database.
-    ///   The setter should only be needed for testing.
+    ///   Gets or sets the session to be used for accessing the database. The setter
+    ///   should only be needed for testing.
     /// </summary>
     public SessionBase Session {
       get => _session ??= Global.Session;
@@ -133,8 +130,8 @@ namespace SoundExplorers.Model {
     }
 
     /// <summary>
-    ///   Deletes the entity at the specified row index
-    ///   from the database and removes it from the list.
+    ///   Deletes the entity at the specified row index from the database and removes it
+    ///   from the list.
     /// </summary>
     /// <param name="rowIndex">
     ///   Zero-based row index.
@@ -160,9 +157,9 @@ namespace SoundExplorers.Model {
     }
 
     /// <summary>
-    ///   Derived classes that can be parent lists must
-    ///   return a list of the child entities of the entity at the specified row index
-    ///   that are to populate the main list when this is the parent list.
+    ///   Derived classes that can be parent lists must return a list of the child
+    ///   entities of the entity at the specified row index that are to populate the main
+    ///   list when this is the parent list.
     /// </summary>
     /// <param name="rowIndex">
     ///   Zero-based row index.
@@ -183,10 +180,9 @@ namespace SoundExplorers.Model {
     ///   Zero-based row index.
     /// </param>
     /// <remarks>
-    ///   This is called when the grid's RowEnter event is raised.
-    ///   If the row is the insertion row,
-    ///   this will be called after the ItemAdded ListChangedType
-    ///   of the BindingList's ListChanged event.
+    ///   This is called when the grid's RowEnter event is raised. If the row is the
+    ///   insertion row, this will be called after the ItemAdded ListChangedType of the
+    ///   BindingList's ListChanged event.
     /// </remarks>
     public void OnRowEnter(int rowIndex) {
       Debug.WriteLine($"EntityListBase.OnRowEnter: row {rowIndex}");
@@ -199,8 +195,8 @@ namespace SoundExplorers.Model {
         // Not forced to reenter row to fix an update error
         //Debug.WriteLine("    Creating BackupBindingItem");
         //
-        // IsInsertionRowCurrent is not reliable here:
-        // it does not work if we are entering the main grid from the parent grid.
+        // IsInsertionRowCurrent is not reliable here: it does not work if we are
+        // entering the main grid from the parent grid.
         // BackupBindingItem = !IsInsertionRowCurrent
         BackupBindingItem = rowIndex < Count
           ? GetBindingItem(rowIndex).CreateBackup()
@@ -209,19 +205,18 @@ namespace SoundExplorers.Model {
     }
 
     /// <summary>
-    ///   If the specified grid row is new or its data has changed,
-    ///   adds (if new) or updates the corresponding the entity
-    ///   on the database with the row data and
+    ///   If the specified grid row is new or its data has changed, adds (if new) or
+    ///   updates the corresponding the entity on the database with the row data and
     ///   saves the entity to the database.
     /// </summary>
     /// <param name="rowIndex">
     ///   Zero-based row index.
     /// </param>
     /// <remarks>
-    ///   Though this is called when the grid's RowValidated event is raised,
-    ///   that actually happens even if the user did no edits,
-    ///   when any row left but after the final ItemChanged ListChangedType,
-    ///   if any, of the BindingList's ListChanged event.
+    ///   Though this is called when the grid's RowValidated event is raised, that
+    ///   actually happens even if the user did no edits, when any row left but after
+    ///   the final ItemChanged ListChangedType, if any, of the BindingList's ListChanged
+    ///   event.
     /// </remarks>
     /// <exception cref="DatabaseUpdateErrorException">
     ///   A database update error occured.
@@ -261,16 +256,14 @@ namespace SoundExplorers.Model {
     ///   Populates and sorts the list and table.
     /// </summary>
     /// <param name="list">
-    ///   Optionally specifies the required list of entities.
-    ///   If null, the default, all entities of the class's entity type
-    ///   will be fetched from the database.
+    ///   Optionally specifies the required list of entities. If null, the default, all
+    ///   entities of the class's entity type will be fetched from the database.
     /// </param>
     /// <param name="createBindingList">
-    ///   Optionally specifies whether the <see cref="BindingList" />,
-    ///   which will be bound to a grid in the editor window,
-    ///   is to be populated along with the list of entities.
-    ///   Default: true.
-    ///   Set to false if entity list is not to be used to populate a grid.
+    ///   Optionally specifies whether the <see cref="BindingList" />, which will be
+    ///   bound to a grid in the editor window, is to be populated along with the list of
+    ///   entities. Default: true. Set to false if entity list is not to be used to
+    ///   populate a grid.
     /// </param>
     public virtual void Populate(IList list = null, bool createBindingList = true) {
       Clear();
@@ -349,9 +342,8 @@ namespace SoundExplorers.Model {
     }
 
     /// <summary>
-    ///   Adds a new entity to the list with the data in the specified grid row,
-    ///   which should be the grid's insertion row,
-    ///   and saves the entity to the database.
+    ///   Adds a new entity to the list with the data in the specified grid row, which
+    ///   should be the grid's insertion row, and saves the entity to the database.
     /// </summary>
     /// <param name="rowIndex">
     ///   Zero-based row index.
@@ -414,9 +406,8 @@ namespace SoundExplorers.Model {
       if (newKey == originalKey) {
         return;
       }
-      // Entity list could be a sorted list. Duplicate check might be faster.
-      // But it would be a big job to do and I don't think there will be
-      // a performance problem.
+      // Entity list could be a sorted list. Duplicate check might be faster. But it
+      // would be a big job to do and I don't think there will be a performance problem.
       if ((from entity in this where entity.Key == newKey select entity).Any()) {
         string message =
           $"Another {EntityTypeName} with key '{newKey}' already exists.";
@@ -428,8 +419,8 @@ namespace SoundExplorers.Model {
     private DatabaseUpdateErrorException CreateDatabaseUpdateErrorException(
       [NotNull] Exception exception, int rowIndex) {
       if (!IsDatabaseUpdateError(exception)) {
-        // Terminal error.  In the Release compilation,
-        // the stack trace will be shown by the terminal error handler in Program.cs.
+        // Terminal error.  In the Release compilation, the stack trace will be shown by
+        // the terminal error handler in Program.cs.
         //Debug.WriteLine(exception);
         throw exception;
       }
@@ -461,42 +452,15 @@ namespace SoundExplorers.Model {
     }
 
     /// <summary>
-    ///   Returns whether the specified exception indicates that,
-    ///   for an anticipated reason, a requested database update could not be done,
-    ///   in which case the exception's message will need to be shown to the user to
-    ///   explain the error that cause the update to be disallowed.
-    ///   If false, the exception should be treated as a terminal error.
+    ///   Returns whether the specified exception indicates that, for an anticipated
+    ///   reason, a requested database update could not be done, in which case the
+    ///   exception's message will need to be shown to the user to explain the error that
+    ///   cause the update to be disallowed. If false, the exception should be treated as
+    ///   a terminal error.
     /// </summary>
     private static bool IsDatabaseUpdateError(Exception exception) {
       return exception is ConstraintException; // Includes PropertyConstraintException
     }
-
-    // /// <summary>
-    // ///   Saves changes to an existing entity.
-    // /// </summary>
-    // /// <remarks>
-    // ///   For reasons I don't fully understand,
-    // ///   even though the individual property values
-    // ///   of the entity have already been updated,
-    // ///   including calling UpdateNonIndexField for each property,
-    // ///   we still have to call UpdateNonIndexField one more time,
-    // ///   now that row validation is complete,
-    // ///   in order to save the changes to the database.
-    // ///   <para>
-    // ///     Because validation by property has already been done,
-    // ///     user errors are not expected at this stage.
-    // ///   </para>
-    // /// </remarks>
-    // /// <param name="rowIndex">Zero-based row index</param>
-    // private void SaveChangesToExistingEntity(int rowIndex) {
-    //   var entity = this[rowIndex];
-    //   Session.BeginUpdate();
-    //   try {
-    //     entity.UpdateNonIndexField();
-    //   } finally {
-    //     Session.Commit();
-    //   }
-    // }
 
     private void UpdateExistingEntityProperty(
       int rowIndex, [NotNull] string propertyName) {
