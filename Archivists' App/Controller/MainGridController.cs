@@ -25,6 +25,8 @@ namespace SoundExplorers.Controller {
     protected virtual StatementType LastChangeAction =>
       List.LastDatabaseUpdateErrorException.ChangeAction;
 
+    // internal int LastCurrentRowIndex { get; set; }
+
     /// <summary>
     ///   Gets whether the current main grid row is the insertion row,
     ///   which is for adding new entities and is located at the bottom of the grid.
@@ -109,6 +111,7 @@ namespace SoundExplorers.Controller {
       // Debug.WriteLine(
       //   "MainGridController.OnRowEnter:  Any row entered (after ItemAdded if insertion row)");
       Debug.WriteLine($"MainGridController.OnRowEnter: row {rowIndex} of {List.Count}");
+      // LastCurrentRowIndex = -1;
       if (!IsPopulating) {
         List.OnRowEnter(rowIndex);
       }

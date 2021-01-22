@@ -13,7 +13,6 @@ namespace SoundExplorers.Controller {
     string Name { get; }
     
     int RowCount { get; }
-    void Focus();
     
     /// <summary>
     ///   Makes the specified row current, which will set focus and raise OnRowEnter.
@@ -30,5 +29,15 @@ namespace SoundExplorers.Controller {
     ///   from the database.
     /// </param>
     void Populate(IList? list = null);
+    
+    /// <summary>
+    ///   Focuses the grid.
+    /// </summary>
+    /// <remarks>
+    ///   Where two grids are shown, their colour schemes are swapped round, indicating
+    ///   which is now the current grid by having the usual colour scheme inverted on the
+    ///   other grid.
+    /// </remarks>
+    void SetFocus();
   }
 }

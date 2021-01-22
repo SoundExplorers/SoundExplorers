@@ -130,7 +130,7 @@ namespace SoundExplorers.View {
 
     private void EditMenu_DropDown_Opening(object? sender, CancelEventArgs e) {
       if (MdiChildren.Any()) {
-        EditorView?.FocusedGrid?.EnableOrDisableMenuItems(
+        EditorView?.CurrentGrid?.EnableOrDisableMenuItems(
           EditCutMenuItem, EditCopyMenuItem, EditPasteMenuItem,
           EditDeleteMenuItem,
           EditSelectAllMenuItem, EditSelectRowMenuItem, EditDeleteSelectedRowsMenuItem);
@@ -142,31 +142,31 @@ namespace SoundExplorers.View {
     }
 
     private void EditCutMenuItem_Click(object? sender, EventArgs e) {
-      EditorView?.FocusedGrid?.ContextMenu.Cut();
+      EditorView?.CurrentGrid?.ContextMenu.Cut();
     }
 
     private void EditCopyMenuItem_Click(object? sender, EventArgs e) {
-      EditorView?.FocusedGrid?.ContextMenu.Copy();
+      EditorView?.CurrentGrid?.ContextMenu.Copy();
     }
 
     private void EditPasteMenuItem_Click(object? sender, EventArgs e) {
-      EditorView?.FocusedGrid?.ContextMenu.Paste();
+      EditorView?.CurrentGrid?.ContextMenu.Paste();
     }
 
     private void EditDeleteMenuItem_Click(object? sender, EventArgs e) {
-      EditorView?.FocusedGrid?.ContextMenu.Delete();
+      EditorView?.CurrentGrid?.ContextMenu.Delete();
     }
 
     private void EditSelectAllMenuItem_Click(object? sender, EventArgs e) {
-      EditorView?.FocusedGrid?.ContextMenu.SelectAll();
+      EditorView?.CurrentGrid?.ContextMenu.SelectAll();
     }
 
     private void EditSelectRowMenuItem_Click(object? sender, EventArgs e) {
-      EditorView?.FocusedGrid?.ContextMenu.SelectRow();
+      EditorView?.CurrentGrid?.ContextMenu.SelectRow();
     }
 
     private void EditDeleteSelectedRowsMenuItem_Click(object? sender, EventArgs e) {
-      EditorView?.FocusedGrid?.ContextMenu.DeleteSelectedRows();
+      EditorView?.CurrentGrid?.ContextMenu.DeleteSelectedRows();
     }
 
     private void FileMenu_DropDown_Opening(object? sender, CancelEventArgs e) {

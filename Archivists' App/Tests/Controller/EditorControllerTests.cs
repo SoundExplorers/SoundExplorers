@@ -363,17 +363,30 @@ namespace SoundExplorers.Tests.Controller {
     }
 
     [Test]
+    public void FocusCurrentGrid() {
+      CreateControllers(typeof(SetList));
+      View.CurrentGrid = null;
+      Assert.IsFalse(ParentGrid.Focused, "ParentGrid.Focused before #1");
+      Controller.FocusCurrentGrid();
+      Assert.IsTrue(ParentGrid.Focused, "ParentGrid.Focused after #1");
+      View.CurrentGrid = MainGrid;
+      Assert.IsFalse(MainGrid.Focused, "MainGrid.Focused before #2");
+      Controller.FocusCurrentGrid();
+      Assert.IsTrue(MainGrid.Focused, "MainGrid.Focused after #2");
+    }
+
+    [Test]
     public void FocusGrids() {
       CreateControllers(typeof(SetList));
-      ParentGrid.Focus();
+      ParentGrid.SetFocus();
       Assert.IsFalse(MainGrid.Focused,
-        "MainGrid.Focused after ParentGrid.Focus");
+        "MainGrid.Focused after ParentGrid.SetFocus");
       Assert.AreEqual(1, MainGrid.CellColorScheme.InvertCount,
-        "MainGrid.CellColorScheme.InvertCount after ParentGrid.Focus");
+        "MainGrid.CellColorScheme.InvertCount after ParentGrid.SetFocus");
       Assert.IsTrue(ParentGrid.Focused,
-        "ParentGrid.Focused after ParentGrid.Focus");
+        "ParentGrid.Focused after ParentGrid.SetFocus");
       Assert.AreEqual(1, ParentGrid.CellColorScheme.RestoreToDefaultCount,
-        "ParentGrid.CellColorScheme.RestoreToDefaultCount after ParentGrid.Focus");
+        "ParentGrid.CellColorScheme.RestoreToDefaultCount after ParentGrid.SetFocus");
       Controller.FocusUnfocusedGridIfAny();
       Assert.IsTrue(MainGrid.Focused,
         "MainGrid.Focused after FocusUnfocusedGridIfAny #1");
@@ -523,7 +536,7 @@ namespace SoundExplorers.Tests.Controller {
         "SetMouseCursorToWaitCount after Populate");
       Assert.AreEqual(1, View.SetMouseCursorToDefaultCount,
         "SetMouseCursorToDefaultCount after Populate");
-      MainGrid.Focus();
+      MainGrid.SetFocus();
       ParentGridController.OnRowEnter(0);
       Assert.AreEqual(3, MainGridController.BindingList?.Count,
         "Main list count when 1st parent selected");

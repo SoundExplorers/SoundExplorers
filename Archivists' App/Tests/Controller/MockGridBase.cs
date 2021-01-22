@@ -24,11 +24,6 @@ namespace SoundExplorers.Tests.Controller {
 
     public abstract int RowCount { get; }
 
-    public virtual void Focus() {
-      Focused = true;
-      Controller.OnFocusing();
-    }
-
     public void MakeRowCurrent(int rowIndex, bool async = false) {
       //Debug.WriteLine($"MockGridBase.MakeRowCurrent: row {rowIndex}");
       MakeRowCurrentCount++;
@@ -42,6 +37,11 @@ namespace SoundExplorers.Tests.Controller {
 
     public void Populate(IList? list = null) {
       Controller.Populate(list);
+    }
+
+    public virtual void SetFocus() {
+      Focused = true;
+      Controller.OnFocusing();
     }
   }
 }

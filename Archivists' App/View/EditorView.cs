@@ -19,7 +19,7 @@ namespace SoundExplorers.View {
       ImageSplitContainer.GotFocus += SplitContainer_GotFocus;
     }
 
-    public GridBase? FocusedGrid { get; internal set; }
+    public GridBase? CurrentGrid { get; internal set; }
     private MainView MainView => (MainView)MdiParent;
     private bool IsClosed { get; set; }
 
@@ -42,7 +42,8 @@ namespace SoundExplorers.View {
     private bool IsFixingFocus { get; set; }
 
     private SizeableFormOptions SizeableFormOptions { get; set; } = null!;
-    private EditorController Controller { get; set; } = null!;
+    internal EditorController Controller { get; private set; } = null!;
+    IGrid? IEditorView.CurrentGrid => CurrentGrid;
     IMainGrid IEditorView.MainGrid => MainGrid;
     IParentGrid IEditorView.ParentGrid => ParentGrid;
 
@@ -187,39 +188,6 @@ namespace SoundExplorers.View {
         new[] {FittedPictureBox1.ImageLocation});
       FittedPictureBox1.DoDragDrop(
         data, DragDropEffects.Copy | DragDropEffects.None);
-    }
-
-    /// <summary>
-    ///   Focuses the specified grid.
-    /// </summary>
-    /// <param name="grid">
-    ///   The grid to be focused.
-    /// </param>
-    /// <remarks>
-    ///   Where two grids are shown, their colour schemes are swapped round, indicating
-    ///   which is now the current grid by having the usual colour scheme inverted on the
-    ///   other grid.
-    /// </remarks>
-    internal void FocusGrid(GridBase grid) {
-      if (!Controller.IsParentGridToBeShown) {
-        grid.Focus();
-        return;
-      }
-      // A read-only related grid for the parent table is shown above the main grid.
-      var unfocusedGrid = GetOtherGrid(grid);
-      // By trial an error, I found that this complicated rigmarole was required to
-      // properly shift the focus programatically, i.e. in EditorView_KeyDown to
-      // implement doing it with the F6 key.
-      unfocusedGrid.Enabled = false;
-      grid.Enabled = true;
-      Refresh();
-      grid.Focus();
-      Refresh();
-      unfocusedGrid.Enabled = true;
-    }
-
-    private GridBase GetOtherGrid(IGrid grid) {
-      return (GridBase)Controller.GetOtherGrid(grid);
     }
 
     /// <summary>
@@ -397,7 +365,7 @@ namespace SoundExplorers.View {
     /// </remarks>
     private void SplitContainer_GotFocus(object? sender, EventArgs e) {
       Debug.WriteLine("EditorView.GridSplitContainer_GotFocus");
-      BeginInvoke((Action)delegate { FocusGrid(FocusedGrid ?? ParentGrid); });
+      BeginInvoke((Action)Controller.FocusCurrentGrid);
     }
 
     protected override void WndProc(ref Message m) {

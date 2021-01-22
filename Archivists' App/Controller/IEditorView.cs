@@ -1,5 +1,6 @@
 ﻿namespace SoundExplorers.Controller {
   public interface IEditorView : IView<EditorController> {
+    IGrid? CurrentGrid { get; }
     IMainGrid MainGrid { get; }
     IParentGrid ParentGrid { get; }
     

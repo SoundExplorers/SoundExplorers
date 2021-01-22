@@ -32,11 +32,17 @@ namespace SoundExplorers.Controller {
       return column.DisplayName ?? columnName;
     }
 
+    public IGrid GetOtherGrid() {
+      return Grid == EditorController.View.MainGrid
+        ? EditorController.View.ParentGrid
+        : EditorController.View.MainGrid;
+    }
+
     public void OnFocusing() {
       Debug.WriteLine($"GridControllerBase.OnFocusing {Grid.Name}");
       if (EditorController.IsParentGridToBeShown && !IsPopulating) {
         Grid.CellColorScheme.RestoreToDefault();
-        EditorController.GetOtherGrid(Grid).CellColorScheme.Invert();
+        GetOtherGrid().CellColorScheme.Invert();
       }
     }
 

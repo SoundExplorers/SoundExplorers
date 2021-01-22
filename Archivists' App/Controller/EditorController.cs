@@ -125,18 +125,25 @@ namespace SoundExplorers.Controller {
       return new(name);
     }
 
-    public void FocusUnfocusedGridIfAny() {
-      if (IsParentGridToBeShown) {
-        if (View.ParentGrid.Focused) {
-          View.MainGrid.Focus();
-        } else {
-          View.ParentGrid.Focus();
-        }
+    public void FocusCurrentGrid() {
+      Debug.WriteLine("EditorController.FocusCurrentGrid");
+      if (View.CurrentGrid != null) {
+        View.CurrentGrid.SetFocus();
+      } else {
+        View.ParentGrid.SetFocus();
       }
     }
 
-    public IGrid GetOtherGrid(IGrid grid) {
-      return grid == View.MainGrid ? (IGrid)View.ParentGrid : View.MainGrid;
+    public void FocusUnfocusedGridIfAny() {
+      if (IsParentGridToBeShown) {
+        if (View.ParentGrid.Focused) {
+          Debug.WriteLine("EditorController.FocusUnfocusedGridIfAny: focusing MainGrid with keyboard shortcut");
+          View.MainGrid.SetFocus();
+        } else {
+          Debug.WriteLine("EditorController.FocusUnfocusedGridIfAny: focusing ParentGrid with keyboard shortcut");
+          View.ParentGrid.SetFocus();
+        }
+      }
     }
 
     /// <summary>
