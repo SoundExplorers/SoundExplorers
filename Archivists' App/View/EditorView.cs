@@ -255,7 +255,7 @@ namespace SoundExplorers.View {
     /// </remarks>
     private void MainGrid_RowsRemoved(
       object? sender, DataGridViewRowsRemovedEventArgs e) {
-      MainGrid.Controller.OnRowValidated(e.RowIndex);
+      MainGrid.Controller.OnRowRemoved(e.RowIndex);
     }
 
     /// <summary>
