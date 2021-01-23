@@ -10,8 +10,8 @@ namespace SoundExplorers.Tests.Controller {
 
     internal MockGridCellColorScheme CellColorScheme { get; }
     internal int MakeRowCurrentCount { get; private set; }
-    internal int MakeRowCurrentRowIndex { get; private set; }
     protected GridControllerBase Controller { get; set; } = null!;
+    public int CurrentRowIndex { get; protected set; }
     IGridCellColorScheme IGrid.CellColorScheme => CellColorScheme;
     public bool Focused { get; internal set; }
 
@@ -27,7 +27,7 @@ namespace SoundExplorers.Tests.Controller {
     public void MakeRowCurrent(int rowIndex, bool async = false) {
       //Debug.WriteLine($"MockGridBase.MakeRowCurrent: row {rowIndex}");
       MakeRowCurrentCount++;
-      MakeRowCurrentRowIndex = rowIndex;
+      CurrentRowIndex = rowIndex;
       Controller.OnRowEnter(rowIndex);
     }
 
@@ -42,6 +42,10 @@ namespace SoundExplorers.Tests.Controller {
     public virtual void SetFocus() {
       Focused = true;
       Controller.OnFocusing();
+    }
+
+    internal void SetCurrentRowIndex(int rowIndex) {
+      CurrentRowIndex = rowIndex;
     }
   }
 }

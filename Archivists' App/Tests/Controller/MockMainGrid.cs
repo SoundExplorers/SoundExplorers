@@ -10,10 +10,11 @@ namespace SoundExplorers.Tests.Controller {
     internal int EditCurrentCellCount { get; private set; }
     internal int MakeCellCurrentCount { get; private set; }
     internal int MakeCellCurrentColumnIndex { get; private set; }
-    internal int MakeCellCurrentRowIndex { get; private set; }
     internal int OnRowAddedOrDeletedCount { get; private set; }
     internal int RestoreCurrentRowCellErrorValueCount { get; private set; }
     internal int SelectCurrentRowOnlyCount { get; private set; }
+    
+    MainGridController IMainGrid.Controller => Controller;
 
     /// <summary>
     ///   Gets the grid row count including the new row. In the application, RowCount is
@@ -43,7 +44,7 @@ namespace SoundExplorers.Tests.Controller {
     public void MakeCellCurrent(int rowIndex, int columnIndex) {
       MakeCellCurrentCount++;
       MakeCellCurrentColumnIndex = columnIndex;
-      MakeCellCurrentRowIndex = rowIndex;
+      CurrentRowIndex = rowIndex;
     }
 
     public override void SetFocus() {
@@ -51,6 +52,7 @@ namespace SoundExplorers.Tests.Controller {
       if (Controller.EditorController.IsParentGridToBeShown) {
         ((MockGridBase)Controller.EditorController.View.ParentGrid).Focused = false;
       }
+      Controller.OnGotFocus();
     }
 
     public void OnRowAddedOrDeleted() {

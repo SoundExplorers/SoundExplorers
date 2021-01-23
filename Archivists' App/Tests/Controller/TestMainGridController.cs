@@ -14,9 +14,10 @@ namespace SoundExplorers.Tests.Controller {
     internal new EditorController EditorController => base.EditorController;
     internal bool TestUnsupportedLastChangeAction { get; set; }
 
-    internal void CreateAndGoToInsertionRow() {
+    internal void CreateAndGoToNewRow() {
       List.BindingList.AddNew();
-      OnRowEnter(List.BindingList.Count - 1);
+      ((MockMainGrid)Grid).SetCurrentRowIndex(List.BindingList.Count - 1); 
+      OnRowEnter(Grid.CurrentRowIndex);
     }
 
     internal void SetComboBoxCellValue(

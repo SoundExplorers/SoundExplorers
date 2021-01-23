@@ -10,14 +10,14 @@ namespace SoundExplorers.Controller {
       grid, editorController) { }
 
     private new IParentGrid Grid => (IParentGrid)base.Grid;
-    private  bool IsJustPopulated { get; set; }
+    private bool IsJustPopulated { get; set; }
     private bool IsScrollingLastRowIntoView { get; set; }
 
     /// <summary>
     ///   Gets the list of entities represented in the grid.
     /// </summary>
     protected override IEntityList List => EditorController.ParentList!;
-    
+
     internal bool LastRowNeedsToBeScrolledIntoView {
       get {
         bool result = IsJustPopulated && List!.Count > 1;
@@ -25,12 +25,20 @@ namespace SoundExplorers.Controller {
         return result;
       }
     }
-    
+
     private int PreviousRowIndex { get; set; }
 
     public IList GetChildrenForMainList(int rowIndex) {
       Debug.WriteLine($"ParentGridController.GetChildrenForMainList: row {rowIndex}");
       return List.GetChildrenForMainList(rowIndex)!;
+    }
+
+    public override void OnFocusing() {
+      if (EditorController.View.MainGrid.Controller.LastCurrentRowIndex < 0) {
+        // Focusing by left mouse button click via Windows message
+        PrepareForFocus();
+      }
+      base.OnFocusing();
     }
 
     public override void OnPopulatedAsync() {
@@ -58,6 +66,12 @@ namespace SoundExplorers.Controller {
         EditorController.View.PopulateMainGridOnParentRowChanged(rowIndex);
       }
       PreviousRowIndex = rowIndex;
+    }
+
+    public void PrepareForFocus() {
+      Debug.WriteLine("ParentGridController.PrepareForFocus");
+      EditorController.View.MainGrid.Controller.LastCurrentRowIndex =
+        EditorController.View.MainGrid.CurrentRowIndex;
     }
 
     public override void Populate(IList? list = null) {

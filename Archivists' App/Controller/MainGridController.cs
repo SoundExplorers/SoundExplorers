@@ -8,7 +8,9 @@ namespace SoundExplorers.Controller {
     public MainGridController(
       // ReSharper disable once SuggestBaseTypeForParameter
       IMainGrid grid, EditorController editorController) :
-      base(grid, editorController) { }
+      base(grid, editorController) {
+      LastCurrentRowIndex = -1;
+    }
 
     private new IMainGrid Grid => (IMainGrid)base.Grid;
 
@@ -25,7 +27,7 @@ namespace SoundExplorers.Controller {
     protected virtual StatementType LastChangeAction =>
       List.LastDatabaseUpdateErrorException.ChangeAction;
 
-    // internal int LastCurrentRowIndex { get; set; }
+    internal int LastCurrentRowIndex { get; set; }
 
     /// <summary>
     ///   Gets whether the current main grid row is the insertion row,
@@ -91,6 +93,20 @@ namespace SoundExplorers.Controller {
       }
     }
 
+    /// <summary>
+    /// If the main grid's current row was the new row before focusing the parent grid,
+    /// then, on focusing the parent grid, the new row was removed, so the main grid's
+    /// last existing row became its current row. So, if focus has now been switched back
+    /// to the main grid, restore currency to the new row.
+    /// </summary>
+    public void OnGotFocus() {
+      Debug.WriteLine("MainGridController.OnGotFocus");
+      if (LastCurrentRowIndex >= 0 && LastCurrentRowIndex != Grid.CurrentRowIndex) {
+        Grid.MakeRowCurrent(LastCurrentRowIndex, true);
+        LastCurrentRowIndex = -1;
+      }
+    }
+
     public override void OnPopulatedAsync() {
       Debug.WriteLine("MainGridController.OnPopulatedAsync");
       if (EditorController.IsParentGridToBeShown) {
@@ -111,7 +127,6 @@ namespace SoundExplorers.Controller {
       // Debug.WriteLine(
       //   "MainGridController.OnRowEnter:  Any row entered (after ItemAdded if insertion row)");
       Debug.WriteLine($"MainGridController.OnRowEnter: row {rowIndex} of {List.Count}");
-      // LastCurrentRowIndex = -1;
       if (!IsPopulating) {
         List.OnRowEnter(rowIndex);
       }

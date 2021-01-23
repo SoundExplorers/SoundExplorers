@@ -64,7 +64,7 @@ namespace SoundExplorers.Tests.Controller {
         "SetMouseCursorToDefaultCount after Populate");
       var bindingList =
         (TypedBindingList<Event, EventBindingItem>)Controller.MainList.BindingList;
-      MainGridController.CreateAndGoToInsertionRow();
+      MainGridController.CreateAndGoToNewRow();
       bindingList[0].Date = event1Date;
       MainGridController.SetComboBoxCellValue(0, "Location", validLocationName);
       // Newsletter
@@ -93,7 +93,7 @@ namespace SoundExplorers.Tests.Controller {
       Assert.AreSame(validLocation, event1.Location, "event1.Location");
       Assert.AreSame(validNewsletter, event1.Newsletter, "event1.Newsletter");
       Assert.AreSame(validSeries, event1.Series, "event1.Series");
-      MainGridController.CreateAndGoToInsertionRow();
+      MainGridController.CreateAndGoToNewRow();
       bindingList[1].Date = event2Date;
       MainGridController.SetComboBoxCellValue(1, "Location", validLocationName);
       // Test that the user can reset the newsletter date to the special date
@@ -114,7 +114,7 @@ namespace SoundExplorers.Tests.Controller {
       var mainList = Controller.MainList;
       var bindingList =
         (TypedBindingList<Genre, NamedBindingItem<Genre>>)Controller.MainList.BindingList;
-      MainGridController.CreateAndGoToInsertionRow();
+      MainGridController.CreateAndGoToNewRow();
       bindingList[0].Name = name;
       Controller.IsClosing = true;
       // Called automatically when editor window is closing
@@ -142,7 +142,7 @@ namespace SoundExplorers.Tests.Controller {
       // The second Location cannot be deleted because it is a parent of 3 child Events.
       CreateControllers(typeof(LocationList));
       Controller.Populate(); // Populate grid
-      MainGridController.CreateAndGoToInsertionRow();
+      MainGridController.CreateAndGoToNewRow();
       MainGridController.OnRowRemoved(1);
       Assert.AreEqual(1, MainGrid.OnRowAddedOrDeletedCount, "OnRowAddedOrDeletedCount");
       Assert.AreEqual(2, Controller.MainList.Count, "MainList.Count");
@@ -160,11 +160,11 @@ namespace SoundExplorers.Tests.Controller {
       Controller.Populate();
       Assert.AreEqual(1, MainGrid.MakeRowCurrentCount,
         "MakeRowCurrentCount after Populate");
-      Assert.AreEqual(1, MainGrid.MakeRowCurrentRowIndex,
-        "MakeRowCurrentRowIndex after Populate");
+      Assert.AreEqual(1, MainGrid.CurrentRowIndex,
+        "CurrentRowIndex after Populate");
       var bindingList =
         (TypedBindingList<Genre, NamedBindingItem<Genre>>)Controller.MainList.BindingList;
-      MainGridController.CreateAndGoToInsertionRow();
+      MainGridController.CreateAndGoToNewRow();
       bindingList[1].Name = bindingList[0].Name;
       MainGridController.OnRowValidated(1);
       Assert.AreEqual(1, View.ShowErrorMessageCount,
@@ -173,10 +173,10 @@ namespace SoundExplorers.Tests.Controller {
       // been made current.
       Assert.AreEqual(3, MainGrid.MakeRowCurrentCount,
         "MakeRowCurrentCount after error message shown for duplicate insert");
-      Assert.AreEqual(1, MainGrid.MakeRowCurrentRowIndex,
-        "MakeRowCurrentRowIndex after error message shown for duplicate insert");
-      Assert.AreEqual(1, MainGrid.MakeRowCurrentRowIndex,
-        "MakeRowCurrentRowIndex after error message shown for duplicate insert");
+      Assert.AreEqual(1, MainGrid.CurrentRowIndex,
+        "CurrentRowIndex after error message shown for duplicate insert");
+      Assert.AreEqual(1, MainGrid.CurrentRowIndex,
+        "CurrentRowIndex after error message shown for duplicate insert");
     }
 
     [Test]
@@ -185,7 +185,7 @@ namespace SoundExplorers.Tests.Controller {
       Controller.Populate(); // Show an empty grid
       var bindingList =
         (TypedBindingList<Event, EventBindingItem>)Controller.MainList.BindingList;
-      MainGridController.CreateAndGoToInsertionRow();
+      MainGridController.CreateAndGoToNewRow();
       var event1Date = DateTime.Parse("2020/03/01");
       bindingList[0].Date = event1Date;
       MainGridController.OnRowValidated(0);
@@ -207,11 +207,11 @@ namespace SoundExplorers.Tests.Controller {
       var bindingList =
         (TypedBindingList<Location, NotablyNamedBindingItem<Location>>)Controller.MainList
           .BindingList;
-      MainGridController.CreateAndGoToInsertionRow();
+      MainGridController.CreateAndGoToNewRow();
       bindingList[0].Name = name1;
       bindingList[0].Notes = "Disestablishmentarianism";
       MainGridController.OnRowValidated(0);
-      MainGridController.CreateAndGoToInsertionRow();
+      MainGridController.CreateAndGoToNewRow();
       bindingList[1].Name = name2;
       bindingList[1].Notes = "Bob";
       MainGridController.OnRowValidated(1);
@@ -234,7 +234,7 @@ namespace SoundExplorers.Tests.Controller {
         "MakeCellCurrentCount after error message shown for duplicate rename");
       Assert.AreEqual(0, MainGrid.MakeCellCurrentColumnIndex,
         "MakeCellCurrentColumnIndex after error message shown for duplicate rename");
-      Assert.AreEqual(1, MainGrid.MakeCellCurrentRowIndex,
+      Assert.AreEqual(1, MainGrid.CurrentRowIndex,
         "MakeCellCurrentRowIndex after error message shown for duplicate rename");
       Assert.AreEqual(name2, bindingList[1].Name,
         "Original name restored after error message shown for duplicate rename");
@@ -268,7 +268,7 @@ namespace SoundExplorers.Tests.Controller {
       // The second Location cannot be deleted because it is a parent of 3 child Events.
       CreateControllers(typeof(LocationList));
       Controller.Populate(); // Populate grid
-      MainGridController.CreateAndGoToInsertionRow();
+      MainGridController.CreateAndGoToNewRow();
       MainGridController.OnRowEnter(1);
       MainGridController.OnRowRemoved(1);
       Assert.AreEqual(1, View.ShowErrorMessageCount,
@@ -363,6 +363,29 @@ namespace SoundExplorers.Tests.Controller {
     }
 
     [Test]
+    public void FixMainGridCurrentRowIndexOnRefocus() {
+      AddDataForSetList();
+      CreateControllers(typeof(SetList));
+      Controller.Populate(); // Populate parent and main grids
+      MainGrid.SetFocus();
+      MainGridController.CreateAndGoToNewRow();
+      int mainGridNewRowIndex = MainGrid.CurrentRowIndex;
+      ParentGrid.SetFocus();
+      // Simulate the problem that occurs when switching focus from the main grid to the
+      // the parent grid.  If the main grid's current row is the new row before focusing
+      // the parent grid, then, on focusing the parent grid, the new row is removed,
+      // so the main grid's last existing row becomes its current row.
+      MainGrid.MakeRowCurrent(mainGridNewRowIndex -1);
+      Assert.AreEqual(mainGridNewRowIndex -1, MainGrid.CurrentRowIndex, 
+        "Main grid current row index after focus switched to parent grid");
+      // Now test the fix. When focus is switched back to the main grid, we want to
+      // restore currency to the new row.
+      MainGrid.SetFocus();
+      Assert.AreEqual(mainGridNewRowIndex, MainGrid.CurrentRowIndex, 
+        "Main grid current row index after focus switched back to main grid");
+    }
+
+    [Test]
     public void FocusCurrentGrid() {
       CreateControllers(typeof(SetList));
       View.CurrentGrid = null;
@@ -405,6 +428,9 @@ namespace SoundExplorers.Tests.Controller {
         "ParentGrid.Focused after FocusUnfocusedGridIfAny #2");
       Assert.AreEqual(2, ParentGrid.CellColorScheme.RestoreToDefaultCount,
         "ParentGrid.CellColorScheme.RestoreToDefaultCount after FocusUnfocusedGridIfAny #2");
+      Controller.FocusUnfocusedGridIfAny();
+      Assert.IsTrue(MainGrid.Focused,
+        "MainGrid.Focused after FocusUnfocusedGridIfAny #3");
     }
 
     [Test]
@@ -417,7 +443,7 @@ namespace SoundExplorers.Tests.Controller {
       }
       CreateControllers(typeof(NewsletterList));
       Controller.Populate(); // Populate grid
-      MainGridController.CreateAndGoToInsertionRow();
+      MainGridController.CreateAndGoToNewRow();
       var exception = new FormatException("Potato is not a valid DateTime.");
       MainGridController.OnExistingRowCellEditError(3, "Date", exception);
       Assert.AreEqual(1, View.ShowErrorMessageCount, "ShowErrorMessageCount");
@@ -504,17 +530,7 @@ namespace SoundExplorers.Tests.Controller {
 
     [Test]
     public void OnParentGridRowEntered() {
-      Session.BeginUpdate();
-      try {
-        Data.AddEventTypesPersisted(1, Session);
-        Data.AddGenresPersisted(1, Session);
-        Data.AddLocationsPersisted(1, Session);
-        Data.AddEventsPersisted(2, Session);
-        Data.AddSetsPersisted(3, Session, Data.Events[0]);
-        Data.AddSetsPersisted(5, Session, Data.Events[1]);
-      } finally {
-        Session.Commit();
-      }
+      AddDataForSetList();
       CreateControllers(typeof(SetList));
       Assert.IsFalse(MainGrid.Focused, "MainGrid.Focused initially");
       Assert.IsFalse(ParentGrid.Focused, "ParentGrid.Focused initially");
@@ -522,7 +538,7 @@ namespace SoundExplorers.Tests.Controller {
         "Is Date column to be shown?");
       Assert.IsTrue(MainGridController.IsColumnToBeShown(nameof(SetBindingItem.SetNo)),
         "Is SetNo column to be shown?");
-      Controller.Populate(); // Populate grid
+      Controller.Populate(); // Populate parent and main grids
       Assert.AreEqual(1, View.OnParentAndMainGridsShownAsyncCount,
         "OnParentAndMainGridsShownAsyncCount after Populate");
       Assert.IsFalse(MainGrid.Focused, "MainGrid.Focused after Populate");
@@ -547,6 +563,20 @@ namespace SoundExplorers.Tests.Controller {
       CreateControllers(typeof(NewsletterList));
       MainGridController.ShowWarningMessage("Warning! Warning!");
       Assert.AreEqual(1, View.ShowWarningMessageCount);
+    }
+
+    private void AddDataForSetList() {
+      Session.BeginUpdate();
+      try {
+        Data.AddEventTypesPersisted(1, Session);
+        Data.AddGenresPersisted(1, Session);
+        Data.AddLocationsPersisted(1, Session);
+        Data.AddEventsPersisted(2, Session);
+        Data.AddSetsPersisted(3, Session, Data.Events[0]);
+        Data.AddSetsPersisted(5, Session, Data.Events[1]);
+      } finally {
+        Session.Commit();
+      }
     }
 
     private void CreateControllers(Type mainListType) {

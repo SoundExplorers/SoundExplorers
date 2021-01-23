@@ -67,6 +67,7 @@ namespace SoundExplorers.View {
       }
     }
 
+    public int CurrentRowIndex => CurrentRow?.Index ?? -1;
     public IGridCellColorScheme CellColorScheme { get; }
     bool IGrid.Focused => Focused;
 
@@ -121,8 +122,8 @@ namespace SoundExplorers.View {
     ///   which is now the current grid by having the usual colour scheme inverted on the
     ///   other grid.
     /// </remarks>
-    public void SetFocus() {
-      Debug.WriteLine($"GridBase.IGrid.SetFocus {Name}");
+    public virtual void SetFocus() {
+      Debug.WriteLine($"GridBase.SetFocus {Name}");
       if (!EditorView.Controller.IsParentGridToBeShown) {
         Focus();
         return;
