@@ -39,7 +39,8 @@ namespace SoundExplorers.Controller {
     ///   Gets the list of entities represented in the grid.
     /// </summary>
     protected override IEntityList List => EditorController.MainList;
-
+    
+    private IParentGrid ParentGrid => EditorController.View.ParentGrid;
     public string TableName => List.EntityTypeName;
 
     /// <summary>
@@ -115,8 +116,8 @@ namespace SoundExplorers.Controller {
       }
       base.OnPopulatedAsync();
       if (EditorController.IsParentGridToBeShown && 
-          EditorController.View.ParentGrid.Controller.LastRowNeedsToBeScrolledIntoView) {
-        EditorController.View.ParentGrid.Controller.ScrollLastRowIntoView();
+          ParentGrid.Controller.LastRowNeedsToBeScrolledIntoView) {
+        ParentGrid.Controller.ScrollLastRowIntoView();
       } else {
         // Show that the population process is finished.
         EditorController.View.SetMouseCursorToDefault();

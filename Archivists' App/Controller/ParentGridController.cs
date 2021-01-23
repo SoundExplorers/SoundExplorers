@@ -10,6 +10,7 @@ namespace SoundExplorers.Controller {
       grid, editorController) { }
 
     private new IParentGrid Grid => (IParentGrid)base.Grid;
+    private IMainGrid MainGrid => EditorController.View.MainGrid;
     private bool IsJustPopulated { get; set; }
     private bool IsScrollingLastRowIntoView { get; set; }
 
@@ -34,7 +35,7 @@ namespace SoundExplorers.Controller {
     }
 
     public override void OnFocusing() {
-      if (EditorController.View.MainGrid.Controller.LastCurrentRowIndex < 0) {
+      if (MainGrid.Controller.LastCurrentRowIndex < 0) {
         // Focusing by left mouse button click via Windows message
         PrepareForFocus();
       }
@@ -70,8 +71,8 @@ namespace SoundExplorers.Controller {
 
     public void PrepareForFocus() {
       Debug.WriteLine("ParentGridController.PrepareForFocus");
-      EditorController.View.MainGrid.Controller.LastCurrentRowIndex =
-        EditorController.View.MainGrid.CurrentRowIndex;
+      MainGrid.Controller.LastCurrentRowIndex =
+        MainGrid.CurrentRowIndex;
     }
 
     public override void Populate(IList? list = null) {
