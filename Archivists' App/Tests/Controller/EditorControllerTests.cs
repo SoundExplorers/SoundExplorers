@@ -377,12 +377,23 @@ namespace SoundExplorers.Tests.Controller {
       // so the main grid's last existing row becomes its current row.
       MainGrid.MakeRowCurrent(mainGridNewRowIndex -1);
       Assert.AreEqual(mainGridNewRowIndex -1, MainGrid.CurrentRowIndex, 
-        "Main grid current row index after focus switched to parent grid");
+        "Main grid current row index after focus switched to parent grid programatically");
       // Now test the fix. When focus is switched back to the main grid, we want to
       // restore currency to the new row.
       MainGrid.SetFocus();
       Assert.AreEqual(mainGridNewRowIndex, MainGrid.CurrentRowIndex, 
-        "Main grid current row index after focus switched back to main grid");
+        "Main grid current row index after focus switched back to main grid #1");
+      // And test that the same fix works if the parent grid is focused by a left mouse
+      // button click via a Windows message instead of programatically.
+      ParentGridController.OnFocusing();
+      // Simulate the problem.
+      MainGrid.MakeRowCurrent(mainGridNewRowIndex -1);
+      Assert.AreEqual(mainGridNewRowIndex -1, MainGrid.CurrentRowIndex, 
+        "Main grid current row index after focus switched to parent grid via Windows message");
+      // Test the fix.
+      MainGrid.SetFocus();
+      Assert.AreEqual(mainGridNewRowIndex, MainGrid.CurrentRowIndex, 
+        "Main grid current row index after focus switched back to main grid #2");
     }
 
     [Test]
