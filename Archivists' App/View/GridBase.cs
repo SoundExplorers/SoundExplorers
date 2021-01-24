@@ -124,8 +124,7 @@ namespace SoundExplorers.View {
     /// </remarks>
     public virtual void SetFocus() {
       Debug.WriteLine($"GridBase.SetFocus {Name}");
-      Controller.IsFocusingProgramatically = true;
-      Controller.PrepareForFocus();
+      Controller.PrepareForFocus(FocusOrigin.Program);
       if (!EditorView.Controller.IsParentGridToBeShown) {
         Focus();
         return;

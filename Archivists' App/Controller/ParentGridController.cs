@@ -19,6 +19,8 @@ namespace SoundExplorers.Controller {
     /// </summary>
     protected override IEntityList List => EditorController.ParentList!;
 
+    private int LastCurrentRowIndex { get; set; }
+
     internal bool LastRowNeedsToBeScrolledIntoView {
       get {
         bool result = IsJustPopulated && List!.Count > 1;
@@ -40,7 +42,8 @@ namespace SoundExplorers.Controller {
     }
 
     public override void OnRowEnter(int rowIndex) {
-      Debug.WriteLine($"ParentGridController.OnRowEnter: row {rowIndex}");
+      // Debug.WriteLine($"ParentGridController.OnRowEnter: row {rowIndex}");
+      Debug.WriteLine($"ParentGridController.OnRowEnter: row {rowIndex}; LastCurrentRowIndex = {LastCurrentRowIndex}; FocusOrigin =  {FocusOrigin}");
       if (IsScrollingLastRowIntoView) {
         if (rowIndex == List.Count - 1) {
           IsScrollingLastRowIntoView = false;
@@ -55,29 +58,22 @@ namespace SoundExplorers.Controller {
       }
       if (!IsPopulating && rowIndex != PreviousRowIndex) {
         Debug.WriteLine("    Populating main grid");
-        if (IsFocusingProgramatically) {
-          if (Grid.CurrentRowIndex != LastCurrentRowIndex) {
+        if (FocusOrigin == FocusOrigin.Program) {
+          if (rowIndex != LastCurrentRowIndex) {
             MainGrid.Controller.LastCurrentRowIndex = -1;
           }
         } else { // Not already showing the wait cursor
           EditorController.View.SetMouseCursorToWait();
         }
-        // if (IsFocusingProgramatically) {
-        //   MainGrid.Controller.LastCurrentRowIndex = -1;
-        // } else {
-        //   EditorController.View.SetMouseCursorToWait();
-        // }
         EditorController.View.PopulateMainGridOnParentRowChanged(rowIndex);
       }
       PreviousRowIndex = rowIndex;
     }
 
-    private int LastCurrentRowIndex { get; set; }
-
-    public override void PrepareForFocus() {
-      Debug.WriteLine($"ParentGridController.PrepareForFocus: MainGrid.CurrentRowIndex = {MainGrid.CurrentRowIndex}");
+    public override void PrepareForFocus(FocusOrigin focusOrigin) {
+      Debug.WriteLine($"ParentGridController.PrepareForFocus: FocusOrigin =  {focusOrigin}; MainGrid.CurrentRowIndex = {MainGrid.CurrentRowIndex}");
       // Debug.WriteLine("ParentGridController.PrepareForFocus");
-      base.PrepareForFocus();
+      base.PrepareForFocus(focusOrigin);
       LastCurrentRowIndex = Grid.CurrentRowIndex;
       if (!IsPopulating && MainGrid.Controller.LastCurrentRowIndex < 0) {
         MainGrid.Controller.LastCurrentRowIndex = MainGrid.CurrentRowIndex;

@@ -26,12 +26,14 @@ namespace SoundExplorers.Controller {
     /// </summary>
     protected abstract IEntityList List { get; }
     
-    /// <summary>
-    ///   Gets or sets whether the grid is being focused programatically, i.e. via
-    ///   <see cref="IGrid.SetFocus" />. If false, either the grid is not being focused,
-    ///   or it is being focusing by a left mouse button click via a Windows message.
-    /// </summary>
-    public bool IsFocusingProgramatically { get; set; }
+    // /// <summary>
+    // ///   Gets or sets whether the grid is being focused programatically, i.e. via
+    // ///   <see cref="IGrid.SetFocus" />. If false, either the grid is not being focused,
+    // ///   or it is being focusing by a left mouse button click via a Windows message.
+    // /// </summary>
+    // protected bool IsFocusingProgramatically { get; private set; }
+    
+    protected FocusOrigin FocusOrigin { get; private set; }
     
     protected bool IsPopulating { get; private set; }
 
@@ -47,9 +49,12 @@ namespace SoundExplorers.Controller {
     }
 
     public void OnFocusing() {
-      Debug.WriteLine($"GridControllerBase.OnFocusing {Grid.Name}");
-      if (!IsFocusingProgramatically) {
-        PrepareForFocus();
+      Debug.WriteLine($"GridControllerBase.OnFocusing {Grid.Name}: FocusOrigin = {FocusOrigin}");
+      if (FocusOrigin != FocusOrigin.Program) {
+        // Debug.WriteLine("======================================================");
+        // Debug.WriteLine("    Focusing via Windows message");
+        // Debug.WriteLine("======================================================");
+        PrepareForFocus(FocusOrigin.Windows);
       }
       if (!IsPopulating && EditorController.IsParentGridToBeShown) {
         Grid.CellColorScheme.RestoreToDefault();
@@ -59,6 +64,7 @@ namespace SoundExplorers.Controller {
     
     public virtual void OnGotFocus() {
       Debug.WriteLine("GridControllerBase.OnGotFocus");
+      FocusOrigin = FocusOrigin.None;
       if (!IsPopulating) {
         EditorController.View.SetMouseCursorToDefault();
       }
@@ -74,8 +80,9 @@ namespace SoundExplorers.Controller {
       }
     }
 
-    public virtual void PrepareForFocus() {
-      Debug.WriteLine($"GridControllerBase.PrepareForFocus {Grid.Name}");
+    public virtual void PrepareForFocus(FocusOrigin focusOrigin) {
+      Debug.WriteLine($"GridControllerBase.PrepareForFocus {Grid.Name}: FocusOrigin =  {focusOrigin}");
+      FocusOrigin = focusOrigin;
       if (!IsPopulating) {
         EditorController.View.SetMouseCursorToWait();
       }
