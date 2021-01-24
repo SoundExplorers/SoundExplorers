@@ -137,10 +137,14 @@ namespace SoundExplorers.Controller {
     public void FocusUnfocusedGridIfAny() {
       if (IsParentGridToBeShown) {
         if (View.ParentGrid.Focused) {
+          Debug.WriteLine("======================================================");
           Debug.WriteLine("EditorController.FocusUnfocusedGridIfAny: focusing MainGrid with keyboard shortcut");
+          Debug.WriteLine("======================================================");
           View.MainGrid.SetFocus();
         } else {
+          Debug.WriteLine("======================================================");
           Debug.WriteLine("EditorController.FocusUnfocusedGridIfAny: focusing ParentGrid with keyboard shortcut");
+          Debug.WriteLine("======================================================");
           View.ParentGrid.SetFocus();
         }
       }

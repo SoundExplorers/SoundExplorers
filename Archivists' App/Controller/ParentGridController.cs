@@ -75,7 +75,8 @@ namespace SoundExplorers.Controller {
     private int LastCurrentRowIndex { get; set; }
 
     public override void PrepareForFocus() {
-      Debug.WriteLine("ParentGridController.PrepareForFocus");
+      Debug.WriteLine($"ParentGridController.PrepareForFocus: MainGrid.CurrentRowIndex = {MainGrid.CurrentRowIndex}");
+      // Debug.WriteLine("ParentGridController.PrepareForFocus");
       base.PrepareForFocus();
       LastCurrentRowIndex = Grid.CurrentRowIndex;
       if (!IsPopulating && MainGrid.Controller.LastCurrentRowIndex < 0) {

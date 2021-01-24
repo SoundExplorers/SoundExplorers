@@ -103,7 +103,8 @@ namespace SoundExplorers.Controller {
     /// to the main grid, restore currency to the new row.
     /// </summary>
     public override void OnGotFocus() {
-      Debug.WriteLine("MainGridController.OnGotFocus");
+      // Debug.WriteLine("MainGridController.OnGotFocus");
+      Debug.WriteLine($"MainGridController.OnGotFocus: CurrentRowIndex = {Grid.CurrentRowIndex}; LastCurrentRowIndex = {LastCurrentRowIndex}");
       if (LastCurrentRowIndex >= 0 && LastCurrentRowIndex != Grid.CurrentRowIndex) {
         Grid.MakeRowCurrent(LastCurrentRowIndex, true);
         LastCurrentRowIndex = -1;

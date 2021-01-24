@@ -264,8 +264,10 @@ namespace SoundExplorers.View {
         // When focusing the grid with the left mouse button, this is not always
         // executed. It can be if the user has just been navigating the other grid with
         // the mouse.
+        Debug.WriteLine("======================================================");
         Debug.WriteLine(
           $"GridBase.OnMouseDown {Name}: focusing grid with {e.Button} mouse button");
+        Debug.WriteLine("======================================================");
         SetFocus();
       }
       if (e.Button == MouseButtons.Right) {
