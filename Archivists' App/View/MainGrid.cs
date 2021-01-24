@@ -167,12 +167,6 @@ namespace SoundExplorers.View {
       Controller.ShowError();
     }
 
-    protected override void OnGotFocus(EventArgs e) {
-      Debug.WriteLine("MainGrid.OnGotFocus");
-      base.OnGotFocus(e);
-      Controller.OnGotFocus();
-    }
-
     protected override void OnKeyDown(KeyEventArgs e) {
       switch (e.KeyData) {
         case Keys.F2:

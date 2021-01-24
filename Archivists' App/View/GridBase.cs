@@ -124,6 +124,8 @@ namespace SoundExplorers.View {
     /// </remarks>
     public virtual void SetFocus() {
       Debug.WriteLine($"GridBase.SetFocus {Name}");
+      Controller.IsFocusingProgramatically = true;
+      Controller.PrepareForFocus();
       if (!EditorView.Controller.IsParentGridToBeShown) {
         Focus();
         return;
@@ -217,6 +219,7 @@ namespace SoundExplorers.View {
       Debug.WriteLine($"GridBase.OnGotFocus {Name}");
       base.OnGotFocus(e);
       EditorView.CurrentGrid = this;
+      Controller.OnGotFocus();
     }
 
     protected override void OnKeyDown(KeyEventArgs e) {

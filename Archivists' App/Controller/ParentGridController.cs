@@ -34,14 +34,6 @@ namespace SoundExplorers.Controller {
       return List.GetChildrenForMainList(rowIndex)!;
     }
 
-    public override void OnFocusing() {
-      if (MainGrid.Controller.LastCurrentRowIndex < 0) {
-        // Focusing by left mouse button click via Windows message
-        PrepareForFocus();
-      }
-      base.OnFocusing();
-    }
-
     public override void OnPopulatedAsync() {
       IsJustPopulated = true;
       base.OnPopulatedAsync();
@@ -63,16 +55,32 @@ namespace SoundExplorers.Controller {
       }
       if (!IsPopulating && rowIndex != PreviousRowIndex) {
         Debug.WriteLine("    Populating main grid");
-        EditorController.View.SetMouseCursorToWait();
+        if (IsFocusingProgramatically) {
+          if (Grid.CurrentRowIndex != LastCurrentRowIndex) {
+            MainGrid.Controller.LastCurrentRowIndex = -1;
+          }
+        } else { // Not already showing the wait cursor
+          EditorController.View.SetMouseCursorToWait();
+        }
+        // if (IsFocusingProgramatically) {
+        //   MainGrid.Controller.LastCurrentRowIndex = -1;
+        // } else {
+        //   EditorController.View.SetMouseCursorToWait();
+        // }
         EditorController.View.PopulateMainGridOnParentRowChanged(rowIndex);
       }
       PreviousRowIndex = rowIndex;
     }
 
-    public void PrepareForFocus() {
+    private int LastCurrentRowIndex { get; set; }
+
+    public override void PrepareForFocus() {
       Debug.WriteLine("ParentGridController.PrepareForFocus");
-      MainGrid.Controller.LastCurrentRowIndex =
-        MainGrid.CurrentRowIndex;
+      base.PrepareForFocus();
+      LastCurrentRowIndex = Grid.CurrentRowIndex;
+      if (!IsPopulating && MainGrid.Controller.LastCurrentRowIndex < 0) {
+        MainGrid.Controller.LastCurrentRowIndex = MainGrid.CurrentRowIndex;
+      }
     }
 
     public override void Populate(IList? list = null) {

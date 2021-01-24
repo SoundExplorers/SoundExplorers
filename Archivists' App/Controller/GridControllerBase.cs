@@ -11,8 +11,6 @@ namespace SoundExplorers.Controller {
     }
 
     public IBindingList? BindingList => List.BindingList;
-    protected IGrid Grid { get; }
-    protected bool IsPopulating { get; private set; }
 
     /// <summary>
     ///   Gets metadata about the database columns represented by the Entity's field
@@ -21,11 +19,21 @@ namespace SoundExplorers.Controller {
     internal BindingColumnList Columns => List.Columns;
 
     protected EditorController EditorController { get; }
+    protected IGrid Grid { get; }
 
     /// <summary>
     ///   Gets the list of entities represented in the grid.
     /// </summary>
     protected abstract IEntityList List { get; }
+    
+    /// <summary>
+    ///   Gets or sets whether the grid is being focused programatically, i.e. via
+    ///   <see cref="IGrid.SetFocus" />. If false, either the grid is not being focused,
+    ///   or it is being focusing by a left mouse button click via a Windows message.
+    /// </summary>
+    public bool IsFocusingProgramatically { get; set; }
+    
+    protected bool IsPopulating { get; private set; }
 
     public string GetColumnDisplayName(string columnName) {
       var column = Columns[columnName];
@@ -38,11 +46,21 @@ namespace SoundExplorers.Controller {
         : EditorController.View.MainGrid;
     }
 
-    public virtual void OnFocusing() {
+    public void OnFocusing() {
       Debug.WriteLine($"GridControllerBase.OnFocusing {Grid.Name}");
-      if (EditorController.IsParentGridToBeShown && !IsPopulating) {
+      if (!IsFocusingProgramatically) {
+        PrepareForFocus();
+      }
+      if (!IsPopulating && EditorController.IsParentGridToBeShown) {
         Grid.CellColorScheme.RestoreToDefault();
         GetOtherGrid().CellColorScheme.Invert();
+      }
+    }
+    
+    public virtual void OnGotFocus() {
+      Debug.WriteLine("GridControllerBase.OnGotFocus");
+      if (!IsPopulating) {
+        EditorController.View.SetMouseCursorToDefault();
       }
     }
 
@@ -53,6 +71,13 @@ namespace SoundExplorers.Controller {
       IsPopulating = false;
       if (Grid.RowCount > 1) {
         Grid.MakeRowCurrent(Grid.RowCount - 1);
+      }
+    }
+
+    public virtual void PrepareForFocus() {
+      Debug.WriteLine($"GridControllerBase.PrepareForFocus {Grid.Name}");
+      if (!IsPopulating) {
+        EditorController.View.SetMouseCursorToWait();
       }
     }
 

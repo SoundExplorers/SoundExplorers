@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using SoundExplorers.Controller;
+﻿using SoundExplorers.Controller;
 
 namespace SoundExplorers.View {
   internal class ParentGrid : GridBase, IParentGrid {
@@ -17,12 +16,6 @@ namespace SoundExplorers.View {
 
     public void SetController(ParentGridController controller) {
       Controller = controller;
-    }
-
-    public override void SetFocus() {
-      Debug.WriteLine("ParentGrid.SetFocus");
-      Controller.PrepareForFocus();
-      base.SetFocus();
     }
   }
 }
