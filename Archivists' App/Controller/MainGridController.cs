@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Data;
 using System.Diagnostics;
 using SoundExplorers.Model;
@@ -9,7 +10,7 @@ namespace SoundExplorers.Controller {
       // ReSharper disable once SuggestBaseTypeForParameter
       IMainGrid grid, EditorController editorController) :
       base(grid, editorController) {
-      LastCurrentRowIndex = -1;
+      // LastCurrentRowIndex = -1;
     }
 
     private new IMainGrid Grid => (IMainGrid)base.Grid;
@@ -198,6 +199,12 @@ namespace SoundExplorers.Controller {
       } catch (DatabaseUpdateErrorException) {
         EditorController.View.OnError();
       }
+    }
+
+    public override void Populate(IList? list = null) {
+      Debug.WriteLine("MainGridController.Populate");
+      base.Populate(list);
+      LastCurrentRowIndex = -1;
     }
 
     public void ShowError() {
