@@ -11,8 +11,6 @@ namespace SoundExplorers.Controller {
     }
 
     public IBindingList? BindingList => List.BindingList;
-    protected IGrid Grid { get; }
-    protected bool IsPopulating { get; private set; }
 
     /// <summary>
     ///   Gets metadata about the database columns represented by the Entity's field
@@ -21,28 +19,34 @@ namespace SoundExplorers.Controller {
     internal BindingColumnList Columns => List.Columns;
 
     protected EditorController EditorController { get; }
+    
+    protected IGrid Grid { get; }
 
     /// <summary>
     ///   Gets the list of entities represented in the grid.
     /// </summary>
     protected abstract IEntityList List { get; }
+    
+    protected bool IsPopulating { get; private set; }
 
     public string GetColumnDisplayName(string columnName) {
       var column = Columns[columnName];
       return column.DisplayName ?? columnName;
     }
 
-    public IGrid GetOtherGrid() {
+    protected IGrid GetOtherGrid() {
       return Grid == EditorController.View.MainGrid
         ? EditorController.View.ParentGrid
         : EditorController.View.MainGrid;
     }
-
-    public virtual void OnFocusing() {
-      Debug.WriteLine($"GridControllerBase.OnFocusing {Grid.Name}");
-      if (EditorController.IsParentGridToBeShown && !IsPopulating) {
-        Grid.CellColorScheme.RestoreToDefault();
-        GetOtherGrid().CellColorScheme.Invert();
+    
+    public virtual void OnGotFocus() {
+      Debug.WriteLine("GridControllerBase.OnGotFocus");
+      if (!IsPopulating) {
+        if (EditorController.IsParentGridToBeShown) {
+          GetOtherGrid().Enabled = true;
+        }
+        EditorController.View.SetMouseCursorToDefault();
       }
     }
 
@@ -61,6 +65,24 @@ namespace SoundExplorers.Controller {
       IsPopulating = true;
       List.Populate(list);
       Grid.OnPopulated();
+    }
+
+    public virtual void PrepareForFocus() {
+      Debug.WriteLine($"GridControllerBase.PrepareForFocus {Grid.Name}");
+      if (!IsPopulating) {
+        EditorController.View.SetMouseCursorToWait();
+        if (EditorController.IsParentGridToBeShown) {
+          PrepareToSwitchFocusFromOtherGridToThis();
+        }
+      }
+    }
+
+    private void PrepareToSwitchFocusFromOtherGridToThis() {
+      Debug.WriteLine($"GridControllerBase.PrepareToSwitchFocusFromOtherGridToThis {Grid.Name}");
+      Grid.CellColorScheme.RestoreToDefault();
+      var otherGrid = GetOtherGrid();
+      otherGrid.CellColorScheme.Invert();
+      otherGrid.Enabled = false;
     }
   }
 }

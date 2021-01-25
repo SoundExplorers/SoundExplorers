@@ -128,20 +128,24 @@ namespace SoundExplorers.Controller {
     public void FocusCurrentGrid() {
       Debug.WriteLine("EditorController.FocusCurrentGrid");
       if (View.CurrentGrid != null) {
-        View.CurrentGrid.SetFocus();
+        View.CurrentGrid.Focus();
       } else {
-        View.ParentGrid.SetFocus();
+        View.ParentGrid.Focus();
       }
     }
 
     public void FocusUnfocusedGridIfAny() {
       if (IsParentGridToBeShown) {
         if (View.ParentGrid.Focused) {
+          Debug.WriteLine("======================================================");
           Debug.WriteLine("EditorController.FocusUnfocusedGridIfAny: focusing MainGrid with keyboard shortcut");
-          View.MainGrid.SetFocus();
+          Debug.WriteLine("======================================================");
+          View.MainGrid.Focus();
         } else {
+          Debug.WriteLine("======================================================");
           Debug.WriteLine("EditorController.FocusUnfocusedGridIfAny: focusing ParentGrid with keyboard shortcut");
-          View.ParentGrid.SetFocus();
+          Debug.WriteLine("======================================================");
+          View.ParentGrid.Focus();
         }
       }
     }

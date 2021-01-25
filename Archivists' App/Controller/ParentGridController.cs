@@ -19,6 +19,8 @@ namespace SoundExplorers.Controller {
     /// </summary>
     protected override IEntityList List => EditorController.ParentList!;
 
+    private int LastCurrentRowIndex { get; set; }
+
     internal bool LastRowNeedsToBeScrolledIntoView {
       get {
         bool result = IsJustPopulated && List!.Count > 1;
@@ -34,21 +36,14 @@ namespace SoundExplorers.Controller {
       return List.GetChildrenForMainList(rowIndex)!;
     }
 
-    public override void OnFocusing() {
-      if (MainGrid.Controller.LastCurrentRowIndex < 0) {
-        // Focusing by left mouse button click via Windows message
-        PrepareForFocus();
-      }
-      base.OnFocusing();
-    }
-
     public override void OnPopulatedAsync() {
       IsJustPopulated = true;
       base.OnPopulatedAsync();
     }
 
     public override void OnRowEnter(int rowIndex) {
-      Debug.WriteLine($"ParentGridController.OnRowEnter: row {rowIndex}");
+      // Debug.WriteLine($"ParentGridController.OnRowEnter: row {rowIndex}");
+      Debug.WriteLine($"ParentGridController.OnRowEnter: row {rowIndex}; LastCurrentRowIndex = {LastCurrentRowIndex}");
       if (IsScrollingLastRowIntoView) {
         if (rowIndex == List.Count - 1) {
           IsScrollingLastRowIntoView = false;
@@ -63,16 +58,18 @@ namespace SoundExplorers.Controller {
       }
       if (!IsPopulating && rowIndex != PreviousRowIndex) {
         Debug.WriteLine("    Populating main grid");
-        EditorController.View.SetMouseCursorToWait();
         EditorController.View.PopulateMainGridOnParentRowChanged(rowIndex);
       }
       PreviousRowIndex = rowIndex;
     }
 
-    public void PrepareForFocus() {
-      Debug.WriteLine("ParentGridController.PrepareForFocus");
-      MainGrid.Controller.LastCurrentRowIndex =
-        MainGrid.CurrentRowIndex;
+    public override void PrepareForFocus() {
+      Debug.WriteLine($"ParentGridController.PrepareForFocus: MainGrid.CurrentRowIndex = {MainGrid.CurrentRowIndex}");
+      base.PrepareForFocus();
+      LastCurrentRowIndex = Grid.CurrentRowIndex;
+      if (!IsPopulating && MainGrid.Controller.LastCurrentRowIndex < 0) {
+        MainGrid.Controller.LastCurrentRowIndex = MainGrid.CurrentRowIndex;
+      }
     }
 
     public override void Populate(IList? list = null) {

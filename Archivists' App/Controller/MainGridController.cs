@@ -24,9 +24,11 @@ namespace SoundExplorers.Controller {
       List.LastDatabaseUpdateErrorException?.InnerException
         is RowNotInTableException;
 
+    private bool IsRestoringRowCurrency { get; set; }
+
     protected virtual StatementType LastChangeAction =>
       List.LastDatabaseUpdateErrorException.ChangeAction;
-
+    
     internal int LastCurrentRowIndex { get; set; }
 
     /// <summary>
@@ -100,11 +102,16 @@ namespace SoundExplorers.Controller {
     /// last existing row became its current row. So, if focus has now been switched back
     /// to the main grid, restore currency to the new row.
     /// </summary>
-    public void OnGotFocus() {
-      Debug.WriteLine("MainGridController.OnGotFocus");
+    public override void OnGotFocus() {
+      // Debug.WriteLine("MainGridController.OnGotFocus");
+      Debug.WriteLine($"MainGridController.OnGotFocus: CurrentRowIndex = {Grid.CurrentRowIndex}; LastCurrentRowIndex = {LastCurrentRowIndex}");
       if (LastCurrentRowIndex >= 0 && LastCurrentRowIndex != Grid.CurrentRowIndex) {
         Grid.MakeRowCurrent(LastCurrentRowIndex, true);
         LastCurrentRowIndex = -1;
+        IsRestoringRowCurrency = true;
+      } else {
+        LastCurrentRowIndex = -1;
+        base.OnGotFocus();
       }
     }
 
@@ -130,6 +137,11 @@ namespace SoundExplorers.Controller {
       Debug.WriteLine($"MainGridController.OnRowEnter: row {rowIndex} of {List.Count}");
       if (!IsPopulating) {
         List.OnRowEnter(rowIndex);
+      }
+      if (IsRestoringRowCurrency) {
+        IsRestoringRowCurrency = false;
+        GetOtherGrid().Enabled = true;
+        EditorController.View.SetMouseCursorToDefault();
       }
     }
 
