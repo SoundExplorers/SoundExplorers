@@ -5,6 +5,7 @@ using SoundExplorers.Model;
 
 namespace SoundExplorers.Controller {
   public abstract class GridControllerBase {
+    private IGrid? _otherGrid;
     protected GridControllerBase(IGrid grid, EditorController editorController) {
       Grid = grid;
       EditorController = editorController;
@@ -28,13 +29,14 @@ namespace SoundExplorers.Controller {
     protected abstract IEntityList List { get; }
     
     protected bool IsPopulating { get; private set; }
+    private IGrid OtherGrid => _otherGrid ??= GetOtherGrid();
 
     public string GetColumnDisplayName(string columnName) {
       var column = Columns[columnName];
       return column.DisplayName ?? columnName;
     }
 
-    protected IGrid GetOtherGrid() {
+    private IGrid GetOtherGrid() {
       return Grid == EditorController.View.MainGrid
         ? EditorController.View.ParentGrid
         : EditorController.View.MainGrid;
@@ -44,7 +46,7 @@ namespace SoundExplorers.Controller {
       Debug.WriteLine($"GridControllerBase.OnGotFocus {Grid.Name}");
       if (!IsPopulating) {
         if (EditorController.IsParentGridToBeShown) {
-          GetOtherGrid().Enabled = true;
+          OtherGrid.Enabled = true;
         }
         EditorController.View.SetMouseCursorToDefault();
       }
@@ -63,6 +65,7 @@ namespace SoundExplorers.Controller {
     public virtual void Populate(IList? list = null) {
       Debug.WriteLine($"GridControllerBase.Populate {Grid.Name}");
       IsPopulating = true;
+      OtherGrid.Enabled = false;
       List.Populate(list);
       Grid.OnPopulated();
     }
@@ -80,9 +83,8 @@ namespace SoundExplorers.Controller {
     private void PrepareToSwitchFocusFromOtherGridToThis() {
       Debug.WriteLine($"GridControllerBase.PrepareToSwitchFocusFromOtherGridToThis {Grid.Name}");
       Grid.CellColorScheme.RestoreToDefault();
-      var otherGrid = GetOtherGrid();
-      otherGrid.CellColorScheme.Invert();
-      otherGrid.Enabled = false;
+      OtherGrid.CellColorScheme.Invert();
+      OtherGrid.Enabled = false;
     }
   }
 }
