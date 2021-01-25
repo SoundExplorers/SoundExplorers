@@ -65,7 +65,6 @@ namespace SoundExplorers.Controller {
     public virtual void Populate(IList? list = null) {
       Debug.WriteLine($"GridControllerBase.Populate {Grid.Name}");
       IsPopulating = true;
-      OtherGrid.Enabled = false;
       List.Populate(list);
       Grid.OnPopulated();
     }
