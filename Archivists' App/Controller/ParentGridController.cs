@@ -43,7 +43,7 @@ namespace SoundExplorers.Controller {
 
     public override void OnRowEnter(int rowIndex) {
       // Debug.WriteLine($"ParentGridController.OnRowEnter: row {rowIndex}");
-      Debug.WriteLine($"ParentGridController.OnRowEnter: row {rowIndex}; LastCurrentRowIndex = {LastCurrentRowIndex}; FocusOrigin =  {FocusOrigin}");
+      Debug.WriteLine($"ParentGridController.OnRowEnter: row {rowIndex}; LastCurrentRowIndex = {LastCurrentRowIndex}; FocusRequestOrigin = {FocusRequestOrigin}");
       if (IsScrollingLastRowIntoView) {
         if (rowIndex == List.Count - 1) {
           IsScrollingLastRowIntoView = false;
@@ -58,7 +58,10 @@ namespace SoundExplorers.Controller {
       }
       if (!IsPopulating && rowIndex != PreviousRowIndex) {
         Debug.WriteLine("    Populating main grid");
-        if (FocusOrigin == FocusOrigin.Program) {
+        // if (rowIndex != LastCurrentRowIndex) {
+        //   MainGrid.Controller.LastCurrentRowIndex = -1;
+        // }
+        if (IsFocusingProgramatically) {
           if (rowIndex != LastCurrentRowIndex) {
             MainGrid.Controller.LastCurrentRowIndex = -1;
           }
@@ -70,10 +73,10 @@ namespace SoundExplorers.Controller {
       PreviousRowIndex = rowIndex;
     }
 
-    public override void PrepareForFocus(FocusOrigin focusOrigin) {
-      Debug.WriteLine($"ParentGridController.PrepareForFocus: FocusOrigin =  {focusOrigin}; MainGrid.CurrentRowIndex = {MainGrid.CurrentRowIndex}");
+    public override void PrepareForFocus() {
+      Debug.WriteLine($"ParentGridController.PrepareForFocus: FocusRequestOrigin = {FocusRequestOrigin}; MainGrid.CurrentRowIndex = {MainGrid.CurrentRowIndex}");
       // Debug.WriteLine("ParentGridController.PrepareForFocus");
-      base.PrepareForFocus(focusOrigin);
+      base.PrepareForFocus();
       LastCurrentRowIndex = Grid.CurrentRowIndex;
       if (!IsPopulating && MainGrid.Controller.LastCurrentRowIndex < 0) {
         MainGrid.Controller.LastCurrentRowIndex = MainGrid.CurrentRowIndex;

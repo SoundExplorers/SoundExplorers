@@ -123,8 +123,8 @@ namespace SoundExplorers.View {
     ///   other grid.
     /// </remarks>
     public virtual void SetFocus() {
-      Debug.WriteLine($"GridBase.SetFocus {Name}");
-      Controller.PrepareForFocus(FocusOrigin.Program);
+      Debug.WriteLine($"GridBase.SetFocus {Name}: FocusRequestOrigin = {Controller.FocusRequestOrigin}");
+      Controller.PrepareForFocus();
       if (!EditorView.Controller.IsParentGridToBeShown) {
         Focus();
         return;
@@ -246,10 +246,11 @@ namespace SoundExplorers.View {
     }
 
     /// <summary>
-    ///   When either mouse button is clicked, the grid will be focused if it is not
-    ///   already. When mouse button 2 is clicked on a cell, the cell will become the
-    ///   current cell and, unless the cell is already being edited, the context menu
-    ///   will be shown.
+    ///   When the mouse is right-clicked, the grid will be focused. When mouse is
+    ///   right-clicked on a cell, the cell will become the current cell and, unless the
+    ///   cell is already being edited, the grid context menu will be shown. (Showing
+    ///   the context menu for a TextBox cell's embedded TextBox when in edit mode is
+    ///   done elsewhere.)
     /// </summary>
     /// <remarks>
     ///   THE FOLLOWING RELATES TO A FEATURE THAT IS NOT YET IN USE BUT MAY BE LATER:
@@ -260,16 +261,23 @@ namespace SoundExplorers.View {
     /// </remarks>
     protected override void OnMouseDown(MouseEventArgs e) {
       if (this != EditorView.CurrentGrid) {
-        // When focusing the grid with the left mouse button, this is not always
-        // executed. It can be if the user has just been navigating the other grid with
-        // the mouse.
         Debug.WriteLine("======================================================");
-        Debug.WriteLine(
-          $"GridBase.OnMouseDown {Name}: focusing grid with {e.Button} mouse button");
+        Debug.WriteLine($"GridBase.OnMouseDown {Name}: focusing grid with {e.Button} mouse button");
         Debug.WriteLine("======================================================");
+        if (e.Button == MouseButtons.Right) {
+          Controller.FocusRequestOrigin = FocusRequestOrigin.MouseRightClick;
+        }
         SetFocus();
       }
       if (e.Button == MouseButtons.Right) {
+        // if (this != EditorView.CurrentGrid) {
+        //   Debug.WriteLine("======================================================");
+        //   Debug.WriteLine(
+        //     $"GridBase.OnMouseDown {Name}: focusing grid with right mouse button");
+        //   Debug.WriteLine("======================================================");
+        //   Controller.FocusRequestOrigin = FocusRequestOrigin.MouseRightClick;
+        //   SetFocus();
+        // }
         // Find the cell, if any, that mouse button 2 clicked.
         var cell = GetCellAtClientCoOrdinates(e.X, e.Y);
         if (cell != null) { // Cell found
@@ -296,10 +304,16 @@ namespace SoundExplorers.View {
         // ReSharper disable once StringLiteralTypo
         Debug.WriteLine($"GridBase.WndProc {Name}: WM_SETFOCUS");
         // We need to make sure we can switch the grid cell colour schemes when switching
-        // focus between two grids.  To get this to work even when focus is changed by a
-        // mouse click, we would ideally like to override the SetFocus method.
-        // As that method does not support overriding, we intercept the corresponding
-        // Windows message here instead, which has the same effect.
+        // focus between two grids. To get this to work even when focus is changed by a
+        // mouse click, we would ideally like to override the SetFocus method. As that
+        // method does not support overriding, we intercept the corresponding Windows
+        // message here instead, which has the same effect.
+        if (Controller.FocusRequestOrigin == FocusRequestOrigin.NotSpecified) {
+          Debug.WriteLine("======================================================");
+          Debug.WriteLine($"    Focusing {Name} via Windows message");
+          Debug.WriteLine("======================================================");
+          Controller.FocusRequestOrigin = FocusRequestOrigin.WindowsMessage;
+        }
         Controller.OnFocusing();
       }
       base.WndProc(ref m);
