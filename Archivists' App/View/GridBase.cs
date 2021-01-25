@@ -69,6 +69,12 @@ namespace SoundExplorers.View {
 
     public int CurrentRowIndex => CurrentRow?.Index ?? -1;
     public IGridCellColorScheme CellColorScheme { get; }
+    
+    bool IGrid.Enabled {
+      get => Enabled;
+      set => Enabled = value;
+    }
+
     bool IGrid.Focused => Focused;
 
     /// <summary>
@@ -79,6 +85,10 @@ namespace SoundExplorers.View {
     string IGrid.Name => Name;
 
     int IGrid.RowCount => RowCount;
+
+    void IGrid.Focus() {
+      Focus();
+    }
 
     /// <summary>
     ///   Makes the specified row current, which will set focus and raise
@@ -112,34 +122,6 @@ namespace SoundExplorers.View {
       DataSource = Controller.BindingList;
       ConfigureColumns();
       AutoResizeColumns();
-    }
-
-    /// <summary>
-    ///   Focuses the grid.
-    /// </summary>
-    /// <remarks>
-    ///   Where two grids are shown, their colour schemes are swapped round, indicating
-    ///   which is now the current grid by having the usual colour scheme inverted on the
-    ///   other grid.
-    /// </remarks>
-    public virtual void SetFocus() {
-      Debug.WriteLine($"GridBase.SetFocus {Name}: FocusRequestOrigin = {Controller.FocusRequestOrigin}");
-      Controller.PrepareForFocus();
-      if (!EditorView.Controller.IsParentGridToBeShown) {
-        Focus();
-        return;
-      }
-      // A read-only related grid for the parent table is shown above the main grid.
-      var unfocusedGrid = GetOtherGrid();
-      // By trial an error, I found that this complicated rigmarole was required to
-      // properly shift the focus programatically, i.e. in EditorView_KeyDown to
-      // implement doing it with the F6 key.
-      unfocusedGrid.Enabled = false;
-      Enabled = true;
-      Refresh();
-      Focus();
-      Refresh();
-      unfocusedGrid.Enabled = true;
     }
 
     /// <summary>
@@ -197,9 +179,6 @@ namespace SoundExplorers.View {
           hitTestInfo.ColumnIndex];
       }
       return null;
-    }
-    private GridBase GetOtherGrid() {
-      return (GridBase)Controller.GetOtherGrid();
     }
 
     private void MakeRowCurrentAsync(int rowIndex) {
@@ -260,24 +239,14 @@ namespace SoundExplorers.View {
     ///   initiate a drag-and-drop operation on Control + mouse button 1.
     /// </remarks>
     protected override void OnMouseDown(MouseEventArgs e) {
-      if (this != EditorView.CurrentGrid) {
-        Debug.WriteLine("======================================================");
-        Debug.WriteLine($"GridBase.OnMouseDown {Name}: focusing grid with {e.Button} mouse button");
-        Debug.WriteLine("======================================================");
-        if (e.Button == MouseButtons.Right) {
-          Controller.FocusRequestOrigin = FocusRequestOrigin.MouseRightClick;
-        }
-        SetFocus();
-      }
       if (e.Button == MouseButtons.Right) {
-        // if (this != EditorView.CurrentGrid) {
-        //   Debug.WriteLine("======================================================");
-        //   Debug.WriteLine(
-        //     $"GridBase.OnMouseDown {Name}: focusing grid with right mouse button");
-        //   Debug.WriteLine("======================================================");
-        //   Controller.FocusRequestOrigin = FocusRequestOrigin.MouseRightClick;
-        //   SetFocus();
-        // }
+        if (this != EditorView.CurrentGrid) {
+          Debug.WriteLine("======================================================");
+          Debug.WriteLine(
+            $"GridBase.OnMouseDown {Name}: focusing grid with right mouse button");
+          Debug.WriteLine("======================================================");
+          Focus();
+        }
         // Find the cell, if any, that mouse button 2 clicked.
         var cell = GetCellAtClientCoOrdinates(e.X, e.Y);
         if (cell != null) { // Cell found
@@ -305,16 +274,10 @@ namespace SoundExplorers.View {
         Debug.WriteLine($"GridBase.WndProc {Name}: WM_SETFOCUS");
         // We need to make sure we can switch the grid cell colour schemes when switching
         // focus between two grids. To get this to work even when focus is changed by a
-        // mouse click, we would ideally like to override the SetFocus method. As that
+        // mouse left-click, we would ideally like to override the Focus method. As that
         // method does not support overriding, we intercept the corresponding Windows
         // message here instead, which has the same effect.
-        if (Controller.FocusRequestOrigin == FocusRequestOrigin.NotSpecified) {
-          Debug.WriteLine("======================================================");
-          Debug.WriteLine($"    Focusing {Name} via Windows message");
-          Debug.WriteLine("======================================================");
-          Controller.FocusRequestOrigin = FocusRequestOrigin.WindowsMessage;
-        }
-        Controller.OnFocusing();
+        Controller.PrepareForFocus();
       }
       base.WndProc(ref m);
     }

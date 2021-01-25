@@ -47,8 +47,8 @@ namespace SoundExplorers.Tests.Controller {
       CurrentRowIndex = rowIndex;
     }
 
-    public override void SetFocus() {
-      base.SetFocus();
+    public override void Focus() {
+      base.Focus();
       if (Controller.EditorController.IsParentGridToBeShown) {
         ((MockGridBase)Controller.EditorController.View.ParentGrid).Focused = false;
       }

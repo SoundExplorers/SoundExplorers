@@ -39,9 +39,9 @@ namespace SoundExplorers.Tests.Controller {
       Controller.Populate(list);
     }
 
-    public virtual void SetFocus() {
+    public virtual void Focus() {
       Focused = true;
-      Controller.OnFocusing();
+      Controller.PrepareForFocus();
     }
 
     internal void SetCurrentRowIndex(int rowIndex) {

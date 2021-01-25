@@ -10,8 +10,8 @@ namespace SoundExplorers.Tests.Controller {
     ParentGridController IParentGrid.Controller => Controller;
     public override int RowCount => Controller.BindingList!.Count;
 
-    public override void SetFocus() {
-      base.SetFocus();
+    public override void Focus() {
+      base.Focus();
       ((MockGridBase)Controller.EditorController.View.MainGrid).Focused = false;
     }
 

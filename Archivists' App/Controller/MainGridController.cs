@@ -140,6 +140,7 @@ namespace SoundExplorers.Controller {
       }
       if (IsRestoringRowCurrency) {
         IsRestoringRowCurrency = false;
+        GetOtherGrid().Enabled = true;
         EditorController.View.SetMouseCursorToDefault();
       }
     }
