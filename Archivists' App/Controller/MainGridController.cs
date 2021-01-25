@@ -10,7 +10,6 @@ namespace SoundExplorers.Controller {
       // ReSharper disable once SuggestBaseTypeForParameter
       IMainGrid grid, EditorController editorController) :
       base(grid, editorController) {
-      // LastCurrentRowIndex = -1;
     }
 
     private new IMainGrid Grid => (IMainGrid)base.Grid;
