@@ -18,5 +18,7 @@ namespace SoundExplorers.Tests.Controller {
     public void SetController(ParentGridController controller) {
       Controller = (TestParentGridController)controller;
     }
+
+    public override string Name => "MockParentGrid";
   }
 }

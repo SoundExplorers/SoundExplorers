@@ -4,11 +4,28 @@ using SoundExplorers.Controller;
 
 namespace SoundExplorers.Tests.Controller {
   public abstract class MockGridBase : IGrid {
+    private bool _enabled;
+
     protected MockGridBase() {
       CellColorScheme = new MockGridCellColorScheme();
     }
 
     internal MockGridCellColorScheme CellColorScheme { get; }
+
+    public bool Enabled {
+      get => _enabled;
+      set {
+        _enabled = value;
+        if (value) {
+          EnableCount++;
+        } else {
+          DisableCount++;
+        }
+      }
+    }
+
+    internal int DisableCount { get; private set; }
+    internal int EnableCount { get; private set; }
     internal int MakeRowCurrentCount { get; private set; }
     protected GridControllerBase Controller { get; set; } = null!;
     public int CurrentRowIndex { get; protected set; }
@@ -20,7 +37,7 @@ namespace SoundExplorers.Tests.Controller {
     /// </summary>
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
     [ExcludeFromCodeCoverage]
-    public string Name { get; internal set; } = null!;
+    public abstract string Name { get; }
 
     public abstract int RowCount { get; }
 
@@ -42,6 +59,7 @@ namespace SoundExplorers.Tests.Controller {
     public virtual void Focus() {
       Focused = true;
       Controller.PrepareForFocus();
+      Controller.OnGotFocus();
     }
 
     internal void SetCurrentRowIndex(int rowIndex) {

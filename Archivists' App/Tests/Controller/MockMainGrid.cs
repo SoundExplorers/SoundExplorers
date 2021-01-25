@@ -32,6 +32,8 @@ namespace SoundExplorers.Tests.Controller {
     ///   </para>
     /// </summary>
     public override int RowCount => Controller.BindingList!.Count + 1;
+    
+    public override string Name => "MockMainGrid";
 
     public void SetController(MainGridController controller) {
       Controller = (TestMainGridController)controller;
@@ -48,11 +50,10 @@ namespace SoundExplorers.Tests.Controller {
     }
 
     public override void Focus() {
-      base.Focus();
       if (Controller.EditorController.IsParentGridToBeShown) {
         ((MockGridBase)Controller.EditorController.View.ParentGrid).Focused = false;
       }
-      Controller.OnGotFocus();
+      base.Focus();
     }
 
     public void OnRowAddedOrDeleted() {

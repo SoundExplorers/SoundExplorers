@@ -373,27 +373,18 @@ namespace SoundExplorers.Tests.Controller {
       ParentGrid.Focus();
       // Simulate the problem that occurs when switching focus from the main grid to the
       // the parent grid.  If the main grid's current row is the new row before focusing
-      // the parent grid, then, on focusing the parent grid, the new row is removed,
-      // so the main grid's last existing row becomes its current row.
+      // the parent grid, then, on focusing the parent grid, the new row is removed, so
+      // the main grid's last existing row becomes its current row.
       MainGrid.MakeRowCurrent(mainGridNewRowIndex -1);
       Assert.AreEqual(mainGridNewRowIndex -1, MainGrid.CurrentRowIndex, 
-        "Main grid current row index after focus switched to parent grid programatically");
+        "Main grid current row index after focus switched back to parent grid");
       // Now test the fix. When focus is switched back to the main grid, we want to
       // restore currency to the new row.
       MainGrid.Focus();
       Assert.AreEqual(mainGridNewRowIndex, MainGrid.CurrentRowIndex, 
-        "Main grid current row index after focus switched back to main grid #1");
-      // And test that the same fix works if the parent grid is focused by a left mouse
-      // button click via a Windows message instead of programatically.
-      ParentGridController.PrepareForFocus();
-      // Simulate the problem.
-      MainGrid.MakeRowCurrent(mainGridNewRowIndex -1);
-      Assert.AreEqual(mainGridNewRowIndex -1, MainGrid.CurrentRowIndex, 
-        "Main grid current row index after focus switched to parent grid via Windows message");
-      // Test the fix.
-      MainGrid.Focus();
-      Assert.AreEqual(mainGridNewRowIndex, MainGrid.CurrentRowIndex, 
-        "Main grid current row index after focus switched back to main grid #2");
+        "Main grid current row index after focus switched back to main grid");
+      Assert.IsTrue(ParentGrid.Enabled,
+        "Parent grid enabled after focus switched back to main grid");
     }
 
     [Test]
@@ -417,10 +408,19 @@ namespace SoundExplorers.Tests.Controller {
         "MainGrid.Focused after ParentGrid.Focus");
       Assert.AreEqual(1, MainGrid.CellColorScheme.InvertCount,
         "MainGrid.CellColorScheme.InvertCount after ParentGrid.Focus");
+      Assert.AreEqual(1, MainGrid.DisableCount,
+        "MainGrid.DisableCount after ParentGrid.Focus");
+      Assert.AreEqual(1, MainGrid.EnableCount,
+        "MainGrid.EnableCount after ParentGrid.Focus");
+      Assert.IsTrue(MainGrid.Enabled, "MainGrid.Enabled after ParentGrid.Focus");
       Assert.IsTrue(ParentGrid.Focused,
         "ParentGrid.Focused after ParentGrid.Focus");
       Assert.AreEqual(1, ParentGrid.CellColorScheme.RestoreToDefaultCount,
         "ParentGrid.CellColorScheme.RestoreToDefaultCount after ParentGrid.Focus");
+      Assert.AreEqual(1, View.SetMouseCursorToWaitCount,
+        "SetMouseCursorToWaitCount after ParentGrid.Focus");
+      Assert.AreEqual(1, View.SetMouseCursorToDefaultCount,
+        "SetMouseCursorToDefaultCount after ParentGrid.Focus");
       Controller.FocusUnfocusedGridIfAny();
       Assert.IsTrue(MainGrid.Focused,
         "MainGrid.Focused after FocusUnfocusedGridIfAny #1");
@@ -559,8 +559,6 @@ namespace SoundExplorers.Tests.Controller {
         "Parent list count after Populate");
       Assert.AreEqual(5, MainGridController.BindingList?.Count,
         "Main list count after Populate");
-      Assert.AreEqual(1, View.SetMouseCursorToWaitCount,
-        "SetMouseCursorToWaitCount after Populate");
       Assert.AreEqual(1, View.SetMouseCursorToDefaultCount,
         "SetMouseCursorToDefaultCount after Populate");
       MainGrid.Focus();

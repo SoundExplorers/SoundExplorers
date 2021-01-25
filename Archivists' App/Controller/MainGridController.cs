@@ -106,9 +106,9 @@ namespace SoundExplorers.Controller {
       // Debug.WriteLine("MainGridController.OnGotFocus");
       Debug.WriteLine($"MainGridController.OnGotFocus: CurrentRowIndex = {Grid.CurrentRowIndex}; LastCurrentRowIndex = {LastCurrentRowIndex}");
       if (LastCurrentRowIndex >= 0 && LastCurrentRowIndex != Grid.CurrentRowIndex) {
+        IsRestoringRowCurrency = true;
         Grid.MakeRowCurrent(LastCurrentRowIndex, true);
         LastCurrentRowIndex = -1;
-        IsRestoringRowCurrency = true;
       } else {
         LastCurrentRowIndex = -1;
         base.OnGotFocus();
@@ -140,8 +140,7 @@ namespace SoundExplorers.Controller {
       }
       if (IsRestoringRowCurrency) {
         IsRestoringRowCurrency = false;
-        GetOtherGrid().Enabled = true;
-        EditorController.View.SetMouseCursorToDefault();
+         base.OnGotFocus();
       }
     }
 

@@ -41,7 +41,7 @@ namespace SoundExplorers.Controller {
     }
     
     public virtual void OnGotFocus() {
-      Debug.WriteLine("GridControllerBase.OnGotFocus");
+      Debug.WriteLine($"GridControllerBase.OnGotFocus {Grid.Name}");
       if (!IsPopulating) {
         if (EditorController.IsParentGridToBeShown) {
           GetOtherGrid().Enabled = true;
