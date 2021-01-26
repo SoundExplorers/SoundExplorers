@@ -88,9 +88,9 @@ namespace SoundExplorers.View {
           // On pasting into or deleting the contents of a cell that is not yet in edit
           // mode, the cell temporarily goes into edit mode but the EditingControl is
           // null instead of a TextBox. So we cannot subscribe to the TextBox's events.
-          // However, as the cell comes out of edit mode immediately the deletion or
-          // paste is done. So in those cases there is no need to subscribe to the
-          // TextBox events anyway.
+          // However, the cell comes out of edit mode immediately the deletion or paste
+          // is done. So in those cases there is no need to subscribe to the TextBox
+          // events anyway.
           && EditingControl is TextBox) {
         BeginInvoke((Action)SubscribeToTextBoxEvents);
       }
