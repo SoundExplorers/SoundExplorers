@@ -24,7 +24,7 @@ namespace SoundExplorers.Data {
     /// </summary>
     [NotNull]
     public static Schema Instance {
-      get => _instance ?? (_instance = new Schema());
+      get => _instance ??= new Schema();
       set => _instance = value;
     }
 
@@ -33,14 +33,14 @@ namespace SoundExplorers.Data {
     /// </summary>
     [NotNull]
     private IEnumerable<Type> EntityTypes =>
-      _entityTypes ?? (_entityTypes = CreateEntityTypes());
+      _entityTypes ??= CreateEntityTypes();
 
     /// <summary>
     ///   The structure of on-to-many relations between entity types.
     /// </summary>
     [NotNull]
     public IEnumerable<RelationInfo> Relations =>
-      _relations ?? (_relations = CreateRelations());
+      _relations ??= CreateRelations();
 
     /// <summary>
     ///   Gets or sets the schema version.

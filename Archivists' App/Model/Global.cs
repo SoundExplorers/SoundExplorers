@@ -5,7 +5,6 @@ using System.IO;
 using System.Reflection;
 using SoundExplorers.Data;
 using VelocityDb.Session;
-using NotNullAttribute = JetBrains.Annotations.NotNullAttribute;
 
 namespace SoundExplorers.Model {
   public static class Global {
@@ -14,7 +13,7 @@ namespace SoundExplorers.Model {
     /// </summary>
     public const string DateFormat = "dd MMM yyyy";
 
-    public static SessionBase Session { get; set; }
+    public static SessionBase Session { get; set; } = null!;
 
     /// <summary>
     ///   Creates an instance of the specified entity list type.
@@ -22,10 +21,9 @@ namespace SoundExplorers.Model {
     /// <param name="type">
     ///   The type of entity list to be created.
     /// </param>
-    [NotNull]
-    public static IEntityList CreateEntityList([NotNull] Type type) {
+    public static IEntityList CreateEntityList(Type type) {
       try {
-        return (IEntityList)Activator.CreateInstance(type) 
+        return (IEntityList)Activator.CreateInstance(type)!
                ?? throw new InvalidOperationException(
                  "In Global.CreateEntityList, cannot create IEntityList.");
       } catch (TargetInvocationException ex) {
@@ -41,9 +39,8 @@ namespace SoundExplorers.Model {
     /// <returns>
     ///   The sorted dictionary created.
     /// </returns>
-    [NotNull]
     public static SortedDictionary<string, Type> CreateEntityListTypeDictionary() {
-      return new SortedDictionary<string, Type> {
+      return new() {
         {nameof(Act), typeof(ActList)},
         {nameof(Event), typeof(EventList)},
         {nameof(EventType), typeof(EventTypeList)},
@@ -76,7 +73,7 @@ namespace SoundExplorers.Model {
 
     [ExcludeFromCodeCoverage]
     public static string GetApplicationFolderPath() {
-      return Path.GetDirectoryName(Assembly.GetEntryAssembly()?.Location);
+      return Path.GetDirectoryName(Assembly.GetEntryAssembly()?.Location)!;
     }
 
     [ExcludeFromCodeCoverage]
@@ -86,7 +83,7 @@ namespace SoundExplorers.Model {
         throw new NullReferenceException(
           "In Global.GetProductName, cannot find entry assembly.");
       return ((AssemblyProductAttribute)Attribute.GetCustomAttribute(entryAssembly,
-        typeof(AssemblyProductAttribute), false))?.Product;
+        typeof(AssemblyProductAttribute), false)!)!.Product;
     }
   }
 }

@@ -63,7 +63,7 @@ namespace SoundExplorers.Tests.Controller {
       Assert.AreEqual(1, View.SetMouseCursorToDefaultCount,
         "SetMouseCursorToDefaultCount after Populate");
       var bindingList =
-        (TypedBindingList<Event, EventBindingItem>)Controller.MainList.BindingList;
+        (TypedBindingList<Event, EventBindingItem>)Controller.MainList.BindingList!;
       MainGridController.CreateAndGoToNewRow();
       bindingList[0].Date = event1Date;
       MainGridController.SetComboBoxCellValue(0, "Location", validLocationName);
@@ -113,7 +113,7 @@ namespace SoundExplorers.Tests.Controller {
       Controller.Populate(); // Show an empty grid
       var mainList = Controller.MainList;
       var bindingList =
-        (TypedBindingList<Genre, NamedBindingItem<Genre>>)Controller.MainList.BindingList;
+        (TypedBindingList<Genre, NamedBindingItem<Genre>>)Controller.MainList.BindingList!;
       MainGridController.CreateAndGoToNewRow();
       bindingList[0].Name = name;
       Controller.IsClosing = true;
@@ -163,7 +163,7 @@ namespace SoundExplorers.Tests.Controller {
       Assert.AreEqual(1, MainGrid.CurrentRowIndex,
         "CurrentRowIndex after Populate");
       var bindingList =
-        (TypedBindingList<Genre, NamedBindingItem<Genre>>)Controller.MainList.BindingList;
+        (TypedBindingList<Genre, NamedBindingItem<Genre>>)Controller.MainList.BindingList!;
       MainGridController.CreateAndGoToNewRow();
       bindingList[1].Name = bindingList[0].Name;
       MainGridController.OnRowValidated(1);
@@ -184,7 +184,7 @@ namespace SoundExplorers.Tests.Controller {
       CreateControllers(typeof(EventList));
       Controller.Populate(); // Show an empty grid
       var bindingList =
-        (TypedBindingList<Event, EventBindingItem>)Controller.MainList.BindingList;
+        (TypedBindingList<Event, EventBindingItem>)Controller.MainList.BindingList!;
       MainGridController.CreateAndGoToNewRow();
       var event1Date = DateTime.Parse("2020/03/01");
       bindingList[0].Date = event1Date;
@@ -206,7 +206,7 @@ namespace SoundExplorers.Tests.Controller {
       Assert.AreEqual("Location", MainGridController.TableName, "Main TableName");
       var bindingList =
         (TypedBindingList<Location, NotablyNamedBindingItem<Location>>)Controller.MainList
-          .BindingList;
+          .BindingList!;
       MainGridController.CreateAndGoToNewRow();
       bindingList[0].Name = name1;
       bindingList[0].Notes = "Disestablishmentarianism";
@@ -220,7 +220,7 @@ namespace SoundExplorers.Tests.Controller {
       Controller.Populate(); // Refresh grid
       bindingList =
         (TypedBindingList<Location, NotablyNamedBindingItem<Location>>)Controller.MainList
-          .BindingList;
+          .BindingList!;
       Assert.AreEqual(2, bindingList.Count, "editor.Count after Refresh");
       MainGridController.OnRowEnter(1);
       // Disallow rename to duplicate
@@ -298,7 +298,7 @@ namespace SoundExplorers.Tests.Controller {
       Assert.IsTrue(MainGridController.DoesColumnReferenceAnotherEntity("Newsletter"),
         "Newsletter DoesColumnReferenceAnotherEntity");
       var bindingList =
-        (TypedBindingList<Event, EventBindingItem>)Controller.MainList.BindingList;
+        (TypedBindingList<Event, EventBindingItem>)Controller.MainList.BindingList!;
       // Newsletter
       var selectedNewsletter = Data.Newsletters[0];
       var selectedNewsletterDate = selectedNewsletter.Date;
@@ -475,7 +475,7 @@ namespace SoundExplorers.Tests.Controller {
       CreateControllers(typeof(EventList));
       Controller.Populate(); // Populate grid
       var bindingList =
-        (TypedBindingList<Event, EventBindingItem>)Controller.MainList.BindingList;
+        (TypedBindingList<Event, EventBindingItem>)Controller.MainList.BindingList!;
       MainGridController.OnRowEnter(2);
       string changedEventType = Data.EventTypes[1].Name;
       string changedLocation = Data.Locations[1].Name;
@@ -527,7 +527,7 @@ namespace SoundExplorers.Tests.Controller {
       Controller.Populate(); // Populate grid
       var bindingList =
         (TypedBindingList<Newsletter, NewsletterBindingItem>)Controller.MainList
-          .BindingList;
+          .BindingList!;
       MainGridController.OnRowEnter(1);
       var exception = Assert.Catch<DatabaseUpdateErrorException>(
         () => bindingList[1].Url = bindingList[0].Url,

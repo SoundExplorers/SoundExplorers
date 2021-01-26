@@ -5,8 +5,6 @@ using System.IO;
 using System.Reflection;
 using System.Xml;
 using System.Xml.Linq;
-using JetBrains.Annotations;
-using NotNullAttribute = JetBrains.Annotations.NotNullAttribute;
 
 namespace SoundExplorers.Model {
   /// <summary>
@@ -20,18 +18,17 @@ namespace SoundExplorers.Model {
   public class DatabaseConfig : IDatabaseConfig {
     /// <summary>
     ///   TODO Replace hard coded DefaultDatabaseFolderPath value to support multiple developers.
-    /// 
     /// </summary>
     internal const string DefaultDatabaseFolderPath =
       @"E:\Simon\OneDrive\Documents\Software\Sound Explorers Audio Archive\Database";
 
-    private readonly string _configFilePath;
-    private XElement Data { get; set; }
-    private XmlWriter XmlWriter { get; set; }
+    private readonly string? _configFilePath;
+    private XElement Data { get; set; } = null!;
+    private XmlWriter XmlWriter { get; set; } = null!;
 
     [Description(
       "Path of the licence file for the VelocityDB object-oriented database management system.")]
-    public string VelocityDbLicenceFilePath { get; protected set; }
+    public string VelocityDbLicenceFilePath { get; protected init; } = null!;
 
     /// <summary>
     ///   Gets or sets the path of the database configuration file.
@@ -45,7 +42,7 @@ namespace SoundExplorers.Model {
     }
 
     [Description(@"Database folder path. Example: C:\Folder\Subfolder")]
-    public string DatabaseFolderPath { get; protected set; }
+    public string DatabaseFolderPath { get; protected set; } = null!;
 
     public void Load() {
       if (File.Exists(ConfigFilePath)) {
@@ -85,8 +82,8 @@ namespace SoundExplorers.Model {
 
     [ExcludeFromCodeCoverage]
     private ApplicationException CreateXmlElementValueFormatException(
-      [NotNull] string name, [CanBeNull] string value) {
-      return new ApplicationException(
+      string name, string? value) {
+      return new(
         "The " + name + " property value '"
         + value
         + "' found in database configuration file "
@@ -94,8 +91,8 @@ namespace SoundExplorers.Model {
     }
 
     [ExcludeFromCodeCoverage]
-    [NotNull]
-    private TResult DoGetConfigFileObject<TResult>([NotNull] Func<TResult> function) {
+    private TResult DoGetConfigFileObject<TResult>(
+      [JetBrains.Annotations.NotNull] Func<TResult> function) {
       try {
         return function.Invoke();
       } catch (Exception exception) {
@@ -104,11 +101,10 @@ namespace SoundExplorers.Model {
       }
     }
 
-    private string GetPropertyDescription([NotNull] string name) {
+    private string GetPropertyDescription(string name) {
       return
-        GetType().GetProperty(name)?
-          .GetCustomAttribute<DescriptionAttribute>()
-          ?.Description;
+        GetType().GetProperty(name)!.GetCustomAttribute<DescriptionAttribute>()!
+          .Description;
     }
 
     private XElement LoadData() {
@@ -129,7 +125,7 @@ namespace SoundExplorers.Model {
       return DefaultDatabaseFolderPath;
     }
 
-    private void SetPropertyValue([NotNull] PropertyInfo property) {
+    private void SetPropertyValue([JetBrains.Annotations.NotNull] PropertyInfo property) {
       var element = Data.Element(property.Name);
       if (element == null) {
         throw new ApplicationException(
@@ -140,8 +136,9 @@ namespace SoundExplorers.Model {
     }
 
     [ExcludeFromCodeCoverage]
-    private void SetPropertyValueFromXmlElement([NotNull] PropertyInfo property,
-      [NotNull] XElement element) {
+    private void SetPropertyValueFromXmlElement(
+      [JetBrains.Annotations.NotNull] PropertyInfo property,
+      [JetBrains.Annotations.NotNull] XElement element) {
       try {
         property.SetValue(
           this,
@@ -158,8 +155,8 @@ namespace SoundExplorers.Model {
     }
 
     private void WriteCommentedElement(
-      [NotNull] string name,
-      [NotNull] string value) {
+      [JetBrains.Annotations.NotNull] string name,
+      [JetBrains.Annotations.NotNull] string value) {
       XmlWriter.WriteComment(GetPropertyDescription(name));
       XmlWriter.WriteElementString(name, value);
     }

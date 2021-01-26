@@ -1,7 +1,5 @@
-﻿using JetBrains.Annotations;
-
-namespace SoundExplorers.Model {
+﻿namespace SoundExplorers.Model {
   internal interface IBindingItem {
-    void SetPropertyValue([NotNull] string propertyName, [CanBeNull] object value);
+    void SetPropertyValue(string propertyName, object? value);
   }
 }

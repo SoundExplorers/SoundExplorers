@@ -6,8 +6,8 @@ namespace SoundExplorers.Model {
   public class NotablyNamedBindingItem<TEntity>
     : BindingItemBase<TEntity, NotablyNamedBindingItem<TEntity>>
     where TEntity : EntityBase, INotablyNamedEntity, new() {
-    private string _name;
-    private string _notes;
+    private string _name = null!;
+    private string _notes = null!;
 
     public string Name {
       get => _name;
@@ -26,7 +26,7 @@ namespace SoundExplorers.Model {
     }
 
     internal override Key GetKey() {
-      return new Key(Name, null);
+      return new(Name, null);
     }
   }
 }

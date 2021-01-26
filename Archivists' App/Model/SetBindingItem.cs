@@ -1,16 +1,18 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using JetBrains.Annotations;
 using SoundExplorers.Data;
 
 namespace SoundExplorers.Model {
   [NoReorder]
+  [SuppressMessage("ReSharper", "PropertyCanBeMadeInitOnly.Global")]
   public class SetBindingItem : BindingItemBase<Set, SetBindingItem> {
     private DateTime _date;
-    private string _location;
+    private string _location = null!;
     private int _setNo;
-    private string _act;
-    private string _genre;
-    private string _notes;
+    private string? _act;
+    private string? _genre;
+    private string? _notes;
 
     public DateTime Date {
       get => _date;
@@ -36,7 +38,7 @@ namespace SoundExplorers.Model {
       }
     }
 
-    public string Act {
+    public string? Act {
       get => _act;
       set {
         _act = value;
@@ -44,7 +46,7 @@ namespace SoundExplorers.Model {
       }
     }
 
-    public string Genre {
+    public string? Genre {
       get => _genre;
       set {
         _genre = value;
@@ -52,7 +54,7 @@ namespace SoundExplorers.Model {
       }
     }
 
-    public string Notes {
+    public string? Notes {
       get => _notes;
       set {
         _notes = value;
@@ -64,7 +66,7 @@ namespace SoundExplorers.Model {
       // This won't work.  We need to
       // TODO Provide access to event parents.
       // They would be the list.
-      return new Key(Set.SetNoToSimpleKey(SetNo), FindParent(Properties[nameof(Event)]));
+      return new(Set.SetNoToSimpleKey(SetNo), FindParent(Properties[nameof(Event)]));
     }
   }
 }

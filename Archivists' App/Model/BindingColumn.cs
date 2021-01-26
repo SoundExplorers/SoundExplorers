@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using JetBrains.Annotations;
 using VelocityDb.Session;
 
 namespace SoundExplorers.Model {
@@ -8,11 +7,11 @@ namespace SoundExplorers.Model {
   ///   Column data for a binding list that links entities to a grid.
   /// </summary>
   public class BindingColumn {
-    private ReferenceableItemList _referenceableItems;
-    private SessionBase _session;
+    private ReferenceableItemList? _referenceableItems;
+    private SessionBase? _session;
 
-    public BindingColumn([NotNull] string name,
-      Type referencedEntityListType = null, string referencedPropertyName = null) {
+    public BindingColumn(string name,
+      Type? referencedEntityListType = null, string? referencedPropertyName = null) {
       Name = name ?? throw new ArgumentNullException(nameof(name));
       if (referencedEntityListType != null &&
           !referencedEntityListType.GetInterfaces().Contains(typeof(IEntityList))) {
@@ -36,15 +35,13 @@ namespace SoundExplorers.Model {
     ///   Gets the display name to be used for reporting.
     ///   Defaults to <see cref="Name" />.
     /// </summary>
-    [CanBeNull]
-    public string DisplayName { get; internal set; }
+    public string? DisplayName { get; internal set; }
 
     public bool IsInKey { get; internal set; }
 
     /// <summary>
     ///   Gets the column's property name.
     /// </summary>
-    [NotNull]
     public string Name { get; }
 
     /// <summary>
@@ -52,37 +49,32 @@ namespace SoundExplorers.Model {
     ///   The setter should only be needed for testing.
     /// </summary>
     internal SessionBase Session {
-      get => _session ?? (_session = Global.Session);
+      get => _session ??= Global.Session;
       set => _session = value;
     }
 
-    [NotNull]
     public ReferenceableItemList ReferenceableItems =>
-      _referenceableItems ?? (_referenceableItems = FetchReferenceableItems());
+      _referenceableItems ??= FetchReferenceableItems();
 
     /// <summary>
     ///   Gets the type of the referenced entity list.
     ///   Null if the column does not reference a column on another entity list.
     /// </summary>
-    [CanBeNull]
-    public Type ReferencedEntityListType { get; }
+    public Type? ReferencedEntityListType { get; }
 
     /// <summary>
     ///   Gets the name of the corresponding property of the referenced entity.
     ///   Null if the column does not reference a another entity type.
     /// </summary>
-    [CanBeNull]
-    public string ReferencedPropertyName { get; }
+    public string? ReferencedPropertyName { get; }
 
     /// <summary>
     ///   Gets the name of the referenced entity list's main table.
     ///   Null if the column does not reference a column on another entity list.
     /// </summary>
-    [CanBeNull]
-    public string ReferencedTableName =>
+    public string? ReferencedTableName =>
       ReferencedEntityListType?.Name.Replace("List", string.Empty);
 
-    [NotNull]
     private ReferenceableItemList FetchReferenceableItems() {
       var result = new ReferenceableItemList(this);
       bool isTransactionRequired = !Session.InTransaction;

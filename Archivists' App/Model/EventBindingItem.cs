@@ -7,11 +7,11 @@ namespace SoundExplorers.Model {
   public class EventBindingItem : BindingItemBase<Event, EventBindingItem> {
     internal const string DefaultEventTypeName = "Performance";
     private DateTime _date;
-    private string _location;
-    private string _series;
+    private string _location = null!;
+    private string? _series;
     private DateTime _newsletter;
-    private string _eventType;
-    private string _notes;
+    private string _eventType = null!;
+    private string _notes = null!;
 
     public EventBindingItem() {
       Date = DateTime.Today;
@@ -51,7 +51,7 @@ namespace SoundExplorers.Model {
       }
     }
 
-    public string Series {
+    public string? Series {
       get => _series;
       set {
         _series = value;
@@ -68,7 +68,7 @@ namespace SoundExplorers.Model {
     }
 
     internal override Key GetKey() {
-      return new Key(EntityBase.DateToSimpleKey(Date),
+      return new(EntityBase.DateToSimpleKey(Date),
         FindParent(Properties[nameof(Location)]));
     }
   }

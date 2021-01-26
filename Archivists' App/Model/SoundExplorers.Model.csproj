@@ -5,6 +5,7 @@
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
     <RootNamespace>SoundExplorers.Model</RootNamespace>
     <AssemblyName>SoundExplorers.Model</AssemblyName>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
   <PropertyGroup>
     <!-- Assembly properties. Before .Net 5, these were coded in AssemblyInfo.cs. -->

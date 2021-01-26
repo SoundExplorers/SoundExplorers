@@ -5,11 +5,11 @@ namespace SoundExplorers.Model {
     NamedEntityList<TEntity> : EntityListBase<TEntity, NamedBindingItem<TEntity>>
     where TEntity : EntityBase, INamedEntity, new() {
     protected override NamedBindingItem<TEntity> CreateBindingItem(TEntity entity) {
-      return new NamedBindingItem<TEntity> {Name = entity.Name};
+      return new() {Name = entity.Name};
     }
 
     protected override BindingColumnList CreateColumns() {
-      return new BindingColumnList {
+      return new() {
         new BindingColumn(nameof(INamedEntity.Name)) {IsInKey = true}
       };
     }

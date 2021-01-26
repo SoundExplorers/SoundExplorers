@@ -7,7 +7,7 @@ namespace SoundExplorers.Model {
   public class NewsletterBindingItem
     : BindingItemBase<Newsletter, NewsletterBindingItem> {
     private DateTime _date;
-    private string _url;
+    private string _url = null!;
 
     public NewsletterBindingItem() {
       Date = DateTime.Today;
@@ -30,7 +30,7 @@ namespace SoundExplorers.Model {
     }
 
     internal override Key GetKey() {
-      return new Key(EntityBase.DateToSimpleKey(Date), null);
+      return new(EntityBase.DateToSimpleKey(Date), null);
     }
   }
 }

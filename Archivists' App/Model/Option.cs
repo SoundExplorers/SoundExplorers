@@ -3,7 +3,6 @@ using System.Data;
 using System.Diagnostics.CodeAnalysis;
 using SoundExplorers.Data;
 using VelocityDb.Session;
-using NotNullAttribute = JetBrains.Annotations.NotNullAttribute;
 
 namespace SoundExplorers.Model {
   /// <summary>
@@ -37,14 +36,14 @@ namespace SoundExplorers.Model {
     ///   there is an error on attempting to access the database.
     /// </exception>
     [ExcludeFromCodeCoverage]
-    public Option([NotNull] string name, object defaultValue = null) : this(
+    public Option(string name, object? defaultValue = null) : this(
       QueryHelper.Instance, Global.Session, name, defaultValue) { }
 
     /// <summary>
     ///   Should only need to be called directly for testing.
     /// </summary>
-    protected Option([NotNull] QueryHelper queryHelper, [NotNull] SessionBase session,
-      [NotNull] string name, object defaultValue = null) {
+    protected Option(QueryHelper queryHelper, SessionBase session,
+      string name, object? defaultValue = null) {
       QueryHelper = queryHelper;
       OptionName = name;
       Session = session;
@@ -52,7 +51,7 @@ namespace SoundExplorers.Model {
       UserOption = FetchUserOption();
     }
 
-    private object DefaultValue { get; }
+    private object? DefaultValue { get; }
     private string OptionName { get; }
     private QueryHelper QueryHelper { get; }
     private SessionBase Session { get; }

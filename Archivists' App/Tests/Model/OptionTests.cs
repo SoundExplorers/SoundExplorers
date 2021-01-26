@@ -50,7 +50,7 @@ namespace SoundExplorers.Tests.Model {
       Session.Commit();
       option = CreateTestOption("String");
       Assert.AreEqual("Hello", option.StringValue, "StringValue retrieved");
-      option.StringValue = null; // Equivalent to default, so needs to deleted
+      option.StringValue = string.Empty; // Equivalent to default, so needs to deleted
       Session.BeginRead();
       Assert.IsNull(
         QueryHelper.Find<UserOption>(simpleKey, Session),

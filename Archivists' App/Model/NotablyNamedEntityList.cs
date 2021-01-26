@@ -7,13 +7,13 @@ namespace SoundExplorers.Model {
     where TEntity : EntityBase, INotablyNamedEntity, new() {
     protected override NotablyNamedBindingItem<TEntity> CreateBindingItem(
       TEntity entity) {
-      return new NotablyNamedBindingItem<TEntity> {
+      return new() {
         Name = entity.Name, Notes = entity.Notes
       };
     }
 
     protected override BindingColumnList CreateColumns() {
-      return new BindingColumnList {
+      return new() {
         new BindingColumn(nameof(Location.Name)) {IsInKey = true},
         new BindingColumn(nameof(Location.Notes))
       };

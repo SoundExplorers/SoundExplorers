@@ -5,10 +5,8 @@ using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Linq;
-using JetBrains.Annotations;
 using SoundExplorers.Data;
 using VelocityDb.Session;
-using PropertyConstraintException = SoundExplorers.Data.PropertyConstraintException;
 
 namespace SoundExplorers.Model {
   /// <summary>
@@ -23,9 +21,9 @@ namespace SoundExplorers.Model {
   public abstract class EntityListBase<TEntity, TBindingItem> : List<TEntity>, IEntityList
     where TEntity : EntityBase, new()
     where TBindingItem : BindingItemBase<TEntity, TBindingItem>, new() {
-    private BindingColumnList _columns;
-    private QueryHelper _queryHelper;
-    private SessionBase _session;
+    private BindingColumnList? _columns;
+    private QueryHelper? _queryHelper;
+    private SessionBase? _session;
 
     /// <summary>
     ///   Base constructor for derived entity list classes.
@@ -35,7 +33,7 @@ namespace SoundExplorers.Model {
     ///   (updatable) main list. Null if a parent list is not required when this is the
     ///   main list.
     /// </param>
-    protected EntityListBase(Type parentListType = null) {
+    protected EntityListBase(Type? parentListType = null) {
       if (parentListType != null) {
         ParentListType = parentListType.GetInterfaces().Contains(typeof(IEntityList))
           ? parentListType
@@ -48,17 +46,16 @@ namespace SoundExplorers.Model {
       EntityComparer = new EntityComparer<TEntity>();
     }
 
-    private TBindingItem BackupBindingItem { get; set; }
-    private TBindingItem BackupBindingItemToRestoreFrom { get; set; }
-    private TBindingItem BindingItemToFix { get; set; }
+    private TBindingItem? BackupBindingItem { get; set; }
+    private TBindingItem? BackupBindingItemToRestoreFrom { get; set; }
+    private TBindingItem? BindingItemToFix { get; set; }
     private EntityComparer<TEntity> EntityComparer { get; }
-    private TBindingItem ErrorBindingItem { get; set; }
+    private TBindingItem? ErrorBindingItem { get; set; }
     private StatementType LastDatabaseChangeAction { get; set; }
 
     /// <summary>
     ///   The setter should only be needed for testing.
     /// </summary>
-    [NotNull]
     internal QueryHelper QueryHelper {
       get => _queryHelper ??= QueryHelper.Instance;
       // ReSharper disable once PropertyCanBeMadeInitOnly.Global
@@ -69,12 +66,14 @@ namespace SoundExplorers.Model {
     ///   Gets a strongly typed view of the binding list to facilitate testing.
     /// </summary>
     internal TypedBindingList<TEntity, TBindingItem> TypedBindingList =>
-      (TypedBindingList<TEntity, TBindingItem>)BindingList;
+      (TypedBindingList<TEntity, TBindingItem>)BindingList!;
+
+    private bool HasRowBeenEdited { get; set; }
 
     /// <summary>
     ///   Gets the binding list representing the list of entities and bound to the grid.
     /// </summary>
-    public IBindingList BindingList { get; private set; }
+    public IBindingList? BindingList { get; private set; }
 
     /// <summary>
     ///   Gets metadata for the columns of the editor grid that represents the list of
@@ -84,14 +83,14 @@ namespace SoundExplorers.Model {
       _columns ??= CreateColumnsWithSession();
 
     public string EntityTypeName => typeof(TEntity).Name;
-    private bool HasRowBeenEdited { get; set; }
 
     /// <summary>
     ///   Gets whether the current grid row is the insertion row, which is for adding new
     ///   entities and is located at the bottom of the grid.
     /// </summary>
     /// <remarks>
-    ///   TODO: Check reliability of IsInsertionRowCurrent throughout when the main grid has been entered from the parent grid.  
+    ///   TODO: Check reliability of IsInsertionRowCurrent throughout when the main grid has been entered
+    ///   from the parent grid.
     ///   What we here call the insertion row is not necessarily the grid's new (i.e.
     ///   empty) row. Rather it is the row that, if committed, will provide the data for
     ///   an entity to be inserted into the database. The new row becomes the insertion
@@ -112,13 +111,13 @@ namespace SoundExplorers.Model {
     public bool IsParentList { get; init; }
 
     public bool IsRemovingInvalidInsertionRow { get; set; }
-    public DatabaseUpdateErrorException LastDatabaseUpdateErrorException { get; set; }
+    public DatabaseUpdateErrorException? LastDatabaseUpdateErrorException { get; set; }
 
     /// <summary>
     ///   Gets the type of parent list (IEntityList) required when this is the main list.
     ///   Null if a parent list is not required when this is the main list.
     /// </summary>
-    public Type ParentListType { get; }
+    public Type? ParentListType { get; }
 
     /// <summary>
     ///   Gets or sets the session to be used for accessing the database. The setter
@@ -149,7 +148,7 @@ namespace SoundExplorers.Model {
         Session.Unpersist(this[rowIndex]);
         RemoveAt(rowIndex);
       } catch (Exception exception) {
-        BindingList.Insert(rowIndex, BackupBindingItem);
+        BindingList!.Insert(rowIndex, BackupBindingItem);
         throw CreateDatabaseUpdateErrorException(exception, rowIndex);
       } finally {
         Session.Commit();
@@ -164,13 +163,12 @@ namespace SoundExplorers.Model {
     /// <param name="rowIndex">
     ///   Zero-based row index.
     /// </param>
-    [NotNull]
     public virtual IList GetChildrenForMainList(int rowIndex) {
       throw new NotSupportedException();
     }
 
     public IList<object> GetErrorValues() {
-      return ErrorBindingItem.GetPropertyValues();
+      return ErrorBindingItem!.GetPropertyValues();
     }
 
     /// <summary>
@@ -233,7 +231,7 @@ namespace SoundExplorers.Model {
       }
     }
 
-    public void OnValidationError(int rowIndex, string propertyName,
+    public void OnValidationError(int rowIndex, string? propertyName,
       Exception exception) {
       ErrorBindingItem = GetBindingItem(rowIndex);
       LastDatabaseChangeAction =
@@ -265,7 +263,7 @@ namespace SoundExplorers.Model {
     ///   entities. Default: true. Set to false if entity list is not to be used to
     ///   populate a grid.
     /// </param>
-    public virtual void Populate(IList list = null, bool createBindingList = true) {
+    public virtual void Populate(IList? list = null, bool createBindingList = true) {
       Clear();
       if (list != null) {
         AddRange((IList<TEntity>)list);
@@ -299,8 +297,8 @@ namespace SoundExplorers.Model {
 
     public void RestoreCurrentBindingItemOriginalValues() {
       //Debug.WriteLine("EntityListBase.RestoreCurrentBindingItemOriginalValues");
-      ErrorBindingItem = BindingItemToFix.CreateBackup();
-      BindingItemToFix.RestorePropertyValuesFrom(BackupBindingItemToRestoreFrom);
+      ErrorBindingItem = BindingItemToFix!.CreateBackup();
+      BindingItemToFix.RestorePropertyValuesFrom(BackupBindingItemToRestoreFrom!);
       BackupBindingItemToRestoreFrom = null;
       BindingItemToFix = null;
       HasRowBeenEdited = false;
@@ -314,25 +312,21 @@ namespace SoundExplorers.Model {
       BindingItemToFix = null;
       var bindingItem = GetBindingItem(rowIndex);
       string propertyName = Columns[columnIndex].Name;
-      var originalValue = BackupBindingItem.GetPropertyValue(propertyName);
+      var originalValue = BackupBindingItem!.GetPropertyValue(propertyName);
       //Debug.WriteLine($"    BackupBindingItem.{propertyName} = {originalValue}");
       bindingItem.SetPropertyValue(propertyName, originalValue);
     }
 
-    [NotNull]
-    protected abstract TBindingItem CreateBindingItem([NotNull] TEntity entity);
+    protected abstract TBindingItem CreateBindingItem(TEntity entity);
 
-    [NotNull]
-    private TBindingItem CreateBindingItemWithColumns([NotNull] TEntity entity) {
+    private TBindingItem CreateBindingItemWithColumns(TEntity entity) {
       var result = CreateBindingItem(entity);
       result.Columns = Columns;
       return result;
     }
 
-    [NotNull]
     protected abstract BindingColumnList CreateColumns();
 
-    [NotNull]
     private BindingColumnList CreateColumnsWithSession() {
       var result = CreateColumns();
       foreach (var column in result) {
@@ -360,7 +354,7 @@ namespace SoundExplorers.Model {
         CheckForDuplicateKey(bindingItem);
       } catch (DuplicateNameException duplicateKeyException) {
         OnValidationError(rowIndex, null, duplicateKeyException);
-        throw LastDatabaseUpdateErrorException;
+        throw LastDatabaseUpdateErrorException!;
       }
       Session.BeginUpdate();
       try {
@@ -400,9 +394,9 @@ namespace SoundExplorers.Model {
       }
     }
 
-    private void CheckForDuplicateKey([NotNull] TBindingItem bindingItem) {
+    private void CheckForDuplicateKey(TBindingItem bindingItem) {
       var newKey = bindingItem.GetKey();
-      var originalKey = BackupBindingItem.GetKey();
+      var originalKey = BackupBindingItem!.GetKey();
       if (newKey == originalKey) {
         return;
       }
@@ -415,16 +409,15 @@ namespace SoundExplorers.Model {
       }
     }
 
-    [NotNull]
     private DatabaseUpdateErrorException CreateDatabaseUpdateErrorException(
-      [NotNull] Exception exception, int rowIndex) {
+      Exception exception, int rowIndex) {
       if (!IsDatabaseUpdateError(exception)) {
         // Terminal error.  In the Release compilation, the stack trace will be shown by
         // the terminal error handler in Program.cs.
         //Debug.WriteLine(exception);
         throw exception;
       }
-      string propertyName =
+      string? propertyName =
         exception is PropertyConstraintException propertyConstraintException
           ? propertyConstraintException.PropertyName
           : null;
@@ -434,7 +427,6 @@ namespace SoundExplorers.Model {
       return LastDatabaseUpdateErrorException;
     }
 
-    [NotNull]
     private TypedBindingList<TEntity, TBindingItem> CreateBindingList() {
       var list = (
         from entity in this
@@ -443,11 +435,10 @@ namespace SoundExplorers.Model {
       return new TypedBindingList<TEntity, TBindingItem>(list);
     }
 
-    [NotNull]
     private TBindingItem GetBindingItem(int rowIndex) {
-      return BindingList[rowIndex] as TBindingItem 
+      return BindingList![rowIndex] as TBindingItem
              ?? throw new InvalidOperationException(
-               "In EntityListBase.GetBindingItem, "+ 
+               "In EntityListBase.GetBindingItem, " +
                "cannot cast BindingList[rowIndex] as TBindingItem");
     }
 
@@ -462,8 +453,7 @@ namespace SoundExplorers.Model {
       return exception is ConstraintException; // Includes PropertyConstraintException
     }
 
-    private void UpdateExistingEntityProperty(
-      int rowIndex, [NotNull] string propertyName) {
+    private void UpdateExistingEntityProperty(int rowIndex, string propertyName) {
       //Debug.WriteLine($"EntityListBase.UpdateExistingEntityProperty: row {rowIndex}");
       LastDatabaseChangeAction = StatementType.Update;
       var bindingItem = GetBindingItem(rowIndex);

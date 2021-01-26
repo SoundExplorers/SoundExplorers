@@ -61,8 +61,8 @@ namespace SoundExplorers.Tests.Model {
       Session.Commit();
       List.Populate();
       var children = List.GetChildrenForMainList(0);
-      Assert.AreEqual(5, children?.Count, "Count");
-      Assert.IsInstanceOf<Piece>(children?[0], "Child type");
+      Assert.AreEqual(5, children.Count, "Count");
+      Assert.IsInstanceOf<Piece>(children[0], "Child type");
     }
 
     [Test]

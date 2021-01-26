@@ -27,7 +27,7 @@ namespace SoundExplorers.Controller {
     private bool IsRestoringRowCurrency { get; set; }
 
     protected virtual StatementType LastChangeAction =>
-      List.LastDatabaseUpdateErrorException.ChangeAction;
+      List.LastDatabaseUpdateErrorException!.ChangeAction;
     
     internal int LastCurrentRowIndex { get; set; }
 
@@ -209,7 +209,7 @@ namespace SoundExplorers.Controller {
     public void ShowError() {
       // Debug.WriteLine(
       //   $"MainGridController.ShowError: LastChangeAction == {LastChangeAction}");
-      Grid.MakeCellCurrent(List.LastDatabaseUpdateErrorException.RowIndex,
+      Grid.MakeCellCurrent(List.LastDatabaseUpdateErrorException!.RowIndex,
         List.LastDatabaseUpdateErrorException.ColumnIndex);
       if (LastChangeAction == StatementType.Delete) {
         Grid.SelectCurrentRowOnly();
@@ -311,7 +311,7 @@ namespace SoundExplorers.Controller {
     /// </remarks>
     private void CancelInsertion() {
       // Debug.WriteLine("EditorController.CancelInsertion");
-      int insertionRowIndex = List.BindingList.Count - 1;
+      int insertionRowIndex = List.BindingList!.Count - 1;
       if (insertionRowIndex > 0) {
         // Currently, it is not anticipated that there can be an insertion row error at
         // this point when the insertion row is the only row on the table, as the only

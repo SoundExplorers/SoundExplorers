@@ -21,8 +21,8 @@ namespace SoundExplorers.Model {
     }
 
     protected override EventBindingItem CreateBindingItem(Event @event) {
-      return new EventBindingItem {
-        Date = @event.Date, Location = @event.Location.Name,
+      return new() {
+        Date = @event.Date, Location = @event.Location.Name!,
         Series = @event.Series?.Name,
         Newsletter = @event.Newsletter?.Date ?? EntityBase.InitialDate,
         EventType = @event.EventType.Name,
@@ -31,7 +31,7 @@ namespace SoundExplorers.Model {
     }
 
     protected override BindingColumnList CreateColumns() {
-      return new BindingColumnList {
+      return new() {
         new BindingColumn(nameof(Event.Date)) {IsInKey = true},
         new BindingColumn(nameof(Event.Location),
           typeof(LocationList), nameof(Location.Name)) {IsInKey = true},
@@ -49,7 +49,7 @@ namespace SoundExplorers.Model {
       return this[rowIndex].Sets.Values.ToList();
     }
 
-    public override void Populate(IList list = null, bool createBindingList = true) {
+    public override void Populate(IList? list = null, bool createBindingList = true) {
       if (!HasDefaultEventTypeBeenFound) {
         AddDefaultEventTypeIfItDoesNotExist();
       }

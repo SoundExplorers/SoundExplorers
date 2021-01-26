@@ -11,8 +11,8 @@ namespace SoundExplorers.Model {
     }
 
     protected override SetBindingItem CreateBindingItem(Set set) {
-      return new SetBindingItem {
-        Date = set.Event.Date, Location = set.Event.Location.Name,
+      return new() {
+        Date = set.Event.Date, Location = set.Event.Location.Name!,
         SetNo = set.SetNo, Act = set.Act?.Name,
         Genre = set.Genre.Name,
         Notes = set.Notes
@@ -21,12 +21,12 @@ namespace SoundExplorers.Model {
 
     protected override BindingColumnList CreateColumns() {
       var result = new BindingColumnList {
-        new BindingColumn(nameof(Set.SetNo)) {IsInKey = true},
-        new BindingColumn(nameof(Set.Act),
+        new(nameof(Set.SetNo)) {IsInKey = true},
+        new(nameof(Set.Act),
           typeof(ActList), nameof(Act.Name)),
-        new BindingColumn(nameof(Set.Genre),
+        new(nameof(Set.Genre),
           typeof(GenreList), nameof(Genre.Name)),
-        new BindingColumn(nameof(Set.Notes))
+        new(nameof(Set.Notes))
       };
       if (IsParentList) {
         result.Insert(0,

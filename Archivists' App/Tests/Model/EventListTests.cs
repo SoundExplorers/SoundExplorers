@@ -102,9 +102,9 @@ namespace SoundExplorers.Tests.Model {
       var bindingList = List.TypedBindingList;
       List.OnRowEnter(1);
       bindingList[1].Date = date;
-      bindingList[1].Location = location.Name;
+      bindingList[1].Location = location.Name!;
       bindingList[1].Newsletter = newsletter.Date;
-      bindingList[1].EventType = eventType.Name;
+      bindingList[1].EventType = eventType.Name!;
       bindingList[1].Series = series.Name;
       bindingList[1].Notes = notes;
       var @event = List[1];
@@ -128,8 +128,8 @@ namespace SoundExplorers.Tests.Model {
       Session.Commit();
       List.Populate();
       var children = List.GetChildrenForMainList(0);
-      Assert.AreEqual(3, children?.Count, "Count");
-      Assert.IsInstanceOf<Set>(children?[0], "Child type");
+      Assert.AreEqual(3, children.Count, "Count");
+      Assert.IsInstanceOf<Set>(children[0], "Child type");
     }
   }
 }

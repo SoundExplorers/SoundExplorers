@@ -23,7 +23,7 @@ namespace SoundExplorers.Data {
 
     [NotNull]
     public static QueryHelper Instance =>
-      _instance ?? (_instance = new QueryHelper());
+      _instance ??= new QueryHelper();
 
     [NotNull]
     private static Func<TEntity, bool> CreateKeyPredicate<TEntity>(

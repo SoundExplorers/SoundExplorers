@@ -35,11 +35,10 @@ namespace SoundExplorers.Model {
     IBindingItem, INotifyPropertyChanged
     where TEntity : EntityBase, new()
     where TBindingItem : BindingItemBase<TEntity, TBindingItem>, new() {
-    private BindingColumnList _columns;
-    private IDictionary<string, PropertyInfo> _entityProperties;
-    private IDictionary<string, PropertyInfo> _properties;
+    private BindingColumnList? _columns;
+    private IDictionary<string, PropertyInfo>? _entityProperties;
+    private IDictionary<string, PropertyInfo>? _properties;
 
-    [NotNull]
     internal BindingColumnList Columns {
       get => _columns ?? throw new NullReferenceException(
         "The binding item's Columns property is null.");
@@ -47,14 +46,14 @@ namespace SoundExplorers.Model {
     }
 
     private IDictionary<string, PropertyInfo> EntityProperties =>
-      _entityProperties ?? (_entityProperties = CreatePropertyDictionary<TEntity>());
+      _entityProperties ??= CreatePropertyDictionary<TEntity>();
 
-    private IDictionary<string, object> EntityPropertyValues { get; set; }
+    private IDictionary<string, object>? EntityPropertyValues { get; set; }
 
     protected IDictionary<string, PropertyInfo> Properties =>
-      _properties ?? (_properties = CreatePropertyDictionary<TBindingItem>());
+      _properties ??= CreatePropertyDictionary<TBindingItem>();
 
-    public void SetPropertyValue(string propertyName, object value) {
+    public void SetPropertyValue(string propertyName, object? value) {
       try {
         Properties[propertyName].SetValue(this, value);
       } catch (TargetInvocationException exception) {
@@ -62,25 +61,25 @@ namespace SoundExplorers.Model {
       }
     }
 
-    public event PropertyChangedEventHandler PropertyChanged;
+    public event PropertyChangedEventHandler? PropertyChanged;
 
     [NotifyPropertyChangedInvocator]
     protected void OnPropertyChanged(
-      [CallerMemberName] string propertyName = null) {
+      [CallerMemberName] string? propertyName = null) {
       PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 
-    private void CopyValuesToEntityProperties([NotNull] TEntity entity) {
+    private void CopyValuesToEntityProperties(TEntity entity) {
       foreach (var property in Properties.Values) {
         CopyValueToEntityProperty(property.Name, entity);
       }
     }
 
-    private void CopyValueToEntityProperty([NotNull] string propertyName,
-      [NotNull] TEntity entity) {
+    private void CopyValueToEntityProperty(string propertyName,
+      TEntity entity) {
       var entityProperty = EntityProperties[propertyName];
       var oldEntityPropertyValue = entityProperty.GetValue(entity);
-      var newEntityPropertyValue = EntityPropertyValues[propertyName];
+      var newEntityPropertyValue = EntityPropertyValues![propertyName];
       if (oldEntityPropertyValue == null && newEntityPropertyValue == null) {
         return;
       }
@@ -90,14 +89,12 @@ namespace SoundExplorers.Model {
       }
     }
 
-    [NotNull]
     internal TBindingItem CreateBackup() {
       var result = new TBindingItem {Columns = Columns};
       result.RestorePropertyValuesFrom((TBindingItem)this);
       return result;
     }
 
-    [NotNull]
     internal TEntity CreateEntity() {
       // Fetch any parent reference values from the database
       // before instantiating the entity.
@@ -117,17 +114,15 @@ namespace SoundExplorers.Model {
       return result;
     }
 
-    [NotNull]
     private IDictionary<string, object> CreateEntityPropertyValueDictionary() {
       var result = new Dictionary<string, object>();
       foreach (var property in Properties.Values) {
         result[property.Name] =
-          GetEntityPropertyValue(property, EntityProperties[property.Name]);
+          GetEntityPropertyValue(property, EntityProperties[property.Name])!;
       }
       return result;
     }
 
-    [NotNull]
     private static IDictionary<string, PropertyInfo> CreatePropertyDictionary<T>() {
       var properties = typeof(T).GetProperties().ToList();
       var result = new Dictionary<string, PropertyInfo>(properties.Count);
@@ -137,17 +132,15 @@ namespace SoundExplorers.Model {
       return result;
     }
 
-    [CanBeNull]
-    protected IEntity FindParent([NotNull] PropertyInfo property) {
+    protected IEntity? FindParent(PropertyInfo property) {
       var propertyValue = property.GetValue(this);
       return propertyValue != null
         ? Columns[property.Name].ReferenceableItems.GetEntity(propertyValue)
         : null;
     }
 
-    [CanBeNull]
-    private object GetEntityPropertyValue([NotNull] PropertyInfo property,
-      [NotNull] PropertyInfo entityProperty) {
+    private object? GetEntityPropertyValue(PropertyInfo property,
+      PropertyInfo entityProperty) {
       return entityProperty.PropertyType == property.PropertyType
         ? property.GetValue(this)
         : FindParent(property);
@@ -155,31 +148,29 @@ namespace SoundExplorers.Model {
 
     internal abstract Key GetKey();
 
-    [CanBeNull]
-    internal object GetPropertyValue([NotNull] string propertyName) {
+    internal object? GetPropertyValue(string propertyName) {
       return Properties[propertyName].GetValue(this);
     }
 
-    [NotNull]
     internal IList<object> GetPropertyValues() {
       return (
         from property in Properties.Values
-        select property.GetValue(this)).ToList();
+        select property.GetValue(this)).ToList()!;
     }
 
-    internal void RestorePropertyValuesFrom([NotNull] TBindingItem backup) {
+    internal void RestorePropertyValuesFrom(TBindingItem backup) {
       foreach (var property in Properties.Values) {
-        SetPropertyValue(property.Name, backup.GetPropertyValue(property.Name));
+        SetPropertyValue(property.Name, backup.GetPropertyValue(property.Name)!);
       }
     }
 
-    internal void RestoreToEntity([NotNull] TEntity entity) {
+    internal void RestoreToEntity(TEntity entity) {
       EntityPropertyValues = CreateEntityPropertyValueDictionary();
       CopyValuesToEntityProperties(entity);
     }
 
-    private static void SetEntityPropertyValue([NotNull] TEntity entity,
-      [NotNull] PropertyInfo entityProperty, [CanBeNull] object newEntityPropertyValue) {
+    private static void SetEntityPropertyValue(TEntity entity,
+      PropertyInfo entityProperty, object? newEntityPropertyValue) {
       try {
         entityProperty.SetValue(entity, newEntityPropertyValue);
       } catch (TargetInvocationException exception) {
@@ -187,8 +178,7 @@ namespace SoundExplorers.Model {
       }
     }
 
-    internal void UpdateEntityProperty(
-      [NotNull] string propertyName, [NotNull] TEntity entity) {
+    internal void UpdateEntityProperty(string propertyName, TEntity entity) {
       var entityProperty = EntityProperties[propertyName];
       var newEntityPropertyValue =
         GetEntityPropertyValue(Properties[propertyName], entityProperty);

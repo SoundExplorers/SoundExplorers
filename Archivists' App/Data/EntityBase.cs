@@ -121,13 +121,13 @@ namespace SoundExplorers.Data {
 
     [NotNull]
     internal QueryHelper QueryHelper {
-      get => _queryHelper ?? (_queryHelper = QueryHelper.Instance);
+      get => _queryHelper ??= QueryHelper.Instance;
       set => _queryHelper = value;
     }
 
     [NotNull]
     protected Schema Schema {
-      get => _schema ?? (_schema = Schema.Instance);
+      get => _schema ??= Schema.Instance;
       set => _schema = value;
     }
 
@@ -324,7 +324,7 @@ namespace SoundExplorers.Data {
       [NotNull] Key keyToCheck) {
       var childrenOfType = ChildrenOfType[child.EntityType];
       if (childrenOfType.Contains(keyToCheck) &&
-          !((EntityBase)childrenOfType[keyToCheck]).Oid.Equals(child.Oid)) {
+          !((EntityBase)childrenOfType[keyToCheck])!.Oid.Equals(child.Oid)) {
         throw new ConstraintException(
           $"{child.EntityType.Name} '{keyToCheck}' " +
           $"cannot be added to {EntityType.Name} '{Key}', " +

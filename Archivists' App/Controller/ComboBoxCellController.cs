@@ -50,7 +50,7 @@ namespace SoundExplorers.Controller {
       if (!MainGridController.IsInsertionRowCurrent) {
         return;
       }
-      string simpleKey = ReferenceableItemList.ToSimpleKey(cellValue);
+      string simpleKey = ReferenceableItemList.ToSimpleKey(cellValue)!;
       if (Column.ReferenceableItems.ContainsKey(simpleKey)) {
         return;
       }

@@ -15,7 +15,7 @@ namespace SoundExplorers.Tests.Controller {
     internal bool TestUnsupportedLastChangeAction { get; set; }
 
     internal void CreateAndGoToNewRow() {
-      List.BindingList.AddNew();
+      List.BindingList!.AddNew();
       ((MockMainGrid)Grid).SetCurrentRowIndex(List.BindingList.Count - 1); 
       OnRowEnter(Grid.CurrentRowIndex);
     }
@@ -24,7 +24,7 @@ namespace SoundExplorers.Tests.Controller {
       int rowIndex, string columnName, object value) {
       var comboBoxCellController =
         CreateComboBoxCellControllerWithItems(columnName);
-      ((IBindingItem)List.BindingList[rowIndex]!).SetPropertyValue(columnName, value);
+      ((IBindingItem)List.BindingList![rowIndex]!).SetPropertyValue(columnName, value);
       comboBoxCellController.OnCellValueChanged(0, value);
     }
 

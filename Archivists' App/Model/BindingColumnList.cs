@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using JetBrains.Annotations;
 
 namespace SoundExplorers.Model {
   /// <summary>
@@ -21,11 +20,10 @@ namespace SoundExplorers.Model {
     /// <returns>
     ///   The entity column with the specified name (case-insensitive).
     /// </returns>
-    [NotNull]
-    public BindingColumn this[[NotNull] string name] =>
-      FindColumn(name) ?? 
-    throw new InvalidOperationException(
-      $"In BindingColumnList.Item, cannot find '{name}' column.");
+    public BindingColumn this[string name] =>
+      FindColumn(name) ??
+      throw new InvalidOperationException(
+        $"In BindingColumnList.Item, cannot find '{name}' column.");
 
     /// <summary>
     ///   Add the specified entity column to the list,
@@ -38,7 +36,7 @@ namespace SoundExplorers.Model {
     ///   The list already contains an entity column
     ///   of the same name.
     /// </exception>
-    public new void Add([NotNull] BindingColumn bindingColumn) {
+    public new void Add(BindingColumn bindingColumn) {
       if (ContainsKey(bindingColumn.Name)) {
         throw new ArgumentException(
           $"The list already contains an entity column named {bindingColumn.Name}.",
@@ -62,8 +60,7 @@ namespace SoundExplorers.Model {
       return FindColumn(name) != null;
     }
 
-    [CanBeNull]
-    private BindingColumn FindColumn([NotNull] string name) {
+    private BindingColumn? FindColumn(string name) {
       return (
         from BindingColumn bindingColumn in this
         where string.Compare(bindingColumn.Name, name,
@@ -71,7 +68,7 @@ namespace SoundExplorers.Model {
         select bindingColumn).FirstOrDefault();
     }
 
-    public int GetIndex([NotNull] string propertyName) {
+    public int GetIndex(string propertyName) {
       return IndexOf(this[propertyName]);
     }
   } //End of class

@@ -183,11 +183,11 @@ namespace SoundExplorers.Tests.Model {
         exception.Message, "Message");
       list.OnValidationError(1, "Name", exception);
       Assert.AreEqual(StatementType.Update,
-        list.LastDatabaseUpdateErrorException.ChangeAction, "ChangeAction");
-      Assert.AreEqual(1, list.LastDatabaseUpdateErrorException.RowIndex, "RowIndex");
-      Assert.AreEqual(0, list.LastDatabaseUpdateErrorException.ColumnIndex,
+        list.LastDatabaseUpdateErrorException!.ChangeAction, "ChangeAction");
+      Assert.AreEqual(1, list.LastDatabaseUpdateErrorException!.RowIndex, "RowIndex");
+      Assert.AreEqual(0, list.LastDatabaseUpdateErrorException!.ColumnIndex,
         "ColumnIndex");
-      Assert.AreSame(exception, list.LastDatabaseUpdateErrorException.InnerException,
+      Assert.AreSame(exception, list.LastDatabaseUpdateErrorException!.InnerException,
         "InnerException");
     }
 

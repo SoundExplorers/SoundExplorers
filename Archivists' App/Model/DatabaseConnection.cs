@@ -3,12 +3,11 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using SoundExplorers.Data;
 using VelocityDb.Session;
-using NotNullAttribute = JetBrains.Annotations.NotNullAttribute;
 
 namespace SoundExplorers.Model {
   public class DatabaseConnection : IOpen {
-    private DatabaseConfig DatabaseConfig { get; set; }
-    public int ExpectedVersion { get; protected set; } = 1;
+    private DatabaseConfig DatabaseConfig { get; set; } = null!;
+    public int ExpectedVersion { get; protected init; } = 1;
 
     public void Open() {
       DatabaseConfig = CreateDatabaseConfig();
@@ -36,7 +35,7 @@ namespace SoundExplorers.Model {
 
     [ExcludeFromCodeCoverage]
     protected virtual DatabaseConfig CreateDatabaseConfig() {
-      return new DatabaseConfig();
+      return new();
     }
 
     private void CheckDatabaseFolderExists() {
@@ -61,8 +60,7 @@ namespace SoundExplorers.Model {
     }
 
     [ExcludeFromCodeCoverage]
-    private static void CopyLicenceFile([NotNull] string sourcePath,
-      [NotNull] string destinationPath) {
+    private static void CopyLicenceFile(string sourcePath, string destinationPath) {
       try {
         File.Copy(sourcePath, destinationPath);
       } catch (Exception exception) {

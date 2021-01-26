@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
-using JetBrains.Annotations;
 using VelocityDb.Session;
 
 namespace SoundExplorers.Model {
@@ -13,16 +12,15 @@ namespace SoundExplorers.Model {
     /// <summary>
     ///   Gets the binding list representing the list of entities.
     /// </summary>
-    IBindingList BindingList { get; }
+    IBindingList? BindingList { get; }
 
     /// <summary>
     ///   Gets metadata for the columns of the editor grid that represents
     ///   the list of entities.
     /// </summary>
-    [NotNull]
     BindingColumnList Columns { get; }
 
-    [NotNull] string EntityTypeName { get; }
+    string EntityTypeName { get; }
 
     /// <summary>
     ///   Gets whether the current grid row is the insertion row,
@@ -37,20 +35,18 @@ namespace SoundExplorers.Model {
     bool IsParentList { get; init; }
 
     bool IsRemovingInvalidInsertionRow { get; set; }
-    DatabaseUpdateErrorException LastDatabaseUpdateErrorException { get; set; }
+    DatabaseUpdateErrorException? LastDatabaseUpdateErrorException { get; set; }
 
     /// <summary>
     ///   Gets the type of parent list (IEntityList) required when this is the main list.
     ///   Null if a parent list is not required when this is the main list.
     /// </summary>
-    [CanBeNull]
-    Type ParentListType { get; }
+    Type? ParentListType { get; }
 
     /// <summary>
     ///   Gets or sets the session to be used for accessing the database.
     ///   The setter should only be needed for testing.
     /// </summary>
-    [NotNull]
     SessionBase Session { set; }
 
     /// <summary>
@@ -70,10 +66,8 @@ namespace SoundExplorers.Model {
     /// <param name="rowIndex">
     ///   Zero-based row index.
     /// </param>
-    [CanBeNull]
-    IList GetChildrenForMainList(int rowIndex);
+    IList? GetChildrenForMainList(int rowIndex);
 
-    [NotNull]
     IList<object> GetErrorValues();
 
     /// <summary>
@@ -95,8 +89,7 @@ namespace SoundExplorers.Model {
     /// </param>
     void OnRowValidated(int rowIndex);
 
-    void OnValidationError(int rowIndex, [CanBeNull] string propertyName,
-      [NotNull] Exception exception);
+    void OnValidationError(int rowIndex, string? propertyName, Exception exception);
 
     /// <summary>
     ///   Populates and sorts the list and table.
@@ -113,7 +106,7 @@ namespace SoundExplorers.Model {
     ///   Default: true.
     ///   Set to false if entity list is not to be used to populate a grid.
     /// </param>
-    void Populate(IList list = null, bool createBindingList = true);
+    void Populate(IList? list = null, bool createBindingList = true);
 
     void RestoreCurrentBindingItemOriginalValues();
     void RemoveInsertionBindingItem();
