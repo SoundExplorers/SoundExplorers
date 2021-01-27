@@ -21,6 +21,7 @@
     </AssemblyAttribute>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Common\SoundExplorers.Common.csproj" />
     <ProjectReference Include="..\Data\SoundExplorers.Data.csproj" />
   </ItemGroup>
   <ItemGroup>

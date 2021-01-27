@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Windows.Forms;
+using SoundExplorers.Common;
 using SoundExplorers.Controller;
 
 namespace SoundExplorers.View {
@@ -15,9 +16,6 @@ namespace SoundExplorers.View {
       ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
       Margin = new Padding(4);
       RowHeadersWidth = 51;
-      // Fixes a .Net 5 problem where, when the user cancelled (by pressing Esc) an edit
-      // of a text cell on the insertion row after typing text, the program would crash.
-      ShowCellErrors = false;
       ShowCellToolTips = false; // Before .Net 5, tooltips were off by default.
       CellColorScheme = new GridCellColorScheme(this);
     }
@@ -119,8 +117,11 @@ namespace SoundExplorers.View {
     public virtual void Populate(IList? list = null) {
       Debug.WriteLine($"GridBase.Populate {Name}");
       Controller.Populate(list);
+      if (ColumnCount == 0) {
+        AddColumns();
+      }
       DataSource = Controller.BindingList;
-      ConfigureColumns();
+      // ConfigureColumns();
       AutoResizeColumns();
     }
 
@@ -145,21 +146,42 @@ namespace SoundExplorers.View {
       deleteSelectedRowsMenuItem.Enabled = CanDeleteSelectedRows;
     }
 
-    protected virtual void ConfigureColumn(DataGridViewColumn column) {
-      // Making every column explicitly not sortable prevents the program
-      // from crashing if F3 in pressed while the grid is focused.
-      column.SortMode = DataGridViewColumnSortMode.NotSortable;
-      column.HeaderText = Controller.GetColumnDisplayName(column.Name);
-      if (column.ValueType == typeof(DateTime)) {
-        column.DefaultCellStyle.Format = EditorController.DateFormat;
+    private void AddColumns() {
+      foreach (var bindingColumn in Controller.BindingColumns) {
+        Columns.Add(CreateColumn(bindingColumn));
       }
     }
 
-    private void ConfigureColumns() {
-      foreach (DataGridViewColumn column in Columns) {
-        ConfigureColumn(column);
+    protected virtual DataGridViewColumn CreateColumn(IBindingColumn bindingColumn) {
+      DataGridViewColumn result = !ReadOnly && bindingColumn.ReferencesAnotherEntity ? 
+        new DataGridViewComboBoxColumn() : new DataGridViewTextBoxColumn();
+      result.HeaderText = bindingColumn.DisplayName;
+      result.Name = result.DataPropertyName = bindingColumn.PropertyName;
+      // Making every column explicitly not sortable prevents the program from crashing
+      // if F3 in pressed while the grid is focused.
+      result.SortMode = DataGridViewColumnSortMode.NotSortable;
+      result.ValueType = bindingColumn.ValueType;
+      if (result.ValueType == typeof(DateTime)) {
+        result.DefaultCellStyle.Format = EditorController.DateFormat;
       }
+      return result;
     }
+
+    // protected virtual void ConfigureColumn(DataGridViewColumn column) {
+    //   // Making every column explicitly not sortable prevents the program
+    //   // from crashing if F3 in pressed while the grid is focused.
+    //   column.SortMode = DataGridViewColumnSortMode.NotSortable;
+    //   column.HeaderText = Controller.GetColumnDisplayName(column.Name);
+    //   if (column.ValueType == typeof(DateTime)) {
+    //     column.DefaultCellStyle.Format = EditorController.DateFormat;
+    //   }
+    // }
+
+    // private void ConfigureColumns() {
+    //   foreach (DataGridViewColumn column in Columns) {
+    //     ConfigureColumn(column);
+    //   }
+    // }
 
     /// <summary>
     ///   Returns the cell that is at the specified client co-ordinates of the main grid.

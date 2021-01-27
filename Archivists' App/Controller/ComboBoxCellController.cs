@@ -55,7 +55,7 @@ namespace SoundExplorers.Controller {
         return;
       }
       MainGridController.OnInsertionRowReferencedEntityNotFound(
-        rowIndex, Column.Name, simpleKey);
+        rowIndex, Column.PropertyName, simpleKey);
     }
   }
 }

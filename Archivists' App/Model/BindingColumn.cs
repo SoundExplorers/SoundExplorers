@@ -1,18 +1,20 @@
 ﻿using System;
 using System.Linq;
+using SoundExplorers.Common;
 using VelocityDb.Session;
 
 namespace SoundExplorers.Model {
   /// <summary>
   ///   Column data for a binding list that links entities to a grid.
   /// </summary>
-  public class BindingColumn {
+  public class BindingColumn : IBindingColumn {
     private ReferenceableItemList? _referenceableItems;
     private SessionBase? _session;
 
-    public BindingColumn(string name,
+    public BindingColumn(string propertyName, Type valueType,
       Type? referencedEntityListType = null, string? referencedPropertyName = null) {
-      Name = name ?? throw new ArgumentNullException(nameof(name));
+      PropertyName = propertyName;
+      ValueType = valueType;
       if (referencedEntityListType != null &&
           !referencedEntityListType.GetInterfaces().Contains(typeof(IEntityList))) {
         throw new ArgumentException(
@@ -32,17 +34,12 @@ namespace SoundExplorers.Model {
     }
 
     /// <summary>
-    ///   Gets the display name to be used for reporting.
-    ///   Defaults to <see cref="Name" />.
+    ///   Gets the display name to be used in the grid column header.
+    ///   Defaults to <see cref="PropertyName" />.
     /// </summary>
-    public string? DisplayName { get; internal set; }
+    public string? DisplayName { get; internal init; }
 
-    public bool IsInKey { get; internal set; }
-
-    /// <summary>
-    ///   Gets the column's property name.
-    /// </summary>
-    public string Name { get; }
+    public bool IsInKey { get; internal init; }
 
     /// <summary>
     ///   Gets or sets the session to be used for accessing the database.
@@ -74,6 +71,31 @@ namespace SoundExplorers.Model {
     /// </summary>
     public string? ReferencedTableName =>
       ReferencedEntityListType?.Name.Replace("List", string.Empty);
+
+    string IBindingColumn.DisplayName => DisplayName ?? PropertyName;
+
+    /// <summary>
+    ///   Gets whether the column is to be visible on the grid. If false, it needs to be
+    ///   hidden. Default: true.
+    /// </summary>
+    public bool IsVisible { get; internal init; } = true;
+
+    /// <summary>
+    ///   Gets the name of the BindingItem property to be bound to the column in the
+    ///   grid.
+    /// </summary>
+    public string PropertyName { get; }
+
+    /// <summary>
+    ///   Gets whether the column references another entity.
+    /// </summary>
+    public bool ReferencesAnotherEntity =>
+      !string.IsNullOrWhiteSpace(ReferencedPropertyName);
+
+    /// <summary>
+    ///   Gets the type of the values that are to be shown for the column on the grid.
+    /// </summary>
+    public Type ValueType { get; }
 
     private ReferenceableItemList FetchReferenceableItems() {
       var result = new ReferenceableItemList(this);

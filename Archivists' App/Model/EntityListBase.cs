@@ -311,7 +311,7 @@ namespace SoundExplorers.Model {
       BackupBindingItemToRestoreFrom = null;
       BindingItemToFix = null;
       var bindingItem = GetBindingItem(rowIndex);
-      string propertyName = Columns[columnIndex].Name;
+      string propertyName = Columns[columnIndex].PropertyName;
       var originalValue = BackupBindingItem!.GetPropertyValue(propertyName);
       //Debug.WriteLine($"    BackupBindingItem.{propertyName} = {originalValue}");
       bindingItem.SetPropertyValue(propertyName, originalValue);

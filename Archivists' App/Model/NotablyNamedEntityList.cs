@@ -14,8 +14,8 @@ namespace SoundExplorers.Model {
 
     protected override BindingColumnList CreateColumns() {
       return new() {
-        new BindingColumn(nameof(Location.Name)) {IsInKey = true},
-        new BindingColumn(nameof(Location.Notes))
+        new BindingColumn(nameof(Location.Name), typeof(string)) {IsInKey = true},
+        new BindingColumn(nameof(Location.Notes), typeof(string))
       };
     }
   }

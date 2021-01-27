@@ -12,6 +12,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoundExplorers.View", "View
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoundExplorers.Tests", "Tests\SoundExplorers.Tests.csproj", "{FC769801-A6A5-48F3-A83F-DF03475E8FC0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoundExplorers.Common", "Common\SoundExplorers.Common.csproj", "{F562B59C-2695-43E8-AAF5-D07CCE2E13A6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -42,5 +44,9 @@ Global
 		{FC769801-A6A5-48F3-A83F-DF03475E8FC0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FC769801-A6A5-48F3-A83F-DF03475E8FC0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FC769801-A6A5-48F3-A83F-DF03475E8FC0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F562B59C-2695-43E8-AAF5-D07CCE2E13A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F562B59C-2695-43E8-AAF5-D07CCE2E13A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F562B59C-2695-43E8-AAF5-D07CCE2E13A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F562B59C-2695-43E8-AAF5-D07CCE2E13A6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

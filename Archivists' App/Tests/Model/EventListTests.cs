@@ -36,30 +36,30 @@ namespace SoundExplorers.Tests.Model {
       Assert.IsFalse(List.IsParentList, "IsParentList");
       Assert.IsNull(List.ParentListType, "ParentListType");
       Assert.AreEqual(6, List.Columns.Count, "Columns.Count");
-      Assert.AreEqual("Date", List.Columns[0].Name, "Columns[0].Name");
-      Assert.AreEqual("Location", List.Columns[1].Name, "Columns[1].Name");
+      Assert.AreEqual("Date", List.Columns[0].PropertyName, "Columns[0].Name");
+      Assert.AreEqual("Location", List.Columns[1].PropertyName, "Columns[1].Name");
       Assert.AreEqual(typeof(LocationList), List.Columns[1].ReferencedEntityListType,
         "Columns[1].ReferencedEntityListType");
       Assert.AreEqual("Name", List.Columns[1].ReferencedPropertyName,
         "Columns[1].ReferencedColumnName");
       Assert.AreEqual("Location", List.Columns[1].ReferencedTableName,
         "Columns[1].ReferencedTableName");
-      Assert.AreEqual("Newsletter", List.Columns[2].Name, "Columns[2].Name");
+      Assert.AreEqual("Newsletter", List.Columns[2].PropertyName, "Columns[2].Name");
       Assert.AreEqual(typeof(NewsletterList), List.Columns[2].ReferencedEntityListType,
         "Columns[2].ReferencedEntityListType");
       Assert.AreEqual("Date", List.Columns[2].ReferencedPropertyName,
         "Columns[2].ReferencedColumnName");
-      Assert.AreEqual("EventType", List.Columns[3].Name, "Columns[3].Name");
+      Assert.AreEqual("EventType", List.Columns[3].PropertyName, "Columns[3].Name");
       Assert.AreEqual(typeof(EventTypeList), List.Columns[3].ReferencedEntityListType,
         "Columns[3].ReferencedEntityListType");
       Assert.AreEqual("Name", List.Columns[3].ReferencedPropertyName,
         "Columns[3].ReferencedColumnName");
-      Assert.AreEqual("Series", List.Columns[4].Name, "Columns[4].Name");
+      Assert.AreEqual("Series", List.Columns[4].PropertyName, "Columns[4].Name");
       Assert.AreEqual(typeof(SeriesList), List.Columns[4].ReferencedEntityListType,
         "Columns[4].ReferencedEntityListType");
       Assert.AreEqual("Name", List.Columns[4].ReferencedPropertyName,
         "Columns[4].ReferencedColumnName");
-      Assert.AreEqual("Notes", List.Columns[5].Name, "Columns[5].Name");
+      Assert.AreEqual("Notes", List.Columns[5].PropertyName, "Columns[5].Name");
     }
 
     [Test]

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Linq;
 using SoundExplorers.Data;
 
@@ -21,19 +22,25 @@ namespace SoundExplorers.Model {
 
     protected override BindingColumnList CreateColumns() {
       var result = new BindingColumnList {
-        new(nameof(Set.SetNo)) {IsInKey = true},
-        new(nameof(Set.Act),
+        new (nameof(Event.Date), typeof(DateTime)) {
+          IsVisible = !IsParentList
+        },
+        new (nameof(Event.Location), typeof(string)) {
+          IsVisible = !IsParentList
+        },
+        new(nameof(Set.SetNo), typeof(string)) {IsInKey = true},
+        new(nameof(Set.Act), typeof(string),
           typeof(ActList), nameof(Act.Name)),
-        new(nameof(Set.Genre),
+        new(nameof(Set.Genre), typeof(string),
           typeof(GenreList), nameof(Genre.Name)),
-        new(nameof(Set.Notes))
+        new(nameof(Set.Notes), typeof(string))
       };
-      if (IsParentList) {
-        result.Insert(0,
-          new BindingColumn(nameof(Event.Date)));
-        result.Insert(1,
-          new BindingColumn(nameof(Event.Location)));
-      }
+      // if (IsParentList) {
+      //   result.Insert(0,
+      //     new BindingColumn(nameof(Event.Date), typeof(DateTime)));
+      //   result.Insert(1,
+      //     new BindingColumn(nameof(Event.Location), typeof(string)));
+      // }
       return result;
     }
   }

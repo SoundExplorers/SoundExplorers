@@ -36,7 +36,7 @@ namespace SoundExplorers.Tests.Model {
       Assert.IsTrue(list.IsParentList, "IsParentList");
       Assert.IsNull(list.ParentListType, "ParentListType");
       Assert.AreEqual(1, list.Columns.Count, "Columns.Count");
-      Assert.AreEqual("Name", list.Columns[0].Name, "Columns[0].Name");
+      Assert.AreEqual("Name", list.Columns[0].PropertyName, "Columns[0].Name");
       list.Session = Session;
       list.Populate();
       Assert.IsEmpty(list.BindingList, "BindingList initially");

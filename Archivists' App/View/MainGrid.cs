@@ -2,10 +2,17 @@ using System;
 using System.Collections;
 using System.Diagnostics;
 using System.Windows.Forms;
+using SoundExplorers.Common;
 using SoundExplorers.Controller;
 
 namespace SoundExplorers.View {
   internal class MainGrid : GridBase, IMainGrid {
+    public MainGrid() {
+      // Fixes a .Net 5 problem where, when the user cancelled (by pressing Esc) an edit
+      // of a text cell on the insertion row after typing text, the program would crash.
+      ShowCellErrors = false;
+    }
+
     public TextBox TextBox =>
       (TextBox)EditingControl ??
       throw new InvalidOperationException(
@@ -57,30 +64,56 @@ namespace SoundExplorers.View {
       Debug.WriteLine("MainGrid.Populate END");
     }
 
-    protected override void ConfigureColumn(DataGridViewColumn column) {
-      if (!Controller.IsColumnToBeShown(column.Name)) {
-        column.Visible = false;
-        return;
+    protected override DataGridViewColumn CreateColumn(IBindingColumn bindingColumn) {
+      var result = base.CreateColumn(bindingColumn);
+      Visible = bindingColumn.IsVisible;
+      if (!Visible) {
+        return result;
       }
       // Column will be shown
-      base.ConfigureColumn(column);
       if (FirstVisibleColumnIndex == -1) {
-        FirstVisibleColumnIndex = column.Index;
+        FirstVisibleColumnIndex = result.Index;
       }
-      if (Controller.DoesColumnReferenceAnotherEntity(column.Name)) {
-        column.CellTemplate = ComboBoxCell.Create(Controller, column.Name);
-      } else if (column.ValueType == typeof(DateTime)) {
-        column.CellTemplate = new CalendarCell();
-      } else if (column.ValueType == typeof(string)) {
-        column.CellTemplate = new TextBoxCell();
+      if (bindingColumn.ReferencesAnotherEntity) {
+        result.CellTemplate = ComboBoxCell.Create(Controller, result.Name);
+      } else if (result.ValueType == typeof(DateTime)) {
+        result.CellTemplate = new CalendarCell();
+      } else if (result.ValueType == typeof(string)) {
+        result.CellTemplate = new TextBoxCell();
         // Interpret blanking a cell as an empty string, not null. Null is not a problem
         // for the object-oriented database to handle. But this fixes an error where,
         // when a text cell was edited to blank and then Tab was pressed to proceed to
-        // the next cell, which happened to be the first cell of the insertion row, if
-        // that is relevant, the program would crash with a NullReferenceException.
-        column.DefaultCellStyle.DataSourceNullValue = string.Empty;
+        // the next cell, the program would crash with a NullReferenceException. Perhaps 
+        // this is no longer necessary, now that ShowCellErrors is set to false. 
+        result.DefaultCellStyle.DataSourceNullValue = string.Empty;
       }
+      return result;
     }
+
+    // protected override void ConfigureColumn(DataGridViewColumn column) {
+    //   if (!Controller.IsColumnToBeShown(column.Name)) {
+    //     column.Visible = false;
+    //     return;
+    //   }
+    //   // Column will be shown
+    //   base.ConfigureColumn(column);
+    //   if (FirstVisibleColumnIndex == -1) {
+    //     FirstVisibleColumnIndex = column.Index;
+    //   }
+    //   if (Controller.DoesColumnReferenceAnotherEntity(column.Name)) {
+    //     column.CellTemplate = ComboBoxCell.Create(Controller, column.Name);
+    //   } else if (column.ValueType == typeof(DateTime)) {
+    //     column.CellTemplate = new CalendarCell();
+    //   } else if (column.ValueType == typeof(string)) {
+    //     column.CellTemplate = new TextBoxCell();
+    //     // Interpret blanking a cell as an empty string, not null. Null is not a problem
+    //     // for the object-oriented database to handle. But this fixes an error where,
+    //     // when a text cell was edited to blank and then Tab was pressed to proceed to
+    //     // the next cell, which happened to be the first cell of the insertion row, if
+    //     // that is relevant, the program would crash with a NullReferenceException.
+    //     column.DefaultCellStyle.DataSourceNullValue = string.Empty;
+    //   }
+    // }
 
     protected override void OnCellBeginEdit(DataGridViewCellCancelEventArgs e) {
       base.OnCellBeginEdit(e);

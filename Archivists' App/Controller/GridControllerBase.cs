@@ -1,14 +1,26 @@
 using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Linq;
+using SoundExplorers.Common;
 using SoundExplorers.Model;
 
 namespace SoundExplorers.Controller {
   public abstract class GridControllerBase {
+    private IList<IBindingColumn>? _bindingColumns;
     private IGrid? _otherGrid;
+
     protected GridControllerBase(IGrid grid, EditorController editorController) {
       Grid = grid;
       EditorController = editorController;
+    }
+
+    public IList<IBindingColumn> BindingColumns => 
+      _bindingColumns ??= CreateBindingColumns();
+
+    private IList<IBindingColumn> CreateBindingColumns() {
+      return (from column in Columns select (IBindingColumn)column).ToList();
     }
 
     public IBindingList? BindingList => List.BindingList;
@@ -20,28 +32,27 @@ namespace SoundExplorers.Controller {
     internal BindingColumnList Columns => List.Columns;
 
     protected EditorController EditorController { get; }
-    
     protected IGrid Grid { get; }
 
     /// <summary>
     ///   Gets the list of entities represented in the grid.
     /// </summary>
     protected abstract IEntityList List { get; }
-    
+
     protected bool IsPopulating { get; private set; }
     private IGrid OtherGrid => _otherGrid ??= GetOtherGrid();
 
-    public string GetColumnDisplayName(string columnName) {
-      var column = Columns[columnName];
-      return column.DisplayName ?? columnName;
-    }
+    // public string GetColumnDisplayName(string columnName) {
+    //   var column = Columns[columnName];
+    //   return column.DisplayName ?? columnName;
+    // }
 
     private IGrid GetOtherGrid() {
       return Grid == EditorController.View.MainGrid
         ? EditorController.View.ParentGrid
         : EditorController.View.MainGrid;
     }
-    
+
     public virtual void OnGotFocus() {
       Debug.WriteLine($"GridControllerBase.OnGotFocus {Grid.Name}");
       if (!IsPopulating) {
@@ -80,7 +91,8 @@ namespace SoundExplorers.Controller {
     }
 
     private void PrepareToSwitchFocusFromOtherGridToThis() {
-      Debug.WriteLine($"GridControllerBase.PrepareToSwitchFocusFromOtherGridToThis {Grid.Name}");
+      Debug.WriteLine(
+        $"GridControllerBase.PrepareToSwitchFocusFromOtherGridToThis {Grid.Name}");
       Grid.CellColorScheme.RestoreToDefault();
       OtherGrid.CellColorScheme.Invert();
       OtherGrid.Enabled = false;

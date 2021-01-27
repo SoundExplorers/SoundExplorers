@@ -8,7 +8,7 @@ namespace SoundExplorers.Model {
   /// </summary>
   /// <remarks>
   ///   A keyed list of entity columns with
-  ///   <see cref="BindingColumn.Name" /> as the key.
+  ///   <see cref="BindingColumn.PropertyName" /> as the key.
   /// </remarks>
   public class BindingColumnList : List<BindingColumn> {
     /// <summary>
@@ -37,9 +37,9 @@ namespace SoundExplorers.Model {
     ///   of the same name.
     /// </exception>
     public new void Add(BindingColumn bindingColumn) {
-      if (ContainsKey(bindingColumn.Name)) {
+      if (ContainsKey(bindingColumn.PropertyName)) {
         throw new ArgumentException(
-          $"The list already contains an entity column named {bindingColumn.Name}.",
+          $"The list already contains an entity column named {bindingColumn.PropertyName}.",
           nameof(bindingColumn));
       }
       base.Add(bindingColumn);
@@ -63,7 +63,7 @@ namespace SoundExplorers.Model {
     private BindingColumn? FindColumn(string name) {
       return (
         from BindingColumn bindingColumn in this
-        where string.Compare(bindingColumn.Name, name,
+        where string.Compare(bindingColumn.PropertyName, name,
           StringComparison.OrdinalIgnoreCase) == 0
         select bindingColumn).FirstOrDefault();
     }

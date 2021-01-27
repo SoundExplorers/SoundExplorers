@@ -45,16 +45,16 @@ namespace SoundExplorers.Controller {
     private IParentGrid ParentGrid => EditorController.View.ParentGrid;
     public string TableName => List.EntityTypeName;
 
-    /// <summary>
-    ///   Returns whether the specified column references another entity.
-    /// </summary>
-    public bool DoesColumnReferenceAnotherEntity(string columnName) {
-      return !string.IsNullOrWhiteSpace(Columns[columnName].ReferencedPropertyName);
-    }
+    // /// <summary>
+    // ///   Returns whether the specified column references another entity.
+    // /// </summary>
+    // public bool DoesColumnReferenceAnotherEntity(string columnName) {
+    //   return !string.IsNullOrWhiteSpace(Columns[columnName].ReferencedPropertyName);
+    // }
 
-    public bool IsColumnToBeShown(string columnName) {
-      return Columns.ContainsKey(columnName);
-    }
+    // public bool IsColumnToBeShown(string columnName) {
+    //   return Columns.ContainsKey(columnName);
+    // }
 
     public void OnExistingRowCellEditError(int rowIndex, string columnName,
       Exception? exception) {

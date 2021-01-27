@@ -76,7 +76,7 @@ namespace SoundExplorers.Model {
         return EntityDictionary![simpleKey];
       }
       throw CreateReferencedEntityNotFoundException(
-        ReferencingColumn.Name, simpleKey);
+        ReferencingColumn.PropertyName, simpleKey);
     }
 
     private void PopulateItems(

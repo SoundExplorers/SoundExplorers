@@ -10,7 +10,7 @@ namespace SoundExplorers.Model {
 
     protected override BindingColumnList CreateColumns() {
       return new() {
-        new BindingColumn(nameof(INamedEntity.Name)) {IsInKey = true}
+        new BindingColumn(nameof(INamedEntity.Name), typeof(string)) {IsInKey = true}
       };
     }
   }

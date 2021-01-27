@@ -1,4 +1,5 @@
-﻿using SoundExplorers.Data;
+﻿using System;
+using SoundExplorers.Data;
 
 namespace SoundExplorers.Model {
   public class NewsletterList : EntityListBase<Newsletter, NewsletterBindingItem> {
@@ -11,8 +12,8 @@ namespace SoundExplorers.Model {
 
     protected override BindingColumnList CreateColumns() {
       return new() {
-        new BindingColumn(nameof(Newsletter.Date)) {IsInKey = true},
-        new BindingColumn(nameof(Newsletter.Url)) {DisplayName = "URL"}
+        new BindingColumn(nameof(Newsletter.Date), typeof(DateTime)) {IsInKey = true},
+        new BindingColumn(nameof(Newsletter.Url), typeof(string)) {DisplayName = "URL"}
       };
     }
   }
