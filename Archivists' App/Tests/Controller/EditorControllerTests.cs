@@ -113,7 +113,8 @@ namespace SoundExplorers.Tests.Controller {
       Controller.Populate(); // Show an empty grid
       var mainList = Controller.MainList;
       var bindingList =
-        (TypedBindingList<Genre, NamedBindingItem<Genre>>)Controller.MainList.BindingList!;
+        (TypedBindingList<Genre, NamedBindingItem<Genre>>)Controller.MainList
+          .BindingList!;
       MainGridController.CreateAndGoToNewRow();
       bindingList[0].Name = name;
       Controller.IsClosing = true;
@@ -163,7 +164,8 @@ namespace SoundExplorers.Tests.Controller {
       Assert.AreEqual(1, MainGrid.CurrentRowIndex,
         "CurrentRowIndex after Populate");
       var bindingList =
-        (TypedBindingList<Genre, NamedBindingItem<Genre>>)Controller.MainList.BindingList!;
+        (TypedBindingList<Genre, NamedBindingItem<Genre>>)Controller.MainList
+          .BindingList!;
       MainGridController.CreateAndGoToNewRow();
       bindingList[1].Name = bindingList[0].Name;
       MainGridController.OnRowValidated(1);
@@ -375,13 +377,13 @@ namespace SoundExplorers.Tests.Controller {
       // the parent grid.  If the main grid's current row is the new row before focusing
       // the parent grid, then, on focusing the parent grid, the new row is removed, so
       // the main grid's last existing row becomes its current row.
-      MainGrid.MakeRowCurrent(mainGridNewRowIndex -1);
-      Assert.AreEqual(mainGridNewRowIndex -1, MainGrid.CurrentRowIndex, 
+      MainGrid.MakeRowCurrent(mainGridNewRowIndex - 1);
+      Assert.AreEqual(mainGridNewRowIndex - 1, MainGrid.CurrentRowIndex,
         "Main grid current row index after focus switched back to parent grid");
       // Now test the fix. When focus is switched back to the main grid, we want to
       // restore currency to the new row.
       MainGrid.Focus();
-      Assert.AreEqual(mainGridNewRowIndex, MainGrid.CurrentRowIndex, 
+      Assert.AreEqual(mainGridNewRowIndex, MainGrid.CurrentRowIndex,
         "Main grid current row index after focus switched back to main grid");
       Assert.IsTrue(ParentGrid.Enabled,
         "Parent grid enabled after focus switched back to main grid");
@@ -555,7 +557,7 @@ namespace SoundExplorers.Tests.Controller {
       Assert.IsFalse(MainGrid.Focused, "MainGrid.Focused after Populate");
       Assert.AreEqual(1, MainGrid.CellColorScheme.InvertCount,
         "MainGrid.CellColorScheme.InvertCount after Populate");
-      Assert.AreEqual(2, Controller.ParentBindingList?.Count, 
+      Assert.AreEqual(2, Controller.ParentBindingList?.Count,
         "Parent list count after Populate");
       Assert.AreEqual(5, MainGridController.BindingList?.Count,
         "Main list count after Populate");

@@ -336,7 +336,7 @@ namespace SoundExplorers.Tests.Data {
       Daughter1 = QueryHelper.Read<Daughter>(Daughter1Name, session);
       Assert.Throws<PropertyConstraintException>(() =>
         // ReSharper disable once AssignNullToNotNullAttribute
-        Daughter1.Name = null, "Disallow set SimpleKey to null");
+        Daughter1.Name = string.Empty, "Disallow set SimpleKey to blank");
       var namelessSon = new Son(QueryHelper);
       Assert.Throws<PropertyConstraintException>(() =>
           // ReSharper disable once AssignNullToNotNullAttribute
@@ -380,7 +380,7 @@ namespace SoundExplorers.Tests.Data {
         // Cannot use [Children].Add, as it is an ambiguous reference 
         // when a null parameter is specified.
         // ReSharper disable once AssignNullToNotNullAttribute
-        Father1.AddNonIdentifiedChild(null));
+        Father1.AddNonIdentifiedChild(null!));
       session.Commit();
     }
   }

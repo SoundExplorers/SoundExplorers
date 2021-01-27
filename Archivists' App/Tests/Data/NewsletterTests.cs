@@ -231,7 +231,7 @@ namespace SoundExplorers.Tests.Data {
 
     [Test]
     public void DisallowSetNullUrl() {
-      Assert.Throws<PropertyConstraintException>(() => Newsletter2.Url = null);
+      Assert.Throws<PropertyConstraintException>(() => Newsletter2.Url = null!);
     }
   }
 }

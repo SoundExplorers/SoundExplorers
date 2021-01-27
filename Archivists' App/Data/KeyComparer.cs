@@ -2,7 +2,7 @@
 
 namespace SoundExplorers.Data {
   public class KeyComparer : Comparer<Key> {
-    public override int Compare(Key x, Key y) {
+    public override int Compare(Key? x, Key? y) {
       if (x < y) {
         return -1;
       }

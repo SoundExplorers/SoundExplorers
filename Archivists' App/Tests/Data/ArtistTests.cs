@@ -171,7 +171,7 @@ namespace SoundExplorers.Tests.Data {
     [Test]
     public void DisallowSetNameToNull() {
       var nameless = new Artist();
-      Assert.Throws<PropertyConstraintException>(() => nameless.Forename = null);
+      Assert.Throws<PropertyConstraintException>(() => nameless.Forename = string.Empty);
     }
 
     [Test]

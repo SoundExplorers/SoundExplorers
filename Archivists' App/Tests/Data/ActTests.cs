@@ -80,14 +80,13 @@ namespace SoundExplorers.Tests.Data {
 
     [Test]
     public void A010_Initial() {
-      using (var session = new TestSession(DatabaseFolderPath)) {
-        session.BeginRead();
-        Act1 = QueryHelper.Read<Act>(Act1Name, session);
-        Act2 = QueryHelper.Read<Act>(Act2Name, session);
-        Set1 = QueryHelper.Read<Set>(Set1.SimpleKey, Event1, session);
-        Set2 = QueryHelper.Read<Set>(Set2.SimpleKey, Event1, session);
-        session.Commit();
-      }
+      using var session = new TestSession(DatabaseFolderPath);
+      session.BeginRead();
+      Act1 = QueryHelper.Read<Act>(Act1Name, session);
+      Act2 = QueryHelper.Read<Act>(Act2Name, session);
+      Set1 = QueryHelper.Read<Set>(Set1.SimpleKey, Event1, session);
+      Set2 = QueryHelper.Read<Set>(Set2.SimpleKey, Event1, session);
+      session.Commit();
       Assert.AreEqual(Act1Name, Act1.Name, "Act1.Name");
       Assert.AreEqual(Act1Notes, Act1.Notes, "Act1.Notes");
       Assert.AreEqual(Act2Name, Act2.Name, "Act2.Name");
@@ -113,7 +112,7 @@ namespace SoundExplorers.Tests.Data {
       using var session = new TestSession(DatabaseFolderPath);
       session.BeginUpdate();
       Act1 = QueryHelper.Read<Act>(Act1Name, session);
-      Assert.Throws<PropertyConstraintException>(() => Act1.Name = null);
+      Assert.Throws<PropertyConstraintException>(() => Act1.Name = string.Empty);
       session.Commit();
     }
 

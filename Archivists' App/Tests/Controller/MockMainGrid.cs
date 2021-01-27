@@ -13,7 +13,6 @@ namespace SoundExplorers.Tests.Controller {
     internal int OnRowAddedOrDeletedCount { get; private set; }
     internal int RestoreCurrentRowCellErrorValueCount { get; private set; }
     internal int SelectCurrentRowOnlyCount { get; private set; }
-    
     MainGridController IMainGrid.Controller => Controller;
 
     /// <summary>
@@ -32,7 +31,7 @@ namespace SoundExplorers.Tests.Controller {
     ///   </para>
     /// </summary>
     public override int RowCount => Controller.BindingList!.Count + 1;
-    
+
     public override string Name => "MockMainGrid";
 
     public void SetController(MainGridController controller) {

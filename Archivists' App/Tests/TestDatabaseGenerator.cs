@@ -13,7 +13,7 @@ namespace SoundExplorers.Tests {
     ///   1 to enable generate
     /// </summary>
     private static int DoIt => 0;
-    
+
     private TestData Data { get; set; } = null!;
     private TestSession Session { get; set; } = null!;
 

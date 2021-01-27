@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using JetBrains.Annotations;
 
 namespace SoundExplorers.Data {
   /// <summary>
@@ -10,10 +9,10 @@ namespace SoundExplorers.Data {
   /// </summary>
   public class Event : EntityBase {
     private DateTime _date;
-    private EventType _eventType;
-    private Newsletter _newsletter;
-    private string _notes;
-    private Series _series;
+    private EventType _eventType = null!;
+    private Newsletter? _newsletter;
+    private string _notes = null!;
+    private Series? _series;
 
     public Event() : base(typeof(Event), nameof(Date), typeof(Location)) {
       _date = InitialDate;
@@ -44,15 +43,14 @@ namespace SoundExplorers.Data {
     }
 
     public Location Location {
-      get => (Location)IdentifyingParent;
+      get => (Location)IdentifyingParent!;
       set {
         UpdateNonIndexField();
         IdentifyingParent = value;
       }
     }
 
-    [CanBeNull]
-    public Newsletter Newsletter {
+    public Newsletter? Newsletter {
       get => _newsletter;
       set {
         UpdateNonIndexField();
@@ -61,7 +59,6 @@ namespace SoundExplorers.Data {
       }
     }
 
-    [CanBeNull]
     public string Notes {
       get => _notes;
       set {
@@ -70,8 +67,7 @@ namespace SoundExplorers.Data {
       }
     }
 
-    [CanBeNull]
-    public Series Series {
+    public Series? Series {
       get => _series;
       set {
         UpdateNonIndexField();
@@ -80,7 +76,7 @@ namespace SoundExplorers.Data {
       }
     }
 
-    [NotNull] public SortedChildList<Set> Sets { get; }
+    public SortedChildList<Set> Sets { get; }
 
     protected override IDictionary GetChildren(Type childType) {
       return Sets;
@@ -88,13 +84,13 @@ namespace SoundExplorers.Data {
 
     protected override void SetNonIdentifyingParentField(
       Type parentEntityType,
-      EntityBase newParent) {
+      EntityBase? newParent) {
       if (parentEntityType == typeof(EventType)) {
-        _eventType = (EventType)newParent;
+        _eventType = (newParent as EventType)!;
       } else if (parentEntityType == typeof(Newsletter)) {
-        _newsletter = (Newsletter)newParent;
+        _newsletter = newParent as Newsletter;
       } else {
-        _series = (Series)newParent;
+        _series = newParent as Series;
       }
     }
   }

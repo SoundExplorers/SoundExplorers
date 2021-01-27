@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Diagnostics.CodeAnalysis;
-using JetBrains.Annotations;
 using VelocityDb.Session;
-using NotNullAttribute = JetBrains.Annotations.NotNullAttribute;
 
 namespace SoundExplorers.Data {
   /// <summary>
@@ -11,11 +9,11 @@ namespace SoundExplorers.Data {
   ///   recording is archived.
   /// </summary>
   public class Piece : EntityBase {
-    private string _audioUrl;
-    private string _notes;
+    private string _audioUrl = null!;
+    private string _notes = null!;
     private int _pieceNo;
-    private string _title;
-    private string _videoUrl;
+    private string _title = null!;
+    private string _videoUrl = null!;
 
     public Piece() : base(typeof(Piece), nameof(PieceNo), typeof(Set)) {
       Credits = new SortedChildList<Credit>();
@@ -25,7 +23,6 @@ namespace SoundExplorers.Data {
     ///   The URL where the audio recording, if available, of the piece is archived.
     ///   Must be unique if specified.
     /// </summary>
-    [CanBeNull]
     public string AudioUrl {
       get => _audioUrl;
       set {
@@ -35,9 +32,8 @@ namespace SoundExplorers.Data {
       }
     }
 
-    [NotNull] public SortedChildList<Credit> Credits { get; }
+    public SortedChildList<Credit> Credits { get; }
 
-    [CanBeNull]
     public string Notes {
       get => _notes;
       set {
@@ -60,14 +56,13 @@ namespace SoundExplorers.Data {
     }
 
     public Set Set {
-      get => (Set)IdentifyingParent;
+      get => (Set)IdentifyingParent!;
       set {
         UpdateNonIndexField();
         IdentifyingParent = value;
       }
     }
 
-    [CanBeNull]
     public string Title {
       get => _title;
       set {
@@ -80,7 +75,6 @@ namespace SoundExplorers.Data {
     ///   The URL where the video recording, if available, of the piece is archived.
     ///   Must be unique if specified.
     /// </summary>
-    [CanBeNull]
     public string VideoUrl {
       get => _videoUrl;
       set {
@@ -90,8 +84,8 @@ namespace SoundExplorers.Data {
       }
     }
 
-    private void CheckCanChangeAudioUrl([CanBeNull] string oldAudioUrl,
-      [CanBeNull] string newAudioUrl) {
+    private void CheckCanChangeAudioUrl(string? oldAudioUrl,
+      string? newAudioUrl) {
       if (string.IsNullOrWhiteSpace(newAudioUrl)) {
         return;
       }
@@ -115,8 +109,7 @@ namespace SoundExplorers.Data {
       }
     }
 
-    private void CheckCanChangeVideoUrl([CanBeNull] string oldVideoUrl,
-      [CanBeNull] string newVideoUrl) {
+    private void CheckCanChangeVideoUrl(string? oldVideoUrl, string? newVideoUrl) {
       if (string.IsNullOrWhiteSpace(newVideoUrl)) {
         return;
       }
@@ -142,7 +135,7 @@ namespace SoundExplorers.Data {
 
     protected override void CheckCanPersist(SessionBase session) {
       base.CheckCanPersist(session);
-      Piece duplicate;
+      Piece? duplicate;
       if (!string.IsNullOrWhiteSpace(AudioUrl)) {
         duplicate = FindDuplicateAudioUrl(AudioUrl, session);
         if (duplicate != null) {
@@ -163,20 +156,20 @@ namespace SoundExplorers.Data {
       }
     }
 
-    [CanBeNull]
-    private Piece FindDuplicateAudioUrl([NotNull] string audioUrl,
-      [NotNull] SessionBase session) {
+    private Piece? FindDuplicateAudioUrl(string audioUrl,
+      SessionBase session) {
       return QueryHelper.Find<Piece>(
-        piece => piece.AudioUrl != null && piece.AudioUrl.Equals(audioUrl) &&
+        piece => !string.IsNullOrWhiteSpace(piece.AudioUrl) &&
+                 piece.AudioUrl.Equals(audioUrl) &&
                  !piece.Oid.Equals(Oid),
         session);
     }
 
-    [CanBeNull]
-    private Piece FindDuplicateVideoUrl([NotNull] string videoUrl,
-      [NotNull] SessionBase session) {
+    private Piece? FindDuplicateVideoUrl(string videoUrl,
+      SessionBase session) {
       return QueryHelper.Find<Piece>(
-        piece => piece.VideoUrl != null && piece.VideoUrl.Equals(videoUrl) &&
+        piece => !string.IsNullOrWhiteSpace(piece.VideoUrl) &&
+                 piece.VideoUrl.Equals(videoUrl) &&
                  !piece.Oid.Equals(Oid),
         session);
     }
@@ -187,7 +180,7 @@ namespace SoundExplorers.Data {
 
     [ExcludeFromCodeCoverage]
     protected override void SetNonIdentifyingParentField(
-      Type parentEntityType, EntityBase newParent) {
+      Type parentEntityType, EntityBase? newParent) {
       throw new NotSupportedException();
     }
   }

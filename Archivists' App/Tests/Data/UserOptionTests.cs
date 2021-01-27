@@ -50,12 +50,8 @@ namespace SoundExplorers.Tests.Data {
 
     [Test]
     public void DisallowBlankKeyPropertyValues() {
-      Assert.Throws<PropertyConstraintException>(() => UserOption1.UserId = null,
-        "UserOption1.UserId = null");
       Assert.Throws<PropertyConstraintException>(() => UserOption1.UserId = string.Empty,
         "UserOption1.UserId = Empty");
-      Assert.Throws<PropertyConstraintException>(() => UserOption1.OptionName = null,
-        "UserOption1.OptionName = null");
       Assert.Throws<PropertyConstraintException>(
         () => UserOption1.OptionName = string.Empty,
         "UserOption1.OptionName = Empty");

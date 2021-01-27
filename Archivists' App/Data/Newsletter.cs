@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Diagnostics.CodeAnalysis;
-using JetBrains.Annotations;
 using VelocityDb.Session;
-using NotNullAttribute = JetBrains.Annotations.NotNullAttribute;
 
 namespace SoundExplorers.Data {
   /// <summary>
@@ -11,7 +9,7 @@ namespace SoundExplorers.Data {
   /// </summary>
   public class Newsletter : EntityBase {
     private DateTime _date;
-    private string _url;
+    private string _url = null!;
 
     public Newsletter() : base(typeof(Newsletter), nameof(Date), null) {
       _date = InitialDate;
@@ -36,7 +34,7 @@ namespace SoundExplorers.Data {
       }
     }
 
-    [NotNull] public SortedChildList<Event> Events { get; }
+    public SortedChildList<Event> Events { get; }
 
     /// <summary>
     ///   The URL where the newsletter is archived.
@@ -51,8 +49,8 @@ namespace SoundExplorers.Data {
       }
     }
 
-    private void CheckCanChangeUrl([CanBeNull] string oldUrl,
-      [CanBeNull] string newUrl) {
+    private void CheckCanChangeUrl(string? oldUrl,
+      string? newUrl) {
       if (string.IsNullOrWhiteSpace(newUrl)) {
         throw new PropertyConstraintException(
           $"A valid URL has not been specified for Newsletter '{SimpleKey}'.",
@@ -94,9 +92,8 @@ namespace SoundExplorers.Data {
       }
     }
 
-    [CanBeNull]
-    private Newsletter FindDuplicateUrl([NotNull] string url,
-      [NotNull] SessionBase session) {
+    private Newsletter? FindDuplicateUrl(string url,
+      SessionBase session) {
       return QueryHelper.Find<Newsletter>(
         newsletter => newsletter.Url.Equals(url) && !newsletter.Oid.Equals(Oid),
         session);
@@ -108,7 +105,7 @@ namespace SoundExplorers.Data {
 
     [ExcludeFromCodeCoverage]
     protected override void SetNonIdentifyingParentField(
-      Type parentEntityType, EntityBase newParent) {
+      Type parentEntityType, EntityBase? newParent) {
       throw new NotSupportedException();
     }
   }

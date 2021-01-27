@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Diagnostics.CodeAnalysis;
-using JetBrains.Annotations;
-using NotNullAttribute = JetBrains.Annotations.NotNullAttribute;
 
 namespace SoundExplorers.Data {
   public class Role : EntityBase {
@@ -13,9 +11,8 @@ namespace SoundExplorers.Data {
       Credits = new SortedChildList<Credit>();
     }
 
-    [NotNull] public SortedChildList<Credit> Credits { get; }
+    public SortedChildList<Credit> Credits { get; }
 
-    [CanBeNull]
     public string Name {
       get => SimpleKey;
       set {
@@ -30,7 +27,7 @@ namespace SoundExplorers.Data {
 
     [ExcludeFromCodeCoverage]
     protected override void SetNonIdentifyingParentField(
-      Type parentEntityType, EntityBase newParent) {
+      Type parentEntityType, EntityBase? newParent) {
       throw new NotSupportedException();
     }
   }

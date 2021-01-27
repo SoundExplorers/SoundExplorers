@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using JetBrains.Annotations;
 using VelocityDb;
 using VelocityDb.Session;
 
@@ -14,15 +13,14 @@ namespace SoundExplorers.Data {
   ///   So it inherits from OptimizedPersistable instead of EntityBase.
   /// </remarks>
   public class Schema : OptimizedPersistable {
-    private static Schema _instance;
-    private IEnumerable<Type> _entityTypes;
-    private IEnumerable<RelationInfo> _relations;
+    private static Schema? _instance;
+    private IEnumerable<Type>? _entityTypes;
+    private IEnumerable<RelationInfo>? _relations;
     private int _version;
 
     /// <summary>
     ///   The instance of the schema that is referenced by default by entities.
     /// </summary>
-    [NotNull]
     public static Schema Instance {
       get => _instance ??= new Schema();
       set => _instance = value;
@@ -31,14 +29,12 @@ namespace SoundExplorers.Data {
     /// <summary>
     ///   Enumerates the entity types persisted on the database
     /// </summary>
-    [NotNull]
     private IEnumerable<Type> EntityTypes =>
       _entityTypes ??= CreateEntityTypes();
 
     /// <summary>
     ///   The structure of on-to-many relations between entity types.
     /// </summary>
-    [NotNull]
     public IEnumerable<RelationInfo> Relations =>
       _relations ??= CreateRelations();
 
@@ -84,20 +80,19 @@ namespace SoundExplorers.Data {
       return list.ToArray();
     }
 
-    [NotNull]
     protected virtual IEnumerable<RelationInfo> CreateRelations() {
       var list = new List<RelationInfo> {
-        new RelationInfo(typeof(Act), typeof(Set), false),
-        new RelationInfo(typeof(Artist), typeof(Credit), true),
-        new RelationInfo(typeof(Event), typeof(Set), true),
-        new RelationInfo(typeof(EventType), typeof(Event), true),
-        new RelationInfo(typeof(Genre), typeof(Set), true),
-        new RelationInfo(typeof(Location), typeof(Event), true),
-        new RelationInfo(typeof(Newsletter), typeof(Event), false),
-        new RelationInfo(typeof(Series), typeof(Event), false),
-        new RelationInfo(typeof(Piece), typeof(Credit), true),
-        new RelationInfo(typeof(Role), typeof(Credit), true),
-        new RelationInfo(typeof(Set), typeof(Piece), true)
+        new(typeof(Act), typeof(Set), false),
+        new(typeof(Artist), typeof(Credit), true),
+        new(typeof(Event), typeof(Set), true),
+        new(typeof(EventType), typeof(Event), true),
+        new(typeof(Genre), typeof(Set), true),
+        new(typeof(Location), typeof(Event), true),
+        new(typeof(Newsletter), typeof(Event), false),
+        new(typeof(Series), typeof(Event), false),
+        new(typeof(Piece), typeof(Credit), true),
+        new(typeof(Role), typeof(Credit), true),
+        new(typeof(Set), typeof(Piece), true)
       };
       return list.ToArray();
     }
@@ -106,9 +101,8 @@ namespace SoundExplorers.Data {
     ///   Returns the one Schema entity, if it already exists on the database,
     ///   otherwise null.
     /// </summary>
-    [CanBeNull]
-    public static Schema Find([NotNull] QueryHelper queryHelper,
-      [NotNull] SessionBase session) {
+    public static Schema? Find(QueryHelper queryHelper,
+      SessionBase session) {
       return queryHelper.SchemaExistsOnDatabase(session)
         ? session.AllObjects<Schema>().FirstOrDefault()
         : null;
@@ -130,7 +124,7 @@ namespace SoundExplorers.Data {
     ///   database schema. VelocityDB may do a license check whenever database schema is added to or is
     ///   updated.
     /// </remarks>
-    public void RegisterEntityTypes([NotNull] SessionBase session) {
+    public void RegisterEntityTypes(SessionBase session) {
       foreach (var entityType in EntityTypes) {
         session.RegisterClass(entityType);
       }

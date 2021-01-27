@@ -4,13 +4,12 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using JetBrains.Annotations;
 using VelocityDb;
 using VelocityDb.Session;
 
 namespace SoundExplorers.Data {
   public class QueryHelper {
-    private static QueryHelper _instance;
+    private static QueryHelper? _instance;
     private bool _schemaExistsOnDatabase;
 
     static QueryHelper() {
@@ -19,16 +18,14 @@ namespace SoundExplorers.Data {
         throw new NullReferenceException("Cannot find generic method.");
     }
 
-    [NotNull] private static MethodInfo AllObjectsGenericMethod { get; }
+    private static MethodInfo AllObjectsGenericMethod { get; }
 
-    [NotNull]
     public static QueryHelper Instance =>
       _instance ??= new QueryHelper();
 
-    [NotNull]
     private static Func<TEntity, bool> CreateKeyPredicate<TEntity>(
-      [CanBeNull] string simpleKey,
-      [CanBeNull] EntityBase identifyingParent)
+      string? simpleKey,
+      EntityBase? identifyingParent)
       where TEntity : EntityBase {
       return
         entity => entity.SimpleKey == simpleKey &&
@@ -39,27 +36,24 @@ namespace SoundExplorers.Data {
                      .Equals(identifyingParent));
     }
 
-    [CanBeNull]
-    public TEntity Find<TEntity>(
-      [CanBeNull] string simpleKey,
-      [NotNull] SessionBase session) where TEntity : EntityBase {
+    public TEntity? Find<TEntity>(
+      string? simpleKey,
+      SessionBase session) where TEntity : EntityBase {
       return Find<TEntity>(simpleKey, null, session);
     }
 
-    [CanBeNull]
-    public TEntity Find<TEntity>(
-      [CanBeNull] string simpleKey,
-      [CanBeNull] EntityBase identifyingParent,
-      [NotNull] SessionBase session) where TEntity : EntityBase {
+    public TEntity? Find<TEntity>(
+      string? simpleKey,
+      EntityBase? identifyingParent,
+      SessionBase session) where TEntity : EntityBase {
       return Find(
         CreateKeyPredicate<TEntity>(simpleKey, identifyingParent),
         session);
     }
 
-    [CanBeNull]
-    public TEntity Find<TEntity>(
-      [NotNull] Func<TEntity, bool> predicate,
-      [NotNull] SessionBase session) where TEntity : EntityBase {
+    public TEntity? Find<TEntity>(
+      Func<TEntity, bool> predicate,
+      SessionBase session) where TEntity : EntityBase {
       if (!SchemaExistsOnDatabase(session)) {
         return null;
       }
@@ -72,15 +66,13 @@ namespace SoundExplorers.Data {
     ///   (case-insensitive) but a different object identifier from the one specified,
     ///   if found, otherwise a null reference.
     /// </summary>
-    [CanBeNull]
-    internal EntityBase FindDuplicateSimpleKey([NotNull] Type entityType,
-      Oid oid, [CanBeNull] string simpleKey, SessionBase session) {
+    internal EntityBase? FindDuplicateSimpleKey(Type entityType,
+      Oid oid, string? simpleKey, SessionBase session) {
       var entity = FindTopLevelEntity(entityType, simpleKey, session);
       return entity != null && !entity.Oid.Equals(oid) ? entity : null;
     }
 
-    [NotNull]
-    private static IEnumerable FetchEntities([NotNull] Type entityType,
+    private static IEnumerable FetchEntities(Type entityType,
       SessionBase session) {
       // This complicated rigmarole is required to allow
       // SessionBase.AllObjects<T> to be invoked with a an ordinary parameter
@@ -89,16 +81,15 @@ namespace SoundExplorers.Data {
       var allObjectsConstructedMethod =
         AllObjectsGenericMethod.MakeGenericMethod(entityType);
       return (IEnumerable)allObjectsConstructedMethod.Invoke(session,
-        new object[] {true, true});
+        new object[] {true, true})!;
     }
 
     /// <summary>
     ///   Returns a top-level entity of the specified type with the specified SimpleKey
     ///   (case-insensitive), if found, otherwise a null reference.
     /// </summary>
-    [CanBeNull]
-    private EntityBase FindTopLevelEntity([NotNull] Type entityType,
-      [CanBeNull] string simpleKey, SessionBase session) {
+    private EntityBase? FindTopLevelEntity(Type entityType,
+      string? simpleKey, SessionBase session) {
       if (!SchemaExistsOnDatabase(session)) {
         return null;
       }
@@ -117,18 +108,16 @@ namespace SoundExplorers.Data {
         select e).FirstOrDefault();
     }
 
-    [NotNull]
     public static TEntity Read<TEntity>(
-      [CanBeNull] string simpleKey,
-      [NotNull] SessionBase session) where TEntity : EntityBase {
+      string? simpleKey,
+      SessionBase session) where TEntity : EntityBase {
       return Read<TEntity>(simpleKey, null, session);
     }
 
-    [NotNull]
     public static TEntity Read<TEntity>(
-      [CanBeNull] string simpleKey,
-      [CanBeNull] EntityBase identifyingParent,
-      [NotNull] SessionBase session) where TEntity : EntityBase {
+      string? simpleKey,
+      EntityBase? identifyingParent,
+      SessionBase session) where TEntity : EntityBase {
       try {
         return Read(
           CreateKeyPredicate<TEntity>(simpleKey, identifyingParent),
@@ -151,15 +140,14 @@ namespace SoundExplorers.Data {
       }
     }
 
-    [NotNull]
     public static TEntity Read<TEntity>(
-      [NotNull] Func<TEntity, bool> predicate,
-      [NotNull] SessionBase session) where TEntity : EntityBase {
+      Func<TEntity, bool> predicate,
+      SessionBase session) where TEntity : EntityBase {
       return session.AllObjects<TEntity>()
         .First(predicate);
     }
 
-    public bool SchemaExistsOnDatabase([NotNull] SessionBase session) {
+    public bool SchemaExistsOnDatabase(SessionBase session) {
       bool result;
       if (_schemaExistsOnDatabase) {
         result = true;

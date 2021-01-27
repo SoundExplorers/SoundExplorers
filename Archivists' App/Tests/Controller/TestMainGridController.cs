@@ -16,7 +16,7 @@ namespace SoundExplorers.Tests.Controller {
 
     internal void CreateAndGoToNewRow() {
       List.BindingList!.AddNew();
-      ((MockMainGrid)Grid).SetCurrentRowIndex(List.BindingList.Count - 1); 
+      ((MockMainGrid)Grid).SetCurrentRowIndex(List.BindingList.Count - 1);
       OnRowEnter(Grid.CurrentRowIndex);
     }
 

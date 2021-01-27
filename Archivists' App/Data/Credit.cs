@@ -8,9 +8,9 @@ namespace SoundExplorers.Data {
   ///   usually the instrument played by a musician.
   /// </summary>
   public class Credit : EntityBase {
-    private Artist _artist;
+    private Artist _artist = null!;
     private int _creditNo;
-    private Role _role;
+    private Role _role = null!;
     public Credit() : base(typeof(Credit), nameof(CreditNo), typeof(Piece)) { }
 
     public Artist Artist {
@@ -36,7 +36,7 @@ namespace SoundExplorers.Data {
     }
 
     public Piece Piece {
-      get => (Piece)IdentifyingParent;
+      get => (Piece)IdentifyingParent!;
       set {
         UpdateNonIndexField();
         IdentifyingParent = value;
@@ -58,11 +58,11 @@ namespace SoundExplorers.Data {
     }
 
     protected override void SetNonIdentifyingParentField(
-      Type parentEntityType, EntityBase newParent) {
+      Type parentEntityType, EntityBase? newParent) {
       if (parentEntityType == typeof(Artist)) {
-        _artist = (Artist)newParent;
+        _artist = (newParent as Artist)!;
       } else {
-        _role = (Role)newParent;
+        _role = (newParent as Role)!;
       }
     }
   }

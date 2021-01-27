@@ -34,7 +34,7 @@ namespace SoundExplorers.Tests.Data {
       }
     }
 
-    public string? Name {
+    public string Name {
       get => SimpleKey;
       set {
         UpdateNonIndexField();
@@ -49,11 +49,11 @@ namespace SoundExplorers.Tests.Data {
 
     protected override void SetNonIdentifyingParentField(
       Type parentEntityType,
-      EntityBase newParent) {
+      EntityBase? newParent) {
       if (parentEntityType == typeof(Father)) {
-        _father = (Father)newParent;
+        _father = newParent as Father;
       } else {
-        _mother = (Mother)newParent;
+        _mother = newParent as Mother;
       }
     }
   }

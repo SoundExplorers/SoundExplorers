@@ -122,7 +122,7 @@ namespace SoundExplorers.Tests.Data {
       var nullName = new Location {
         QueryHelper = QueryHelper
       };
-      Assert.Throws<PropertyConstraintException>(() => nullName.Name = null);
+      Assert.Throws<PropertyConstraintException>(() => nullName.Name = null!);
     }
 
     [Test]

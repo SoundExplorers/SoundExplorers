@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
-using JetBrains.Annotations;
 using VelocityDb;
 using VelocityDb.Session;
 using VelocityDb.TypeInfo;
@@ -15,14 +14,14 @@ namespace SoundExplorers.Data {
   ///   and/or many-to-one relations with other entity types.
   /// </summary>
   public abstract class EntityBase : ReferenceTracked, IEntity {
-    private IDictionary<Type, IDictionary> _childrenOfType;
-    private IDictionary<Type, IRelationInfo> _childrenRelations;
-    private EntityBase _identifyingParent;
-    private IDictionary<Type, IRelationInfo> _parentRelations;
-    private IDictionary<Type, EntityBase> _parents;
-    private QueryHelper _queryHelper;
-    private Schema _schema;
-    private string _simpleKey;
+    private IDictionary<Type, IDictionary>? _childrenOfType;
+    private IDictionary<Type, IRelationInfo>? _childrenRelations;
+    private EntityBase? _identifyingParent;
+    private IDictionary<Type, IRelationInfo>? _parentRelations;
+    private IDictionary<Type, EntityBase?>? _parents;
+    private QueryHelper? _queryHelper;
+    private Schema? _schema;
+    private string _simpleKey = null!;
 
     static EntityBase() {
       InitialDate = DateTime.Parse("1900/01/01");
@@ -41,8 +40,8 @@ namespace SoundExplorers.Data {
     /// <param name="identifyingParentType">
     ///   Where applicable, the entity type of the identifying parent entity.
     /// </param>
-    protected EntityBase([NotNull] Type entityType,
-      [NotNull] string simpleKeyName, [CanBeNull] Type identifyingParentType) {
+    protected EntityBase(Type entityType,
+      string simpleKeyName, Type? identifyingParentType) {
       EntityType = entityType ??
                    throw new ArgumentNullException(
                      nameof(entityType));
@@ -52,11 +51,10 @@ namespace SoundExplorers.Data {
       Key = new Key(this);
     }
 
-    [NotNull]
     private IDictionary<Type, IDictionary> ChildrenOfType {
       get {
         InitialiseIfNull(_childrenOfType);
-        return _childrenOfType;
+        return _childrenOfType!;
       }
       set {
         UpdateNonIndexField();
@@ -64,11 +62,10 @@ namespace SoundExplorers.Data {
       }
     }
 
-    [NotNull]
     private IDictionary<Type, IRelationInfo> ChildrenRelations {
       get {
         InitialiseIfNull(_childrenRelations);
-        return _childrenRelations;
+        return _childrenRelations!;
       }
       set {
         UpdateNonIndexField();
@@ -81,10 +78,9 @@ namespace SoundExplorers.Data {
     ///   Entities of subtypes may be persisted but will be members of the same
     ///   child collections, if any, as entities of the main Type.
     /// </summary>
-    [NotNull]
     internal Type EntityType { get; }
 
-    [CanBeNull] private Type IdentifyingParentType { get; }
+    private Type? IdentifyingParentType { get; }
 
     /// <summary>
     ///   A hopefully safely old date, suitable for initialising Date fields
@@ -95,11 +91,10 @@ namespace SoundExplorers.Data {
     private bool IsAddingToOrRemovingFromIdentifyingParent { get; set; }
     private bool IsTopLevel => Parents.Count == 0;
 
-    [NotNull]
     private IDictionary<Type, IRelationInfo> ParentRelations {
       get {
         InitialiseIfNull(_parentRelations);
-        return _parentRelations;
+        return _parentRelations!;
       }
       set {
         UpdateNonIndexField();
@@ -107,11 +102,10 @@ namespace SoundExplorers.Data {
       }
     }
 
-    [NotNull]
-    private IDictionary<Type, EntityBase> Parents {
+    private IDictionary<Type, EntityBase?> Parents {
       get {
         InitialiseIfNull(_parents);
-        return _parents;
+        return _parents!;
       }
       set {
         UpdateNonIndexField();
@@ -119,19 +113,17 @@ namespace SoundExplorers.Data {
       }
     }
 
-    [NotNull]
     internal QueryHelper QueryHelper {
       get => _queryHelper ??= QueryHelper.Instance;
       set => _queryHelper = value;
     }
 
-    [NotNull]
     protected Schema Schema {
       get => _schema ??= Schema.Instance;
       set => _schema = value;
     }
 
-    [NotNull] private string SimpleKeyName { get; }
+    private string SimpleKeyName { get; }
 
     /// <summary>
     ///   From VelocityDB User's Guide:
@@ -155,8 +147,7 @@ namespace SoundExplorers.Data {
     ///   to a parent entity, of type specified by IdentifyingParentType,
     ///   that already exists.
     /// </remarks>
-    [CanBeNull]
-    public EntityBase IdentifyingParent {
+    public EntityBase? IdentifyingParent {
       get => _identifyingParent;
       protected set {
         if (IsAddingToOrRemovingFromIdentifyingParent) {
@@ -172,13 +163,13 @@ namespace SoundExplorers.Data {
           throw new PropertyConstraintException(
             "A null reference has been specified as the " +
             $"{IdentifyingParentType.Name} for {EntityType.Name} '{Key}'.",
-            IdentifyingParentType?.Name);
+            IdentifyingParentType!.Name);
         }
         if (value.EntityType != IdentifyingParentType) {
           throw new PropertyConstraintException(
             $"A {value.EntityType.Name} has been specified as the " +
             $"IdentifyingParent for {EntityType.Name} '{Key}'. " +
-            $"A {IdentifyingParentType.Name} is expected'.", IdentifyingParentType?.Name);
+            $"A {IdentifyingParentType.Name} is expected'.", IdentifyingParentType!.Name);
         }
         var newKey = new Key(SimpleKey, value);
         value.CheckForDuplicateChild(this, newKey);
@@ -200,7 +191,6 @@ namespace SoundExplorers.Data {
     ///   this is used as the key of this entity in any
     ///   SortedChildLists of which it is a member.
     /// </summary>
-    [NotNull]
     public Key Key { get; }
 
     /// <summary>
@@ -213,7 +203,6 @@ namespace SoundExplorers.Data {
     ///   perstistable public property.
     ///   It is null only initially.  It must be set before persistence.
     /// </remarks>
-    [CanBeNull]
     public string SimpleKey {
       get => _simpleKey;
       protected set {
@@ -230,21 +219,20 @@ namespace SoundExplorers.Data {
       References.AddFast(new Reference(child, "_children"));
     }
 
-    internal void AddNonIdentifiedChild([NotNull] EntityBase child) {
+    internal void AddNonIdentifiedChild(EntityBase child) {
       CheckCanAddNonIdentifiedChild(child);
       AddChild(child);
       UpdateChild(child, this);
     }
 
-    protected void ChangeNonIdentifyingParent(
-      [NotNull] Type parentEntityType,
-      [CanBeNull] EntityBase newParent) {
+    protected void ChangeNonIdentifyingParent(Type parentEntityType,
+      EntityBase? newParent) {
       Parents[parentEntityType]?.RemoveChildWhenNonIdentifyingParentOrUnpersistingChild(
         this, newParent != null);
       newParent?.AddNonIdentifiedChild(this);
     }
 
-    private void CheckCanAddNonIdentifiedChild([NotNull] EntityBase child) {
+    private void CheckCanAddNonIdentifiedChild(EntityBase child) {
       if (child == null) {
         throw new ConstraintException(
           "A null reference has been specified. " +
@@ -254,7 +242,7 @@ namespace SoundExplorers.Data {
     }
 
     private void CheckCanChangeSimpleKey(
-      [CanBeNull] string oldSimpleKey, [CanBeNull] string newSimpleKey) {
+      string? oldSimpleKey, string? newSimpleKey) {
       if (string.IsNullOrWhiteSpace(newSimpleKey)) {
         throw new PropertyConstraintException(
           $"A null reference has been specified as the {SimpleKeyName}. " +
@@ -283,7 +271,7 @@ namespace SoundExplorers.Data {
       }
     }
 
-    protected virtual void CheckCanPersist([NotNull] SessionBase session) {
+    protected virtual void CheckCanPersist(SessionBase session) {
       if (string.IsNullOrWhiteSpace(SimpleKey)) {
         throw new PropertyConstraintException(
           $"A {SimpleKeyName} has not yet been specified. " +
@@ -310,7 +298,7 @@ namespace SoundExplorers.Data {
     }
 
     private void CheckCanRemoveChild(
-      [NotNull] EntityBase child, bool isReplacingOrUnpersisting) {
+      EntityBase child, bool isReplacingOrUnpersisting) {
       if (ChildrenRelations[child.EntityType].IsMandatory &&
           !isReplacingOrUnpersisting) {
         throw new ConstraintException(
@@ -320,26 +308,27 @@ namespace SoundExplorers.Data {
       }
     }
 
-    private void CheckForDuplicateChild([NotNull] EntityBase child,
-      [NotNull] Key keyToCheck) {
-      var childrenOfType = ChildrenOfType[child.EntityType];
-      if (childrenOfType.Contains(keyToCheck) &&
-          !((EntityBase)childrenOfType[keyToCheck])!.Oid.Equals(child.Oid)) {
-        throw new ConstraintException(
-          $"{child.EntityType.Name} '{keyToCheck}' " +
-          $"cannot be added to {EntityType.Name} '{Key}', " +
-          $"because a {child.EntityType.Name} with that Key " +
-          $"already belongs to the {EntityType.Name}.");
+    private void CheckForDuplicateChild(EntityBase child,
+      Key keyToCheck) {
+      var childrenOfType = ChildrenOfType[child.EntityType]!;
+      bool childExists = childrenOfType.Contains(keyToCheck);
+      if (childExists) {
+        var existingChild = (EntityBase)childrenOfType[keyToCheck]!;
+        if (!existingChild.Oid.Equals(child.Oid)) {
+          throw new ConstraintException(
+            $"{child.EntityType.Name} '{keyToCheck}' " +
+            $"cannot be added to {EntityType.Name} '{Key}', " +
+            $"because a {child.EntityType.Name} with that Key " +
+            $"already belongs to the {EntityType.Name}.");
+        }
       }
     }
 
-    [NotNull]
-    private Key CreateChildKey([NotNull] EntityBase child) {
-      return new Key(child,
+    private Key CreateChildKey(EntityBase child) {
+      return new(child,
         child.IdentifyingParentType == EntityType ? this : null);
     }
 
-    [NotNull]
     private IDictionary<Type, IRelationInfo> CreateChildrenRelations() {
       var values =
         from relation in Schema.Relations
@@ -349,7 +338,6 @@ namespace SoundExplorers.Data {
         value => value.ChildType, value => value);
     }
 
-    [NotNull]
     private IDictionary<Type, IRelationInfo> CreateParentRelations() {
       var values =
         from relation in Schema.Relations
@@ -359,7 +347,6 @@ namespace SoundExplorers.Data {
         value => value.ParentType, value => value);
     }
 
-    [NotNull]
     private string CreateReferentialIntegrityViolationMessage() {
       var list = new SortedList<string, int>();
       foreach (var childOfTypePair in ChildrenOfType) {
@@ -385,12 +372,11 @@ namespace SoundExplorers.Data {
     ///   Allows a derived entity to return
     ///   its SortedChildList of child entities of the specified entity type.
     /// </summary>
-    [NotNull]
-    protected abstract IDictionary GetChildren([NotNull] Type childType);
+    protected abstract IDictionary GetChildren(Type childType);
 
     private void Initialise() {
       ParentRelations = CreateParentRelations();
-      Parents = new Dictionary<Type, EntityBase>();
+      Parents = new Dictionary<Type, EntityBase?>();
       foreach (var relationPair in ParentRelations) {
         Parents.Add(relationPair.Key, null);
       }
@@ -401,7 +387,7 @@ namespace SoundExplorers.Data {
       }
     }
 
-    private void InitialiseIfNull([CanBeNull] object backingField) {
+    private void InitialiseIfNull(object? backingField) {
       if (backingField == null) {
         Initialise();
       }
@@ -410,7 +396,7 @@ namespace SoundExplorers.Data {
     public override ulong Persist(Placement place, SessionBase session,
       bool persistRefs = true,
       bool disableFlush = false,
-      Queue<IOptimizedPersistable> toPersist = null) {
+      Queue<IOptimizedPersistable>? toPersist = null) {
       CheckCanPersist(session);
       return base.Persist(place, session, persistRefs, disableFlush, toPersist);
     }
@@ -424,7 +410,7 @@ namespace SoundExplorers.Data {
     }
 
     private void RemoveChildWhenNonIdentifyingParentOrUnpersistingChild(
-      [NotNull] EntityBase child, bool isReplacingOrUnpersisting) {
+      EntityBase child, bool isReplacingOrUnpersisting) {
       CheckCanRemoveChild(child, isReplacingOrUnpersisting);
       RemoveChild(child);
       UpdateChild(child, null);
@@ -436,7 +422,7 @@ namespace SoundExplorers.Data {
     ///   with the specified new value.
     /// </summary>
     protected abstract void SetNonIdentifyingParentField(
-      [NotNull] Type parentEntityType, [CanBeNull] EntityBase newParent);
+      Type parentEntityType, EntityBase? newParent);
 
     public override void Unpersist(SessionBase session) {
       if (References.Count > 0) {
@@ -453,14 +439,14 @@ namespace SoundExplorers.Data {
         var parents =
           Parents.Values.Where(parent => parent != null).ToList();
         for (int i = parents.Count - 1; i >= 0; i--) {
-          parents[i].RemoveChildWhenNonIdentifyingParentOrUnpersistingChild(
+          parents[i]!.RemoveChildWhenNonIdentifyingParentOrUnpersistingChild(
             this, true);
         }
       }
     }
 
-    private void UpdateChild([NotNull] EntityBase child,
-      [CanBeNull] EntityBase newParent) {
+    private void UpdateChild(EntityBase child,
+      EntityBase? newParent) {
       child.UpdateNonIndexField();
       child.Parents[EntityType] = newParent;
       if (EntityType == child.IdentifyingParentType) {

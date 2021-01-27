@@ -128,11 +128,9 @@ namespace SoundExplorers.Tests.Data {
         "key4.GetHashCode()");
       Assert.AreEqual(key3, key4, "key4");
       Assert.IsTrue(key3 == key4, "key3 == key4");
-      string? nullSimpleKey = null;
-      // ReSharper disable once ExpressionIsAlwaysNull
-      var key5 = new Key(nullSimpleKey, location1);
-      // ReSharper disable once ExpressionIsAlwaysNull
-      var key6 = new Key(nullSimpleKey, location1);
+      string blankSimpleKey = string.Empty;
+      var key5 = new Key(blankSimpleKey, location1);
+      var key6 = new Key(blankSimpleKey, location1);
       Assert.AreEqual(key5.GetHashCode(), key6.GetHashCode(),
         "key6.GetHashCode()");
       Assert.AreEqual(key5, key6, "key6");

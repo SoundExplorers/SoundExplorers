@@ -11,6 +11,10 @@ namespace SoundExplorers.Tests.Controller {
     }
 
     internal MockGridCellColorScheme CellColorScheme { get; }
+    internal int DisableCount { get; private set; }
+    internal int EnableCount { get; private set; }
+    internal int MakeRowCurrentCount { get; private set; }
+    protected GridControllerBase Controller { get; set; } = null!;
 
     public bool Enabled {
       get => _enabled;
@@ -24,10 +28,6 @@ namespace SoundExplorers.Tests.Controller {
       }
     }
 
-    internal int DisableCount { get; private set; }
-    internal int EnableCount { get; private set; }
-    internal int MakeRowCurrentCount { get; private set; }
-    protected GridControllerBase Controller { get; set; } = null!;
     public int CurrentRowIndex { get; protected set; }
     IGridCellColorScheme IGrid.CellColorScheme => CellColorScheme;
     public bool Focused { get; internal set; }

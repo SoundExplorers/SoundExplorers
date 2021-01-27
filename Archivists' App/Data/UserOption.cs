@@ -1,17 +1,15 @@
 ﻿using System;
 using System.Collections;
 using System.Diagnostics.CodeAnalysis;
-using JetBrains.Annotations;
-using NotNullAttribute = JetBrains.Annotations.NotNullAttribute;
 
 namespace SoundExplorers.Data {
   /// <summary>
   ///   An entity for persisting a user option for the application.
   /// </summary>
   public class UserOption : EntityBase {
-    private string _optionName;
-    private string _optionValue;
-    private string _userId;
+    private string _optionName = null!;
+    private string _optionValue = null!;
+    private string _userId = null!;
     public UserOption() : base(typeof(UserOption), nameof(SimpleKey), null) { }
 
     public string OptionName {
@@ -27,7 +25,6 @@ namespace SoundExplorers.Data {
       }
     }
 
-    [CanBeNull]
     public string OptionValue {
       get => _optionValue;
       set {
@@ -56,11 +53,11 @@ namespace SoundExplorers.Data {
 
     [ExcludeFromCodeCoverage]
     protected override void SetNonIdentifyingParentField(Type parentEntityType,
-      EntityBase newParent) {
+      EntityBase? newParent) {
       throw new NotSupportedException();
     }
 
-    private void SetSimpleKey([NotNull] string userId, [NotNull] string optionName) {
+    private void SetSimpleKey(string userId, string optionName) {
       SimpleKey = $"{userId}|{optionName}";
     }
   }

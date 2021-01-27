@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using JetBrains.Annotations;
 
 namespace SoundExplorers.Data {
   /// <summary>
@@ -8,9 +7,9 @@ namespace SoundExplorers.Data {
   ///   performed at or in some other way part of an Event.
   /// </summary>
   public class Set : EntityBase {
-    private Act _act;
-    private Genre _genre;
-    private string _notes;
+    private Act? _act;
+    private Genre _genre = null!;
+    private string? _notes;
     private int _setNo;
 
     public Set() : base(typeof(Set), nameof(SetNo), typeof(Event)) {
@@ -21,8 +20,7 @@ namespace SoundExplorers.Data {
     /// <summary>
     ///   Optionally specifies the Act that played the set.
     /// </summary>
-    [CanBeNull]
-    public Act Act {
+    public Act? Act {
       get => _act;
       set {
         UpdateNonIndexField();
@@ -32,7 +30,7 @@ namespace SoundExplorers.Data {
     }
 
     public Event Event {
-      get => (Event)IdentifyingParent;
+      get => (Event)IdentifyingParent!;
       set {
         UpdateNonIndexField();
         IdentifyingParent = value;
@@ -50,8 +48,7 @@ namespace SoundExplorers.Data {
 
     public bool IsPublic { get; set; }
 
-    [CanBeNull]
-    public string Notes {
+    public string? Notes {
       get => _notes;
       set {
         UpdateNonIndexField();
@@ -59,7 +56,7 @@ namespace SoundExplorers.Data {
       }
     }
 
-    [NotNull] public SortedChildList<Piece> Pieces { get; }
+    public SortedChildList<Piece> Pieces { get; }
 
     public int SetNo {
       get => _setNo;
@@ -83,11 +80,11 @@ namespace SoundExplorers.Data {
     }
 
     protected override void SetNonIdentifyingParentField(
-      Type parentEntityType, EntityBase newParent) {
+      Type parentEntityType, EntityBase? newParent) {
       if (parentEntityType == typeof(Act)) {
-        _act = (Act)newParent;
+        _act = newParent as Act;
       } else {
-        _genre = (Genre)newParent;
+        _genre = (newParent as Genre)!;
       }
     }
   }

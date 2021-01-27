@@ -1,29 +1,26 @@
 ﻿using System;
 using System.Collections;
 using System.Diagnostics.CodeAnalysis;
-using JetBrains.Annotations;
-using NotNullAttribute = JetBrains.Annotations.NotNullAttribute;
 
 namespace SoundExplorers.Data {
   /// <summary>
   ///   Artist entity, usually representing a musician.
   /// </summary>
   public class Artist : EntityBase {
-    private string _forename;
-    private string _notes;
-    private string _surname;
+    private string _forename = null!;
+    private string _notes = null!;
+    private string _surname = null!;
 
     public Artist() : base(typeof(Artist), nameof(Name), null) {
       Credits = new SortedChildList<Credit>();
     }
 
-    [NotNull] public SortedChildList<Credit> Credits { get; }
+    public SortedChildList<Credit> Credits { get; }
 
     /// <summary>
     ///   The Name of an Artist who goes by a single name
     ///   may be specified as either Forename or Surname.
     /// </summary>
-    [CanBeNull]
     public string Forename {
       get => _forename;
       set {
@@ -38,7 +35,6 @@ namespace SoundExplorers.Data {
     ///   So the name of an Artist who goes by a single name
     ///   may be specified as either Forename or Surname.
     /// </summary>
-    [CanBeNull]
     public string Name {
       get => SimpleKey;
       private set {
@@ -47,7 +43,6 @@ namespace SoundExplorers.Data {
       }
     }
 
-    [CanBeNull]
     public string Notes {
       get => _notes;
       set {
@@ -60,7 +55,6 @@ namespace SoundExplorers.Data {
     ///   The Name of an Artist who goes by a single name
     ///   may be specified as either Forename or Surname.
     /// </summary>
-    [CanBeNull]
     public string Surname {
       get => _surname;
       set {
@@ -78,9 +72,8 @@ namespace SoundExplorers.Data {
     ///   Combines forename and surname into a single name,
     ///   allowing for artists who go by a single name.
     /// </summary>
-    [CanBeNull]
-    private static string MakeName([CanBeNull] string forename,
-      [CanBeNull] string surname) {
+    private static string MakeName(string? forename,
+      string? surname) {
       string result;
       if (!string.IsNullOrWhiteSpace(forename)) {
         if (!string.IsNullOrWhiteSpace(surname)) {
@@ -91,16 +84,14 @@ namespace SoundExplorers.Data {
       } else if (!string.IsNullOrWhiteSpace(surname)) {
         result = surname.Trim();
       } else {
-        // A PropertyConstraintException will be thrown when Name is set to null.
-        // But here it is for completeness!
-        result = null;
+        result = string.Empty;
       }
       return result;
     }
 
     [ExcludeFromCodeCoverage]
     protected override void SetNonIdentifyingParentField(
-      Type parentEntityType, EntityBase newParent) {
+      Type parentEntityType, EntityBase? newParent) {
       throw new NotSupportedException();
     }
   }

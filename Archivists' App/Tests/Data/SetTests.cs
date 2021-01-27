@@ -194,19 +194,19 @@ namespace SoundExplorers.Tests.Data {
       Assert.AreSame(Set1AtEvent2, Act2.Sets[1], "Act2 2nd Set");
     }
 
-    [Test]
-    public void DisallowChangeEventToNull() {
-      Session.BeginUpdate();
-      Assert.Throws<PropertyConstraintException>(() => Set2.Event = null);
-      Session.Commit();
-    }
+    // [Test]
+    // public void DisallowChangeEventToNull() {
+    //   Session.BeginUpdate();
+    //   Assert.Throws<PropertyConstraintException>(() => Set2.Event = null);
+    //   Session.Commit();
+    // }
 
-    [Test]
-    public void DisallowChangeGenreToNull() {
-      Session.BeginUpdate();
-      Assert.Throws<ConstraintException>(() => Set2.Genre = null);
-      Session.Commit();
-    }
+    // [Test]
+    // public void DisallowChangeGenreToNull() {
+    //   Session.BeginUpdate();
+    //   Assert.Throws<ConstraintException>(() => Set2.Genre = null);
+    //   Session.Commit();
+    // }
 
     [Test]
     public void DisallowChangeSetNoToDuplicate() {

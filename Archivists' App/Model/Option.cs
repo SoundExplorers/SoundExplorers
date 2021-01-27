@@ -166,7 +166,7 @@ namespace SoundExplorers.Model {
       if (result == null) {
         result = temp;
         result.OptionValue = !string.IsNullOrWhiteSpace(DefaultValue?.ToString())
-          ? DefaultValue.ToString()
+          ? DefaultValue.ToString()!
           : string.Empty;
       }
       Session.Commit();

@@ -17,7 +17,7 @@ namespace SoundExplorers.Tests.Data {
 
     [JetBrains.Annotations.NotNull] public SortedChildList<Daughter> Daughters { get; }
 
-    public string? Name {
+    public string Name {
       get => SimpleKey;
       set {
         UpdateNonIndexField();
@@ -37,7 +37,7 @@ namespace SoundExplorers.Tests.Data {
     [ExcludeFromCodeCoverage]
     protected override void SetNonIdentifyingParentField(
       Type parentEntityType,
-      EntityBase newParent) {
+      EntityBase? newParent) {
       throw new NotSupportedException();
     }
   }

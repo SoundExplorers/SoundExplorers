@@ -328,16 +328,16 @@ namespace SoundExplorers.Tests.Data {
     }
 
     [Test]
-    public void SetAudioUrlToNull() {
+    public void SetAudioUrlToBlank() {
       Session.BeginUpdate();
-      Assert.DoesNotThrow(() => Piece1.AudioUrl = null);
+      Assert.DoesNotThrow(() => Piece1.AudioUrl = string.Empty);
       Session.Commit();
     }
 
     [Test]
-    public void SetVideoUrlToNull() {
+    public void SetVideoUrlToBlank() {
       Session.BeginUpdate();
-      Assert.DoesNotThrow(() => Piece1.VideoUrl = null);
+      Assert.DoesNotThrow(() => Piece1.VideoUrl = string.Empty);
       Session.Commit();
     }
 

@@ -198,7 +198,7 @@ namespace SoundExplorers.Tests.Data {
       Assert.AreEqual(2, Event1.Sets.Count, "Event1.Sets.Count");
       Assert.AreEqual(2, Event1.References.Count, "Event1.References.Count");
       Assert.AreSame(Event1, Set1.Event, "Set1.Event");
-      Assert.AreEqual(Event1.Date, Set1.Event?.Date, "Set1.Event.Date");
+      Assert.AreEqual(Event1.Date, Set1.Event.Date, "Set1.Event.Date");
       Assert.AreSame(Event1, Set2.Event, "Set2.Event");
       Assert.AreEqual(Event1.Date, Set2.Event.Date, "Set2.Event.Date");
     }
@@ -345,7 +345,7 @@ namespace SoundExplorers.Tests.Data {
       session.BeginUpdate();
       EventType1 = QueryHelper.Read<EventType>(EventType1Name, session);
       Event1 = QueryHelper.Read<Event>(Event1SimpleKey, Location1, session);
-      Assert.Throws<ConstraintException>(() => Event1.EventType = null);
+      Assert.Throws<ConstraintException>(() => Event1.EventType = null!);
       session.Commit();
     }
 
@@ -355,7 +355,7 @@ namespace SoundExplorers.Tests.Data {
       session.BeginUpdate();
       Location1 = QueryHelper.Read<Location>(Location1Name, session);
       Event1 = QueryHelper.Read<Event>(Event1SimpleKey, Location1, session);
-      Assert.Throws<PropertyConstraintException>(() => Event1.Location = null);
+      Assert.Throws<PropertyConstraintException>(() => Event1.Location = null!);
       session.Commit();
     }
 

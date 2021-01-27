@@ -1,5 +1,4 @@
 ﻿using System;
-using JetBrains.Annotations;
 
 namespace SoundExplorers.Data {
   /// <summary>
@@ -11,8 +10,8 @@ namespace SoundExplorers.Data {
   ///   SimpleKey has priority over IdentifyingParent when keys are compared.
   /// </remarks>
   public class Key {
-    private readonly IEntity _identifyingParent;
-    private readonly string _simpleKey;
+    private readonly IEntity? _identifyingParent;
+    private readonly string? _simpleKey;
 
     /// <summary>
     ///   Use this constructor to instantiate a key that
@@ -29,8 +28,8 @@ namespace SoundExplorers.Data {
     ///   For comparative use only, optionally specifies
     ///   the identifying parent entity.
     /// </param>
-    internal Key([NotNull] IEntity owner,
-      IEntity identifyingParent = null) {
+    internal Key(IEntity owner,
+      IEntity? identifyingParent = null) {
       Owner = owner;
       _simpleKey = Owner.SimpleKey;
       _identifyingParent = identifyingParent;
@@ -47,22 +46,23 @@ namespace SoundExplorers.Data {
     ///   The identifying parent entity, if applicable,
     ///   to be used for comparison.
     /// </param>
-    public Key([CanBeNull] string simpleKey,
-      [CanBeNull] IEntity identifyingParent) {
+    public Key(string? simpleKey,
+      IEntity? identifyingParent) {
       _simpleKey = simpleKey;
       _identifyingParent = identifyingParent;
     }
 
-    [CanBeNull]
-    private IEntity IdentifyingParent =>
+    private IEntity? IdentifyingParent =>
       Owner?.IdentifyingParent ?? _identifyingParent;
 
-    [CanBeNull] private IEntity Owner { get; }
-    [CanBeNull] private string SimpleKey => Owner?.SimpleKey ?? _simpleKey;
+    private IEntity? Owner { get; }
+    private string? SimpleKey => Owner?.SimpleKey ?? _simpleKey;
 
-    public override bool Equals(object obj) {
+    public override bool Equals(object? obj) {
       var keyToMatch = obj as Key;
-      if ((object)keyToMatch == null) {
+      // We have to cast the key to a nullable object for the == comparison. Otherwise
+      // the == operator will loop.
+      if ((object?)keyToMatch == null) {
         return false;
       }
       if (IdentifyingParent != null && keyToMatch.IdentifyingParent != null) {
@@ -87,22 +87,24 @@ namespace SoundExplorers.Data {
       return hashCode1 + hashCode2;
     }
 
-    public static bool operator ==([CanBeNull] Key key1, [CanBeNull] Key key2) {
-      if ((object)key1 != null) {
+    public static bool operator ==(Key? key1, Key? key2) {
+      // We have to cast the keys to nullable objects for the == and != comparisons.
+      // Otherwise this == operator will loop.
+      if ((object?)key1 != null) {
         return key1.Equals(key2);
       }
-      return (object)key2 == null;
+      return (object?)key2 == null;
     }
 
-    public static bool operator >([CanBeNull] Key key1, [CanBeNull] Key key2) {
+    public static bool operator >(Key? key1, Key? key2) {
       return !(key1 < key2) && key1 != key2;
     }
 
-    public static bool operator !=([CanBeNull] Key key1, [CanBeNull] Key key2) {
+    public static bool operator !=(Key? key1, Key? key2) {
       return !(key1 == key2);
     }
 
-    public static bool operator <([CanBeNull] Key key1, [CanBeNull] Key key2) {
+    public static bool operator <(Key? key1, Key? key2) {
       if (key1 == key2) {
         return false;
       }
