@@ -370,9 +370,7 @@ namespace SoundExplorers.View {
     }
 
     protected override void WndProc(ref Message m) {
-      // ReSharper disable once InconsistentNaming
-      const int WM_CLOSE = 0x0010;
-      if (m.Msg == WM_CLOSE) {
+      if (m.Msg == (int)WindowsMessage.WM_CLOSE) {
         if (IsClosed) {
           // The editor window has already been closed programatically (in
           // MainView.WindowsCloseAllMenuItem_Click), when the main window is closed

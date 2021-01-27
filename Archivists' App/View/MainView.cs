@@ -89,16 +89,6 @@ namespace SoundExplorers.View {
       SplashManager.Close();
     }
 
-    protected override void WndProc(ref Message m) {
-      // ReSharper disable once InconsistentNaming
-      const int WM_CLOSE = 0x0010;
-      if (m.Msg == WM_CLOSE) {
-        // Attempting to close Form
-        Controller.IsClosing = true;
-      }
-      base.WndProc(ref m);
-    }
-
     private SelectEditorView CreateSelectEditorView() {
       return SelectEditorView.Create(Controller.TableName);
     }
@@ -351,8 +341,8 @@ namespace SoundExplorers.View {
       childList[previousChildIndex].Activate();
     }
 
-    private void
-      WindowsCloseCurrentTableEditorMenuItem_Click(object? sender, EventArgs e) {
+    private void WindowsCloseCurrentTableEditorMenuItem_Click(
+      object? sender, EventArgs e) {
       if (MdiChildren.Any()) {
         EditorView?.Close();
       }
@@ -362,6 +352,14 @@ namespace SoundExplorers.View {
       foreach (var childForm in MdiChildren) {
         childForm.Close();
       }
+    }
+
+    protected override void WndProc(ref Message m) {
+      if (m.Msg == (int)WindowsMessage.WM_CLOSE) {
+        // Attempting to close Form
+        Controller.IsClosing = true;
+      }
+      base.WndProc(ref m);
     }
   } //End of class
 } //End of namespace

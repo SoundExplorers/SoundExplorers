@@ -266,10 +266,7 @@ namespace SoundExplorers.View {
     }
 
     protected override void WndProc(ref Message m) {
-      // ReSharper disable once InconsistentNaming
-      // ReSharper disable once IdentifierTypo
-      const int WM_SETFOCUS = 0x0007;
-      if (m.Msg == WM_SETFOCUS) {
+      if (m.Msg == (int)WindowsMessage.WM_SETFOCUS) {
         // ReSharper disable once StringLiteralTypo
         Debug.WriteLine($"GridBase.WndProc {Name}: WM_SETFOCUS");
         // We need to make sure we can switch the grid cell colour schemes when switching
