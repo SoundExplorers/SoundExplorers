@@ -6,6 +6,7 @@ using SoundExplorers.Model;
 
 namespace SoundExplorers.Controller {
   public class MainGridController : GridControllerBase {
+
     public MainGridController(
       // ReSharper disable once SuggestBaseTypeForParameter
       IMainGrid grid, EditorController editorController) :

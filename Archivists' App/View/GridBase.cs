@@ -32,7 +32,6 @@ namespace SoundExplorers.View {
       !SelectedRows.Contains(NewRow);
 
     protected GridControllerBase Controller { get; set; } = null!;
-    protected int FirstVisibleColumnIndex { get; set; }
 
     public GridContextMenu ContextMenu =>
       _contextMenu ??= new GridContextMenu(this);
@@ -97,7 +96,7 @@ namespace SoundExplorers.View {
       if (async) {
         BeginInvoke((Action)delegate { MakeRowCurrentAsync(rowIndex); });
       } else {
-        CurrentCell = Rows[rowIndex].Cells[FirstVisibleColumnIndex];
+        CurrentCell = Rows[rowIndex].Cells[Controller.FirstVisibleColumnIndex];
       }
     }
 
@@ -145,7 +144,7 @@ namespace SoundExplorers.View {
       deleteSelectedRowsMenuItem.Enabled = CanDeleteSelectedRows;
     }
 
-    protected virtual void AddColumns() {
+    private void AddColumns() {
       foreach (var bindingColumn in Controller.BindingColumns) {
         AddColumn(bindingColumn);
       }

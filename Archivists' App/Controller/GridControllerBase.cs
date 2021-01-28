@@ -9,11 +9,13 @@ using SoundExplorers.Model;
 namespace SoundExplorers.Controller {
   public abstract class GridControllerBase {
     private IList<IBindingColumn>? _bindingColumns;
+    private int _firstVisibleColumnIndex;
     private IGrid? _otherGrid;
 
     protected GridControllerBase(IGrid grid, EditorController editorController) {
       Grid = grid;
       EditorController = editorController;
+      _firstVisibleColumnIndex = -1;
     }
 
     public IList<IBindingColumn> BindingColumns =>
@@ -28,6 +30,11 @@ namespace SoundExplorers.Controller {
     internal BindingColumnList Columns => List.Columns;
 
     protected EditorController EditorController { get; }
+
+    public int FirstVisibleColumnIndex => _firstVisibleColumnIndex >= 0
+      ? _firstVisibleColumnIndex
+      : _firstVisibleColumnIndex = GetFirstVisibleColumnIndex();
+
     protected IGrid Grid { get; }
 
     /// <summary>
@@ -40,6 +47,17 @@ namespace SoundExplorers.Controller {
 
     private IList<IBindingColumn> CreateBindingColumns() {
       return (from column in Columns select (IBindingColumn)column).ToList();
+    }
+
+    private int GetFirstVisibleColumnIndex() {
+      int result = -1;
+      for (int i = 0; i < Columns.Count; i++) {
+        if (Columns[i].IsVisible) {
+          result = i;
+          break;
+        }
+      }
+      return result;
     }
 
     private IGrid GetOtherGrid() {

@@ -70,9 +70,6 @@ namespace SoundExplorers.View {
         return result;
       }
       // Column will be shown
-      if (FirstVisibleColumnIndex == -1) {
-        FirstVisibleColumnIndex = result.Index;
-      }
       if (bindingColumn.ReferencesAnotherEntity) {
         result.CellTemplate = ComboBoxCell.Create(Controller, result.Name);
       } else if (result.ValueType == typeof(DateTime)) {
@@ -87,11 +84,6 @@ namespace SoundExplorers.View {
         result.DefaultCellStyle.DataSourceNullValue = string.Empty;
       }
       return result;
-    }
-
-    protected override void AddColumns() {
-      FirstVisibleColumnIndex = -1;
-      base.AddColumns();
     }
 
     protected override void OnCellBeginEdit(DataGridViewCellCancelEventArgs e) {
