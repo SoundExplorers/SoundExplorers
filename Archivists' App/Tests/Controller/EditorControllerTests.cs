@@ -297,8 +297,11 @@ namespace SoundExplorers.Tests.Controller {
       }
       CreateControllers(typeof(EventList));
       Controller.Populate(); // Populate grid
-      // Assert.IsTrue(MainGridController.DoesColumnReferenceAnotherEntity("Newsletter"),
-      //   "Newsletter DoesColumnReferenceAnotherEntity");
+      Assert.AreEqual(0, MainGridController.FirstVisibleColumnIndex,
+        "FirstVisibleColumnIndex");
+      Assert.IsTrue(
+        MainGridController.GetBindingColumn("Newsletter").ReferencesAnotherEntity,
+        "Newsletter ReferencesAnotherEntity");
       var bindingList =
         (TypedBindingList<Event, EventBindingItem>)Controller.MainList.BindingList!;
       // Newsletter
@@ -500,16 +503,18 @@ namespace SoundExplorers.Tests.Controller {
       Assert.AreEqual(changedSeries, bindingList[2].Series, "Series");
     }
 
-    // [Test]
-    // public void GetColumnDisplayName() {
-    //   Session.BeginUpdate();
-    //   Data.AddNewslettersPersisted(1, Session);
-    //   Session.Commit();
-    //   CreateControllers(typeof(NewsletterList));
-    //   Controller.Populate(); // Populate grid
-    //   Assert.AreEqual("Date", MainGridController.GetColumnDisplayName("Date"), "Date");
-    //   Assert.AreEqual("URL", MainGridController.GetColumnDisplayName("Url"), "Url");
-    // }
+    [Test]
+    public void GetColumnDisplayName() {
+      Session.BeginUpdate();
+      Data.AddNewslettersPersisted(1, Session);
+      Session.Commit();
+      CreateControllers(typeof(NewsletterList));
+      Controller.Populate(); // Populate grid
+      Assert.AreEqual("Date", MainGridController.GetBindingColumn("Date").DisplayName,
+        "Date");
+      Assert.AreEqual("URL", MainGridController.GetBindingColumn("Url").DisplayName,
+        "Url");
+    }
 
     [Test]
     public void GridSplitterDistance() {
@@ -547,10 +552,6 @@ namespace SoundExplorers.Tests.Controller {
       CreateControllers(typeof(SetList));
       Assert.IsFalse(MainGrid.Focused, "MainGrid.Focused initially");
       Assert.IsFalse(ParentGrid.Focused, "ParentGrid.Focused initially");
-      // Assert.IsFalse(MainGridController.IsColumnToBeShown(nameof(SetBindingItem.Date)),
-      //   "Is Date column to be shown?");
-      // Assert.IsTrue(MainGridController.IsColumnToBeShown(nameof(SetBindingItem.SetNo)),
-      //   "Is SetNo column to be shown?");
       Controller.Populate(); // Populate parent and main grids
       Assert.AreEqual(1, View.OnParentAndMainGridsShownAsyncCount,
         "OnParentAndMainGridsShownAsyncCount after Populate");
@@ -559,8 +560,16 @@ namespace SoundExplorers.Tests.Controller {
         "MainGrid.CellColorScheme.InvertCount after Populate");
       Assert.AreEqual(2, Controller.ParentBindingList?.Count,
         "Parent list count after Populate");
+      Assert.AreEqual(2, MainGridController.FirstVisibleColumnIndex,
+        "Main grid FirstVisibleColumnIndex after Populate");
+      Assert.IsFalse(MainGridController.GetBindingColumn("Date").IsVisible,
+        "Is Date column to be shown?");
+      Assert.IsTrue(MainGridController.GetBindingColumn("SetNo").IsVisible,
+        "Is SetNo column to be shown?");
       Assert.AreEqual(5, MainGridController.BindingList?.Count,
         "Main list count after Populate");
+      Assert.AreEqual(0, ParentGridController.FirstVisibleColumnIndex,
+        "Main grid FirstVisibleColumnIndex after Populate");
       Assert.AreEqual(1, View.SetMouseCursorToDefaultCount,
         "SetMouseCursorToDefaultCount after Populate");
       MainGrid.Focus();

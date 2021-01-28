@@ -1,4 +1,6 @@
 ﻿using System.Data;
+using System.Linq;
+using SoundExplorers.Common;
 using SoundExplorers.Controller;
 using SoundExplorers.Model;
 
@@ -18,6 +20,12 @@ namespace SoundExplorers.Tests.Controller {
       List.BindingList!.AddNew();
       ((MockMainGrid)Grid).SetCurrentRowIndex(List.BindingList.Count - 1);
       OnRowEnter(Grid.CurrentRowIndex);
+    }
+
+    internal IBindingColumn GetBindingColumn(string propertyName) {
+      return (from bindingColumn in BindingColumns
+        where bindingColumn.PropertyName == propertyName
+        select bindingColumn).First();
     }
 
     internal void SetComboBoxCellValue(
