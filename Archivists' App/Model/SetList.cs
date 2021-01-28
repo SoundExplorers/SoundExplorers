@@ -23,10 +23,10 @@ namespace SoundExplorers.Model {
     protected override BindingColumnList CreateColumns() {
       var result = new BindingColumnList {
         new (nameof(Event.Date), typeof(DateTime)) {
-          IsVisible = !IsParentList
+          IsVisible = IsParentList
         },
         new (nameof(Event.Location), typeof(string)) {
-          IsVisible = !IsParentList
+          IsVisible = IsParentList
         },
         new(nameof(Set.SetNo), typeof(string)) {IsInKey = true},
         new(nameof(Set.Act), typeof(string),

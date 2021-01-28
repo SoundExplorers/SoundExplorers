@@ -152,15 +152,16 @@ namespace SoundExplorers.View {
       }
     }
 
-    protected virtual DataGridViewColumn AddColumn(IBindingColumn bindingColumn) {
-      DataGridViewColumn result = !ReadOnly && bindingColumn.ReferencesAnotherEntity ? 
-        new DataGridViewComboBoxColumn() : new DataGridViewTextBoxColumn();
-      result.HeaderText = bindingColumn.DisplayName;
-      result.Name = result.DataPropertyName = bindingColumn.PropertyName;
-      // Making every column explicitly not sortable prevents the program from crashing
-      // if F3 in pressed while the grid is focused.
-      result.SortMode = DataGridViewColumnSortMode.NotSortable;
-      result.ValueType = bindingColumn.ValueType;
+    protected virtual DataGridViewTextBoxColumn AddColumn(IBindingColumn bindingColumn) {
+      DataGridViewTextBoxColumn result = new() {
+        DataPropertyName = bindingColumn.PropertyName,
+        HeaderText = bindingColumn.DisplayName,
+        Name = bindingColumn.PropertyName,
+        // Making every column explicitly not sortable prevents the program from crashing
+        // if F3 in pressed while the grid is focused.
+        SortMode = DataGridViewColumnSortMode.NotSortable,
+        ValueType = bindingColumn.ValueType
+      };
       if (result.ValueType == typeof(DateTime)) {
         result.DefaultCellStyle.Format = EditorController.DateFormat;
       }

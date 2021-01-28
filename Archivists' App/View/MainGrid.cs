@@ -64,10 +64,10 @@ namespace SoundExplorers.View {
       Debug.WriteLine("MainGrid.Populate END");
     }
 
-    protected override DataGridViewColumn AddColumn(IBindingColumn bindingColumn) {
+    protected override DataGridViewTextBoxColumn AddColumn(IBindingColumn bindingColumn) {
       var result = base.AddColumn(bindingColumn);
-      Visible = bindingColumn.IsVisible;
-      if (!Visible) {
+      result.Visible = bindingColumn.IsVisible;
+      if (!result.Visible) {
         return result;
       }
       // Column will be shown
