@@ -59,9 +59,13 @@ namespace SoundExplorers.View {
 
     public override void Populate(IList? list = null) {
       Debug.WriteLine("MainGrid.Populate");
-      FirstVisibleColumnIndex = -1;
       base.Populate(list);
       Debug.WriteLine("MainGrid.Populate END");
+    }
+
+    protected override void AddColumns() {
+      FirstVisibleColumnIndex = -1;
+      base.AddColumns();
     }
 
     protected override DataGridViewTextBoxColumn AddColumn(IBindingColumn bindingColumn) {
@@ -89,31 +93,6 @@ namespace SoundExplorers.View {
       }
       return result;
     }
-
-    // protected override void ConfigureColumn(DataGridViewColumn column) {
-    //   if (!Controller.IsColumnToBeShown(column.Name)) {
-    //     column.Visible = false;
-    //     return;
-    //   }
-    //   // Column will be shown
-    //   base.ConfigureColumn(column);
-    //   if (FirstVisibleColumnIndex == -1) {
-    //     FirstVisibleColumnIndex = column.Index;
-    //   }
-    //   if (Controller.DoesColumnReferenceAnotherEntity(column.Name)) {
-    //     column.CellTemplate = ComboBoxCell.Create(Controller, column.Name);
-    //   } else if (column.ValueType == typeof(DateTime)) {
-    //     column.CellTemplate = new CalendarCell();
-    //   } else if (column.ValueType == typeof(string)) {
-    //     column.CellTemplate = new TextBoxCell();
-    //     // Interpret blanking a cell as an empty string, not null. Null is not a problem
-    //     // for the object-oriented database to handle. But this fixes an error where,
-    //     // when a text cell was edited to blank and then Tab was pressed to proceed to
-    //     // the next cell, which happened to be the first cell of the insertion row, if
-    //     // that is relevant, the program would crash with a NullReferenceException.
-    //     column.DefaultCellStyle.DataSourceNullValue = string.Empty;
-    //   }
-    // }
 
     protected override void OnCellBeginEdit(DataGridViewCellCancelEventArgs e) {
       base.OnCellBeginEdit(e);

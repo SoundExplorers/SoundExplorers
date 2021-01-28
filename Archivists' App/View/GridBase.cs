@@ -67,7 +67,7 @@ namespace SoundExplorers.View {
 
     public int CurrentRowIndex => CurrentRow?.Index ?? -1;
     public IGridCellColorScheme CellColorScheme { get; }
-    
+
     bool IGrid.Enabled {
       get => Enabled;
       set => Enabled = value;
@@ -121,7 +121,6 @@ namespace SoundExplorers.View {
         AddColumns();
       }
       DataSource = Controller.BindingList;
-      // ConfigureColumns();
       AutoResizeColumns();
     }
 
@@ -146,7 +145,7 @@ namespace SoundExplorers.View {
       deleteSelectedRowsMenuItem.Enabled = CanDeleteSelectedRows;
     }
 
-    private void AddColumns() {
+    protected virtual void AddColumns() {
       foreach (var bindingColumn in Controller.BindingColumns) {
         AddColumn(bindingColumn);
       }
@@ -168,22 +167,6 @@ namespace SoundExplorers.View {
       Columns.Add(result);
       return result;
     }
-
-    // protected virtual void ConfigureColumn(DataGridViewColumn column) {
-    //   // Making every column explicitly not sortable prevents the program
-    //   // from crashing if F3 in pressed while the grid is focused.
-    //   column.SortMode = DataGridViewColumnSortMode.NotSortable;
-    //   column.HeaderText = Controller.GetColumnDisplayName(column.Name);
-    //   if (column.ValueType == typeof(DateTime)) {
-    //     column.DefaultCellStyle.Format = EditorController.DateFormat;
-    //   }
-    // }
-
-    // private void ConfigureColumns() {
-    //   foreach (DataGridViewColumn column in Columns) {
-    //     ConfigureColumn(column);
-    //   }
-    // }
 
     /// <summary>
     ///   Returns the cell that is at the specified client co-ordinates of the main grid.

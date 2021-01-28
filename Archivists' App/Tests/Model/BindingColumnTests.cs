@@ -21,7 +21,7 @@ namespace SoundExplorers.Tests.Model {
           dummy = new BindingColumn(name, typeof(string), typeof(Newsletter), referencedColumnName),
         "Invalid referencedEntityListType");
       Assert.Throws<InvalidOperationException>(() =>
-          dummy = new BindingColumn(name, referencedEntityListType),
+          dummy = new BindingColumn(name, typeof(string), referencedEntityListType),
         "Missing referencedColumnName.");
       Assert.Throws<InvalidOperationException>(() =>
           dummy = new BindingColumn(name, typeof(string), null, referencedColumnName),

@@ -9,8 +9,7 @@ namespace SoundExplorers.Controller {
     public MainGridController(
       // ReSharper disable once SuggestBaseTypeForParameter
       IMainGrid grid, EditorController editorController) :
-      base(grid, editorController) {
-    }
+      base(grid, editorController) { }
 
     private new IMainGrid Grid => (IMainGrid)base.Grid;
 
@@ -28,7 +27,7 @@ namespace SoundExplorers.Controller {
 
     protected virtual StatementType LastChangeAction =>
       List.LastDatabaseUpdateErrorException!.ChangeAction;
-    
+
     internal int LastCurrentRowIndex { get; set; }
 
     /// <summary>
@@ -41,30 +40,13 @@ namespace SoundExplorers.Controller {
     ///   Gets the list of entities represented in the grid.
     /// </summary>
     protected override IEntityList List => EditorController.MainList;
-    
+
     private IParentGrid ParentGrid => EditorController.View.ParentGrid;
     public string TableName => List.EntityTypeName;
-
-    // /// <summary>
-    // ///   Returns whether the specified column references another entity.
-    // /// </summary>
-    // public bool DoesColumnReferenceAnotherEntity(string columnName) {
-    //   return !string.IsNullOrWhiteSpace(Columns[columnName].ReferencedPropertyName);
-    // }
-
-    // public bool IsColumnToBeShown(string columnName) {
-    //   return Columns.ContainsKey(columnName);
-    // }
 
     public void OnExistingRowCellEditError(int rowIndex, string columnName,
       Exception? exception) {
       switch (exception) {
-        // case ArgumentException argumentException:
-        //   // Allow unspecified default in ComboBoxCell on new row.
-        //   if (argumentException.Message != "DataGridViewComboBoxCell value is not valid.") {
-        //     throw argumentException;
-        //   }
-        //   break;
         case DatabaseUpdateErrorException databaseUpdateErrorException:
           List.LastDatabaseUpdateErrorException = databaseUpdateErrorException;
           EditorController.View.OnError();
@@ -103,14 +85,15 @@ namespace SoundExplorers.Controller {
     }
 
     /// <summary>
-    /// If the main grid's current row was the new row before focusing the parent grid,
-    /// then, on focusing the parent grid, the new row was removed, so the main grid's
-    /// last existing row became its current row. So, if focus has now been switched back
-    /// to the main grid, restore currency to the new row.
+    ///   If the main grid's current row was the new row before focusing the parent grid,
+    ///   then, on focusing the parent grid, the new row was removed, so the main grid's
+    ///   last existing row became its current row. So, if focus has now been switched back
+    ///   to the main grid, restore currency to the new row.
     /// </summary>
     public override void OnGotFocus() {
       // Debug.WriteLine("MainGridController.OnGotFocus");
-      Debug.WriteLine($"MainGridController.OnGotFocus: CurrentRowIndex = {Grid.CurrentRowIndex}; LastCurrentRowIndex = {LastCurrentRowIndex}");
+      Debug.WriteLine(
+        $"MainGridController.OnGotFocus: CurrentRowIndex = {Grid.CurrentRowIndex}; LastCurrentRowIndex = {LastCurrentRowIndex}");
       if (LastCurrentRowIndex >= 0 && LastCurrentRowIndex != Grid.CurrentRowIndex) {
         IsRestoringRowCurrency = true;
         Grid.MakeRowCurrent(LastCurrentRowIndex, true);
@@ -128,7 +111,7 @@ namespace SoundExplorers.Controller {
         Grid.CellColorScheme.Invert();
       }
       base.OnPopulatedAsync();
-      if (EditorController.IsParentGridToBeShown && 
+      if (EditorController.IsParentGridToBeShown &&
           ParentGrid.Controller.LastRowNeedsToBeScrolledIntoView) {
         ParentGrid.Controller.ScrollLastRowIntoView();
       } else {
@@ -146,7 +129,7 @@ namespace SoundExplorers.Controller {
       }
       if (IsRestoringRowCurrency) {
         IsRestoringRowCurrency = false;
-         base.OnGotFocus();
+        base.OnGotFocus();
       }
     }
 

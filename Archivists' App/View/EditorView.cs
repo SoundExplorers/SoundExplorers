@@ -42,7 +42,7 @@ namespace SoundExplorers.View {
     private bool IsFixingFocus { get; set; }
 
     private SizeableFormOptions SizeableFormOptions { get; set; } = null!;
-    internal EditorController Controller { get; private set; } = null!;
+    private EditorController Controller { get; set; } = null!;
     IGrid? IEditorView.CurrentGrid => CurrentGrid;
     IMainGrid IEditorView.MainGrid => MainGrid;
     IParentGrid IEditorView.ParentGrid => ParentGrid;

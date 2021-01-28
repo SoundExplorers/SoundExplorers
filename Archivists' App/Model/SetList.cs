@@ -35,12 +35,6 @@ namespace SoundExplorers.Model {
           typeof(GenreList), nameof(Genre.Name)),
         new(nameof(Set.Notes), typeof(string))
       };
-      // if (IsParentList) {
-      //   result.Insert(0,
-      //     new BindingColumn(nameof(Event.Date), typeof(DateTime)));
-      //   result.Insert(1,
-      //     new BindingColumn(nameof(Event.Location), typeof(string)));
-      // }
       return result;
     }
   }

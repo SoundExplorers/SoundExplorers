@@ -16,12 +16,8 @@ namespace SoundExplorers.Controller {
       EditorController = editorController;
     }
 
-    public IList<IBindingColumn> BindingColumns => 
+    public IList<IBindingColumn> BindingColumns =>
       _bindingColumns ??= CreateBindingColumns();
-
-    private IList<IBindingColumn> CreateBindingColumns() {
-      return (from column in Columns select (IBindingColumn)column).ToList();
-    }
 
     public IBindingList? BindingList => List.BindingList;
 
@@ -42,10 +38,9 @@ namespace SoundExplorers.Controller {
     protected bool IsPopulating { get; private set; }
     private IGrid OtherGrid => _otherGrid ??= GetOtherGrid();
 
-    // public string GetColumnDisplayName(string columnName) {
-    //   var column = Columns[columnName];
-    //   return column.DisplayName ?? columnName;
-    // }
+    private IList<IBindingColumn> CreateBindingColumns() {
+      return (from column in Columns select (IBindingColumn)column).ToList();
+    }
 
     private IGrid GetOtherGrid() {
       return Grid == EditorController.View.MainGrid
