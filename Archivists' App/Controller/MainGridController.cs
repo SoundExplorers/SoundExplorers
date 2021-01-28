@@ -59,6 +59,12 @@ namespace SoundExplorers.Controller {
     public void OnExistingRowCellEditError(int rowIndex, string columnName,
       Exception? exception) {
       switch (exception) {
+        // case ArgumentException argumentException:
+        //   // Allow unspecified default in ComboBoxCell on new row.
+        //   if (argumentException.Message != "DataGridViewComboBoxCell value is not valid.") {
+        //     throw argumentException;
+        //   }
+        //   break;
         case DatabaseUpdateErrorException databaseUpdateErrorException:
           List.LastDatabaseUpdateErrorException = databaseUpdateErrorException;
           EditorController.View.OnError();

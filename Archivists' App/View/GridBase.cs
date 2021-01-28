@@ -148,11 +148,11 @@ namespace SoundExplorers.View {
 
     private void AddColumns() {
       foreach (var bindingColumn in Controller.BindingColumns) {
-        Columns.Add(CreateColumn(bindingColumn));
+        AddColumn(bindingColumn);
       }
     }
 
-    protected virtual DataGridViewColumn CreateColumn(IBindingColumn bindingColumn) {
+    protected virtual DataGridViewColumn AddColumn(IBindingColumn bindingColumn) {
       DataGridViewColumn result = !ReadOnly && bindingColumn.ReferencesAnotherEntity ? 
         new DataGridViewComboBoxColumn() : new DataGridViewTextBoxColumn();
       result.HeaderText = bindingColumn.DisplayName;
@@ -164,6 +164,7 @@ namespace SoundExplorers.View {
       if (result.ValueType == typeof(DateTime)) {
         result.DefaultCellStyle.Format = EditorController.DateFormat;
       }
+      Columns.Add(result);
       return result;
     }
 

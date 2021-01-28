@@ -41,11 +41,12 @@ namespace SoundExplorers.Tests {
       Data.AddLocationsPersisted(8, Session);
       Data.AddNewslettersPersisted(64, Session);
       Data.AddSeriesPersisted(8, Session);
-      AddEvents();
-      AddSets();
+      // AddEvents();
+      // AddSets();
       Session.Commit();
     }
 
+    [SuppressMessage("ReSharper", "UnusedMember.Local")]
     private void AddEvents() {
       Data.AddEventsPersisted(18, Session);
       for (int i = 0; i < 5; i++) {
@@ -70,6 +71,7 @@ namespace SoundExplorers.Tests {
       }
     }
 
+    [SuppressMessage("ReSharper", "UnusedMember.Local")]
     private void AddSets() {
       for (int i = 0; i < 5; i++) {
         Data.AddSetsPersisted(i + 1, Session, Data.Events[i], Data.Genres[i]);
