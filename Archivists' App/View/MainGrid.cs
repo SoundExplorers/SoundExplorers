@@ -63,11 +63,6 @@ namespace SoundExplorers.View {
       Debug.WriteLine("MainGrid.Populate END");
     }
 
-    protected override void AddColumns() {
-      FirstVisibleColumnIndex = -1;
-      base.AddColumns();
-    }
-
     protected override DataGridViewTextBoxColumn AddColumn(IBindingColumn bindingColumn) {
       var result = base.AddColumn(bindingColumn);
       result.Visible = bindingColumn.IsVisible;
@@ -92,6 +87,11 @@ namespace SoundExplorers.View {
         result.DefaultCellStyle.DataSourceNullValue = string.Empty;
       }
       return result;
+    }
+
+    protected override void AddColumns() {
+      FirstVisibleColumnIndex = -1;
+      base.AddColumns();
     }
 
     protected override void OnCellBeginEdit(DataGridViewCellCancelEventArgs e) {

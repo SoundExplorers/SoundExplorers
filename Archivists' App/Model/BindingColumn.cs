@@ -8,6 +8,7 @@ namespace SoundExplorers.Model {
   ///   Column data for a binding list that links entities to a grid.
   /// </summary>
   public class BindingColumn : IBindingColumn {
+    private string? _displayName;
     private ReferenceableItemList? _referenceableItems;
     private SessionBase? _session;
 
@@ -32,12 +33,6 @@ namespace SoundExplorers.Model {
       ReferencedEntityListType = referencedEntityListType;
       ReferencedPropertyName = referencedPropertyName;
     }
-
-    /// <summary>
-    ///   Gets the display name to be used in the grid column header.
-    ///   Defaults to <see cref="PropertyName" />.
-    /// </summary>
-    public string? DisplayName { get; internal init; }
 
     public bool IsInKey { get; internal init; }
 
@@ -72,7 +67,14 @@ namespace SoundExplorers.Model {
     public string? ReferencedTableName =>
       ReferencedEntityListType?.Name.Replace("List", string.Empty);
 
-    string IBindingColumn.DisplayName => DisplayName ?? PropertyName;
+    /// <summary>
+    ///   Gets or sets the display name to be used in the grid column header.
+    ///   Defaults to <see cref="PropertyName" />.
+    /// </summary>
+    public string DisplayName {
+      get => _displayName ??= PropertyName;
+      internal init => _displayName = value;
+    }
 
     /// <summary>
     ///   Gets whether the column is to be visible on the grid. If false, it needs to be
