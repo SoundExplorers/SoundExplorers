@@ -239,7 +239,12 @@ namespace SoundExplorers.Model {
       string message;
       if (propertyName != null) {
         columnIndex = Columns.GetIndex(propertyName);
-        message = $"Invalid {propertyName}:\r\n{exception.Message}";
+        if (exception is FormatException &&
+            Columns[propertyName].ValueType == typeof(int)) {
+          message = EntityBase.GetIntegerSimpleKeyErrorMessage(propertyName);
+        } else {
+          message = $"Invalid {propertyName}:\r\n{exception.Message}";
+        }
       } else {
         columnIndex = 0;
         message = exception.Message;
@@ -433,7 +438,8 @@ namespace SoundExplorers.Model {
       ).ToList());
     }
 
-    protected virtual TypedBindingList<TEntity, TBindingItem> CreateBindingList(IList<TBindingItem> list) {
+    protected virtual TypedBindingList<TEntity, TBindingItem> CreateBindingList(
+      IList<TBindingItem> list) {
       return new(list);
     }
 

@@ -232,14 +232,6 @@ namespace SoundExplorers.Tests.Data {
     }
 
     [Test]
-    public void DisallowChangePieceNoToZero() {
-      Session.BeginUpdate();
-      Assert.Throws<PropertyConstraintException>(() =>
-        Piece2.PieceNo = 0);
-      Session.Commit();
-    }
-
-    [Test]
     public void DisallowChangeVideoUrlToDuplicate() {
       Session.BeginUpdate();
       Assert.Throws<PropertyConstraintException>(() =>
@@ -269,6 +261,20 @@ namespace SoundExplorers.Tests.Data {
         "Message");
       Assert.AreEqual("VideoUrl", exception.PropertyName,
         "PropertyName");
+    }
+
+    [Test]
+    public void DisallowOutOfRangePieceNo() {
+      Session.BeginUpdate();
+      var exception = Assert.Catch<FormatException>(() => Piece2.PieceNo = 0,
+        "Zero should throw FormatException");
+      Assert.AreEqual("PieceNo must be an integer between 1 and 99.", exception.Message,
+        "Error message when zero");
+      exception = Assert.Catch<FormatException>(() => Piece2.PieceNo = 100,
+        "100 should throw FormatException");
+      Assert.AreEqual("PieceNo must be an integer between 1 and 99.", exception.Message,
+        "Error message when 100");
+      Session.Commit();
     }
 
     [Test]

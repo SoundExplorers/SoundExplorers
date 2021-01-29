@@ -20,11 +20,10 @@ namespace SoundExplorers.Model {
     /// </param>
     /// <param name="valueType">
     ///   The type of the values that are to be shown for the column on the grid.
-    ///   Indicates any special cell editor control that may be required on the main grid
-    ///   for the value type, such as a DateTimePicker for a DateTime column, or a
-    ///   CheckBox for a boolean column. Otherwise specify <see cref="String" /> to get
-    ///   the application's custom TextBox context menu for the column's cells when
-    ///   edited.
+    ///   This can indicate any special cell editor control that may be required on the
+    ///   main grid for the value type, such as a DateTimePicker for a DateTime column or
+    ///   a CheckBox for a boolean column. Or it can indicate required type-specific
+    ///   validation, as for as integer column. 
     /// </param>
     /// <param name="referencedEntityListType">
     ///   The type of the referenced entity list or, if the column does not reference a
@@ -123,11 +122,10 @@ namespace SoundExplorers.Model {
     ///   Gets the type of the values that are to be shown for the column on the grid.
     /// </summary>
     /// <remarks>
-    ///   Indicates any special cell editor control that may be required on the main grid
-    ///   for the value type, such as a DateTimePicker for a DateTime column, or a
-    ///   CheckBox for a boolean column. Otherwise specify <see cref="String" /> to get
-    ///   the application's custom TextBox context menu for the column's cells when
-    ///   edited.
+    ///   This can indicate any special cell editor control that may be required on the
+    ///   main grid for the value type, such as a DateTimePicker for a DateTime column or
+    ///   a CheckBox for a boolean column. Or it can indicate required type-specific
+    ///   validation, as for as integer column. 
     /// </remarks>
     public Type ValueType { get; }
 

@@ -74,10 +74,11 @@ namespace SoundExplorers.Model {
     }
 
     internal override Key GetKey() {
-      // This won't work.  We need to
+      // This won't work. We need to
       // TODO Provide access to event parents.
       // They would be the list.
-      return new(Set.SetNoToSimpleKey(SetNo), FindParent(Properties[nameof(Event)]));
+      return new(EntityBase.IntegerToSimpleKey(SetNo, nameof(SetNo)),
+        FindParent(Properties[nameof(Event)]));
     }
   }
 }

@@ -68,18 +68,10 @@ namespace SoundExplorers.Data {
     public int SetNo {
       get => _setNo;
       set {
-        if (value == 0) {
-          throw new PropertyConstraintException("SetNo '00' is not valid.",
-            nameof(SetNo));
-        }
         UpdateNonIndexField();
         _setNo = value;
-        SimpleKey = SetNoToSimpleKey(value);
+        SimpleKey = IntegerToSimpleKey(value, nameof(SetNo));
       }
-    }
-
-    public static string SetNoToSimpleKey(int setNo) {
-      return setNo.ToString().PadLeft(2, '0');
     }
 
     protected override IDictionary GetChildren(Type childType) {

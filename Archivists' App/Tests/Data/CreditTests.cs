@@ -230,10 +230,16 @@ namespace SoundExplorers.Tests.Data {
     }
 
     [Test]
-    public void DisallowChangeCreditNoToZero() {
+    public void DisallowOutOfRangeCreditNo() {
       Session.BeginUpdate();
-      Assert.Throws<PropertyConstraintException>(() =>
-        Credit2.CreditNo = 0);
+      var exception = Assert.Catch<FormatException>(() => Credit2.CreditNo = 0,
+        "Zero should throw FormatException");
+      Assert.AreEqual("CreditNo must be an integer between 1 and 99.", exception.Message,
+        "Error message when zero");
+      exception = Assert.Catch<FormatException>(() => Credit2.CreditNo = 100,
+        "100 should throw FormatException");
+      Assert.AreEqual("CreditNo must be an integer between 1 and 99.", exception.Message,
+        "Error message when 100");
       Session.Commit();
     }
 

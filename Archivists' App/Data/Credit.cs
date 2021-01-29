@@ -25,13 +25,9 @@ namespace SoundExplorers.Data {
     public int CreditNo {
       get => _creditNo;
       set {
-        if (value == 0) {
-          throw new PropertyConstraintException("CreditNo '00' is not valid.",
-            nameof(CreditNo));
-        }
         UpdateNonIndexField();
         _creditNo = value;
-        SimpleKey = value.ToString().PadLeft(2, '0');
+        SimpleKey = IntegerToSimpleKey(value, nameof(CreditNo));
       }
     }
 

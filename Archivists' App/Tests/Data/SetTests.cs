@@ -217,9 +217,16 @@ namespace SoundExplorers.Tests.Data {
     }
 
     [Test]
-    public void DisallowChangeSetNoToZero() {
+    public void DisallowOutOfRangeSetNo() {
       Session.BeginUpdate();
-      Assert.Throws<PropertyConstraintException>(() => Set2.SetNo = 0);
+      var exception = Assert.Catch<FormatException>(() => Set2.SetNo = 0,
+        "Zero should throw FormatException");
+      Assert.AreEqual("SetNo must be an integer between 1 and 99.", exception.Message,
+        "Error message when zero");
+      exception = Assert.Catch<FormatException>(() => Set2.SetNo = 100,
+        "100 should throw FormatException");
+      Assert.AreEqual("SetNo must be an integer between 1 and 99.", exception.Message,
+        "Error message when 100");
       Session.Commit();
     }
 

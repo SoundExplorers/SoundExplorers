@@ -45,13 +45,9 @@ namespace SoundExplorers.Data {
     public int PieceNo {
       get => _pieceNo;
       set {
-        if (value == 0) {
-          throw new PropertyConstraintException("PieceNo '00' is not valid.",
-            nameof(PieceNo));
-        }
         UpdateNonIndexField();
         _pieceNo = value;
-        SimpleKey = value.ToString().PadLeft(2, '0');
+        SimpleKey = IntegerToSimpleKey(value, nameof(PieceNo));
       }
     }
 

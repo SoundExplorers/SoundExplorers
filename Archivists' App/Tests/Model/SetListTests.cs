@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using System;
+using NUnit.Framework;
 using SoundExplorers.Data;
 using SoundExplorers.Model;
 using SoundExplorers.Tests.Data;
@@ -30,7 +31,8 @@ namespace SoundExplorers.Tests.Model {
       Assert.AreEqual(typeof(EventList), List.ParentListType, "ParentListType");
       Assert.AreEqual(7, List.Columns.Count, "Columns.Count when parent list");
       Assert.AreEqual("Date", List.Columns[0].PropertyName, "Columns[0].PropertyName");
-      Assert.AreEqual("Location", List.Columns[1].PropertyName, "Columns[1].PropertyName");
+      Assert.AreEqual("Location", List.Columns[1].PropertyName,
+        "Columns[1].PropertyName");
       Assert.AreEqual("SetNo", List.Columns[2].PropertyName, "Columns[2].PropertyName");
       Assert.AreEqual("Act", List.Columns[3].PropertyName, "Columns[3].PropertyName");
       Assert.AreEqual(typeof(ActList), List.Columns[3].ReferencedEntityListType,
@@ -45,7 +47,8 @@ namespace SoundExplorers.Tests.Model {
       Assert.AreEqual("Name", List.Columns[4].ReferencedPropertyName,
         "Columns[4].ReferencedColumnName");
       Assert.AreEqual("Public?", List.Columns[5].DisplayName, "Columns[5].DisplayName");
-      Assert.AreEqual("IsPublic", List.Columns[5].PropertyName, "Columns[5].PropertyName");
+      Assert.AreEqual("IsPublic", List.Columns[5].PropertyName,
+        "Columns[5].PropertyName");
       Assert.AreEqual("Notes", List.Columns[6].PropertyName, "Columns[6].PropertyName");
     }
 
@@ -75,6 +78,16 @@ namespace SoundExplorers.Tests.Model {
       var children = List.GetChildrenForMainList(0);
       Assert.AreEqual(5, children.Count, "Count");
       Assert.IsInstanceOf<Piece>(children[0], "Child type");
+    }
+
+    [Test]
+    public void InvalidFormatSetNo() {
+      List = CreateMainSetList();
+      List.Populate();
+      List.OnValidationError(1, "SetNo",
+        new FormatException("Value is not a valid integer"));
+      Assert.AreEqual("SetNo must be an integer between 1 and 99.", 
+        List.LastDatabaseUpdateErrorException!.Message, "Error message");
     }
 
     [Test]
