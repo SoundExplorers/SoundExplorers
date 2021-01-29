@@ -245,8 +245,8 @@ namespace SoundExplorers.Data {
       string? oldSimpleKey, string? newSimpleKey) {
       if (string.IsNullOrWhiteSpace(newSimpleKey)) {
         throw new PropertyConstraintException(
-          $"A null reference has been specified as the {SimpleKeyName}. " +
-          $"Null {SimpleKeyName}s are not supported.", SimpleKeyName);
+          $"The {SimpleKeyName} is blank. " +
+          $"Blank {SimpleKeyName}s are not supported.", SimpleKeyName);
       }
       if (newSimpleKey == oldSimpleKey) {
         return;

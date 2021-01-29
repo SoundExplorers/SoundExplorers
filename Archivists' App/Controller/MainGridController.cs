@@ -58,6 +58,7 @@ namespace SoundExplorers.Controller {
           break;
         case FormatException formatException:
           // An invalid value was pasted into a cell, e.g. text into a date.
+          // Or invalid text was entered into a numeric cell, e.g. Set.SetNo.
           List.OnValidationError(rowIndex, columnName, formatException);
           EditorController.View.OnError();
           break;

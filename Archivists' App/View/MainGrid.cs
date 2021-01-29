@@ -76,11 +76,11 @@ namespace SoundExplorers.View {
         result.CellTemplate = new CalendarCell();
       } else if (result.ValueType == typeof(string)) {
         result.CellTemplate = new TextBoxCell();
-        // Interpret blanking a cell as an empty string, not null. Null is not a problem
-        // for the object-oriented database to handle. But this fixes an error where,
-        // when a text cell was edited to blank and then Tab was pressed to proceed to
-        // the next cell, the program would crash with a NullReferenceException. Perhaps 
-        // this is no longer necessary, now that ShowCellErrors is set to false. 
+        // Interpret blanking a cell as an empty string, not null. Now that
+        // ShowCellErrors is set to false, this is no longer necessary, as the program
+        // will no longer crash with a NullReferenceException if a mandatory a text cell
+        // is edited to blank. (Null is not a problem for the object-oriented database to
+        // handle.)
         result.DefaultCellStyle.DataSourceNullValue = string.Empty;
       }
       return result;

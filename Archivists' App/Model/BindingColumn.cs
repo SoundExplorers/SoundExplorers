@@ -12,6 +12,29 @@ namespace SoundExplorers.Model {
     private ReferenceableItemList? _referenceableItems;
     private SessionBase? _session;
 
+    /// <summary>
+    ///   Creates a new BindingColumn.
+    /// </summary>
+    /// <param name="propertyName">
+    ///   The name of the BindingItem property to be bound to the column in the grid.
+    /// </param>
+    /// <param name="valueType">
+    ///   The type of the values that are to be shown for the column on the grid.
+    ///   Currently it is only critical to get this right when there needs to be a
+    ///   special cell editor control for the value type, such as a DateTimePicker for a
+    ///   DateTime column. Otherwise <see cref="String"/> will work.
+    /// </param>
+    /// <param name="referencedEntityListType">
+    ///   The type of the referenced entity list or, if the column does not reference a
+    ///   column on another entity list, null (the default). If specified,
+    ///   <paramref name="referencedPropertyName"/> must be specified too.
+    /// </param>
+    /// <param name="referencedPropertyName">
+    ///   The name of the corresponding property of the referenced entity or, if the
+    ///   column does not reference a column on another entity list, null (the default).
+    ///   If specified, <paramref name="referencedEntityListType"/> must be specified
+    ///   too.
+    /// </param>
     public BindingColumn(string propertyName, Type valueType,
       Type? referencedEntityListType = null, string? referencedPropertyName = null) {
       PropertyName = propertyName;
@@ -37,8 +60,8 @@ namespace SoundExplorers.Model {
     public bool IsInKey { get; internal init; }
 
     /// <summary>
-    ///   Gets or sets the session to be used for accessing the database.
-    ///   The setter should only be needed for testing.
+    ///   Gets or sets the session to be used for accessing the database. The setter
+    ///   should only be needed for testing.
     /// </summary>
     internal SessionBase Session {
       get => _session ??= Global.Session;
@@ -49,14 +72,14 @@ namespace SoundExplorers.Model {
       _referenceableItems ??= FetchReferenceableItems();
 
     /// <summary>
-    ///   Gets the type of the referenced entity list.
-    ///   Null if the column does not reference a column on another entity list.
+    ///   Gets the type of the referenced entity list. Null if the column does not
+    ///   reference a column on another entity list.
     /// </summary>
     public Type? ReferencedEntityListType { get; }
 
     /// <summary>
-    ///   Gets the name of the corresponding property of the referenced entity.
-    ///   Null if the column does not reference a another entity type.
+    ///   Gets the name of the corresponding property of the referenced entity. Null if
+    ///   the column does not reference a another entity type.
     /// </summary>
     public string? ReferencedPropertyName { get; }
 
@@ -97,6 +120,11 @@ namespace SoundExplorers.Model {
     /// <summary>
     ///   Gets the type of the values that are to be shown for the column on the grid.
     /// </summary>
+    /// <remarks>
+    ///   Currently it is only critical to get this right when there needs to be a
+    ///   special cell editor control for the value type, such as a DateTimePicker for a
+    ///   DateTime column. Otherwise <see cref="String"/> will work.
+    /// </remarks>
     public Type ValueType { get; }
 
     private ReferenceableItemList FetchReferenceableItems() {

@@ -35,7 +35,7 @@ namespace SoundExplorers.Model {
         new(nameof(Event.Location), typeof(string)) {
           IsVisible = IsParentList
         },
-        new(nameof(Set.SetNo), typeof(string)) {IsInKey = true},
+        new(nameof(Set.SetNo), typeof(int)) {IsInKey = true},
         new(nameof(Set.Act), typeof(string),
           typeof(ActList), nameof(Act.Name)),
         new(nameof(Set.Genre), typeof(string),
