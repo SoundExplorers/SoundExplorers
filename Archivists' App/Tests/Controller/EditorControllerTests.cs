@@ -299,9 +299,11 @@ namespace SoundExplorers.Tests.Controller {
       Controller.Populate(); // Populate grid
       Assert.AreEqual(0, MainGridController.FirstVisibleColumnIndex,
         "FirstVisibleColumnIndex");
-      Assert.IsTrue(
-        MainGridController.GetBindingColumn("Newsletter").ReferencesAnotherEntity,
+      var newsletterColumn = MainGridController.GetBindingColumn("Newsletter");  
+      Assert.IsTrue(newsletterColumn.ReferencesAnotherEntity, 
         "Newsletter ReferencesAnotherEntity");
+      Assert.AreEqual(typeof(DateTime), newsletterColumn.ValueType, 
+        "Newsletter ValueType");
       var bindingList =
         (TypedBindingList<Event, EventBindingItem>)Controller.MainList.BindingList!;
       // Newsletter
