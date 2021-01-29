@@ -63,7 +63,7 @@ namespace SoundExplorers.View {
       Debug.WriteLine("MainGrid.Populate END");
     }
 
-    protected override DataGridViewTextBoxColumn AddColumn(IBindingColumn bindingColumn) {
+    protected override DataGridViewColumn AddColumn(IBindingColumn bindingColumn) {
       var result = base.AddColumn(bindingColumn);
       result.Visible = bindingColumn.IsVisible;
       if (!result.Visible) {

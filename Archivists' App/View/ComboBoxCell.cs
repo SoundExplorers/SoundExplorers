@@ -81,6 +81,7 @@ namespace SoundExplorers.View {
       base.InitializeEditingControl(rowIndex, initialFormattedValue,
         dataGridViewCellStyle);
       ComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+      ComboBox.FlatStyle = FlatStyle.Flat;
       ComboBox.Items.Clear();
       ComboBox.Items.AddRange(Controller.GetItems());
       ComboBox.DisplayMember = "Key";

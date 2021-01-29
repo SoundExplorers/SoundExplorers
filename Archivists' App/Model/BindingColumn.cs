@@ -20,19 +20,21 @@ namespace SoundExplorers.Model {
     /// </param>
     /// <param name="valueType">
     ///   The type of the values that are to be shown for the column on the grid.
-    ///   Currently it is only critical to get this right when there needs to be a
-    ///   special cell editor control for the value type, such as a DateTimePicker for a
-    ///   DateTime column. Otherwise <see cref="String"/> will work.
+    ///   Indicates any special cell editor control that may be required on the main grid
+    ///   for the value type, such as a DateTimePicker for a DateTime column, or a
+    ///   CheckBox for a boolean column. Otherwise specify <see cref="String" /> to get
+    ///   the application's custom TextBox context menu for the column's cells when
+    ///   edited.
     /// </param>
     /// <param name="referencedEntityListType">
     ///   The type of the referenced entity list or, if the column does not reference a
     ///   column on another entity list, null (the default). If specified,
-    ///   <paramref name="referencedPropertyName"/> must be specified too.
+    ///   <paramref name="referencedPropertyName" /> must be specified too.
     /// </param>
     /// <param name="referencedPropertyName">
     ///   The name of the corresponding property of the referenced entity or, if the
     ///   column does not reference a column on another entity list, null (the default).
-    ///   If specified, <paramref name="referencedEntityListType"/> must be specified
+    ///   If specified, <paramref name="referencedEntityListType" /> must be specified
     ///   too.
     /// </param>
     public BindingColumn(string propertyName, Type valueType,
@@ -121,9 +123,11 @@ namespace SoundExplorers.Model {
     ///   Gets the type of the values that are to be shown for the column on the grid.
     /// </summary>
     /// <remarks>
-    ///   Currently it is only critical to get this right when there needs to be a
-    ///   special cell editor control for the value type, such as a DateTimePicker for a
-    ///   DateTime column. Otherwise <see cref="String"/> will work.
+    ///   Indicates any special cell editor control that may be required on the main grid
+    ///   for the value type, such as a DateTimePicker for a DateTime column, or a
+    ///   CheckBox for a boolean column. Otherwise specify <see cref="String" /> to get
+    ///   the application's custom TextBox context menu for the column's cells when
+    ///   edited.
     /// </remarks>
     public Type ValueType { get; }
 

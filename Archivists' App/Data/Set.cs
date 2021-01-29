@@ -9,7 +9,8 @@ namespace SoundExplorers.Data {
   public class Set : EntityBase {
     private Act? _act;
     private Genre _genre = null!;
-    private string? _notes;
+    private bool _isPublic;
+    private string _notes = null!;
     private int _setNo;
 
     public Set() : base(typeof(Set), nameof(SetNo), typeof(Event)) {
@@ -46,9 +47,15 @@ namespace SoundExplorers.Data {
       }
     }
 
-    public bool IsPublic { get; set; }
+    public bool IsPublic {
+      get => _isPublic;
+      set {
+        UpdateNonIndexField();
+        _isPublic = value;
+      }
+    }
 
-    public string? Notes {
+    public string Notes {
       get => _notes;
       set {
         UpdateNonIndexField();

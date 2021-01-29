@@ -10,7 +10,12 @@ namespace SoundExplorers.Model {
     private int _setNo;
     private string? _act;
     private string? _genre;
-    private string? _notes;
+    private bool _isPublic;
+    private string _notes = null!;
+
+    public SetBindingItem() {
+      IsPublic = true;
+    }
 
     public DateTime Date {
       get => _date;
@@ -52,7 +57,15 @@ namespace SoundExplorers.Model {
       }
     }
 
-    public string? Notes {
+    public bool IsPublic {
+      get => _isPublic;
+      set {
+        _isPublic = value;
+        OnPropertyChanged(nameof(IsPublic));
+      }
+    }
+
+    public string Notes {
       get => _notes;
       set {
         _notes = value;

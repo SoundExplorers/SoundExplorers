@@ -150,16 +150,19 @@ namespace SoundExplorers.View {
       }
     }
 
-    protected virtual DataGridViewTextBoxColumn AddColumn(IBindingColumn bindingColumn) {
-      DataGridViewTextBoxColumn result = new() {
-        DataPropertyName = bindingColumn.PropertyName,
-        HeaderText = bindingColumn.DisplayName,
-        Name = bindingColumn.PropertyName,
+    protected virtual DataGridViewColumn AddColumn(IBindingColumn bindingColumn) {
+      DataGridViewColumn result = bindingColumn.ValueType == typeof(bool)
+        ? new DataGridViewCheckBoxColumn { FlatStyle = FlatStyle.Flat }
+        : new DataGridViewTextBoxColumn();
+      {
+        result.DataPropertyName = bindingColumn.PropertyName;
+        result.HeaderText = bindingColumn.DisplayName;
+        result.Name = bindingColumn.PropertyName;
         // Making every column explicitly not sortable prevents the program from crashing
         // if F3 in pressed while the grid is focused.
-        SortMode = DataGridViewColumnSortMode.NotSortable,
-        ValueType = bindingColumn.ValueType
-      };
+        result.SortMode = DataGridViewColumnSortMode.NotSortable;
+        result.ValueType = bindingColumn.ValueType;
+      }
       if (result.ValueType == typeof(DateTime)) {
         result.DefaultCellStyle.Format = EditorController.DateFormat;
       }

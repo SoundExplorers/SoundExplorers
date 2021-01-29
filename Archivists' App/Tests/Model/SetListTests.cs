@@ -28,23 +28,25 @@ namespace SoundExplorers.Tests.Model {
       List = CreateParentSetList();
       Assert.AreEqual("Set", List.EntityTypeName, "EntityName");
       Assert.AreEqual(typeof(EventList), List.ParentListType, "ParentListType");
-      Assert.AreEqual(6, List.Columns.Count, "Columns.Count when parent list");
-      Assert.AreEqual("Date", List.Columns[0].PropertyName, "Columns[0].Name");
-      Assert.AreEqual("Location", List.Columns[1].PropertyName, "Columns[1].Name");
-      Assert.AreEqual("SetNo", List.Columns[2].PropertyName, "Columns[2].Name");
-      Assert.AreEqual("Act", List.Columns[3].PropertyName, "Columns[3].Name");
+      Assert.AreEqual(7, List.Columns.Count, "Columns.Count when parent list");
+      Assert.AreEqual("Date", List.Columns[0].PropertyName, "Columns[0].PropertyName");
+      Assert.AreEqual("Location", List.Columns[1].PropertyName, "Columns[1].PropertyName");
+      Assert.AreEqual("SetNo", List.Columns[2].PropertyName, "Columns[2].PropertyName");
+      Assert.AreEqual("Act", List.Columns[3].PropertyName, "Columns[3].PropertyName");
       Assert.AreEqual(typeof(ActList), List.Columns[3].ReferencedEntityListType,
         "Columns[3].ReferencedEntityListType");
       Assert.AreEqual("Name", List.Columns[3].ReferencedPropertyName,
         "Columns[3].ReferencedColumnName");
       Assert.AreEqual("Act", List.Columns[3].ReferencedTableName,
         "Columns[3].ReferencedTableName");
-      Assert.AreEqual("Genre", List.Columns[4].PropertyName, "Columns[4].Name");
+      Assert.AreEqual("Genre", List.Columns[4].PropertyName, "Columns[4].PropertyName");
       Assert.AreEqual(typeof(GenreList), List.Columns[4].ReferencedEntityListType,
         "Columns[4].ReferencedEntityListType");
       Assert.AreEqual("Name", List.Columns[4].ReferencedPropertyName,
         "Columns[4].ReferencedColumnName");
-      Assert.AreEqual("Notes", List.Columns[5].PropertyName, "Columns[5].Name");
+      Assert.AreEqual("Public?", List.Columns[5].DisplayName, "Columns[5].DisplayName");
+      Assert.AreEqual("IsPublic", List.Columns[5].PropertyName, "Columns[5].PropertyName");
+      Assert.AreEqual("Notes", List.Columns[6].PropertyName, "Columns[6].PropertyName");
     }
 
     [Test]

@@ -18,6 +18,7 @@ namespace SoundExplorers.Model {
         SetNo = set.SetNo,
         Act = set.Act?.Name,
         Genre = set.Genre.Name,
+        IsPublic = set.IsPublic,
         Notes = set.Notes
       };
     }
@@ -35,11 +36,12 @@ namespace SoundExplorers.Model {
         new(nameof(Event.Location), typeof(string)) {
           IsVisible = IsParentList
         },
-        new(nameof(Set.SetNo), typeof(int)) {IsInKey = true},
+        new(nameof(Set.SetNo), typeof(string)) {IsInKey = true},
         new(nameof(Set.Act), typeof(string),
           typeof(ActList), nameof(Act.Name)),
         new(nameof(Set.Genre), typeof(string),
           typeof(GenreList), nameof(Genre.Name)),
+        new(nameof(Set.IsPublic), typeof(bool)) {DisplayName = "Public?"},
         new(nameof(Set.Notes), typeof(string))
       };
       return result;
