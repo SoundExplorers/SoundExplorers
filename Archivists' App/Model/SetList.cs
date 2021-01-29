@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using SoundExplorers.Data;
 
@@ -14,18 +15,24 @@ namespace SoundExplorers.Model {
     protected override SetBindingItem CreateBindingItem(Set set) {
       return new() {
         Date = set.Event.Date, Location = set.Event.Location.Name!,
-        SetNo = set.SetNo, Act = set.Act?.Name,
+        SetNo = set.SetNo,
+        Act = set.Act?.Name,
         Genre = set.Genre.Name,
         Notes = set.Notes
       };
     }
 
+    protected override TypedBindingList<Set, SetBindingItem> CreateBindingList(
+      IList<SetBindingItem> list) {
+      return new SetBindingList(list);
+    }
+
     protected override BindingColumnList CreateColumns() {
       var result = new BindingColumnList {
-        new (nameof(Event.Date), typeof(DateTime)) {
+        new(nameof(Event.Date), typeof(DateTime)) {
           IsVisible = IsParentList
         },
-        new (nameof(Event.Location), typeof(string)) {
+        new(nameof(Event.Location), typeof(string)) {
           IsVisible = IsParentList
         },
         new(nameof(Set.SetNo), typeof(string)) {IsInKey = true},

@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
 using JetBrains.Annotations;
 using SoundExplorers.Data;
 
 namespace SoundExplorers.Model {
   [NoReorder]
-  [SuppressMessage("ReSharper", "PropertyCanBeMadeInitOnly.Global")]
   public class SetBindingItem : BindingItemBase<Set, SetBindingItem> {
     private DateTime _date;
     private string _location = null!;

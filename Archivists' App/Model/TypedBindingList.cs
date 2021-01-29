@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
 using SoundExplorers.Data;
 
@@ -12,13 +11,5 @@ namespace SoundExplorers.Model {
     where TBindingItem : BindingItemBase<TEntity, TBindingItem>, new() {
     public TypedBindingList(IList<TBindingItem> bindingItems) : base(
       bindingItems) { }
-
-    /// <summary>
-    ///   A non-nullable replacement for <see cref="IBindingList.AddNew" />,
-    ///   for ease of testing, as it should never be null.
-    /// </summary>
-    public new TBindingItem AddNew() {
-      return base.AddNew() ?? throw new NullReferenceException();
-    }
   }
 }

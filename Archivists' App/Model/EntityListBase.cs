@@ -58,7 +58,6 @@ namespace SoundExplorers.Model {
     /// </summary>
     internal QueryHelper QueryHelper {
       get => _queryHelper ??= QueryHelper.Instance;
-      // ReSharper disable once PropertyCanBeMadeInitOnly.Global
       set => _queryHelper = value;
     }
 
@@ -376,7 +375,7 @@ namespace SoundExplorers.Model {
     private void BindingList_ListChanged(object sender, ListChangedEventArgs e) {
       switch (e.ListChangedType) {
         case ListChangedType.ItemAdded: // Insertion row entered
-          //Debug.WriteLine("ListChangedType.ItemAdded: Insertion row entered");
+          Debug.WriteLine("ListChangedType.ItemAdded: Insertion row entered");
           IsInsertionRowCurrent = true;
           break;
         case ListChangedType.ItemChanged: // Cell edit completed
@@ -428,11 +427,14 @@ namespace SoundExplorers.Model {
     }
 
     private TypedBindingList<TEntity, TBindingItem> CreateBindingList() {
-      var list = (
+      return CreateBindingList((
         from entity in this
         select CreateBindingItemWithColumns(entity)
-      ).ToList();
-      return new TypedBindingList<TEntity, TBindingItem>(list);
+      ).ToList());
+    }
+
+    protected virtual TypedBindingList<TEntity, TBindingItem> CreateBindingList(IList<TBindingItem> list) {
+      return new(list);
     }
 
     private TBindingItem GetBindingItem(int rowIndex) {

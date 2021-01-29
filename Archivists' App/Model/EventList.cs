@@ -36,7 +36,7 @@ namespace SoundExplorers.Model {
         new BindingColumn(nameof(Event.Date), typeof(DateTime)) {IsInKey = true},
         new BindingColumn(nameof(Event.Location), typeof(string),
           typeof(LocationList), nameof(Location.Name)) {IsInKey = true},
-        new BindingColumn(nameof(Event.Newsletter), typeof(string),
+        new BindingColumn(nameof(Event.Newsletter), typeof(DateTime),
           typeof(NewsletterList), nameof(Newsletter.Date)),
         new BindingColumn(nameof(Event.EventType),typeof(string),
           typeof(EventTypeList), nameof(EventType.Name)),
