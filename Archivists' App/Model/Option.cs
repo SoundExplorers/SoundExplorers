@@ -80,7 +80,7 @@ namespace SoundExplorers.Model {
     /// </remarks>
     public bool BooleanValue {
       get {
-        bool.TryParse(StringValue, out bool result);
+        bool unused = bool.TryParse(StringValue, out bool result);
         return result;
       }
       set => StringValue = value.ToString();
@@ -104,7 +104,7 @@ namespace SoundExplorers.Model {
     /// </remarks>
     public int Int32Value {
       get {
-        int.TryParse(StringValue, out int result);
+        bool unused = int.TryParse(StringValue, out int result);
         return result;
       }
       set => StringValue = value.ToString();
