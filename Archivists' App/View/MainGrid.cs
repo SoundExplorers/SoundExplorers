@@ -74,13 +74,11 @@ namespace SoundExplorers.View {
         result.CellTemplate = ComboBoxCell.Create(Controller, result.Name);
       } else if (result.ValueType == typeof(DateTime)) {
         result.CellTemplate = new CalendarCell();
+      } else if (result.ValueType == typeof(int)) {
+        result.CellTemplate = IntegerTextBoxCell.Create(Controller, result.Name);
+        result.DefaultCellStyle.DataSourceNullValue = string.Empty;
       } else if (result.ValueType == typeof(string)) {
         result.CellTemplate = new TextBoxCell();
-        // Interpret blanking a cell as an empty string, not null. Now that
-        // ShowCellErrors is set to false, this is no longer necessary, as the program
-        // will no longer crash with a NullReferenceException if a mandatory a text cell
-        // is edited to blank. (Null is not a problem for the object-oriented database to
-        // handle.)
         result.DefaultCellStyle.DataSourceNullValue = string.Empty;
       }
       return result;
