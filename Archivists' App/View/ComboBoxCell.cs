@@ -6,10 +6,6 @@ namespace SoundExplorers.View {
   /// <summary>
   ///   A DataGridView cell that supports editing via an embedded ComboBox control.
   /// </summary>
-  /// <remarks>
-  ///   The cell displays dates in ordinary text box cells,
-  ///   but when the user edits a cell, a ComboBox control appears.
-  /// </remarks>
   internal class ComboBoxCell : DataGridViewTextBoxCell, IView<ComboBoxCellController>,
     ICanRestoreErrorValue {
     /// <summary>
@@ -39,10 +35,9 @@ namespace SoundExplorers.View {
     }
 
     /// <summary>
-    ///   Creates a ComboBoxCell and its associated controller,
-    ///   as per the Model-View-Controller design pattern,
-    ///   returning the view instance created.
-    ///   The parameters are passed to the controller's constructor.
+    ///   Creates a ComboBoxCell and its associated controller, as per the
+    ///   Model-View-Controller design pattern, returning the view instance created. The
+    ///   parameters are passed to the controller's constructor.
     /// </summary>
     /// <param name="mainGridController">
     ///   The controller of the table editor.
@@ -67,11 +62,11 @@ namespace SoundExplorers.View {
     /// </param>
     /// <param name="dataGridViewCellStyle">
     ///   A cell style that is used to determine the appearance of the hosted control.
-    ///   Not used in this case
+    ///   Not used in this case.
     /// </param>
     /// <exception cref="ApplicationException">
-    ///   Throw if the referenced table contains no rows that
-    ///   can be made available for selection in the cell's drop-down list.
+    ///   Throw if the referenced table contains no rows that can be made available for
+    ///   selection in the cell's drop-down list.
     /// </exception>
     public override void InitializeEditingControl(
       int rowIndex,

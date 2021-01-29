@@ -1,11 +1,9 @@
-﻿using JetBrains.Annotations;
-using SoundExplorers.Model;
+﻿using SoundExplorers.Model;
 
 namespace SoundExplorers.Controller {
   /// <summary>
   ///   Controller for a cell that supports an embedded combo box control.
   /// </summary>
-  [UsedImplicitly]
   public class ComboBoxCellController : CellControllerBase {
     /// <summary>
     ///   Initialises a new instance of the <see cref="ComboBoxCellController" /> class.

@@ -8,12 +8,7 @@ namespace SoundExplorers.View {
   internal class TextBoxCell : DataGridViewTextBoxCell, ICanRestoreErrorValue {
     private TextBoxContextMenu? _cellTextBoxContextMenu;
 
-    private DataGridView Grid =>
-      DataGridView
-      ?? throw new NullReferenceException(
-        "In TextBoxCell.Grid, DataGridView is null.");
-
-    private TextBox TextBox => (TextBox)Grid.EditingControl;
+    private TextBox TextBox => (TextBox)DataGridView!.EditingControl;
 
     private TextBoxContextMenu TextBoxContextMenu =>
       _cellTextBoxContextMenu ??= new TextBoxContextMenu(TextBox);
