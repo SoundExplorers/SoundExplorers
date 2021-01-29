@@ -334,9 +334,14 @@ namespace SoundExplorers.Tests.Data {
       session.BeginUpdate();
       Daughter1 = QueryHelper.Read<Daughter>(Daughter1Name, session);
       var exception = Assert.Catch<PropertyConstraintException>(() =>
-        Daughter1.Name = string.Empty, "Disallow changing SimpleKey to blank");
+        Daughter1.Name = string.Empty, "Disallow changing SimpleKey to empty");
       Assert.AreEqual("The Name is blank. Blank Names are not supported.", 
         exception.Message, "Error message when trying to change SimpleKey to empty");
+      exception = Assert.Catch<PropertyConstraintException>(() =>
+        Daughter1.Name = "    \r\n", "Disallow changing SimpleKey to white space");
+      Assert.AreEqual("The Name is blank. Blank Names are not supported.", 
+        exception.Message, 
+        "Error message when trying to change SimpleKey to white space");
       var namelessSon = new Son(QueryHelper);
       exception = Assert.Catch<PropertyConstraintException>(() =>
           namelessSon.Name = null!, "Disallow changing SimpleKey to null");
