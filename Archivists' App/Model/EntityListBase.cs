@@ -239,12 +239,9 @@ namespace SoundExplorers.Model {
       string message;
       if (propertyName != null) {
         columnIndex = Columns.GetIndex(propertyName);
-        if (exception is FormatException &&
-            Columns[propertyName].ValueType == typeof(int)) {
-          message = EntityBase.GetIntegerSimpleKeyErrorMessage(propertyName);
-        } else {
-          message = $"Invalid {propertyName}:\r\n{exception.Message}";
-        }
+        message = IsIntegerSimpleKeyFormatError(exception, Columns[propertyName]) 
+          ? EntityBase.GetIntegerSimpleKeyErrorMessage(propertyName) 
+          : $"Invalid {propertyName}:\r\n{exception.Message}";
       } else {
         columnIndex = 0;
         message = exception.Message;
@@ -459,6 +456,14 @@ namespace SoundExplorers.Model {
     /// </summary>
     private static bool IsDatabaseUpdateError(Exception exception) {
       return exception is ConstraintException; // Includes PropertyConstraintException
+    }
+
+    private static bool IsIntegerSimpleKeyFormatError(Exception exception, 
+      BindingColumn column) {
+      if (!(exception is FormatException)) {
+        return false;
+      }
+      return column.ValueType == typeof(int) && column.IsInKey;
     }
 
     private void UpdateExistingEntityProperty(int rowIndex, string propertyName) {

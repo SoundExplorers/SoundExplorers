@@ -85,7 +85,7 @@ namespace SoundExplorers.Tests.Model {
       List = CreateMainSetList();
       List.Populate();
       List.OnValidationError(1, "SetNo",
-        new FormatException("Value is not a valid integer"));
+        new FormatException("Value cannot be cast to Int32"));
       Assert.AreEqual("SetNo must be an integer between 1 and 99.", 
         List.LastDatabaseUpdateErrorException!.Message, "Error message");
     }
