@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 using NUnit.Framework;
 using SoundExplorers.Data;
 using SoundExplorers.Model;
@@ -83,6 +84,27 @@ namespace SoundExplorers.Tests.Model {
         EventBindingItem.DefaultEventTypeName, Session);
       Session.Commit();
       Assert.IsNotNull(defaultEventType, "Default EventType after populate");
+    }
+
+    [Test]
+    public void DisallowDuplicateKey() {
+      List.Populate();
+      List.OnRowEnter(2);
+      var bindingList = (TypedBindingList<Event, EventBindingItem>)List.BindingList!;
+      Exception exception = Assert.Catch<DuplicateNameException>(
+        ()=> bindingList[2].Date = Data.Events[0].Date, 
+        "Changing Date to duplicate for Location disallowed");
+      Assert.AreEqual("Another Event with key '2020/01/09 | Athens' already exists.",
+        exception.Message, 
+        "Error message on trying to change Date to duplicate for Location");
+      bindingList.AddNew();
+      List.OnRowEnter(4);
+      bindingList[4].Date = Data.Events[1].Date;
+      exception = Assert.Catch<DatabaseUpdateErrorException>(()=> List.OnRowValidated(3), 
+        "Adding Event with Date duplicate for Location disallowed");
+      Assert.AreEqual("Another Event with key '2020/01/10 | Athens' already exists.",
+        exception.Message, 
+        "Error message on trying to add Event with duplicate Date for Location");
     }
 
     [Test]

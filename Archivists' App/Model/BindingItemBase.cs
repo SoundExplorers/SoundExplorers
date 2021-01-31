@@ -34,15 +34,9 @@ namespace SoundExplorers.Model {
     IBindingItem, INotifyPropertyChanged
     where TEntity : EntityBase, new()
     where TBindingItem : BindingItemBase<TEntity, TBindingItem>, new() {
-    // private BindingColumnList? _columns;
     private IDictionary<string, PropertyInfo>? _entityProperties;
     private IDictionary<string, PropertyInfo>? _properties;
 
-    // internal BindingColumnList Columns {
-    //   get => _columns ?? throw new NullReferenceException(
-    //     "The binding item's Columns property is null.");
-    //   set => _columns = value;
-    // }
     internal EntityListBase<TEntity, TBindingItem> EntityList { get; set; } = null!;
 
     private IDictionary<string, PropertyInfo> EntityProperties =>
@@ -123,7 +117,7 @@ namespace SoundExplorers.Model {
       return result;
     }
 
-    internal Key CreateKey() {
+    internal virtual Key CreateKey() {
       return new(GetSimpleKey(), EntityList.IdentifyingParent);
     }
 

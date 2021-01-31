@@ -28,8 +28,8 @@ namespace SoundExplorers.Controller {
 
     private int PreviousRowIndex { get; set; }
 
-    public IdentifyingParentChildren
-      GetIdentifyingParentChildrenForMainList(int rowIndex) {
+    public IdentifyingParentChildren GetIdentifyingParentChildrenForMainList(
+      int rowIndex) {
       Debug.WriteLine(
         $"ParentGridController.GetIdentifyingParentChildrenForMainList: row {rowIndex}");
       return List.GetIdentifyingParentChildrenForMainList(rowIndex)!;
