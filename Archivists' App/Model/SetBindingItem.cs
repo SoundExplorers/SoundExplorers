@@ -74,10 +74,7 @@ namespace SoundExplorers.Model {
     }
 
     protected override string GetSimpleKey() {
-      // Allow a zero SimpleKey in case this is an empty BackupBindingItem, to which
-      // the insertion BindingItem is compared to see whether we need to check whether
-      // there the insertion row's duplicate key duplications that of an existing row.
-      return EntityBase.IntegerToSimpleKey(SetNo, nameof(SetNo), true);
+      return EntityBase.IntegerToSimpleKey(SetNo, nameof(SetNo));
     }
   }
 }

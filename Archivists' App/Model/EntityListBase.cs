@@ -405,9 +405,11 @@ namespace SoundExplorers.Model {
     /// </remarks>
     private void CheckForDuplicateKey(TBindingItem bindingItem) {
       var newKey = bindingItem.CreateKey();
-      var originalKey = BackupBindingItem!.CreateKey();
-      if (newKey == originalKey) {
-        return;
+      if (!IsInsertionRowCurrent) {
+        var originalKey = BackupBindingItem!.CreateKey();
+        if (newKey == originalKey) {
+          return;
+        }
       }
       // Entity list could be a sorted list. Duplicate check might be faster. But it
       // would be a big job to do and I don't think there will be a performance problem.
