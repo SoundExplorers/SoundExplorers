@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using NUnit.Framework;
 using SoundExplorers.Model;
@@ -20,7 +19,8 @@ namespace SoundExplorers.Tests.Model {
 
     private class DudErrorThrowerList : NamedEntityList<ErrorThrowingEventType> {
       [ExcludeFromCodeCoverage]
-      public override IList GetIdentifyingParentChildrenForMainList(int rowIndex) {
+      public override IdentifyingParentChildren GetIdentifyingParentChildrenForMainList(
+        int rowIndex) {
         throw new NotSupportedException();
       }
     }

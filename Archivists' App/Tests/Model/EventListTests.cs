@@ -33,7 +33,6 @@ namespace SoundExplorers.Tests.Model {
     [Test]
     public void A010_Initial() {
       Assert.AreEqual("Event", List.EntityTypeName, "EntityName");
-      Assert.IsFalse(List.IsParentList, "IsParentList");
       Assert.IsNull(List.ParentListType, "ParentListType");
       Assert.AreEqual(6, List.Columns.Count, "Columns.Count");
       Assert.AreEqual("Date", List.Columns[0].PropertyName, "Columns[0].Name");
@@ -121,15 +120,17 @@ namespace SoundExplorers.Tests.Model {
     }
 
     [Test]
-    public void GetChildrenForMainList() {
+    public void GetIdentifyingParentChildrenForMainList() {
       Session.BeginUpdate();
       Data.AddGenresPersisted(1, Session);
       Data.AddSetsPersisted(3, Session);
       Session.Commit();
       List.Populate();
-      var children = List.GetIdentifyingParentChildrenForMainList(0);
-      Assert.AreEqual(3, children.Count, "Count");
-      Assert.IsInstanceOf<Set>(children[0], "Child type");
+      var identifyingParentChildren = List.GetIdentifyingParentChildrenForMainList(0);
+      Assert.AreSame(Data.Events[0], identifyingParentChildren.IdentifyingParent, 
+        "IdentifyingParent");
+      Assert.AreEqual(3, identifyingParentChildren.Children.Count, "Count");
+      Assert.IsInstanceOf<Set>(identifyingParentChildren.Children[0], "Child type");
     }
   }
 }

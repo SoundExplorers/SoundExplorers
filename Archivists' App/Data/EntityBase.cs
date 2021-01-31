@@ -378,8 +378,9 @@ namespace SoundExplorers.Data {
       return $"{propertyName} must be an integer between 1 and 99.";
     }
 
-    public static string IntegerToSimpleKey(int integer, string propertyName) {
-      if (integer >= 1 && integer <= 99) {
+    public static string IntegerToSimpleKey(int integer, string propertyName, 
+      bool allowOutOfRange = false) {
+      if (integer >= 1 && integer <= 99 || allowOutOfRange) {
         return integer.ToString().PadLeft(2, '0');
       }
       throw new FormatException(GetIntegerSimpleKeyErrorMessage(propertyName));

@@ -26,10 +26,10 @@ namespace SoundExplorers.Model {
     protected override BindingColumnList CreateColumns() {
       var result = new BindingColumnList {
         new(nameof(Event.Date), typeof(DateTime)) {
-          IsVisible = IsParentList
+          IsVisible = ParentListType == null
         },
         new(nameof(Event.Location), typeof(string)) {
-          IsVisible = IsParentList
+          IsVisible = ParentListType == null
         },
         new(nameof(Set.SetNo), typeof(int)) {IsInKey = true},
         new(nameof(Set.Act), typeof(string),
@@ -44,7 +44,7 @@ namespace SoundExplorers.Model {
  
     public override IdentifyingParentChildren GetIdentifyingParentChildrenForMainList(
       int rowIndex) {
-      return new(IdentifyingParent!, this[rowIndex].Pieces.Values.ToList());
+      return new(this[rowIndex], this[rowIndex].Pieces.Values.ToList());
     }
   }
 }

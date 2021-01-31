@@ -50,7 +50,7 @@ namespace SoundExplorers.Model {
 
     private IDictionary<string, object>? EntityPropertyValues { get; set; }
 
-    protected IDictionary<string, PropertyInfo> Properties =>
+    private IDictionary<string, PropertyInfo> Properties =>
       _properties ??= CreatePropertyDictionary<TBindingItem>();
 
     public void SetPropertyValue(string propertyName, object? value) {
@@ -136,7 +136,7 @@ namespace SoundExplorers.Model {
       return result;
     }
 
-    protected IEntity? FindParent(PropertyInfo property) {
+    private IEntity? FindParent(PropertyInfo property) {
       var propertyValue = property.GetValue(this);
       return propertyValue != null
         ? EntityList.Columns[property.Name].ReferenceableItems.GetEntity(propertyValue)

@@ -49,7 +49,7 @@ namespace SoundExplorers.Model {
 
     public override IdentifyingParentChildren GetIdentifyingParentChildrenForMainList(
       int rowIndex) {
-      return new(IdentifyingParent!, this[rowIndex].Sets.Values.ToList());
+      return new(this[rowIndex], this[rowIndex].Sets.Values.ToList());
     }
 
     public override void Populate(

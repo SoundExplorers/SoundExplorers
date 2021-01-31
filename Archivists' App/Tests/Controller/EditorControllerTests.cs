@@ -299,10 +299,10 @@ namespace SoundExplorers.Tests.Controller {
       Controller.Populate(); // Populate grid
       Assert.AreEqual(0, MainGridController.FirstVisibleColumnIndex,
         "FirstVisibleColumnIndex");
-      var newsletterColumn = MainGridController.GetBindingColumn("Newsletter");  
-      Assert.IsTrue(newsletterColumn.ReferencesAnotherEntity, 
+      var newsletterColumn = MainGridController.GetBindingColumn("Newsletter");
+      Assert.IsTrue(newsletterColumn.ReferencesAnotherEntity,
         "Newsletter ReferencesAnotherEntity");
-      Assert.AreEqual(typeof(DateTime), newsletterColumn.ValueType, 
+      Assert.AreEqual(typeof(DateTime), newsletterColumn.ValueType,
         "Newsletter ValueType");
       var bindingList =
         (TypedBindingList<Event, EventBindingItem>)Controller.MainList.BindingList!;
@@ -560,7 +560,8 @@ namespace SoundExplorers.Tests.Controller {
       Assert.IsFalse(MainGrid.Focused, "MainGrid.Focused after Populate");
       Assert.AreEqual(1, MainGrid.CellColorScheme.InvertCount,
         "MainGrid.CellColorScheme.InvertCount after Populate");
-      Assert.AreEqual(2, Controller.ParentBindingList?.Count,
+      // Assert.AreEqual(2, Controller.ParentBindingList?.Count,
+      Assert.AreEqual(2, ParentGridController.BindingList?.Count,
         "Parent list count after Populate");
       Assert.AreEqual(2, MainGridController.FirstVisibleColumnIndex,
         "Main grid FirstVisibleColumnIndex after Populate");

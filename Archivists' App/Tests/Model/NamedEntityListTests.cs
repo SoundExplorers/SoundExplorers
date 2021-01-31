@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Data;
+﻿using System.Data;
 using NUnit.Framework;
 using SoundExplorers.Data;
 using SoundExplorers.Model;
@@ -31,9 +30,8 @@ namespace SoundExplorers.Tests.Model {
 
     private void A010_Initial<TEntityList>(string tableName)
       where TEntityList : IEntityList, new() {
-      var list = new TEntityList {IsParentList = true};
+      var list = new TEntityList();
       Assert.AreEqual(tableName, list.EntityTypeName, "EntityName");
-      Assert.IsTrue(list.IsParentList, "IsParentList");
       Assert.IsNull(list.ParentListType, "ParentListType");
       Assert.AreEqual(1, list.Columns.Count, "Columns.Count");
       Assert.AreEqual("Name", list.Columns[0].PropertyName, "Columns[0].Name");
@@ -102,13 +100,16 @@ namespace SoundExplorers.Tests.Model {
       Session.Commit();
       // The second EventType cannot be deleted
       // because it is a parent of 3 child Events.
-      ErrorOnDelete<EventTypeList>((IList)Data.EventTypes);
+      ErrorOnDelete<EventTypeList>();
+      // ErrorOnDelete<EventTypeList>((IList)Data.EventTypes);
     }
 
-    private void ErrorOnDelete<TEntityList>(IList entities)
+    private void ErrorOnDelete<TEntityList>()
+      // private void ErrorOnDelete<TEntityList>(IList entities)
       where TEntityList : IEntityList, new() {
       var list = new TEntityList {Session = Session};
-      list.Populate(entities);
+      list.Populate();
+      // list.Populate(entities);
       var exception = Assert.Catch<DatabaseUpdateErrorException>(
         () => list.DeleteEntity(1),
         "DeleteEntity should have thrown DatabaseUpdateErrorException.");

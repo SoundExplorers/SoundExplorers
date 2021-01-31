@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Data;
+using System.Linq;
 using NUnit.Framework;
 using SoundExplorers.Data;
 using SoundExplorers.Model;
@@ -26,7 +28,7 @@ namespace SoundExplorers.Tests.Model {
 
     [Test]
     public void A010_InitialiseAsParentList() {
-      List = CreateParentSetList();
+      List = CreateSetList();
       Assert.AreEqual("Set", List.EntityTypeName, "EntityName");
       Assert.AreEqual(typeof(EventList), List.ParentListType, "ParentListType");
       Assert.AreEqual(7, List.Columns.Count, "Columns.Count when parent list");
@@ -54,7 +56,7 @@ namespace SoundExplorers.Tests.Model {
 
     [Test]
     public void DefaultSetNoWithExistingSets() {
-      List = CreateMainSetList();
+      List = CreateSetList();
       List.Populate();
       List.BindingList!.AddNew();
       Assert.AreEqual(4, List.TypedBindingList[3].SetNo);
@@ -62,37 +64,62 @@ namespace SoundExplorers.Tests.Model {
 
     [Test]
     public void DefaultSetNoWithNoExistingSets() {
-      List = CreateMainSetList(false);
+      List = CreateSetList(false);
       List.Populate();
       List.TypedBindingList!.AddNew();
       Assert.AreEqual(1, List.TypedBindingList[0].SetNo);
     }
 
     [Test]
-    public void GetChildrenForMainList() {
-      List = CreateParentSetList();
+    public void DisallowDuplicateKey() {
+      List = CreateSetList();
+      var eventChildren = new IdentifyingParentChildren(
+        Data.Events[0], Data.Events[0].Sets.Values.ToList());
+      List.Populate(eventChildren);
+      List.OnRowEnter(2);
+      var bindingList = (TypedBindingList<Set, SetBindingItem>)List.BindingList!;
+      Exception exception = Assert.Catch<DuplicateNameException>(()=> bindingList[2].SetNo = 1, 
+        "Changing SetNo to duplicate for Event disallowed");
+      Assert.AreEqual("Another Set with key '01 | 2020/01/09 | Athens' already exists.",
+        exception.Message, 
+        "Error message on trying to change SetNo to duplicate for Event");
+      bindingList.AddNew();
+      List.OnRowEnter(3);
+      bindingList[3].SetNo = 2;
+      exception = Assert.Catch<DatabaseUpdateErrorException>(()=> List.OnRowValidated(3), 
+        "Adding Set with SetNo duplicate for Event disallowed");
+      Assert.AreEqual("Another Set with key '02 | 2020/01/09 | Athens' already exists.",
+        exception.Message, 
+        "Error message on trying to add Set with duplicate SetNo for Event");
+    }
+
+    [Test]
+    public void GetIdentifyingParentChildrenForMainList() {
+      List = CreateSetList();
       Session.BeginUpdate();
       Data.AddPiecesPersisted(5, Session);
       Session.Commit();
       List.Populate();
-      var children = List.GetIdentifyingParentChildrenForMainList(0);
-      Assert.AreEqual(5, children.Count, "Count");
-      Assert.IsInstanceOf<Piece>(children[0], "Child type");
+      var identifyingParentChildren = List.GetIdentifyingParentChildrenForMainList(0);
+      Assert.AreSame(Data.Sets[0], identifyingParentChildren.IdentifyingParent, 
+        "IdentifyingParent");
+      Assert.AreEqual(5, identifyingParentChildren.Children.Count, "Count");
+      Assert.IsInstanceOf<Piece>(identifyingParentChildren.Children[0], "Child type");
     }
 
     [Test]
     public void InvalidFormatSetNo() {
-      List = CreateMainSetList();
+      List = CreateSetList();
       List.Populate();
       List.OnValidationError(1, "SetNo",
         new FormatException("Value cannot be cast to Int32"));
-      Assert.AreEqual("SetNo must be an integer between 1 and 99.", 
+      Assert.AreEqual("SetNo must be an integer between 1 and 99.",
         List.LastDatabaseUpdateErrorException!.Message, "Error message");
     }
 
     [Test]
     public void ReadAsParentList() {
-      List = CreateParentSetList();
+      List = CreateSetList();
       Session.BeginUpdate();
       Data.AddActsPersisted(2, Session);
       var set = Data.Sets[2];
@@ -120,14 +147,9 @@ namespace SoundExplorers.Tests.Model {
       Session.Commit();
     }
 
-    private SetList CreateMainSetList(bool addSets = true) {
+    private SetList CreateSetList(bool addSets = true) {
       AddData(addSets);
       return new SetList {Session = Session};
-    }
-
-    private SetList CreateParentSetList() {
-      AddData();
-      return new SetList {IsParentList = true, Session = Session};
     }
   }
 }

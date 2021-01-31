@@ -70,12 +70,6 @@ namespace SoundExplorers.Model {
     public IEntity? IdentifyingParent { get; private set; }
 
     /// <summary>
-    ///   Gets whether this is a (read-only) parent list. False (the default) if this is
-    ///   the (updatable) main (and maybe only) list.
-    /// </summary>
-    public bool IsParentList => IdentifyingParent == null;
-
-    /// <summary>
     ///   Gets the binding list representing the list of entities and bound to the grid.
     /// </summary>
     public IBindingList? BindingList { get; private set; }
