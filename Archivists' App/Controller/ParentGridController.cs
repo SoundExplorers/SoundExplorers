@@ -1,5 +1,5 @@
-﻿using System.Collections;
-using System.Diagnostics;
+﻿using System.Diagnostics;
+using SoundExplorers.Common;
 using SoundExplorers.Model;
 
 namespace SoundExplorers.Controller {
@@ -29,9 +29,9 @@ namespace SoundExplorers.Controller {
 
     private int PreviousRowIndex { get; set; }
 
-    public IList GetChildrenForMainList(int rowIndex) {
-      Debug.WriteLine($"ParentGridController.GetChildrenForMainList: row {rowIndex}");
-      return List.GetChildrenForMainList(rowIndex)!;
+    public IdentifyingParentChildren GetIdentifyingParentChildrenForMainList(int rowIndex) {
+      Debug.WriteLine($"ParentGridController.GetIdentifyingParentChildrenForMainList: row {rowIndex}");
+      return List.GetIdentifyingParentChildrenForMainList(rowIndex)!;
     }
 
     public override void OnPopulatedAsync() {
@@ -68,9 +68,10 @@ namespace SoundExplorers.Controller {
       }
     }
 
-    public override void Populate(IList? list = null) {
+    public override void Populate(
+        IdentifyingParentChildren? identifyingParentChildren = null) {
       PreviousRowIndex = -1;
-      base.Populate(list);
+      base.Populate(identifyingParentChildren);
     }
 
     /// <summary>

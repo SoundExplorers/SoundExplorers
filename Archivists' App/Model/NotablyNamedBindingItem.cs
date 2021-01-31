@@ -25,8 +25,8 @@ namespace SoundExplorers.Model {
       }
     }
 
-    internal override Key GetKey() {
-      return new(Name, null);
+    protected override string GetSimpleKey() {
+      return Name;
     }
   }
 }

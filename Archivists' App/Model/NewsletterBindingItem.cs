@@ -29,8 +29,8 @@ namespace SoundExplorers.Model {
       }
     }
 
-    internal override Key GetKey() {
-      return new(EntityBase.DateToSimpleKey(Date), null);
+    protected override string GetSimpleKey() {
+      return EntityBase.DateToSimpleKey(Date);
     }
   }
 }

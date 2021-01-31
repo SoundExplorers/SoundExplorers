@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Diagnostics;
 using System.Windows.Forms;
 using SoundExplorers.Common;
@@ -57,9 +56,9 @@ namespace SoundExplorers.View {
       CurrentRow!.Selected = true;
     }
 
-    public override void Populate(IList? list = null) {
+    public override void Populate(IdentifyingParentChildren? identifyingParentChildren = null) {
       Debug.WriteLine("MainGrid.Populate");
-      base.Populate(list);
+      base.Populate(identifyingParentChildren);
       Debug.WriteLine("MainGrid.Populate END");
     }
 

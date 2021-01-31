@@ -75,7 +75,7 @@ namespace SoundExplorers.Tests.Model {
       Data.AddPiecesPersisted(5, Session);
       Session.Commit();
       List.Populate();
-      var children = List.GetChildrenForMainList(0);
+      var children = List.GetIdentifyingParentChildrenForMainList(0);
       Assert.AreEqual(5, children.Count, "Count");
       Assert.IsInstanceOf<Piece>(children[0], "Child type");
     }

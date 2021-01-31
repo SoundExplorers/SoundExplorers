@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using SoundExplorers.Common;
+using SoundExplorers.Data;
 using VelocityDb.Session;
 
 namespace SoundExplorers.Model {
@@ -15,12 +17,13 @@ namespace SoundExplorers.Model {
     IBindingList? BindingList { get; }
 
     /// <summary>
-    ///   Gets metadata for the columns of the editor grid that represents
-    ///   the list of entities.
+    ///   Gets metadata for the columns of the editor grid that represents the list of
+    ///   entities.
     /// </summary>
     BindingColumnList Columns { get; }
 
     string EntityTypeName { get; }
+    IEntity? IdentifyingParent { get; set; }
 
     /// <summary>
     ///   Gets whether the current grid row is the insertion row,
@@ -28,15 +31,15 @@ namespace SoundExplorers.Model {
     /// </summary>
     bool IsInsertionRowCurrent { get; }
 
-    /// <summary>
-    ///   Gets or sets whether this is a (read-only) parent list.
-    ///   False (the default) if this is the (updatable) main (and maybe only) list.
-    /// </summary>
-    bool IsParentList { get; init; }
+    // /// <summary>
+    // ///   Gets or sets whether this is a (read-only) parent list.
+    // ///   False (the default) if this is the (updatable) main (and maybe only) list.
+    // /// </summary>
+    // bool IsParentList { get; init; }
 
     bool IsRemovingInvalidInsertionRow { get; set; }
     DatabaseUpdateErrorException? LastDatabaseUpdateErrorException { get; set; }
-
+      
     /// <summary>
     ///   Gets the type of parent list (IEntityList) required when this is the main list.
     ///   Null if a parent list is not required when this is the main list.
@@ -66,7 +69,7 @@ namespace SoundExplorers.Model {
     /// <param name="rowIndex">
     ///   Zero-based row index.
     /// </param>
-    IList? GetChildrenForMainList(int rowIndex);
+    IdentifyingParentChildren? GetIdentifyingParentChildrenForMainList(int rowIndex);
 
     IList<object> GetErrorValues();
 
@@ -94,19 +97,19 @@ namespace SoundExplorers.Model {
     /// <summary>
     ///   Populates and sorts the list and table.
     /// </summary>
-    /// <param name="list">
-    ///   Optionally specifies the required list of entities.
-    ///   If null, the default, all entities of the class's entity type
-    ///   will be fetched from the database.
+    /// <param name="identifyingParentChildren">
+    ///   Optionally specifies the required list of entities, together with their
+    ///   identifying parent. If null, the default, all entities of the class's entity
+    ///   type will be fetched from the database.
     /// </param>
     /// <param name="createBindingList">
-    ///   Optionally specifies whether the <see cref="BindingList" />,
-    ///   which will be bound to a grid in the editor window,
-    ///   is to be populated along with the list of entities.
-    ///   Default: true.
-    ///   Set to false if entity list is not to be used to populate a grid.
+    ///   Optionally specifies whether the <see cref="BindingList" />, which will be
+    ///   bound to a grid in the editor window, is to be populated along with the list of
+    ///   entities. Default: true. Set to false if entity list is not to be used to
+    ///   populate a grid.
     /// </param>
-    void Populate(IList? list = null, bool createBindingList = true);
+    void Populate(IdentifyingParentChildren? identifyingParentChildren = null, 
+      bool createBindingList = true);
 
     void RestoreCurrentBindingItemOriginalValues();
     void RemoveInsertionBindingItem();

@@ -127,7 +127,7 @@ namespace SoundExplorers.Tests.Model {
       Data.AddSetsPersisted(3, Session);
       Session.Commit();
       List.Populate();
-      var children = List.GetChildrenForMainList(0);
+      var children = List.GetIdentifyingParentChildrenForMainList(0);
       Assert.AreEqual(3, children.Count, "Count");
       Assert.IsInstanceOf<Set>(children[0], "Child type");
     }

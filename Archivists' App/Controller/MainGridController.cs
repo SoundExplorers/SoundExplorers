@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Collections;
 using System.Data;
 using System.Diagnostics;
+using SoundExplorers.Common;
 using SoundExplorers.Model;
 
 namespace SoundExplorers.Controller {
@@ -191,9 +191,10 @@ namespace SoundExplorers.Controller {
       }
     }
 
-    public override void Populate(IList? list = null) {
+    public override void Populate(
+      IdentifyingParentChildren? identifyingParentChildren = null) {
       Debug.WriteLine("MainGridController.Populate");
-      base.Populate(list);
+      base.Populate(identifyingParentChildren);
       LastCurrentRowIndex = -1;
     }
 

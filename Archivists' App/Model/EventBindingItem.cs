@@ -67,9 +67,8 @@ namespace SoundExplorers.Model {
       }
     }
 
-    internal override Key GetKey() {
-      return new(EntityBase.DateToSimpleKey(Date),
-        FindParent(Properties[nameof(Location)]));
+    protected override string GetSimpleKey() {
+      return EntityBase.DateToSimpleKey(Date);
     }
   }
 }

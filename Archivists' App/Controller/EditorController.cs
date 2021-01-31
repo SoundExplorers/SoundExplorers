@@ -1,5 +1,4 @@
 using System;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using JetBrains.Annotations;
@@ -86,24 +85,16 @@ namespace SoundExplorers.Controller {
     internal IEntityList MainList => _mainList ??= CreateEntityList(MainListType);
 
     private Type MainListType { get; }
-    public IBindingList? ParentBindingList => ParentList?.BindingList;
-
-    /// <summary>
-    ///   Gets the list of entities represented in the parent table, if any.
-    /// </summary>
+    
     internal IEntityList? ParentList => IsParentGridToBeShown
-      ? _parentList ??= CreateEntityList(
-        MainList.ParentListType ??
-        throw new InvalidOperationException(
-          "MainList.ParentListType is unexpectedly null."))
+      ? _parentList ??= CreateEntityList(MainList.ParentListType!)
       : null;
 
     internal IEditorView View { get; }
 
     /// <summary>
     ///   THE FOLLOWING RELATES TO A FEATURE THAT IS NOT YET IN USE BUT MAY BE LATER:
-    ///   Edit the tags of the audio file, if found,
-    ///   of the current Piece, if any,
+    ///   Edit the tags of the audio file, if found, of the current Piece, if any.
     ///   Otherwise shows an informative message box.
     /// </summary>
     /// <exception cref="ApplicationException">
@@ -169,7 +160,7 @@ namespace SoundExplorers.Controller {
       Debug.WriteLine(
         $"EditorController.PopulateMainGridOnParentRowChanged: parent row {parentRowIndex}");
       View.MainGrid.Populate(
-        View.ParentGrid.Controller.GetChildrenForMainList(parentRowIndex));
+        View.ParentGrid.Controller.GetIdentifyingParentChildrenForMainList(parentRowIndex));
     }
 
     /// <summary>

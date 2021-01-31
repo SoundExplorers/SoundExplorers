@@ -23,9 +23,7 @@ namespace SoundExplorers.Model {
     /// </param>
     public static IEntityList CreateEntityList(Type type) {
       try {
-        return (IEntityList)Activator.CreateInstance(type)!
-               ?? throw new InvalidOperationException(
-                 "In Global.CreateEntityList, cannot create IEntityList.");
+        return (IEntityList)Activator.CreateInstance(type)!;
       } catch (TargetInvocationException ex) {
         throw ex.InnerException ?? ex;
       }

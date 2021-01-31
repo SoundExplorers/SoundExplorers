@@ -20,7 +20,7 @@ namespace SoundExplorers.Tests.Model {
 
     private class DudErrorThrowerList : NamedEntityList<ErrorThrowingEventType> {
       [ExcludeFromCodeCoverage]
-      public override IList GetChildrenForMainList(int rowIndex) {
+      public override IList GetIdentifyingParentChildrenForMainList(int rowIndex) {
         throw new NotSupportedException();
       }
     }
@@ -42,7 +42,7 @@ namespace SoundExplorers.Tests.Model {
     public void GetChildrenForMainListNotSupported() {
       var list = new ActList();
       Assert.Throws<NotSupportedException>(
-        () => list.GetChildrenForMainList(0));
+        () => list.GetIdentifyingParentChildrenForMainList(0));
     }
   }
 }

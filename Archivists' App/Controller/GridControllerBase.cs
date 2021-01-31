@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -86,10 +85,11 @@ namespace SoundExplorers.Controller {
       }
     }
 
-    public virtual void Populate(IList? list = null) {
+    public virtual void Populate(
+        IdentifyingParentChildren? identifyingParentChildren = null) {
       Debug.WriteLine($"GridControllerBase.Populate {Grid.Name}");
       IsPopulating = true;
-      List.Populate(list);
+      List.Populate(identifyingParentChildren);
       Grid.OnPopulated();
     }
 

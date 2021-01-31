@@ -1,5 +1,5 @@
-﻿using System.Collections;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
+using SoundExplorers.Common;
 
 namespace SoundExplorers.Controller {
   public interface IGrid {
@@ -27,11 +27,11 @@ namespace SoundExplorers.Controller {
     /// <summary>
     ///   Populates and sorts the grid.
     /// </summary>
-    /// <param name="list">
-    ///   Optionally specifies the required list of entities that will populate the grid.
-    ///   If null, the default, all entities of the class's entity type will be fetched
-    ///   from the database.
+    /// <param name="identifyingParentChildren">
+    ///   Optionally specifies the required list of entities, together with their
+    ///   identifying parent. If null, the default, all entities of the class's entity
+    ///   type will be fetched from the database.
     /// </param>
-    void Populate(IList? list = null);
+    void Populate(IdentifyingParentChildren? identifyingParentChildren = null);
   }
 }

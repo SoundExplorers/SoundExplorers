@@ -1,10 +1,10 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Linq;
+using SoundExplorers.Common;
 using SoundExplorers.Data;
 using VelocityDb.Session;
 
@@ -82,6 +82,7 @@ namespace SoundExplorers.Model {
       _columns ??= CreateColumnsWithSession();
 
     public string EntityTypeName => typeof(TEntity).Name;
+    public IEntity? IdentifyingParent { get; set; }
 
     /// <summary>
     ///   Gets whether the current grid row is the insertion row, which is for adding new
@@ -162,7 +163,8 @@ namespace SoundExplorers.Model {
     /// <param name="rowIndex">
     ///   Zero-based row index.
     /// </param>
-    public virtual IList GetChildrenForMainList(int rowIndex) {
+    public virtual IdentifyingParentChildren GetIdentifyingParentChildrenForMainList(
+      int rowIndex) {
       throw new NotSupportedException();
     }
 
@@ -197,7 +199,7 @@ namespace SoundExplorers.Model {
         // BackupBindingItem = !IsInsertionRowCurrent
         BackupBindingItem = rowIndex < Count
           ? GetBindingItem(rowIndex).CreateBackup()
-          : new TBindingItem {Columns = Columns};
+          : new TBindingItem {EntityList = this};
       }
     }
 
@@ -254,9 +256,10 @@ namespace SoundExplorers.Model {
     /// <summary>
     ///   Populates and sorts the list and table.
     /// </summary>
-    /// <param name="list">
-    ///   Optionally specifies the required list of entities. If null, the default, all
-    ///   entities of the class's entity type will be fetched from the database.
+    /// <param name="identifyingParentChildren">
+    ///   Optionally specifies the required list of entities, together with their
+    ///   identifying parent. If null, the default, all entities of the class's entity
+    ///   type will be fetched from the database.
     /// </param>
     /// <param name="createBindingList">
     ///   Optionally specifies whether the <see cref="BindingList" />, which will be
@@ -264,10 +267,13 @@ namespace SoundExplorers.Model {
     ///   entities. Default: true. Set to false if entity list is not to be used to
     ///   populate a grid.
     /// </param>
-    public virtual void Populate(IList? list = null, bool createBindingList = true) {
+    public virtual void Populate(
+        IdentifyingParentChildren? identifyingParentChildren = null, 
+        bool createBindingList = true) {
       Clear();
-      if (list != null) {
-        AddRange((IList<TEntity>)list);
+      if (identifyingParentChildren != null) {
+        IdentifyingParent = (IEntity)identifyingParentChildren.IdentifyingParent;
+        AddRange((IList<TEntity>)identifyingParentChildren.Children);
       } else {
         bool isTransactionRequired = !Session.InTransaction;
         if (isTransactionRequired) {
@@ -320,9 +326,9 @@ namespace SoundExplorers.Model {
 
     protected abstract TBindingItem CreateBindingItem(TEntity entity);
 
-    private TBindingItem CreateBindingItemWithColumns(TEntity entity) {
+    private TBindingItem CreateBindingItemWithEntityList(TEntity entity) {
       var result = CreateBindingItem(entity);
-      result.Columns = Columns;
+      result.EntityList = this;
       return result;
     }
 
@@ -350,7 +356,7 @@ namespace SoundExplorers.Model {
       //Debug.WriteLine("EntityListBase.AddNewEntity");
       LastDatabaseChangeAction = StatementType.Insert;
       var bindingItem = GetBindingItem(rowIndex);
-      bindingItem.Columns = Columns;
+      bindingItem.EntityList = this;
       try {
         CheckForDuplicateKey(bindingItem);
       } catch (DuplicateNameException duplicateKeyException) {
@@ -396,8 +402,8 @@ namespace SoundExplorers.Model {
     }
 
     private void CheckForDuplicateKey(TBindingItem bindingItem) {
-      var newKey = bindingItem.GetKey();
-      var originalKey = BackupBindingItem!.GetKey();
+      var newKey = bindingItem.CreateKey();
+      var originalKey = BackupBindingItem!.CreateKey();
       if (newKey == originalKey) {
         return;
       }
@@ -431,7 +437,7 @@ namespace SoundExplorers.Model {
     private TypedBindingList<TEntity, TBindingItem> CreateBindingList() {
       return CreateBindingList((
         from entity in this
-        select CreateBindingItemWithColumns(entity)
+        select CreateBindingItemWithEntityList(entity)
       ).ToList());
     }
 
@@ -474,7 +480,7 @@ namespace SoundExplorers.Model {
         CheckForDuplicateKey(bindingItem);
       }
       var entity = this[rowIndex];
-      var backupBindingItem = CreateBindingItemWithColumns(entity);
+      var backupBindingItem = CreateBindingItemWithEntityList(entity);
       Session.BeginUpdate();
       try {
         bindingItem.UpdateEntityProperty(propertyName, entity);

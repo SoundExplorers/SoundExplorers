@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
@@ -35,15 +34,17 @@ namespace SoundExplorers.Model {
     IBindingItem, INotifyPropertyChanged
     where TEntity : EntityBase, new()
     where TBindingItem : BindingItemBase<TEntity, TBindingItem>, new() {
-    private BindingColumnList? _columns;
+    // private BindingColumnList? _columns;
     private IDictionary<string, PropertyInfo>? _entityProperties;
     private IDictionary<string, PropertyInfo>? _properties;
 
-    internal BindingColumnList Columns {
-      get => _columns ?? throw new NullReferenceException(
-        "The binding item's Columns property is null.");
-      set => _columns = value;
-    }
+    // internal BindingColumnList Columns {
+    //   get => _columns ?? throw new NullReferenceException(
+    //     "The binding item's Columns property is null.");
+    //   set => _columns = value;
+    // }
+
+    internal EntityListBase<TEntity, TBindingItem> EntityList { get; set; } = null!;
 
     private IDictionary<string, PropertyInfo> EntityProperties =>
       _entityProperties ??= CreatePropertyDictionary<TEntity>();
@@ -90,7 +91,7 @@ namespace SoundExplorers.Model {
     }
 
     internal TBindingItem CreateBackup() {
-      var result = new TBindingItem {Columns = Columns};
+      var result = new TBindingItem {EntityList = EntityList};
       result.RestorePropertyValuesFrom((TBindingItem)this);
       return result;
     }
@@ -123,6 +124,10 @@ namespace SoundExplorers.Model {
       return result;
     }
 
+    internal Key CreateKey() {
+      return new(GetSimpleKey(), EntityList.IdentifyingParent); 
+    }
+
     private static IDictionary<string, PropertyInfo> CreatePropertyDictionary<T>() {
       var properties = typeof(T).GetProperties().ToList();
       var result = new Dictionary<string, PropertyInfo>(properties.Count);
@@ -135,7 +140,7 @@ namespace SoundExplorers.Model {
     protected IEntity? FindParent(PropertyInfo property) {
       var propertyValue = property.GetValue(this);
       return propertyValue != null
-        ? Columns[property.Name].ReferenceableItems.GetEntity(propertyValue)
+        ? EntityList.Columns[property.Name].ReferenceableItems.GetEntity(propertyValue)
         : null;
     }
 
@@ -146,8 +151,6 @@ namespace SoundExplorers.Model {
         : FindParent(property);
     }
 
-    internal abstract Key GetKey();
-
     internal object? GetPropertyValue(string propertyName) {
       return Properties[propertyName].GetValue(this);
     }
@@ -157,6 +160,8 @@ namespace SoundExplorers.Model {
         from property in Properties.Values
         select property.GetValue(this)).ToList()!;
     }
+    
+    protected abstract string GetSimpleKey();
 
     internal void RestorePropertyValuesFrom(TBindingItem backup) {
       foreach (var property in Properties.Values) {
