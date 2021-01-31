@@ -88,7 +88,7 @@ namespace SoundExplorers.Model {
     ///   This can indicate any special cell editor control that may be required on the
     ///   main grid for the value type, such as a DateTimePicker for a DateTime column or
     ///   a CheckBox for a boolean column. Or it can indicate required type-specific
-    ///   validation, as for as integer column. 
+    ///   validation, as for as integer column.
     /// </remarks>
     public Type ValueType { get; }
 

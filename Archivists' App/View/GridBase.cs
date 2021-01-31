@@ -107,14 +107,9 @@ namespace SoundExplorers.View {
     /// <summary>
     ///   Populates and sorts the grid.
     /// </summary>
-    /// <param name="identifyingParentChildren">
-    ///   Optionally specifies the required list of entities, together with their
-    ///   identifying parent. If null, the default, all entities of the class's entity
-    ///   type will be fetched from the database.
-    /// </param>
-    public virtual void Populate(IdentifyingParentChildren? identifyingParentChildren = null) {
+    public void Populate() {
       Debug.WriteLine($"GridBase.Populate {Name}");
-      Controller.Populate(identifyingParentChildren);
+      Controller.Populate();
       if (ColumnCount == 0) {
         AddColumns();
       }
@@ -151,7 +146,7 @@ namespace SoundExplorers.View {
 
     protected virtual DataGridViewColumn AddColumn(IBindingColumn bindingColumn) {
       DataGridViewColumn result = bindingColumn.ValueType == typeof(bool)
-        ? new DataGridViewCheckBoxColumn { FlatStyle = FlatStyle.Flat }
+        ? new DataGridViewCheckBoxColumn {FlatStyle = FlatStyle.Flat}
         : new DataGridViewTextBoxColumn();
       {
         result.DataPropertyName = bindingColumn.PropertyName;

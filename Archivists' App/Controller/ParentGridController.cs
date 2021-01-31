@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using SoundExplorers.Common;
 using SoundExplorers.Model;
 
 namespace SoundExplorers.Controller {
@@ -29,8 +28,10 @@ namespace SoundExplorers.Controller {
 
     private int PreviousRowIndex { get; set; }
 
-    public IdentifyingParentChildren GetIdentifyingParentChildrenForMainList(int rowIndex) {
-      Debug.WriteLine($"ParentGridController.GetIdentifyingParentChildrenForMainList: row {rowIndex}");
+    public IdentifyingParentChildren
+      GetIdentifyingParentChildrenForMainList(int rowIndex) {
+      Debug.WriteLine(
+        $"ParentGridController.GetIdentifyingParentChildrenForMainList: row {rowIndex}");
       return List.GetIdentifyingParentChildrenForMainList(rowIndex)!;
     }
 
@@ -61,17 +62,17 @@ namespace SoundExplorers.Controller {
     }
 
     public override void PrepareForFocus() {
-      Debug.WriteLine($"ParentGridController.PrepareForFocus: MainGrid.CurrentRowIndex = {MainGrid.CurrentRowIndex}");
+      Debug.WriteLine(
+        $"ParentGridController.PrepareForFocus: MainGrid.CurrentRowIndex = {MainGrid.CurrentRowIndex}");
       base.PrepareForFocus();
       if (!IsPopulating && MainGrid.Controller.LastCurrentRowIndex < 0) {
         MainGrid.Controller.LastCurrentRowIndex = MainGrid.CurrentRowIndex;
       }
     }
 
-    public override void Populate(
-        IdentifyingParentChildren? identifyingParentChildren = null) {
+    public override void Populate() {
       PreviousRowIndex = -1;
-      base.Populate(identifyingParentChildren);
+      base.Populate();
     }
 
     /// <summary>

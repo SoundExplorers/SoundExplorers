@@ -1,17 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using SoundExplorers.Common;
 using SoundExplorers.Data;
 
 namespace SoundExplorers.Model {
   public class SetList : EntityListBase<Set, SetBindingItem> {
     public SetList() : base(typeof(EventList)) { }
-
-    public override IdentifyingParentChildren GetIdentifyingParentChildrenForMainList(
-      int rowIndex) {
-      return new(this, this[rowIndex].Pieces.Values.ToList()); 
-    }
 
     protected override SetBindingItem CreateBindingItem(Set set) {
       return new() {
@@ -46,6 +40,11 @@ namespace SoundExplorers.Model {
         new(nameof(Set.Notes), typeof(string))
       };
       return result;
+    }
+ 
+    public override IdentifyingParentChildren GetIdentifyingParentChildrenForMainList(
+      int rowIndex) {
+      return new(IdentifyingParent!, this[rowIndex].Pieces.Values.ToList());
     }
   }
 }

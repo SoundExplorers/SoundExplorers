@@ -85,7 +85,7 @@ namespace SoundExplorers.Controller {
     internal IEntityList MainList => _mainList ??= CreateEntityList(MainListType);
 
     private Type MainListType { get; }
-    
+
     internal IEntityList? ParentList => IsParentGridToBeShown
       ? _parentList ??= CreateEntityList(MainList.ParentListType!)
       : null;
@@ -129,12 +129,14 @@ namespace SoundExplorers.Controller {
       if (IsParentGridToBeShown) {
         if (View.ParentGrid.Focused) {
           Debug.WriteLine("======================================================");
-          Debug.WriteLine("EditorController.FocusUnfocusedGridIfAny: focusing MainGrid with keyboard shortcut");
+          Debug.WriteLine(
+            "EditorController.FocusUnfocusedGridIfAny: focusing MainGrid with keyboard shortcut");
           Debug.WriteLine("======================================================");
           View.MainGrid.Focus();
         } else {
           Debug.WriteLine("======================================================");
-          Debug.WriteLine("EditorController.FocusUnfocusedGridIfAny: focusing ParentGrid with keyboard shortcut");
+          Debug.WriteLine(
+            "EditorController.FocusUnfocusedGridIfAny: focusing ParentGrid with keyboard shortcut");
           Debug.WriteLine("======================================================");
           View.ParentGrid.Focus();
         }
@@ -159,8 +161,10 @@ namespace SoundExplorers.Controller {
     public void PopulateMainGridOnParentRowChanged(int parentRowIndex) {
       Debug.WriteLine(
         $"EditorController.PopulateMainGridOnParentRowChanged: parent row {parentRowIndex}");
-      View.MainGrid.Populate(
-        View.ParentGrid.Controller.GetIdentifyingParentChildrenForMainList(parentRowIndex));
+      View.MainGrid.Controller.SetIdentifyingParentChildrenForList(
+        View.ParentGrid.Controller.GetIdentifyingParentChildrenForMainList(
+          parentRowIndex));
+      View.MainGrid.Populate();
     }
 
     /// <summary>

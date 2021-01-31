@@ -7,7 +7,6 @@ namespace SoundExplorers.View {
   /// </summary>
   internal class TextBoxCell : DataGridViewTextBoxCell, ICanRestoreErrorValue {
     private TextBoxContextMenu? _cellTextBoxContextMenu;
-
     private TextBox TextBox => (TextBox)DataGridView!.EditingControl;
 
     private TextBoxContextMenu TextBoxContextMenu =>

@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Data;
 using System.Diagnostics;
-using SoundExplorers.Common;
 using SoundExplorers.Model;
 
 namespace SoundExplorers.Controller {
   public class MainGridController : GridControllerBase {
-
     public MainGridController(
       // ReSharper disable once SuggestBaseTypeForParameter
       IMainGrid grid, EditorController editorController) :
@@ -191,10 +189,9 @@ namespace SoundExplorers.Controller {
       }
     }
 
-    public override void Populate(
-      IdentifyingParentChildren? identifyingParentChildren = null) {
+    public override void Populate() {
       Debug.WriteLine("MainGridController.Populate");
-      base.Populate(identifyingParentChildren);
+      base.Populate();
       LastCurrentRowIndex = -1;
     }
 
@@ -261,6 +258,11 @@ namespace SoundExplorers.Controller {
       List.OnValidationError(
         rowIndex, columnName, referencedEntityNotFoundException);
       EditorController.View.OnError();
+    }
+
+    internal void SetIdentifyingParentChildrenForList(
+      IdentifyingParentChildren identifyingParentChildrenForList) {
+      IdentifyingParentChildrenForList = identifyingParentChildrenForList;
     }
 
     /// <summary>

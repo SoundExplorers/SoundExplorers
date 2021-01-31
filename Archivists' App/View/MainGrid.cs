@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics;
 using System.Windows.Forms;
 using SoundExplorers.Common;
 using SoundExplorers.Controller;
@@ -54,12 +53,6 @@ namespace SoundExplorers.View {
     public void SelectCurrentRowOnly() {
       ClearSelection();
       CurrentRow!.Selected = true;
-    }
-
-    public override void Populate(IdentifyingParentChildren? identifyingParentChildren = null) {
-      Debug.WriteLine("MainGrid.Populate");
-      base.Populate(identifyingParentChildren);
-      Debug.WriteLine("MainGrid.Populate END");
     }
 
     protected override DataGridViewColumn AddColumn(IBindingColumn bindingColumn) {

@@ -43,7 +43,6 @@ namespace SoundExplorers.Model {
     //     "The binding item's Columns property is null.");
     //   set => _columns = value;
     // }
-
     internal EntityListBase<TEntity, TBindingItem> EntityList { get; set; } = null!;
 
     private IDictionary<string, PropertyInfo> EntityProperties =>
@@ -125,7 +124,7 @@ namespace SoundExplorers.Model {
     }
 
     internal Key CreateKey() {
-      return new(GetSimpleKey(), EntityList.IdentifyingParent); 
+      return new(GetSimpleKey(), EntityList.IdentifyingParent);
     }
 
     private static IDictionary<string, PropertyInfo> CreatePropertyDictionary<T>() {
@@ -160,7 +159,7 @@ namespace SoundExplorers.Model {
         from property in Properties.Values
         select property.GetValue(this)).ToList()!;
     }
-    
+
     protected abstract string GetSimpleKey();
 
     internal void RestorePropertyValuesFrom(TBindingItem backup) {

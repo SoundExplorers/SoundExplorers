@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using SoundExplorers.Common;
 using SoundExplorers.Data;
 
 namespace SoundExplorers.Model {
@@ -40,7 +39,7 @@ namespace SoundExplorers.Model {
         },
         new BindingColumn(nameof(Event.Newsletter), typeof(DateTime),
           new ReferenceType(typeof(NewsletterList), nameof(Newsletter.Date))),
-        new BindingColumn(nameof(Event.EventType),typeof(string),
+        new BindingColumn(nameof(Event.EventType), typeof(string),
           new ReferenceType(typeof(EventTypeList), nameof(EventType.Name))),
         new BindingColumn(nameof(Event.Series), typeof(string),
           new ReferenceType(typeof(SeriesList), nameof(Series.Name))),
@@ -48,13 +47,14 @@ namespace SoundExplorers.Model {
       };
     }
 
-    public override IdentifyingParentChildren GetIdentifyingParentChildrenForMainList(int rowIndex) {
-      return new (this, this[rowIndex].Sets.Values.ToList());
+    public override IdentifyingParentChildren GetIdentifyingParentChildrenForMainList(
+      int rowIndex) {
+      return new(IdentifyingParent!, this[rowIndex].Sets.Values.ToList());
     }
 
     public override void Populate(
-        IdentifyingParentChildren? identifyingParentChildren = null, 
-        bool createBindingList = true) {
+      IdentifyingParentChildren? identifyingParentChildren = null,
+      bool createBindingList = true) {
       if (!HasDefaultEventTypeBeenFound) {
         AddDefaultEventTypeIfItDoesNotExist();
       }

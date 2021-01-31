@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using SoundExplorers.Common;
 
 namespace SoundExplorers.Controller {
   public interface IGrid {
@@ -23,15 +22,10 @@ namespace SoundExplorers.Controller {
     void MakeRowCurrent(int rowIndex, bool async = false);
 
     void OnPopulated();
-    
+
     /// <summary>
     ///   Populates and sorts the grid.
     /// </summary>
-    /// <param name="identifyingParentChildren">
-    ///   Optionally specifies the required list of entities, together with their
-    ///   identifying parent. If null, the default, all entities of the class's entity
-    ///   type will be fetched from the database.
-    /// </param>
-    void Populate(IdentifyingParentChildren? identifyingParentChildren = null);
+    void Populate();
   }
 }

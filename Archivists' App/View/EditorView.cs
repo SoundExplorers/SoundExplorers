@@ -297,7 +297,8 @@ namespace SoundExplorers.View {
       base.OnKeyDown(e);
       switch (e.KeyData) {
         case Keys.F6:
-          Debug.WriteLine($"EditorView.OnKeyDown F6: ParentGrid.Enabled = {ParentGrid.Enabled}");
+          Debug.WriteLine(
+            $"EditorView.OnKeyDown F6: ParentGrid.Enabled = {ParentGrid.Enabled}");
           Controller.FocusUnfocusedGridIfAny();
           break;
       } //End of switch

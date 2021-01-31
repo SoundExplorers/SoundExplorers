@@ -35,6 +35,7 @@ namespace SoundExplorers.Controller {
       : _firstVisibleColumnIndex = GetFirstVisibleColumnIndex();
 
     protected IGrid Grid { get; }
+    protected IdentifyingParentChildren? IdentifyingParentChildrenForList { get; set; }
 
     /// <summary>
     ///   Gets the list of entities represented in the grid.
@@ -85,11 +86,11 @@ namespace SoundExplorers.Controller {
       }
     }
 
-    public virtual void Populate(
-        IdentifyingParentChildren? identifyingParentChildren = null) {
+    public virtual void Populate() {
       Debug.WriteLine($"GridControllerBase.Populate {Grid.Name}");
       IsPopulating = true;
-      List.Populate(identifyingParentChildren);
+      List.Populate(IdentifyingParentChildrenForList);
+      IdentifyingParentChildrenForList = null;
       Grid.OnPopulated();
     }
 

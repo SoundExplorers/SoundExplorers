@@ -2,8 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
-using SoundExplorers.Common;
-using SoundExplorers.Data;
 using VelocityDb.Session;
 
 namespace SoundExplorers.Model {
@@ -23,7 +21,6 @@ namespace SoundExplorers.Model {
     BindingColumnList Columns { get; }
 
     string EntityTypeName { get; }
-    IEntity? IdentifyingParent { get; set; }
 
     /// <summary>
     ///   Gets whether the current grid row is the insertion row,
@@ -36,10 +33,9 @@ namespace SoundExplorers.Model {
     // ///   False (the default) if this is the (updatable) main (and maybe only) list.
     // /// </summary>
     // bool IsParentList { get; init; }
-
     bool IsRemovingInvalidInsertionRow { get; set; }
     DatabaseUpdateErrorException? LastDatabaseUpdateErrorException { get; set; }
-      
+
     /// <summary>
     ///   Gets the type of parent list (IEntityList) required when this is the main list.
     ///   Null if a parent list is not required when this is the main list.
@@ -108,7 +104,7 @@ namespace SoundExplorers.Model {
     ///   entities. Default: true. Set to false if entity list is not to be used to
     ///   populate a grid.
     /// </param>
-    void Populate(IdentifyingParentChildren? identifyingParentChildren = null, 
+    void Populate(IdentifyingParentChildren? identifyingParentChildren = null,
       bool createBindingList = true);
 
     void RestoreCurrentBindingItemOriginalValues();

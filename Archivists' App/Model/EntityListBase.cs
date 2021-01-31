@@ -4,7 +4,6 @@ using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Linq;
-using SoundExplorers.Common;
 using SoundExplorers.Data;
 using VelocityDb.Session;
 
@@ -68,6 +67,13 @@ namespace SoundExplorers.Model {
       (TypedBindingList<TEntity, TBindingItem>)BindingList!;
 
     private bool HasRowBeenEdited { get; set; }
+    public IEntity? IdentifyingParent { get; private set; }
+
+    /// <summary>
+    ///   Gets whether this is a (read-only) parent list. False (the default) if this is
+    ///   the (updatable) main (and maybe only) list.
+    /// </summary>
+    public bool IsParentList => IdentifyingParent == null;
 
     /// <summary>
     ///   Gets the binding list representing the list of entities and bound to the grid.
@@ -82,7 +88,6 @@ namespace SoundExplorers.Model {
       _columns ??= CreateColumnsWithSession();
 
     public string EntityTypeName => typeof(TEntity).Name;
-    public IEntity? IdentifyingParent { get; set; }
 
     /// <summary>
     ///   Gets whether the current grid row is the insertion row, which is for adding new
@@ -102,13 +107,6 @@ namespace SoundExplorers.Model {
     ///   row, it is always the current row.
     /// </remarks>
     public bool IsInsertionRowCurrent { get; private set; }
-
-    /// <summary>
-    ///   Gets or sets whether this is a (read-only) parent list. False (the default) if
-    ///   this is the (updatable) main (and maybe only) list.
-    ///   TODO Set EntityListBase.IsParentList (currently just done in tests)
-    /// </summary>
-    public bool IsParentList { get; init; }
 
     public bool IsRemovingInvalidInsertionRow { get; set; }
     public DatabaseUpdateErrorException? LastDatabaseUpdateErrorException { get; set; }
@@ -241,8 +239,8 @@ namespace SoundExplorers.Model {
       string message;
       if (propertyName != null) {
         columnIndex = Columns.GetIndex(propertyName);
-        message = IsIntegerSimpleKeyFormatError(exception, Columns[propertyName]) 
-          ? EntityBase.GetIntegerSimpleKeyErrorMessage(propertyName) 
+        message = IsIntegerSimpleKeyFormatError(exception, Columns[propertyName])
+          ? EntityBase.GetIntegerSimpleKeyErrorMessage(propertyName)
           : $"Invalid {propertyName}:\r\n{exception.Message}";
       } else {
         columnIndex = 0;
@@ -268,11 +266,11 @@ namespace SoundExplorers.Model {
     ///   populate a grid.
     /// </param>
     public virtual void Populate(
-        IdentifyingParentChildren? identifyingParentChildren = null, 
-        bool createBindingList = true) {
+      IdentifyingParentChildren? identifyingParentChildren = null,
+      bool createBindingList = true) {
       Clear();
       if (identifyingParentChildren != null) {
-        IdentifyingParent = (IEntity)identifyingParentChildren.IdentifyingParent;
+        IdentifyingParent = identifyingParentChildren.IdentifyingParent;
         AddRange((IList<TEntity>)identifyingParentChildren.Children);
       } else {
         bool isTransactionRequired = !Session.InTransaction;
@@ -464,7 +462,7 @@ namespace SoundExplorers.Model {
       return exception is ConstraintException; // Includes PropertyConstraintException
     }
 
-    private static bool IsIntegerSimpleKeyFormatError(Exception exception, 
+    private static bool IsIntegerSimpleKeyFormatError(Exception exception,
       BindingColumn column) {
       if (!(exception is FormatException)) {
         return false;
