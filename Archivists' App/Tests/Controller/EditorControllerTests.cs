@@ -231,7 +231,7 @@ namespace SoundExplorers.Tests.Controller {
         "Rename name should have thrown DuplicateNameException.");
       Assert.AreEqual(name1, bindingList[1].Name,
         "Still duplicate name before error message shown for duplicate rename");
-      MainGridController.OnExistingRowCellEditError(1, "Name", exception);
+      MainGridController.OnCellEditError(1, "Name", exception);
       Assert.AreEqual(1, MainGrid.MakeCellCurrentCount,
         "MakeCellCurrentCount after error message shown for duplicate rename");
       Assert.AreEqual(0, MainGrid.MakeCellCurrentColumnIndex,
@@ -247,12 +247,12 @@ namespace SoundExplorers.Tests.Controller {
       // as in the case of this rename,
       // the second time with a null exception.
       // So check that this is allowed for and has no effect.
-      MainGridController.OnExistingRowCellEditError(1, "Name", null);
+      MainGridController.OnCellEditError(1, "Name", null);
       Assert.AreEqual(1, View.ShowErrorMessageCount,
         "ShowErrorMessageCount after null error");
       // Check that an exception of an unsupported type is rethrown
       Assert.Throws<InvalidOperationException>(
-        () => MainGridController.OnExistingRowCellEditError(1, "Name",
+        () => MainGridController.OnCellEditError(1, "Name",
           new InvalidOperationException()),
         "Unsupported exception type");
     }
@@ -325,10 +325,10 @@ namespace SoundExplorers.Tests.Controller {
       Assert.IsInstanceOf<RowNotInTableException>(exception,
         "Exception on not-found Newsletter pasted");
       Assert.AreEqual(0, View.ShowErrorMessageCount,
-        "ShowErrorMessageCount after not-found Newsletter pasted but before OnExistingRowCellEditError");
-      MainGridController.OnExistingRowCellEditError(0, "Newsletter", exception);
+        "ShowErrorMessageCount after not-found Newsletter pasted but before OnCellEditError");
+      MainGridController.OnCellEditError(0, "Newsletter", exception);
       Assert.AreEqual(1, View.ShowErrorMessageCount,
-        "ShowErrorMessageCount after not-found Newsletter pasted and after OnExistingRowCellEditError");
+        "ShowErrorMessageCount after not-found Newsletter pasted and after OnCellEditError");
       Assert.AreEqual("Invalid Newsletter:\r\nNewsletter not found: '31 Dec 2345'",
         View.LastErrorMessage,
         "LastErrorMessage after not-found Newsletter pasted");
@@ -356,10 +356,10 @@ namespace SoundExplorers.Tests.Controller {
       Assert.IsInstanceOf<RowNotInTableException>(exception,
         "Exception on not-found Series pasted");
       Assert.AreEqual(1, View.ShowErrorMessageCount,
-        "ShowErrorMessageCount after not-found Series pasted but before OnExistingRowCellEditError");
-      MainGridController.OnExistingRowCellEditError(0, "Series", exception);
+        "ShowErrorMessageCount after not-found Series pasted but before OnCellEditError");
+      MainGridController.OnCellEditError(0, "Series", exception);
       Assert.AreEqual(2, View.ShowErrorMessageCount,
-        "ShowErrorMessageCount after not-found Series pasted and after OnExistingRowCellEditError");
+        "ShowErrorMessageCount after not-found Series pasted and after OnCellEditError");
       Assert.AreEqual("Invalid Series:\r\nSeries not found: 'Not-Found Name'",
         View.LastErrorMessage,
         "LastErrorMessage after not-found Series pasted");
@@ -463,7 +463,7 @@ namespace SoundExplorers.Tests.Controller {
       Controller.Populate(); // Populate grid
       MainGridController.CreateAndGoToNewRow();
       var exception = new FormatException("Potato is not a valid DateTime.");
-      MainGridController.OnExistingRowCellEditError(3, "Date", exception);
+      MainGridController.OnCellEditError(3, "Date", exception);
       Assert.AreEqual(1, View.ShowErrorMessageCount, "ShowErrorMessageCount");
     }
 
@@ -496,7 +496,7 @@ namespace SoundExplorers.Tests.Controller {
       bindingList[2].Series = changedSeries;
       // Simulate pasting text into the Date cell.
       var exception = new FormatException("Potato is not a valid value for DateTime.");
-      MainGridController.OnExistingRowCellEditError(2, "Date", exception);
+      MainGridController.OnCellEditError(2, "Date", exception);
       Assert.AreEqual(1, View.ShowErrorMessageCount, "ShowErrorMessageCount");
       Assert.AreEqual(changedEventType, bindingList[2].EventType, "EventType");
       Assert.AreEqual(changedLocation, bindingList[2].Location, "Location");
@@ -541,7 +541,7 @@ namespace SoundExplorers.Tests.Controller {
       var exception = Assert.Catch<DatabaseUpdateErrorException>(
         () => bindingList[1].Url = bindingList[0].Url,
         "Rename Url should have thrown DatabaseUpdateErrorException.");
-      MainGridController.OnExistingRowCellEditError(1, "Url", exception);
+      MainGridController.OnCellEditError(1, "Url", exception);
       Assert.AreEqual(1, MainGrid.RestoreCurrentRowCellErrorValueCount,
         "RestoreCurrentRowCellErrorValueCount");
       Assert.AreEqual(1, MainGrid.EditCurrentCellCount,

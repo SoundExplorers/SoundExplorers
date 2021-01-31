@@ -74,7 +74,8 @@ namespace SoundExplorers.Model {
     }
 
     protected override string GetSimpleKey() {
-      // Allow a zero SimpleKey in case this is an empty BackupBindingItem.
+      // Allow a zero SimpleKey in case this is an empty BackupBindingItem, to which
+      // the insertion BindingItem is compared to check whether a
       return EntityBase.IntegerToSimpleKey(SetNo, nameof(SetNo), true);
     }
   }

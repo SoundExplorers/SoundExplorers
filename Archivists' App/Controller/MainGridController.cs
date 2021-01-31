@@ -43,7 +43,7 @@ namespace SoundExplorers.Controller {
     private IParentGrid ParentGrid => EditorController.View.ParentGrid;
     public string TableName => List.EntityTypeName;
 
-    public void OnExistingRowCellEditError(int rowIndex, string columnName,
+    public void OnCellEditError(int rowIndex, string columnName,
       Exception? exception) {
       switch (exception) {
         case DatabaseUpdateErrorException databaseUpdateErrorException:

@@ -191,8 +191,12 @@ namespace SoundExplorers.View {
     }
 
     /// <summary>
-    ///   Occurs when an external data-parsing or validation operation in an existing row
-    ///   (not the insertion row) throws an exception.
+    ///   Raised when an exception is thrown on ending a cell edit. Some validation
+    ///   exceptions are thrown at end of cell edit on existing rows but on row
+    ///   validation for the insertion row, when this event is not raised. However, the
+    ///   event will be raised at end of cell edit on the insertion row when a
+    ///   <see cref="FormatException"/> is thrown, which will be due to failure of either 
+    ///   the grid's internal data parsing or an application-defined range check.
     /// </summary>
     /// <remarks>
     ///   The event has to be handled for error handling to work. Overriding the
@@ -200,11 +204,8 @@ namespace SoundExplorers.View {
     /// </remarks>
     private void MainGrid_DataError(object? sender, DataGridViewDataErrorEventArgs e) {
       // Debug.WriteLine("MainGrid_DataError");
-      // Debug.WriteLine("Context = " + e.Context);
-      // Debug.WriteLine("ColumnIndex = " + e.ColumnIndex);
-      // Debug.WriteLine("RowIndex = " + e.RowIndex);
       string columnName = MainGrid.Columns[e.ColumnIndex].Name;
-      MainGrid.Controller.OnExistingRowCellEditError(e.RowIndex, columnName,
+      MainGrid.Controller.OnCellEditError(e.RowIndex, columnName,
         e.Exception);
     }
 
