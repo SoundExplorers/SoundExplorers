@@ -393,6 +393,16 @@ namespace SoundExplorers.Model {
       }
     }
 
+    /// <summary>
+    ///   There are also checks for duplicate keys in <see cref="EntityBase" /> in the
+    ///   Data layer. This method preempts those by searching application data, on hand
+    ///   in memory, rather than the database. So it is hoped that it will turn out to be
+    ///   quicker with large volumes of data.
+    /// </summary>
+    /// <remarks>
+    ///   Currently this duplicate key check does not give such nice error messages as
+    ///   the ones in the Data layer.
+    /// </remarks>
     private void CheckForDuplicateKey(TBindingItem bindingItem) {
       var newKey = bindingItem.CreateKey();
       var originalKey = BackupBindingItem!.CreateKey();
