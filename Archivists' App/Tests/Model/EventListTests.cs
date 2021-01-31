@@ -100,9 +100,10 @@ namespace SoundExplorers.Tests.Model {
       bindingList.AddNew();
       List.OnRowEnter(4);
       bindingList[4].Date = Data.Events[1].Date;
-      exception = Assert.Catch<DatabaseUpdateErrorException>(()=> List.OnRowValidated(3), 
+      bindingList[4].Location = Data.Events[1].Location.Name;
+      exception = Assert.Catch<DatabaseUpdateErrorException>(()=> List.OnRowValidated(4), 
         "Adding Event with Date duplicate for Location disallowed");
-      Assert.AreEqual("Another Event with key '2020/01/10 | Athens' already exists.",
+      Assert.AreEqual("Another Event with key '2020/01/16 | Athens' already exists.",
         exception.Message, 
         "Error message on trying to add Event with duplicate Date for Location");
     }
