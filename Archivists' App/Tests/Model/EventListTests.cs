@@ -102,10 +102,10 @@ namespace SoundExplorers.Tests.Model {
       bindingList[4].Date = Data.Events[1].Date;
       bindingList[4].Location = Data.Events[1].Location.Name;
       exception = Assert.Catch<DatabaseUpdateErrorException>(()=> List.OnRowValidated(4), 
-        "Adding Event with Date duplicate for Location disallowed");
+        "Adding Event with duplicate key disallowed");
       Assert.AreEqual("Another Event with key '2020/01/16 | Athens' already exists.",
         exception.Message, 
-        "Error message on trying to add Event with duplicate Date for Location");
+        "Error message on trying to add Event with duplicate key");
     }
 
     [Test]
