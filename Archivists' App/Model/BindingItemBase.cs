@@ -118,7 +118,7 @@ namespace SoundExplorers.Model {
     }
 
     internal virtual Key CreateKey() {
-      return new(GetSimpleKey(), EntityList.IdentifyingParent);
+      return new Key(GetSimpleKey(), EntityList.IdentifyingParent);
     }
 
     private static IDictionary<string, PropertyInfo> CreatePropertyDictionary<T>() {

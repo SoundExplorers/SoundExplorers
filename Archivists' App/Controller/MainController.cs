@@ -44,7 +44,7 @@ namespace SoundExplorers.Controller {
     [ExcludeFromCodeCoverage]
     protected virtual Option CreateOption(string name,
       object? defaultValue = null) {
-      return new(name, defaultValue);
+      return new Option(name, defaultValue);
     }
   }
 }

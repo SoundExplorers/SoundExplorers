@@ -82,17 +82,17 @@ namespace SoundExplorers.Data {
 
     protected virtual IEnumerable<RelationInfo> CreateRelations() {
       var list = new List<RelationInfo> {
-        new(typeof(Act), typeof(Set), false),
-        new(typeof(Artist), typeof(Credit), true),
-        new(typeof(Event), typeof(Set), true),
-        new(typeof(EventType), typeof(Event), true),
-        new(typeof(Genre), typeof(Set), true),
-        new(typeof(Location), typeof(Event), true),
-        new(typeof(Newsletter), typeof(Event), false),
-        new(typeof(Series), typeof(Event), false),
-        new(typeof(Piece), typeof(Credit), true),
-        new(typeof(Role), typeof(Credit), true),
-        new(typeof(Set), typeof(Piece), true)
+        new RelationInfo(typeof(Act), typeof(Set), false),
+        new RelationInfo(typeof(Artist), typeof(Credit), true),
+        new RelationInfo(typeof(Event), typeof(Set), true),
+        new RelationInfo(typeof(EventType), typeof(Event), true),
+        new RelationInfo(typeof(Genre), typeof(Set), true),
+        new RelationInfo(typeof(Location), typeof(Event), true),
+        new RelationInfo(typeof(Newsletter), typeof(Event), false),
+        new RelationInfo(typeof(Series), typeof(Event), false),
+        new RelationInfo(typeof(Piece), typeof(Credit), true),
+        new RelationInfo(typeof(Role), typeof(Credit), true),
+        new RelationInfo(typeof(Set), typeof(Piece), true)
       };
       return list.ToArray();
     }

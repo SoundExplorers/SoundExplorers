@@ -447,7 +447,7 @@ namespace SoundExplorers.Model {
 
     protected virtual TypedBindingList<TEntity, TBindingItem> CreateBindingList(
       IList<TBindingItem> list) {
-      return new(list);
+      return new TypedBindingList<TEntity, TBindingItem>(list);
     }
 
     private TBindingItem GetBindingItem(int rowIndex) {

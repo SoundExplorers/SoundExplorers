@@ -35,7 +35,7 @@ namespace SoundExplorers.Model {
 
     [ExcludeFromCodeCoverage]
     protected virtual DatabaseConfig CreateDatabaseConfig() {
-      return new();
+      return new DatabaseConfig();
     }
 
     private void CheckDatabaseFolderExists() {

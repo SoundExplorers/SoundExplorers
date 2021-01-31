@@ -325,7 +325,7 @@ namespace SoundExplorers.Data {
     }
 
     private Key CreateChildKey(EntityBase child) {
-      return new(child,
+      return new Key(child,
         child.IdentifyingParentType == EntityType ? this : null);
     }
 

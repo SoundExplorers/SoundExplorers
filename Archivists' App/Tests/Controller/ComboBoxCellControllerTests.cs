@@ -73,7 +73,7 @@ namespace SoundExplorers.Tests.Controller {
     }
 
     private ComboBoxCellController CreateCellController(string columnName) {
-      return new(CellView, MainGridController, columnName);
+      return new ComboBoxCellController(CellView, MainGridController, columnName);
     }
 
     private void CreateControllers(Type mainListType) {

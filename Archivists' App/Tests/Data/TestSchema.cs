@@ -11,10 +11,10 @@ namespace SoundExplorers.Tests.Data {
 
     protected override IEnumerable<RelationInfo> CreateRelations() {
       var list = new List<RelationInfo> {
-        new(typeof(Father), typeof(Daughter), false),
-        new(typeof(Father), typeof(Son), false),
-        new(typeof(Mother), typeof(Daughter), true),
-        new(typeof(Mother), typeof(Son), false)
+        new RelationInfo(typeof(Father), typeof(Daughter), false),
+        new RelationInfo(typeof(Father), typeof(Son), false),
+        new RelationInfo(typeof(Mother), typeof(Daughter), true),
+        new RelationInfo(typeof(Mother), typeof(Son), false)
       };
       return new ReadOnlyCollection<RelationInfo>(list);
     }

@@ -83,7 +83,7 @@ namespace SoundExplorers.Model {
     [ExcludeFromCodeCoverage]
     private ApplicationException CreateXmlElementValueFormatException(
       string name, string? value) {
-      return new(
+      return new ApplicationException(
         "The " + name + " property value '"
         + value
         + "' found in database configuration file "

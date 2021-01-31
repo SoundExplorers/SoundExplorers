@@ -113,7 +113,7 @@ namespace SoundExplorers.Controller {
 
     [ExcludeFromCodeCoverage]
     protected virtual Option CreateOption(string name) {
-      return new(name);
+      return new Option(name);
     }
 
     public void FocusCurrentGrid() {

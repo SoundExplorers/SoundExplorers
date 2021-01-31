@@ -74,7 +74,7 @@ namespace SoundExplorers.Tests.Model {
 
     private TestOption CreateTestOption(
       string name, object? defaultValue = null) {
-      return new(QueryHelper, Session, name, defaultValue);
+      return new TestOption(QueryHelper, Session, name, defaultValue);
     }
   }
 }
