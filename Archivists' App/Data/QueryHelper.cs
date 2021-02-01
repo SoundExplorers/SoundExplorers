@@ -13,9 +13,7 @@ namespace SoundExplorers.Data {
     private bool _schemaExistsOnDatabase;
 
     static QueryHelper() {
-      AllObjectsGenericMethod =
-        typeof(SessionBase).GetMethod("AllObjects") ??
-        throw new NullReferenceException("Cannot find generic method.");
+      AllObjectsGenericMethod = typeof(SessionBase).GetMethod("AllObjects")!;
     }
 
     private static MethodInfo AllObjectsGenericMethod { get; }

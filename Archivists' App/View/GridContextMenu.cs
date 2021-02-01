@@ -8,10 +8,7 @@ namespace SoundExplorers.View {
       Grid = grid;
     }
 
-    private TextBox TextBox =>
-      (Grid as MainGrid)?.TextBox ??
-      throw new InvalidOperationException(
-        "ParentGrid does not support the TextBox property.");
+    private TextBox TextBox => (Grid as MainGrid)?.TextBox!;
 
     public override ToolStripItemCollection Items {
       get {
@@ -123,7 +120,7 @@ namespace SoundExplorers.View {
         // Prevents use of keyboard shortcut outside valid context. 
         return;
       }
-      (Grid.CurrentRow ?? throw new NullReferenceException()).Selected = true;
+      Grid.CurrentRow!.Selected = true;
     }
 
     public override void DeleteSelectedRows() {

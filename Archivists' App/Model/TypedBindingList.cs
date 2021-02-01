@@ -18,7 +18,11 @@ namespace SoundExplorers.Model {
     ///   for ease of testing, as it should never be null.
     /// </summary>
     public new TBindingItem AddNew() {
-      return base.AddNew() ?? throw new NullReferenceException();
+      return base.AddNew()!;
+    }
+
+    protected override void OnAddingNew(AddingNewEventArgs e) {
+      base.OnAddingNew(e);
     }
   }
 }

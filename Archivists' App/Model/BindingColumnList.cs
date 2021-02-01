@@ -20,10 +20,7 @@ namespace SoundExplorers.Model {
     /// <returns>
     ///   The entity column with the specified name (case-insensitive).
     /// </returns>
-    public BindingColumn this[string name] =>
-      FindColumn(name) ??
-      throw new InvalidOperationException(
-        $"In BindingColumnList.Item, cannot find '{name}' column.");
+    public BindingColumn this[string name] => FindColumn(name)!;
 
     /// <summary>
     ///   Add the specified entity column to the list, provided its name is unique in the

@@ -179,9 +179,7 @@ namespace SoundExplorers.Data {
           _identifyingParent.RemoveChild(this);
         }
         value.AddChild(this);
-        Parents[
-          IdentifyingParentType ??
-          throw new NullReferenceException(nameof(IdentifyingParentType))] = value;
+        Parents[IdentifyingParentType!] = value;
         _identifyingParent = value;
       }
     }

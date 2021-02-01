@@ -614,9 +614,7 @@ namespace SoundExplorers.Tests.Controller {
     }
 
     private static Event ToEvent(object? value) {
-      return
-        value as Event
-        ?? throw new InvalidOperationException($"{value} is not an Event.");
+      return (value as Event)!;
     }
   }
 }

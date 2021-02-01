@@ -463,10 +463,7 @@ namespace SoundExplorers.Model {
     }
 
     private TBindingItem GetBindingItem(int rowIndex) {
-      return BindingList![rowIndex] as TBindingItem
-             ?? throw new InvalidOperationException(
-               "In EntityListBase.GetBindingItem, " +
-               "cannot cast BindingList[rowIndex] as TBindingItem");
+      return (BindingList![rowIndex] as TBindingItem)!;
     }
 
     /// <summary>

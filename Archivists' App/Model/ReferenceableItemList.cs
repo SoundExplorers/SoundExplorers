@@ -37,11 +37,7 @@ namespace SoundExplorers.Model {
     }
 
     private IEntityList CreateEntityList() {
-      var result =
-        Global.CreateEntityList(
-          ReferencingColumn.ReferencedEntityListType ??
-          throw new NullReferenceException(
-            nameof(ReferencingColumn.ReferencedEntityListType)));
+      var result = Global.CreateEntityList(ReferencingColumn.ReferencedEntityListType!);
       result.Session = ReferencingColumn.Session;
       return result;
     }

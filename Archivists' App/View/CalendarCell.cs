@@ -20,12 +20,8 @@ namespace SoundExplorers.View {
       // Return the type of the editing control that CalendarCell uses.
       typeof(CalendarEditingControl);
 
-    private DateTimePicker DateTimePicker => (DateTimePicker)Grid.EditingControl;
-
-    private DataGridView Grid =>
-      DataGridView
-      ?? throw new NullReferenceException(
-        "In CalendarCell.Grid, DataGridView is null.");
+    private DateTimePicker DateTimePicker => 
+      (DateTimePicker)DataGridView!.EditingControl;
 
     public void RestoreErrorValue(object? errorValue) {
       if (errorValue is DateTime dateTime) {

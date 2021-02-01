@@ -76,10 +76,7 @@ namespace SoundExplorers.Model {
 
     [ExcludeFromCodeCoverage]
     public static string GetProductName() {
-      var entryAssembly =
-        Assembly.GetEntryAssembly() ??
-        throw new NullReferenceException(
-          "In Global.GetProductName, cannot find entry assembly.");
+      var entryAssembly = Assembly.GetEntryAssembly()!;
       return ((AssemblyProductAttribute)Attribute.GetCustomAttribute(entryAssembly,
         typeof(AssemblyProductAttribute), false)!)!.Product;
     }
