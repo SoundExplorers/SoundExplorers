@@ -106,13 +106,12 @@ namespace SoundExplorers.Controller {
 
     public override void OnPopulatedAsync() {
       Debug.WriteLine("MainGridController.OnPopulatedAsync");
-      if (EditorController.IsParentGridToBeShown) {
+      if (List.IsChildList) {
         EditorController.View.OnParentAndMainGridsShownAsync();
         Grid.CellColorScheme.Invert();
       }
       base.OnPopulatedAsync();
-      if (EditorController.IsParentGridToBeShown &&
-          ParentGrid.Controller.LastRowNeedsToBeScrolledIntoView) {
+      if (List.IsChildList && ParentGrid.Controller.LastRowNeedsToBeScrolledIntoView) {
         ParentGrid.Controller.ScrollLastRowIntoView();
       } else {
         // Show that the population process is finished.

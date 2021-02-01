@@ -21,18 +21,19 @@ namespace SoundExplorers.Model {
     BindingColumnList Columns { get; }
 
     string EntityTypeName { get; }
+    
+    /// <summary>
+    ///   Gets whether this is a main list that is to be populated with children of an
+    ///   identifying parent entity.
+    /// </summary>
+    bool IsChildList { get; }
 
     /// <summary>
-    ///   Gets whether the current grid row is the insertion row,
-    ///   which is for adding new entities and is located at the bottom of the grid.
+    ///   Gets whether the current grid row is the insertion row, which is for adding new
+    ///   entities and is located at the bottom of the grid.
     /// </summary>
     bool IsInsertionRowCurrent { get; }
 
-    // /// <summary>
-    // ///   Gets or sets whether this is a (read-only) parent list.
-    // ///   False (the default) if this is the (updatable) main (and maybe only) list.
-    // /// </summary>
-    // bool IsParentList { get; init; }
     bool IsRemovingInvalidInsertionRow { get; set; }
     DatabaseUpdateErrorException? LastDatabaseUpdateErrorException { get; set; }
 
@@ -43,14 +44,14 @@ namespace SoundExplorers.Model {
     Type? ParentListType { get; }
 
     /// <summary>
-    ///   Gets or sets the session to be used for accessing the database.
-    ///   The setter should only be needed for testing.
+    ///   Gets or sets the session to be used for accessing the database. The setter
+    ///   should only be needed for testing.
     /// </summary>
     SessionBase Session { set; }
 
     /// <summary>
-    ///   Deletes the entity at the specified row index
-    ///   from the database and removes it from the list.
+    ///   Deletes the entity at the specified row index from the database and removes it
+    ///   from the list.
     /// </summary>
     /// <param name="rowIndex">
     ///   Zero-based row index.
@@ -58,9 +59,9 @@ namespace SoundExplorers.Model {
     void DeleteEntity(int rowIndex);
 
     /// <summary>
-    ///   Derived classes that are identifying parents should
-    ///   return a list of the child entities of the entity at the specified row index
-    ///   that are to populate the main list when this is the parent list.
+    ///   Derived classes that are identifying parents should return a list of the child
+    ///   entities of the entity at the specified row index that are to populate the main
+    ///   list when this is the parent list.
     /// </summary>
     /// <param name="rowIndex">
     ///   Zero-based row index.
@@ -78,10 +79,9 @@ namespace SoundExplorers.Model {
     void OnRowEnter(int rowIndex);
 
     /// <summary>
-    ///   If the specified grid row is new or its data has changed,
-    ///   adds (if new) or updates the corresponding the entity
-    ///   on the database with the row data and
-    ///   saves the entity to the database.
+    ///   If the specified grid row is new or its data has changed, adds (if new) or
+    ///   updates the corresponding entity on the database with the row data and saves
+    ///   the entity to the database.
     /// </summary>
     /// <param name="rowIndex">
     ///   Zero-based row index.
@@ -99,7 +99,7 @@ namespace SoundExplorers.Model {
     ///   type will be fetched from the database.
     /// </param>
     /// <param name="createBindingList">
-    ///   Optionally specifies whether the <see cref="BindingList" />, which will be
+    ///   Optionally specifies whether the <see cref="BindingList" />, which will be      
     ///   bound to a grid in the editor window, is to be populated along with the list of
     ///   entities. Default: true. Set to false if entity list is not to be used to
     ///   populate a grid.

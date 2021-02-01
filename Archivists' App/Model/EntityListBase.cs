@@ -17,7 +17,8 @@ namespace SoundExplorers.Model {
   /// <typeparam name="TBindingItem">
   ///   Binding list item type parameter
   /// </typeparam>
-  public abstract class EntityListBase<TEntity, TBindingItem> : List<TEntity>, IEntityList
+  public abstract class EntityListBase<TEntity, TBindingItem> : List<TEntity>,
+    IEntityList
     where TEntity : EntityBase, new()
     where TBindingItem : BindingItemBase<TEntity, TBindingItem>, new() {
     private BindingColumnList? _columns;
@@ -50,7 +51,6 @@ namespace SoundExplorers.Model {
     private TBindingItem? BindingItemToFix { get; set; }
     private EntityComparer<TEntity> EntityComparer { get; }
     private TBindingItem? ErrorBindingItem { get; set; }
-    internal bool IsChildList => ParentListType != null;
     private StatementType LastDatabaseChangeAction { get; set; }
 
     /// <summary>
@@ -68,10 +68,10 @@ namespace SoundExplorers.Model {
       (TypedBindingList<TEntity, TBindingItem>)BindingList!;
 
     private bool HasRowBeenEdited { get; set; }
-    
+
     /// <summary>
-    ///   Only applicable to a main list that is a child of a parent entity, this
-    ///   specifies the list's identifying parent entity.
+    ///   Only applicable to a main list that is to be populated with children of an
+    ///   identifying parent entity, this specifies the identifying parent entity.
     /// </summary>
     public IEntity? IdentifyingParent { get; private set; }
 
@@ -88,6 +88,12 @@ namespace SoundExplorers.Model {
       _columns ??= CreateColumnsWithSession();
 
     public string EntityTypeName => typeof(TEntity).Name;
+    
+    /// <summary>
+    ///   Gets whether this is a main list that is to be populated with children of an
+    ///   identifying parent entity.
+    /// </summary>
+    public bool IsChildList => ParentListType != null;
 
     /// <summary>
     ///   Gets whether the current grid row is the insertion row, which is for adding new
@@ -406,8 +412,8 @@ namespace SoundExplorers.Model {
     ///   quicker with large volumes of data.
     /// </summary>
     /// <remarks>
-    ///   Currently this duplicate key check does not give such nice error messages as
-    ///   the ones in the Data layer.
+    ///   Arguably this duplicate key check does not give such nice error messages as
+    ///   the ones in the Data layer, but I think they are fine.
     /// </remarks>
     private void CheckForDuplicateKey(TBindingItem bindingItem) {
       var newKey = bindingItem.CreateKey();
