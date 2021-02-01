@@ -39,8 +39,9 @@ namespace SoundExplorers.Controller {
     protected IGrid Grid { get; }
     
     /// <summary>
-    ///   Only applicable to main grids that have parent grids, this specifies the grid's
-    ///   identifying parent entity and, for populating the grid, its child entities.  
+    ///   Only applicable to a main grid that is a child of a parent grid row, this
+    ///   specifies the grid's identifying parent entity and, for populating the grid,
+    ///   its child entities.  
     /// </summary>
     protected IdentifyingParentChildren? IdentifyingParentChildrenForList { get; set; }
 

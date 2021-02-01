@@ -50,6 +50,7 @@ namespace SoundExplorers.Model {
     private TBindingItem? BindingItemToFix { get; set; }
     private EntityComparer<TEntity> EntityComparer { get; }
     private TBindingItem? ErrorBindingItem { get; set; }
+    internal bool IsChildList => ParentListType != null;
     private StatementType LastDatabaseChangeAction { get; set; }
 
     /// <summary>
@@ -69,8 +70,8 @@ namespace SoundExplorers.Model {
     private bool HasRowBeenEdited { get; set; }
     
     /// <summary>
-    ///   Gets the list's identifying parent entity. Only applicable to main grids that
-    ///   have parent grids.
+    ///   Only applicable to a main list that is a child of a parent entity, this
+    ///   specifies the list's identifying parent entity.
     /// </summary>
     public IEntity? IdentifyingParent { get; private set; }
 
