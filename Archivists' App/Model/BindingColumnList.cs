@@ -26,15 +26,14 @@ namespace SoundExplorers.Model {
         $"In BindingColumnList.Item, cannot find '{name}' column.");
 
     /// <summary>
-    ///   Add the specified entity column to the list,
-    ///   provided its name is unique in the list.
+    ///   Add the specified entity column to the list, provided its name is unique in the
+    ///   list.
     /// </summary>
     /// <param name="bindingColumn">
     ///   The entity column to be added.
     /// </param>
     /// <exception cref="ArgumentException">
-    ///   The list already contains an entity column
-    ///   of the same name.
+    ///   The list already contains an entity column of the same name.
     /// </exception>
     public new void Add(BindingColumn bindingColumn) {
       if (ContainsKey(bindingColumn.PropertyName)) {
@@ -46,17 +45,15 @@ namespace SoundExplorers.Model {
     }
 
     /// <summary>
-    ///   Returns whether the list contains
-    ///   an entity column with the specified name.
+    ///   Returns whether the list contains an entity column with the specified name.
     /// </summary>
     /// <param name="name">
     ///   The name of the column.
     /// </param>
     /// <returns>
-    ///   Whether the list contains
-    ///   an entity column with the specified name.
+    ///   Whether the list contains an entity column with the specified name.
     /// </returns>
-    public bool ContainsKey(string name) {
+    private bool ContainsKey(string name) {
       return FindColumn(name) != null;
     }
 

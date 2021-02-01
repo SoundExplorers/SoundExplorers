@@ -67,6 +67,11 @@ namespace SoundExplorers.Model {
       (TypedBindingList<TEntity, TBindingItem>)BindingList!;
 
     private bool HasRowBeenEdited { get; set; }
+    
+    /// <summary>
+    ///   Gets the list's identifying parent entity. Only applicable to main grids that
+    ///   have parent grids.
+    /// </summary>
     public IEntity? IdentifyingParent { get; private set; }
 
     /// <summary>

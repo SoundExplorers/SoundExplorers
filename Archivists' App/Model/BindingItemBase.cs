@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -36,7 +38,8 @@ namespace SoundExplorers.Model {
     where TBindingItem : BindingItemBase<TEntity, TBindingItem>, new() {
     private IDictionary<string, PropertyInfo>? _entityProperties;
     private IDictionary<string, PropertyInfo>? _properties;
-
+    private IEnumerable<PropertyInfo>? _visibleProperties;
+    
     internal EntityListBase<TEntity, TBindingItem> EntityList { get; set; } = null!;
 
     private IDictionary<string, PropertyInfo> EntityProperties =>
@@ -46,6 +49,9 @@ namespace SoundExplorers.Model {
 
     protected IDictionary<string, PropertyInfo> Properties =>
       _properties ??= CreatePropertyDictionary<TBindingItem>();
+
+    private IEnumerable<PropertyInfo> VisibleProperties =>
+      _visibleProperties ??= CreateVisibleProperties();
 
     public void SetPropertyValue(string propertyName, object? value) {
       try {
@@ -63,8 +69,25 @@ namespace SoundExplorers.Model {
       PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 
-    private void CopyValuesToEntityProperties(TEntity entity) {
-      foreach (var property in Properties.Values) {
+    [ExcludeFromCodeCoverage]
+    private void CheckIdentifyingParent(TEntity entity) {
+      if (EntityList.IdentifyingParent != null && entity.IdentifyingParent == null) {
+        throw new InvalidOperationException(
+          "For a row of a main grid that has a parent grid, the derived class " +
+          "must override BindingItemBase.CopyValuesToEntityProperties to set the " +
+          "entity's identifying parent to the entity list's identifying parent before " +
+          "calling the base method.");
+      }
+    }
+
+    /// <summary>
+    ///   Derived classes representing rows of main grids that have parent grids must
+    ///   override this to set the entity's identifying parent to the entity list's
+    ///   identifying parent before calling this base method. 
+    /// </summary>
+    protected virtual void CopyValuesToEntityProperties(TEntity entity) {
+      CheckIdentifyingParent(entity);
+      foreach (var property in VisibleProperties) {
         CopyValueToEntityProperty(property.Name, entity);
       }
     }
@@ -109,8 +132,9 @@ namespace SoundExplorers.Model {
     }
 
     private IDictionary<string, object> CreateEntityPropertyValueDictionary() {
+      // Debug.WriteLine("BindingItemBase.CreateEntityPropertyValueDictionary");
       var result = new Dictionary<string, object>();
-      foreach (var property in Properties.Values) {
+      foreach (var property in VisibleProperties) {
         result[property.Name] =
           GetEntityPropertyValue(property, EntityProperties[property.Name])!;
       }
@@ -128,6 +152,12 @@ namespace SoundExplorers.Model {
         result.Add(property.Name, property);
       }
       return result;
+    }
+
+    private IEnumerable<PropertyInfo> CreateVisibleProperties() {
+      return from property in Properties.Values
+        where EntityList.Columns[property.Name].IsVisible
+        select property;
     }
 
     protected IEntity? FindParent(PropertyInfo property) {

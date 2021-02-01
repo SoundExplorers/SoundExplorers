@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using SoundExplorers.Common;
 using SoundExplorers.Model;
@@ -17,6 +18,7 @@ namespace SoundExplorers.Controller {
       _firstVisibleColumnIndex = -1;
     }
 
+    [SuppressMessage("ReSharper", "ReturnTypeCanBeEnumerable.Global")]
     public IList<IBindingColumn> BindingColumns =>
       _bindingColumns ??= CreateBindingColumns();
 
@@ -35,6 +37,11 @@ namespace SoundExplorers.Controller {
       : _firstVisibleColumnIndex = GetFirstVisibleColumnIndex();
 
     protected IGrid Grid { get; }
+    
+    /// <summary>
+    ///   Only applicable to main grids that have parent grids, this specifies the grid's
+    ///   identifying parent entity and, for populating the grid, its child entities.  
+    /// </summary>
     protected IdentifyingParentChildren? IdentifyingParentChildrenForList { get; set; }
 
     /// <summary>

@@ -55,6 +55,22 @@ namespace SoundExplorers.Tests.Model {
     }
 
     [Test]
+    public void AddSet() {
+      List = CreateSetList();
+      var @event = Data.Events[0];
+      var eventChildren = CreateEventChildren(@event);
+      List.Populate(eventChildren);
+      var bindingList = List.TypedBindingList!;
+      bindingList.AddNew();
+      List.OnRowEnter(3);
+      bindingList[3].Genre = Data.Genres[0].Name;
+      List.OnRowValidated(3);
+      Assert.AreEqual(4, @event.Sets.Count, "Count");
+      List.Populate(eventChildren);
+      Assert.AreEqual(4, @event.Sets[3].SetNo, "SetNo");
+    }
+
+    [Test]
     public void DefaultSetNoWithExistingSets() {
       List = CreateSetList();
       List.Populate();
@@ -71,13 +87,29 @@ namespace SoundExplorers.Tests.Model {
     }
 
     [Test]
+    public void DisallowAddSetWithoutGenre() {
+      List = CreateSetList(false);
+      var @event = Data.Events[0];
+      var eventChildren = CreateEventChildren(@event);
+      List.Populate(eventChildren);
+      var bindingList = List.TypedBindingList!;
+      bindingList.AddNew();
+      List.OnRowEnter(0);
+      bindingList[0].Act = Data.Acts[0].Name;
+      var exception = Assert.Catch<DatabaseUpdateErrorException>(()=> List.OnRowValidated(0), 
+        "Adding Set without Genre disallowed.");
+      Assert.AreEqual(
+        "Set '01 | 2020/01/09 | Athens' cannot be added because its Genre has not been specified.",
+        exception.Message, "Error message");
+    }
+
+    [Test]
     public void DisallowDuplicateKey() {
       List = CreateSetList();
-      var eventChildren = new IdentifyingParentChildren(
-        Data.Events[0], Data.Events[0].Sets.Values.ToList());
+      var eventChildren = CreateEventChildren(Data.Events[0]);
       List.Populate(eventChildren);
       List.OnRowEnter(2);
-      var bindingList = (TypedBindingList<Set, SetBindingItem>)List.BindingList!;
+      var bindingList = List.TypedBindingList!;
       Exception exception = Assert.Catch<DuplicateNameException>(()=> bindingList[2].SetNo = 1, 
         "Changing SetNo to duplicate for Event disallowed");
       Assert.AreEqual("Another Set with key '01 | 2020/01/09 | Athens' already exists.",
@@ -137,6 +169,7 @@ namespace SoundExplorers.Tests.Model {
 
     private void AddData(bool includingSets = true) {
       Session.BeginUpdate();
+      Data.AddActsPersisted(1, Session);
       Data.AddEventTypesPersisted(1, Session);
       Data.AddLocationsPersisted(1, Session);
       Data.AddEventsPersisted(1, Session);
@@ -145,6 +178,12 @@ namespace SoundExplorers.Tests.Model {
         Data.AddSetsPersisted(3, Session);
       }
       Session.Commit();
+    }
+
+    private static IdentifyingParentChildren CreateEventChildren(Event @event) {
+      var eventChildren = new IdentifyingParentChildren(
+        @event, @event.Sets.Values.ToList());
+      return eventChildren;
     }
 
     private SetList CreateSetList(bool addSets = true) {
