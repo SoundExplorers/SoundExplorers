@@ -269,20 +269,20 @@ namespace SoundExplorers.Model {
       IdentifyingParentChildren? identifyingParentChildren = null,
       bool createBindingList = true) {
       Clear();
+      bool isTransactionRequired = !Session.InTransaction;
+      if (isTransactionRequired) {
+        Session.BeginRead();
+      }
       if (identifyingParentChildren != null) {
         IdentifyingParent = identifyingParentChildren.IdentifyingParent;
         AddRange((IList<TEntity>)identifyingParentChildren.Children);
       } else {
-        bool isTransactionRequired = !Session.InTransaction;
-        if (isTransactionRequired) {
-          Session.BeginRead();
-        }
         AddRange(Session.AllObjects<TEntity>());
-        if (isTransactionRequired) {
-          Session.Commit();
-        }
-        Sort(EntityComparer);
       }
+      if (isTransactionRequired) {
+        Session.Commit();
+      }
+      Sort(EntityComparer);
       if (!createBindingList) {
         return;
       }
