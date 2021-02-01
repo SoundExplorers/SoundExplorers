@@ -203,6 +203,40 @@ namespace SoundExplorers.Tests.Data {
       Assert.AreEqual(Event1.Date, Set2.Event.Date, "Set2.Event.Date");
     }
 
+    [Test]
+    public void OrderOfSets() {
+      var set3 = new Set {
+        QueryHelper = QueryHelper,
+        SetNo = 3
+      };
+      var set4 = new Set {
+        QueryHelper = QueryHelper,
+        SetNo = 4
+      };
+      using (var session = new TestSession(DatabaseFolderPath)) {
+        session.BeginUpdate();
+        Event1 = QueryHelper.Read<Event>(Event1SimpleKey, Location1, session);
+        Genre1 = QueryHelper.Read<Genre>(Genre1Name, session);
+        set4.Event = Event1;
+        set4.Genre = Genre1;
+        session.Persist(set4);
+        set3.Event = Event1;
+        set3.Genre = Genre1;
+        session.Persist(set3);
+        session.Commit();
+      }
+      using (var session = new TestSession(DatabaseFolderPath)) {
+        session.BeginRead();
+        Event1 = QueryHelper.Read<Event>(Event1SimpleKey, Location1, session);
+        session.Commit();
+      }
+      Assert.AreEqual(4, Event1.Sets.Count, "Sets.Count");
+      Assert.AreEqual(1, Event1.Sets[0].SetNo, "Sets[0].SetNo");
+      Assert.AreEqual(2, Event1.Sets[1].SetNo, "Sets[1].SetNo");
+      Assert.AreEqual(3, Event1.Sets[2].SetNo, "Sets[2].SetNo");
+      Assert.AreEqual(4, Event1.Sets[3].SetNo, "Sets[3].SetNo");
+    }
+
     /// <summary>
     ///   Adds an Event to a Series that already includes an Event
     ///   on the same Date at a different Location.

@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -69,24 +67,12 @@ namespace SoundExplorers.Model {
       PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 
-    [ExcludeFromCodeCoverage]
-    private void CheckIdentifyingParent(TEntity entity) {
-      if (EntityList.IsChildList && entity.IdentifyingParent == null) {
-        throw new InvalidOperationException(
-          "For a row of a main grid is a child of a parent grid row, the derived " +
-          "class must override BindingItemBase.CopyValuesToEntityProperties to set " +
-          "the entity's identifying parent to the entity list's identifying parent " +
-          "before calling the base method.");
-      }
-    }
-
     /// <summary>
     ///   A derived class representing a row of a main grid that is a child of a parent
     ///   grid row must override this method to set the entity's identifying parent to
-    ///   the entity list's identifying parent before calling this base method. 
+    ///   the entity list's identifying parent AFTER calling this base method. 
     /// </summary>
     protected virtual void CopyValuesToEntityProperties(TEntity entity) {
-      CheckIdentifyingParent(entity);
       foreach (var property in VisibleProperties) {
         CopyValueToEntityProperty(property.Name, entity);
       }

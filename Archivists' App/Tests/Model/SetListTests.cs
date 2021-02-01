@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Data;
-using System.Diagnostics;
 using System.Linq;
 using NUnit.Framework;
 using SoundExplorers.Data;
@@ -71,7 +70,7 @@ namespace SoundExplorers.Tests.Model {
       List.Populate(eventChildren);
       Assert.AreEqual(4, List[3].SetNo, "SetNo in List");
       Assert.AreEqual(4, bindingList[3].SetNo, "SetNo in binding list");
-      //Assert.AreEqual(4, @event.Sets[3].SetNo, "SetNo in Event.Sets");
+      Assert.AreEqual(4, @event.Sets[3].SetNo, "SetNo in Event.Sets");
     }
 
     [Test]

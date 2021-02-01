@@ -74,9 +74,8 @@ namespace SoundExplorers.Model {
     }
 
     protected override void CopyValuesToEntityProperties(Set set) {
-      set.Event = (Event)EntityList.IdentifyingParent!;
       base.CopyValuesToEntityProperties(set);
-      
+      set.Event = (Event)EntityList.IdentifyingParent!;
     }
 
     protected override string GetSimpleKey() {
