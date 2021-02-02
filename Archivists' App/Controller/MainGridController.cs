@@ -46,6 +46,16 @@ namespace SoundExplorers.Controller {
     public void OnCellEditError(int rowIndex, string columnName,
       Exception? exception) {
       switch (exception) {
+        case ArgumentException argumentException:
+          if (argumentException.Message.StartsWith(" is not a valid value for")) {
+            // Thrown when an integer cell is empty
+            List.OnValidationError(rowIndex, columnName, 
+              new FormatException(argumentException.Message, argumentException));
+            EditorController.View.OnError();
+          } else {
+            throw argumentException;
+          }
+          break;
         case DatabaseUpdateErrorException databaseUpdateErrorException:
           List.LastDatabaseUpdateErrorException = databaseUpdateErrorException;
           EditorController.View.OnError();
@@ -56,7 +66,7 @@ namespace SoundExplorers.Controller {
           break;
         case FormatException formatException:
           // An invalid value was pasted into a cell, e.g. text into a date.
-          // Or invalid text was entered into a numeric cell, e.g. Set.SetNo.
+          // Or invalid text was entered into an integer cell, e.g. Set.SetNo.
           List.OnValidationError(rowIndex, columnName, formatException);
           EditorController.View.OnError();
           break;
@@ -275,10 +285,7 @@ namespace SoundExplorers.Controller {
       // Debug.WriteLine("EditorController.CancelInsertion");
       int insertionRowIndex = List.BindingList!.Count - 1;
       if (insertionRowIndex > 0) {
-        // Currently, it is not anticipated that there can be an insertion row error at
-        // this point when the insertion row is the only row on the table, as the only
-        // anticipated error type that should get to this point is a duplicate key.
-        // Format errors are handled differently and should not get here.
+        // TODO Restore insertion error data even when there are no existing rows.
         List.IsRemovingInvalidInsertionRow = true;
         Grid.MakeRowCurrent(insertionRowIndex - 1);
         List.RemoveInsertionBindingItem(); // Backs up the error insertion item
