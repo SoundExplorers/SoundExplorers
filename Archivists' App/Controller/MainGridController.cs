@@ -214,7 +214,8 @@ namespace SoundExplorers.Controller {
       EditorController.View.ShowErrorMessage(
         List.LastDatabaseUpdateErrorException.Message);
       // Debug.WriteLine("Error message shown");
-      if (IsFormatException) {
+      if (IsFormatException || IsReferencingValueNotFoundException && 
+        LastChangeAction == StatementType.Insert) {
         return;
       }
       if (IsDuplicateKeyException || IsReferencingValueNotFoundException) {
@@ -289,7 +290,8 @@ namespace SoundExplorers.Controller {
         Grid.MakeRowCurrent(insertionRowIndex - 1);
         List.RemoveInsertionBindingItem(); // Backs up the error insertion item
         // Force a new row to be created with the erroneous data restored to it.
-        Grid.MakeRowCurrent(insertionRowIndex); 
+        // insertionRowIndex = List.BindingList!.Count - 1;
+        // Grid.MakeRowCurrent(insertionRowIndex); 
       }
     }
   }
