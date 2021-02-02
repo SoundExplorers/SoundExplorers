@@ -214,8 +214,7 @@ namespace SoundExplorers.Controller {
       EditorController.View.ShowErrorMessage(
         List.LastDatabaseUpdateErrorException.Message);
       // Debug.WriteLine("Error message shown");
-      if (IsFormatException || IsReferencingValueNotFoundException && 
-        LastChangeAction == StatementType.Insert) {
+      if (IsFormatException) {
         return;
       }
       if (IsDuplicateKeyException || IsReferencingValueNotFoundException) {
@@ -230,7 +229,11 @@ namespace SoundExplorers.Controller {
         case StatementType.Delete:
           break;
         case StatementType.Insert:
-          CancelInsertion();
+          // The insertion row gets removed on paste into combo box error, in which case
+          // we cannot do the usual insertion cancellation procedure.
+          if (!IsReferencingValueNotFoundException) {
+            CancelInsertion();
+          }
           break;
         case StatementType.Update:
           List.RestoreCurrentBindingItemOriginalValues();
