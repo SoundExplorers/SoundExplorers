@@ -47,8 +47,8 @@ namespace SoundExplorers.Controller {
       object? cellValue) {
       // Null cell value has only been found when we can ignore it: on pasting an invalid
       // format date into Event.Newsletter on the insertion row when there are no
-      // existing rows and Location has not been specified. An error message will be
-      // shown for this in MainGridController.OnCellEditError.
+      // existing rows and Location has not been specified. A format error message will
+      // be shown for the invalid Newsletter in MainGridController.OnCellEditError.
       if (!MainGridController.IsInsertionRowCurrent || cellValue == null) {
         return;
       }
