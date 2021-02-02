@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
 using VelocityDb.Session;
 
 namespace SoundExplorers.Model {
@@ -12,7 +11,7 @@ namespace SoundExplorers.Model {
     /// <summary>
     ///   Gets the binding list representing the list of entities.
     /// </summary>
-    IBindingList? BindingList { get; }
+    ITypedBindingList? BindingList { get; }
 
     /// <summary>
     ///   Gets metadata for the columns of the editor grid that represents the list of
@@ -108,7 +107,13 @@ namespace SoundExplorers.Model {
       bool createBindingList = true);
 
     void RestoreCurrentBindingItemOriginalValues();
+    
+    /// <summary>
+    ///   Removes an erroneous insertion binding item after first backing it up to be
+    ///   restored when a new row is subsequently added. 
+    /// </summary>
     void RemoveInsertionBindingItem();
+    
     void RestoreReferencingPropertyOriginalValue(int rowIndex, int columnIndex);
   }
 }

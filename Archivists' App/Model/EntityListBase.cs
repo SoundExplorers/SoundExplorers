@@ -49,8 +49,14 @@ namespace SoundExplorers.Model {
     private TBindingItem? BackupBindingItem { get; set; }
     private TBindingItem? BackupBindingItemToRestoreFrom { get; set; }
     private TBindingItem? BindingItemToFix { get; set; }
+    
+    /// <summary>
+    ///   Used for restoring the error value for correction or edit cancellation after an
+    ///   error message hase been shown for a cell edit error on an existing row.
+    /// </summary>
+    private TBindingItem? CellEditErrorBindingItem { get; set; }
+    
     private EntityComparer<TEntity> EntityComparer { get; }
-    private TBindingItem? ErrorBindingItem { get; set; }
     private StatementType LastDatabaseChangeAction { get; set; }
 
     /// <summary>
@@ -78,7 +84,7 @@ namespace SoundExplorers.Model {
     /// <summary>
     ///   Gets the binding list representing the list of entities and bound to the grid.
     /// </summary>
-    public IBindingList? BindingList { get; private set; }
+    public ITypedBindingList? BindingList { get; private set; }
 
     /// <summary>
     ///   Gets metadata for the columns of the editor grid that represents the list of
@@ -173,7 +179,7 @@ namespace SoundExplorers.Model {
     }
 
     public IList<object> GetErrorValues() {
-      return ErrorBindingItem!.GetPropertyValues();
+      return CellEditErrorBindingItem!.GetPropertyValues();
     }
 
     /// <summary>
@@ -238,7 +244,7 @@ namespace SoundExplorers.Model {
 
     public void OnValidationError(int rowIndex, string? propertyName,
       Exception exception) {
-      ErrorBindingItem = GetBindingItem(rowIndex);
+      CellEditErrorBindingItem = GetBindingItem(rowIndex);
       LastDatabaseChangeAction =
         IsInsertionRowCurrent ? StatementType.Insert : StatementType.Update;
       int columnIndex;
@@ -299,16 +305,21 @@ namespace SoundExplorers.Model {
       BindingList.ListChanged += BindingList_ListChanged;
     }
 
+    /// <summary>
+    ///   Removes an erroneous insertion binding item after first backing it up to be
+    ///   restored when a new row is subsequently added. 
+    /// </summary>
     public void RemoveInsertionBindingItem() {
       // Debug.WriteLine("EntityListBase.RemoveInsertionBindingItem");
       IsInsertionRowCurrent = false;
       IsRemovingInvalidInsertionRow = false;
-      BindingList?.RemoveAt(BindingList.Count - 1);
+      BindingList!.InsertionErrorItem = (IBindingItem)BindingList[^1]!;
+      BindingList?.Remove(BindingList!.InsertionErrorItem);
     }
 
     public void RestoreCurrentBindingItemOriginalValues() {
       //Debug.WriteLine("EntityListBase.RestoreCurrentBindingItemOriginalValues");
-      ErrorBindingItem = BindingItemToFix!.CreateBackup();
+      CellEditErrorBindingItem = BindingItemToFix!.CreateBackup();
       BindingItemToFix.RestorePropertyValuesFrom(BackupBindingItemToRestoreFrom!);
       BackupBindingItemToRestoreFrom = null;
       BindingItemToFix = null;
@@ -377,7 +388,6 @@ namespace SoundExplorers.Model {
       } catch (Exception exception) {
         //Debug.WriteLine(exception);
         Session.Abort();
-        ErrorBindingItem = bindingItem;
         throw CreateDatabaseUpdateErrorException(exception, rowIndex);
       } finally {
         IsInsertionRowCurrent = false;

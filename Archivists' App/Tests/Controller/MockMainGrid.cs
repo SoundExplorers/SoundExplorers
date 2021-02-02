@@ -7,6 +7,7 @@ namespace SoundExplorers.Tests.Controller {
       set => base.Controller = value;
     }
 
+    internal bool AutoAddNewRow { get; set; }
     internal int EditCurrentCellCount { get; private set; }
     internal int MakeCellCurrentCount { get; private set; }
     internal int MakeCellCurrentColumnIndex { get; private set; }
@@ -27,7 +28,7 @@ namespace SoundExplorers.Tests.Controller {
     ///   row is no longer the current row, it is removed from the BindingList.
     ///   <para>
     ///     So the use of RowCount in tests should be avoided. Use
-    ///     EditorController.BindingList.Count instead.
+    ///     MainGridController.BindingList.Count instead.
     ///   </para>
     /// </summary>
     public override int RowCount => Controller.BindingList!.Count + 1;
@@ -46,6 +47,13 @@ namespace SoundExplorers.Tests.Controller {
       MakeCellCurrentCount++;
       MakeCellCurrentColumnIndex = columnIndex;
       CurrentRowIndex = rowIndex;
+    }
+
+    public override void MakeRowCurrent(int rowIndex, bool async = false) {
+      base.MakeRowCurrent(rowIndex, async);
+      if (AutoAddNewRow && rowIndex == Controller.BindingList!.Count) {
+        Controller.BindingList.AddNew();
+      }
     }
 
     public override void Focus() {

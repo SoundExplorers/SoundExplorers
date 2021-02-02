@@ -18,8 +18,8 @@ namespace SoundExplorers.Tests {
     private TestSession Session { get; set; } = null!;
 
     /// <summary>
-    ///   If the main test database folder already exists,
-    ///   it will be deleted and recreated from scratch.
+    ///   If the main test database folder already exists, it will be deleted and
+    ///   recreated from scratch.
     /// </summary>
     [Test]
     public void GenerateData() {

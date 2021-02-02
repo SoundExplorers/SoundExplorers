@@ -40,7 +40,7 @@ namespace SoundExplorers.Tests.Controller {
 
     public abstract int RowCount { get; }
 
-    public void MakeRowCurrent(int rowIndex, bool async = false) {
+    public virtual void MakeRowCurrent(int rowIndex, bool async = false) {
       //Debug.WriteLine($"MockGridBase.MakeRowCurrent: row {rowIndex}");
       MakeRowCurrentCount++;
       CurrentRowIndex = rowIndex;

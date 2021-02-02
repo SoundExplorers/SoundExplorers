@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
 using SoundExplorers.Data;
 
@@ -7,7 +6,8 @@ namespace SoundExplorers.Model {
   /// <summary>
   ///   A strongly typed binding list to facilitate testing.
   /// </summary>
-  public class TypedBindingList<TEntity, TBindingItem> : BindingList<TBindingItem>
+  public class TypedBindingList<TEntity, TBindingItem> : BindingList<TBindingItem>,
+    ITypedBindingList
     where TEntity : EntityBase, new()
     where TBindingItem : BindingItemBase<TEntity, TBindingItem>, new() {
     public TypedBindingList(IList<TBindingItem> bindingItems) : base(
@@ -21,8 +21,18 @@ namespace SoundExplorers.Model {
       return base.AddNew()!;
     }
 
+    /// <summary>
+    ///   Used for restoring error values to the new row for correction or edit
+    ///   cancellation after an insertion error message hase been shown.
+    /// </summary>
+    public IBindingItem? InsertionErrorItem { get; set; }
+
     protected override void OnAddingNew(AddingNewEventArgs e) {
+      if (InsertionErrorItem != null) {
+        e.NewObject = InsertionErrorItem;      
+      }
       base.OnAddingNew(e);
+      InsertionErrorItem = null;
     }
   }
 }

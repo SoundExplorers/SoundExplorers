@@ -158,6 +158,7 @@ namespace SoundExplorers.Tests.Controller {
         Session.Commit();
       }
       CreateControllers(typeof(GenreList));
+      MainGrid.AutoAddNewRow = true;
       Controller.Populate();
       Assert.AreEqual(1, MainGrid.MakeRowCurrentCount,
         "MakeRowCurrentCount after Populate");
@@ -166,7 +167,7 @@ namespace SoundExplorers.Tests.Controller {
       var bindingList =
         (TypedBindingList<Genre, NamedBindingItem<Genre>>)Controller.MainList
           .BindingList!;
-      MainGridController.CreateAndGoToNewRow();
+      //MainGridController.CreateAndGoToNewRow();
       bindingList[1].Name = bindingList[0].Name;
       MainGridController.OnRowValidated(1);
       Assert.AreEqual(1, View.ShowErrorMessageCount,
@@ -177,8 +178,8 @@ namespace SoundExplorers.Tests.Controller {
         "MakeRowCurrentCount after error message shown for duplicate insert");
       Assert.AreEqual(1, MainGrid.CurrentRowIndex,
         "CurrentRowIndex after error message shown for duplicate insert");
-      Assert.AreEqual(1, MainGrid.CurrentRowIndex,
-        "CurrentRowIndex after error message shown for duplicate insert");
+      Assert.AreEqual(bindingList[0].Name, bindingList[1].Name,
+        "Duplicate Name restored to insertion row for correction or edit cancellation after message shown");
     }
 
     [Test]

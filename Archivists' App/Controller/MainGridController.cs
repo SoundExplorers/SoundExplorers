@@ -167,8 +167,7 @@ namespace SoundExplorers.Controller {
     ///   would result in an exception at an unpredictable point, due to the closure
     ///   process already being underway. Ideally, the user would instead be given the
     ///   options of committing the insertion or cancelling the close and returning to
-    ///   the editor. But see the XML comments for <see cref="CancelInsertion" /> for the
-    ///   difficulties that would be involved in reopening a 'validated' insertion.
+    ///   the editor.
     /// </remarks>
     public void OnRowValidated(int rowIndex) {
       Debug.WriteLine($"MainGridController.OnRowValidated: row {rowIndex}");
@@ -268,40 +267,10 @@ namespace SoundExplorers.Controller {
     ///   Invoked when the user clicks OK on an insert error message box. If the
     ///   insertion row is not the only row, the row above the insertion row is
     ///   temporarily made current, which allows the insertion row to be removed. The
-    ///   insertion row is then removed, forcing a new empty insertion row to be created.
-    ///   Finally the new empty insertion row is made current. The net effect is that,
-    ///   after the error message has been shown, the insertion row remains current, from
-    ///   the perspective of the user, but all its cells have been blanked out or, where
-    ///   applicable, reverted to default values.
+    ///   insertion row is then removed and a new row is created and made current with
+    ///   the error data restored for correction or cancellation of the insertion by the
+    ///   user.
     /// </summary>
-    /// <remarks>
-    ///   The disadvantage is that the user's work on the insertion row is lost and, if
-    ///   still needed, has to be restarted from scratch. So why is this done?
-    ///   <para>
-    ///     If the insertion row were to be left with the error values, the user would
-    ///     have no way of cancelling out of the insertion short of closing the
-    ///     application. And, as the most probable or only error type is a duplicate key,
-    ///     the user would quite likely want to cancel the insertion and edit the
-    ///     existing row with that key instead.
-    ///   </para>
-    ///   <para>
-    ///     There is no way of selectively reverting just the erroneous cell values of an
-    ///     insertion row to blank or default. So I spent an inordinate amount of effort
-    ///     trying to get another option to work. The idea was to convert the insertion
-    ///     row into an 'existing' row without updating the database, resetting just the
-    ///     erroneous cell values to blank or default. While I still think that would be
-    ///     possible, it turned out to add a great deal of complexity just to get it not
-    ///     working reliably! So I gave up and went for this relatively simple and
-    ///     hopefully robust solution instead.
-    ///   </para>
-    ///   <para>
-    ///     If in future we want to allow the insertion row to be re-edited, perhaps the
-    ///     insertion row could to be replaced with a new one based on a special binding
-    ///     item pre-populated with the changed values (apart from the property
-    ///     corresponding to a FormatException, which would be impossible, or a reference
-    ///     not found paste error, which would be pointless).
-    ///   </para>
-    /// </remarks>
     private void CancelInsertion() {
       // Debug.WriteLine("EditorController.CancelInsertion");
       int insertionRowIndex = List.BindingList!.Count - 1;
@@ -312,8 +281,9 @@ namespace SoundExplorers.Controller {
         // Format errors are handled differently and should not get here.
         List.IsRemovingInvalidInsertionRow = true;
         Grid.MakeRowCurrent(insertionRowIndex - 1);
-        List.RemoveInsertionBindingItem();
-        Grid.MakeRowCurrent(insertionRowIndex);
+        List.RemoveInsertionBindingItem(); // Backs up the error insertion item
+        // Force a new row to be created with the erroneous data restored to it.
+        Grid.MakeRowCurrent(insertionRowIndex); 
       }
     }
   }

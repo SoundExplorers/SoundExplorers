@@ -1,5 +1,5 @@
 ﻿namespace SoundExplorers.Model {
-  internal interface IBindingItem {
+  public interface IBindingItem {
     void SetPropertyValue(string propertyName, object? value);
   }
 }
