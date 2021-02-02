@@ -285,7 +285,6 @@ namespace SoundExplorers.Controller {
       // Debug.WriteLine("EditorController.CancelInsertion");
       int insertionRowIndex = List.BindingList!.Count - 1;
       if (insertionRowIndex > 0) {
-        // TODO Restore insertion error data even when there are no existing rows.
         List.IsRemovingInvalidInsertionRow = true;
         Grid.MakeRowCurrent(insertionRowIndex - 1);
         List.RemoveInsertionBindingItem(); // Backs up the error insertion item
