@@ -240,7 +240,7 @@ namespace SoundExplorers.View {
       Debug.WriteLine($"EditorView.MainGrid_RowValidated: row {e.RowIndex}");
       if (IsFixingFocus) {
         IsFixingFocus = false;
-        if (MainGrid.RowCount > 1) {
+        if (!MainGrid.Controller.IsInsertionRowCurrent) {
           return;
         }
       }
