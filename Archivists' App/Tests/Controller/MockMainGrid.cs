@@ -1,4 +1,5 @@
-﻿using SoundExplorers.Controller;
+﻿using System.Diagnostics.CodeAnalysis;
+using SoundExplorers.Controller;
 
 namespace SoundExplorers.Tests.Controller {
   public class MockMainGrid : MockGridBase, IMainGrid {
@@ -33,6 +34,7 @@ namespace SoundExplorers.Tests.Controller {
     /// </summary>
     public override int RowCount => Controller.BindingList!.Count + 1;
 
+    [ExcludeFromCodeCoverage]
     public override string Name => "MockMainGrid";
 
     public void SetController(MainGridController controller) {

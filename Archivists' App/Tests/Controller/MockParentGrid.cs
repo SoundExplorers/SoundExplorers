@@ -1,4 +1,5 @@
-﻿using SoundExplorers.Controller;
+﻿using System.Diagnostics.CodeAnalysis;
+using SoundExplorers.Controller;
 
 namespace SoundExplorers.Tests.Controller {
   public class MockParentGrid : MockGridBase, IParentGrid {
@@ -19,6 +20,7 @@ namespace SoundExplorers.Tests.Controller {
       Controller = (TestParentGridController)controller;
     }
 
+    [ExcludeFromCodeCoverage]
     public override string Name => "MockParentGrid";
   }
 }

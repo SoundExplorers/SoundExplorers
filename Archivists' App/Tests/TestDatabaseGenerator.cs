@@ -42,7 +42,7 @@ namespace SoundExplorers.Tests {
       Data.AddNewslettersPersisted(64, Session);
       Data.AddSeriesPersisted(8, Session);
       AddEvents();
-      // AddSets();
+      AddSets();
       Session.Commit();
     }
 

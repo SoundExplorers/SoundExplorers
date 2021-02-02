@@ -259,6 +259,24 @@ namespace SoundExplorers.Tests.Controller {
     }
 
     [Test]
+    public void EmptyIntegerCellException() {
+      AddDataForSetList();
+      CreateControllers(typeof(SetList));
+      Controller.Populate(); // Populate grid
+      MainGridController.CreateAndGoToNewRow();
+      var exception = new ArgumentException(
+        " is not a valid value for Int32. (Parameter 'value').");
+      MainGridController.OnCellEditError(5, "SetNo", exception);
+      Assert.AreEqual(1, View.ShowErrorMessageCount, "ShowErrorMessageCount");
+      Assert.AreEqual("SetNo must be an integer between 1 and 99.", 
+        View.LastErrorMessage, "LastErrorMessage");
+      exception = new ArgumentException("Unexpected message");
+      Assert.Throws<ArgumentException>(() =>
+        MainGridController.OnCellEditError(5, "SetNo", exception),
+        "ArgumentException with unexpected message rethrown");
+    }
+
+    [Test]
     public void ErrorOnDelete() {
       Session.BeginUpdate();
       try {
