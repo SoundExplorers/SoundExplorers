@@ -12,7 +12,7 @@ namespace SoundExplorers.Tests {
     /// <summary>
     ///   1 to enable generate
     /// </summary>
-    private static int DoIt => 0;
+    private static int DoIt => 1;
 
     private TestData Data { get; set; } = null!;
     private TestSession Session { get; set; } = null!;
@@ -41,8 +41,8 @@ namespace SoundExplorers.Tests {
       Data.AddLocationsPersisted(8, Session);
       Data.AddNewslettersPersisted(64, Session);
       Data.AddSeriesPersisted(8, Session);
-      AddEvents();
-      AddSets();
+      // AddEvents();
+      // AddSets();
       Session.Commit();
     }
 
