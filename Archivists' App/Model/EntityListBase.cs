@@ -397,7 +397,7 @@ namespace SoundExplorers.Model {
     private void BindingList_ListChanged(object sender, ListChangedEventArgs e) {
       switch (e.ListChangedType) {
         case ListChangedType.ItemAdded: // Insertion row entered
-          Debug.WriteLine("ListChangedType.ItemAdded: Insertion row entered");
+          // Debug.WriteLine("ListChangedType.ItemAdded: Insertion row entered");
           IsInsertionRowCurrent = true;
           break;
         case ListChangedType.ItemChanged: // Cell edit completed
