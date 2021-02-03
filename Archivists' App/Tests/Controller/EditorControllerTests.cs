@@ -133,6 +133,17 @@ namespace SoundExplorers.Tests.Controller {
     }
 
     [Test]
+    public void CloseChildEditorIfNoParents() {
+      CreateControllers(typeof(SetList));
+      Controller.Populate(); // Populate grid
+      Assert.AreEqual(1, View.CloseCount, "CloseCount");
+      Assert.AreEqual(1, View.ShowErrorMessageCount, "ShowErrorMessageCount");
+      Assert.AreEqual(
+        "The Set editor cannot be used yet because the Event table is empty.", 
+        View.LastErrorMessage, "LastErrorMessage");
+    }
+
+    [Test]
     public void Delete() {
       Session.BeginUpdate();
       try {

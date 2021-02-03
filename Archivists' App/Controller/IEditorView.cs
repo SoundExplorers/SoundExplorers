@@ -3,6 +3,7 @@
     IGrid? CurrentGrid { get; }
     IMainGrid MainGrid { get; }
     IParentGrid ParentGrid { get; }
+    void Close();
     void OnError();
     void OnParentAndMainGridsShownAsync();
     void PopulateMainGridOnParentRowChanged(int parentRowIndex);

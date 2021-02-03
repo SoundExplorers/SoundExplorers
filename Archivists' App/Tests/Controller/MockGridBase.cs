@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using SoundExplorers.Controller;
 
 namespace SoundExplorers.Tests.Controller {
@@ -47,12 +48,12 @@ namespace SoundExplorers.Tests.Controller {
       Controller.OnRowEnter(rowIndex);
     }
 
-    public void OnPopulated() {
-      Controller.OnPopulatedAsync();
-    }
-
     public void Populate() {
       Controller.Populate();
+    }
+
+    public void BeginInvoke(Action action) {
+      action.Invoke();
     }
 
     public virtual void Focus() {

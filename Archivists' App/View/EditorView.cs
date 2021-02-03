@@ -47,6 +47,10 @@ namespace SoundExplorers.View {
     IMainGrid IEditorView.MainGrid => MainGrid;
     IParentGrid IEditorView.ParentGrid => ParentGrid;
 
+    void IEditorView.Close() {
+      Close();
+    }
+
     public void OnError() {
       // Debug.WriteLine("EditorView.OnError");
       SetMouseCursorToWait();

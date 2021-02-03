@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SoundExplorers.Controller {
   public interface IGrid {
@@ -14,6 +15,7 @@ namespace SoundExplorers.Controller {
     string Name { get; }
 
     int RowCount { get; }
+    void BeginInvoke(Action action);
     void Focus();
 
     /// <summary>
@@ -21,7 +23,7 @@ namespace SoundExplorers.Controller {
     /// </summary>
     void MakeRowCurrent(int rowIndex, bool async = false);
 
-    void OnPopulated();
+    // void OnPopulated();
 
     /// <summary>
     ///   Populates and sorts the grid.

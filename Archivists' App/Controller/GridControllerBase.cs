@@ -52,6 +52,7 @@ namespace SoundExplorers.Controller {
 
     protected bool IsPopulating { get; private set; }
     private IGrid OtherGrid => _otherGrid ??= GetOtherGrid();
+    public string TableName => List.EntityTypeName;
 
     private IList<IBindingColumn> CreateBindingColumns() {
       return (from column in Columns select (IBindingColumn)column).ToList();
@@ -99,7 +100,8 @@ namespace SoundExplorers.Controller {
       IsPopulating = true;
       List.Populate(IdentifyingParentChildrenForList);
       IdentifyingParentChildrenForList = null;
-      Grid.OnPopulated();
+      Grid.BeginInvoke(OnPopulatedAsync);
+      // Grid.OnPopulated();
     }
 
     public virtual void PrepareForFocus() {

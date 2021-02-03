@@ -73,6 +73,13 @@ namespace SoundExplorers.Controller {
     public override void Populate() {
       PreviousRowIndex = -1;
       base.Populate();
+      if (List.Count == 0) {
+        string errorMessage =
+          $"The {MainGrid.Controller.TableName} editor cannot be used yet because " +
+          $"the {TableName} table is empty.";
+        EditorController.View.ShowErrorMessage(errorMessage);
+        Grid.BeginInvoke(EditorController.View.Close);
+      }
     }
 
     /// <summary>

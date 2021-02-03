@@ -82,6 +82,10 @@ namespace SoundExplorers.View {
 
     int IGrid.RowCount => RowCount;
 
+    void IGrid.BeginInvoke(Action action) {
+      BeginInvoke(action);
+    }
+
     void IGrid.Focus() {
       Focus();
     }
@@ -99,10 +103,11 @@ namespace SoundExplorers.View {
       }
     }
 
-    public virtual void OnPopulated() {
-      Debug.WriteLine($"GridBase.OnPopulated {Name}");
-      BeginInvoke((Action)Controller.OnPopulatedAsync);
-    }
+    // public virtual void OnPopulated() {
+    //   // TODO AsyncInvoke
+    //   Debug.WriteLine($"GridBase.OnPopulated {Name}");
+    //   BeginInvoke((Action)Controller.OnPopulatedAsync);
+    // }
 
     /// <summary>
     ///   Populates and sorts the grid.

@@ -1,4 +1,5 @@
-﻿using SoundExplorers.Controller;
+﻿using System;
+using SoundExplorers.Controller;
 
 namespace SoundExplorers.Tests.Controller {
   public class MockEditorView : IEditorView {
@@ -7,6 +8,7 @@ namespace SoundExplorers.Tests.Controller {
       ParentGrid = parentGrid;
     }
 
+    internal int CloseCount { get; private set; }
     internal string LastErrorMessage { get; private set; } = null!;
     internal TestMainGridController MainGridController { get; set; } = null!;
     internal int OnParentAndMainGridsShownAsyncCount { get; private set; }
@@ -21,6 +23,10 @@ namespace SoundExplorers.Tests.Controller {
 
     public void SetController(EditorController controller) {
       Controller = controller;
+    }
+
+    public void Close() {
+      CloseCount++;
     }
 
     public void OnError() {
