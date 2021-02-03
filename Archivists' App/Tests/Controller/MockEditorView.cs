@@ -1,5 +1,4 @@
-﻿using System;
-using SoundExplorers.Controller;
+﻿using SoundExplorers.Controller;
 
 namespace SoundExplorers.Tests.Controller {
   public class MockEditorView : IEditorView {

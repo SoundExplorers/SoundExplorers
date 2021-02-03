@@ -103,12 +103,6 @@ namespace SoundExplorers.View {
       }
     }
 
-    // public virtual void OnPopulated() {
-    //   // TODO AsyncInvoke
-    //   Debug.WriteLine($"GridBase.OnPopulated {Name}");
-    //   BeginInvoke((Action)Controller.OnPopulatedAsync);
-    // }
-
     /// <summary>
     ///   Populates and sorts the grid.
     /// </summary>

@@ -35,7 +35,7 @@ namespace SoundExplorers.Controller {
       return List.GetIdentifyingParentChildrenForMainList(rowIndex)!;
     }
 
-    public override void OnPopulatedAsync() {
+    protected override void OnPopulatedAsync() {
       IsJustPopulated = true;
       base.OnPopulatedAsync();
     }

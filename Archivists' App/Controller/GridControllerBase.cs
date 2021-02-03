@@ -87,7 +87,7 @@ namespace SoundExplorers.Controller {
 
     public abstract void OnRowEnter(int rowIndex);
 
-    public virtual void OnPopulatedAsync() {
+    protected virtual void OnPopulatedAsync() {
       Debug.WriteLine($"GridControllerBase.OnPopulatedAsync {Grid.Name}");
       IsPopulating = false;
       if (Grid.RowCount > 1) {
@@ -101,7 +101,6 @@ namespace SoundExplorers.Controller {
       List.Populate(IdentifyingParentChildrenForList);
       IdentifyingParentChildrenForList = null;
       Grid.BeginInvoke(OnPopulatedAsync);
-      // Grid.OnPopulated();
     }
 
     public virtual void PrepareForFocus() {

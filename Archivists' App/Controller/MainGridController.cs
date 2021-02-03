@@ -113,7 +113,7 @@ namespace SoundExplorers.Controller {
       }
     }
 
-    public override void OnPopulatedAsync() {
+    protected override void OnPopulatedAsync() {
       Debug.WriteLine("MainGridController.OnPopulatedAsync");
       if (List.IsChildList) {
         EditorController.View.OnParentAndMainGridsShownAsync();
