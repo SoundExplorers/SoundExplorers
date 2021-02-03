@@ -292,7 +292,6 @@ namespace SoundExplorers.Controller {
         Grid.MakeRowCurrent(insertionRowIndex - 1);
         List.RemoveInsertionBindingItem(); // Backs up the error insertion item
         // Force a new row to be created with the erroneous data restored to it.
-        // insertionRowIndex = List.BindingList!.Count - 1;
         Grid.MakeRowCurrent(insertionRowIndex); 
       }
     }
