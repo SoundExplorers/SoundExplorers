@@ -42,7 +42,15 @@ namespace SoundExplorers.Controller {
 
     private IParentGrid ParentGrid => EditorController.View.ParentGrid;
 
-    public void OnCellEditError(int rowIndex, string columnName,
+    /// <summary>
+    ///   Occurs when an exception is thrown on ending a cell edit. 
+    /// </summary>
+    /// <remarks>
+    ///   A <see cref="DatabaseUpdateErrorException" />, which is explicitly thrown by
+    ///   the application's code, is thrown at end of cell edit on existing rows but on
+    ///   row validation for the insertion row, when this event is not raised.
+    /// </remarks>
+    public void OnCellEditException(int rowIndex, string columnName,
       Exception? exception) {
       switch (exception) {
         case ArgumentException argumentException:

@@ -43,12 +43,23 @@ namespace SoundExplorers.Controller {
       return ReferenceableItemList.ToSimpleKey(value);
     }
 
+    /// <summary>
+    ///   As the combo boxes in the main grid are all dropdown lists, it is only possible
+    ///   to attempt to update one with a value that is not available for selection by
+    ///   pasting.  For the insertion row, we need to check for that here.
+    /// </summary>
+    /// <remarks>
+    ///   For existing rows, this validation is done in
+    ///   <see cref="MainGridController.OnCellEditException"/>.
+    /// </remarks>
     public void OnCellValueChanged(int rowIndex,
       object? cellValue) {
-      // Null cell value has only been found when we can ignore it: on pasting an invalid
-      // format date into Event.Newsletter on the insertion row when there are no
-      // existing rows and Location has not been specified. A format error message will
-      // be shown for the invalid Newsletter in MainGridController.OnCellEditError.
+      // It is impossible to paste null, so, when we detect it here, it must be a
+      // programming artefact. And a null cell value has only been found when we can
+      // ignore it: on pasting an invalid format date into Event.Newsletter on the
+      // insertion row when there are no existing rows and Location has not been
+      // specified. A format error message will be shown for the invalid Newsletter in
+      // MainGridController.OnCellEditException.
       if (!MainGridController.IsInsertionRowCurrent || cellValue == null) {
         return;
       }
