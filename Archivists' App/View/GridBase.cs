@@ -87,6 +87,7 @@ namespace SoundExplorers.View {
     }
 
     void IGrid.Focus() {
+      Debug.WriteLine($"GridBase.Focus {Name}");
       Focus();
     }
 
