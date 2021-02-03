@@ -158,11 +158,13 @@ namespace SoundExplorers.Model {
         //throw new ConstraintException("Test error message");
         Session.Unpersist(this[rowIndex]);
         RemoveAt(rowIndex);
+        Session.Commit();
       } catch (Exception exception) {
+        Session.Abort();
         BindingList!.Insert(rowIndex, BackupBindingItem);
         throw CreateDatabaseUpdateErrorException(exception, rowIndex);
-      } finally {
-        Session.Commit();
+      // } finally {
+      //   Session.Commit();
       }
     }
 
