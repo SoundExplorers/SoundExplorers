@@ -149,6 +149,7 @@ namespace SoundExplorers.Model {
     ///   A database update error occured.
     /// </exception>
     public void DeleteEntity(int rowIndex) {
+      Debug.WriteLine($"EntityListBase.DeleteEntity: row {rowIndex}");
       // Debug.WriteLine(
       //   $"{nameof(DeleteEntity)}: IsInsertionRowCurrent = {IsInsertionRowCurrent}; BindingList.Count = {BindingList.Count}");
       LastDatabaseChangeAction = StatementType.Delete;

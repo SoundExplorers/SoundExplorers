@@ -154,7 +154,7 @@ namespace SoundExplorers.Controller {
     ///   from the list.
     /// </summary>
     public void OnRowRemoved(int rowIndex) {
-      //Debug.WriteLine("MainGridController.OnRowRemoved");
+      Debug.WriteLine($"MainGridController.OnRowRemoved: row {rowIndex}");
       // Debug.WriteLine(
       //   $"{nameof(OnMainGridRowRemoved)}:  2 or 3 times on opening a table before 1st ItemAdded (insertion row entered); existing row removed");
       // For unknown reason, the grid's RowsRemoved event is raised 2 or 3 times while

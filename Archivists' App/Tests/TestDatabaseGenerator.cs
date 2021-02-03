@@ -41,8 +41,8 @@ namespace SoundExplorers.Tests {
       Data.AddLocationsPersisted(8, Session);
       Data.AddNewslettersPersisted(64, Session);
       Data.AddSeriesPersisted(8, Session);
-      // AddEvents();
-      // AddSets();
+      AddEvents();
+      AddSets();
       Session.Commit();
     }
 
