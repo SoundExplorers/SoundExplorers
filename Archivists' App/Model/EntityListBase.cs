@@ -68,7 +68,7 @@ namespace SoundExplorers.Model {
     }
 
     /// <summary>
-    ///   Gets a strongly typed view of the binding list to facilitate testing.
+    ///   Gets a strongly typed view of the binding list.
     /// </summary>
     internal TypedBindingList<TEntity, TBindingItem> TypedBindingList =>
       (TypedBindingList<TEntity, TBindingItem>)BindingList!;

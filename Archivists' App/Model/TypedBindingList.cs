@@ -4,7 +4,7 @@ using SoundExplorers.Data;
 
 namespace SoundExplorers.Model {
   /// <summary>
-  ///   A strongly typed binding list to facilitate testing.
+  ///   A strongly typed binding list.
   /// </summary>
   public class TypedBindingList<TEntity, TBindingItem> : BindingList<TBindingItem>
     where TEntity : EntityBase, new()
