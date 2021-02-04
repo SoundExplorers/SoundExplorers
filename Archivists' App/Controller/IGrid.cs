@@ -19,11 +19,11 @@ namespace SoundExplorers.Controller {
     void Focus();
 
     /// <summary>
-    ///   Makes the specified row current, which will set focus and raise OnRowEnter.
+    ///   Makes the specified row current, which will set focus and raise OnRowEnter. If
+    ///   the new row index is specified, the insertion binding item will be added
+    ///   (unless the new row is already current). 
     /// </summary>
     void MakeRowCurrent(int rowIndex, bool async = false);
-
-    // void OnPopulated();
 
     /// <summary>
     ///   Populates and sorts the grid.

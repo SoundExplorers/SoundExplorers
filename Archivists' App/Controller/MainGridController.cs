@@ -189,10 +189,7 @@ namespace SoundExplorers.Controller {
     public void OnRowValidated(int rowIndex) {
       Debug.WriteLine($"MainGridController.OnRowValidated: row {rowIndex}");
       //Debug.WriteLine("MainGridController.OnRowValidated:  Any row left, after final ItemChanged, if any");
-      // Debug.WriteLine(
-      //   $"MainGridController.OnRowValidated: row {rowIndex}, IsRemovingInvalidInsertionRow == {MainList.IsRemovingInvalidInsertionRow}");
-      if (List.IsRemovingInvalidInsertionRow ||
-          IsPopulating || EditorController.IsClosing ||
+      if (IsPopulating || EditorController.IsClosing ||
           EditorController.MainController.IsClosing) {
         return;
       }
@@ -296,12 +293,11 @@ namespace SoundExplorers.Controller {
       // Debug.WriteLine("EditorController.CancelInsertion");
       int insertionRowIndex = List.BindingList!.Count - 1;
       if (insertionRowIndex > 0) {
-        List.IsRemovingInvalidInsertionRow = true;
         Grid.MakeRowCurrent(insertionRowIndex - 1);
-        List.RemoveInsertionBindingItem(); // Backs up the error insertion item
-        // Force a new row to be created with the erroneous data restored to it.
-        Grid.MakeRowCurrent(insertionRowIndex); 
       }
+      // Force a new row to be created with the erroneous data restored to it.
+      List.BackupAndRemoveInsertionErrorBindingItem(); // Backs up the error insertion item
+      Grid.MakeRowCurrent(insertionRowIndex);
     }
   }
 }

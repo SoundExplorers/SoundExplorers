@@ -33,7 +33,6 @@ namespace SoundExplorers.Model {
     /// </summary>
     bool IsInsertionRowCurrent { get; }
 
-    bool IsRemovingInvalidInsertionRow { get; set; }
     DatabaseUpdateErrorException? LastDatabaseUpdateErrorException { get; set; }
 
     /// <summary>
@@ -47,6 +46,12 @@ namespace SoundExplorers.Model {
     ///   should only be needed for testing.
     /// </summary>
     SessionBase Session { set; }
+    
+    /// <summary>
+    ///   Removes an erroneous insertion binding item after first backing it up to be
+    ///   restored when a new row is subsequently added. 
+    /// </summary>
+    void BackupAndRemoveInsertionErrorBindingItem();
 
     /// <summary>
     ///   Deletes the entity at the specified row index from the database and removes it
@@ -107,12 +112,6 @@ namespace SoundExplorers.Model {
       bool createBindingList = true);
 
     void RestoreCurrentBindingItemOriginalValues();
-    
-    /// <summary>
-    ///   Removes an erroneous insertion binding item after first backing it up to be
-    ///   restored when a new row is subsequently added. 
-    /// </summary>
-    void RemoveInsertionBindingItem();
     
     void RestoreReferencingPropertyOriginalValue(int rowIndex, int columnIndex);
   }

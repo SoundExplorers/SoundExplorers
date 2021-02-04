@@ -120,7 +120,6 @@ namespace SoundExplorers.Model {
     /// </remarks>
     public bool IsInsertionRowCurrent { get; private set; }
 
-    public bool IsRemovingInvalidInsertionRow { get; set; }
     public DatabaseUpdateErrorException? LastDatabaseUpdateErrorException { get; set; }
 
     /// <summary>
@@ -136,6 +135,16 @@ namespace SoundExplorers.Model {
     public SessionBase Session {
       get => _session ??= Global.Session;
       set => _session = value;
+    }
+
+    /// <summary>
+    ///   Removes an erroneous insertion binding item after first backing it up to be
+    ///   restored when a new row is subsequently added. 
+    /// </summary>
+    public void BackupAndRemoveInsertionErrorBindingItem() {
+      // Debug.WriteLine("EntityListBase.BackupAndRemoveInsertionErrorBindingItem");
+      BindingList!.InsertionErrorItem = (IBindingItem)BindingList[^1]!;
+      BindingList?.RemoveAt(BindingList!.Count - 1);
     }
 
     /// <summary>
@@ -163,8 +172,6 @@ namespace SoundExplorers.Model {
         Session.Abort();
         BindingList!.Insert(rowIndex, BackupBindingItem);
         throw CreateDatabaseUpdateErrorException(exception, rowIndex);
-      // } finally {
-      //   Session.Commit();
       }
     }
 
@@ -297,7 +304,9 @@ namespace SoundExplorers.Model {
       if (isTransactionRequired) {
         Session.Commit();
       }
-      Sort(EntityComparer);
+      if (!IsChildList) {
+        Sort(EntityComparer);
+      }
       if (!createBindingList) {
         return;
       }
@@ -306,18 +315,6 @@ namespace SoundExplorers.Model {
       }
       BindingList = CreateBindingList();
       BindingList.ListChanged += BindingList_ListChanged;
-    }
-
-    /// <summary>
-    ///   Removes an erroneous insertion binding item after first backing it up to be
-    ///   restored when a new row is subsequently added. 
-    /// </summary>
-    public void RemoveInsertionBindingItem() {
-      // Debug.WriteLine("EntityListBase.RemoveInsertionBindingItem");
-      IsInsertionRowCurrent = false;
-      IsRemovingInvalidInsertionRow = false;
-      BindingList!.InsertionErrorItem = (IBindingItem)BindingList[^1]!;
-      BindingList?.Remove(BindingList!.InsertionErrorItem);
     }
 
     public void RestoreCurrentBindingItemOriginalValues() {
@@ -387,7 +384,6 @@ namespace SoundExplorers.Model {
         Session.Persist(entity);
         Add(entity);
         Session.Commit();
-        IsRemovingInvalidInsertionRow = false;
       } catch (Exception exception) {
         //Debug.WriteLine(exception);
         Session.Abort();

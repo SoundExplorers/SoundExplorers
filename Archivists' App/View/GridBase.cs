@@ -93,7 +93,8 @@ namespace SoundExplorers.View {
 
     /// <summary>
     ///   Makes the specified row current, which will set focus and raise
-    ///   <see cref="OnRowEnter" />.
+    ///   <see cref="OnRowEnter" />. If the new row index is specified, the insertion
+    ///   binding item will be added (unless the new row is already current). 
     /// </summary>
     public void MakeRowCurrent(int rowIndex, bool async = false) {
       Debug.WriteLine($"GridBase.MakeRowCurrent {Name}: row {rowIndex}");
