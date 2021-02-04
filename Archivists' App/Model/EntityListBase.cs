@@ -84,7 +84,7 @@ namespace SoundExplorers.Model {
     /// <summary>
     ///   Gets the binding list representing the list of entities and bound to the grid.
     /// </summary>
-    public ITypedBindingList? BindingList { get; private set; }
+    public IBindingList? BindingList { get; private set; }
 
     /// <summary>
     ///   Gets metadata for the columns of the editor grid that represents the list of
@@ -143,7 +143,7 @@ namespace SoundExplorers.Model {
     /// </summary>
     public void BackupAndRemoveInsertionErrorBindingItem() {
       // Debug.WriteLine("EntityListBase.BackupAndRemoveInsertionErrorBindingItem");
-      BindingList!.InsertionErrorItem = (IBindingItem)BindingList[^1]!;
+      TypedBindingList!.InsertionErrorItem = TypedBindingList[^1]!.CreateBackup();
       BindingList?.RemoveAt(BindingList!.Count - 1);
     }
 

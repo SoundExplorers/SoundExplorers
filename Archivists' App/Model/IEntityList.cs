@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using VelocityDb.Session;
 
 namespace SoundExplorers.Model {
@@ -11,7 +12,7 @@ namespace SoundExplorers.Model {
     /// <summary>
     ///   Gets the binding list representing the list of entities.
     /// </summary>
-    ITypedBindingList? BindingList { get; }
+    IBindingList? BindingList { get; }
 
     /// <summary>
     ///   Gets metadata for the columns of the editor grid that represents the list of
