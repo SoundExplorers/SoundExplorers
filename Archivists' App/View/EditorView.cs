@@ -15,8 +15,9 @@ namespace SoundExplorers.View {
       InitializeComponent();
       // Allow things to be dropped on to the PictureBox.
       FittedPictureBox1.AllowDrop = true;
-      GridSplitContainer.GotFocus += SplitContainer_GotFocus;
-      ImageSplitContainer.GotFocus += SplitContainer_GotFocus;
+      GridSplitContainer.MouseCaptureChanged += GridSplitContainer_MouseCaptureChanged;
+      // THE FOLLOWING RELATES TO A FEATURE THAT IS NOT YET IN USE BUT MAY BE LATER
+      ImageSplitContainer.MouseCaptureChanged += GridSplitContainer_MouseCaptureChanged;
     }
 
     private EditorController Controller { get; set; } = null!;
@@ -182,6 +183,7 @@ namespace SoundExplorers.View {
     }
 
     /// <summary>
+    ///   THE FOLLOWING RELATES TO A FEATURE THAT IS NOT YET IN USE BUT MAY BE LATER:
     ///   Handles the picture box's <see cref="Control.MouseDown" /> event to initiate a
     ///   drag-and-drop operation to allow the path of the image displayed in the picture
     ///   box to be dropped on another application.
@@ -192,6 +194,14 @@ namespace SoundExplorers.View {
         new[] {FittedPictureBox1.ImageLocation});
       FittedPictureBox1.DoDragDrop(
         data, DragDropEffects.Copy | DragDropEffects.None);
+    }
+
+    /// <summary>
+    ///   Shifts the focus back to the current grid when the user lets go of the grid
+    ///   splitter with the mouse.
+    /// </summary>
+    private void GridSplitContainer_MouseCaptureChanged(object? sender, EventArgs e) {
+      BeginInvoke((Action)Controller.FocusCurrentGrid);
     }
 
     /// <summary>
@@ -259,6 +269,9 @@ namespace SoundExplorers.View {
       MainGrid.Enabled = true;
       if (Controller.IsParentGridToBeShown) {
         ParentGrid.Enabled = true;
+        // When an existing parent /child editor window is activated,the grid splitter
+        // gets focused. So we need to switch focus to the parent grid.
+        BeginInvoke((Func<bool>)ParentGrid.Focus);
       }
     }
 
@@ -356,20 +369,6 @@ namespace SoundExplorers.View {
       MainView.Cursor = Cursors.Default;
       MessageBox.Show(
         this, text, Application.ProductName, MessageBoxButtons.OK, icon);
-    }
-
-    /// <summary>
-    ///   Handle's a SplitContainer's GotFocus event to shift the focus to the current
-    ///   grid when the SplitContainer gets the focus.
-    /// </summary>
-    /// <remarks>
-    ///   For unknown reason, when an existing table form is activated,the grid
-    ///   SplitContainer gets focused. In any case, we want focus to return to the
-    ///   current grid after the user has grabbed the splitter.
-    /// </remarks>
-    private void SplitContainer_GotFocus(object? sender, EventArgs e) {
-      Debug.WriteLine("EditorView.GridSplitContainer_GotFocus");
-      BeginInvoke((Action)Controller.FocusCurrentGrid);
     }
 
     protected override void WndProc(ref Message m) {
