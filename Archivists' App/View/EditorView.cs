@@ -19,6 +19,7 @@ namespace SoundExplorers.View {
       ImageSplitContainer.GotFocus += SplitContainer_GotFocus;
     }
 
+    private EditorController Controller { get; set; } = null!;
     public GridBase? CurrentGrid { get; internal set; }
     private MainView MainView => (MainView)MdiParent;
     private bool IsClosed { get; set; }
@@ -39,10 +40,9 @@ namespace SoundExplorers.View {
     ///   the base method from being called.  That is not practicable, as it prevents
     ///   editor controls from appearing in grid cells when they are edited!
     /// </remarks>
-    private bool IsFixingFocus { get; set; }
+    internal bool IsFixingFocus { get; set; }
 
     private SizeableFormOptions SizeableFormOptions { get; set; } = null!;
-    private EditorController Controller { get; set; } = null!;
     IGrid? IEditorView.CurrentGrid => CurrentGrid;
     IMainGrid IEditorView.MainGrid => MainGrid;
     IParentGrid IEditorView.ParentGrid => ParentGrid;
@@ -240,7 +240,7 @@ namespace SoundExplorers.View {
       if (IsFixingFocus) {
         IsFixingFocus = false;
         // Stops the main grid from being focused when the user changes row on the parent
-        // grid, repopulating the main grid.
+        // grid, repopulating the main grid.  See also the comments for IsFixingFocus. 
         return;
       }
       MainGrid.Controller.OnRowValidated(e.RowIndex);
