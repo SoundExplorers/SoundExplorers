@@ -239,9 +239,9 @@ namespace SoundExplorers.View {
       Debug.WriteLine($"EditorView.MainGrid_RowValidated: row {e.RowIndex}");
       if (IsFixingFocus) {
         IsFixingFocus = false;
-        if (!MainGrid.Controller.IsInsertionRowCurrent) {
-          return;
-        }
+        // Stops the main grid from being focused when the user changes row on the parent
+        // grid, repopulating the main grid.
+        return;
       }
       MainGrid.Controller.OnRowValidated(e.RowIndex);
     }
