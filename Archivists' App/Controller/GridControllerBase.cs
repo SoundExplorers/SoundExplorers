@@ -107,7 +107,8 @@ namespace SoundExplorers.Controller {
       Debug.WriteLine($"GridControllerBase.PrepareForFocus {Grid.Name}");
       if (!IsPopulating) {
         EditorController.View.SetMouseCursorToWait();
-        if (EditorController.IsParentGridToBeShown) {
+        if (EditorController.IsParentGridToBeShown 
+            && EditorController.View.CurrentGrid != Grid) {
           PrepareToSwitchFocusFromOtherGridToThis();
         }
       }
