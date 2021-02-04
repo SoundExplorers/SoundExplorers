@@ -291,8 +291,9 @@ namespace SoundExplorers.Controller {
     private void CancelInsertion() {
       // Debug.WriteLine("EditorController.CancelInsertion");
       int insertionRowIndex = List.BindingList!.Count - 1;
+      // Backs up the error insertion item
+      List.BackupAndRemoveInsertionErrorBindingItem(); 
       // Force a new row to be created with the erroneous data restored to it.
-      List.BackupAndRemoveInsertionErrorBindingItem(); // Backs up the error insertion item
       Grid.MakeRowCurrent(insertionRowIndex);
     }
   }
