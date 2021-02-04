@@ -282,19 +282,15 @@ namespace SoundExplorers.Controller {
     }
 
     /// <summary>
-    ///   Invoked when the user clicks OK on an insert error message box. If the
-    ///   insertion row is not the only row, the row above the insertion row is
-    ///   temporarily made current, which allows the insertion row to be removed. The
-    ///   insertion row is then removed and a new row is created and made current with
-    ///   the error data restored for correction or cancellation of the insertion by the
-    ///   user.
+    ///   Invoked when the user clicks OK on an insert error message box. The insertion
+    ///   row is then removed and a new row is created and made current with the error
+    ///   data restored for correction or cancellation of the insertion by the user.
+    ///   If this were not done, the user could go to a new row below the error row,
+    ///   leaving the error row on the grid but not bound to an entity.
     /// </summary>
     private void CancelInsertion() {
       // Debug.WriteLine("EditorController.CancelInsertion");
       int insertionRowIndex = List.BindingList!.Count - 1;
-      if (insertionRowIndex > 0) {
-        Grid.MakeRowCurrent(insertionRowIndex - 1);
-      }
       // Force a new row to be created with the erroneous data restored to it.
       List.BackupAndRemoveInsertionErrorBindingItem(); // Backs up the error insertion item
       Grid.MakeRowCurrent(insertionRowIndex);

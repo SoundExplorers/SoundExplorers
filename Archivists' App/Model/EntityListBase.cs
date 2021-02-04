@@ -143,6 +143,7 @@ namespace SoundExplorers.Model {
     /// </summary>
     public void BackupAndRemoveInsertionErrorBindingItem() {
       // Debug.WriteLine("EntityListBase.BackupAndRemoveInsertionErrorBindingItem");
+      // Just creating a backup rather than using the original does not help.
       TypedBindingList!.InsertionErrorItem = TypedBindingList[^1]!.CreateBackup();
       BindingList?.RemoveAt(BindingList!.Count - 1);
     }

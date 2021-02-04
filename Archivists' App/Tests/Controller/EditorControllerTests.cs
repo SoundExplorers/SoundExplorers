@@ -183,9 +183,7 @@ namespace SoundExplorers.Tests.Controller {
       MainGridController.OnRowValidated(1);
       Assert.AreEqual(1, View.ShowErrorMessageCount,
         "ShowErrorMessageCount after error message shown for duplicate insert");
-      // See MainGridController.CancelInsertion documentation for why two more rows have
-      // been made current.
-      Assert.AreEqual(3, MainGrid.MakeRowCurrentCount,
+      Assert.AreEqual(2, MainGrid.MakeRowCurrentCount,
         "MakeRowCurrentCount after error message shown for duplicate insert");
       Assert.AreEqual(1, MainGrid.CurrentRowIndex,
         "CurrentRowIndex after error message shown for duplicate insert");
