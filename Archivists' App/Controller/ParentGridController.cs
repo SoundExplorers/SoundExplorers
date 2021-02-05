@@ -56,6 +56,7 @@ namespace SoundExplorers.Controller {
       }
       if (!IsPopulating && rowIndex != PreviousRowIndex) {
         Debug.WriteLine("    Populating main grid");
+        EditorController.View.SetMouseCursorToWait();
         EditorController.View.PopulateMainGridOnParentRowChanged(rowIndex);
       }
       PreviousRowIndex = rowIndex;
