@@ -90,7 +90,7 @@ namespace SoundExplorers.Tests.Model {
     public void DisallowDuplicateKey() {
       List.Populate();
       List.OnRowEnter(2);
-      var bindingList = (TypedBindingList<Event, EventBindingItem>)List.BindingList!;
+      var bindingList = List.BindingList!;
       Exception exception = Assert.Catch<DuplicateNameException>(
         ()=> bindingList[2].Date = Data.Events[0].Date, 
         "Changing Date to duplicate for Location disallowed");
@@ -121,7 +121,7 @@ namespace SoundExplorers.Tests.Model {
       var series = Data.Series[0];
       const string notes = "My notes";
       List.Populate();
-      var bindingList = List.TypedBindingList;
+      var bindingList = List.BindingList!;
       List.OnRowEnter(1);
       bindingList[1].Date = date;
       bindingList[1].Location = location.Name!;

@@ -53,7 +53,7 @@ namespace SoundExplorers.Tests.Model {
       const string name3 = "Rehearsal";
       var list = new TEntityList {Session = Session};
       list.Populate(); // Creates an empty BindingList
-      var bindingList = list.TypedBindingList;
+      var bindingList = list.BindingList!;
       var item1 = bindingList.AddNew();
       list.OnRowEnter(0);
       item1.Name = name1;
@@ -69,7 +69,7 @@ namespace SoundExplorers.Tests.Model {
       Assert.AreEqual(name2, entity2.Name, "2nd entity Name after 2nd add");
       // Refresh the grid from the saved entities on the database
       list.Populate();
-      bindingList = list.TypedBindingList;
+      bindingList = list.BindingList!;
       Assert.AreEqual(2, bindingList.Count, "editor.Count after Populate");
       // After being refreshed by Populate, the table should now be sorted into Name order.
       Assert.AreEqual(name2, bindingList[0].Name, "1st item Name after populate");
@@ -82,7 +82,7 @@ namespace SoundExplorers.Tests.Model {
       Assert.AreEqual(name3, entity1.Name, "1st entity Name after update");
       list.DeleteEntity(0); // And delete it
       list.Populate(); // And refresh the grid from the database again.
-      bindingList = list.TypedBindingList;
+      bindingList = list.BindingList!;
       Assert.AreEqual(1, list.Count, "Entity count after delete and repopulate");
       entity1 = list[0];
       Assert.AreEqual(name1, entity1.Name, "1st entity Name after delete and repopulate");
@@ -135,7 +135,7 @@ namespace SoundExplorers.Tests.Model {
       const string name = "Performance";
       var list = new TEntityList {Session = Session};
       list.Populate(); // Creates an empty BindingList
-      var bindingList = list.TypedBindingList;
+      var bindingList = list.BindingList!;
       var item1 = bindingList.AddNew();
       list.OnRowEnter(0);
       item1.Name = name;
@@ -168,7 +168,7 @@ namespace SoundExplorers.Tests.Model {
       const string name2 = "Rehearsal";
       var list = new TEntityList {Session = Session};
       list.Populate(); // Creates an empty BindingList
-      var bindingList = list.TypedBindingList;
+      var bindingList = list.BindingList!;
       var item1 = bindingList.AddNew();
       list.OnRowEnter(0);
       item1.Name = name1;
@@ -196,7 +196,7 @@ namespace SoundExplorers.Tests.Model {
     public void IsInsertionRowCurrent() {
       var list = new GenreList {Session = Session};
       list.Populate(); // Creates an empty BindingList
-      var bindingList = list.TypedBindingList;
+      var bindingList = list.BindingList!;
       Assert.IsFalse(list.IsInsertionRowCurrent, "IsInsertionRowCurrent initially");
       bindingList.AddNew();
       Assert.IsTrue(list.IsInsertionRowCurrent,

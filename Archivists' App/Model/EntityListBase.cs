@@ -68,10 +68,10 @@ namespace SoundExplorers.Model {
     }
 
     /// <summary>
-    ///   Gets a strongly typed view of the binding list.
+    ///   Gets a strongly typed view of the binding list representing the list of
+    ///   entities and bound to the grid.
     /// </summary>
-    internal TypedBindingList<TEntity, TBindingItem> TypedBindingList =>
-      (TypedBindingList<TEntity, TBindingItem>)BindingList!;
+    internal TypedBindingList<TEntity, TBindingItem>? BindingList { get; private set; }
 
     private bool HasRowBeenEdited { get; set; }
 
@@ -84,7 +84,7 @@ namespace SoundExplorers.Model {
     /// <summary>
     ///   Gets the binding list representing the list of entities and bound to the grid.
     /// </summary>
-    public IBindingList? BindingList { get; private set; }
+    IBindingList? IEntityList.BindingList => BindingList;
 
     /// <summary>
     ///   Gets metadata for the columns of the editor grid that represents the list of
@@ -146,8 +146,8 @@ namespace SoundExplorers.Model {
       // Just creating a backup rather than using the original does not help.
       // BindingList!.InsertionErrorItem = BindingList[^1]!.CreateBackup();
       int insertionRowIndex = BindingList!.Count - 1; 
-      TypedBindingList!.InsertionErrorItem = TypedBindingList[insertionRowIndex]!;
-      BindingList?.RemoveAt(insertionRowIndex);
+      BindingList.InsertionErrorItem = BindingList[insertionRowIndex]!;
+      BindingList.RemoveAt(insertionRowIndex);
     }
 
     /// <summary>
@@ -173,7 +173,7 @@ namespace SoundExplorers.Model {
         Session.Commit();
       } catch (Exception exception) {
         Session.Abort();
-        BindingList!.Insert(rowIndex, BackupBindingItem);
+        BindingList!.Insert(rowIndex, BackupBindingItem!);
         throw CreateDatabaseUpdateErrorException(exception, rowIndex);
       }
     }
@@ -475,7 +475,7 @@ namespace SoundExplorers.Model {
     }
 
     private TBindingItem GetBindingItem(int rowIndex) {
-      return (BindingList![rowIndex] as TBindingItem)!;
+      return BindingList![rowIndex]!;
     }
 
     /// <summary>

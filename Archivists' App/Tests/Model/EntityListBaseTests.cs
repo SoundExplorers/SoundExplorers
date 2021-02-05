@@ -31,7 +31,7 @@ namespace SoundExplorers.Tests.Model {
     public void RethrowDudError() {
       var list = new DudErrorThrowerList {Session = Session};
       list.Populate(); // Creates an empty BindingList
-      var bindingList = list.TypedBindingList;
+      var bindingList = list.BindingList!;
       var item1 = bindingList.AddNew();
       list.OnRowEnter(0);
       item1.Name = "Dudley";
