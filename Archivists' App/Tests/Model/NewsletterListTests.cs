@@ -42,7 +42,7 @@ namespace SoundExplorers.Tests.Model {
       var date = DateTime.Parse("2015/04/03");
       const string url = "http://www.homegrownjuice.co.nz/thank-you.html";
       List.Populate();
-      var bindingList = List.BindingList!;
+      var bindingList = List.BindingList;
       List.OnRowEnter(0);
       bindingList[0].Date = date;
       bindingList[0].Url = url;

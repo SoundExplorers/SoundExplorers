@@ -588,8 +588,7 @@ namespace SoundExplorers.Tests.Controller {
       Assert.IsFalse(MainGrid.Focused, "MainGrid.Focused after Populate");
       Assert.AreEqual(1, MainGrid.CellColorScheme.InvertCount,
         "MainGrid.CellColorScheme.InvertCount after Populate");
-      // Assert.AreEqual(2, Controller.ParentBindingList?.Count,
-      Assert.AreEqual(2, ParentGridController.BindingList?.Count,
+      Assert.AreEqual(2, ParentGridController.BindingList.Count,
         "Parent list count after Populate");
       Assert.AreEqual(2, MainGridController.FirstVisibleColumnIndex,
         "Main grid FirstVisibleColumnIndex after Populate");
@@ -597,7 +596,7 @@ namespace SoundExplorers.Tests.Controller {
         "Is Date column to be shown?");
       Assert.IsTrue(MainGridController.GetBindingColumn("SetNo").IsVisible,
         "Is SetNo column to be shown?");
-      Assert.AreEqual(5, MainGridController.BindingList?.Count,
+      Assert.AreEqual(5, MainGridController.BindingList.Count,
         "Main list count after Populate");
       Assert.AreEqual(0, ParentGridController.FirstVisibleColumnIndex,
         "Main grid FirstVisibleColumnIndex after Populate");
@@ -605,7 +604,7 @@ namespace SoundExplorers.Tests.Controller {
         "SetMouseCursorToDefaultCount after Populate");
       MainGrid.Focus();
       ParentGridController.OnRowEnter(0);
-      Assert.AreEqual(3, MainGridController.BindingList?.Count,
+      Assert.AreEqual(3, MainGridController.BindingList.Count,
         "Main list count when 1st parent selected");
     }
 

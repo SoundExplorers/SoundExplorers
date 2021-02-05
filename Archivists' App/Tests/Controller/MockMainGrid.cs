@@ -32,7 +32,7 @@ namespace SoundExplorers.Tests.Controller {
     ///     MainGridController.BindingList.Count instead.
     ///   </para>
     /// </summary>
-    public override int RowCount => Controller.BindingList!.Count + 1;
+    public override int RowCount => Controller.BindingList.Count + 1;
 
     [ExcludeFromCodeCoverage]
     public override string Name => "MockMainGrid";
@@ -53,7 +53,7 @@ namespace SoundExplorers.Tests.Controller {
 
     public override void MakeRowCurrent(int rowIndex, bool async = false) {
       base.MakeRowCurrent(rowIndex, async);
-      if (AutoAddNewRow && rowIndex == Controller.BindingList!.Count) {
+      if (AutoAddNewRow && rowIndex == Controller.BindingList.Count) {
         Controller.BindingList.AddNew();
       }
     }

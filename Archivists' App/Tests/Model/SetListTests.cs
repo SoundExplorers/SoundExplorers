@@ -60,7 +60,7 @@ namespace SoundExplorers.Tests.Model {
       var @event = Data.Events[0];
       var eventChildren = CreateEventChildren(@event);
       List.Populate(eventChildren);
-      var bindingList = List.BindingList!;
+      var bindingList = List.BindingList;
       bindingList.AddNew();
       List.OnRowEnter(3);
       bindingList[3].Genre = Data.Genres[0].Name;
@@ -78,16 +78,16 @@ namespace SoundExplorers.Tests.Model {
     public void DefaultSetNoWithExistingSets() {
       List = CreateSetList();
       List.Populate();
-      List.BindingList!.AddNew();
-      Assert.AreEqual(4, List.BindingList![3].SetNo);
+      List.BindingList.AddNew();
+      Assert.AreEqual(4, List.BindingList[3].SetNo);
     }
 
     [Test]
     public void DefaultSetNoWithNoExistingSets() {
       List = CreateSetList(false);
       List.Populate();
-      List.BindingList!.AddNew();
-      Assert.AreEqual(1, List.BindingList![0].SetNo);
+      List.BindingList.AddNew();
+      Assert.AreEqual(1, List.BindingList[0].SetNo);
     }
 
     [Test]
@@ -96,7 +96,7 @@ namespace SoundExplorers.Tests.Model {
       var @event = Data.Events[0];
       var eventChildren = CreateEventChildren(@event);
       List.Populate(eventChildren);
-      var bindingList = List.BindingList!;
+      var bindingList = List.BindingList;
       bindingList.AddNew();
       List.OnRowEnter(0);
       bindingList[0].Act = Data.Acts[0].Name;
@@ -113,7 +113,7 @@ namespace SoundExplorers.Tests.Model {
       var eventChildren = CreateEventChildren(Data.Events[0]);
       List.Populate(eventChildren);
       List.OnRowEnter(2);
-      var bindingList = List.BindingList!;
+      var bindingList = List.BindingList;
       Exception exception = Assert.Catch<DuplicateNameException>(()=> bindingList[2].SetNo = 1, 
         "Changing SetNo to duplicate for Event disallowed");
       Assert.AreEqual("Another Set with key '01 | 2020/01/09 | Athens' already exists.",
@@ -162,7 +162,7 @@ namespace SoundExplorers.Tests.Model {
       set.Act = Data.Acts[1];
       Session.Commit();
       List.Populate();
-      var bindingList = List.BindingList!;
+      var bindingList = List.BindingList;
       Assert.AreEqual(set.Event.Date, bindingList[2].Date, "Date");
       Assert.AreEqual(set.Event.Location.Name, bindingList[2].Location, "Location");
       Assert.AreEqual(set.SetNo, bindingList[2].SetNo, "SetNo");

@@ -21,6 +21,7 @@ namespace SoundExplorers.Model {
     IEntityList
     where TEntity : EntityBase, new()
     where TBindingItem : BindingItemBase<TEntity, TBindingItem>, new() {
+    private TypedBindingList<TEntity, TBindingItem>? _bindingList;
     private BindingColumnList? _columns;
     private QueryHelper? _queryHelper;
     private SessionBase? _session;
@@ -71,7 +72,10 @@ namespace SoundExplorers.Model {
     ///   Gets a strongly typed view of the binding list representing the list of
     ///   entities and bound to the grid.
     /// </summary>
-    internal TypedBindingList<TEntity, TBindingItem>? BindingList { get; private set; }
+    internal TypedBindingList<TEntity, TBindingItem> BindingList {
+      get => _bindingList!;
+      set => _bindingList = value;
+    }
 
     private bool HasRowBeenEdited { get; set; }
 
@@ -84,7 +88,7 @@ namespace SoundExplorers.Model {
     /// <summary>
     ///   Gets the binding list representing the list of entities and bound to the grid.
     /// </summary>
-    IBindingList? IEntityList.BindingList => BindingList;
+    IBindingList IEntityList.BindingList => BindingList;
 
     /// <summary>
     ///   Gets metadata for the columns of the editor grid that represents the list of
@@ -144,8 +148,8 @@ namespace SoundExplorers.Model {
     public void BackupAndRemoveInsertionErrorBindingItem() {
       // Debug.WriteLine("EntityListBase.BackupAndRemoveInsertionErrorBindingItem");
       // Just creating a backup rather than using the original does not help.
-      // BindingList!.InsertionErrorItem = BindingList[^1]!.CreateBackup();
-      int insertionRowIndex = BindingList!.Count - 1; 
+      // BindingList.InsertionErrorItem = BindingList[^1]!.CreateBackup();
+      int insertionRowIndex = BindingList.Count - 1; 
       BindingList.InsertionErrorItem = BindingList[insertionRowIndex]!;
       BindingList.RemoveAt(insertionRowIndex);
     }
@@ -173,7 +177,7 @@ namespace SoundExplorers.Model {
         Session.Commit();
       } catch (Exception exception) {
         Session.Abort();
-        BindingList!.Insert(rowIndex, BackupBindingItem!);
+        BindingList.Insert(rowIndex, BackupBindingItem!);
         throw CreateDatabaseUpdateErrorException(exception, rowIndex);
       }
     }
@@ -313,8 +317,8 @@ namespace SoundExplorers.Model {
       if (!createBindingList) {
         return;
       }
-      if (BindingList != null) {
-        BindingList.ListChanged -= BindingList_ListChanged;
+      if (_bindingList != null) {
+        _bindingList.ListChanged -= BindingList_ListChanged;
       }
       BindingList = CreateBindingList();
       BindingList.ListChanged += BindingList_ListChanged;
@@ -475,7 +479,7 @@ namespace SoundExplorers.Model {
     }
 
     private TBindingItem GetBindingItem(int rowIndex) {
-      return BindingList![rowIndex]!;
+      return BindingList[rowIndex]!;
     }
 
     /// <summary>

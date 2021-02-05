@@ -9,7 +9,7 @@ namespace SoundExplorers.Tests.Controller {
     }
 
     ParentGridController IParentGrid.Controller => Controller;
-    public override int RowCount => Controller.BindingList!.Count;
+    public override int RowCount => Controller.BindingList.Count;
 
     public override void Focus() {
       base.Focus();

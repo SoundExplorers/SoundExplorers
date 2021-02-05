@@ -22,7 +22,7 @@ namespace SoundExplorers.Controller {
     public IList<IBindingColumn> BindingColumns =>
       _bindingColumns ??= CreateBindingColumns();
 
-    public IBindingList? BindingList => List.BindingList;
+    public IBindingList BindingList => List.BindingList;
 
     /// <summary>
     ///   Gets metadata about the database columns represented by the Entity's field
