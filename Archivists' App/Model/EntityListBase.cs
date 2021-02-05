@@ -74,7 +74,13 @@ namespace SoundExplorers.Model {
     /// </summary>
     internal TypedBindingList<TEntity, TBindingItem> BindingList {
       get => _bindingList!;
-      set => _bindingList = value;
+      private set {
+        if (_bindingList != null) {
+          _bindingList.ListChanged -= BindingList_ListChanged;
+        }
+        _bindingList = value;
+        _bindingList.ListChanged += BindingList_ListChanged;
+      }
     }
 
     private bool HasRowBeenEdited { get; set; }
@@ -314,14 +320,9 @@ namespace SoundExplorers.Model {
       if (!IsChildList) {
         Sort(EntityComparer);
       }
-      if (!createBindingList) {
-        return;
+      if (createBindingList) {
+        BindingList = CreateBindingList();
       }
-      if (_bindingList != null) {
-        _bindingList.ListChanged -= BindingList_ListChanged;
-      }
-      BindingList = CreateBindingList();
-      BindingList.ListChanged += BindingList_ListChanged;
     }
 
     public void RestoreCurrentBindingItemOriginalValues() {
