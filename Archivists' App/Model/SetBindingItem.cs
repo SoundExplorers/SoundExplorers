@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using System.Collections.Generic;
 using JetBrains.Annotations;
 using SoundExplorers.Data;
 
@@ -72,6 +73,44 @@ namespace SoundExplorers.Model {
         OnPropertyChanged(nameof(Notes));
       }
     }
+
+    protected override IDictionary<string, object?>
+      CreateEntityPropertyValueDictionary() {
+      if (!EntityList.IsChildList && !EntityList.IsInsertionRowCurrent) {
+        return base.CreateEntityPropertyValueDictionary();
+      }
+      var @event = EntityList.IdentifyingParent!;
+      return new Dictionary<string, object?> {
+        [nameof(Event)] = QueryHelper.Read<Event>(@event.SimpleKey,
+          @event.IdentifyingParent, EntityList.Session),
+        [nameof(SetNo)] = SetNo,
+        [nameof(Act)] =
+          Act != null ? QueryHelper.Read<Act>(Act, EntityList.Session) : null,
+        [nameof(Genre)] = Genre != null
+          ? QueryHelper.Read<Genre>(Genre, EntityList.Session)
+          : null,
+        [nameof(IsPublic)] = IsPublic,
+        [nameof(Notes)] = Notes
+      };
+    }
+
+    // protected override Set? CreateEntityFromProperties() {
+    //   if (!EntityList.IsChildList && !EntityList.IsInsertionRowCurrent) {
+    //     return null;
+    //   }
+    //   var actParent = 
+    //     Act != null ? QueryHelper.Read<Act>(Act, EntityList.Session) : null;
+    //   var genreParent =
+    //     Genre != null ? QueryHelper.Read<Genre>(Act, EntityList.Session) : null;
+    //   var result = new Set {
+    //     Event = (Event)EntityList.IdentifyingParent!, SetNo = SetNo, Act = actParent,
+    //     IsPublic = IsPublic, Notes = Notes
+    //   };
+    //   if (genreParent != null) {
+    //     result.Genre = genreParent;
+    //   }
+    //   return result;
+    // }
 
     protected override void CopyValuesToEntityProperties(Set set) {
       base.CopyValuesToEntityProperties(set);

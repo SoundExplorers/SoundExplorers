@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
@@ -43,7 +43,7 @@ namespace SoundExplorers.Model {
     private IDictionary<string, PropertyInfo> EntityProperties =>
       _entityProperties ??= CreatePropertyDictionary<TEntity>();
 
-    private IDictionary<string, object>? EntityPropertyValues { get; set; }
+    private IDictionary<string, object?>? EntityPropertyValues { get; set; }
 
     protected IDictionary<string, PropertyInfo> Properties =>
       _properties ??= CreatePropertyDictionary<TBindingItem>();
