@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using SoundExplorers.Common;
 using VelocityDb.Session;
 
 namespace SoundExplorers.Model {
@@ -93,6 +94,9 @@ namespace SoundExplorers.Model {
     /// </param>
     void OnRowValidated(int rowIndex);
 
+    void OnValueOutOfRange(int rowIndex, string columnName, 
+      PropertyValueOutOfRangeException outOfRangeException);
+    
     void OnValidationError(int rowIndex, string? propertyName, Exception exception);
 
     /// <summary>

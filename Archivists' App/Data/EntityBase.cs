@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
+using SoundExplorers.Common;
 using VelocityDb;
 using VelocityDb.Session;
 using VelocityDb.TypeInfo;
@@ -380,7 +381,8 @@ namespace SoundExplorers.Data {
       if (integer >= 1 && integer <= 99) {
         return integer.ToString().PadLeft(2, '0');
       }
-      throw new FormatException(GetIntegerSimpleKeyErrorMessage(propertyName));
+      throw new PropertyValueOutOfRangeException(
+        GetIntegerSimpleKeyErrorMessage(propertyName), propertyName);
     }
 
     private void Initialise() {

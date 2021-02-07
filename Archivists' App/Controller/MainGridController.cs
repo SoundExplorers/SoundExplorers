@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data;
 using System.Diagnostics;
+using SoundExplorers.Common;
 using SoundExplorers.Model;
 
 namespace SoundExplorers.Controller {
@@ -56,26 +57,28 @@ namespace SoundExplorers.Controller {
         case ArgumentException argumentException:
           if (argumentException.Message.StartsWith(" is not a valid value for")) {
             // Thrown when an integer cell is empty
-            List.OnValidationError(rowIndex, columnName, 
+            OnCellValidationError(rowIndex, columnName, 
               new FormatException(argumentException.Message, argumentException));
-            EditorController.View.OnError();
           } else {
-            throw argumentException;
+            throw argumentException; // Terminal error
           }
+          break;
+        case PropertyValueOutOfRangeException outOfRangeException:
+          // Thrown when an integer cell value is out of range.
+          List.OnValueOutOfRange(rowIndex, columnName, outOfRangeException);
+          EditorController.View.OnError();
           break;
         case DatabaseUpdateErrorException databaseUpdateErrorException:
           List.LastDatabaseUpdateErrorException = databaseUpdateErrorException;
           EditorController.View.OnError();
           break;
         case DuplicateNameException duplicateKeyException:
-          List.OnValidationError(rowIndex, columnName, duplicateKeyException);
-          EditorController.View.OnError();
+          OnCellValidationError(rowIndex, columnName, duplicateKeyException);
           break;
         case FormatException formatException:
           // An invalid value was pasted into a cell, e.g. text into a date.
           // Or invalid text was entered into an integer cell, e.g. Set.SetNo.
-          List.OnValidationError(rowIndex, columnName, formatException);
-          EditorController.View.OnError();
+          OnCellValidationError(rowIndex, columnName, formatException);
           break;
         case RowNotInTableException referencedEntityNotFoundException:
           // A combo box cell value does not match any of it's embedded combo box's
@@ -84,9 +87,7 @@ namespace SoundExplorers.Controller {
           // is that the unmatched value was pasted into the cell. If the cell value had
           // been changed by selecting an item on the embedded combo box, it could only
           // be a matching value.
-          List.OnValidationError(rowIndex, columnName,
-            referencedEntityNotFoundException);
-          EditorController.View.OnError();
+          OnCellValidationError(rowIndex, columnName, referencedEntityNotFoundException);
           break;
         case null:
           // For unknown reason, the way I've got the error handling set up, this event
@@ -99,6 +100,12 @@ namespace SoundExplorers.Controller {
           // the terminal error handler in Program.cs.
           throw exception;
       }
+    }
+
+    private void OnCellValidationError(
+      int rowIndex, string columnName, Exception exception) {
+      List.OnValidationError(rowIndex, columnName, exception);
+      EditorController.View.OnError();
     }
 
     /// <summary>
