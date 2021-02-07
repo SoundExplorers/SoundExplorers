@@ -294,7 +294,8 @@ namespace SoundExplorers.Controller {
       // Backs up the error insertion item
       List.BackupAndRemoveInsertionErrorBindingItem(); 
       // Force a new row to be created with the erroneous data restored to it.
-      Grid.MakeRowCurrent(insertionRowIndex);
+      Grid.MakeCellCurrent(insertionRowIndex, 
+        List.LastDatabaseUpdateErrorException!.ColumnIndex);
     }
   }
 }

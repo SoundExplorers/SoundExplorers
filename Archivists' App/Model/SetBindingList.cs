@@ -9,10 +9,8 @@ namespace SoundExplorers.Model {
       base(bindingItems) { }
 
     protected override void OnAddingNew(AddingNewEventArgs e) {
-      if (InsertionErrorItem == null) {
-        e.NewObject = new SetBindingItem {SetNo = GetDefaultSetNo()};
-      }
       base.OnAddingNew(e);
+      e.NewObject ??= new SetBindingItem {SetNo = GetDefaultSetNo()};
     }
 
     private int GetDefaultSetNo() {

@@ -154,7 +154,8 @@ namespace SoundExplorers.Model {
     public void BackupAndRemoveInsertionErrorBindingItem() {
       // Debug.WriteLine("EntityListBase.BackupAndRemoveInsertionErrorBindingItem");
       int insertionRowIndex = BindingList.Count - 1; 
-      BindingList.InsertionErrorItem = BindingList[insertionRowIndex].CreateBackup()!;
+      BindingList.InsertionErrorItem = BindingList[insertionRowIndex];
+      // BindingList.InsertionErrorItem = BindingList[insertionRowIndex].CreateBackup()!;
       BindingList.RemoveAt(insertionRowIndex);
     }
 
@@ -216,20 +217,19 @@ namespace SoundExplorers.Model {
     /// </remarks>
     public void OnRowEnter(int rowIndex) {
       Debug.WriteLine($"EntityListBase.OnRowEnter: row {rowIndex}");
-      // Debug.WriteLine(
-      //   $"{nameof(OnRowEnter)}:  Any row entered (after ItemAdded if insertion row)");
       HasRowBeenEdited = false;
-      // Debug.WriteLine(
-      //   $"EntityListBase.OnRowEnter: HasRowBeenEdited = {HasRowBeenEdited}");
       if (BackupBindingItemToRestoreFrom == null) {
         // Not forced to reenter row to fix an update error
-        //Debug.WriteLine("    Creating BackupBindingItem");
+        // if (rowIndex < Count) {
+        //   var dummy = BindingList[rowIndex]!;
+        //   Debug.WriteLine("    Existing row");
+        // }
         //
         // IsInsertionRowCurrent is not reliable here: it does not work if we are
         // entering the main grid from the parent grid.
         // BackupBindingItem = !IsInsertionRowCurrent
         BackupBindingItem = rowIndex < Count
-          ? GetBindingItem(rowIndex).CreateBackup()
+          ? BindingList[rowIndex]!.CreateBackup()
           : new TBindingItem {EntityList = this};
       }
     }
@@ -265,7 +265,7 @@ namespace SoundExplorers.Model {
 
     public void OnValidationError(int rowIndex, string? propertyName,
       Exception exception) {
-      CellEditErrorBindingItem = GetBindingItem(rowIndex);
+      CellEditErrorBindingItem = BindingList[rowIndex]!;
       LastDatabaseChangeAction =
         IsInsertionRowCurrent ? StatementType.Insert : StatementType.Update;
       int columnIndex;
@@ -338,7 +338,7 @@ namespace SoundExplorers.Model {
       //Debug.WriteLine($"EntityListBase.RestoreReferencingPropertyOriginalValue: row {rowIndex}");
       BackupBindingItemToRestoreFrom = null;
       BindingItemToFix = null;
-      var bindingItem = GetBindingItem(rowIndex);
+      var bindingItem = BindingList[rowIndex]!;
       string propertyName = Columns[columnIndex].PropertyName;
       var originalValue = BackupBindingItem!.GetPropertyValue(propertyName);
       //Debug.WriteLine($"    BackupBindingItem.{propertyName} = {originalValue}");
@@ -376,12 +376,12 @@ namespace SoundExplorers.Model {
     private void AddNewEntity(int rowIndex) {
       //Debug.WriteLine("EntityListBase.AddNewEntity");
       LastDatabaseChangeAction = StatementType.Insert;
-      var bindingItem = GetBindingItem(rowIndex);
+      var bindingItem = BindingList[rowIndex]!;
       bindingItem.EntityList = this;
       try {
         CheckForDuplicateKey(bindingItem);
-      } catch (DuplicateNameException duplicateKeyException) {
-        OnValidationError(rowIndex, null, duplicateKeyException);
+      } catch (Exception exception) {
+        OnValidationError(rowIndex, null, exception);
         throw LastDatabaseUpdateErrorException!;
       }
       Session.BeginUpdate();
@@ -477,9 +477,9 @@ namespace SoundExplorers.Model {
       return new TypedBindingList<TEntity, TBindingItem>(list);
     }
 
-    private TBindingItem GetBindingItem(int rowIndex) {
-      return BindingList[rowIndex]!;
-    }
+    // private TBindingItem GetBindingItem(int rowIndex) {
+    //   return BindingList[rowIndex]!;
+    // }
 
     /// <summary>
     ///   Returns whether the specified exception indicates that, for an anticipated
@@ -503,7 +503,7 @@ namespace SoundExplorers.Model {
     private void UpdateExistingEntityProperty(int rowIndex, string propertyName) {
       //Debug.WriteLine($"EntityListBase.UpdateExistingEntityProperty: row {rowIndex}");
       LastDatabaseChangeAction = StatementType.Update;
-      var bindingItem = GetBindingItem(rowIndex);
+      var bindingItem = BindingList[rowIndex]!;
       if (Columns[propertyName].IsInKey) {
         CheckForDuplicateKey(bindingItem);
       }

@@ -36,7 +36,7 @@ namespace SoundExplorers.Model {
     where TBindingItem : BindingItemBase<TEntity, TBindingItem>, new() {
     private IDictionary<string, PropertyInfo>? _entityProperties;
     private IDictionary<string, PropertyInfo>? _properties;
-    private IEnumerable<PropertyInfo>? _visibleProperties;
+    // private IEnumerable<PropertyInfo>? _visibleProperties;
     
     internal EntityListBase<TEntity, TBindingItem> EntityList { get; set; } = null!;
 
@@ -48,8 +48,8 @@ namespace SoundExplorers.Model {
     protected IDictionary<string, PropertyInfo> Properties =>
       _properties ??= CreatePropertyDictionary<TBindingItem>();
 
-    private IEnumerable<PropertyInfo> VisibleProperties =>
-      _visibleProperties ??= CreateVisibleProperties();
+    // private IEnumerable<PropertyInfo> VisibleProperties =>
+    //   _visibleProperties ??= CreateVisibleProperties();
 
     public void SetPropertyValue(string propertyName, object? value) {
       try {
@@ -68,12 +68,14 @@ namespace SoundExplorers.Model {
     }
 
     /// <summary>
+    ///   ???
     ///   A derived class representing a row of a main grid that is a child of a parent
     ///   grid row must override this method to set the entity's identifying parent to
     ///   the entity list's identifying parent AFTER calling this base method. 
     /// </summary>
     protected virtual void CopyValuesToEntityProperties(TEntity entity) {
-      foreach (var property in VisibleProperties) {
+      // foreach (var property in VisibleProperties) {
+      foreach (var property in Properties.Values) {
         CopyValueToEntityProperty(property.Name, entity);
       }
     }
@@ -117,10 +119,11 @@ namespace SoundExplorers.Model {
       return result;
     }
 
-    private IDictionary<string, object> CreateEntityPropertyValueDictionary() {
+    protected virtual IDictionary<string, object?> CreateEntityPropertyValueDictionary() {
       // Debug.WriteLine("BindingItemBase.CreateEntityPropertyValueDictionary");
-      var result = new Dictionary<string, object>();
-      foreach (var property in VisibleProperties) {
+      var result = new Dictionary<string, object?>();
+      // foreach (var property in VisibleProperties) {
+      foreach (var property in Properties.Values) {
         result[property.Name] =
           GetEntityPropertyValue(property, EntityProperties[property.Name])!;
       }
@@ -140,11 +143,11 @@ namespace SoundExplorers.Model {
       return result;
     }
 
-    private IEnumerable<PropertyInfo> CreateVisibleProperties() {
-      return from property in Properties.Values
-        where EntityList.Columns[property.Name].IsVisible
-        select property;
-    }
+    // private IEnumerable<PropertyInfo> CreateVisibleProperties() {
+    //   return from property in Properties.Values
+    //     where EntityList.Columns[property.Name].IsVisible
+    //     select property;
+    // }
 
     protected IEntity? FindParent(PropertyInfo property) {
       var propertyValue = property.GetValue(this);
@@ -172,7 +175,7 @@ namespace SoundExplorers.Model {
 
     protected abstract string GetSimpleKey();
 
-    internal void RestorePropertyValuesFrom(TBindingItem backup) {
+    internal virtual void RestorePropertyValuesFrom(TBindingItem backup) {
       foreach (var property in Properties.Values) {
         SetPropertyValue(property.Name, backup.GetPropertyValue(property.Name)!);
       }

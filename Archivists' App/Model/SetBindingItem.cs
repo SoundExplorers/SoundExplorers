@@ -74,51 +74,72 @@ namespace SoundExplorers.Model {
       }
     }
 
+    private Event Event { get; set; } = null!;
+
     protected override IDictionary<string, object?>
       CreateEntityPropertyValueDictionary() {
       if (!EntityList.IsChildList && !EntityList.IsInsertionRowCurrent) {
         return base.CreateEntityPropertyValueDictionary();
       }
-      var @event = EntityList.IdentifyingParent!;
+      Event = ReadEvent();
       return new Dictionary<string, object?> {
-        [nameof(Event)] = QueryHelper.Read<Event>(@event.SimpleKey,
-          @event.IdentifyingParent, EntityList.Session),
+        [nameof(Date)] = Event.Date,
+        [nameof(Location)] = ReadLocation(),
         [nameof(SetNo)] = SetNo,
-        [nameof(Act)] =
-          Act != null ? QueryHelper.Read<Act>(Act, EntityList.Session) : null,
-        [nameof(Genre)] = Genre != null
-          ? QueryHelper.Read<Genre>(Genre, EntityList.Session)
-          : null,
+        [nameof(Act)] = ReadAct(),
+        [nameof(Genre)] = ReadGenre(),
         [nameof(IsPublic)] = IsPublic,
         [nameof(Notes)] = Notes
       };
     }
 
-    // protected override Set? CreateEntityFromProperties() {
-    //   if (!EntityList.IsChildList && !EntityList.IsInsertionRowCurrent) {
-    //     return null;
-    //   }
-    //   var actParent = 
-    //     Act != null ? QueryHelper.Read<Act>(Act, EntityList.Session) : null;
-    //   var genreParent =
-    //     Genre != null ? QueryHelper.Read<Genre>(Act, EntityList.Session) : null;
-    //   var result = new Set {
-    //     Event = (Event)EntityList.IdentifyingParent!, SetNo = SetNo, Act = actParent,
-    //     IsPublic = IsPublic, Notes = Notes
-    //   };
-    //   if (genreParent != null) {
-    //     result.Genre = genreParent;
-    //   }
-    //   return result;
-    // }
-
     protected override void CopyValuesToEntityProperties(Set set) {
-      base.CopyValuesToEntityProperties(set);
-      set.Event = (Event)EntityList.IdentifyingParent!;
+      set.SetNo = SetNo;
+      set.Act = FindParent(Properties[nameof(Act)]) as Act;
+      set.Genre = (Genre)FindParent(Properties[nameof(Genre)])!;
+      set.IsPublic = IsPublic;
+      set.Notes = Notes;
+      set.Event = Event;
+    }
+
+    internal override void RestorePropertyValuesFrom(SetBindingItem backup) {
+      base.RestorePropertyValuesFrom(backup);
+      Event = (Event)EntityList.IdentifyingParent!;
+      // if (!EntityList.IsChildList && !EntityList.IsInsertionRowCurrent) {
+      //   base.RestorePropertyValuesFrom(backup);
+      // }
+      // Event = (Event)EntityList.IdentifyingParent!;
+      // Date = Event.Date;
+      // Location = Event.Location.Name;
+      // SetNo = backup.SetNo;
+      // Act = backup.Act;
+      // Genre = backup.Genre;
+      // IsPublic = backup.IsPublic;
+      // Notes = backup.Notes;
     }
 
     protected override string GetSimpleKey() {
       return EntityBase.IntegerToSimpleKey(SetNo, nameof(SetNo));
+    }
+
+    private Act? ReadAct() {
+      return Act != null
+        ? QueryHelper.Read<Act>(Act, EntityList.Session)
+        : null;
+    }
+
+    private Event ReadEvent() {
+      var listEvent = EntityList.IdentifyingParent!;
+      return QueryHelper.Read<Event>(
+        listEvent.SimpleKey, listEvent.IdentifyingParent, EntityList.Session);
+    }
+
+    private Genre? ReadGenre() {
+      return Genre != null ? QueryHelper.Read<Genre>(Genre, EntityList.Session) : null;
+    }
+
+    private Location ReadLocation() {
+      return QueryHelper.Read<Location>(Event.Location.Name, EntityList.Session);
     }
   }
 }

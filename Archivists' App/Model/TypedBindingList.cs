@@ -28,7 +28,7 @@ namespace SoundExplorers.Model {
 
     protected override void OnAddingNew(AddingNewEventArgs e) {
       if (InsertionErrorItem != null) {
-        e.NewObject = InsertionErrorItem;      
+        e.NewObject = InsertionErrorItem?.CreateBackup();      
       }
       base.OnAddingNew(e);
       InsertionErrorItem = null;
