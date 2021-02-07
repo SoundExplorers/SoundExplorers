@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Linq;
+using SoundExplorers.Common;
 using SoundExplorers.Data;
 using VelocityDb.Session;
 
@@ -261,6 +262,13 @@ namespace SoundExplorers.Model {
       if (IsInsertionRowCurrent) {
         AddNewEntity(rowIndex);
       }
+    }
+
+    public void OnValueOutOfRange(int rowIndex, string propertyName,
+      PropertyValueOutOfRangeException outOfRangeException) {
+      BindingItemToFix = GetBindingItem(rowIndex);
+      BackupBindingItemToRestoreFrom = BackupBindingItem; 
+      OnValidationError(rowIndex, propertyName, outOfRangeException);
     }
 
     public void OnValidationError(int rowIndex, string? propertyName,
