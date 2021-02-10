@@ -20,6 +20,24 @@ namespace SoundExplorers.Controller {
     internal int LastCurrentRowIndex { get; set; }
 
     /// <summary>
+    ///   This flag is used in a workaround for an unwanted feature of
+    ///   DataGridView.OnBindingContextChanged".  In some of the multiple times that
+    ///   event method occurs per <see cref="EditorController.Populate" />, it makes row
+    ///   0 of the main grid current (by calling internal method
+    ///   DataGridView.MakeFirstDisplayedCellCurrentCell). In this application, that
+    ///   would usually be the wrong row, as we want the new row to be current on
+    ///   population of the main grid. Normally, the unwanted behaviour would trigger
+    ///   DataGridView.OnRowEnter for row 0, which MainGrid overrides. The workaround
+    ///   stops OnRowEnter from being called in this case.
+    /// </summary>
+    /// <remarks>
+    ///   Another workaround I looked at was to override OnBindingContextChanged to stop
+    ///   the base method from being called.  That is not practicable, as it prevents
+    ///   editor controls from appearing in grid cells when they are edited!
+    /// </remarks>
+    private bool IsFixingFocus { get; set; }
+
+    /// <summary>
     ///   Gets whether the current main grid row is the insertion row,
     ///   which is for adding new entities and is located at the bottom of the grid.
     /// </summary>
@@ -107,6 +125,7 @@ namespace SoundExplorers.Controller {
       // Debug.WriteLine("MainGridController.OnGotFocus");
       Debug.WriteLine(
         $"MainGridController.OnGotFocus: CurrentRowIndex = {Grid.CurrentRowIndex}; LastCurrentRowIndex = {LastCurrentRowIndex}");
+      IsFixingFocus = false; 
       if (LastCurrentRowIndex >= 0 && LastCurrentRowIndex != Grid.CurrentRowIndex) {
         IsRestoringRowCurrency = true;
         Grid.MakeRowCurrent(LastCurrentRowIndex, true);
@@ -119,8 +138,9 @@ namespace SoundExplorers.Controller {
 
     protected override void OnPopulatedAsync() {
       Debug.WriteLine("MainGridController.OnPopulatedAsync");
+      IsFixingFocus = true;
       if (List.IsChildList) {
-        EditorController.View.OnParentAndMainGridsShownAsync();
+        EditorController.View.OnParentAndMainGridsShown();
         Grid.CellColorScheme.Invert();
       }
       base.OnPopulatedAsync();
@@ -185,6 +205,12 @@ namespace SoundExplorers.Controller {
     public void OnRowValidated(int rowIndex) {
       Debug.WriteLine($"MainGridController.OnRowValidated: row {rowIndex}");
       //Debug.WriteLine("MainGridController.OnRowValidated:  Any row left, after final ItemChanged, if any");
+      if (IsFixingFocus) {
+        IsFixingFocus = false;
+        // Stops the main grid from being focused when the user changes row on the parent
+        // grid, repopulating the main grid.  See also the comments for IsFixingFocus. 
+        return;
+      }
       if (IsPopulating || EditorController.IsClosing ||
           EditorController.MainController.IsClosing) {
         return;
@@ -271,6 +297,7 @@ namespace SoundExplorers.Controller {
 
     internal void SetIdentifyingParentChildrenForList(
       IdentifyingParentChildren identifyingParentChildrenForList) {
+      IsFixingFocus = true;
       IdentifyingParentChildrenForList = identifyingParentChildrenForList;
     }
 

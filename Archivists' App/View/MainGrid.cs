@@ -158,11 +158,11 @@ namespace SoundExplorers.View {
       Controller.ShowError();
     }
 
-    protected override void OnGotFocus(EventArgs e) {
-      base.OnGotFocus(e);
-      // Shows error message to help the 1-row problem
-      EditorView.IsFixingFocus = false; 
-    }
+    // protected override void OnGotFocus(EventArgs e) {
+    //   base.OnGotFocus(e);
+    //   // Shows error message to help the 1-row problem
+    //   EditorView.IsFixingFocus = false; 
+    // }
 
     protected override void OnKeyDown(KeyEventArgs e) {
       switch (e.KeyData) {

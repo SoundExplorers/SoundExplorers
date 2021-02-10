@@ -158,14 +158,15 @@ namespace SoundExplorers.Controller {
       Debug.WriteLine("EditorController.Populate END");
     }
 
-    public void PopulateMainGridOnParentRowChanged(int parentRowIndex) {
-      Debug.WriteLine(
-        $"EditorController.PopulateMainGridOnParentRowChanged: parent row {parentRowIndex}");
-      View.MainGrid.Controller.SetIdentifyingParentChildrenForList(
-        View.ParentGrid.Controller.GetIdentifyingParentChildrenForMainList(
-          parentRowIndex));
-      View.MainGrid.Populate();
-    }
+    // public void PopulateMainGridOnParentRowChanged(int parentRowIndex) {
+    //   Debug.WriteLine(
+    //     $"EditorController.PopulateMainGridOnParentRowChanged: parent row {parentRowIndex}");
+    //   IsFixingFocus = true;
+    //   View.MainGrid.Controller.SetIdentifyingParentChildrenForList(
+    //     View.ParentGrid.Controller.GetIdentifyingParentChildrenForMainList(
+    //       parentRowIndex));
+    //   View.MainGrid.Populate();
+    // }
 
     /// <summary>
     ///   THE FOLLOWING RELATES TO A FEATURE THAT IS NOT YET IN USE BUT MAY BE LATER:

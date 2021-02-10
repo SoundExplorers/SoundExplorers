@@ -15,13 +15,13 @@ namespace SoundExplorers.Tests.Controller {
     internal int SetMouseCursorToWaitCount { get; private set; }
     internal int ShowErrorMessageCount { get; private set; }
     internal int ShowWarningMessageCount { get; private set; }
-    private EditorController Controller { get; set; } = null!;
+    // private EditorController Controller { get; set; } = null!;
     public IGrid? CurrentGrid { get; set; }
     public IMainGrid MainGrid { get; }
     public IParentGrid ParentGrid { get; }
 
     public void SetController(EditorController controller) {
-      Controller = controller;
+      // Controller = controller;
     }
 
     public void Close() {
@@ -32,13 +32,13 @@ namespace SoundExplorers.Tests.Controller {
       MainGridController.ShowError();
     }
 
-    public void OnParentAndMainGridsShownAsync() {
+    public void OnParentAndMainGridsShown() {
       OnParentAndMainGridsShownAsyncCount++;
     }
 
-    public void PopulateMainGridOnParentRowChanged(int parentRowIndex) {
-      Controller.PopulateMainGridOnParentRowChanged(parentRowIndex);
-    }
+    // public void PopulateMainGridOnParentRowChanged(int parentRowIndex) {
+    //   Controller.PopulateMainGridOnParentRowChanged(parentRowIndex);
+    // }
 
     public void SetMouseCursorToDefault() {
       SetMouseCursorToDefaultCount++;

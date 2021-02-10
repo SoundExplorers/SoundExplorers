@@ -5,8 +5,8 @@
     IParentGrid ParentGrid { get; }
     void Close();
     void OnError();
-    void OnParentAndMainGridsShownAsync();
-    void PopulateMainGridOnParentRowChanged(int parentRowIndex);
+    void OnParentAndMainGridsShown();
+    // void PopulateMainGridOnParentRowChanged(int parentRowIndex);
     void SetMouseCursorToDefault();
     void SetMouseCursorToWait();
     void ShowErrorMessage(string text);

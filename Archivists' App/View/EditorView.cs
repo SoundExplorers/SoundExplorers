@@ -25,24 +25,6 @@ namespace SoundExplorers.View {
     private MainView MainView => (MainView)MdiParent;
     private bool IsClosed { get; set; }
 
-    /// <summary>
-    ///   This flag is used in a workaround for an unwanted feature of
-    ///   <see cref="DataGridView.OnBindingContextChanged" />.  In some of the multiple
-    ///   times that event method occurs per <see cref="EditorController.Populate" />, it
-    ///   makes row 0 of the main grid current (by calling internal method
-    ///   DataGridView.MakeFirstDisplayedCellCurrentCell). In this application, that
-    ///   would usually be the wrong row, as we want the new row to be current on
-    ///   population of the main grid. Normally, the unwanted behaviour would trigger
-    ///   <see cref="DataGridView.OnRowEnter" /> for row 0, which <see cref="MainGrid" />
-    ///   overrides. The workaround stops OnRowEnter from being called in this case.
-    /// </summary>
-    /// <remarks>
-    ///   Another workaround I looked at was to override OnBindingContextChanged to stop
-    ///   the base method from being called.  That is not practicable, as it prevents
-    ///   editor controls from appearing in grid cells when they are edited!
-    /// </remarks>
-    internal bool IsFixingFocus { get; set; }
-
     private SizeableFormOptions SizeableFormOptions { get; set; } = null!;
     IGrid? IEditorView.CurrentGrid => CurrentGrid;
     IMainGrid IEditorView.MainGrid => MainGrid;
@@ -67,12 +49,11 @@ namespace SoundExplorers.View {
     ///   Setting the horizontal splitter position has to be called asynchronously to
     ///   ensure it is positioned correctly if the editor window is opened maximised.
     /// </remarks>
-    public void OnParentAndMainGridsShownAsync() {
-      Debug.WriteLine("EditorView.OnParentAndMainGridsShownAsync");
+    public void OnParentAndMainGridsShown() {
+      Debug.WriteLine("EditorView.OnParentAndMainGridsShown");
       int savedGridSplitterDistance = Controller.GridSplitterDistance;
       GridSplitContainer.SplitterDistance =
         savedGridSplitterDistance > 0 ? savedGridSplitterDistance : 180;
-      IsFixingFocus = true;
     }
 
     public void SetMouseCursorToDefault() {
@@ -107,12 +88,11 @@ namespace SoundExplorers.View {
       Controller = controller;
     }
 
-    public void PopulateMainGridOnParentRowChanged(int parentRowIndex) {
-      Debug.WriteLine(
-        $"EditorView.PopulateMainGridOnParentRowChanged: parent row {parentRowIndex}");
-      IsFixingFocus = true;
-      Controller.PopulateMainGridOnParentRowChanged(parentRowIndex);
-    }
+    // public void PopulateMainGridOnParentRowChanged(int parentRowIndex) {
+    //   Debug.WriteLine(
+    //     $"EditorView.PopulateMainGridOnParentRowChanged: parent row {parentRowIndex}");
+    //   Controller.PopulateMainGridOnParentRowChanged(parentRowIndex);
+    // }
 
     /// <summary>
     ///   Creates a EditorView and its associated controller, as per the
@@ -248,12 +228,12 @@ namespace SoundExplorers.View {
     /// </remarks>
     private void MainGrid_RowValidated(object? sender, DataGridViewCellEventArgs e) {
       Debug.WriteLine($"EditorView.MainGrid_RowValidated: row {e.RowIndex}");
-      if (IsFixingFocus) {
-        IsFixingFocus = false;
-        // Stops the main grid from being focused when the user changes row on the parent
-        // grid, repopulating the main grid.  See also the comments for IsFixingFocus. 
-        return;
-      }
+      // if (IsFixingFocus) {
+      //   IsFixingFocus = false;
+      //   // Stops the main grid from being focused when the user changes row on the parent
+      //   // grid, repopulating the main grid.  See also the comments for IsFixingFocus. 
+      //   return;
+      // }
       MainGrid.Controller.OnRowValidated(e.RowIndex);
     }
 

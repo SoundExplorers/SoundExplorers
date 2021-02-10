@@ -28,7 +28,7 @@ namespace SoundExplorers.Controller {
 
     private int PreviousRowIndex { get; set; }
 
-    public IdentifyingParentChildren GetIdentifyingParentChildrenForMainList(
+    private IdentifyingParentChildren GetIdentifyingParentChildrenForMainList(
       int rowIndex) {
       Debug.WriteLine(
         $"ParentGridController.GetIdentifyingParentChildrenForMainList: row {rowIndex}");
@@ -57,9 +57,17 @@ namespace SoundExplorers.Controller {
       if (!IsPopulating && rowIndex != PreviousRowIndex) {
         Debug.WriteLine("    Populating main grid");
         EditorController.View.SetMouseCursorToWait();
-        EditorController.View.PopulateMainGridOnParentRowChanged(rowIndex);
+        PopulateMainGrid(rowIndex);
       }
       PreviousRowIndex = rowIndex;
+    }
+
+    private void PopulateMainGrid(int parentRowIndex) {
+      Debug.WriteLine(
+        $"ParentGridController.PopulateMainGrid: parent row {parentRowIndex}");
+      MainGrid.Controller.SetIdentifyingParentChildrenForList(
+        GetIdentifyingParentChildrenForMainList(parentRowIndex));
+      MainGrid.Populate();
     }
 
     public override void PrepareForFocus() {
