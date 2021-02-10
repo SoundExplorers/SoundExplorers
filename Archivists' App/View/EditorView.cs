@@ -219,7 +219,8 @@ namespace SoundExplorers.View {
     }
 
     /// <summary>
-    ///   Actually called once for each row removed, even when multiple selected rows are
+    ///   Handles the main grid's <see cref="DataGridView.RowsRemoved" /> event, which is
+    ///   actually called once for each row removed, even when multiple selected rows are
     ///   removed at once.
     /// </summary>
     /// <remarks>
@@ -231,7 +232,7 @@ namespace SoundExplorers.View {
     ///     in some circumstances.
     ///   </para>
     /// </remarks>
-    private void MainGrid_RowsRemoved(
+    private void MainGrid_RowRemoved(
       object? sender, DataGridViewRowsRemovedEventArgs e) {
       MainGrid.Controller.OnRowRemoved(e.RowIndex);
     }
@@ -325,7 +326,7 @@ namespace SoundExplorers.View {
       MainGrid.EditorView = this;
       MainGrid.MainView = MainView;
       MainGrid.DataError += MainGrid_DataError;
-      MainGrid.RowsRemoved += MainGrid_RowsRemoved;
+      MainGrid.RowsRemoved += MainGrid_RowRemoved;
       MainGrid.RowValidated += MainGrid_RowValidated;
       if (Controller.IsParentGridToBeShown) {
         ParentGrid.SetController(new ParentGridController(ParentGrid, Controller));
