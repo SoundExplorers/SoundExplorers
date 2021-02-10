@@ -48,15 +48,15 @@ namespace SoundExplorers.Model {
       EntityComparer = new EntityComparer<TEntity>();
     }
 
-    private TBindingItem? BackupBindingItem { get; set; }
-    private TBindingItem? BackupBindingItemToRestoreFrom { get; set; }
+    private BackupItem<TBindingItem>? BackupItem { get; set; }
+    private BackupItem<TBindingItem>? BackupItemToRestoreFrom { get; set; }
     private TBindingItem? BindingItemToFix { get; set; }
     
     /// <summary>
     ///   Used for restoring the error value for correction or edit cancellation after an
     ///   error message hase been shown for a cell edit error on an existing row.
     /// </summary>
-    private TBindingItem? CellEditErrorBindingItem { get; set; }
+    private BackupItem<TBindingItem>? CellEditErrorBackupItem { get; set; }
     
     private EntityComparer<TEntity> EntityComparer { get; }
     private StatementType LastDatabaseChangeAction { get; set; }
@@ -154,9 +154,14 @@ namespace SoundExplorers.Model {
     /// </summary>
     public void BackupAndRemoveInsertionErrorBindingItem() {
       // Debug.WriteLine("EntityListBase.BackupAndRemoveInsertionErrorBindingItem");
-      int insertionRowIndex = BindingList.Count - 1; 
-      BindingList.InsertionErrorItem = BindingList[insertionRowIndex];
-      // BindingList.InsertionErrorItem = BindingList[insertionRowIndex].CreateBackup()!;
+      int insertionRowIndex = BindingList.Count - 1;
+      // I have not worked out how to return to the insertion row after showing an out of
+      // range error message. The workaround is not to back up the insertion error
+      // binding item. Otherwise it would appear on the insertion row when the user 
+      // navigates to it manually, which does not look right.
+      if (LastDatabaseUpdateErrorException!.ErrorType != ErrorType.OutOfRange) {
+        BindingList.InsertionErrorItem = BindingList[insertionRowIndex];
+      }
       BindingList.RemoveAt(insertionRowIndex);
     }
 
@@ -183,7 +188,7 @@ namespace SoundExplorers.Model {
         Session.Commit();
       } catch (Exception exception) {
         Session.Abort();
-        BindingList.Insert(rowIndex, BackupBindingItem!);
+        BindingList.Insert(rowIndex, BackupItem!.CreateBindingItem());
         throw CreateDatabaseUpdateErrorException(exception, rowIndex);
       }
     }
@@ -201,8 +206,8 @@ namespace SoundExplorers.Model {
       throw new NotSupportedException();
     }
 
-    public IList<object> GetErrorValues() {
-      return CellEditErrorBindingItem!.GetPropertyValues();
+    public IList<object?> GetErrorValues() {
+      return CellEditErrorBackupItem!.GetValues();
     }
 
     /// <summary>
@@ -219,19 +224,25 @@ namespace SoundExplorers.Model {
     public void OnRowEnter(int rowIndex) {
       Debug.WriteLine($"EntityListBase.OnRowEnter: row {rowIndex}");
       HasRowBeenEdited = false;
-      if (BackupBindingItemToRestoreFrom == null) {
+      if (BackupItemToRestoreFrom == null) {
         // Not forced to reenter row to fix an update error
         // if (rowIndex < Count) {
         //   var dummy = BindingList[rowIndex]!;
         //   Debug.WriteLine("    Existing row");
         // }
         //
-        // IsInsertionRowCurrent is not reliable here: it does not work if we are
-        // entering the main grid from the parent grid.
-        // BackupBindingItem = !IsInsertionRowCurrent
-        BackupBindingItem = rowIndex < Count
-          ? BindingList[rowIndex]!.CreateBackup()
-          : new TBindingItem {EntityList = this};
+        // // IsInsertionRowCurrent is not reliable here: it does not work if we are
+        // // entering the main grid from the parent grid.
+        // // BackupItem = !IsInsertionRowCurrent
+        // var itemToBackUp =  rowIndex < Count
+        //     ? BindingList[rowIndex]! : new TBindingItem();
+        var currentBindingItem = BindingList[rowIndex]!;
+        // Actually, EntityList should already be set unless this is the new row.
+        currentBindingItem.EntityList = this; 
+        BackupItem = CreateBackupItem(currentBindingItem);
+        // BackupItem = rowIndex < Count
+        //   ? BindingList[rowIndex]!.CreateBackup()
+        //   : new TBindingItem {EntityList = this};
       }
     }
 
@@ -266,14 +277,14 @@ namespace SoundExplorers.Model {
 
     public void OnValueOutOfRange(int rowIndex, string propertyName,
       PropertyValueOutOfRangeException outOfRangeException) {
-      BindingItemToFix = GetBindingItem(rowIndex);
-      BackupBindingItemToRestoreFrom = BackupBindingItem; 
+      BindingItemToFix = BindingList[rowIndex];
+      BackupItemToRestoreFrom = BackupItem; 
       OnValidationError(rowIndex, propertyName, outOfRangeException);
     }
 
     public void OnValidationError(int rowIndex, string? propertyName,
       Exception exception) {
-      CellEditErrorBindingItem = BindingList[rowIndex]!;
+      CellEditErrorBackupItem = CreateBackupItem(BindingList[rowIndex]!);
       LastDatabaseChangeAction =
         IsInsertionRowCurrent ? StatementType.Insert : StatementType.Update;
       int columnIndex;
@@ -331,28 +342,32 @@ namespace SoundExplorers.Model {
       }
     }
 
+    public void ReplaceErrorBindingValueWithOriginal() {
+      //Debug.WriteLine($"EntityListBase.ReplaceErrorBindingValueWithOriginal: row {rowIndex}");
+      BackupItemToRestoreFrom = null;
+      BindingItemToFix = null;
+      var bindingItem = BindingList[LastDatabaseUpdateErrorException!.RowIndex]!;
+      string propertyName = 
+        Columns[LastDatabaseUpdateErrorException.ColumnIndex].PropertyName;
+      var originalValue = BackupItem![propertyName];
+      bindingItem.SetPropertyValue(propertyName, originalValue);
+    }
+
     public void RestoreCurrentBindingItemOriginalValues() {
       //Debug.WriteLine("EntityListBase.RestoreCurrentBindingItemOriginalValues");
-      CellEditErrorBindingItem = BindingItemToFix!.CreateBackup();
-      BindingItemToFix.RestorePropertyValuesFrom(BackupBindingItemToRestoreFrom!);
-      BackupBindingItemToRestoreFrom = null;
+      CellEditErrorBackupItem = CreateBackupItem(BindingItemToFix!);
+      BackupItemToRestoreFrom!.RestoreTo(BindingItemToFix!);
+      BackupItemToRestoreFrom = null;
       BindingItemToFix = null;
       HasRowBeenEdited = false;
       // Debug.WriteLine(
       //   $"EntityListBase.RestoreCurrentBindingItemOriginalValues: HasRowBeenEdited = {HasRowBeenEdited}");
     }
 
-    public void RestoreReferencingPropertyOriginalValue(int rowIndex, int columnIndex) {
-      //Debug.WriteLine($"EntityListBase.RestoreReferencingPropertyOriginalValue: row {rowIndex}");
-      BackupBindingItemToRestoreFrom = null;
-      BindingItemToFix = null;
-      var bindingItem = BindingList[rowIndex]!;
-      string propertyName = Columns[columnIndex].PropertyName;
-      var originalValue = BackupBindingItem!.GetPropertyValue(propertyName);
-      //Debug.WriteLine($"    BackupBindingItem.{propertyName} = {originalValue}");
-      bindingItem.SetPropertyValue(propertyName, originalValue);
+    protected virtual BackupItem<TBindingItem> CreateBackupItem(TBindingItem bindingItem) {
+      return new BackupItem<TBindingItem>(bindingItem);
     }
-
+    
     protected abstract TBindingItem CreateBindingItem(TEntity entity);
 
     private TBindingItem CreateBindingItemWithEntityList(TEntity entity) {
@@ -441,7 +456,7 @@ namespace SoundExplorers.Model {
     private void CheckForDuplicateKey(TBindingItem bindingItem) {
       var newKey = bindingItem.CreateKey();
       if (!IsInsertionRowCurrent) {
-        var originalKey = BackupBindingItem!.CreateKey();
+        var originalKey = BackupItem!.Key;
         if (newKey == originalKey) {
           return;
         }
@@ -523,7 +538,7 @@ namespace SoundExplorers.Model {
       } catch (Exception exception) {
         BindingItemToFix = bindingItem;
         backupBindingItem.RestoreToEntity(entity);
-        BackupBindingItemToRestoreFrom = BackupBindingItem;
+        BackupItemToRestoreFrom = BackupItem;
         // This exception will be passed to the grid's DataError event handler.
         throw CreateDatabaseUpdateErrorException(exception, rowIndex);
       } finally {

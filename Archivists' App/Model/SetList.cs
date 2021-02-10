@@ -6,6 +6,9 @@ using SoundExplorers.Data;
 namespace SoundExplorers.Model {
   public class SetList : EntityListBase<Set, SetBindingItem> {
     public SetList() : base(typeof(EventList)) { }
+    protected override BackupItem<SetBindingItem> CreateBackupItem(SetBindingItem bindingItem) {
+      return new SetBackupItem(bindingItem);
+    }
 
     protected override SetBindingItem CreateBindingItem(Set set) {
       return new SetBindingItem() {

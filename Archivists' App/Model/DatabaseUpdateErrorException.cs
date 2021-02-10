@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
+using SoundExplorers.Common;
+using SoundExplorers.Data;
 
 namespace SoundExplorers.Model {
   /// <summary>
@@ -7,6 +10,10 @@ namespace SoundExplorers.Model {
   ///   attempting to insert, update or delete an entity on the database.
   /// </summary>
   public class DatabaseUpdateErrorException : ApplicationException {
+    static DatabaseUpdateErrorException() {
+      ErrorTypes = CreateErrorTypes();
+    }
+    
     /// <summary>
     ///   Initialises an instance of the
     ///   <see cref="DatabaseUpdateErrorException" /> class.
@@ -50,10 +57,25 @@ namespace SoundExplorers.Model {
     /// </summary>
     public int ColumnIndex { get; }
 
+    public ErrorType ErrorType => ErrorTypes[InnerException!.GetType()]; 
+
+    private static IDictionary<Type, ErrorType> ErrorTypes { get; }
+
     /// <summary>
     ///   Gets the index of the whose
     ///   insertion, update or deletion failed.
     /// </summary>
     public int RowIndex { get; }
+
+    private static IDictionary<Type, ErrorType> CreateErrorTypes() {
+      return new Dictionary<Type, ErrorType> {
+        {typeof(ConstraintException), ErrorType.Database},
+        {typeof(DuplicateNameException), ErrorType.Duplicate},
+        {typeof(FormatException), ErrorType.Format},
+        {typeof(PropertyConstraintException), ErrorType.Database},
+        {typeof(PropertyValueOutOfRangeException), ErrorType.OutOfRange},
+        {typeof(RowNotInTableException), ErrorType.ReferencingValueNotFound}
+      };
+    }
   }
 }

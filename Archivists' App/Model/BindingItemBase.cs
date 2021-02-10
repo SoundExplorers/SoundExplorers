@@ -35,9 +35,10 @@ namespace SoundExplorers.Model {
     where TEntity : EntityBase, new()
     where TBindingItem : BindingItemBase<TEntity, TBindingItem>, new() {
     private IDictionary<string, PropertyInfo>? _entityProperties;
+
     private IDictionary<string, PropertyInfo>? _properties;
     // private IEnumerable<PropertyInfo>? _visibleProperties;
-    
+
     internal EntityListBase<TEntity, TBindingItem> EntityList { get; set; } = null!;
 
     private IDictionary<string, PropertyInfo> EntityProperties =>
@@ -48,12 +49,25 @@ namespace SoundExplorers.Model {
     protected IDictionary<string, PropertyInfo> Properties =>
       _properties ??= CreatePropertyDictionary<TBindingItem>();
 
-    // private IEnumerable<PropertyInfo> VisibleProperties =>
-    //   _visibleProperties ??= CreateVisibleProperties();
+    // Must be explicit interface implementation rather than public. Otherwise it would
+    // appear as a column on the grid!
+    IDictionary<string, PropertyInfo> IBindingItem.Properties => Properties;
+
+    public virtual Key CreateKey() {
+      return new Key(GetSimpleKey(), EntityList.IdentifyingParent);
+    }
+
+    public object? GetPropertyValue(string propertyName) {
+      return Properties[propertyName].GetValue(this);
+    }
 
     public void SetPropertyValue(string propertyName, object? value) {
       try {
-        Properties[propertyName].SetValue(this, value);
+        var property = Properties[propertyName];
+        property.SetValue(this, value);
+        // The only way to get a detailed diagnostic trace for a crash on
+        // PropertyInfo.SetValue is to explicitly set the property's value rather than
+        // via SetValue, e.g. by overriding BackupItem.RestoreTo.
       } catch (TargetInvocationException exception) {
         throw exception.InnerException ?? exception;
       }
@@ -71,7 +85,7 @@ namespace SoundExplorers.Model {
     ///   ???
     ///   A derived class representing a row of a main grid that is a child of a parent
     ///   grid row must override this method to set the entity's identifying parent to
-    ///   the entity list's identifying parent AFTER calling this base method. 
+    ///   the entity list's identifying parent AFTER calling this base method.
     /// </summary>
     protected virtual void CopyValuesToEntityProperties(TEntity entity) {
       // foreach (var property in VisibleProperties) {
@@ -94,11 +108,11 @@ namespace SoundExplorers.Model {
       }
     }
 
-    internal TBindingItem CreateBackup() {
-      var result = new TBindingItem {EntityList = EntityList};
-      result.RestorePropertyValuesFrom((TBindingItem)this);
-      return result;
-    }
+    // internal TBindingItem CreateBackup() {
+    //   var result = new TBindingItem {EntityList = EntityList};
+    //   result.RestorePropertyValuesFrom((TBindingItem)this);
+    //   return result;
+    // }
 
     internal TEntity CreateEntity() {
       // Fetch any parent reference values from the database
@@ -130,10 +144,6 @@ namespace SoundExplorers.Model {
       return result;
     }
 
-    internal virtual Key CreateKey() {
-      return new Key(GetSimpleKey(), EntityList.IdentifyingParent);
-    }
-
     private static IDictionary<string, PropertyInfo> CreatePropertyDictionary<T>() {
       var properties = typeof(T).GetProperties().ToList();
       var result = new Dictionary<string, PropertyInfo>(properties.Count);
@@ -163,10 +173,6 @@ namespace SoundExplorers.Model {
         : FindParent(property);
     }
 
-    internal object? GetPropertyValue(string propertyName) {
-      return Properties[propertyName].GetValue(this);
-    }
-
     internal IList<object> GetPropertyValues() {
       return (
         from property in Properties.Values
@@ -175,11 +181,11 @@ namespace SoundExplorers.Model {
 
     protected abstract string GetSimpleKey();
 
-    internal virtual void RestorePropertyValuesFrom(TBindingItem backup) {
-      foreach (var property in Properties.Values) {
-        SetPropertyValue(property.Name, backup.GetPropertyValue(property.Name)!);
-      }
-    }
+    // internal virtual void RestorePropertyValuesFrom(TBindingItem backup) {
+    //   foreach (var property in Properties.Values) {
+    //     SetPropertyValue(property.Name, backup.GetPropertyValue(property.Name)!);
+    //   }
+    // }
 
     internal void RestoreToEntity(TEntity entity) {
       EntityPropertyValues = CreateEntityPropertyValueDictionary();
@@ -191,6 +197,9 @@ namespace SoundExplorers.Model {
       try {
         entityProperty.SetValue(entity, newEntityPropertyValue);
       } catch (TargetInvocationException exception) {
+        // The only way to get a detailed diagnostic trace for a crash on
+        // PropertyInfo.SetValue is to explicitly set the property's value rather than
+        // via SetValue, e.g. by overriding CopyValuesToEntityProperties. 
         throw exception.InnerException ?? exception;
       }
     }

@@ -74,7 +74,7 @@ namespace SoundExplorers.Model {
     /// </param>
     IdentifyingParentChildren? GetIdentifyingParentChildrenForMainList(int rowIndex);
 
-    IList<object> GetErrorValues();
+    IList<object?> GetErrorValues();
 
     /// <summary>
     ///   This is called when any row has been entered.
@@ -116,8 +116,7 @@ namespace SoundExplorers.Model {
     void Populate(IdentifyingParentChildren? identifyingParentChildren = null,
       bool createBindingList = true);
 
+    void ReplaceErrorBindingValueWithOriginal();
     void RestoreCurrentBindingItemOriginalValues();
-    
-    void RestoreReferencingPropertyOriginalValue(int rowIndex, int columnIndex);
   }
 }

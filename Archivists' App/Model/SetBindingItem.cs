@@ -102,21 +102,21 @@ namespace SoundExplorers.Model {
       set.Event = Event;
     }
 
-    internal override void RestorePropertyValuesFrom(SetBindingItem backup) {
-      base.RestorePropertyValuesFrom(backup);
-      Event = (Event)EntityList.IdentifyingParent!;
-      // if (!EntityList.IsChildList && !EntityList.IsInsertionRowCurrent) {
-      //   base.RestorePropertyValuesFrom(backup);
-      // }
-      // Event = (Event)EntityList.IdentifyingParent!;
-      // Date = Event.Date;
-      // Location = Event.Location.Name;
-      // SetNo = backup.SetNo;
-      // Act = backup.Act;
-      // Genre = backup.Genre;
-      // IsPublic = backup.IsPublic;
-      // Notes = backup.Notes;
-    }
+    // internal override void RestorePropertyValuesFrom(SetBindingItem backup) {
+    //   // base.RestorePropertyValuesFrom(backup);
+    //   // Event = (Event)EntityList.IdentifyingParent!;
+    //   // if (!EntityList.IsChildList && !EntityList.IsInsertionRowCurrent) {
+    //   //   base.RestorePropertyValuesFrom(backup);
+    //   // }
+    //   Event = (Event)EntityList.IdentifyingParent!;
+    //   Date = Event.Date;
+    //   Location = Event.Location.Name;
+    //   SetNo = backup.SetNo;
+    //   Act = backup.Act;
+    //   Genre = backup.Genre;
+    //   IsPublic = backup.IsPublic;
+    //   Notes = backup.Notes;
+    // }
 
     protected override string GetSimpleKey() {
       return EntityBase.IntegerToSimpleKey(SetNo, nameof(SetNo));

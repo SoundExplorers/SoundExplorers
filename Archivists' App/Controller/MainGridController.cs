@@ -12,17 +12,6 @@ namespace SoundExplorers.Controller {
       base(grid, editorController) { }
 
     private new IMainGrid Grid => (IMainGrid)base.Grid;
-
-    private bool IsDuplicateKeyException =>
-      List.LastDatabaseUpdateErrorException?.InnerException is DuplicateNameException;
-
-    private bool IsFormatException =>
-      List.LastDatabaseUpdateErrorException?.InnerException is FormatException;
-
-    private bool IsReferencingValueNotFoundException =>
-      List.LastDatabaseUpdateErrorException?.InnerException
-        is RowNotInTableException;
-
     private bool IsRestoringRowCurrency { get; set; }
 
     protected virtual StatementType LastChangeAction =>
@@ -44,7 +33,7 @@ namespace SoundExplorers.Controller {
     private IParentGrid ParentGrid => EditorController.View.ParentGrid;
 
     /// <summary>
-    ///   Occurs when an exception is thrown on ending a cell edit. 
+    ///   Occurs when an exception is thrown on ending a cell edit.
     /// </summary>
     /// <remarks>
     ///   A <see cref="DatabaseUpdateErrorException" />, which is explicitly thrown by
@@ -57,7 +46,7 @@ namespace SoundExplorers.Controller {
         case ArgumentException argumentException:
           if (argumentException.Message.StartsWith(" is not a valid value for")) {
             // Thrown when an integer cell is empty
-            OnCellValidationError(rowIndex, columnName, 
+            OnCellValidationError(rowIndex, columnName,
               new FormatException(argumentException.Message, argumentException));
           } else {
             throw argumentException; // Terminal error
@@ -225,29 +214,26 @@ namespace SoundExplorers.Controller {
       EditorController.View.ShowErrorMessage(
         List.LastDatabaseUpdateErrorException.Message);
       // Debug.WriteLine("Error message shown");
-      if (IsFormatException) {
-        return;
-      }
-      if (IsDuplicateKeyException || IsReferencingValueNotFoundException) {
-        if (LastChangeAction == StatementType.Update) {
-          List.RestoreReferencingPropertyOriginalValue(
-            List.LastDatabaseUpdateErrorException.RowIndex,
-            List.LastDatabaseUpdateErrorException.ColumnIndex);
+      switch (List.LastDatabaseUpdateErrorException.ErrorType) {
+        case ErrorType.Format:
           return;
-        }
+        case ErrorType.Duplicate:
+        case ErrorType.OutOfRange:
+        case ErrorType.ReferencingValueNotFound:
+          if (LastChangeAction == StatementType.Update) {
+            List.ReplaceErrorBindingValueWithOriginal();
+            return;
+          }
+          break;
       }
       switch (LastChangeAction) {
         case StatementType.Delete:
           break;
         case StatementType.Insert:
-          // The insertion row gets removed on paste into combo box error, in which case
-          // we cannot do the usual insertion cancellation procedure.
-          if (!IsReferencingValueNotFoundException) {
-            CancelInsertion();
-          }
+          CancelInsertion();
           break;
         case StatementType.Update:
-          List.RestoreCurrentBindingItemOriginalValues();
+          List.RestoreCurrentBindingItemOriginalValues(); // ???
           Grid.EditCurrentCell();
           Grid.RestoreCurrentRowCellErrorValue(
             List.LastDatabaseUpdateErrorException.ColumnIndex,
@@ -299,8 +285,17 @@ namespace SoundExplorers.Controller {
       // Debug.WriteLine("EditorController.CancelInsertion");
       int insertionRowIndex = List.BindingList.Count - 1;
       // Backs up the error insertion item
-      List.BackupAndRemoveInsertionErrorBindingItem(); 
+      List.BackupAndRemoveInsertionErrorBindingItem();
+      // DOES NOT HELP WITH FAILURE TO RETURN TO INSERTION ROW ON OUT OF RANGE ERROR
+      // if (insertionRowIndex > 0) {
+      //   Grid.MakeCellCurrent(insertionRowIndex - 1, 
+      //     List.LastDatabaseUpdateErrorException!.ColumnIndex);
+      // }
       // Force a new row to be created with the erroneous data restored to it.
+      // DOES NOT HELP WITH FAILURE TO RETURN TO INSERTION ROW ON OUT OF RANGE ERROR
+      // Grid.BeginInvoke(() =>
+      //   Grid.MakeCellCurrent(insertionRowIndex,
+      //     List.LastDatabaseUpdateErrorException!.ColumnIndex));
       Grid.MakeCellCurrent(insertionRowIndex, 
         List.LastDatabaseUpdateErrorException!.ColumnIndex);
     }
