@@ -8,7 +8,7 @@ namespace SoundExplorers.Tests.Controller {
       set => base.Controller = value;
     }
 
-    internal bool AutoAddNewRow { get; set; }
+    // internal bool AutoAddNewRow { get; set; }
     internal int EditCurrentCellCount { get; private set; }
     internal int MakeCellCurrentCount { get; private set; }
     internal int MakeCellCurrentColumnIndex { get; private set; }
@@ -48,14 +48,17 @@ namespace SoundExplorers.Tests.Controller {
     public void MakeCellCurrent(int rowIndex, int columnIndex) {
       MakeCellCurrentCount++;
       MakeCellCurrentColumnIndex = columnIndex;
-      CurrentRowIndex = rowIndex;
+      MakeRowCurrent(rowIndex);
     }
 
     public override void MakeRowCurrent(int rowIndex, bool async = false) {
-      base.MakeRowCurrent(rowIndex, async);
-      if (AutoAddNewRow && rowIndex == Controller.BindingList.Count) {
+      if (rowIndex == Controller.BindingList.Count) {
         Controller.BindingList.AddNew();
       }
+      base.MakeRowCurrent(rowIndex, async);
+      // if (AutoAddNewRow && rowIndex == Controller.BindingList.Count) {
+      //   Controller.BindingList.AddNew();
+      // }
     }
 
     public override void Focus() {

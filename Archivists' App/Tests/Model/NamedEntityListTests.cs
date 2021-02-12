@@ -101,7 +101,6 @@ namespace SoundExplorers.Tests.Model {
       // The second EventType cannot be deleted
       // because it is a parent of 3 child Events.
       ErrorOnDelete<EventTypeList>();
-      // ErrorOnDelete<EventTypeList>((IList)Data.EventTypes);
     }
 
     private void ErrorOnDelete<TEntityList>()
@@ -109,7 +108,7 @@ namespace SoundExplorers.Tests.Model {
       where TEntityList : IEntityList, new() {
       var list = new TEntityList {Session = Session};
       list.Populate();
-      // list.Populate(entities);
+      list.OnRowEnter(1);
       var exception = Assert.Catch<DatabaseUpdateErrorException>(
         () => list.DeleteEntity(1),
         "DeleteEntity should have thrown DatabaseUpdateErrorException.");

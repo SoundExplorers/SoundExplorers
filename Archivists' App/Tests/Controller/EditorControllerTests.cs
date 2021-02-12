@@ -169,7 +169,6 @@ namespace SoundExplorers.Tests.Controller {
         Session.Commit();
       }
       CreateControllers(typeof(GenreList));
-      MainGrid.AutoAddNewRow = true;
       Controller.Populate();
       Assert.AreEqual(1, MainGrid.MakeRowCurrentCount,
         "MakeRowCurrentCount after Populate");
@@ -178,12 +177,11 @@ namespace SoundExplorers.Tests.Controller {
       var bindingList =
         (TypedBindingList<Genre, NamedBindingItem<Genre>>)Controller.MainList
           .BindingList!;
-      //MainGridController.CreateAndGoToNewRow();
       bindingList[1].Name = bindingList[0].Name;
       MainGridController.OnRowValidated(1);
       Assert.AreEqual(1, View.ShowErrorMessageCount,
         "ShowErrorMessageCount after error message shown for duplicate insert");
-      Assert.AreEqual(2, MainGrid.MakeRowCurrentCount,
+      Assert.AreEqual(3, MainGrid.MakeRowCurrentCount,
         "MakeRowCurrentCount after error message shown for duplicate insert");
       Assert.AreEqual(1, MainGrid.CurrentRowIndex,
         "CurrentRowIndex after error message shown for duplicate insert");
@@ -233,7 +231,7 @@ namespace SoundExplorers.Tests.Controller {
       bindingList =
         (TypedBindingList<Location, NotablyNamedBindingItem<Location>>)Controller.MainList
           .BindingList!;
-      Assert.AreEqual(2, bindingList.Count, "editor.Count after Refresh");
+      Assert.AreEqual(3, bindingList.Count, "bindingList.Count after Refresh");
       MainGridController.OnRowEnter(1);
       // Disallow rename to duplicate
       var exception = Assert.Catch<DuplicateNameException>(
@@ -369,7 +367,7 @@ namespace SoundExplorers.Tests.Controller {
       string selectedSeriesName = selectedSeries.Name!;
       Assert.IsNotNull(selectedSeriesName, "selectedSeriesName");
       MainGridController.OnRowEnter(0);
-      MainGridController.SetComboBoxCellValue(0, "Series", selectedSeriesName!);
+      MainGridController.SetComboBoxCellValue(0, "Series", selectedSeriesName);
       Assert.AreEqual(1, View.ShowErrorMessageCount,
         "ShowErrorMessageCount after valid Series selection");
       Assert.AreEqual(selectedSeriesName, bindingList[0].Series,

@@ -20,6 +20,7 @@ namespace SoundExplorers.Data {
     private EntityBase? _identifyingParent;
     private IDictionary<Type, IRelationInfo>? _parentRelations;
     private IDictionary<Type, EntityBase?>? _parents;
+    // private IDictionary<string, PropertyInfo>? _properties;
     private QueryHelper? _queryHelper;
     private Schema? _schema;
     private string _simpleKey = null!;
@@ -91,6 +92,13 @@ namespace SoundExplorers.Data {
 
     private bool IsAddingToOrRemovingFromIdentifyingParent { get; set; }
     private bool IsTopLevel => Parents.Count == 0;
+
+    // private IDictionary<string, PropertyInfo> Properties =>
+    //   _properties ??= new PropertyDictionary(EntityType);
+
+    // public object? GetPropertyValue(string propertyName) {
+    //   return Properties[propertyName].GetValue(this);
+    // }
 
     private IDictionary<Type, IRelationInfo> ParentRelations {
       get {

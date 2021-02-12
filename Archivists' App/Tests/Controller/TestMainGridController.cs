@@ -15,6 +15,19 @@ namespace SoundExplorers.Tests.Controller {
 
     internal new EditorController EditorController => base.EditorController;
     internal bool TestUnsupportedLastChangeAction { get; set; }
+    
+    protected override void OnPopulatedAsync() {
+      base.OnPopulatedAsync();
+      IsFixingFocus = false;
+    }
+
+    public override void OnRowEnter(int rowIndex) {
+      if (!IsPopulating && rowIndex != Grid.CurrentRowIndex && 
+          Grid.CurrentRowIndex == BindingList.Count - 1) {
+        OnRowValidated(Grid.CurrentRowIndex);
+      }
+      base.OnRowEnter(rowIndex);
+    }
 
     internal void CreateAndGoToNewRow() {
       List.BindingList.AddNew();
@@ -32,9 +45,24 @@ namespace SoundExplorers.Tests.Controller {
       int rowIndex, string columnName, object value) {
       var comboBoxCellController =
         CreateComboBoxCellControllerWithItems(columnName);
-      ((IBindingItem)List.BindingList[rowIndex]!).SetPropertyValue(columnName, value);
+      if (rowIndex == BindingList.Count) {
+        BindingList.AddNew();
+      }
+      ((IBindingItem)BindingList[rowIndex]!).SetPropertyValue(columnName, value);
       comboBoxCellController.OnCellValueChanged(0, value);
     }
+
+    // internal void SetComboBoxCellValue<TBindingItem>(
+    //   int rowIndex, string columnName, object value) where TBindingItem : IBindingItem {
+    //   var comboBoxCellController =
+    //     CreateComboBoxCellControllerWithItems(columnName);
+    //   if (rowIndex == BindingList.Count) {
+    //     BindingList.AddNew();
+    //   }
+    //   // ((EventBindingItem)BindingList[rowIndex]!).Newsletter = (DateTime)value;
+    //   ((TBindingItem)BindingList[rowIndex]!).SetPropertyValue(columnName, value);
+    //   comboBoxCellController.OnCellValueChanged(0, value);
+    // }
 
     private ComboBoxCellController CreateComboBoxCellControllerWithItems(
       string columnName) {

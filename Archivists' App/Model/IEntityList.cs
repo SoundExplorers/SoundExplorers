@@ -94,8 +94,8 @@ namespace SoundExplorers.Model {
     /// </param>
     void OnRowValidated(int rowIndex);
 
-    void OnValueOutOfRange(int rowIndex, string columnName, 
-      PropertyValueOutOfRangeException outOfRangeException);
+    // void OnValueOutOfRange(int rowIndex, string columnName, 
+    //   PropertyValueOutOfRangeException outOfRangeException);
     
     void OnValidationError(int rowIndex, string? propertyName, Exception exception);
 
@@ -117,6 +117,6 @@ namespace SoundExplorers.Model {
       bool createBindingList = true);
 
     void ReplaceErrorBindingValueWithOriginal();
-    void RestoreCurrentBindingItemOriginalValues();
+    // void RestoreCurrentBindingItemOriginalValues();
   }
 }

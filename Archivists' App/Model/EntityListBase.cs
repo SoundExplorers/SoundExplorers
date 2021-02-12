@@ -4,7 +4,6 @@ using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Linq;
-using SoundExplorers.Common;
 using SoundExplorers.Data;
 using VelocityDb.Session;
 
@@ -50,15 +49,15 @@ namespace SoundExplorers.Model {
 
     private BackupItem<TBindingItem>? BackupItem { get; set; }
     private BackupItem<TBindingItem>? BackupItemToRestoreFrom { get; set; }
-    private TBindingItem? BindingItemToFix { get; set; }
+    // private TBindingItem? BindingItemToFix { get; set; }
+    private EntityComparer<TEntity> EntityComparer { get; }
     
     /// <summary>
     ///   Used for restoring the error value for correction or edit cancellation after an
     ///   error message hase been shown for a cell edit error on an existing row.
     /// </summary>
-    private BackupItem<TBindingItem>? CellEditErrorBackupItem { get; set; }
+    private BackupItem<TBindingItem>? ExistingEntityPropertyErrorBackupItem { get; set; }
     
-    private EntityComparer<TEntity> EntityComparer { get; }
     private StatementType LastDatabaseChangeAction { get; set; }
 
     /// <summary>
@@ -84,6 +83,7 @@ namespace SoundExplorers.Model {
       }
     }
 
+    private bool IsReplacingErrorBindingValueWithOriginal { get; set; }
     private bool HasRowBeenEdited { get; set; }
 
     /// <summary>
@@ -185,11 +185,11 @@ namespace SoundExplorers.Model {
         //throw new ConstraintException("Test error message");
         Session.Unpersist(this[rowIndex]);
         RemoveAt(rowIndex);
-        Session.Commit();
       } catch (Exception exception) {
-        Session.Abort();
         BindingList.Insert(rowIndex, BackupItem!.CreateBindingItem());
         throw CreateDatabaseUpdateErrorException(exception, rowIndex);
+      } finally {
+        Session.Commit();
       }
     }
 
@@ -207,7 +207,7 @@ namespace SoundExplorers.Model {
     }
 
     public IList<object?> GetErrorValues() {
-      return CellEditErrorBackupItem!.GetValues();
+      return ExistingEntityPropertyErrorBackupItem!.GetValues();
     }
 
     /// <summary>
@@ -275,16 +275,18 @@ namespace SoundExplorers.Model {
       }
     }
 
-    public void OnValueOutOfRange(int rowIndex, string propertyName,
-      PropertyValueOutOfRangeException outOfRangeException) {
-      BindingItemToFix = BindingList[rowIndex];
-      BackupItemToRestoreFrom = BackupItem; 
-      OnValidationError(rowIndex, propertyName, outOfRangeException);
-    }
+    // public void OnValueOutOfRange(int rowIndex, string propertyName,
+    //   PropertyValueOutOfRangeException outOfRangeException) {
+    //   // BindingItemToFix = BindingList[rowIndex];
+    //   OnValidationError(rowIndex, propertyName, outOfRangeException);
+    // }
 
     public void OnValidationError(int rowIndex, string? propertyName,
       Exception exception) {
-      CellEditErrorBackupItem = CreateBackupItem(BindingList[rowIndex]!);
+      Debug.WriteLine(
+        $"EntityListBase.OnValidationError: row {rowIndex}; property {propertyName}; {exception.GetType().Name}");
+      BackupItemToRestoreFrom = BackupItem; 
+      // ExistingEntityPropertyErrorBackupItem = CreateBackupItem(BindingList[rowIndex]!);
       LastDatabaseChangeAction =
         IsInsertionRowCurrent ? StatementType.Insert : StatementType.Update;
       int columnIndex;
@@ -342,27 +344,36 @@ namespace SoundExplorers.Model {
       }
     }
 
+    /// <summary>
+    ///   After showing an error message for an invalid cell value on editing an existing
+    ///   entity's row with the invalid value still shown, we now need to revert the cell
+    ///   value to its original, as on the database.
+    /// </summary>
     public void ReplaceErrorBindingValueWithOriginal() {
-      //Debug.WriteLine($"EntityListBase.ReplaceErrorBindingValueWithOriginal: row {rowIndex}");
-      BackupItemToRestoreFrom = null;
-      BindingItemToFix = null;
-      var bindingItem = BindingList[LastDatabaseUpdateErrorException!.RowIndex]!;
+      // BindingItemToFix = null; // ???
+      int errorRowIndex = LastDatabaseUpdateErrorException!.RowIndex;
+      Debug.WriteLine($"EntityListBase.ReplaceErrorBindingValueWithOriginal: row {errorRowIndex}");
+      var bindingItem = BindingList[errorRowIndex]!;
       string propertyName = 
         Columns[LastDatabaseUpdateErrorException.ColumnIndex].PropertyName;
-      var originalValue = BackupItem![propertyName];
+      // var originalValue = this[errorRowIndex].GetPropertyValue(propertyName);
+      var originalValue = BackupItemToRestoreFrom!.GetPropertyValue(propertyName);
+      // (bindingItem as NotablyNamedBindingItem<Location>)!.Name = originalValue!.ToString()!;
+      IsReplacingErrorBindingValueWithOriginal = true;
       bindingItem.SetPropertyValue(propertyName, originalValue);
+      BackupItemToRestoreFrom = null;
     }
 
-    public void RestoreCurrentBindingItemOriginalValues() {
-      //Debug.WriteLine("EntityListBase.RestoreCurrentBindingItemOriginalValues");
-      CellEditErrorBackupItem = CreateBackupItem(BindingItemToFix!);
-      BackupItemToRestoreFrom!.RestoreTo(BindingItemToFix!);
-      BackupItemToRestoreFrom = null;
-      BindingItemToFix = null;
-      HasRowBeenEdited = false;
-      // Debug.WriteLine(
-      //   $"EntityListBase.RestoreCurrentBindingItemOriginalValues: HasRowBeenEdited = {HasRowBeenEdited}");
-    }
+    // public void RestoreCurrentBindingItemOriginalValues() {
+    //   //Debug.WriteLine("EntityListBase.RestoreCurrentBindingItemOriginalValues");
+    //   ExistingEntityPropertyErrorBackupItem = CreateBackupItem(BindingItemToFix!);
+    //   BackupItemToRestoreFrom!.RestoreTo(BindingItemToFix!);
+    //   BackupItemToRestoreFrom = null;
+    //   BindingItemToFix = null;
+    //   HasRowBeenEdited = false;
+    //   // Debug.WriteLine(
+    //   //   $"EntityListBase.RestoreCurrentBindingItemOriginalValues: HasRowBeenEdited = {HasRowBeenEdited}");
+    // }
 
     protected virtual BackupItem<TBindingItem> CreateBackupItem(TBindingItem bindingItem) {
       return new BackupItem<TBindingItem>(bindingItem);
@@ -437,7 +448,11 @@ namespace SoundExplorers.Model {
           // Debug.WriteLine(
           //   $"EntityListBase.BindingList_ListChanged: ItemChanged, HasRowBeenEdited = {HasRowBeenEdited}");
           if (!IsInsertionRowCurrent) {
-            UpdateExistingEntityProperty(e.NewIndex, e.PropertyDescriptor.Name);
+            if (!IsReplacingErrorBindingValueWithOriginal) {
+              UpdateExistingEntityProperty(e.NewIndex, e.PropertyDescriptor.Name);
+            } else {
+              IsReplacingErrorBindingValueWithOriginal = false;
+            }
           }
           break;
       }
@@ -453,11 +468,11 @@ namespace SoundExplorers.Model {
     ///   Arguably this duplicate key check does not give such nice error messages as
     ///   the ones in the Data layer, but I think they are fine.
     /// </remarks>
-    private void CheckForDuplicateKey(TBindingItem bindingItem) {
-      var newKey = bindingItem.CreateKey();
-      if (!IsInsertionRowCurrent) {
-        var originalKey = BackupItem!.Key;
-        if (newKey == originalKey) {
+    private void CheckForDuplicateKey(
+      TBindingItem currentBindingItem, TEntity? currentEntity = null) {
+      var newKey = currentBindingItem.CreateKey();
+      if (currentEntity != null) {
+        if (newKey == currentEntity.Key) {
           return;
         }
       }
@@ -524,25 +539,34 @@ namespace SoundExplorers.Model {
     }
 
     private void UpdateExistingEntityProperty(int rowIndex, string propertyName) {
-      //Debug.WriteLine($"EntityListBase.UpdateExistingEntityProperty: row {rowIndex}");
+      Debug.WriteLine($"EntityListBase.UpdateExistingEntityProperty: row {rowIndex}; property {propertyName}");
       LastDatabaseChangeAction = StatementType.Update;
       var bindingItem = BindingList[rowIndex]!;
-      if (Columns[propertyName].IsInKey) {
-        CheckForDuplicateKey(bindingItem);
+      var newValue = bindingItem.GetPropertyValue(propertyName); 
+      var oldValue = BackupItem!.GetPropertyValue(propertyName); 
+      if (newValue == oldValue) {
+        return;
       }
       var entity = this[rowIndex];
-      var backupBindingItem = CreateBindingItemWithEntityList(entity);
+      if (Columns[propertyName].IsInKey) {
+        CheckForDuplicateKey(bindingItem, entity);
+      }
+      // var backupBindingItem = CreateBindingItemWithEntityList(entity); // ???
       Session.BeginUpdate();
       try {
         bindingItem.UpdateEntityProperty(propertyName, entity);
+        Session.Commit();
+        BackupItem = CreateBackupItem(bindingItem);
       } catch (Exception exception) {
-        BindingItemToFix = bindingItem;
-        backupBindingItem.RestoreToEntity(entity);
+        Session.Abort();
+        // BindingItemToFix = bindingItem;
+        ExistingEntityPropertyErrorBackupItem = CreateBackupItem(bindingItem);
+        // backupBindingItem.RestoreToEntity(entity); // ???
         BackupItemToRestoreFrom = BackupItem;
         // This exception will be passed to the grid's DataError event handler.
         throw CreateDatabaseUpdateErrorException(exception, rowIndex);
-      } finally {
-        Session.Commit();
+      // } finally {
+      //   Session.Commit();
       }
     }
   }

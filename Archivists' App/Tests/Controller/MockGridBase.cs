@@ -28,7 +28,7 @@ namespace SoundExplorers.Tests.Controller {
       }
     }
 
-    public int CurrentRowIndex { get; protected set; }
+    public int CurrentRowIndex { get; private set; }
     IGridCellColorScheme IGrid.CellColorScheme => CellColorScheme;
     public bool Focused { get; internal set; }
 

@@ -35,7 +35,7 @@ namespace SoundExplorers.View {
     }
 
     public void OnError() {
-      // Debug.WriteLine("EditorView.OnError");
+      Debug.WriteLine("EditorView.OnError");
       SetMouseCursorToWait();
       BeginInvoke((Action)MainGrid.OnError);
     }

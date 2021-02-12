@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Windows.Forms;
 using SoundExplorers.Common;
 using SoundExplorers.Controller;
@@ -46,6 +47,7 @@ namespace SoundExplorers.View {
     }
 
     public void RestoreCurrentRowCellErrorValue(int columnIndex, object? errorValue) {
+      Debug.WriteLine("MainGrid.RestoreCurrentRowCellErrorValue");
       ((ICanRestoreErrorValue)CurrentRow!.Cells[columnIndex]).RestoreErrorValue(
         errorValue);
     }
@@ -154,6 +156,7 @@ namespace SoundExplorers.View {
     }
 
     public void OnError() {
+      Debug.WriteLine("MainGrid.OnError");
       CancelEdit();
       Controller.ShowError();
     }

@@ -3,5 +3,6 @@
     EntityBase? IdentifyingParent { get; }
     Key Key { get; }
     string SimpleKey { get; }
+    // object? GetPropertyValue(string propertyName);
   }
 }

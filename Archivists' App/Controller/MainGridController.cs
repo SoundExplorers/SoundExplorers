@@ -35,7 +35,7 @@ namespace SoundExplorers.Controller {
     ///   the base method from being called.  That is not practicable, as it prevents
     ///   editor controls from appearing in grid cells when they are edited!
     /// </remarks>
-    private bool IsFixingFocus { get; set; }
+    protected bool IsFixingFocus { get; set; }
 
     /// <summary>
     ///   Gets whether the current main grid row is the insertion row,
@@ -60,6 +60,8 @@ namespace SoundExplorers.Controller {
     /// </remarks>
     public void OnCellEditException(int rowIndex, string columnName,
       Exception? exception) {
+      Debug.WriteLine(
+        $"MainGridController.OnCellEditException: rowIndex = {rowIndex}; columnName = {columnName}, {exception?.GetType().Name}");
       switch (exception) {
         case ArgumentException argumentException:
           if (argumentException.Message.StartsWith(" is not a valid value for")) {
@@ -72,8 +74,9 @@ namespace SoundExplorers.Controller {
           break;
         case PropertyValueOutOfRangeException outOfRangeException:
           // Thrown when an integer cell value is out of range.
-          List.OnValueOutOfRange(rowIndex, columnName, outOfRangeException);
-          EditorController.View.OnError();
+          OnCellValidationError(rowIndex, columnName, outOfRangeException);
+          // List.OnValueOutOfRange(rowIndex, columnName, outOfRangeException);
+          // EditorController.View.OnError();
           break;
         case DatabaseUpdateErrorException databaseUpdateErrorException:
           List.LastDatabaseUpdateErrorException = databaseUpdateErrorException;
@@ -111,6 +114,8 @@ namespace SoundExplorers.Controller {
 
     private void OnCellValidationError(
       int rowIndex, string columnName, Exception exception) {
+      Debug.WriteLine(
+        $"MainGridController.OnCellValidationError: rowIndex = {rowIndex}; columnName = {columnName}, {exception.GetType().Name}");
       List.OnValidationError(rowIndex, columnName, exception);
       EditorController.View.OnError();
     }
@@ -230,8 +235,8 @@ namespace SoundExplorers.Controller {
     }
 
     public void ShowError() {
-      // Debug.WriteLine(
-      //   $"MainGridController.ShowError: LastChangeAction == {LastChangeAction}");
+      Debug.WriteLine(
+        $"MainGridController.ShowError: LastChangeAction == {LastChangeAction}");
       Grid.MakeCellCurrent(List.LastDatabaseUpdateErrorException!.RowIndex,
         List.LastDatabaseUpdateErrorException.ColumnIndex);
       if (LastChangeAction == StatementType.Delete) {
@@ -259,7 +264,7 @@ namespace SoundExplorers.Controller {
           CancelInsertion();
           break;
         case StatementType.Update:
-          List.RestoreCurrentBindingItemOriginalValues(); // ???
+          //List.RestoreCurrentBindingItemOriginalValues(); // ???
           Grid.EditCurrentCell();
           Grid.RestoreCurrentRowCellErrorValue(
             List.LastDatabaseUpdateErrorException.ColumnIndex,
@@ -309,7 +314,7 @@ namespace SoundExplorers.Controller {
     ///   leaving the error row on the grid but not bound to an entity.
     /// </summary>
     private void CancelInsertion() {
-      // Debug.WriteLine("EditorController.CancelInsertion");
+      Debug.WriteLine("EditorController.CancelInsertion");
       int insertionRowIndex = List.BindingList.Count - 1;
       // Backs up the error insertion item
       List.BackupAndRemoveInsertionErrorBindingItem();

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using JetBrains.Annotations;
+using SoundExplorers.Common;
 using SoundExplorers.Data;
 
 namespace SoundExplorers.Model {
@@ -37,17 +38,16 @@ namespace SoundExplorers.Model {
     private IDictionary<string, PropertyInfo>? _entityProperties;
 
     private IDictionary<string, PropertyInfo>? _properties;
-    // private IEnumerable<PropertyInfo>? _visibleProperties;
 
     internal EntityListBase<TEntity, TBindingItem> EntityList { get; set; } = null!;
 
     private IDictionary<string, PropertyInfo> EntityProperties =>
-      _entityProperties ??= CreatePropertyDictionary<TEntity>();
+      _entityProperties ??=  new PropertyDictionary(typeof(TEntity));
 
     private IDictionary<string, object?>? EntityPropertyValues { get; set; }
 
     protected IDictionary<string, PropertyInfo> Properties =>
-      _properties ??= CreatePropertyDictionary<TBindingItem>();
+      _properties ??= new PropertyDictionary(typeof(TBindingItem));
 
     // Must be explicit interface implementation rather than public. Otherwise it would
     // appear as a column on the grid!
@@ -88,7 +88,6 @@ namespace SoundExplorers.Model {
     ///   the entity list's identifying parent AFTER calling this base method.
     /// </summary>
     protected virtual void CopyValuesToEntityProperties(TEntity entity) {
-      // foreach (var property in VisibleProperties) {
       foreach (var property in Properties.Values) {
         CopyValueToEntityProperty(property.Name, entity);
       }
@@ -107,12 +106,6 @@ namespace SoundExplorers.Model {
         SetEntityPropertyValue(entity, entityProperty, newEntityPropertyValue);
       }
     }
-
-    // internal TBindingItem CreateBackup() {
-    //   var result = new TBindingItem {EntityList = EntityList};
-    //   result.RestorePropertyValuesFrom((TBindingItem)this);
-    //   return result;
-    // }
 
     internal TEntity CreateEntity() {
       // Fetch any parent reference values from the database
@@ -136,7 +129,6 @@ namespace SoundExplorers.Model {
     protected virtual IDictionary<string, object?> CreateEntityPropertyValueDictionary() {
       // Debug.WriteLine("BindingItemBase.CreateEntityPropertyValueDictionary");
       var result = new Dictionary<string, object?>();
-      // foreach (var property in VisibleProperties) {
       foreach (var property in Properties.Values) {
         result[property.Name] =
           GetEntityPropertyValue(property, EntityProperties[property.Name])!;
@@ -144,19 +136,13 @@ namespace SoundExplorers.Model {
       return result;
     }
 
-    private static IDictionary<string, PropertyInfo> CreatePropertyDictionary<T>() {
-      var properties = typeof(T).GetProperties().ToList();
-      var result = new Dictionary<string, PropertyInfo>(properties.Count);
-      foreach (var property in properties) {
-        result.Add(property.Name, property);
-      }
-      return result;
-    }
-
-    // private IEnumerable<PropertyInfo> CreateVisibleProperties() {
-    //   return from property in Properties.Values
-    //     where EntityList.Columns[property.Name].IsVisible
-    //     select property;
+    // private static IDictionary<string, PropertyInfo> CreatePropertyDictionary<T>() {
+    //   var properties = typeof(T).GetProperties().ToList();
+    //   var result = new Dictionary<string, PropertyInfo>(properties.Count);
+    //   foreach (var property in properties) {
+    //     result.Add(property.Name, property);
+    //   }
+    //   return result;
     // }
 
     protected IEntity? FindParent(PropertyInfo property) {
@@ -180,12 +166,6 @@ namespace SoundExplorers.Model {
     }
 
     protected abstract string GetSimpleKey();
-
-    // internal virtual void RestorePropertyValuesFrom(TBindingItem backup) {
-    //   foreach (var property in Properties.Values) {
-    //     SetPropertyValue(property.Name, backup.GetPropertyValue(property.Name)!);
-    //   }
-    // }
 
     internal void RestoreToEntity(TEntity entity) {
       EntityPropertyValues = CreateEntityPropertyValueDictionary();

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data;
 using NUnit.Framework;
+using SoundExplorers.Common;
 using SoundExplorers.Data;
 
 namespace SoundExplorers.Tests.Data {
@@ -232,12 +233,14 @@ namespace SoundExplorers.Tests.Data {
     [Test]
     public void DisallowOutOfRangeCreditNo() {
       Session.BeginUpdate();
-      var exception = Assert.Catch<FormatException>(() => Credit2.CreditNo = 0,
-        "Zero should throw FormatException");
+      var exception = 
+        Assert.Catch<PropertyValueOutOfRangeException>(() => Credit2.CreditNo = 0,
+        "Zero disallowed");
       Assert.AreEqual("CreditNo must be an integer between 1 and 99.", exception.Message,
         "Error message when zero");
-      exception = Assert.Catch<FormatException>(() => Credit2.CreditNo = 100,
-        "100 should throw FormatException");
+      exception = 
+        Assert.Catch<PropertyValueOutOfRangeException>(() => Credit2.CreditNo = 100,
+        "100 disallowed");
       Assert.AreEqual("CreditNo must be an integer between 1 and 99.", exception.Message,
         "Error message when 100");
       Session.Commit();
