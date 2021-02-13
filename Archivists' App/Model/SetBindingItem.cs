@@ -95,9 +95,12 @@ namespace SoundExplorers.Model {
     }
 
     protected override void CopyValuesToEntityProperties(Set set) {
+      // The order is crucial here. SetNo must be set before Event so that Event.Sets
+      // will be in the right sort order. And, to avoid referential integrity exceptions,
+      // Genre must be set before Event, which must be set before Act.
+      set.SetNo = SetNo; 
       set.Genre = (Genre)FindParent(Properties[nameof(Genre)])!;
       set.Event = Event;
-      set.SetNo = SetNo;
       set.Act = (Act)FindParent(Properties[nameof(Act)])!;
       set.IsPublic = IsPublic;
       set.Notes = Notes;

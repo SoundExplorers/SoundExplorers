@@ -68,8 +68,8 @@ namespace SoundExplorers.Tests.Model {
       Assert.AreEqual(4, @event.Sets.Count, "Count");
       eventChildren = CreateEventChildren(@event);
       List.Populate(eventChildren);
-      Assert.AreEqual(4, List[3].SetNo, "SetNo in List");
       Assert.AreEqual(4, bindingList[3].SetNo, "SetNo in binding list");
+      Assert.AreEqual(4, List[3].SetNo, "SetNo in List");
       Assert.AreEqual(4, @event.Sets[3].SetNo, "SetNo in Event.Sets");
       Assert.AreEqual(4, Data.Genres[0].Sets[3].SetNo, "SetNo in Genre.Sets");
     }
