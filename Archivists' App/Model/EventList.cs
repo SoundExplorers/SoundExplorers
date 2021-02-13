@@ -5,14 +5,16 @@ using SoundExplorers.Data;
 namespace SoundExplorers.Model {
   public class EventList : EntityListBase<Event, EventBindingItem> {
     private bool HasDefaultEventTypeBeenFound { get; set; }
+    private bool HasDefaultNewsletterBeenFound { get; set; }
+    private bool HasDefaultSeriesBeenFound { get; set; }
 
     private void AddDefaultEventTypeIfItDoesNotExist() {
       Session.BeginUpdate();
       var defaultEventType = QueryHelper.Find<EventType>(
-        EventBindingItem.DefaultEventTypeName, Session);
+        Event.DefaultEventTypeName, Session);
       if (defaultEventType == null) {
         defaultEventType = new EventType {
-          Name = EventBindingItem.DefaultEventTypeName
+          Name = Event.DefaultEventTypeName
         };
         Session.Persist(defaultEventType);
       }
@@ -20,11 +22,40 @@ namespace SoundExplorers.Model {
       HasDefaultEventTypeBeenFound = true;
     }
 
+    private void AddDefaultNewsletterIfItDoesNotExist() {
+      Session.BeginUpdate();
+      var defaultNewsletter = QueryHelper.Find<Newsletter>(
+        EntityBase.DateToSimpleKey(EntityBase.DefaultDate), Session);
+      if (defaultNewsletter == null) {
+        defaultNewsletter = new Newsletter {
+          Date = EntityBase.DefaultDate
+        };
+        Session.Persist(defaultNewsletter);
+      }
+      Session.Commit();
+      HasDefaultNewsletterBeenFound = true;
+    }
+
+    private void AddDefaultSeriesIfItDoesNotExist() {
+      Session.BeginUpdate();
+      var defaultSeries = QueryHelper.Find<Series>(
+        Event.DefaultSeriesName, Session);
+      if (defaultSeries == null) {
+        defaultSeries = new Series {
+          Name = Event.DefaultSeriesName
+        };
+        Session.Persist(defaultSeries);
+      }
+      Session.Commit();
+      HasDefaultSeriesBeenFound = true;
+    }
+
     protected override EventBindingItem CreateBindingItem(Event @event) {
       return new EventBindingItem() {
         Date = @event.Date, Location = @event.Location.Name!,
-        Series = @event.Series?.Name,
-        Newsletter = @event.Newsletter?.Date ?? EntityBase.InitialDate,
+        Series = @event.Series.Name,
+        Newsletter = @event.Newsletter.Date,
+        // Newsletter = @event.Newsletter?.Date ?? EntityBase.DefaultDate,
         EventType = @event.EventType.Name,
         Notes = @event.Notes
       };
@@ -57,6 +88,12 @@ namespace SoundExplorers.Model {
       bool createBindingList = true) {
       if (!HasDefaultEventTypeBeenFound) {
         AddDefaultEventTypeIfItDoesNotExist();
+      }
+      if (!HasDefaultNewsletterBeenFound) {
+        AddDefaultNewsletterIfItDoesNotExist();
+      }
+      if (!HasDefaultSeriesBeenFound) {
+        AddDefaultSeriesIfItDoesNotExist();
       }
       base.Populate(identifyingParentChildren, createBindingList);
     }

@@ -10,6 +10,18 @@ namespace SoundExplorers.Tests.Data {
       QueryHelper = new QueryHelper();
       DatabaseFolderPath = TestSession.CreateDatabaseFolder();
       Data = new TestData(QueryHelper);
+      DefaultAct = new Act {
+        QueryHelper = QueryHelper,
+        Name = Set.DefaultActName
+      };
+      DefaultNewsletter = new Newsletter {
+        QueryHelper = QueryHelper,
+        Date = EntityBase.DefaultDate
+      };
+      DefaultSeries = new Series {
+        QueryHelper = QueryHelper,
+        Name = Event.DefaultSeriesName
+      };
       Location1 = new Location {
         QueryHelper = QueryHelper,
         Name = Location1Name
@@ -37,6 +49,9 @@ namespace SoundExplorers.Tests.Data {
       };
       using var session = new TestSession(DatabaseFolderPath);
       session.BeginUpdate();
+      session.Persist(DefaultAct);
+      session.Persist(DefaultNewsletter);
+      session.Persist(DefaultSeries);
       session.Persist(Location1);
       Data.AddEventTypesPersisted(1, session);
       Event1.EventType = Data.EventTypes[0];
@@ -70,6 +85,9 @@ namespace SoundExplorers.Tests.Data {
     private string DatabaseFolderPath { get; set; } = null!;
     private QueryHelper QueryHelper { get; set; } = null!;
     private TestData Data { get; set; } = null!;
+    private Act DefaultAct { get; set; } = null!;
+    private Newsletter DefaultNewsletter { get; set; } = null!;
+    private Series DefaultSeries { get; set; } = null!;
     private Act Act1 { get; set; } = null!;
     private Act Act2 { get; set; } = null!;
     private Event Event1 { get; set; } = null!;
@@ -82,6 +100,7 @@ namespace SoundExplorers.Tests.Data {
     public void A010_Initial() {
       using var session = new TestSession(DatabaseFolderPath);
       session.BeginRead();
+      DefaultAct = QueryHelper.Read<Act>(DefaultAct.Name, session);
       Act1 = QueryHelper.Read<Act>(Act1Name, session);
       Act2 = QueryHelper.Read<Act>(Act2Name, session);
       Set1 = QueryHelper.Read<Set>(Set1.SimpleKey, Event1, session);
@@ -92,8 +111,19 @@ namespace SoundExplorers.Tests.Data {
       Assert.AreEqual(Act2Name, Act2.Name, "Act2.Name");
       Assert.AreEqual(1, Act1.Sets.Count, "Act1.Sets.Count");
       Assert.AreSame(Act1, Set1.Act, "Set1.Act");
-      Assert.AreEqual(Act1.Name, Set1.Act?.Name, "Set1.Act.Name");
-      Assert.IsNull(Set2.Act, "Set2.Act");
+      Assert.AreEqual(Act1.Name, Set1.Act.Name, "Set1.Act.Name");
+      Assert.AreSame(DefaultAct, Set2.Act, "Set2.Act");
+    }
+
+    [Test]
+    public void AllowPersistUnspecifiedName() {
+      var noName = new Act {
+        QueryHelper = QueryHelper
+      };
+      using var session = new TestSession(DatabaseFolderPath);
+      session.BeginUpdate();
+      Assert.DoesNotThrow(() => session.Persist(noName));
+      session.Commit();
     }
 
     [Test]
@@ -125,17 +155,6 @@ namespace SoundExplorers.Tests.Data {
       using var session = new TestSession(DatabaseFolderPath);
       session.BeginUpdate();
       Assert.Throws<PropertyConstraintException>(() => session.Persist(duplicate));
-      session.Commit();
-    }
-
-    [Test]
-    public void DisallowPersistUnspecifiedName() {
-      var noName = new Act {
-        QueryHelper = QueryHelper
-      };
-      using var session = new TestSession(DatabaseFolderPath);
-      session.BeginUpdate();
-      Assert.Throws<PropertyConstraintException>(() => session.Persist(noName));
       session.Commit();
     }
   }

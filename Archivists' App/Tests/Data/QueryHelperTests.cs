@@ -12,6 +12,14 @@ namespace SoundExplorers.Tests.Data {
       QueryHelper = new QueryHelper();
       DatabaseFolderPath = TestSession.CreateDatabaseFolder();
       Data = new TestData(QueryHelper);
+      DefaultNewsletter = new Newsletter {
+        QueryHelper = QueryHelper,
+        Date = EntityBase.DefaultDate
+      };
+      DefaultSeries = new Series {
+        QueryHelper = QueryHelper,
+        Name = Event.DefaultSeriesName
+      };
       Event1 = new Event {
         QueryHelper = QueryHelper,
         Date = Event1Date,
@@ -19,6 +27,8 @@ namespace SoundExplorers.Tests.Data {
       };
       using var session = new TestSession(DatabaseFolderPath);
       session.BeginUpdate();
+      session.Persist(DefaultNewsletter);
+      session.Persist(DefaultSeries);
       Data.AddEventTypesPersisted(1, session);
       Data.AddLocationsPersisted(2, session);
       Event1.EventType = Data.EventTypes[0];
@@ -37,6 +47,8 @@ namespace SoundExplorers.Tests.Data {
     private string DatabaseFolderPath { get; set; } = null!;
     private QueryHelper QueryHelper { get; set; } = null!;
     private TestData Data { get; set; } = null!;
+    private Newsletter DefaultNewsletter { get; set; } = null!;
+    private Series DefaultSeries { get; set; } = null!;
     private Event Event1 { get; set; } = null!;
     private static DateTime Event1Date => DateTime.Parse(Event1SimpleKey);
 

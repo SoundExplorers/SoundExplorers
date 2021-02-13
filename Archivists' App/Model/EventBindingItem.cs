@@ -5,7 +5,6 @@ using SoundExplorers.Data;
 namespace SoundExplorers.Model {
   [NoReorder]
   public class EventBindingItem : BindingItemBase<Event, EventBindingItem> {
-    internal const string DefaultEventTypeName = "Performance";
     private DateTime _date;
     private string _location = null!;
     private string? _series;
@@ -15,8 +14,9 @@ namespace SoundExplorers.Model {
 
     public EventBindingItem() {
       Date = DateTime.Today;
-      Newsletter = EntityBase.InitialDate;
-      EventType = DefaultEventTypeName;
+      Newsletter = EntityBase.DefaultDate;
+      EventType = Event.DefaultEventTypeName;
+      Series = Event.DefaultSeriesName;
     }
 
     public DateTime Date {

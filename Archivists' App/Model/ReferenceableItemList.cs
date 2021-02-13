@@ -27,9 +27,9 @@ namespace SoundExplorers.Model {
       // ReSharper disable once SuggestBaseTypeForParameter
       IEntityList entities) {
       var result = new Dictionary<string, IEntity?>();
-      if (entities is NewsletterList) {
-        result.Add(EntityBase.DateToSimpleKey(EntityBase.InitialDate), null);
-      }
+      // if (entities is NewsletterList) {
+      //   result.Add(EntityBase.DateToSimpleKey(EntityBase.DefaultDate), null);
+      // }
       foreach (IEntity entity in entities) {
         result.Add(ToSimpleKey(entity)!, entity);
       }
@@ -79,11 +79,11 @@ namespace SoundExplorers.Model {
       // ReSharper disable once SuggestBaseTypeForParameter
       IEntityList entities) {
       Clear();
-      if (entities is NewsletterList) {
-        Add(new KeyValuePair<object, object?>(
-          Format(EntityBase.InitialDate.ToString(Global.DateFormat))!,
-          null));
-      }
+      // if (entities is NewsletterList) {
+      //   Add(new KeyValuePair<object, object?>(
+      //     Format(EntityBase.DefaultDate.ToString(Global.DateFormat))!,
+      //     null));
+      // }
       AddRange(
         from IEntity entity in entities
         select (object)new KeyValuePair<object?, object>(Format(entity.SimpleKey), entity)

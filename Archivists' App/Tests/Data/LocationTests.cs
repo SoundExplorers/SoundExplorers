@@ -11,6 +11,14 @@ namespace SoundExplorers.Tests.Data {
       QueryHelper = new QueryHelper();
       DatabaseFolderPath = TestSession.CreateDatabaseFolder();
       Data = new TestData(QueryHelper);
+      DefaultNewsletter = new Newsletter {
+        QueryHelper = QueryHelper,
+        Date = EntityBase.DefaultDate
+      };
+      DefaultSeries = new Series {
+        QueryHelper = QueryHelper,
+        Name = Event.DefaultSeriesName
+      };
       Location1 = new Location {
         QueryHelper = QueryHelper,
         Name = Location1Name,
@@ -30,6 +38,8 @@ namespace SoundExplorers.Tests.Data {
       };
       using var session = new TestSession(DatabaseFolderPath);
       session.BeginUpdate();
+      session.Persist(DefaultNewsletter);
+      session.Persist(DefaultSeries);
       session.Persist(Location1);
       session.Persist(Location2);
       Event1.Location = Location1;
@@ -53,6 +63,8 @@ namespace SoundExplorers.Tests.Data {
     private string DatabaseFolderPath { get; set; } = null!;
     private QueryHelper QueryHelper { get; set; } = null!;
     private TestData Data { get; set; } = null!;
+    private Newsletter DefaultNewsletter { get; set; } = null!;
+    private Series DefaultSeries { get; set; } = null!;
     private Event Event1 { get; set; } = null!;
     private static DateTime Event1Date => DateTime.Today.AddDays(-1);
     private Event Event2 { get; set; } = null!;

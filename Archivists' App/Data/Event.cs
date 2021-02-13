@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
+using VelocityDb;
+using VelocityDb.Session;
 
 namespace SoundExplorers.Data {
   /// <summary>
@@ -8,23 +11,25 @@ namespace SoundExplorers.Data {
   ///   be a rehearsal.
   /// </summary>
   public class Event : EntityBase {
+    public const string DefaultEventTypeName = "Performance";
+    public const string DefaultSeriesName = "";
     private DateTime _date;
-    private EventType _eventType = null!;
+    private EventType? _eventType;
     private Newsletter? _newsletter;
     private string _notes = null!;
     private Series? _series;
 
     public Event() : base(typeof(Event), nameof(Date), typeof(Location)) {
-      _date = InitialDate;
+      _date = DefaultDate;
       Sets = new SortedChildList<Set>();
     }
 
     public DateTime Date {
       get => _date;
       set {
-        if (value <= InitialDate) {
+        if (value <= DefaultDate) {
           throw new PropertyConstraintException(
-            $"Event Date must be later than {DateToSimpleKey(InitialDate)}.",
+            $"Event Date must be later than {DateToSimpleKey(DefaultDate)}.",
             nameof(Date));
         }
         UpdateNonIndexField();
@@ -34,7 +39,7 @@ namespace SoundExplorers.Data {
     }
 
     public EventType EventType {
-      get => _eventType;
+      get => _eventType!;
       set {
         UpdateNonIndexField();
         ChangeNonIdentifyingParent(typeof(EventType), value);
@@ -50,8 +55,8 @@ namespace SoundExplorers.Data {
       }
     }
 
-    public Newsletter? Newsletter {
-      get => _newsletter;
+    public Newsletter Newsletter {
+      get => _newsletter!;
       set {
         UpdateNonIndexField();
         ChangeNonIdentifyingParent(typeof(Newsletter), value);
@@ -67,8 +72,8 @@ namespace SoundExplorers.Data {
       }
     }
 
-    public Series? Series {
-      get => _series;
+    public Series Series {
+      get => _series!;
       set {
         UpdateNonIndexField();
         ChangeNonIdentifyingParent(typeof(Series), value);
@@ -82,11 +87,24 @@ namespace SoundExplorers.Data {
       return Sets;
     }
 
+    public override ulong Persist(Placement place, SessionBase session, bool persistRefs = true,
+      bool disableFlush = false, Queue<IOptimizedPersistable>? toPersist = null) {
+      if (_eventType == null) {
+        EventType = QueryHelper.Read<EventType>(DefaultEventTypeName, session);
+      }
+      if (_newsletter == null) {
+        Newsletter = QueryHelper.Read<Newsletter>(DateToSimpleKey(DefaultDate), session);
+      }
+      if (_series == null) {
+        Series = QueryHelper.Read<Series>(DefaultSeriesName, session);
+      }
+      return base.Persist(place, session, persistRefs, disableFlush, toPersist);
+    }
+
     protected override void SetNonIdentifyingParentField(
-      Type parentEntityType,
-      EntityBase? newParent) {
+      Type parentEntityType, EntityBase? newParent) {
       if (parentEntityType == typeof(EventType)) {
-        _eventType = (newParent as EventType)!;
+        _eventType = newParent as EventType;
       } else if (parentEntityType == typeof(Newsletter)) {
         _newsletter = newParent as Newsletter;
       } else {

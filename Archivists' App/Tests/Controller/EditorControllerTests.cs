@@ -98,7 +98,7 @@ namespace SoundExplorers.Tests.Controller {
       MainGridController.SetComboBoxCellValue(1, "Location", validLocationName);
       // Test that the user can reset the newsletter date to the special date
       // that indicated that the event's newsletter is to be unassigned.
-      MainGridController.SetComboBoxCellValue(1, "Newsletter", EntityBase.InitialDate);
+      MainGridController.SetComboBoxCellValue(1, "Newsletter", EntityBase.DefaultDate);
       MainGridController.OnRowValidated(1);
       Assert.AreEqual(2, validLocation.Events.Count, "Events.Count after 2nd add");
       var event2 = validLocation.Events[1];

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.Diagnostics.CodeAnalysis;
 
 namespace SoundExplorers.Data {
   public class Role : EntityBase {
@@ -23,12 +22,6 @@ namespace SoundExplorers.Data {
 
     protected override IDictionary GetChildren(Type childType) {
       return Credits;
-    }
-
-    [ExcludeFromCodeCoverage]
-    protected override void SetNonIdentifyingParentField(
-      Type parentEntityType, EntityBase? newParent) {
-      throw new NotSupportedException();
     }
   }
 }

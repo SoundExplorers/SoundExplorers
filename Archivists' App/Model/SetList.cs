@@ -6,15 +6,32 @@ using SoundExplorers.Data;
 namespace SoundExplorers.Model {
   public class SetList : EntityListBase<Set, SetBindingItem> {
     public SetList() : base(typeof(EventList)) { }
+    
     protected override BackupItem<SetBindingItem> CreateBackupItem(SetBindingItem bindingItem) {
       return new SetBackupItem(bindingItem);
+    }
+    
+    private bool HasDefaultActBeenFound { get; set; }
+
+    private void AddDefaultActIfItDoesNotExist() {
+      Session.BeginUpdate();
+      var defaultAct = QueryHelper.Find<Act>(
+        Set.DefaultActName, Session);
+      if (defaultAct == null) {
+        defaultAct = new Act {
+          Name = Set.DefaultActName
+        };
+        Session.Persist(defaultAct);
+      }
+      Session.Commit();
+      HasDefaultActBeenFound = true;
     }
 
     protected override SetBindingItem CreateBindingItem(Set set) {
       return new SetBindingItem() {
         Date = set.Event.Date, Location = set.Event.Location.Name!,
         SetNo = set.SetNo,
-        Act = set.Act?.Name,
+        Act = set.Act.Name,
         Genre = set.Genre.Name,
         IsPublic = set.IsPublic,
         Notes = set.Notes
@@ -48,6 +65,14 @@ namespace SoundExplorers.Model {
     public override IdentifyingParentChildren GetIdentifyingParentChildrenForMainList(
       int rowIndex) {
       return new IdentifyingParentChildren(this[rowIndex], this[rowIndex].Pieces.Values.ToList());
+    }
+
+    public override void Populate(IdentifyingParentChildren? identifyingParentChildren = null,
+      bool createBindingList = true) {
+      if (!HasDefaultActBeenFound) {
+        AddDefaultActIfItDoesNotExist();
+      }
+      base.Populate(identifyingParentChildren, createBindingList);
     }
   }
 }

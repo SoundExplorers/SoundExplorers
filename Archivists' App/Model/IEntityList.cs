@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
-using SoundExplorers.Common;
 using VelocityDb.Session;
 
 namespace SoundExplorers.Model {

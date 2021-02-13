@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.Diagnostics.CodeAnalysis;
 
 namespace SoundExplorers.Data {
   /// <summary>
@@ -10,6 +9,7 @@ namespace SoundExplorers.Data {
     private string _notes = null!;
 
     public Act() : base(typeof(Act), nameof(Name), null) {
+      AllowBlankSimpleKey = true;
       Sets = new SortedChildList<Set>();
     }
 
@@ -33,12 +33,6 @@ namespace SoundExplorers.Data {
 
     protected override IDictionary GetChildren(Type childType) {
       return Sets;
-    }
-
-    [ExcludeFromCodeCoverage]
-    protected override void SetNonIdentifyingParentField(
-      Type parentEntityType, EntityBase? newParent) {
-      throw new NotSupportedException();
     }
   }
 }

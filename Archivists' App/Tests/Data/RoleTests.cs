@@ -11,6 +11,18 @@ namespace SoundExplorers.Tests.Data {
       QueryHelper = new QueryHelper();
       DatabaseFolderPath = TestSession.CreateDatabaseFolder();
       Data = new TestData(QueryHelper);
+      DefaultAct = new Act {
+        QueryHelper = QueryHelper,
+        Name = Set.DefaultActName
+      };
+      DefaultNewsletter = new Newsletter {
+        QueryHelper = QueryHelper,
+        Date = EntityBase.DefaultDate
+      };
+      DefaultSeries = new Series {
+        QueryHelper = QueryHelper,
+        Name = Event.DefaultSeriesName
+      };
       Drums = new Role {
         QueryHelper = QueryHelper,
         Name = DrumsName
@@ -50,6 +62,9 @@ namespace SoundExplorers.Tests.Data {
       };
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
+        session.Persist(DefaultAct);
+        session.Persist(DefaultNewsletter);
+        session.Persist(DefaultSeries);
         session.Persist(Drums);
         session.Persist(ElectricGuitar);
         session.Persist(Artist1);
@@ -101,6 +116,9 @@ namespace SoundExplorers.Tests.Data {
     private QueryHelper QueryHelper { get; set; } = null!;
     private TestSession Session { get; set; } = null!;
     private TestData Data { get; set; } = null!;
+    private Act DefaultAct { get; set; } = null!;
+    private Newsletter DefaultNewsletter { get; set; } = null!;
+    private Series DefaultSeries { get; set; } = null!;
     private Role Drums { get; set; } = null!;
     private Role ElectricGuitar { get; set; } = null!;
     private Artist Artist1 { get; set; } = null!;

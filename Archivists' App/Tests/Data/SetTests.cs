@@ -11,6 +11,18 @@ namespace SoundExplorers.Tests.Data {
     public void Setup() {
       QueryHelper = new QueryHelper();
       DatabaseFolderPath = TestSession.CreateDatabaseFolder();
+      DefaultAct = new Act {
+        QueryHelper = QueryHelper,
+        Name = Set.DefaultActName
+      };
+      DefaultNewsletter = new Newsletter {
+        QueryHelper = QueryHelper,
+        Date = EntityBase.DefaultDate
+      };
+      DefaultSeries = new Series {
+        QueryHelper = QueryHelper,
+        Name = Event.DefaultSeriesName
+      };
       Location1 = new Location {
         QueryHelper = QueryHelper,
         Name = Location1Name
@@ -63,6 +75,9 @@ namespace SoundExplorers.Tests.Data {
       };
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginUpdate();
+        session.Persist(DefaultAct);
+        session.Persist(DefaultNewsletter);
+        session.Persist(DefaultSeries);
         session.Persist(EventType1);
         session.Persist(Location1);
         Event1.Location = Location1;
@@ -127,6 +142,9 @@ namespace SoundExplorers.Tests.Data {
     private string DatabaseFolderPath { get; set; } = null!;
     private QueryHelper QueryHelper { get; set; } = null!;
     private TestSession Session { get; set; } = null!;
+    private Act DefaultAct { get; set; } = null!;
+    private Newsletter DefaultNewsletter { get; set; } = null!;
+    private Series DefaultSeries { get; set; } = null!;
     private Act Act1 { get; set; } = null!;
     private Act Act2 { get; set; } = null!;
     private Event Event1 { get; set; } = null!;

@@ -15,6 +15,7 @@ namespace SoundExplorers.Model {
     private string _notes = null!;
 
     public SetBindingItem() {
+      Act = Set.DefaultActName;
       IsPublic = true;
     }
 
@@ -94,12 +95,12 @@ namespace SoundExplorers.Model {
     }
 
     protected override void CopyValuesToEntityProperties(Set set) {
-      set.SetNo = SetNo;
-      set.Act = FindParent(Properties[nameof(Act)]) as Act;
       set.Genre = (Genre)FindParent(Properties[nameof(Genre)])!;
+      set.Event = Event;
+      set.SetNo = SetNo;
+      set.Act = (Act)FindParent(Properties[nameof(Act)])!;
       set.IsPublic = IsPublic;
       set.Notes = Notes;
-      set.Event = Event;
     }
 
     // internal override void RestorePropertyValuesFrom(SetBindingItem backup) {

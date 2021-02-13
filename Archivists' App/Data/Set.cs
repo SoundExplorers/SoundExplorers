@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
+using VelocityDb;
+using VelocityDb.Session;
 
 namespace SoundExplorers.Data {
   /// <summary>
@@ -7,6 +10,7 @@ namespace SoundExplorers.Data {
   ///   performed at or in some other way part of an Event.
   /// </summary>
   public class Set : EntityBase {
+    public const string DefaultActName = "";
     private Act? _act;
     private Genre _genre = null!;
     private bool _isPublic;
@@ -21,8 +25,8 @@ namespace SoundExplorers.Data {
     /// <summary>
     ///   Optionally specifies the Act that played the set.
     /// </summary>
-    public Act? Act {
-      get => _act;
+    public Act Act {
+      get => _act!;
       set {
         UpdateNonIndexField();
         ChangeNonIdentifyingParent(typeof(Act), value);
@@ -78,12 +82,20 @@ namespace SoundExplorers.Data {
       return Pieces;
     }
 
+    public override ulong Persist(Placement place, SessionBase session, bool persistRefs = true,
+      bool disableFlush = false, Queue<IOptimizedPersistable>? toPersist = null) {
+      if (_act == null) {
+        Act = QueryHelper.Read<Act>(DefaultActName, session);
+      }
+      return base.Persist(place, session, persistRefs, disableFlush, toPersist);
+    }
+
     protected override void SetNonIdentifyingParentField(
       Type parentEntityType, EntityBase? newParent) {
       if (parentEntityType == typeof(Act)) {
         _act = newParent as Act;
       } else {
-        _genre = (newParent as Genre)!;
+        _genre = ((Genre)newParent)!;
       }
     }
   }

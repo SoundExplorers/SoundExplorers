@@ -65,7 +65,7 @@ namespace SoundExplorers.Tests.Model {
     [Test]
     public void DefaultEventType() {
       var defaultEventType = Data.EventTypes[0];
-      Assert.AreEqual(EventBindingItem.DefaultEventTypeName, defaultEventType.Name,
+      Assert.AreEqual(Event.DefaultEventTypeName, defaultEventType.Name,
         "Default EventType added in Setup");
       Session.BeginUpdate();
       // First, delete the events that reference the default event type,
@@ -75,13 +75,13 @@ namespace SoundExplorers.Tests.Model {
       }
       Session.Unpersist(Data.EventTypes[0]);
       defaultEventType = QueryHelper.Find<EventType>(
-        EventBindingItem.DefaultEventTypeName, Session);
+        Event.DefaultEventTypeName, Session);
       Session.Commit();
       Assert.IsNull(defaultEventType, "Default EventType removed");
       List.Populate(); // This should re-add the now missing default event type.
       Session.BeginRead();
       defaultEventType = QueryHelper.Find<EventType>(
-        EventBindingItem.DefaultEventTypeName, Session);
+        Event.DefaultEventTypeName, Session);
       Session.Commit();
       Assert.IsNotNull(defaultEventType, "Default EventType after populate");
     }
@@ -138,7 +138,7 @@ namespace SoundExplorers.Tests.Model {
       Assert.AreEqual(notes, @event.Notes, "Notes");
       bindingList[1].Series = null;
       Assert.IsNull(@event.Series, "Series reset to null");
-      bindingList[1].Newsletter = EntityBase.InitialDate;
+      bindingList[1].Newsletter = EntityBase.DefaultDate;
       Assert.IsNull(@event.Newsletter, "Newsletter reset to null");
     }
 

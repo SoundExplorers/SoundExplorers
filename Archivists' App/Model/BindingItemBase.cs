@@ -82,10 +82,8 @@ namespace SoundExplorers.Model {
     }
 
     /// <summary>
-    ///   ???
     ///   A derived class representing a row of a main grid that is a child of a parent
-    ///   grid row must override this method to set the entity's identifying parent to
-    ///   the entity list's identifying parent AFTER calling this base method.
+    ///   grid row must override this method.
     /// </summary>
     protected virtual void CopyValuesToEntityProperties(TEntity entity) {
       foreach (var property in Properties.Values) {

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.Diagnostics.CodeAnalysis;
 using SoundExplorers.Data;
 
 namespace SoundExplorers.Tests.Data {
@@ -32,13 +31,6 @@ namespace SoundExplorers.Tests.Data {
         return Daughters;
       }
       return Sons;
-    }
-
-    [ExcludeFromCodeCoverage]
-    protected override void SetNonIdentifyingParentField(
-      Type parentEntityType,
-      EntityBase? newParent) {
-      throw new NotSupportedException();
     }
   }
 }

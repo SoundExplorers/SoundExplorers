@@ -55,8 +55,8 @@ namespace SoundExplorers.Data {
       if (!SchemaExistsOnDatabase(session)) {
         return null;
       }
-      return session.AllObjects<TEntity>()
-        .FirstOrDefault(predicate);
+      var entities = session.AllObjects<TEntity>();
+      return entities.FirstOrDefault(predicate);
     }
 
     /// <summary>

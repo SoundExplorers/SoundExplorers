@@ -157,7 +157,6 @@ namespace SoundExplorers.Tests.Model {
     public void ReadAsParentList() {
       List = CreateSetList();
       Session.BeginUpdate();
-      Data.AddActsPersisted(2, Session);
       var set = Data.Sets[2];
       set.Act = Data.Acts[1];
       Session.Commit();
@@ -173,9 +172,11 @@ namespace SoundExplorers.Tests.Model {
 
     private void AddData(bool includingSets = true) {
       Session.BeginUpdate();
-      Data.AddActsPersisted(1, Session);
+      Data.AddActsPersisted(2, Session);
       Data.AddEventTypesPersisted(1, Session);
       Data.AddLocationsPersisted(1, Session);
+      Data.AddNewslettersPersisted(1, Session);
+      Data.AddSeriesPersisted(1, Session);
       Data.AddEventsPersisted(1, Session);
       Data.AddGenresPersisted(1, Session);
       if (includingSets) {

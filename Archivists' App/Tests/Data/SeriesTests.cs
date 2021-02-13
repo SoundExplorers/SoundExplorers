@@ -10,6 +10,14 @@ namespace SoundExplorers.Tests.Data {
       QueryHelper = new QueryHelper();
       DatabaseFolderPath = TestSession.CreateDatabaseFolder();
       Data = new TestData(QueryHelper);
+      DefaultNewsletter = new Newsletter {
+        QueryHelper = QueryHelper,
+        Date = EntityBase.DefaultDate
+      };
+      DefaultSeries = new Series {
+        QueryHelper = QueryHelper,
+        Name = Event.DefaultSeriesName
+      };
       Location1 = new Location {
         QueryHelper = QueryHelper,
         Name = Location1Name
@@ -33,6 +41,8 @@ namespace SoundExplorers.Tests.Data {
       };
       using var session = new TestSession(DatabaseFolderPath);
       session.BeginUpdate();
+      session.Persist(DefaultNewsletter);
+      session.Persist(DefaultSeries);
       session.Persist(Location1);
       session.Persist(Series1);
       session.Persist(Series2);
@@ -59,6 +69,8 @@ namespace SoundExplorers.Tests.Data {
     private string DatabaseFolderPath { get; set; } = null!;
     private QueryHelper QueryHelper { get; set; } = null!;
     private TestData Data { get; set; } = null!;
+    private Newsletter DefaultNewsletter { get; set; } = null!;
+    private Series DefaultSeries { get; set; } = null!;
     private Event Event1 { get; set; } = null!;
     private static DateTime Event1Date => DateTime.Today.AddDays(-1);
     private Event Event2 { get; set; } = null!;
@@ -71,9 +83,11 @@ namespace SoundExplorers.Tests.Data {
     public void T010_Initial() {
       using (var session = new TestSession(DatabaseFolderPath)) {
         session.BeginRead();
+        DefaultSeries = QueryHelper.Read<Series>(DefaultSeries.Name, session);
         Series1 = QueryHelper.Read<Series>(Series1Name, session);
         Series2 = QueryHelper.Read<Series>(Series2Name, session);
         Event1 = QueryHelper.Read<Event>(Event1.SimpleKey, Location1, session);
+        Event2 = QueryHelper.Read<Event>(Event2.SimpleKey, Location1, session);
         session.Commit();
       }
       Assert.AreEqual(Series1Name, Series1.Name, "Series1.Name initially");
@@ -82,9 +96,9 @@ namespace SoundExplorers.Tests.Data {
       Assert.AreEqual(1, Series1.Events.Count,
         "Series1.Events.Count initially");
       Assert.AreSame(Series1, Event1.Series, "Event1.Series initially");
-      Assert.AreEqual(Series1.Name, Event1.Series?.Name,
+      Assert.AreEqual(Series1.Name, Event1.Series.Name,
         "Event1.Series.Name initially");
-      Assert.IsNull(Event2.Series, "Event2.Series initially");
+      Assert.AreSame(DefaultSeries, Event2.Series, "Event2.Series initially");
     }
 
     [Test]

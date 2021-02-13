@@ -74,7 +74,8 @@ namespace SoundExplorers.Tests.Data {
     private static IList<string> SeriesNames { get; }
 
     public void AddActsPersisted(int count, SessionBase session) {
-      for (int i = 0; i < count; i++) {
+      AddDefaultAct(session);
+      for (int i = 1; i < count; i++) {
         var act = new Act {
           QueryHelper = QueryHelper,
           Name = Acts.Count < ActNames.Count
@@ -149,8 +150,9 @@ namespace SoundExplorers.Tests.Data {
     }
 
     public void AddNewslettersPersisted(int count, SessionBase session) {
+      AddDefaultNewsletter(session);
       var date = DateTime.Parse("2020/01/06");
-      for (int i = 0; i < count; i++) {
+      for (int i = 1; i < count; i++) {
         var newsletter = new Newsletter {
           QueryHelper = QueryHelper,
           Date = date,
@@ -182,7 +184,8 @@ namespace SoundExplorers.Tests.Data {
     }
 
     public void AddSeriesPersisted(int count, SessionBase session) {
-      for (int i = 0; i < count; i++) {
+      AddDefaultSeries(session);
+      for (int i = 1; i < count; i++) {
         var series = new Series {
           QueryHelper = QueryHelper,
           Name = Series.Count < SeriesNames.Count
@@ -211,6 +214,33 @@ namespace SoundExplorers.Tests.Data {
         Sets.Add(set);
         setNo++;
       }
+    }
+
+    private void AddDefaultAct(SessionBase session) {
+      var act = new Act {
+        QueryHelper = QueryHelper,
+        Name = Set.DefaultActName,
+      };
+      session.Persist(act);
+      Acts.Add(act);
+    }
+
+    private void AddDefaultNewsletter(SessionBase session) {
+      var newsletter = new Newsletter {
+        QueryHelper = QueryHelper,
+        Date = EntityBase.DefaultDate,
+      };
+      session.Persist(newsletter);
+      Newsletters.Add(newsletter);
+    }
+
+    private void AddDefaultSeries(SessionBase session) {
+      var act = new Series {
+        QueryHelper = QueryHelper,
+        Name = Event.DefaultSeriesName,
+      };
+      session.Persist(act);
+      Series.Add(act);
     }
 
     private Event GetDefaultEvent() {

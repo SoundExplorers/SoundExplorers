@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections;
-using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using VelocityDb.Session;
 
 namespace SoundExplorers.Data {
@@ -12,7 +12,7 @@ namespace SoundExplorers.Data {
     private string _url = null!;
 
     public Newsletter() : base(typeof(Newsletter), nameof(Date), null) {
-      _date = InitialDate;
+      _date = DefaultDate;
       Events = new SortedChildList<Event>();
     }
 
@@ -23,9 +23,11 @@ namespace SoundExplorers.Data {
     public DateTime Date {
       get => _date;
       set {
-        if (value <= InitialDate) {
+        if (value < DefaultDate) {
           throw new PropertyConstraintException(
-            $"Newsletter Date must be later than {DateToSimpleKey(InitialDate)}.",
+            $"Newsletter Date must be later than or equal to " + 
+            $"{DateToSimpleKey(DefaultDate)}. ({DateToSimpleKey(DefaultDate)} " + 
+            "indicates that an Event's Newsletter has not yet been specified.)",
             nameof(Date));
         }
         UpdateNonIndexField();
@@ -79,6 +81,9 @@ namespace SoundExplorers.Data {
     protected override void CheckCanPersist(SessionBase session) {
       base.CheckCanPersist(session);
       if (string.IsNullOrWhiteSpace(Url)) {
+        if (Date == DefaultDate) {
+          return;
+        }
         throw new PropertyConstraintException(
           "Newsletter cannot be added because a URL has not been specified.",
           nameof(Url));
@@ -94,19 +99,20 @@ namespace SoundExplorers.Data {
 
     private Newsletter? FindDuplicateUrl(string url,
       SessionBase session) {
-      return QueryHelper.Find<Newsletter>(
-        newsletter => newsletter.Url.Equals(url) && !newsletter.Oid.Equals(Oid),
-        session);
+      var newsletters = session.AllObjects<Newsletter>().ToList();
+      return (
+        from newsletter in newsletters
+        where newsletter.Url == url && !newsletter.Oid.Equals(Oid)
+        select newsletter).FirstOrDefault();
+      // NewsletterTests fail with this, for unknown reason.
+      // The predicate makes it throw a NullReferenceException.
+      // return QueryHelper.Find<Newsletter>(
+      //   newsletter => newsletter.Url.Equals(url) && !newsletter.Oid.Equals(Oid),
+      //   session);
     }
 
     protected override IDictionary GetChildren(Type childType) {
       return Events;
-    }
-
-    [ExcludeFromCodeCoverage]
-    protected override void SetNonIdentifyingParentField(
-      Type parentEntityType, EntityBase? newParent) {
-      throw new NotSupportedException();
     }
   }
 }

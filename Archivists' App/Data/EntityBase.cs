@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using SoundExplorers.Common;
@@ -26,7 +27,7 @@ namespace SoundExplorers.Data {
     private string _simpleKey = null!;
 
     static EntityBase() {
-      InitialDate = DateTime.Parse("1900/01/01");
+      DefaultDate = DateTime.Parse("1900/01/01");
     }
 
     /// <summary>
@@ -53,6 +54,8 @@ namespace SoundExplorers.Data {
       Key = new Key(this);
     }
 
+    protected bool AllowBlankSimpleKey { get; set; }
+
     private IDictionary<Type, IDictionary> ChildrenOfType {
       get {
         InitialiseIfNull(_childrenOfType);
@@ -76,6 +79,12 @@ namespace SoundExplorers.Data {
     }
 
     /// <summary>
+    ///   A hopefully safely old date, suitable for initialising Date fields
+    ///   because it is compatible with calendar controls.
+    /// </summary>
+    public static DateTime DefaultDate { get; }
+
+    /// <summary>
     ///   The main Type as which the entity will be persisted on the database.
     ///   Entities of subtypes may be persisted but will be members of the same
     ///   child collections, if any, as entities of the main Type.
@@ -83,12 +92,6 @@ namespace SoundExplorers.Data {
     internal Type EntityType { get; }
 
     private Type? IdentifyingParentType { get; }
-
-    /// <summary>
-    ///   A hopefully safely old date, suitable for initialising Date fields
-    ///   because it is compatible with calendar controls.
-    /// </summary>
-    public static DateTime InitialDate { get; }
 
     private bool IsAddingToOrRemovingFromIdentifyingParent { get; set; }
     private bool IsTopLevel => Parents.Count == 0;
@@ -250,7 +253,7 @@ namespace SoundExplorers.Data {
 
     private void CheckCanChangeSimpleKey(
       string? oldSimpleKey, string? newSimpleKey) {
-      if (string.IsNullOrWhiteSpace(newSimpleKey)) {
+      if (!AllowBlankSimpleKey && string.IsNullOrWhiteSpace(newSimpleKey)) {
         throw new PropertyConstraintException(
           $"The {SimpleKeyName} is blank. " +
           $"Blank {SimpleKeyName}s are not supported.", SimpleKeyName);
@@ -279,7 +282,7 @@ namespace SoundExplorers.Data {
     }
 
     protected virtual void CheckCanPersist(SessionBase session) {
-      if (string.IsNullOrWhiteSpace(SimpleKey)) {
+      if (!AllowBlankSimpleKey && string.IsNullOrWhiteSpace(SimpleKey)) {
         throw new PropertyConstraintException(
           $"A {SimpleKeyName} has not yet been specified. " +
           $"So the {EntityType.Name} cannot be added.", SimpleKeyName);
@@ -421,8 +424,15 @@ namespace SoundExplorers.Data {
     }
 
     private void RemoveChild(EntityBase child) {
+      // Debug.WriteLine($"EntityBase.RemoveChild {EntityType.Name}: removing {child.EntityType.Name} '{child.Key}'");
       UpdateNonIndexField();
       ChildrenOfType[child.EntityType].Remove(child.Key);
+      // var children = ChildrenOfType[child.EntityType];
+      // Debug.WriteLine($"    children count before removal: {children.Count}");
+      // Debug.WriteLine($"    children contains child before removal: {children.Contains(child.Key)}");
+      // children.Remove(child.Key);
+      // Debug.WriteLine($"    children count after removal: {children.Count}");
+      // Debug.WriteLine($"    children contains child after removal: {children.Contains(child.Key)}");
       // Full referential integrity is implemented in this class.
       // But, for added safety, update VelocityDB's internal referential integrity data. 
       References.Remove(References.First(r => r.To.Equals(child)));
@@ -440,8 +450,11 @@ namespace SoundExplorers.Data {
     ///   corresponding to the parent entity of the specified entity type
     ///   with the specified new value.
     /// </summary>
-    protected abstract void SetNonIdentifyingParentField(
-      Type parentEntityType, EntityBase? newParent);
+    [ExcludeFromCodeCoverage]
+    protected virtual void SetNonIdentifyingParentField(
+      Type parentEntityType, EntityBase? newParent) {
+      throw new NotSupportedException();
+    }
 
     public override void Unpersist(SessionBase session) {
       if (References.Count > 0) {

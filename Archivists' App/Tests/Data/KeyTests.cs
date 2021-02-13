@@ -64,7 +64,10 @@ namespace SoundExplorers.Tests.Data {
         session.BeginUpdate();
         session.Persist(location1);
         session.Persist(location2);
+        Data.AddActsPersisted(1, session);
         Data.AddEventTypesPersisted(1, session);
+        Data.AddNewslettersPersisted(1, session);
+        Data.AddSeriesPersisted(1, session);
         event1 = new Event {
           Date = DateTime.Today,
           Location = location1,

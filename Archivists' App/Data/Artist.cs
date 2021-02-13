@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.Diagnostics.CodeAnalysis;
 
 namespace SoundExplorers.Data {
   /// <summary>
@@ -87,12 +86,6 @@ namespace SoundExplorers.Data {
         result = string.Empty;
       }
       return result;
-    }
-
-    [ExcludeFromCodeCoverage]
-    protected override void SetNonIdentifyingParentField(
-      Type parentEntityType, EntityBase? newParent) {
-      throw new NotSupportedException();
     }
   }
 }

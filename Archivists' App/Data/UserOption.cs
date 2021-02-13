@@ -51,12 +51,6 @@ namespace SoundExplorers.Data {
       throw new NotSupportedException();
     }
 
-    [ExcludeFromCodeCoverage]
-    protected override void SetNonIdentifyingParentField(Type parentEntityType,
-      EntityBase? newParent) {
-      throw new NotSupportedException();
-    }
-
     private void SetSimpleKey(string userId, string optionName) {
       SimpleKey = $"{userId}|{optionName}";
     }
