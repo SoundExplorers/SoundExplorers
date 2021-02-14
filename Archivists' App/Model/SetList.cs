@@ -1,16 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using JetBrains.Annotations;
 using SoundExplorers.Data;
 
 namespace SoundExplorers.Model {
   public class SetList : EntityListBase<Set, SetBindingItem> {
-    public SetList() : base(typeof(EventList)) { }
-    
-    protected override BackupItem<SetBindingItem> CreateBackupItem(SetBindingItem bindingItem) {
-      return new SetBackupItem(bindingItem);
-    }
-    
+    [UsedImplicitly]
+    public SetList() : this(true) { }
+
+    public SetList(bool isChildList) :
+      base(isChildList ? typeof(EventList) : null) { }
+
     private bool HasDefaultActBeenFound { get; set; }
 
     private void AddDefaultActIfItDoesNotExist() {
@@ -19,7 +20,8 @@ namespace SoundExplorers.Model {
         Set.DefaultActName, Session);
       if (defaultAct == null) {
         defaultAct = new Act {
-          Name = Set.DefaultActName
+          Name = Set.DefaultActName,
+          Notes = "Required default"
         };
         Session.Persist(defaultAct);
       }
@@ -28,7 +30,7 @@ namespace SoundExplorers.Model {
     }
 
     protected override SetBindingItem CreateBindingItem(Set set) {
-      return new SetBindingItem() {
+      return new SetBindingItem {
         Date = set.Event.Date, Location = set.Event.Location.Name!,
         SetNo = set.SetNo,
         Act = set.Act.Name,
@@ -61,13 +63,15 @@ namespace SoundExplorers.Model {
       };
       return result;
     }
- 
+
     public override IdentifyingParentChildren GetIdentifyingParentChildrenForMainList(
       int rowIndex) {
-      return new IdentifyingParentChildren(this[rowIndex], this[rowIndex].Pieces.Values.ToList());
+      return new IdentifyingParentChildren(this[rowIndex],
+        this[rowIndex].Pieces.Values.ToList());
     }
 
-    public override void Populate(IdentifyingParentChildren? identifyingParentChildren = null,
+    public override void Populate(
+      IdentifyingParentChildren? identifyingParentChildren = null,
       bool createBindingList = true) {
       if (!HasDefaultActBeenFound) {
         AddDefaultActIfItDoesNotExist();

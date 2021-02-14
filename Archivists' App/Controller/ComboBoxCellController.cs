@@ -50,7 +50,7 @@ namespace SoundExplorers.Controller {
     /// </summary>
     /// <remarks>
     ///   For existing rows, this validation is done in
-    ///   <see cref="MainGridController.OnCellEditException"/>.
+    ///   <see cref="MainGridController.OnCellEditException" />.
     /// </remarks>
     public void OnCellValueChanged(int rowIndex,
       object? cellValue) {

@@ -285,14 +285,14 @@ namespace SoundExplorers.Tests.Data {
     [Test]
     public void DisallowOutOfRangePieceNo() {
       Session.BeginUpdate();
-      var exception = 
+      var exception =
         Assert.Catch<PropertyValueOutOfRangeException>(() => Piece2.PieceNo = 0,
-        "Zero disallowed");
+          "Zero disallowed");
       Assert.AreEqual("PieceNo must be an integer between 1 and 99.", exception.Message,
         "Error message when zero");
-      exception = 
+      exception =
         Assert.Catch<PropertyValueOutOfRangeException>(() => Piece2.PieceNo = 100,
-        "100 disallowed");
+          "100 disallowed");
       Assert.AreEqual("PieceNo must be an integer between 1 and 99.", exception.Message,
         "Error message when 100");
       Session.Commit();

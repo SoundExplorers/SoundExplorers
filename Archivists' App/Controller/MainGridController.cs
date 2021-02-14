@@ -35,7 +35,7 @@ namespace SoundExplorers.Controller {
     ///   the base method from being called.  That is not practicable, as it prevents
     ///   editor controls from appearing in grid cells when they are edited!
     /// </remarks>
-    protected bool IsFixingFocus { get; set; }
+    protected bool IsFixingFocus { get; private set; }
 
     /// <summary>
     ///   Gets whether the current main grid row is the insertion row,
@@ -75,8 +75,6 @@ namespace SoundExplorers.Controller {
         case PropertyValueOutOfRangeException outOfRangeException:
           // Thrown when an integer cell value is out of range.
           OnCellValidationError(rowIndex, columnName, outOfRangeException);
-          // List.OnValueOutOfRange(rowIndex, columnName, outOfRangeException);
-          // EditorController.View.OnError();
           break;
         case DatabaseUpdateErrorException databaseUpdateErrorException:
           List.LastDatabaseUpdateErrorException = databaseUpdateErrorException;
@@ -130,7 +128,7 @@ namespace SoundExplorers.Controller {
       // Debug.WriteLine("MainGridController.OnGotFocus");
       Debug.WriteLine(
         $"MainGridController.OnGotFocus: CurrentRowIndex = {Grid.CurrentRowIndex}; LastCurrentRowIndex = {LastCurrentRowIndex}");
-      IsFixingFocus = false; 
+      IsFixingFocus = false;
       if (LastCurrentRowIndex >= 0 && LastCurrentRowIndex != Grid.CurrentRowIndex) {
         IsRestoringRowCurrency = true;
         Grid.MakeRowCurrent(LastCurrentRowIndex, true);
@@ -143,8 +141,9 @@ namespace SoundExplorers.Controller {
 
     protected override void OnPopulatedAsync() {
       Debug.WriteLine("MainGridController.OnPopulatedAsync");
-      IsFixingFocus = true;
+      // IsFixingFocus = true;
       if (List.IsChildList) {
+        IsFixingFocus = true;
         EditorController.View.OnParentAndMainGridsShown();
         Grid.CellColorScheme.Invert();
       }
@@ -328,7 +327,7 @@ namespace SoundExplorers.Controller {
       // Grid.BeginInvoke(() =>
       //   Grid.MakeCellCurrent(insertionRowIndex,
       //     List.LastDatabaseUpdateErrorException!.ColumnIndex));
-      Grid.MakeCellCurrent(insertionRowIndex, 
+      Grid.MakeCellCurrent(insertionRowIndex,
         List.LastDatabaseUpdateErrorException!.ColumnIndex);
     }
   }

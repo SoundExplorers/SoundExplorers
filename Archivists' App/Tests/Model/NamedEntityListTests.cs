@@ -96,6 +96,8 @@ namespace SoundExplorers.Tests.Model {
       Session.BeginUpdate();
       Data.AddEventTypesPersisted(2, Session);
       Data.AddLocationsPersisted(1, Session);
+      Data.AddNewslettersPersisted(1, Session);
+      Data.AddSeriesPersisted(1, Session);
       Data.AddEventsPersisted(3, Session, eventType: Data.EventTypes[1]);
       Session.Commit();
       // The second EventType cannot be deleted

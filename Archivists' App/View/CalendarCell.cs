@@ -20,7 +20,7 @@ namespace SoundExplorers.View {
       // Return the type of the editing control that CalendarCell uses.
       typeof(CalendarEditingControl);
 
-    private DateTimePicker DateTimePicker => 
+    private DateTimePicker DateTimePicker =>
       (DateTimePicker)DataGridView!.EditingControl;
 
     public void RestoreErrorValue(object? errorValue) {

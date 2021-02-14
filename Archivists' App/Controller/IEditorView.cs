@@ -6,6 +6,7 @@
     void Close();
     void OnError();
     void OnParentAndMainGridsShown();
+
     // void PopulateMainGridOnParentRowChanged(int parentRowIndex);
     void SetMouseCursorToDefault();
     void SetMouseCursorToWait();

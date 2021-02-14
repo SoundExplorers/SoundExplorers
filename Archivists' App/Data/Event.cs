@@ -87,7 +87,8 @@ namespace SoundExplorers.Data {
       return Sets;
     }
 
-    public override ulong Persist(Placement place, SessionBase session, bool persistRefs = true,
+    public override ulong Persist(Placement place, SessionBase session,
+      bool persistRefs = true,
       bool disableFlush = false, Queue<IOptimizedPersistable>? toPersist = null) {
       if (_eventType == null) {
         EventType = QueryHelper.Read<EventType>(DefaultEventTypeName, session);

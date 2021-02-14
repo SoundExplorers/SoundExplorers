@@ -13,6 +13,12 @@ namespace SoundExplorers.Model {
       bindingItems) { }
 
     /// <summary>
+    ///   Used for restoring error values to the new row for correction or edit
+    ///   cancellation after an insertion error message hase been shown.
+    /// </summary>
+    internal TBindingItem? InsertionErrorItem { get; set; }
+
+    /// <summary>
     ///   A non-nullable replacement for <see cref="IBindingList.AddNew" />,
     ///   for ease of testing, as it should never be null.
     /// </summary>
@@ -20,15 +26,9 @@ namespace SoundExplorers.Model {
       return base.AddNew()!;
     }
 
-    /// <summary>
-    ///   Used for restoring error values to the new row for correction or edit
-    ///   cancellation after an insertion error message hase been shown.
-    /// </summary>
-    internal TBindingItem? InsertionErrorItem { get; set; }
-
     protected override void OnAddingNew(AddingNewEventArgs e) {
       if (InsertionErrorItem != null) {
-        e.NewObject = InsertionErrorItem;      
+        e.NewObject = InsertionErrorItem;
       }
       base.OnAddingNew(e);
       InsertionErrorItem = null;

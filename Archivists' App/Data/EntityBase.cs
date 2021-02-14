@@ -21,7 +21,6 @@ namespace SoundExplorers.Data {
     private EntityBase? _identifyingParent;
     private IDictionary<Type, IRelationInfo>? _parentRelations;
     private IDictionary<Type, EntityBase?>? _parents;
-    // private IDictionary<string, PropertyInfo>? _properties;
     private QueryHelper? _queryHelper;
     private Schema? _schema;
     private string _simpleKey = null!;
@@ -92,16 +91,8 @@ namespace SoundExplorers.Data {
     internal Type EntityType { get; }
 
     private Type? IdentifyingParentType { get; }
-
     private bool IsAddingToOrRemovingFromIdentifyingParent { get; set; }
     private bool IsTopLevel => Parents.Count == 0;
-
-    // private IDictionary<string, PropertyInfo> Properties =>
-    //   _properties ??= new PropertyDictionary(EntityType);
-
-    // public object? GetPropertyValue(string propertyName) {
-    //   return Properties[propertyName].GetValue(this);
-    // }
 
     private IDictionary<Type, IRelationInfo> ParentRelations {
       get {
@@ -427,12 +418,6 @@ namespace SoundExplorers.Data {
       // Debug.WriteLine($"EntityBase.RemoveChild {EntityType.Name}: removing {child.EntityType.Name} '{child.Key}'");
       UpdateNonIndexField();
       ChildrenOfType[child.EntityType].Remove(child.Key);
-      // var children = ChildrenOfType[child.EntityType];
-      // Debug.WriteLine($"    children count before removal: {children.Count}");
-      // Debug.WriteLine($"    children contains child before removal: {children.Contains(child.Key)}");
-      // children.Remove(child.Key);
-      // Debug.WriteLine($"    children count after removal: {children.Count}");
-      // Debug.WriteLine($"    children contains child after removal: {children.Contains(child.Key)}");
       // Full referential integrity is implemented in this class.
       // But, for added safety, update VelocityDB's internal referential integrity data. 
       References.Remove(References.First(r => r.To.Equals(child)));

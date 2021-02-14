@@ -38,14 +38,14 @@ namespace SoundExplorers.Tests.Model {
     [Test]
     public void Newsletters() {
       var items = EventList.Columns["Newsletter"].ReferenceableItems;
-      Assert.AreEqual(5, items.Count, "Count");
+      Assert.AreEqual(4, items.Count, "Count");
       Assert.IsTrue(items.ContainsKey("1900/01/01"), "Contains dummy Newsletter");
       Assert.IsTrue(items.ContainsKey("2020/01/06"), "Contains real Newsletter");
       var item1 = items[0];
       Assert.IsInstanceOf<KeyValuePair<object, object>>(item1, "item1");
       var (key1, value1) = (KeyValuePair<object, object>)item1;
       Assert.IsInstanceOf<string>(key1, "Key 1");
-      Assert.IsNull(value1, "Value 1");
+      Assert.IsInstanceOf<Newsletter>(value1, "Value 1");
       string formattedDate1 = key1.ToString()!;
       Assert.AreEqual("01 Jan 1900", formattedDate1, "formattedDate1");
       var item2 = items[1];

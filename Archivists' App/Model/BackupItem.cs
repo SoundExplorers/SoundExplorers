@@ -8,21 +8,9 @@ namespace SoundExplorers.Model {
       foreach (var propertyName in bindingItem.Properties.Keys) {
         Dictionary.Add(propertyName, bindingItem.GetPropertyValue(propertyName));
       }
-      // try {
-      //   Key = bindingItem.CreateKey();
-      // } catch {
-      //   // Null if invalid
-      // }
     }
 
     private IDictionary<string, object?> Dictionary { get; }
-
-    // public object? this[string propertyName] => Dictionary[propertyName];
-
-    // /// <summary>
-    // ///   Null if a valid key cannot be constructed.
-    // /// </summary>
-    // public Key? Key { get; }
 
     public TBindingItem CreateBindingItem() {
       var result = new TBindingItem();
@@ -38,7 +26,7 @@ namespace SoundExplorers.Model {
       return Dictionary[propertyName];
     }
 
-    public virtual void RestoreTo(TBindingItem bindingItem) {
+    private void RestoreTo(TBindingItem bindingItem) {
       foreach (var (key, value) in Dictionary) {
         bindingItem.SetPropertyValue(key, value);
       }

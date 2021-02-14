@@ -5,7 +5,7 @@ namespace SoundExplorers.Model {
   public class IdentifyingParentChildren {
     /// <summary>
     ///   For a main grid that is a child of a parent grid row, this specifies the grid's
-    ///   identifying parent entity and, for populating the grid, its child entities.  
+    ///   identifying parent entity and, for populating the grid, its child entities.
     /// </summary>
     internal IdentifyingParentChildren(IEntity identifyingParent, IList children) {
       IdentifyingParent = identifyingParent;

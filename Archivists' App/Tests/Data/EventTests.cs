@@ -93,6 +93,7 @@ namespace SoundExplorers.Tests.Data {
       Event1.Location = Location1;
       Event1AtLocation2.Location = Location2;
       Event2.Location = Location1;
+      Event2.Series = Series1;
       Event1.EventType = EventType1;
       Event1AtLocation2.EventType = EventType1;
       Event2.EventType = EventType1;
@@ -202,9 +203,9 @@ namespace SoundExplorers.Tests.Data {
       Assert.AreEqual(1, Newsletter2.Events.Count, "Newsletter2.Events.Count");
       Assert.AreEqual(1, Newsletter2.References.Count,
         "Newsletter2.References.Count");
-      Assert.AreSame(DefaultSeries , Event1.Series, "Event1.Series");
-      Assert.AreEqual(0, Series1.Events.Count, "Series1.Events.Count");
-      Assert.AreEqual(0, Series1.References.Count, "Series1.Events.Count");
+      Assert.AreSame(DefaultSeries, Event1.Series, "Event1.Series");
+      Assert.AreEqual(1, Series1.Events.Count, "Series1.Events.Count");
+      Assert.AreEqual(1, Series1.References.Count, "Series1.References.Count");
       Assert.AreEqual(1, Series2.Events.Count, "Series2.Events.Count");
       Assert.AreEqual(1, Series2.References.Count, "Series2.References.Count");
       Assert.AreEqual(Event2Date, Event2.Date, "Event2.Date");
@@ -338,6 +339,84 @@ namespace SoundExplorers.Tests.Data {
     }
 
     [Test]
+    public void ChangeNewsletterToDefault() {
+      Assert.AreSame(Newsletter1, Event1.Newsletter, "Event1.Newsletter initially");
+      Assert.AreEqual(1, DefaultNewsletter.Events.Count,
+        "DefaultNewsletter.Events.Count initially");
+      Assert.AreEqual(1, Newsletter1.Events.Count,
+        "Newsletter1.Events.Count initially");
+      using (var session = new TestSession(DatabaseFolderPath)) {
+        session.BeginUpdate();
+        DefaultNewsletter =
+          QueryHelper.Read<Newsletter>(DefaultNewsletter.SimpleKey, session);
+        Newsletter1 =
+          QueryHelper.Read<Newsletter>(Newsletter1SimpleKey, session);
+        Event1 = QueryHelper.Read<Event>(Event1SimpleKey, Location1, session);
+        Event1.Newsletter = DefaultNewsletter;
+        session.Commit();
+      }
+      Assert.AreSame(DefaultNewsletter, Event1.Newsletter, "Event1.Newsletter");
+      Assert.AreEqual(2, DefaultNewsletter.Events.Count,
+        "DefaultNewsletter.Events.Count after update");
+      Assert.AreEqual(0, Newsletter1.Events.Count,
+        "Newsletter1.Events.Count after update");
+      using (var session = new TestSession(DatabaseFolderPath)) {
+        session.BeginRead();
+        DefaultNewsletter =
+          QueryHelper.Read<Newsletter>(DefaultNewsletter.SimpleKey, session);
+        Newsletter1 =
+          QueryHelper.Read<Newsletter>(Newsletter1SimpleKey, session);
+        Event1 = QueryHelper.Read<Event>(Event1SimpleKey, Location1, session);
+        session.Commit();
+      }
+      Assert.AreSame(DefaultNewsletter, Event1.Newsletter,
+        "Event1.Newsletter in new session");
+      Assert.AreEqual(2, DefaultNewsletter.Events.Count,
+        "DefaultNewsletter.Events.Count in new session");
+      Assert.AreEqual(0, Newsletter1.Events.Count,
+        "Newsletter1.Events.Count in new session");
+    }
+
+    [Test]
+    public void ChangeSeriesToDefault() {
+      Assert.AreSame(Series1, Event2.Series, "Event2.Series initially");
+      Assert.AreEqual(1, DefaultSeries.Events.Count,
+        "DefaultSeries.Events.Count initially");
+      Assert.AreEqual(1, Series1.Events.Count,
+        "Series1.Events.Count initially");
+      using (var session = new TestSession(DatabaseFolderPath)) {
+        session.BeginUpdate();
+        DefaultSeries =
+          QueryHelper.Read<Series>(DefaultSeries.SimpleKey, session);
+        Series1 =
+          QueryHelper.Read<Series>(Series1.SimpleKey, session);
+        Event2 = QueryHelper.Read<Event>(Event2SimpleKey, Location1, session);
+        Event2.Series = DefaultSeries;
+        session.Commit();
+      }
+      Assert.AreSame(DefaultSeries, Event2.Series, "Event2.Series");
+      Assert.AreEqual(2, DefaultSeries.Events.Count,
+        "DefaultSeries.Events.Count after update");
+      Assert.AreEqual(0, Series1.Events.Count,
+        "Series1.Events.Count after update");
+      using (var session = new TestSession(DatabaseFolderPath)) {
+        session.BeginRead();
+        DefaultSeries =
+          QueryHelper.Read<Series>(DefaultSeries.SimpleKey, session);
+        Series1 =
+          QueryHelper.Read<Series>(Series1.SimpleKey, session);
+        Event2 = QueryHelper.Read<Event>(Event2SimpleKey, Location1, session);
+        session.Commit();
+      }
+      Assert.AreSame(DefaultSeries, Event2.Series,
+        "Event2.Series in new session");
+      Assert.AreEqual(2, DefaultSeries.Events.Count,
+        "DefaultSeries.Events.Count in new session");
+      Assert.AreEqual(0, Series1.Events.Count,
+        "Series1.Events.Count in new session");
+    }
+
+    [Test]
     public void DisallowChangeDateToDuplicate() {
       using var session = new TestSession(DatabaseFolderPath);
       session.BeginUpdate();
@@ -456,45 +535,6 @@ namespace SoundExplorers.Tests.Data {
       Assert.AreEqual(2, Event1.Sets[1].SetNo, "Sets[1].SetNo");
       Assert.AreEqual(3, Event1.Sets[2].SetNo, "Sets[2].SetNo");
       Assert.AreEqual(4, Event1.Sets[3].SetNo, "Sets[3].SetNo");
-    }
-
-    [Test]
-    public void SetNewsletterToDefault() {
-      Assert.AreSame(Newsletter1, Event1.Newsletter, "Event1.Newsletter initially");
-      Assert.AreEqual(1, DefaultNewsletter.Events.Count,
-        "DefaultNewsletter.Events.Count initially");
-      Assert.AreEqual(1, Newsletter1.Events.Count,
-        "Newsletter1.Events.Count initially");
-      using (var session = new TestSession(DatabaseFolderPath)) {
-        session.BeginUpdate();
-        DefaultNewsletter =
-          QueryHelper.Read<Newsletter>(DefaultNewsletter.SimpleKey, session);
-        Newsletter1 =
-          QueryHelper.Read<Newsletter>(Newsletter1SimpleKey, session);
-        Event1 = QueryHelper.Read<Event>(Event1SimpleKey, Location1, session);
-        Event1.Newsletter = DefaultNewsletter;
-        session.Commit();
-      }
-      Assert.AreSame(DefaultNewsletter, Event1.Newsletter, "Event1.Newsletter");
-      Assert.AreEqual(2, DefaultNewsletter.Events.Count,
-        "DefaultNewsletter.Events.Count after update");
-      Assert.AreEqual(0, Newsletter1.Events.Count,
-        "Newsletter1.Events.Count after update");
-      using (var session = new TestSession(DatabaseFolderPath)) {
-        session.BeginRead();
-        DefaultNewsletter =
-          QueryHelper.Read<Newsletter>(DefaultNewsletter.SimpleKey, session);
-        Newsletter1 =
-          QueryHelper.Read<Newsletter>(Newsletter1SimpleKey, session);
-        Event1 = QueryHelper.Read<Event>(Event1SimpleKey, Location1, session);
-        session.Commit();
-      }
-      Assert.AreSame(DefaultNewsletter, Event1.Newsletter, 
-        "Event1.Newsletter in new session");
-      Assert.AreEqual(2, DefaultNewsletter.Events.Count,
-        "DefaultNewsletter.Events.Count in new session");
-      Assert.AreEqual(0, Newsletter1.Events.Count,
-        "Newsletter1.Events.Count in new session");
     }
 
     [Test]

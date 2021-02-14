@@ -82,7 +82,8 @@ namespace SoundExplorers.Data {
       return Pieces;
     }
 
-    public override ulong Persist(Placement place, SessionBase session, bool persistRefs = true,
+    public override ulong Persist(Placement place, SessionBase session,
+      bool persistRefs = true,
       bool disableFlush = false, Queue<IOptimizedPersistable>? toPersist = null) {
       if (_act == null) {
         Act = QueryHelper.Read<Act>(DefaultActName, session);

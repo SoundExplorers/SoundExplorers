@@ -220,6 +220,7 @@ namespace SoundExplorers.Tests.Data {
       var act = new Act {
         QueryHelper = QueryHelper,
         Name = Set.DefaultActName,
+        Notes = "Required default"
       };
       session.Persist(act);
       Acts.Add(act);
@@ -228,7 +229,7 @@ namespace SoundExplorers.Tests.Data {
     private void AddDefaultNewsletter(SessionBase session) {
       var newsletter = new Newsletter {
         QueryHelper = QueryHelper,
-        Date = EntityBase.DefaultDate,
+        Date = EntityBase.DefaultDate
       };
       session.Persist(newsletter);
       Newsletters.Add(newsletter);
@@ -238,6 +239,7 @@ namespace SoundExplorers.Tests.Data {
       var act = new Series {
         QueryHelper = QueryHelper,
         Name = Event.DefaultSeriesName,
+        Notes = "Required default"
       };
       session.Persist(act);
       Series.Add(act);

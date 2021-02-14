@@ -13,7 +13,7 @@ namespace SoundExplorers.Model {
     static DatabaseUpdateErrorException() {
       ErrorTypes = CreateErrorTypes();
     }
-    
+
     /// <summary>
     ///   Initialises an instance of the
     ///   <see cref="DatabaseUpdateErrorException" /> class.
@@ -57,8 +57,7 @@ namespace SoundExplorers.Model {
     /// </summary>
     public int ColumnIndex { get; }
 
-    public ErrorType ErrorType => ErrorTypes[InnerException!.GetType()]; 
-
+    public ErrorType ErrorType => ErrorTypes[InnerException!.GetType()];
     private static IDictionary<Type, ErrorType> ErrorTypes { get; }
 
     /// <summary>

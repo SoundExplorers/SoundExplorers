@@ -20,7 +20,6 @@ namespace SoundExplorers.Tests.Controller {
       Controller = (TestParentGridController)controller;
     }
 
-    [ExcludeFromCodeCoverage]
-    public override string Name => "MockParentGrid";
+    [ExcludeFromCodeCoverage] public override string Name => "MockParentGrid";
   }
 }

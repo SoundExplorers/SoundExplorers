@@ -238,9 +238,10 @@ namespace SoundExplorers.Tests.Data {
     [Test]
     public void DisallowOutOfRangeSetNo() {
       Session.BeginUpdate();
-      var exception = 
+      var exception =
         Assert.Catch<PropertyValueOutOfRangeException>(() => Set2.SetNo = 0,
-        "Zero disallowed");
+          "Zero disallowed");
+      Assert.AreEqual("SetNo", exception.PropertyName, "PropertyName");
       Assert.AreEqual("SetNo must be an integer between 1 and 99.", exception.Message,
         "Error message when zero");
       exception = Assert.Catch<PropertyValueOutOfRangeException>(() => Set2.SetNo = 100,

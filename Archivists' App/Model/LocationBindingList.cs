@@ -1,5 +1,3 @@
 ﻿namespace SoundExplorers.Model {
-  public class LocationBindingList {
-    
-  }
+  public class LocationBindingList { }
 }

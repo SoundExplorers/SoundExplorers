@@ -46,7 +46,9 @@ namespace SoundExplorers.Model {
     public string? Act {
       get => _act;
       set {
-        _act = value;
+        _act = !string.IsNullOrWhiteSpace(value)
+          ? value
+          : Set.DefaultActName;
         OnPropertyChanged(nameof(Act));
       }
     }
@@ -79,9 +81,6 @@ namespace SoundExplorers.Model {
 
     protected override IDictionary<string, object?>
       CreateEntityPropertyValueDictionary() {
-      if (!EntityList.IsChildList && !EntityList.IsInsertionRowCurrent) {
-        return base.CreateEntityPropertyValueDictionary();
-      }
       Event = ReadEvent();
       return new Dictionary<string, object?> {
         [nameof(Date)] = Event.Date,
@@ -95,33 +94,16 @@ namespace SoundExplorers.Model {
     }
 
     protected override void CopyValuesToEntityProperties(Set set) {
-      // The order is crucial here. SetNo must be set before Genre and Event so that
-      // Genre.Sets and Event.Sets will be in the right sort order. And, to avoid
-      // referential integrity exceptions, Genre must be set before Event,
-      // which must be set before Act.
-      set.SetNo = SetNo; 
+      // SetNo must be set before Genre and Event so that Genre.Sets and Event.Sets will
+      // be in the right sort order. And, to avoid referential integrity exceptions,
+      // Genre must be set before Event, which must be set before Act.
+      set.SetNo = SetNo;
       set.Genre = (Genre)FindParent(Properties[nameof(Genre)])!;
       set.Event = Event;
       set.Act = (Act)FindParent(Properties[nameof(Act)])!;
       set.IsPublic = IsPublic;
       set.Notes = Notes;
     }
-
-    // internal override void RestorePropertyValuesFrom(SetBindingItem backup) {
-    //   // base.RestorePropertyValuesFrom(backup);
-    //   // Event = (Event)EntityList.IdentifyingParent!;
-    //   // if (!EntityList.IsChildList && !EntityList.IsInsertionRowCurrent) {
-    //   //   base.RestorePropertyValuesFrom(backup);
-    //   // }
-    //   Event = (Event)EntityList.IdentifyingParent!;
-    //   Date = Event.Date;
-    //   Location = Event.Location.Name;
-    //   SetNo = backup.SetNo;
-    //   Act = backup.Act;
-    //   Genre = backup.Genre;
-    //   IsPublic = backup.IsPublic;
-    //   Notes = backup.Notes;
-    // }
 
     protected override string GetSimpleKey() {
       return EntityBase.IntegerToSimpleKey(SetNo, nameof(SetNo));

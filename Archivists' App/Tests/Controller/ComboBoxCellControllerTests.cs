@@ -18,9 +18,11 @@ namespace SoundExplorers.Tests.Controller {
       CellView = new MockView<ComboBoxCellController>();
       Session.BeginUpdate();
       try {
+        Data.AddActsPersisted(3, Session);
         Data.AddEventTypesPersisted(1, Session);
         Data.AddLocationsPersisted(2, Session);
         Data.AddNewslettersPersisted(3, Session);
+        Data.AddSeriesPersisted(1, Session);
         Data.AddEventsPersisted(5, Session);
       } finally {
         Session.Commit();
@@ -54,15 +56,29 @@ namespace SoundExplorers.Tests.Controller {
       CellController = CreateCellController("Series");
       Assert.AreEqual("Event", CellController.TableName, "TableName");
       var seriesItems = CellController.GetItems();
-      Assert.AreEqual(0, seriesItems.Length, "seriesItems.Length");
-      Assert.AreEqual(1, EditorView.ShowWarningMessageCount, "ShowWarningMessageCount");
+      Assert.AreEqual(1, seriesItems.Length, "seriesItems.Length");
+      Assert.AreEqual(0, EditorView.ShowWarningMessageCount, "ShowWarningMessageCount");
       CellController = CreateCellController("Location");
       var locationItems = CellController.GetItems();
       Assert.AreEqual(2, locationItems.Length, "locationItems.Length");
       CellController = CreateCellController("NewsLetter");
       var newsLetterItems = CellController.GetItems();
-      // Includes dummy newsletter
-      Assert.AreEqual(4, newsLetterItems.Length, "newsLetterItems.Length");
+      // Includes default newsletter
+      Assert.AreEqual(3, newsLetterItems.Length, "newsLetterItems.Length");
+    }
+
+    [Test]
+    public void NoAvailableReferences() {
+      CreateControllers(typeof(SetList));
+      CellController = CreateCellController("Genre");
+      Assert.AreEqual("Set", CellController.TableName, "TableName");
+      var genreItems = CellController.GetItems();
+      Assert.AreEqual(0, genreItems.Length, "genreItems.Length");
+      Assert.AreEqual(1, EditorView.ShowWarningMessageCount, "ShowWarningMessageCount");
+      Assert.AreEqual(
+        "There are no Genre Names to choose between. You need to add at least one row " +
+        "to the Genre table before you can select a Genre for a Set.",
+        EditorView.LastWarningMessage, "LastWarningMessage");
     }
 
     [Test]

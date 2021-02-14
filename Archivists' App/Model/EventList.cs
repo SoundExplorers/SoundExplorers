@@ -42,7 +42,8 @@ namespace SoundExplorers.Model {
         Event.DefaultSeriesName, Session);
       if (defaultSeries == null) {
         defaultSeries = new Series {
-          Name = Event.DefaultSeriesName
+          Name = Event.DefaultSeriesName,
+          Notes = "Required default"
         };
         Session.Persist(defaultSeries);
       }
@@ -51,18 +52,17 @@ namespace SoundExplorers.Model {
     }
 
     protected override EventBindingItem CreateBindingItem(Event @event) {
-      return new EventBindingItem() {
+      return new EventBindingItem {
         Date = @event.Date, Location = @event.Location.Name!,
         Series = @event.Series.Name,
         Newsletter = @event.Newsletter.Date,
-        // Newsletter = @event.Newsletter?.Date ?? EntityBase.DefaultDate,
         EventType = @event.EventType.Name,
         Notes = @event.Notes
       };
     }
 
     protected override BindingColumnList CreateColumns() {
-      return new BindingColumnList() {
+      return new BindingColumnList {
         new BindingColumn(nameof(Event.Date), typeof(DateTime)) {IsInKey = true},
         new BindingColumn(nameof(Event.Location), typeof(string),
           new ReferenceType(typeof(LocationList), nameof(Location.Name))) {
@@ -80,7 +80,8 @@ namespace SoundExplorers.Model {
 
     public override IdentifyingParentChildren GetIdentifyingParentChildrenForMainList(
       int rowIndex) {
-      return new IdentifyingParentChildren(this[rowIndex], this[rowIndex].Sets.Values.ToList());
+      return new IdentifyingParentChildren(this[rowIndex],
+        this[rowIndex].Sets.Values.ToList());
     }
 
     public override void Populate(

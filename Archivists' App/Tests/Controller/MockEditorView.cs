@@ -9,12 +9,14 @@ namespace SoundExplorers.Tests.Controller {
 
     internal int CloseCount { get; private set; }
     internal string LastErrorMessage { get; private set; } = null!;
+    internal string LastWarningMessage { get; private set; } = null!;
     internal TestMainGridController MainGridController { get; set; } = null!;
     internal int OnParentAndMainGridsShownAsyncCount { get; private set; }
     internal int SetMouseCursorToDefaultCount { get; private set; }
     internal int SetMouseCursorToWaitCount { get; private set; }
     internal int ShowErrorMessageCount { get; private set; }
     internal int ShowWarningMessageCount { get; private set; }
+
     // private EditorController Controller { get; set; } = null!;
     public IGrid? CurrentGrid { get; set; }
     public IMainGrid MainGrid { get; }
@@ -55,6 +57,7 @@ namespace SoundExplorers.Tests.Controller {
     }
 
     public void ShowWarningMessage(string text) {
+      LastWarningMessage = text;
       ShowWarningMessageCount++;
     }
   }

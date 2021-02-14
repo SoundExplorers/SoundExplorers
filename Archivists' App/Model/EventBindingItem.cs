@@ -54,7 +54,9 @@ namespace SoundExplorers.Model {
     public string? Series {
       get => _series;
       set {
-        _series = value;
+        _series = !string.IsNullOrWhiteSpace(value)
+          ? value
+          : Event.DefaultSeriesName;
         OnPropertyChanged(nameof(Series));
       }
     }

@@ -24,7 +24,6 @@ namespace SoundExplorers.View {
     public GridBase? CurrentGrid { get; internal set; }
     private MainView MainView => (MainView)MdiParent;
     private bool IsClosed { get; set; }
-
     private SizeableFormOptions SizeableFormOptions { get; set; } = null!;
     IGrid? IEditorView.CurrentGrid => CurrentGrid;
     IMainGrid IEditorView.MainGrid => MainGrid;

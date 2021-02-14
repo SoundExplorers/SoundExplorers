@@ -11,7 +11,7 @@ namespace SoundExplorers.Common {
         Add(property.Name, property);
       }
     }
-    
+
     // public static PropertyDictionary Create<T>() {
     //   return n
     // }

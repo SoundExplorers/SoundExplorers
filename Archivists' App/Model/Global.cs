@@ -38,7 +38,7 @@ namespace SoundExplorers.Model {
     ///   The sorted dictionary created.
     /// </returns>
     public static SortedDictionary<string, Type> CreateEntityListTypeDictionary() {
-      return new SortedDictionary<string, Type>() {
+      return new SortedDictionary<string, Type> {
         {nameof(Act), typeof(ActList)},
         {nameof(Event), typeof(EventList)},
         {nameof(EventType), typeof(EventTypeList)},

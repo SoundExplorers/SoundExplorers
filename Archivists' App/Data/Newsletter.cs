@@ -25,8 +25,8 @@ namespace SoundExplorers.Data {
       set {
         if (value < DefaultDate) {
           throw new PropertyConstraintException(
-            $"Newsletter Date must be later than or equal to " + 
-            $"{DateToSimpleKey(DefaultDate)}. ({DateToSimpleKey(DefaultDate)} " + 
+            "Newsletter Date must be later than or equal to " +
+            $"{DateToSimpleKey(DefaultDate)}. ({DateToSimpleKey(DefaultDate)} " +
             "indicates that an Event's Newsletter has not yet been specified.)",
             nameof(Date));
         }

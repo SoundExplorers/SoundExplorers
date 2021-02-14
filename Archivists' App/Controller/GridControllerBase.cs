@@ -37,11 +37,11 @@ namespace SoundExplorers.Controller {
       : _firstVisibleColumnIndex = GetFirstVisibleColumnIndex();
 
     protected IGrid Grid { get; }
-    
+
     /// <summary>
     ///   Only applicable to a main grid that is a child of a parent grid row, this
     ///   specifies the grid's identifying parent entity and, for populating the grid,
-    ///   its child entities.  
+    ///   its child entities.
     /// </summary>
     protected IdentifyingParentChildren? IdentifyingParentChildrenForList { get; set; }
 
@@ -107,7 +107,7 @@ namespace SoundExplorers.Controller {
       Debug.WriteLine($"GridControllerBase.PrepareForFocus {Grid.Name}");
       if (!IsPopulating) {
         EditorController.View.SetMouseCursorToWait();
-        if (EditorController.IsParentGridToBeShown 
+        if (EditorController.IsParentGridToBeShown
             && EditorController.View.CurrentGrid != Grid) {
           PrepareToSwitchFocusFromOtherGridToThis();
         }

@@ -55,8 +55,26 @@ namespace SoundExplorers.Tests.Model {
     }
 
     [Test]
+    public void AddDefaultAct() {
+      List = CreateSetList(false, false);
+      var @event = Data.Events[0];
+      var eventChildren = CreateEventChildren(@event);
+      Session.BeginRead();
+      var defaultAct = QueryHelper.Find<Act>(string.Empty, Session);
+      Session.Commit();
+      Assert.IsNull(defaultAct, "Default Act before Populate");
+      List.Populate(eventChildren);
+      Session.BeginRead();
+      defaultAct = QueryHelper.Find<Act>(string.Empty, Session);
+      Session.Commit();
+      Assert.IsNotNull(defaultAct, "Default Act after Populate");
+      Assert.AreEqual("Required default", defaultAct!.Notes, "Notes");
+    }
+
+    [Test]
     public void AddSet() {
       List = CreateSetList();
+      Assert.IsTrue(List.IsChildList, "IsChildList");
       var @event = Data.Events[0];
       var eventChildren = CreateEventChildren(@event);
       List.Populate(eventChildren);
@@ -72,6 +90,23 @@ namespace SoundExplorers.Tests.Model {
       Assert.AreEqual(4, List[3].SetNo, "SetNo in List");
       Assert.AreEqual(4, @event.Sets[3].SetNo, "SetNo in Event.Sets");
       Assert.AreEqual(4, Data.Genres[0].Sets[3].SetNo, "SetNo in Genre.Sets");
+    }
+
+    [Test]
+    public void ChangeActToDefault() {
+      List = CreateSetList();
+      var defaultAct = Data.Acts[0];
+      var nonDefaultAct = Data.Acts[1];
+      Session.BeginUpdate();
+      Data.Sets[0].Act = nonDefaultAct;
+      Session.Commit();
+      List.Populate();
+      List.OnRowEnter(0);
+      Assert.AreEqual(nonDefaultAct.Name, List.BindingList[0].Act,
+        "Binding Act after populate");
+      List.BindingList[0].Act = "    ";
+      Assert.AreSame(defaultAct, Data.Sets[0].Act,
+        "List Act after change to default");
     }
 
     [Test]
@@ -100,7 +135,8 @@ namespace SoundExplorers.Tests.Model {
       bindingList.AddNew();
       List.OnRowEnter(0);
       bindingList[0].Act = Data.Acts[0].Name;
-      var exception = Assert.Catch<DatabaseUpdateErrorException>(()=> List.OnRowValidated(0), 
+      var exception = Assert.Catch<DatabaseUpdateErrorException>(
+        () => List.OnRowValidated(0),
         "Adding Set without Genre disallowed.");
       Assert.AreEqual(
         "Set '01 | 2020/01/09 | Athens' cannot be added because its Genre has not been specified.",
@@ -114,18 +150,20 @@ namespace SoundExplorers.Tests.Model {
       List.Populate(eventChildren);
       List.OnRowEnter(2);
       var bindingList = List.BindingList;
-      Exception exception = Assert.Catch<DuplicateNameException>(()=> bindingList[2].SetNo = 1, 
+      Assert.DoesNotThrow(() => bindingList[2].SetNo = 3);
+      Exception exception = Assert.Catch<DuplicateNameException>(
+        () => bindingList[2].SetNo = 1,
         "Changing SetNo to duplicate for Event disallowed");
       Assert.AreEqual("Another Set with key '01 | 2020/01/09 | Athens' already exists.",
-        exception.Message, 
+        exception.Message,
         "Error message on trying to change SetNo to duplicate for Event");
       bindingList.AddNew();
       List.OnRowEnter(3);
       bindingList[3].SetNo = 2;
-      exception = Assert.Catch<DatabaseUpdateErrorException>(()=> List.OnRowValidated(3), 
+      exception = Assert.Catch<DatabaseUpdateErrorException>(() => List.OnRowValidated(3),
         "Adding Set with SetNo duplicate for Event disallowed");
       Assert.AreEqual("Another Set with key '02 | 2020/01/09 | Athens' already exists.",
-        exception.Message, 
+        exception.Message,
         "Error message on trying to add Set with duplicate SetNo for Event");
     }
 
@@ -137,7 +175,7 @@ namespace SoundExplorers.Tests.Model {
       Session.Commit();
       List.Populate();
       var identifyingParentChildren = List.GetIdentifyingParentChildrenForMainList(0);
-      Assert.AreSame(Data.Sets[0], identifyingParentChildren.IdentifyingParent, 
+      Assert.AreSame(Data.Sets[0], identifyingParentChildren.IdentifyingParent,
         "IdentifyingParent");
       Assert.AreEqual(5, identifyingParentChildren.Children.Count, "Count");
       Assert.IsInstanceOf<Piece>(identifyingParentChildren.Children[0], "Child type");
@@ -155,7 +193,8 @@ namespace SoundExplorers.Tests.Model {
 
     [Test]
     public void ReadAsParentList() {
-      List = CreateSetList();
+      List = CreateSetList(true, true, false);
+      Assert.IsFalse(List.IsChildList, "IsChildList");
       Session.BeginUpdate();
       var set = Data.Sets[2];
       set.Act = Data.Acts[1];
@@ -170,9 +209,11 @@ namespace SoundExplorers.Tests.Model {
       Assert.AreEqual(set.Notes, bindingList[2].Notes, "Notes");
     }
 
-    private void AddData(bool includingSets = true) {
+    private void AddData(bool includingSets = true, bool includingActs = true) {
       Session.BeginUpdate();
-      Data.AddActsPersisted(2, Session);
+      if (includingActs) {
+        Data.AddActsPersisted(2, Session);
+      }
       Data.AddEventTypesPersisted(1, Session);
       Data.AddLocationsPersisted(1, Session);
       Data.AddNewslettersPersisted(1, Session);
@@ -191,9 +232,10 @@ namespace SoundExplorers.Tests.Model {
       return eventChildren;
     }
 
-    private SetList CreateSetList(bool addSets = true) {
-      AddData(addSets);
-      return new SetList {Session = Session};
+    private SetList CreateSetList(
+      bool addSets = true, bool addActs = true, bool isChildList = true) {
+      AddData(addSets, addActs);
+      return new SetList(isChildList) {Session = Session};
     }
   }
 }

@@ -34,8 +34,7 @@ namespace SoundExplorers.Tests.Controller {
     /// </summary>
     public override int RowCount => Controller.BindingList.Count + 1;
 
-    [ExcludeFromCodeCoverage]
-    public override string Name => "MockMainGrid";
+    [ExcludeFromCodeCoverage] public override string Name => "MockMainGrid";
 
     public void SetController(MainGridController controller) {
       Controller = (TestMainGridController)controller;

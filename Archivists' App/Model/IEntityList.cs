@@ -21,7 +21,7 @@ namespace SoundExplorers.Model {
     BindingColumnList Columns { get; }
 
     string EntityTypeName { get; }
-    
+
     /// <summary>
     ///   Gets whether this is a main list that is to be populated with children of an
     ///   identifying parent entity.
@@ -47,10 +47,10 @@ namespace SoundExplorers.Model {
     ///   should only be needed for testing.
     /// </summary>
     SessionBase Session { set; }
-    
+
     /// <summary>
     ///   Removes an erroneous insertion binding item after first backing it up to be
-    ///   restored when a new row is subsequently added. 
+    ///   restored when a new row is subsequently added.
     /// </summary>
     void BackupAndRemoveInsertionErrorBindingItem();
 
@@ -95,7 +95,6 @@ namespace SoundExplorers.Model {
 
     // void OnValueOutOfRange(int rowIndex, string columnName, 
     //   PropertyValueOutOfRangeException outOfRangeException);
-    
     void OnValidationError(int rowIndex, string? propertyName, Exception exception);
 
     /// <summary>
@@ -107,7 +106,7 @@ namespace SoundExplorers.Model {
     ///   type will be fetched from the database.
     /// </param>
     /// <param name="createBindingList">
-    ///   Optionally specifies whether the <see cref="BindingList" />, which will be      
+    ///   Optionally specifies whether the <see cref="BindingList" />, which will be
     ///   bound to a grid in the editor window, is to be populated along with the list of
     ///   entities. Default: true. Set to false if entity list is not to be used to
     ///   populate a grid.

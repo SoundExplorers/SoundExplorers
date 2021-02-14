@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using JetBrains.Annotations;
@@ -36,13 +35,11 @@ namespace SoundExplorers.Model {
     where TEntity : EntityBase, new()
     where TBindingItem : BindingItemBase<TEntity, TBindingItem>, new() {
     private IDictionary<string, PropertyInfo>? _entityProperties;
-
     private IDictionary<string, PropertyInfo>? _properties;
-
     internal EntityListBase<TEntity, TBindingItem> EntityList { get; set; } = null!;
 
     private IDictionary<string, PropertyInfo> EntityProperties =>
-      _entityProperties ??=  new PropertyDictionary(typeof(TEntity));
+      _entityProperties ??= new PropertyDictionary(typeof(TEntity));
 
     private IDictionary<string, object?>? EntityPropertyValues { get; set; }
 
@@ -134,15 +131,6 @@ namespace SoundExplorers.Model {
       return result;
     }
 
-    // private static IDictionary<string, PropertyInfo> CreatePropertyDictionary<T>() {
-    //   var properties = typeof(T).GetProperties().ToList();
-    //   var result = new Dictionary<string, PropertyInfo>(properties.Count);
-    //   foreach (var property in properties) {
-    //     result.Add(property.Name, property);
-    //   }
-    //   return result;
-    // }
-
     protected IEntity? FindParent(PropertyInfo property) {
       var propertyValue = property.GetValue(this);
       return propertyValue != null
@@ -157,18 +145,7 @@ namespace SoundExplorers.Model {
         : FindParent(property);
     }
 
-    internal IList<object> GetPropertyValues() {
-      return (
-        from property in Properties.Values
-        select property.GetValue(this)).ToList()!;
-    }
-
     protected abstract string GetSimpleKey();
-
-    internal void RestoreToEntity(TEntity entity) {
-      EntityPropertyValues = CreateEntityPropertyValueDictionary();
-      CopyValuesToEntityProperties(entity);
-    }
 
     private static void SetEntityPropertyValue(TEntity entity,
       PropertyInfo entityProperty, object? newEntityPropertyValue) {

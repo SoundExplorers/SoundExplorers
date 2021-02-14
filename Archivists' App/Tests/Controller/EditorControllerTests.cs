@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data;
 using NUnit.Framework;
+using SoundExplorers.Common;
 using SoundExplorers.Data;
 using SoundExplorers.Model;
 using SoundExplorers.Tests.Data;
@@ -43,15 +44,16 @@ namespace SoundExplorers.Tests.Controller {
       try {
         Data.AddLocationsPersisted(1, Session);
         Data.AddNewslettersPersisted(2, Session);
-        Data.AddSeriesPersisted(1, Session);
+        Data.AddSeriesPersisted(2, Session);
       } finally {
         Session.Commit();
       }
+      var defaultNewsletter = Data.Newsletters[0];
       var validLocation = Data.Locations[0];
       string validLocationName = validLocation.Name!;
-      var validNewsletter = Data.Newsletters[0];
+      var validNewsletter = Data.Newsletters[1];
       var validNewsletterDate = validNewsletter.Date;
-      var validSeries = Data.Series[0];
+      var validSeries = Data.Series[1];
       string validSeriesName = validSeries.Name!;
       Assert.IsNotNull(validLocationName, "validLocationName");
       Assert.IsNotNull(validSeriesName, "validSeriesName");
@@ -102,7 +104,7 @@ namespace SoundExplorers.Tests.Controller {
       MainGridController.OnRowValidated(1);
       Assert.AreEqual(2, validLocation.Events.Count, "Events.Count after 2nd add");
       var event2 = validLocation.Events[1];
-      Assert.IsNull(event2.Newsletter, "event2.Newsletter");
+      Assert.AreSame(defaultNewsletter, event2.Newsletter, "event2.Newsletter");
     }
 
     [Test]
@@ -139,7 +141,7 @@ namespace SoundExplorers.Tests.Controller {
       Assert.AreEqual(1, View.CloseCount, "CloseCount");
       Assert.AreEqual(1, View.ShowErrorMessageCount, "ShowErrorMessageCount");
       Assert.AreEqual(
-        "The Set editor cannot be used yet because the Event table is empty.", 
+        "The Set editor cannot be used yet because the Event table is empty.",
         View.LastErrorMessage, "LastErrorMessage");
     }
 
@@ -275,24 +277,20 @@ namespace SoundExplorers.Tests.Controller {
         " is not a valid value for Int32. (Parameter 'value').");
       MainGridController.OnCellEditException(5, "SetNo", exception);
       Assert.AreEqual(1, View.ShowErrorMessageCount, "ShowErrorMessageCount");
-      Assert.AreEqual("SetNo must be an integer between 1 and 99.", 
+      Assert.AreEqual("SetNo must be an integer between 1 and 99.",
         View.LastErrorMessage, "LastErrorMessage");
       exception = new ArgumentException("Unexpected message");
       Assert.Throws<ArgumentException>(() =>
-        MainGridController.OnCellEditException(5, "SetNo", exception),
+          MainGridController.OnCellEditException(5, "SetNo", exception),
         "ArgumentException with unexpected message rethrown");
     }
 
     [Test]
     public void ErrorOnDelete() {
+      AddDataForEventList();
       Session.BeginUpdate();
-      try {
-        Data.AddEventTypesPersisted(1, Session);
-        Data.AddLocationsPersisted(2, Session);
-        Data.AddEventsPersisted(3, Session, Data.Locations[1]);
-      } finally {
-        Session.Commit();
-      }
+      Data.AddEventsPersisted(3, Session, Data.Locations[1]);
+      Session.Commit();
       // The second Location cannot be deleted because it is a parent of 3 child Events.
       CreateControllers(typeof(LocationList));
       Controller.Populate(); // Populate grid
@@ -495,16 +493,7 @@ namespace SoundExplorers.Tests.Controller {
 
     [Test]
     public void FormatExceptionOnUpdate() {
-      Session.BeginUpdate();
-      try {
-        Data.AddEventTypesPersisted(2, Session);
-        Data.AddLocationsPersisted(2, Session);
-        Data.AddEventsPersisted(3, Session);
-        Data.AddNewslettersPersisted(1, Session);
-        Data.AddSeriesPersisted(1, Session);
-      } finally {
-        Session.Commit();
-      }
+      AddDataForEventList();
       CreateControllers(typeof(EventList));
       Controller.Populate(); // Populate grid
       var bindingList =
@@ -580,6 +569,7 @@ namespace SoundExplorers.Tests.Controller {
       CreateControllers(typeof(SetList));
       Assert.IsFalse(MainGrid.Focused, "MainGrid.Focused initially");
       Assert.IsFalse(ParentGrid.Focused, "ParentGrid.Focused initially");
+      Assert.IsFalse(MainGridController.IsFixingFocus, "IsFixingFocus initially");
       Controller.Populate(); // Populate parent and main grids
       Assert.AreEqual(1, View.OnParentAndMainGridsShownAsyncCount,
         "OnParentAndMainGridsShownAsyncCount after Populate");
@@ -594,16 +584,36 @@ namespace SoundExplorers.Tests.Controller {
         "Is Date column to be shown?");
       Assert.IsTrue(MainGridController.GetBindingColumn("SetNo").IsVisible,
         "Is SetNo column to be shown?");
-      Assert.AreEqual(5, MainGridController.BindingList.Count,
-        "Main list count after Populate");
+      Assert.AreEqual(6, MainGridController.BindingList.Count,
+        "Main list count after Populate"); // Includes new row 
+      Assert.IsTrue(MainGridController.IsFixingFocus, "IsFixingFocus after Populate");
       Assert.AreEqual(0, ParentGridController.FirstVisibleColumnIndex,
         "Main grid FirstVisibleColumnIndex after Populate");
       Assert.AreEqual(1, View.SetMouseCursorToDefaultCount,
         "SetMouseCursorToDefaultCount after Populate");
-      MainGrid.Focus();
+      MainGridController.OnRowValidated(0);
+      Assert.IsFalse(MainGridController.IsFixingFocus,
+        "IsFixingFocus after OnRowValidated");
       ParentGridController.OnRowEnter(0);
-      Assert.AreEqual(3, MainGridController.BindingList.Count,
-        "Main list count when 1st parent selected");
+      Assert.AreEqual(4, MainGridController.BindingList.Count,
+        "Main list count when 1st parent selected"); // Includes insertion row
+      // Assert.IsFalse(MainGrid.Focused, "MainGrid.Focused when 1st parent selected");
+      // Assert.True(ParentGrid.Focused, "ParentGrid.Focused when 1st parent selected");
+    }
+
+    [Test]
+    public void OutOfRangeIntegerCellException() {
+      AddDataForSetList();
+      CreateControllers(typeof(SetList));
+      Controller.Populate(); // Populate grid
+      MainGridController.CreateAndGoToNewRow();
+      var exception = new PropertyValueOutOfRangeException(
+        "SetNo must be an integer between 1 and 99.", "SetNo");
+      MainGridController.OnCellEditException(5,
+        exception.PropertyName, exception);
+      Assert.AreEqual(1, View.ShowErrorMessageCount, "ShowErrorMessageCount");
+      Assert.AreEqual("Invalid SetNo:\r\nSetNo must be an integer between 1 and 99.",
+        View.LastErrorMessage, "LastErrorMessage");
     }
 
     [Test]
@@ -613,18 +623,28 @@ namespace SoundExplorers.Tests.Controller {
       Assert.AreEqual(1, View.ShowWarningMessageCount);
     }
 
+    private void AddDataForEventList() {
+      Session.BeginUpdate();
+      Data.AddEventTypesPersisted(2, Session);
+      Data.AddLocationsPersisted(2, Session);
+      Data.AddNewslettersPersisted(1, Session);
+      Data.AddSeriesPersisted(1, Session);
+      Data.AddEventsPersisted(3, Session);
+      Session.Commit();
+    }
+
     private void AddDataForSetList() {
       Session.BeginUpdate();
-      try {
-        Data.AddEventTypesPersisted(1, Session);
-        Data.AddGenresPersisted(1, Session);
-        Data.AddLocationsPersisted(1, Session);
-        Data.AddEventsPersisted(2, Session);
-        Data.AddSetsPersisted(3, Session, Data.Events[0]);
-        Data.AddSetsPersisted(5, Session, Data.Events[1]);
-      } finally {
-        Session.Commit();
-      }
+      Data.AddActsPersisted(1, Session);
+      Data.AddSeriesPersisted(1, Session);
+      Data.AddEventTypesPersisted(1, Session);
+      Data.AddGenresPersisted(1, Session);
+      Data.AddLocationsPersisted(1, Session);
+      Data.AddNewslettersPersisted(1, Session);
+      Data.AddEventsPersisted(2, Session);
+      Data.AddSetsPersisted(3, Session, Data.Events[0]);
+      Data.AddSetsPersisted(5, Session, Data.Events[1]);
+      Session.Commit();
     }
 
     private void CreateControllers(Type mainListType) {
