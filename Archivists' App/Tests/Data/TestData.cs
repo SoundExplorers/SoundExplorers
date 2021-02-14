@@ -217,32 +217,21 @@ namespace SoundExplorers.Tests.Data {
     }
 
     private void AddDefaultAct(SessionBase session) {
-      var act = new Act {
-        QueryHelper = QueryHelper,
-        Name = Set.DefaultActName,
-        Notes = "Required default"
-      };
+      var act = Act.CreateDefault();
       session.Persist(act);
       Acts.Add(act);
     }
 
     private void AddDefaultNewsletter(SessionBase session) {
-      var newsletter = new Newsletter {
-        QueryHelper = QueryHelper,
-        Date = EntityBase.DefaultDate
-      };
+      var newsletter = Newsletter.CreateDefault();
       session.Persist(newsletter);
       Newsletters.Add(newsletter);
     }
 
     private void AddDefaultSeries(SessionBase session) {
-      var act = new Series {
-        QueryHelper = QueryHelper,
-        Name = Event.DefaultSeriesName,
-        Notes = "Required default"
-      };
-      session.Persist(act);
-      Series.Add(act);
+      var series = SoundExplorers.Data.Series.CreateDefault();
+      session.Persist(series);
+      Series.Add(series);
     }
 
     private Event GetDefaultEvent() {

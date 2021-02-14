@@ -11,8 +11,6 @@ namespace SoundExplorers.Data {
   ///   be a rehearsal.
   /// </summary>
   public class Event : EntityBase {
-    public const string DefaultEventTypeName = "Performance";
-    public const string DefaultSeriesName = "";
     private DateTime _date;
     private EventType? _eventType;
     private Newsletter? _newsletter;
@@ -91,13 +89,13 @@ namespace SoundExplorers.Data {
       bool persistRefs = true,
       bool disableFlush = false, Queue<IOptimizedPersistable>? toPersist = null) {
       if (_eventType == null) {
-        EventType = QueryHelper.Read<EventType>(DefaultEventTypeName, session);
+        EventType = QueryHelper.Read<EventType>(EventType.DefaultName, session);
       }
       if (_newsletter == null) {
         Newsletter = QueryHelper.Read<Newsletter>(DateToSimpleKey(DefaultDate), session);
       }
       if (_series == null) {
-        Series = QueryHelper.Read<Series>(DefaultSeriesName, session);
+        Series = QueryHelper.Read<Series>(Series.DefaultName, session);
       }
       return base.Persist(place, session, persistRefs, disableFlush, toPersist);
     }

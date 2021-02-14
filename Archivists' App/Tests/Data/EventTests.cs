@@ -26,10 +26,7 @@ namespace SoundExplorers.Tests.Data {
         QueryHelper = QueryHelper,
         Name = Location2Name
       };
-      DefaultNewsletter = new Newsletter {
-        QueryHelper = QueryHelper,
-        Date = EntityBase.DefaultDate
-      };
+      DefaultNewsletter = Newsletter.CreateDefault();
       Newsletter1 = new Newsletter {
         QueryHelper = QueryHelper,
         Date = Newsletter1Date,
@@ -40,10 +37,7 @@ namespace SoundExplorers.Tests.Data {
         Date = Newsletter2Date,
         Url = Newsletter2Url
       };
-      DefaultSeries = new Series {
-        QueryHelper = QueryHelper,
-        Name = Event.DefaultSeriesName
-      };
+      DefaultSeries = Series.CreateDefault();
       Series1 = new Series {
         QueryHelper = QueryHelper,
         Name = Series1Name
@@ -73,10 +67,7 @@ namespace SoundExplorers.Tests.Data {
         QueryHelper = QueryHelper,
         SetNo = Set2SetNo
       };
-      DefaultAct = new Act {
-        QueryHelper = QueryHelper,
-        Name = Set.DefaultActName
-      };
+      DefaultAct = Act.CreateDefault();
       using var session = new TestSession(DatabaseFolderPath);
       session.BeginUpdate();
       session.Persist(EventType1);

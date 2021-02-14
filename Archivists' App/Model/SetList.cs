@@ -17,12 +17,9 @@ namespace SoundExplorers.Model {
     private void AddDefaultActIfItDoesNotExist() {
       Session.BeginUpdate();
       var defaultAct = QueryHelper.Find<Act>(
-        Set.DefaultActName, Session);
+        Act.DefaultName, Session);
       if (defaultAct == null) {
-        defaultAct = new Act {
-          Name = Set.DefaultActName,
-          Notes = "Required default"
-        };
+        defaultAct = Act.CreateDefault();
         Session.Persist(defaultAct);
       }
       Session.Commit();

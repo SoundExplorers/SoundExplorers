@@ -10,7 +10,6 @@ namespace SoundExplorers.Data {
   ///   performed at or in some other way part of an Event.
   /// </summary>
   public class Set : EntityBase {
-    public const string DefaultActName = "";
     private Act? _act;
     private Genre _genre = null!;
     private bool _isPublic;
@@ -86,7 +85,7 @@ namespace SoundExplorers.Data {
       bool persistRefs = true,
       bool disableFlush = false, Queue<IOptimizedPersistable>? toPersist = null) {
       if (_act == null) {
-        Act = QueryHelper.Read<Act>(DefaultActName, session);
+        Act = QueryHelper.Read<Act>(Act.DefaultName, session);
       }
       return base.Persist(place, session, persistRefs, disableFlush, toPersist);
     }
@@ -96,7 +95,7 @@ namespace SoundExplorers.Data {
       if (parentEntityType == typeof(Act)) {
         _act = newParent as Act;
       } else {
-        _genre = ((Genre)newParent)!;
+        _genre = (newParent as Genre)!;
       }
     }
   }

@@ -15,7 +15,7 @@ namespace SoundExplorers.Model {
     private string _notes = null!;
 
     public SetBindingItem() {
-      Act = Set.DefaultActName;
+      Act = Data.Act.DefaultName;
       IsPublic = true;
     }
 
@@ -48,7 +48,7 @@ namespace SoundExplorers.Model {
       set {
         _act = !string.IsNullOrWhiteSpace(value)
           ? value
-          : Set.DefaultActName;
+          : Data.Act.DefaultName;
         OnPropertyChanged(nameof(Act));
       }
     }

@@ -15,8 +15,8 @@ namespace SoundExplorers.Model {
     public EventBindingItem() {
       Date = DateTime.Today;
       Newsletter = EntityBase.DefaultDate;
-      EventType = Event.DefaultEventTypeName;
-      Series = Event.DefaultSeriesName;
+      EventType = Data.EventType.DefaultName;
+      Series = Data.Series.DefaultName;
     }
 
     public DateTime Date {
@@ -56,7 +56,7 @@ namespace SoundExplorers.Model {
       set {
         _series = !string.IsNullOrWhiteSpace(value)
           ? value
-          : Event.DefaultSeriesName;
+          : Data.Series.DefaultName;
         OnPropertyChanged(nameof(Series));
       }
     }

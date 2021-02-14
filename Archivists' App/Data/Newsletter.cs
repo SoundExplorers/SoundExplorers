@@ -58,6 +58,9 @@ namespace SoundExplorers.Data {
           $"A valid URL has not been specified for Newsletter '{SimpleKey}'.",
           nameof(Url));
       }
+      if (Date == DefaultDate) {
+        return;
+      }
       try {
         var dummy = new Uri(newUrl, UriKind.Absolute);
       } catch (UriFormatException) {
@@ -81,9 +84,6 @@ namespace SoundExplorers.Data {
     protected override void CheckCanPersist(SessionBase session) {
       base.CheckCanPersist(session);
       if (string.IsNullOrWhiteSpace(Url)) {
-        if (Date == DefaultDate) {
-          return;
-        }
         throw new PropertyConstraintException(
           "Newsletter cannot be added because a URL has not been specified.",
           nameof(Url));
@@ -95,6 +95,13 @@ namespace SoundExplorers.Data {
           $"'{urlDuplicate.SimpleKey}' " +
           $"already exists with the same URL '{Url}'.", nameof(Url));
       }
+    }
+
+    public static Newsletter CreateDefault() {
+      return new Newsletter {
+        Date = DefaultDate,
+        Url = "Required default"
+      };
     }
 
     private Newsletter? FindDuplicateUrl(string url,

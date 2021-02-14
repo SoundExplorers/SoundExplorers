@@ -7,6 +7,8 @@ namespace SoundExplorers.Data {
   ///   A performance or rehearsal, for example.
   /// </summary>
   public class EventType : EntityBase, INamedEntity {
+    public const string DefaultName = "Performance";
+
     public EventType() : base(typeof(EventType), nameof(Name), null) {
       Events = new SortedChildList<Event>();
     }
@@ -19,6 +21,12 @@ namespace SoundExplorers.Data {
         UpdateNonIndexField();
         SimpleKey = value;
       }
+    }
+
+    public static EventType CreateDefault() {
+      return new EventType {
+        Name = DefaultName
+      };
     }
 
     protected override IDictionary GetChildren(Type childType) {

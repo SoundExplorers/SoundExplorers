@@ -7,6 +7,7 @@ namespace SoundExplorers.Data {
   ///   A festival, for example.
   /// </summary>
   public class Series : EntityBase, INotablyNamedEntity {
+    public const string DefaultName = "";
     private string _notes = null!;
 
     public Series() : base(typeof(Series), nameof(Name), null) {
@@ -30,6 +31,13 @@ namespace SoundExplorers.Data {
         UpdateNonIndexField();
         _notes = value;
       }
+    }
+
+    public static Series CreateDefault() {
+      return new Series {
+        Name = DefaultName,
+        Notes = "Required default"
+      };
     }
 
     protected override IDictionary GetChildren(Type childType) {

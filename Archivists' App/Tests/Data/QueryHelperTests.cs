@@ -12,14 +12,8 @@ namespace SoundExplorers.Tests.Data {
       QueryHelper = new QueryHelper();
       DatabaseFolderPath = TestSession.CreateDatabaseFolder();
       Data = new TestData(QueryHelper);
-      DefaultNewsletter = new Newsletter {
-        QueryHelper = QueryHelper,
-        Date = EntityBase.DefaultDate
-      };
-      DefaultSeries = new Series {
-        QueryHelper = QueryHelper,
-        Name = Event.DefaultSeriesName
-      };
+      DefaultNewsletter = Newsletter.CreateDefault();
+      DefaultSeries = Series.CreateDefault();
       Event1 = new Event {
         QueryHelper = QueryHelper,
         Date = Event1Date,
