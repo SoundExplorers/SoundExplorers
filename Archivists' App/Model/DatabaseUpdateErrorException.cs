@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using SoundExplorers.Common;
 using SoundExplorers.Data;
 
 namespace SoundExplorers.Model {

@@ -212,6 +212,59 @@ namespace SoundExplorers.Model {
     }
 
     /// <summary>
+    ///   Occurs when an exception is thrown on ending a cell edit.
+    /// </summary>
+    /// <remarks>
+    ///   A <see cref="DatabaseUpdateErrorException" />, which is explicitly thrown by
+    ///   the application's code, is thrown at end of cell edit on existing rows but on
+    ///   row validation for the insertion row, when this event is not raised.
+    /// </remarks>
+    public void OnCellEditException(int rowIndex, string columnName,
+      Exception exception) {
+      Debug.WriteLine(
+        $"EntityListBase.OnCellEditException: rowIndex = {rowIndex}; columnName = {columnName}, {exception.GetType().Name}");
+      switch (exception) {
+        case ArgumentException argumentException:
+          if (argumentException.Message.StartsWith(" is not a valid value for")) {
+            // Thrown when an integer cell is empty
+            OnValidationError(rowIndex, columnName,
+              new FormatException(argumentException.Message, argumentException));
+          } else {
+            throw argumentException; // Terminal error
+          }
+          break;
+        case PropertyValueOutOfRangeException outOfRangeException:
+          // Thrown when an integer cell value is out of range.
+          OnValidationError(rowIndex, columnName, outOfRangeException);
+          break;
+        case DatabaseUpdateErrorException databaseUpdateErrorException:
+          LastDatabaseUpdateErrorException = databaseUpdateErrorException;
+          break;
+        case DuplicateNameException duplicateKeyException:
+          OnValidationError(rowIndex, columnName, duplicateKeyException);
+          break;
+        case FormatException formatException:
+          // An invalid value was pasted into a cell, e.g. text into a date.
+          // Or invalid text was entered into an integer cell, e.g. Set.SetNo.
+          OnValidationError(rowIndex, columnName, formatException);
+          break;
+        case RowNotInTableException referencedEntityNotFoundException:
+          // A combo box cell value does not match any of it's embedded combo box's
+          // items. So the combo box's selected index and text could not be updated. As
+          // the combo boxes are all dropdown lists, the only way this can have happened
+          // is that the unmatched value was pasted into the cell. If the cell value had
+          // been changed by selecting an item on the embedded combo box, it could only
+          // be a matching value.
+          OnValidationError(rowIndex, columnName, referencedEntityNotFoundException);
+          break;
+        default:
+          // Terminal error. In the Release build, the stack trace will be shown by
+          // the terminal error handler in Program.cs.
+          throw exception;
+      }
+    }
+
+    /// <summary>
     ///   This is called when any row has been entered.
     /// </summary>
     /// <param name="rowIndex">
@@ -268,7 +321,6 @@ namespace SoundExplorers.Model {
       Debug.WriteLine(
         $"EntityListBase.OnValidationError: row {rowIndex}; property {propertyName}; {exception.GetType().Name}");
       BackupItemToRestoreFrom = BackupItem;
-      // ExistingEntityPropertyErrorBackupItem = CreateBackupItem(BindingList[rowIndex]!);
       LastDatabaseChangeAction =
         IsInsertionRowCurrent ? StatementType.Insert : StatementType.Update;
       int columnIndex;

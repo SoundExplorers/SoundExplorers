@@ -76,6 +76,16 @@ namespace SoundExplorers.Model {
     IList<object?> GetErrorValues();
 
     /// <summary>
+    ///   Occurs when an exception is thrown on ending a cell edit.
+    /// </summary>
+    /// <remarks>
+    ///   A <see cref="DatabaseUpdateErrorException" />, which is explicitly thrown by
+    ///   the application's code, is thrown at end of cell edit on existing rows but on
+    ///   row validation for the insertion row, when this event is not raised.
+    /// </remarks>
+    void OnCellEditException(int rowIndex, string columnName, Exception exception);
+
+    /// <summary>
     ///   This is called when any row has been entered.
     /// </summary>
     /// <param name="rowIndex">
@@ -93,8 +103,6 @@ namespace SoundExplorers.Model {
     /// </param>
     void OnRowValidated(int rowIndex);
 
-    // void OnValueOutOfRange(int rowIndex, string columnName, 
-    //   PropertyValueOutOfRangeException outOfRangeException);
     void OnValidationError(int rowIndex, string? propertyName, Exception exception);
 
     /// <summary>

@@ -3,7 +3,6 @@ using System.ComponentModel;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using JetBrains.Annotations;
-using SoundExplorers.Common;
 using SoundExplorers.Data;
 
 namespace SoundExplorers.Model {

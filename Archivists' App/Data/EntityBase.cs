@@ -5,7 +5,6 @@ using System.Data;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
-using SoundExplorers.Common;
 using VelocityDb;
 using VelocityDb.Session;
 using VelocityDb.TypeInfo;

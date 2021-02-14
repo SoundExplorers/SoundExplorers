@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Data;
 using System.Diagnostics;
-using SoundExplorers.Common;
 using SoundExplorers.Model;
 
 namespace SoundExplorers.Controller {
@@ -62,60 +61,14 @@ namespace SoundExplorers.Controller {
       Exception? exception) {
       Debug.WriteLine(
         $"MainGridController.OnCellEditException: rowIndex = {rowIndex}; columnName = {columnName}, {exception?.GetType().Name}");
-      switch (exception) {
-        case ArgumentException argumentException:
-          if (argumentException.Message.StartsWith(" is not a valid value for")) {
-            // Thrown when an integer cell is empty
-            OnCellValidationError(rowIndex, columnName,
-              new FormatException(argumentException.Message, argumentException));
-          } else {
-            throw argumentException; // Terminal error
-          }
-          break;
-        case PropertyValueOutOfRangeException outOfRangeException:
-          // Thrown when an integer cell value is out of range.
-          OnCellValidationError(rowIndex, columnName, outOfRangeException);
-          break;
-        case DatabaseUpdateErrorException databaseUpdateErrorException:
-          List.LastDatabaseUpdateErrorException = databaseUpdateErrorException;
-          EditorController.View.OnError();
-          break;
-        case DuplicateNameException duplicateKeyException:
-          OnCellValidationError(rowIndex, columnName, duplicateKeyException);
-          break;
-        case FormatException formatException:
-          // An invalid value was pasted into a cell, e.g. text into a date.
-          // Or invalid text was entered into an integer cell, e.g. Set.SetNo.
-          OnCellValidationError(rowIndex, columnName, formatException);
-          break;
-        case RowNotInTableException referencedEntityNotFoundException:
-          // A combo box cell value does not match any of it's embedded combo box's
-          // items. So the combo box's selected index and text could not be updated. As
-          // the combo boxes are all dropdown lists, the only way this can have happened
-          // is that the unmatched value was pasted into the cell. If the cell value had
-          // been changed by selecting an item on the embedded combo box, it could only
-          // be a matching value.
-          OnCellValidationError(rowIndex, columnName, referencedEntityNotFoundException);
-          break;
-        case null:
-          // For unknown reason, the way I've got the error handling set up, this event
-          // gets raise twice if there's a DatabaseUpdateErrorException, the second time
-          // with a null exception. It does not seem to do any harm, so long as it is
-          // trapped like this.
-          break;
-        default:
-          // Terminal error. In the Release build, the stack trace will be shown by
-          // the terminal error handler in Program.cs.
-          throw exception;
+      // For unknown reason, the way I've got the error handling set up, the main grid's
+      // DataError event, whose handler calls this method, gets raise twice if there's
+      // a DatabaseUpdateErrorException, the second time with a null exception. It does
+      // not seem to do any harm, so long as it is trapped like this.
+      if (exception != null) {
+        List.OnCellEditException(rowIndex, columnName, exception);
+        EditorController.View.OnError();
       }
-    }
-
-    private void OnCellValidationError(
-      int rowIndex, string columnName, Exception exception) {
-      Debug.WriteLine(
-        $"MainGridController.OnCellValidationError: rowIndex = {rowIndex}; columnName = {columnName}, {exception.GetType().Name}");
-      List.OnValidationError(rowIndex, columnName, exception);
-      EditorController.View.OnError();
     }
 
     /// <summary>

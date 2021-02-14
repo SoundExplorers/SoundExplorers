@@ -1,6 +1,6 @@
 ﻿using System.Data;
 
-namespace SoundExplorers.Common {
+namespace SoundExplorers.Data {
   public class PropertyValueOutOfRangeException : ConstraintException {
     public PropertyValueOutOfRangeException(string message,
       string propertyName) : base(message) {

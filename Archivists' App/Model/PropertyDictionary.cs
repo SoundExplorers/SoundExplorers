@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace SoundExplorers.Common {
+namespace SoundExplorers.Model {
   public class PropertyDictionary : Dictionary<string, PropertyInfo> {
     public PropertyDictionary(Type type) {
       var properties = type.GetProperties().ToArray();
@@ -11,9 +11,5 @@ namespace SoundExplorers.Common {
         Add(property.Name, property);
       }
     }
-
-    // public static PropertyDictionary Create<T>() {
-    //   return n
-    // }
   }
 }
