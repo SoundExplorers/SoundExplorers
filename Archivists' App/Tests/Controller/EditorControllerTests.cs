@@ -396,8 +396,16 @@ namespace SoundExplorers.Tests.Controller {
     public void FixMainGridCurrentRowIndexOnRefocus() {
       AddDataForSetList();
       CreateControllers(typeof(SetList));
+      ParentGrid.Focus();
+      Assert.AreEqual(1, View.SetMouseCursorToDefaultCount,
+        "SetMouseCursorToDefaultCount after focusing parent grid");
       Controller.Populate(); // Populate parent and main grids
+      Assert.IsTrue(ParentGrid.Focused, "ParentGrid.Focused after Populate");
+      Assert.AreEqual(2, View.SetMouseCursorToDefaultCount,
+        "SetMouseCursorToDefaultCount after Populate");
       MainGrid.Focus();
+      Assert.AreEqual(3, View.SetMouseCursorToDefaultCount,
+        "SetMouseCursorToDefaultCount after focusing main grid");
       MainGridController.CreateAndGoToNewRow();
       int mainGridNewRowIndex = MainGrid.CurrentRowIndex;
       ParentGrid.Focus();
