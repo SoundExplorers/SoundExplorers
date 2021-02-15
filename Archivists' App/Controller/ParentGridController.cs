@@ -36,6 +36,7 @@ namespace SoundExplorers.Controller {
     }
 
     protected override void OnPopulatedAsync() {
+      Debug.WriteLine($"ParentGridController.OnPopulatedAsync");
       IsJustPopulated = true;
       base.OnPopulatedAsync();
     }
@@ -84,6 +85,7 @@ namespace SoundExplorers.Controller {
     }
 
     public override void Populate() {
+      Debug.WriteLine($"ParentGridController.Populate");
       PreviousRowIndex = -1;
       base.Populate();
       if (List.Count == 0) {

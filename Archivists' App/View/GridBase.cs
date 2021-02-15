@@ -83,6 +83,7 @@ namespace SoundExplorers.View {
     int IGrid.RowCount => RowCount;
 
     void IGrid.BeginInvoke(Action action) {
+      Debug.WriteLine($"GridBase.BeginInvoke {Name}");
       BeginInvoke(action);
     }
 
