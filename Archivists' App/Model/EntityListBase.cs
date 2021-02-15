@@ -185,12 +185,12 @@ namespace SoundExplorers.Model {
       try {
         //throw new ConstraintException("Test error message");
         Session.Unpersist(this[rowIndex]);
+        Session.Commit();
         RemoveAt(rowIndex);
       } catch (Exception exception) {
+        Session.Abort();
         BindingList.Insert(rowIndex, BackupItem!.CreateBindingItem());
         throw CreateDatabaseUpdateErrorException(exception, rowIndex);
-      } finally {
-        Session.Commit();
       }
     }
 
