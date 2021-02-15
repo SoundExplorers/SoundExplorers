@@ -145,20 +145,39 @@ namespace SoundExplorers.Tests.Controller {
     }
 
     [Test]
-    public void Delete() {
-      Session.BeginUpdate();
-      try {
-        Data.AddLocationsPersisted(3, Session);
-      } finally {
-        Session.Commit();
-      }
-      // The second Location cannot be deleted because it is a parent of 3 child Events.
-      CreateControllers(typeof(LocationList));
+    public void DeleteEvent() {
+      AddDataForEventList();
+      CreateControllers(typeof(EventList));
       Controller.Populate(); // Populate grid
-      MainGridController.CreateAndGoToNewRow();
+      Assert.AreEqual(3, Controller.MainList.Count, "Count after Populate");
       MainGridController.OnRowRemoved(1);
       Assert.AreEqual(1, MainGrid.OnRowAddedOrDeletedCount, "OnRowAddedOrDeletedCount");
-      Assert.AreEqual(2, Controller.MainList.Count, "MainList.Count");
+      Assert.AreEqual(2, Controller.MainList.Count, "Count after delete");
+    }
+
+    [Test]
+    public void DeleteLocation() {
+      Session.BeginUpdate();
+      Data.AddLocationsPersisted(3, Session);
+      Session.Commit();
+      CreateControllers(typeof(LocationList));
+      Controller.Populate(); // Populate grid
+      Assert.AreEqual(3, Controller.MainList.Count, "Count after Populate");
+      MainGridController.OnRowRemoved(1);
+      Assert.AreEqual(1, MainGrid.OnRowAddedOrDeletedCount, "OnRowAddedOrDeletedCount");
+      Assert.AreEqual(2, Controller.MainList.Count, "Count after delete");
+    }
+
+    [Test]
+    public void DeleteSet() {
+      AddDataForSetList();
+      CreateControllers(typeof(SetList));
+      Controller.Populate(); // Populate grid
+      // The last Event parent's Sets should be in the main grid.
+      Assert.AreEqual(5, Controller.MainList.Count, "Count after Populate");
+      MainGridController.OnRowRemoved(1);
+      Assert.AreEqual(1, MainGrid.OnRowAddedOrDeletedCount, "OnRowAddedOrDeletedCount");
+      Assert.AreEqual(4, Controller.MainList.Count, "Count after delete");
     }
 
     [Test]
@@ -410,9 +429,9 @@ namespace SoundExplorers.Tests.Controller {
       int mainGridNewRowIndex = MainGrid.CurrentRowIndex;
       ParentGrid.Focus();
       // Simulate the problem that occurs when switching focus from the main grid to the
-      // the parent grid.  If the main grid's current row is the new row before focusing
-      // the parent grid, then, on focusing the parent grid, the new row is removed, so
-      // the main grid's last existing row becomes its current row.
+      // parent grid. If the main grid's current row is the new row before focusing the
+      // parent grid, then, on focusing the parent grid, the new row is removed, so the
+      // main grid's last existing row becomes its current row.
       MainGrid.MakeRowCurrent(mainGridNewRowIndex - 1);
       Assert.AreEqual(mainGridNewRowIndex - 1, MainGrid.CurrentRowIndex,
         "Main grid current row index after focus switched back to parent grid");
