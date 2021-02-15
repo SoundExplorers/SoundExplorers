@@ -81,13 +81,13 @@ namespace SoundExplorers.Model {
 
     protected override IDictionary<string, object?>
       CreateEntityPropertyValueDictionary() {
-      Event = ReadEvent();
+      Event = (EntityList.IdentifyingParent as Event)!;
       return new Dictionary<string, object?> {
         [nameof(Date)] = Event.Date,
-        [nameof(Location)] = ReadLocation(),
+        [nameof(Location)] = Event.Location,
         [nameof(SetNo)] = SetNo,
-        [nameof(Act)] = ReadAct(),
-        [nameof(Genre)] = ReadGenre(),
+        [nameof(Act)] = Act,
+        [nameof(Genre)] = Genre,
         [nameof(IsPublic)] = IsPublic,
         [nameof(Notes)] = Notes
       };
@@ -107,26 +107,6 @@ namespace SoundExplorers.Model {
 
     protected override string GetSimpleKey() {
       return EntityBase.IntegerToSimpleKey(SetNo, nameof(SetNo));
-    }
-
-    private Act? ReadAct() {
-      return Act != null
-        ? QueryHelper.Read<Act>(Act, EntityList.Session)
-        : null;
-    }
-
-    private Event ReadEvent() {
-      var listEvent = EntityList.IdentifyingParent!;
-      return QueryHelper.Read<Event>(
-        listEvent.SimpleKey, listEvent.IdentifyingParent, EntityList.Session);
-    }
-
-    private Genre? ReadGenre() {
-      return Genre != null ? QueryHelper.Read<Genre>(Genre, EntityList.Session) : null;
-    }
-
-    private Location ReadLocation() {
-      return QueryHelper.Read<Location>(Event.Location.Name, EntityList.Session);
     }
   }
 }
