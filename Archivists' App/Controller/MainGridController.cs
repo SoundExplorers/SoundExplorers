@@ -135,8 +135,6 @@ namespace SoundExplorers.Controller {
       // because of an insertion error, in which case the entity will not have been
       // persisted (rowIndex == Count).
       if (!IsPopulating && rowIndex < List.Count) {
-        // Grid.Enabled = false;
-        // Grid.BeginInvoke(() => DeleteEntityAsync(rowIndex));
         try {
           List.DeleteEntity(rowIndex);
           Grid.OnRowAddedOrDeleted();
@@ -145,15 +143,6 @@ namespace SoundExplorers.Controller {
         }
       }
     }
-
-    // private void DeleteEntityAsync(int rowIndex) {
-    //   try {
-    //     List.DeleteEntity(rowIndex);
-    //     Grid.OnRowAddedOrDeleted();
-    //   } catch (DatabaseUpdateErrorException) {
-    //     EditorController.View.OnError();
-    //   }
-    // }
 
     /// <summary>
     ///   Handles the main grid's RowValidated event, which is raised when the user exits

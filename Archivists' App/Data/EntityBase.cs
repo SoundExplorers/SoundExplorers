@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
@@ -410,13 +409,13 @@ namespace SoundExplorers.Data {
       bool persistRefs = true,
       bool disableFlush = false,
       Queue<IOptimizedPersistable>? toPersist = null) {
-      Debug.WriteLine($"EntityBase.Persist {EntityType.Name}");
+      // Debug.WriteLine($"EntityBase.Persist {EntityType.Name}");
       CheckCanPersist(session);
       return base.Persist(place, session, persistRefs, disableFlush, toPersist);
     }
 
     private void RemoveChild(EntityBase child) {
-      Debug.WriteLine($"EntityBase.RemoveChild {EntityType.Name}: removing {child.EntityType.Name} '{child.Key}'");
+      // Debug.WriteLine($"EntityBase.RemoveChild {EntityType.Name}: removing {child.EntityType.Name} '{child.Key}'");
       UpdateNonIndexField();
       ChildrenOfType[child.EntityType].Remove(child.Key);
       // Full referential integrity is implemented in this class.
@@ -432,6 +431,30 @@ namespace SoundExplorers.Data {
     }
 
     /// <summary>
+    ///   Removes the entity from all its parent entities (if any) in preparation for its
+    ///   deletion from the database.
+    /// </summary>
+    private void RemoveFromAllParents() {
+      // Debug.WriteLine($"EntityBase.RemoveFromAllParents {EntityType.Name}");
+      var nonIdentifyingParents = (
+        from parent in Parents.Values 
+        where parent != null && !parent.Equals(IdentifyingParent) 
+        select parent).ToList();
+      if (nonIdentifyingParents.Count > 0) {
+        foreach (var nonIdentifyingParent in nonIdentifyingParents) {
+          nonIdentifyingParent!.RemoveChildWhenNonIdentifyingParentOrUnpersistingChild(
+            this, true);
+        }
+      }
+      if (IdentifyingParent != null) {
+        // Removing the entity from its identifying parent last to prevent
+        // VelocityDB FlushUpdates error that can happen on Unpersist.
+        IdentifyingParent!.RemoveChildWhenNonIdentifyingParentOrUnpersistingChild(
+          this, true);
+      }
+    }
+
+    /// <summary>
     ///   Allows a derived entity to update the field (not property)
     ///   corresponding to the parent entity of the specified entity type
     ///   with the specified new value.
@@ -443,7 +466,7 @@ namespace SoundExplorers.Data {
     }
 
     public override void Unpersist(SessionBase session) {
-      Debug.WriteLine($"EntityBase.Unpersist {EntityType.Name}");
+      // Debug.WriteLine($"EntityBase.Unpersist {EntityType.Name}");
       if (References.Count > 0) {
         // If we did not do this, VelocityDB would throw a ReferentialIntegrityException
         // on base.Unpersist.
@@ -452,15 +475,6 @@ namespace SoundExplorers.Data {
       }
       RemoveFromAllParents();
       base.Unpersist(session);
-
-      void RemoveFromAllParents() {
-        var parents =
-          Parents.Values.Where(parent => parent != null).ToList();
-        for (int i = parents.Count - 1; i >= 0; i--) {
-          parents[i]!.RemoveChildWhenNonIdentifyingParentOrUnpersistingChild(
-            this, true);
-        }
-      }
     }
 
     private void UpdateChild(EntityBase child,
