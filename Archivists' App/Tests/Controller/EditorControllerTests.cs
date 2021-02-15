@@ -569,11 +569,15 @@ namespace SoundExplorers.Tests.Controller {
       Assert.IsFalse(MainGrid.Focused, "MainGrid.Focused initially");
       Assert.IsFalse(ParentGrid.Focused, "ParentGrid.Focused initially");
       Assert.IsFalse(MainGridController.IsFixingFocus, "IsFixingFocus initially");
+      MainGrid.Focus();
+      Assert.AreEqual(1, View.SetMouseCursorToDefaultCount,
+        "SetMouseCursorToDefaultCount after focusing main grid");
       Controller.Populate(); // Populate parent and main grids
       Assert.AreEqual(1, View.OnParentAndMainGridsShownAsyncCount,
         "OnParentAndMainGridsShownAsyncCount after Populate");
       Assert.IsFalse(MainGrid.Focused, "MainGrid.Focused after Populate");
-      Assert.AreEqual(1, MainGrid.CellColorScheme.InvertCount,
+      Assert.IsTrue(ParentGrid.Focused, "ParentGrid.Focused after Populate");
+      Assert.AreEqual(2, MainGrid.CellColorScheme.InvertCount,
         "MainGrid.CellColorScheme.InvertCount after Populate");
       Assert.AreEqual(2, ParentGridController.BindingList.Count,
         "Parent list count after Populate");
@@ -588,7 +592,7 @@ namespace SoundExplorers.Tests.Controller {
       Assert.IsTrue(MainGridController.IsFixingFocus, "IsFixingFocus after Populate");
       Assert.AreEqual(0, ParentGridController.FirstVisibleColumnIndex,
         "Main grid FirstVisibleColumnIndex after Populate");
-      Assert.AreEqual(1, View.SetMouseCursorToDefaultCount,
+      Assert.AreEqual(2, View.SetMouseCursorToDefaultCount,
         "SetMouseCursorToDefaultCount after Populate");
       MainGridController.OnRowValidated(0);
       Assert.IsFalse(MainGridController.IsFixingFocus,
@@ -596,8 +600,6 @@ namespace SoundExplorers.Tests.Controller {
       ParentGridController.OnRowEnter(0);
       Assert.AreEqual(4, MainGridController.BindingList.Count,
         "Main list count when 1st parent selected"); // Includes insertion row
-      // Assert.IsFalse(MainGrid.Focused, "MainGrid.Focused when 1st parent selected");
-      // Assert.True(ParentGrid.Focused, "ParentGrid.Focused when 1st parent selected");
     }
 
     [Test]

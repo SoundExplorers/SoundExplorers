@@ -20,7 +20,7 @@ namespace SoundExplorers.Controller {
 
     internal bool LastRowNeedsToBeScrolledIntoView {
       get {
-        bool result = IsJustPopulated && List!.Count > 1;
+        bool result = IsJustPopulated && (List!.Count > 1 || !Grid.Focused);
         IsJustPopulated = result;
         return result;
       }
@@ -46,8 +46,12 @@ namespace SoundExplorers.Controller {
         if (rowIndex == List.Count - 1) {
           IsScrollingLastRowIntoView = false;
           IsJustPopulated = false;
-          // Show that the population process for the two grids is finished.
-          EditorController.View.SetMouseCursorToDefault();
+          if (Grid.Focused) {
+            // Show that the population process for the two grids is finished.
+            EditorController.View.SetMouseCursorToDefault();
+          } else {
+            Grid.Focus();
+          }
         } else {
           Grid.MakeRowCurrent(List.Count - 1, true);
         }

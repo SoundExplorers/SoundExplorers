@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
@@ -409,12 +410,13 @@ namespace SoundExplorers.Data {
       bool persistRefs = true,
       bool disableFlush = false,
       Queue<IOptimizedPersistable>? toPersist = null) {
+      Debug.WriteLine($"EntityBase.Persist {EntityType.Name}");
       CheckCanPersist(session);
       return base.Persist(place, session, persistRefs, disableFlush, toPersist);
     }
 
     private void RemoveChild(EntityBase child) {
-      // Debug.WriteLine($"EntityBase.RemoveChild {EntityType.Name}: removing {child.EntityType.Name} '{child.Key}'");
+      Debug.WriteLine($"EntityBase.RemoveChild {EntityType.Name}: removing {child.EntityType.Name} '{child.Key}'");
       UpdateNonIndexField();
       ChildrenOfType[child.EntityType].Remove(child.Key);
       // Full referential integrity is implemented in this class.
@@ -441,9 +443,9 @@ namespace SoundExplorers.Data {
     }
 
     public override void Unpersist(SessionBase session) {
+      Debug.WriteLine($"EntityBase.Unpersist {EntityType.Name}");
       if (References.Count > 0) {
-        // If we did not do this,
-        // VelocityDB would throw a ReferentialIntegrityException
+        // If we did not do this, VelocityDB would throw a ReferentialIntegrityException
         // on base.Unpersist.
         throw new ConstraintException(
           CreateReferentialIntegrityViolationMessage());

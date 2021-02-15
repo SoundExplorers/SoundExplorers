@@ -38,10 +38,6 @@ namespace SoundExplorers.Tests.Controller {
       OnParentAndMainGridsShownAsyncCount++;
     }
 
-    // public void PopulateMainGridOnParentRowChanged(int parentRowIndex) {
-    //   Controller.PopulateMainGridOnParentRowChanged(parentRowIndex);
-    // }
-
     public void SetMouseCursorToDefault() {
       SetMouseCursorToDefaultCount++;
     }
