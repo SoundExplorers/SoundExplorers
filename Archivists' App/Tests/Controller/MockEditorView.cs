@@ -16,8 +16,8 @@ namespace SoundExplorers.Tests.Controller {
     internal int SetMouseCursorToWaitCount { get; private set; }
     internal int ShowErrorMessageCount { get; private set; }
     internal int ShowWarningMessageCount { get; private set; }
+    internal string StatusBarText { get; set; } = null!;
 
-    // private EditorController Controller { get; set; } = null!;
     public IGrid? CurrentGrid { get; set; }
     public IMainGrid MainGrid { get; }
     public IParentGrid ParentGrid { get; }
@@ -44,6 +44,10 @@ namespace SoundExplorers.Tests.Controller {
 
     public void SetMouseCursorToWait() {
       SetMouseCursorToWaitCount++;
+    }
+
+    public void SetStatusBarText(string text) {
+      StatusBarText = text;
     }
 
     public void ShowErrorMessage(string text) {

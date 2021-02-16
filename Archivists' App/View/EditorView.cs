@@ -65,6 +65,10 @@ namespace SoundExplorers.View {
       MainView.Cursor = Cursors.WaitCursor;
     }
 
+    public void SetStatusBarText(string text) {
+      MainView.StatusLabel.Text = text;
+    }
+
     public void ShowErrorMessage(string text) {
       //MeasureProfiler.SaveData();
       ShowMessage(text, MessageBoxIcon.Error);
@@ -247,6 +251,7 @@ namespace SoundExplorers.View {
       base.OnActivated(e);
       //Debug.WriteLine("EditorView.OnActivated: " + this.Text);
       MainGrid.Enabled = true;
+      CurrentGrid?.Controller.OnWindowActivated();
       if (Controller.IsParentGridToBeShown) {
         ParentGrid.Enabled = true;
         // When an existing parent /child editor window is activated,the grid splitter

@@ -36,13 +36,15 @@ namespace SoundExplorers.Controller {
     }
 
     protected override void OnPopulatedAsync() {
-      Debug.WriteLine($"ParentGridController.OnPopulatedAsync");
+      Debug.WriteLine("ParentGridController.OnPopulatedAsync");
       IsJustPopulated = true;
       base.OnPopulatedAsync();
     }
 
     public override void OnRowEnter(int rowIndex) {
-      Debug.WriteLine($"ParentGridController.OnRowEnter: row {rowIndex}");
+      Debug.WriteLine(
+        $"ParentGridController.OnRowEnter: row {rowIndex} of {BindingList.Count}");
+      base.OnRowEnter(rowIndex);
       if (IsScrollingLastRowIntoView) {
         if (rowIndex == List.Count - 1) {
           IsScrollingLastRowIntoView = false;
@@ -85,7 +87,7 @@ namespace SoundExplorers.Controller {
     }
 
     public override void Populate() {
-      Debug.WriteLine($"ParentGridController.Populate");
+      Debug.WriteLine("ParentGridController.Populate");
       PreviousRowIndex = -1;
       base.Populate();
       if (List.Count == 0) {

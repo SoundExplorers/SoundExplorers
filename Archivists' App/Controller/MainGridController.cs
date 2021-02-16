@@ -112,7 +112,8 @@ namespace SoundExplorers.Controller {
     public override void OnRowEnter(int rowIndex) {
       // Debug.WriteLine(
       //   "MainGridController.OnRowEnter:  Any row entered (after ItemAdded if insertion row)");
-      Debug.WriteLine($"MainGridController.OnRowEnter: row {rowIndex} of {List.Count}");
+      Debug.WriteLine($"MainGridController.OnRowEnter: row {rowIndex} of {BindingList.Count}");
+      base.OnRowEnter(rowIndex);
       if (!IsPopulating) {
         List.OnRowEnter(rowIndex);
       }

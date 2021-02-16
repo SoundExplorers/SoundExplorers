@@ -56,7 +56,7 @@ namespace SoundExplorers.View {
       this.StatusLabel.RightToLeft = System.Windows.Forms.RightToLeft.No;
       this.StatusLabel.Size = new System.Drawing.Size(310, 34);
       this.StatusLabel.TabIndex = 8;
-      this.StatusLabel.Text = "lblStatus";
+      this.StatusLabel.Text = "StatusLabel";
       this.StatusLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
       // 
       // OkButton

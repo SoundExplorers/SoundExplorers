@@ -30,7 +30,7 @@ namespace SoundExplorers.View {
       !ReadOnly && !IsCurrentCellInEditMode && SelectedRows.Count > 0 &&
       !SelectedRows.Contains(NewRow);
 
-    protected GridControllerBase Controller { get; set; } = null!;
+    public GridControllerBase Controller { get; protected set; } = null!;
 
     public GridContextMenu ContextMenu =>
       _contextMenu ??= new GridContextMenu(this);

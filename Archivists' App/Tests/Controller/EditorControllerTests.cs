@@ -600,6 +600,8 @@ namespace SoundExplorers.Tests.Controller {
       Assert.AreEqual(1, View.SetMouseCursorToDefaultCount,
         "SetMouseCursorToDefaultCount after focusing main grid");
       Controller.Populate(); // Populate parent and main grids
+      Assert.AreEqual("Event 2 of 2", View.StatusBarText, 
+        "StatusBarText after Populate");
       Assert.AreEqual(1, View.OnParentAndMainGridsShownAsyncCount,
         "OnParentAndMainGridsShownAsyncCount after Populate");
       Assert.IsFalse(MainGrid.Focused, "MainGrid.Focused after Populate");
@@ -621,12 +623,31 @@ namespace SoundExplorers.Tests.Controller {
         "Main grid FirstVisibleColumnIndex after Populate");
       Assert.AreEqual(2, View.SetMouseCursorToDefaultCount,
         "SetMouseCursorToDefaultCount after Populate");
+      // Emulate the extra validation of the first main grid row that happens in the
+      // application at end of Populate, even though the parent grid is focused, as a
+      // result of the DataGridView's internal logic. See the documentation for
+      // MainGridController.IsFixingFocus.
       MainGridController.OnRowValidated(0);
       Assert.IsFalse(MainGridController.IsFixingFocus,
         "IsFixingFocus after OnRowValidated");
+      MainGrid.Focus();
+      Assert.AreEqual("Set 6 of 6", View.StatusBarText, 
+        "StatusBarText when main grid focused");
+      MainGridController.OnRowEnter(1);
+      Assert.AreEqual("Set 2 of 6", View.StatusBarText, 
+        "StatusBarText when 2nd main grid row entered");
+      ParentGrid.Focus();
+      Assert.AreEqual("Event 2 of 2", View.StatusBarText, 
+        "StatusBarText after focusing parent grid");
       ParentGridController.OnRowEnter(0);
+      Assert.AreEqual("Event 1 of 2", View.StatusBarText, 
+        "StatusBarText when 1st parent selected");
       Assert.AreEqual(4, MainGridController.BindingList.Count,
         "Main list count when 1st parent selected"); // Includes insertion row
+      View.StatusBarText = string.Empty; // Simulates editor window deactivated.
+      ParentGridController.OnWindowActivated();
+      Assert.AreEqual("Event 1 of 2", View.StatusBarText, 
+        "StatusBarText when editor window reactivated");
     }
 
     [Test]

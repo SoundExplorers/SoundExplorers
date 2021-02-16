@@ -52,6 +52,7 @@ namespace SoundExplorers.Controller {
 
     protected bool IsPopulating { get; private set; }
     private IGrid OtherGrid => _otherGrid ??= GetOtherGrid();
+    private string? RowText { get; set; }
     public string TableName => List.EntityTypeName;
 
     private IList<IBindingColumn> CreateBindingColumns() {
@@ -74,18 +75,28 @@ namespace SoundExplorers.Controller {
         ? EditorController.View.ParentGrid
         : EditorController.View.MainGrid;
     }
-
+    
     public virtual void OnGotFocus() {
       Debug.WriteLine($"GridControllerBase.OnGotFocus {Grid.Name}");
       if (!IsPopulating) {
         if (EditorController.IsParentGridToBeShown) {
           OtherGrid.Enabled = true;
         }
+        SetStatusBarTextToRowText();
         EditorController.View.SetMouseCursorToDefault();
       }
     }
 
-    public abstract void OnRowEnter(int rowIndex);
+    public virtual void OnRowEnter(int rowIndex) {
+      Debug.WriteLine(
+        $"GridControllerBase.OnRowEnter {Grid.Name}: row {rowIndex} of {BindingList.Count}");
+      if (!IsPopulating) {
+        RowText = $"{List.EntityTypeName} {rowIndex + 1} of {BindingList.Count}";
+        if (Grid.Focused) {
+          EditorController.View.SetStatusBarText(RowText);
+        }
+      }
+    }
 
     protected virtual void OnPopulatedAsync() {
       Debug.WriteLine($"GridControllerBase.OnPopulatedAsync {Grid.Name}");
@@ -93,6 +104,10 @@ namespace SoundExplorers.Controller {
       if (Grid.RowCount > 1) {
         Grid.MakeRowCurrent(Grid.RowCount - 1);
       }
+    }
+
+    public void OnWindowActivated() {
+      SetStatusBarTextToRowText();
     }
 
     public virtual void Populate() {
@@ -120,6 +135,12 @@ namespace SoundExplorers.Controller {
       Grid.CellColorScheme.RestoreToDefault();
       OtherGrid.CellColorScheme.Invert();
       OtherGrid.Enabled = false;
+    }
+
+    private void SetStatusBarTextToRowText() {
+      if (RowText != null) {
+        EditorController.View.SetStatusBarText(RowText);
+      }
     }
   }
 }

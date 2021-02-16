@@ -8,6 +8,7 @@
     void OnParentAndMainGridsShown();
     void SetMouseCursorToDefault();
     void SetMouseCursorToWait();
+    void SetStatusBarText(string text);
     void ShowErrorMessage(string text);
     void ShowWarningMessage(string text);
   }

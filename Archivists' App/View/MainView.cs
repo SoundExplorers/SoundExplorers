@@ -14,6 +14,7 @@ namespace SoundExplorers.View {
       InitializeComponent();
       HideMainMenuImageMargins();
       DisableGridToolStripButtons();
+      StatusLabel.Text = string.Empty;
       FileMenu.DropDown.Opening += FileMenu_DropDown_Opening;
       EditMenu.DropDown.Opening += EditMenu_DropDown_Opening;
       WindowsMenu.DropDown.Opening += WindowsMenu_DropDown_Opening;
@@ -34,6 +35,7 @@ namespace SoundExplorers.View {
         SplashManager.Status = "Getting options...";
         SelectEditorView = CreateSelectEditorView();
         ToolStrip.Visible = Controller.IsToolBarVisible;
+        StatusLabel.Visible = Controller.IsStatusBarVisible;
       } catch (Exception exception) {
         if (exception is ApplicationException) {
           MessageBox.Show(
@@ -69,6 +71,7 @@ namespace SoundExplorers.View {
     protected override void OnFormClosed(FormClosedEventArgs e) {
       base.OnFormClosed(e);
       Controller.IsToolBarVisible = ToolStrip.Visible;
+      Controller.IsStatusBarVisible = StatusLabel.Visible;
       Controller.TableName = (MdiChildren.Any()
         ? EditorView?.MainGrid.Controller.TableName
         : SelectEditorView.Controller.SelectedTableName)!;
@@ -115,6 +118,7 @@ namespace SoundExplorers.View {
     }
 
     private void EditorView_FormClosed(object? sender, FormClosedEventArgs e) {
+      StatusLabel.Text = string.Empty;
       BeginInvoke((Action)OnEditorClosed);
     }
 
@@ -279,6 +283,10 @@ namespace SoundExplorers.View {
 
     private void ViewToolBarMenuItem_Click(object? sender, EventArgs e) {
       ToolStrip.Visible = ViewToolBarMenuItem.Checked;
+    }
+
+    private void ViewStatusBarMenuItem_Click(object? sender, EventArgs e) {
+      StatusLabel.Visible = ViewStatusBarMenuItem.Checked;
     }
 
     private void WindowsMenu_DropDown_Opening(object? sender, CancelEventArgs e) {

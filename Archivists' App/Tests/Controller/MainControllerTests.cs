@@ -33,10 +33,13 @@ namespace SoundExplorers.Tests.Controller {
       controller.ConnectToDatabase();
       Assert.AreEqual(1, Connection.OpenCount, "OpenCount");
       Assert.IsTrue(controller.IsToolBarVisible, "IsToolBarVisible initially");
+      Assert.IsTrue(controller.IsStatusBarVisible, "IsStatusBarVisible initially");
       controller.IsToolBarVisible = false;
+      controller.IsStatusBarVisible = false;
       controller.TableName = tableName;
       controller = new TestMainController(view, QueryHelper, Session);
       Assert.IsFalse(controller.IsToolBarVisible, "IsToolBarVisible");
+      Assert.IsFalse(controller.IsStatusBarVisible, "IsStatusBarVisible");
       Assert.AreEqual(tableName, controller.TableName, "TableName");
     }
   }

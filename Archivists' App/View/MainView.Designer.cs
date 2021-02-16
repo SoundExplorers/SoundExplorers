@@ -45,6 +45,7 @@ namespace SoundExplorers.View {
       this.EditDeleteSelectedRowsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.ViewMenu = new System.Windows.Forms.ToolStripMenuItem();
       this.ViewToolBarMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.ViewStatusBarMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.ToolsMenu = new System.Windows.Forms.ToolStripMenuItem();
       this.ToolsOptionsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.WindowsMenu = new System.Windows.Forms.ToolStripMenuItem();
@@ -69,6 +70,7 @@ namespace SoundExplorers.View {
       this.CutToolStripButton = new System.Windows.Forms.ToolStripButton();
       this.CopyToolStripButton = new System.Windows.Forms.ToolStripButton();
       this.PasteToolStripButton = new System.Windows.Forms.ToolStripButton();
+      this.StatusLabel = new System.Windows.Forms.Label();
       this.MenuStrip.SuspendLayout();
       this.ToolStrip.SuspendLayout();
       this.SuspendLayout();
@@ -231,7 +233,7 @@ namespace SoundExplorers.View {
       // ViewMenu
       // 
       this.ViewMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.ViewToolBarMenuItem});
+            this.ViewToolBarMenuItem, this.ViewStatusBarMenuItem});
       this.ViewMenu.Name = "ViewMenu";
       this.ViewMenu.Size = new System.Drawing.Size(49, 21);
       this.ViewMenu.Text = "&View";
@@ -246,6 +248,17 @@ namespace SoundExplorers.View {
       this.ViewToolBarMenuItem.Size = new System.Drawing.Size(135, 26);
       this.ViewToolBarMenuItem.Text = "&Toolbar";
       this.ViewToolBarMenuItem.Click += new System.EventHandler(this.ViewToolBarMenuItem_Click);
+      // 
+      // ViewStatusBarMenuItem
+      // 
+      this.ViewStatusBarMenuItem.Checked = true;
+      this.ViewStatusBarMenuItem.CheckOnClick = true;
+      this.ViewStatusBarMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.ViewStatusBarMenuItem.ImageTransparentColor = System.Drawing.Color.Black;
+      this.ViewStatusBarMenuItem.Name = "ViewStatusBarMenuItem";
+      this.ViewStatusBarMenuItem.Size = new System.Drawing.Size(135, 26);
+      this.ViewStatusBarMenuItem.Text = "&Statusbar";
+      this.ViewStatusBarMenuItem.Click += new System.EventHandler(this.ViewStatusBarMenuItem_Click);
       // 
       // ToolsMenu
       // 
@@ -467,6 +480,17 @@ namespace SoundExplorers.View {
       this.PasteToolStripButton.Text = "Paste (Ctrl+V)";
       this.PasteToolStripButton.Click += new System.EventHandler(this.EditPasteMenuItem_Click);
       // 
+      // StatusLabel
+      // 
+      this.StatusLabel.BorderStyle = System.Windows.Forms.BorderStyle.None;
+      this.StatusLabel.Dock = DockStyle.Bottom;
+      this.StatusLabel.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+      this.StatusLabel.Name = "StatusLabel";
+      this.StatusLabel.Size = new System.Drawing.Size(310, 34);
+      this.StatusLabel.TabIndex = 2;
+      this.StatusLabel.Text = "StatusLabel";
+      this.StatusLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+      //
       // MainView
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 18F);
@@ -474,6 +498,7 @@ namespace SoundExplorers.View {
       this.ClientSize = new System.Drawing.Size(843, 558);
       this.Controls.Add(this.ToolStrip);
       this.Controls.Add(this.MenuStrip);
+      this.Controls.Add(this.StatusLabel);
       this.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
       this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
       this.IsMdiContainer = true;
@@ -511,6 +536,7 @@ namespace SoundExplorers.View {
         private System.Windows.Forms.ToolStripMenuItem EditDeleteSelectedRowsMenuItem;
         private System.Windows.Forms.ToolStripMenuItem ViewMenu;
         private System.Windows.Forms.ToolStripMenuItem ViewToolBarMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem ViewStatusBarMenuItem;
         private System.Windows.Forms.ToolStripMenuItem ToolsMenu;
         private System.Windows.Forms.ToolStripMenuItem ToolsOptionsMenuItem;
         private System.Windows.Forms.ToolStripMenuItem WindowsMenu;
@@ -534,5 +560,6 @@ namespace SoundExplorers.View {
         public System.Windows.Forms.ToolStripButton CutToolStripButton;
         public System.Windows.Forms.ToolStripButton CopyToolStripButton;
         public System.Windows.Forms.ToolStripButton PasteToolStripButton;
+        public System.Windows.Forms.Label StatusLabel;
     }
 }
