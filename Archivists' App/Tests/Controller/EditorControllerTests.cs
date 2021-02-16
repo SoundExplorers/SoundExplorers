@@ -623,11 +623,13 @@ namespace SoundExplorers.Tests.Controller {
         "Main grid FirstVisibleColumnIndex after Populate");
       Assert.AreEqual(2, View.SetMouseCursorToDefaultCount,
         "SetMouseCursorToDefaultCount after Populate");
-      // Emulate the extra validation of the first main grid row that happens in the
-      // application at end of Populate, even though the parent grid is focused, as a
-      // result of the DataGridView's internal logic. See the documentation for
-      // MainGridController.IsFixingFocus.
+      // Emulate the unwanted internal logic of DataGridView that, following the end of
+      // Populate, causes an extra validation of the first main grid row, even though the
+      // parent grid is focused.  Without the workaround we are about to test, this
+      // would switch focus to the main grid and make its first row current, neither of
+      // which we want. See the documentation for MainGridController.IsFixingFocus. 
       MainGridController.OnRowValidated(0);
+      // Confirm that the workaround was executed.
       Assert.IsFalse(MainGridController.IsFixingFocus,
         "IsFixingFocus after OnRowValidated");
       MainGrid.Focus();

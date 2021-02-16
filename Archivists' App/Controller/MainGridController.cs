@@ -25,7 +25,8 @@ namespace SoundExplorers.Controller {
     ///   0 of the main grid current (by calling internal method
     ///   DataGridView.MakeFirstDisplayedCellCurrentCell). In this application, that
     ///   would usually be the wrong row, as we want the new row to be current on
-    ///   population of the main grid. Normally, the unwanted behaviour would trigger
+    ///   population of the main grid. And it would also focus the main grid when we want
+    ///   the parent grid to be focused. Normally, the unwanted behaviour would trigger
     ///   DataGridView.OnRowEnter for row 0, which MainGrid overrides. The workaround
     ///   stops OnRowEnter from being called in this case.
     /// </summary>

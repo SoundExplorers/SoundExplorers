@@ -91,12 +91,6 @@ namespace SoundExplorers.View {
       Controller = controller;
     }
 
-    // public void PopulateMainGridOnParentRowChanged(int parentRowIndex) {
-    //   Debug.WriteLine(
-    //     $"EditorView.PopulateMainGridOnParentRowChanged: parent row {parentRowIndex}");
-    //   Controller.PopulateMainGridOnParentRowChanged(parentRowIndex);
-    // }
-
     /// <summary>
     ///   Creates a EditorView and its associated controller, as per the
     ///   Model-View-Controller design pattern, returning the view instance created. The
@@ -112,7 +106,7 @@ namespace SoundExplorers.View {
       MainController mainController) {
       return (EditorView)ViewFactory.Create<EditorView, EditorController>(
         entityListType, mainController);
-      // THIS CAN BE USED INSTEAD FOR EASE OF EXCEPTION HANDLING:
+      // THIS CAN BE USED INSTEAD, FOR EASE OF EXCEPTION HANDLING:
       // EditorView result;
       // try {
       //   result = new EditorView();
@@ -231,12 +225,6 @@ namespace SoundExplorers.View {
     /// </remarks>
     private void MainGrid_RowValidated(object? sender, DataGridViewCellEventArgs e) {
       Debug.WriteLine($"EditorView.MainGrid_RowValidated: row {e.RowIndex}");
-      // if (IsFixingFocus) {
-      //   IsFixingFocus = false;
-      //   // Stops the main grid from being focused when the user changes row on the parent
-      //   // grid, repopulating the main grid.  See also the comments for IsFixingFocus. 
-      //   return;
-      // }
       MainGrid.Controller.OnRowValidated(e.RowIndex);
     }
 
