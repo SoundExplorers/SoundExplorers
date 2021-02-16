@@ -28,7 +28,7 @@ namespace SoundExplorers.Tests.Data {
       };
       Event1 = new Event {
         QueryHelper = QueryHelper,
-        Date = Event1Date
+        Date = DateTime.Today.AddDays(-1)
       };
       Set1 = new Set {
         QueryHelper = QueryHelper,
@@ -42,17 +42,20 @@ namespace SoundExplorers.Tests.Data {
         QueryHelper = QueryHelper,
         PieceNo = Piece1PieceNo,
         AudioUrl = Piece1AudioUrl,
+        Duration = Piece1Duration = new TimeSpan(0, 5, 29),
         Notes = Piece1Notes,
         Title = Piece1Title,
         VideoUrl = Piece1VideoUrl
       };
       Piece1AtSet2 = new Piece {
         QueryHelper = QueryHelper,
-        PieceNo = Piece1PieceNo
+        PieceNo = Piece1PieceNo,
+        Duration = Piece1AtSet2Duration = new TimeSpan(0, 2, 8)
       };
       Piece2 = new Piece {
         QueryHelper = QueryHelper,
-        PieceNo = Piece2PieceNo
+        PieceNo = Piece2PieceNo,
+        Duration = Piece2Duration = new TimeSpan(1, 46, 3),
       };
       Credit1 = new Credit {
         QueryHelper = QueryHelper,
@@ -140,9 +143,9 @@ namespace SoundExplorers.Tests.Data {
     private Credit Credit1 { get; set; } = null!;
     private Credit Credit2 { get; set; } = null!;
     private Event Event1 { get; set; } = null!;
-    private static DateTime Event1Date => DateTime.Today.AddDays(-1);
     private Location Location1 { get; set; } = null!;
     private Piece Piece1 { get; set; } = null!;
+    private TimeSpan Piece1Duration { get; set; }
 
     private static string Piece1AudioUrl =>
       "https://archive.org/details/geometry_dash_1.9/Geometry+Dash+OST/BaseAfterBase.mp3";
@@ -151,7 +154,9 @@ namespace SoundExplorers.Tests.Data {
       "https://archive.org/details/nikopivx/niko-pivx-xoxo-hd.mp4";
 
     private Piece Piece1AtSet2 { get; set; } = null!;
+    private TimeSpan Piece1AtSet2Duration { get; set; }
     private Piece Piece2 { get; set; } = null!;
+    private TimeSpan Piece2Duration { get; set; }
     private Role Drums { get; set; } = null!;
     private Set Set1 { get; set; } = null!;
     private Set Set2 { get; set; } = null!;
@@ -160,16 +165,20 @@ namespace SoundExplorers.Tests.Data {
     public void A010_Initial() {
       Assert.AreEqual(Piece1PieceNo, Piece1.PieceNo, "Piece1.PieceNo");
       Assert.AreEqual(Piece1AudioUrl, Piece1.AudioUrl, "Piece1.AudioUrl");
+      Assert.AreEqual(Piece1Duration, Piece1.Duration, "Piece1.Duration");
       Assert.AreEqual(Piece1Notes, Piece1.Notes, "Piece1.Notes");
       Assert.AreEqual(Piece1Title, Piece1.Title, "Piece1.Title");
       Assert.AreEqual(Piece1VideoUrl, Piece1.VideoUrl, "Piece1.VideoUrl");
       Assert.AreEqual(Piece1PieceNo, Piece1AtSet2.PieceNo, "Piece1_2.PieceNo");
       Assert.AreEqual(Piece2PieceNo, Piece2.PieceNo, "Piece2.PieceNo");
+      Assert.AreEqual(Piece2Duration, Piece2.Duration, "Piece2.Duration");
       Assert.AreEqual(2, Set1.Pieces.Count, "Set1.Pieces.Count");
       Assert.AreEqual(2, Set1.References.Count, "Set1.References.Count");
       Assert.AreEqual(1, Set2.Pieces.Count, "Set1.Pieces.Count");
       Assert.AreSame(Piece1, Set1.Pieces[0], "Set1.Pieces[0]");
       Assert.AreSame(Piece1AtSet2, Set2.Pieces[0], "Set2.Pieces[0]");
+      Assert.AreEqual(Piece1AtSet2Duration, Piece1AtSet2.Duration, 
+        "Piece1AtSet2.Duration");
       Assert.AreSame(Piece2, Set1.Pieces[1], "Set1.Pieces[1]");
       Assert.AreSame(Set1, Piece1.Set, "Piece1.Set");
       Assert.AreEqual(Set1.SetNo, Piece1.Set.SetNo, "Piece1.Set.SetNo");
@@ -273,6 +282,28 @@ namespace SoundExplorers.Tests.Data {
     }
 
     [Test]
+    public void DisallowOutOfRangeDuration() {
+      Session.BeginUpdate();
+      var exception =
+        Assert.Catch<PropertyValueOutOfRangeException>(
+          () => Piece2.Duration = TimeSpan.FromMilliseconds(999),
+          "999 milliseconds disallowed");
+      Assert.AreEqual(
+        "Duration must be between 1 second and 9 hours, 59 minutes, 59 seconds.", 
+        exception.Message, "Error message when 999 milliseconds");
+      exception =
+        Assert.Catch<PropertyValueOutOfRangeException>(
+          () => Piece2.Duration = TimeSpan.FromHours(10),
+          "10 hours disallowed");
+      Assert.AreEqual(
+        "Duration must be between 1 second and 9 hours, 59 minutes, 59 seconds.", 
+        exception.Message,
+        "Error message when 10 hours");
+      Session.Commit();
+      Assert.AreEqual("Duration", exception.PropertyName, "PropertyName");
+    }
+
+    [Test]
     public void DisallowOutOfRangePieceNo() {
       Session.BeginUpdate();
       var exception =
@@ -286,6 +317,7 @@ namespace SoundExplorers.Tests.Data {
       Assert.AreEqual("PieceNo must be an integer between 1 and 99.", exception.Message,
         "Error message when 100");
       Session.Commit();
+      Assert.AreEqual("PieceNo", exception.PropertyName, "PropertyName");
     }
 
     [Test]
@@ -312,6 +344,24 @@ namespace SoundExplorers.Tests.Data {
       duplicate.Set = Set1;
       Assert.Throws<PropertyConstraintException>(() => Session.Persist(duplicate));
       Session.Abort();
+    }
+
+    [Test]
+    public void DisallowPersistUnspecifiedDuration() {
+      var noDuration = new Piece {
+        QueryHelper = QueryHelper,
+        PieceNo = 9
+      };
+      Assert.AreEqual(TimeSpan.Zero, noDuration.Duration, "Initial Duration");
+      Session.BeginUpdate();
+      noDuration.Set = Set1;
+      var exception = Assert.Catch<PropertyConstraintException>(
+        () => Session.Persist(noDuration), "Unspecified Duration disallowed");
+      Session.Abort();
+      Assert.AreEqual(
+        "Piece cannot be added because its Duration has not been specified.", 
+        exception.Message, "Message");
+      Assert.AreEqual("Duration", exception.PropertyName, "PropertyName");
     }
 
     [Test]

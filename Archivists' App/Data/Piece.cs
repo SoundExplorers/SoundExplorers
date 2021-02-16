@@ -9,6 +9,7 @@ namespace SoundExplorers.Data {
   /// </summary>
   public class Piece : EntityBase {
     private string _audioUrl = null!;
+    private TimeSpan _duration;
     private string _notes = null!;
     private int _pieceNo;
     private string _title = null!;
@@ -32,6 +33,15 @@ namespace SoundExplorers.Data {
     }
 
     public SortedChildList<Credit> Credits { get; }
+
+    public TimeSpan Duration {
+      get => _duration;
+      set {
+        ValidateDuration(value);
+        UpdateNonIndexField();
+        _duration = value;
+      }
+    }
 
     public string Notes {
       get => _notes;
@@ -149,6 +159,11 @@ namespace SoundExplorers.Data {
             $"already exists with the same Video URL '{VideoUrl}'.", nameof(VideoUrl));
         }
       }
+      if (Duration == TimeSpan.Zero) {
+        throw new PropertyConstraintException(
+          "Piece cannot be added because its Duration has not been specified.", 
+          nameof(Duration));
+      }
     }
 
     private Piece? FindDuplicateAudioUrl(string audioUrl,
@@ -171,6 +186,14 @@ namespace SoundExplorers.Data {
 
     protected override IDictionary GetChildren(Type childType) {
       return Credits;
+    }
+ 
+    private static void ValidateDuration(TimeSpan value) {
+      if (value < TimeSpan.FromSeconds(1) || value >= TimeSpan.FromHours(10)) {
+        throw new PropertyValueOutOfRangeException(
+          "Duration must be between 1 second and 9 hours, 59 minutes, 59 seconds.", 
+          nameof(Duration));
+      }
     }
   }
 }
