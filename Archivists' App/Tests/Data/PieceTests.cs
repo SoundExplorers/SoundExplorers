@@ -28,7 +28,7 @@ namespace SoundExplorers.Tests.Data {
       };
       Event1 = new Event {
         QueryHelper = QueryHelper,
-        Date = DateTime.Today.AddDays(-1)
+        Date = DateTime.Parse("2020/03/01")
       };
       Set1 = new Set {
         QueryHelper = QueryHelper,
@@ -359,7 +359,7 @@ namespace SoundExplorers.Tests.Data {
         () => Session.Persist(noDuration), "Unspecified Duration disallowed");
       Session.Abort();
       Assert.AreEqual(
-        "Piece '09 | 01 | 2021/02/16 | Pyramid Club' cannot be added because its Duration has not been specified.", 
+        "Piece '09 | 01 | 2020/03/01 | Pyramid Club' cannot be added because its Duration has not been specified.", 
         exception.Message, "Message");
       Assert.AreEqual("Duration", exception.PropertyName, "PropertyName");
     }

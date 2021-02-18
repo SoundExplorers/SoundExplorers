@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -53,77 +52,6 @@ namespace SoundExplorers.Tests.Data {
     private IList<string> RoleNames => _roleNames ??= CreateRoleNames();
     private IList<string> SeriesNames => _seriesNames ??= CreateSeriesNames();
 
-    [SuppressMessage("ReSharper", "StringLiteralTypo")]
-    private static IList<string> CreateActNames() {
-      return new List<string> {
-        "Miles Davis Quintet", "Art Ensemble of Chicago", "World Saxophone Quartet",
-        "Duke Ellington’s Jazz Orchestra", "Count Basie Orchestra", "Jazz Messengers",
-        "Cab Calloway Orchestra", "Mahavishnu Orchestra", "Return to Forever",
-        "Weather Report", "AMM", "Borbetomagus", "Last Exit", "M.I.M.E.O.", 
-        "Spontaneous Music Ensemble", "Massacre", "Supersilent", "Voice Crack", 
-        "Musica Elettronica Viva", "Necks, The", "Iskra 1903", "Fushitsusha", 
-        "Die Like a Dog Quartet", "nmperign", "Thing, The", "Company", 
-        "Blue Humans, The", "Naked City", "Music Improvisation Company, The", "NoHome",
-        "Knead", "Spring Heel Jack", "Family Underground", "Diskaholics Anonymous Trio",
-        "Sonic Youth", "Globe Unity Orchestra", "A Handful of Dust", "Vandermark 5, The",
-        "Bark!", "Sult", "Sandoz Lab Technicians", "Baloni", "Red Trio", 
-        "Jazz Group Arkhangelsk", "Ground Zero", "Revolutionary Ensemble", 
-        "Quartet Noir", "DKV Trio", "Full Blast", "Tim Berne's Snakeoil", "Amalgam", 
-        "SSSD", "Trockeneis"
-      };
-    }
-
-    private static char[] CreateChars() {
-      // ReSharper disable once StringLiteralTypo
-      return
-        ("abcdefghijklmnopqrstuvwxyz" +
-         "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890").ToCharArray();
-    }
-
-    private static IList<string> CreateEventTypeNames() {
-      return new List<string> {
-        "Performance", "Rehearsal", "Field recording", "Interview", "Installation"
-      };
-    }
-
-    private static IList<string> CreateGenreNames() {
-      return new List<string> {
-        "Free Improvisation", "Jazz", "Composed", "Ambient", "Dance", "Noise", "Folk",
-        "Rock", "Electronic", "Global"
-      };
-    }
-
-    [SuppressMessage("ReSharper", "StringLiteralTypo")]
-    private static IList<string> CreateLocationNames() {
-      return new List<string> {
-        "Fred's", "Pyramid Club", "Knitting Factory", "Make It Up Club", 
-        "Little Theatre Club", "Red Room", "Luggage Store", "Cafe Oto", "Boat-Ting", 
-        "Vortex", "Klinker", "Exploratorium", "Petit Mignon", "Noiseberg" 
-      };
-    }
-
-    [SuppressMessage("ReSharper", "StringLiteralTypo")]
-    private static IList<string> CreateRoleNames() {
-      return new List<string> {
-        "electric guitar", "acoustic guitar", "nylon-string guitar", "bass", 
-        "bass guitar", "drums", "percussion", "keyboard", "piano", "marimba", 
-        "vibraphone", "gongs", "maracas", "vocal", "flute", "alto flute", "bass flute", 
-        "synthesizer", "electronics", "saxophone", "soprano saxophone", "alto saxophone", 
-        "tenor saxophone", "baritone saxophone", "bass saxophone", "violin", "viola", 
-        "cello", "double bass", "clarinet", "basset horn", "bass clarinet", "oboe", 
-        "cor anglais", "bassoon", "contrabassoon", "french horn", "cornet", "trumpet",
-        "trombone", "valve trombone", "bass trombone", "tuba", "euphonium", "tenor horn",
-        "sousaphone", "harp", "theorbo"
-      };
-    }
-
-    private static IList<string> CreateSeriesNames() {
-      return new List<string> {
-        "Jazz Classics", "New Composers", "Improvised Extravaganza", "Welsh Week",
-        "French Fortnight", "Mongolian Month", "Beer Festival", "76 Trombonists"
-      };
-    }
-
     public void AddActsPersisted(SessionBase session) {
       AddActsPersisted(ActNames.Count, session);
     }
@@ -141,7 +69,7 @@ namespace SoundExplorers.Tests.Data {
         session.Persist(act);
         Acts.Add(act);
       }
-      Sort(Acts);
+      Acts.Sort();
     }
 
     //public void AddCreditsPersisted
@@ -178,7 +106,7 @@ namespace SoundExplorers.Tests.Data {
         session.Persist(eventType);
         EventTypes.Add(eventType);
       }
-      Sort(EventTypes);
+      EventTypes.Sort();
     }
 
     public void AddGenresPersisted(SessionBase session) {
@@ -196,7 +124,7 @@ namespace SoundExplorers.Tests.Data {
         session.Persist(genre);
         Genres.Add(genre);
       }
-      Sort(Genres);
+      Genres.Sort();
     }
 
     public void AddLocationsPersisted(SessionBase session) {
@@ -215,7 +143,7 @@ namespace SoundExplorers.Tests.Data {
         session.Persist(location);
         Locations.Add(location);
       }
-      Sort(Locations);
+      Locations.Sort();
     }
 
     public void AddNewslettersPersisted(int count, SessionBase session) {
@@ -268,7 +196,7 @@ namespace SoundExplorers.Tests.Data {
         session.Persist(role);
         Roles.Add(role);
       }
-      Sort(Roles);
+      Roles.Sort();
     }
 
     public void AddSeriesPersisted(SessionBase session) {
@@ -288,7 +216,7 @@ namespace SoundExplorers.Tests.Data {
         session.Persist(series);
         Series.Add(series);
       }
-      Sort(Series);
+      Series.Sort();
     }
 
     public void AddSetsPersisted(int count, SessionBase session,
@@ -308,54 +236,75 @@ namespace SoundExplorers.Tests.Data {
       }
     }
 
-    private void InsertDefaultAct(SessionBase session) {
-      var act = Act.CreateDefault();
-      session.Persist(act);
-      Acts.Insert(0, act);
+    [SuppressMessage("ReSharper", "StringLiteralTypo")]
+    private static IList<string> CreateActNames() {
+      return new List<string> {
+        "Miles Davis Quintet", "Art Ensemble of Chicago", "World Saxophone Quartet",
+        "Duke Ellington’s Jazz Orchestra", "Count Basie Orchestra", "Jazz Messengers",
+        "Cab Calloway Orchestra", "Mahavishnu Orchestra", "Return to Forever",
+        "Weather Report", "AMM", "Borbetomagus", "Last Exit", "M.I.M.E.O.",
+        "Spontaneous Music Ensemble", "Massacre", "Supersilent", "Voice Crack",
+        "Musica Elettronica Viva", "Necks, The", "Iskra 1903", "Fushitsusha",
+        "Die Like a Dog Quartet", "nmperign", "Thing, The", "Company",
+        "Blue Humans, The", "Naked City", "Music Improvisation Company, The", "NoHome",
+        "Knead", "Spring Heel Jack", "Family Underground", "Diskaholics Anonymous Trio",
+        "Sonic Youth", "Globe Unity Orchestra", "A Handful of Dust", "Vandermark 5, The",
+        "Bark!", "Sult", "Sandoz Lab Technicians", "Baloni", "Red Trio",
+        "Jazz Group Arkhangelsk", "Ground Zero", "Revolutionary Ensemble",
+        "Quartet Noir", "DKV Trio", "Full Blast", "Tim Berne's Snakeoil", "Amalgam",
+        "SSSD", "Trockeneis"
+      }.Shuffle();
     }
 
-    private void InsertDefaultNewsletter(SessionBase session) {
-      var newsletter = Newsletter.CreateDefault();
-      session.Persist(newsletter);
-      Newsletters.Insert(0, newsletter);
+    private static char[] CreateChars() {
+      // ReSharper disable once StringLiteralTypo
+      return
+        ("abcdefghijklmnopqrstuvwxyz" +
+         "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890").ToCharArray();
     }
 
-    private void InsertDefaultSeries(SessionBase session) {
-      var series = SoundExplorers.Data.Series.CreateDefault();
-      session.Persist(series);
-      Series.Insert(0, series);
+    private static IList<string> CreateEventTypeNames() {
+      return new List<string> {
+        "Performance", "Rehearsal", "Field recording", "Interview", "Installation"
+      };
     }
 
-    private Event GetDefaultEvent() {
-      return Events.Count >= 0
-        ? Events[0]
-        : throw new InvalidOperationException("An Event must be added first.");
+    private static IList<string> CreateGenreNames() {
+      return new List<string> {
+        "Free Improvisation", "Jazz", "Composed", "Ambient", "Dance", "Noise", "Folk",
+        "Rock", "Electronic", "Global"
+      }.Shuffle();
     }
 
-    private EventType GetDefaultEventType() {
-      return EventTypes.Count >= 0
-        ? (from eventType in EventTypes
-          where eventType.Name == "Performance"
-          select eventType).First()
-        : throw new InvalidOperationException("An EventType must be added first.");
+    [SuppressMessage("ReSharper", "StringLiteralTypo")]
+    private static IList<string> CreateLocationNames() {
+      return new List<string> {
+        "Fred's", "Pyramid Club", "Knitting Factory", "Make It Up Club",
+        "Little Theatre Club", "Red Room", "Luggage Store", "Cafe Oto", "Boat-Ting",
+        "Vortex", "Klinker", "Exploratorium", "Petit Mignon", "Noiseberg"
+      }.Shuffle();
     }
 
-    private Genre GetDefaultGenre() {
-      return Genres.Count >= 0
-        ? Genres[0]
-        : throw new InvalidOperationException("A Genre must be added first.");
+    [SuppressMessage("ReSharper", "StringLiteralTypo")]
+    private static IList<string> CreateRoleNames() {
+      return new List<string> {
+        "guitar", "electric guitar", "acoustic guitar", "nylon-string guitar", "bass",
+        "bass guitar", "drums", "percussion", "keyboard", "piano", "marimba",
+        "vibraphone", "gongs", "maracas", "vocal", "flute", "alto flute", "bass flute",
+        "synthesizer", "electronics", "saxophone", "soprano saxophone", "alto saxophone",
+        "tenor saxophone", "baritone saxophone", "bass saxophone", "violin", "viola",
+        "cello", "double bass", "clarinet", "basset horn", "bass clarinet", "oboe",
+        "cor anglais", "bassoon", "contrabassoon", "french horn", "cornet", "trumpet",
+        "trombone", "valve trombone", "bass trombone", "tuba", "euphonium", "tenor horn",
+        "sousaphone", "harp", "theorbo", "serpent"
+      }.Shuffle();
     }
 
-    private Location GetDefaultLocation() {
-      return Locations.Count >= 0
-        ? Locations[0]
-        : throw new InvalidOperationException("A Location must be added first.");
-    }
-
-    private Set GetDefaultSet() {
-      return Sets.Count >= 0
-        ? Sets[0]
-        : throw new InvalidOperationException("A Set must be added first.");
+    private static IList<string> CreateSeriesNames() {
+      return new List<string> {
+        "Jazz Classics", "New Composers", "Improvised Extravaganza", "Welsh Week",
+        "French Fortnight", "Mongolian Month", "Beer Festival", "76 Trombonists"
+      }.Shuffle();
     }
 
     private string GenerateUniqueName(int size) {
@@ -373,28 +322,98 @@ namespace SoundExplorers.Tests.Data {
     }
 
     private string GenerateUniqueUrl() {
-      return new Uri($"https://{GenerateUniqueName(8)}.com/{GenerateUniqueName(6)}",
+      return new Uri(
+        $"https://{GenerateUniqueName(8)}.com/{GenerateUniqueName(6)}",
         UriKind.Absolute).ToString();
     }
-    
-    private static void Shuffle(IList list) {
-      RNGCryptoServiceProvider provider = new RNGCryptoServiceProvider();
-      int n = list.Count;
-      while (n > 1)
-      {
-        byte[] box = new byte[1];
-        do provider.GetBytes(box);
-        while (!(box[0] < n * (byte.MaxValue / n)));
-        int k = (box[0] % n);
-        n--;
-        var value = list[k];
-        list[k] = list[n];
-        list[n] = value;
-      }
+
+    private Event GetDefaultEvent() {
+      return GetEntity<Event, IList<Event>>(Events, 0);
     }
 
-    private static void Sort<TEntity>(IList<TEntity> list) where TEntity : IEntity {
-      ((List<TEntity>)list).Sort(new EntityComparer<TEntity>());
+    private EventType GetDefaultEventType() {
+      return EventTypes.Count >= 0
+        ? (from eventType in EventTypes
+          where eventType.Name == "Performance"
+          select eventType).First()
+        : throw new InvalidOperationException(
+          "Default EventType 'Performance' must be added first.");
+    }
+
+    private Genre GetDefaultGenre() {
+      return GetEntity<Genre, IList<Genre>>(Genres, 0);
+    }
+
+    private Location GetDefaultLocation() {
+      return GetEntity<Location, IList<Location>>(Locations, 0);
+    }
+
+    private Set GetDefaultSet() {
+      return GetEntity<Set, IList<Set>>(Sets, 0);
+    }
+
+    private static TEntity GetEntity<TEntity, TList>(TList list, int index) 
+      where TEntity : EntityBase
+      where TList : IList<TEntity> {
+      return index >= 0 && index < list.Count
+        ? list[index]
+        : throw new InvalidOperationException(
+          $"{typeof(TEntity).Name} {index} has not been added.");
+    }
+
+    public Act GetRandomAct() {
+      return GetRandomEntity<Act, IList<Act>>(Acts);
+    }
+
+    private static TEntity GetRandomEntity<TEntity, TList>(TList list) 
+      where TEntity : EntityBase
+      where TList : IList<TEntity> {
+      return list.Count > 0
+        ? list[GetRandomInteger(0, list.Count - 1)]
+        : throw new InvalidOperationException(
+          $"No {typeof(TEntity).Name}s have been added.");
+    }
+
+    public EventType GetRandomEventType() {
+      return GetRandomEntity<EventType, IList<EventType>>(EventTypes);
+    }
+
+    public Genre GetRandomGenre() {
+      return GetRandomEntity<Genre, IList<Genre>>(Genres);
+    }
+
+    private static int GetRandomInteger(int min, int max) {
+      RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider();
+      byte[] buffer = new byte[4];
+      rng.GetBytes(buffer);
+      int result = BitConverter.ToInt32(buffer, 0);
+      return new Random(result).Next(min, max);
+    }
+
+    public Location GetRandomLocation() {
+      return GetRandomEntity<Location, IList<Location>>(Locations);
+    }
+
+    public Series GetRandomSeries() {
+      return GetRandomEntity<Series, IList<Series>>(Series);
+    }
+
+    private void InsertDefaultAct(SessionBase session) {
+      var act = Act.CreateDefault();
+      session.Persist(act);
+      Acts.Insert(0, act);
+    }
+
+    private void InsertDefaultNewsletter(SessionBase session) {
+      var newsletter = Newsletter.CreateDefault();
+      session.Persist(newsletter);
+      Newsletters.Insert(0, newsletter);
+    }
+
+    private void InsertDefaultSeries(SessionBase session) {
+      var series = SoundExplorers.Data.Series.CreateDefault();
+      session.Persist(series);
+      Series.Insert(0, series);
     }
   }
 }

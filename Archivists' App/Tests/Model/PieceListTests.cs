@@ -101,7 +101,7 @@ namespace SoundExplorers.Tests.Model {
         () => List.OnRowValidated(0),
         "Adding Piece without Duration disallowed.");
       Assert.AreEqual(
-        "Piece '01 | 01 | 2020/01/09 | Athens' cannot be added because its Duration has not been specified.",
+        $"Piece '{bindingList[0].CreateKey()}' cannot be added because its Duration has not been specified.",
         exception.Message, "Error message");
     }
 
@@ -116,7 +116,8 @@ namespace SoundExplorers.Tests.Model {
       Exception exception = Assert.Catch<DuplicateNameException>(
         () => bindingList[2].PieceNo = 1,
         "Changing PieceNo to duplicate for Set disallowed");
-      Assert.AreEqual("Another Piece with key '01 | 01 | 2020/01/09 | Athens' already exists.",
+      Assert.AreEqual(
+        $"Another Piece with key '{bindingList[2].CreateKey()}' already exists.",
         exception.Message,
         "Error message on trying to change PieceNo to duplicate for Set");
       bindingList.AddNew();
@@ -124,7 +125,8 @@ namespace SoundExplorers.Tests.Model {
       bindingList[3].PieceNo = 2;
       exception = Assert.Catch<DatabaseUpdateErrorException>(() => List.OnRowValidated(3),
         "Adding Piece with PieceNo duplicate for Set disallowed");
-      Assert.AreEqual("Another Piece with key '02 | 01 | 2020/01/09 | Athens' already exists.",
+      Assert.AreEqual(
+        $"Another Piece with key '{bindingList[3].CreateKey()}' already exists.",
         exception.Message,
         "Error message on trying to add Piece with duplicate PieceNo for Set");
     }
