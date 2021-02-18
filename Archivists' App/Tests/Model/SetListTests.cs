@@ -27,14 +27,16 @@ namespace SoundExplorers.Tests.Model {
     private TestSession Session { get; set; } = null!;
 
     [Test]
-    public void A010_InitialiseAsParentList() {
-      List = CreateSetList();
+    public void A010_InitialiseAsChildList() {
+      List = CreateSetList(false, false);
       Assert.AreEqual("Set", List.EntityTypeName, "EntityName");
       Assert.AreEqual(typeof(EventList), List.ParentListType, "ParentListType");
-      Assert.AreEqual(7, List.Columns.Count, "Columns.Count when parent list");
+      Assert.AreEqual(7, List.Columns.Count, "Columns.Count");
       Assert.AreEqual("Date", List.Columns[0].PropertyName, "Columns[0].PropertyName");
+      Assert.IsFalse(List.Columns[0].IsVisible, "Columns[0].IsVisible");
       Assert.AreEqual("Location", List.Columns[1].PropertyName,
         "Columns[1].PropertyName");
+      Assert.IsFalse(List.Columns[1].IsVisible, "Columns[1].IsVisible");
       Assert.AreEqual("SetNo", List.Columns[2].PropertyName, "Columns[2].PropertyName");
       Assert.AreEqual("Act", List.Columns[3].PropertyName, "Columns[3].PropertyName");
       Assert.AreEqual(typeof(ActList), List.Columns[3].ReferencedEntityListType,
@@ -227,9 +229,7 @@ namespace SoundExplorers.Tests.Model {
     }
 
     private static IdentifyingParentChildren CreateEventChildren(Event @event) {
-      var eventChildren = new IdentifyingParentChildren(
-        @event, @event.Sets.Values.ToList());
-      return eventChildren;
+      return new IdentifyingParentChildren(@event, @event.Sets.Values.ToList());
     }
 
     private SetList CreateSetList(

@@ -55,11 +55,11 @@ namespace SoundExplorers.Tests.Data {
         QueryHelper = QueryHelper,
         SetNo = Set2SetNo
       };
-      Piece1 = new Piece {
+      Piece1 = new TestPiece {
         QueryHelper = QueryHelper,
         PieceNo = Piece1PieceNo
       };
-      Piece2 = new Piece {
+      Piece2 = new TestPiece {
         QueryHelper = QueryHelper,
         PieceNo = Piece2PieceNo
       };

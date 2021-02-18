@@ -35,12 +35,13 @@ namespace SoundExplorers.Tests {
       TestSession.CopyLicenceToDatabaseFolder(DatabaseConfig.DefaultDatabaseFolderPath);
       Session = new TestSession(DatabaseConfig.DefaultDatabaseFolderPath);
       Session.BeginUpdate();
-      Data.AddActsPersisted(10, Session);
-      Data.AddEventTypesPersisted(5, Session);
-      Data.AddGenresPersisted(10, Session);
-      Data.AddLocationsPersisted(8, Session);
+      Data.AddActsPersisted(Session);
+      Data.AddEventTypesPersisted(Session);
+      Data.AddGenresPersisted(Session);
+      Data.AddLocationsPersisted(Session);
       Data.AddNewslettersPersisted(64, Session);
-      Data.AddSeriesPersisted(8, Session);
+      Data.AddRolesPersisted(Session);
+      Data.AddSeriesPersisted(Session);
       AddEvents();
       AddSets();
       Session.Commit();

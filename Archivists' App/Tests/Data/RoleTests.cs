@@ -39,7 +39,7 @@ namespace SoundExplorers.Tests.Data {
         QueryHelper = QueryHelper,
         SetNo = Set1SetNo
       };
-      Piece1 = new Piece {
+      Piece1 = new TestPiece {
         QueryHelper = QueryHelper,
         PieceNo = Piece1PieceNo
       };

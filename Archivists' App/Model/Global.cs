@@ -45,6 +45,7 @@ namespace SoundExplorers.Model {
         {nameof(Genre), typeof(GenreList)},
         {nameof(Location), typeof(LocationList)},
         {nameof(Newsletter), typeof(NewsletterList)},
+        {nameof(Piece), typeof(PieceList)},
         {nameof(Series), typeof(SeriesList)},
         {nameof(Set), typeof(SetList)}
       };

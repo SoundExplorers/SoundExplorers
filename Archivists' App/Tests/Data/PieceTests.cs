@@ -359,7 +359,7 @@ namespace SoundExplorers.Tests.Data {
         () => Session.Persist(noDuration), "Unspecified Duration disallowed");
       Session.Abort();
       Assert.AreEqual(
-        "Piece cannot be added because its Duration has not been specified.", 
+        "Piece '09 | 01 | 2021/02/16 | Pyramid Club' cannot be added because its Duration has not been specified.", 
         exception.Message, "Message");
       Assert.AreEqual("Duration", exception.PropertyName, "PropertyName");
     }

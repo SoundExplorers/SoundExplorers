@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -8,36 +10,14 @@ using VelocityDb.Session;
 
 namespace SoundExplorers.Tests.Data {
   public class TestData {
+    private IList<string>? _actNames;
+    private char[]? _chars;
     private EventType? _defaultEventType;
-
-    static TestData() {
-      // ReSharper disable once StringLiteralTypo
-      ActNames = new List<string> {
-        "Miles Davis Quintet", "Art Ensemble of Chicago", "World Saxophone Quartet",
-        "Duke Ellington’s Jazz Orchestra", "Count Basie Orchestra", "Jazz Messengers",
-        "Cab Calloway Orchestra", "Mahavishnu Orchestra", "Return to Forever",
-        "Weather Report"
-      };
-      Chars =
-        // ReSharper disable once StringLiteralTypo
-        ("abcdefghijklmnopqrstuvwxyz" +
-         "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890").ToCharArray();
-      EventTypeNames = new List<string> {
-        "Performance", "Rehearsal", "Field recording", "Interview", "Installation"
-      };
-      GenreNames = new List<string> {
-        "Free Improvisation", "Jazz", "Composed", "Ambient", "Dance", "Noise", "Folk",
-        "Rock", "Electronic", "Global"
-      };
-      LocationNames = new List<string> {
-        "Athens", "Berlin", "Copenhagen", "Dublin", "Edinburgh", "Frankfurt", "Geneva",
-        "Helsinki"
-      };
-      SeriesNames = new List<string> {
-        "Jazz Classics", "New Composers", "Improvised Extravaganza", "Welsh Week",
-        "French Fortnight", "Mongolian Month", "Beer Festival", "76 Trombonists"
-      };
-    }
+    private IList<string>? _eventTypeNames;
+    private IList<string>? _genreNames;
+    private IList<string>? _locationNames;
+    private IList<string>? _roleNames;
+    private IList<string>? _seriesNames;
 
     public TestData(QueryHelper queryHelper) {
       QueryHelper = queryHelper;
@@ -48,33 +28,108 @@ namespace SoundExplorers.Tests.Data {
       Locations = new List<Location>();
       Newsletters = new List<Newsletter>();
       Pieces = new List<Piece>();
+      Roles = new List<Role>();
       Series = new List<Series>();
       Sets = new List<Set>();
     }
 
     public IList<Act> Acts { get; }
-
-    private EventType DefaultEventType =>
-      _defaultEventType ??= GetDefaultEventType();
-
     public IList<Event> Events { get; }
     public IList<EventType> EventTypes { get; }
     public IList<Genre> Genres { get; }
     public IList<Location> Locations { get; }
     public IList<Newsletter> Newsletters { get; }
     public IList<Piece> Pieces { get; }
+    public IList<Role> Roles { get; }
     public IList<Series> Series { get; }
     public IList<Set> Sets { get; }
-    private static IList<string> ActNames { get; }
-    private static char[] Chars { get; }
-    private static IList<string> EventTypeNames { get; }
-    private static IList<string> GenreNames { get; }
-    private static IList<string> LocationNames { get; }
+    private IList<string> ActNames => _actNames ??= CreateActNames();
     private QueryHelper QueryHelper { get; }
-    private static IList<string> SeriesNames { get; }
+    private char[] Chars => _chars ??= CreateChars();
+    private EventType DefaultEventType => _defaultEventType ??= GetDefaultEventType();
+    private IList<string> EventTypeNames => _eventTypeNames ??= CreateEventTypeNames();
+    private IList<string> GenreNames => _genreNames ??= CreateGenreNames();
+    private IList<string> LocationNames => _locationNames ??= CreateLocationNames();
+    private IList<string> RoleNames => _roleNames ??= CreateRoleNames();
+    private IList<string> SeriesNames => _seriesNames ??= CreateSeriesNames();
+
+    [SuppressMessage("ReSharper", "StringLiteralTypo")]
+    private static IList<string> CreateActNames() {
+      return new List<string> {
+        "Miles Davis Quintet", "Art Ensemble of Chicago", "World Saxophone Quartet",
+        "Duke Ellington’s Jazz Orchestra", "Count Basie Orchestra", "Jazz Messengers",
+        "Cab Calloway Orchestra", "Mahavishnu Orchestra", "Return to Forever",
+        "Weather Report", "AMM", "Borbetomagus", "Last Exit", "M.I.M.E.O.", 
+        "Spontaneous Music Ensemble", "Massacre", "Supersilent", "Voice Crack", 
+        "Musica Elettronica Viva", "Necks, The", "Iskra 1903", "Fushitsusha", 
+        "Die Like a Dog Quartet", "nmperign", "Thing, The", "Company", 
+        "Blue Humans, The", "Naked City", "Music Improvisation Company, The", "NoHome",
+        "Knead", "Spring Heel Jack", "Family Underground", "Diskaholics Anonymous Trio",
+        "Sonic Youth", "Globe Unity Orchestra", "A Handful of Dust", "Vandermark 5, The",
+        "Bark!", "Sult", "Sandoz Lab Technicians", "Baloni", "Red Trio", 
+        "Jazz Group Arkhangelsk", "Ground Zero", "Revolutionary Ensemble", 
+        "Quartet Noir", "DKV Trio", "Full Blast", "Tim Berne's Snakeoil", "Amalgam", 
+        "SSSD", "Trockeneis"
+      };
+    }
+
+    private static char[] CreateChars() {
+      // ReSharper disable once StringLiteralTypo
+      return
+        ("abcdefghijklmnopqrstuvwxyz" +
+         "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890").ToCharArray();
+    }
+
+    private static IList<string> CreateEventTypeNames() {
+      return new List<string> {
+        "Performance", "Rehearsal", "Field recording", "Interview", "Installation"
+      };
+    }
+
+    private static IList<string> CreateGenreNames() {
+      return new List<string> {
+        "Free Improvisation", "Jazz", "Composed", "Ambient", "Dance", "Noise", "Folk",
+        "Rock", "Electronic", "Global"
+      };
+    }
+
+    [SuppressMessage("ReSharper", "StringLiteralTypo")]
+    private static IList<string> CreateLocationNames() {
+      return new List<string> {
+        "Fred's", "Pyramid Club", "Knitting Factory", "Make It Up Club", 
+        "Little Theatre Club", "Red Room", "Luggage Store", "Cafe Oto", "Boat-Ting", 
+        "Vortex", "Klinker", "Exploratorium", "Petit Mignon", "Noiseberg" 
+      };
+    }
+
+    [SuppressMessage("ReSharper", "StringLiteralTypo")]
+    private static IList<string> CreateRoleNames() {
+      return new List<string> {
+        "electric guitar", "acoustic guitar", "nylon-string guitar", "bass", 
+        "bass guitar", "drums", "percussion", "keyboard", "piano", "marimba", 
+        "vibraphone", "gongs", "maracas", "vocal", "flute", "alto flute", "bass flute", 
+        "synthesizer", "electronics", "saxophone", "soprano saxophone", "alto saxophone", 
+        "tenor saxophone", "baritone saxophone", "bass saxophone", "violin", "viola", 
+        "cello", "double bass", "clarinet", "basset horn", "bass clarinet", "oboe", 
+        "cor anglais", "bassoon", "contrabassoon", "french horn", "cornet", "trumpet",
+        "trombone", "valve trombone", "bass trombone", "tuba", "euphonium", "tenor horn",
+        "sousaphone", "harp", "theorbo"
+      };
+    }
+
+    private static IList<string> CreateSeriesNames() {
+      return new List<string> {
+        "Jazz Classics", "New Composers", "Improvised Extravaganza", "Welsh Week",
+        "French Fortnight", "Mongolian Month", "Beer Festival", "76 Trombonists"
+      };
+    }
+
+    public void AddActsPersisted(SessionBase session) {
+      AddActsPersisted(ActNames.Count, session);
+    }
 
     public void AddActsPersisted(int count, SessionBase session) {
-      AddDefaultAct(session);
+      InsertDefaultAct(session);
       for (int i = 1; i < count; i++) {
         var act = new Act {
           QueryHelper = QueryHelper,
@@ -88,6 +143,8 @@ namespace SoundExplorers.Tests.Data {
       }
       Sort(Acts);
     }
+
+    //public void AddCreditsPersisted
 
     public void AddEventsPersisted(int count, SessionBase session,
       Location? location = null, EventType? eventType = null) {
@@ -106,6 +163,10 @@ namespace SoundExplorers.Tests.Data {
       }
     }
 
+    public void AddEventTypesPersisted(SessionBase session) {
+      AddEventTypesPersisted(EventTypeNames.Count, session);
+    }
+
     public void AddEventTypesPersisted(int count, SessionBase session) {
       for (int i = 0; i < count; i++) {
         var eventType = new EventType {
@@ -120,6 +181,10 @@ namespace SoundExplorers.Tests.Data {
       Sort(EventTypes);
     }
 
+    public void AddGenresPersisted(SessionBase session) {
+      AddGenresPersisted(GenreNames.Count, session);
+    }
+
     public void AddGenresPersisted(int count, SessionBase session) {
       for (int i = 0; i < count; i++) {
         var genre = new Genre {
@@ -132,6 +197,10 @@ namespace SoundExplorers.Tests.Data {
         Genres.Add(genre);
       }
       Sort(Genres);
+    }
+
+    public void AddLocationsPersisted(SessionBase session) {
+      AddLocationsPersisted(LocationNames.Count, session);
     }
 
     public void AddLocationsPersisted(int count, SessionBase session) {
@@ -150,7 +219,7 @@ namespace SoundExplorers.Tests.Data {
     }
 
     public void AddNewslettersPersisted(int count, SessionBase session) {
-      AddDefaultNewsletter(session);
+      InsertDefaultNewsletter(session);
       var date = DateTime.Parse("2020/01/06");
       for (int i = 1; i < count; i++) {
         var newsletter = new Newsletter {
@@ -175,6 +244,7 @@ namespace SoundExplorers.Tests.Data {
           AudioUrl = GenerateUniqueUrl(),
           VideoUrl = GenerateUniqueUrl(),
           Title = GenerateUniqueName(8),
+          Duration = TimeSpan.FromSeconds((i + 1) * 10),
           Notes = GenerateUniqueName(16)
         };
         session.Persist(piece);
@@ -183,8 +253,30 @@ namespace SoundExplorers.Tests.Data {
       }
     }
 
+    public void AddRolesPersisted(SessionBase session) {
+      AddRolesPersisted(RoleNames.Count, session);
+    }
+
+    public void AddRolesPersisted(int count, SessionBase session) {
+      for (int i = 0; i < count; i++) {
+        var role = new Role {
+          QueryHelper = QueryHelper,
+          Name = Roles.Count < RoleNames.Count
+            ? RoleNames[Roles.Count]
+            : GenerateUniqueName(8)
+        };
+        session.Persist(role);
+        Roles.Add(role);
+      }
+      Sort(Roles);
+    }
+
+    public void AddSeriesPersisted(SessionBase session) {
+      AddSeriesPersisted(SeriesNames.Count, session);
+    }
+
     public void AddSeriesPersisted(int count, SessionBase session) {
-      AddDefaultSeries(session);
+      InsertDefaultSeries(session);
       for (int i = 1; i < count; i++) {
         var series = new Series {
           QueryHelper = QueryHelper,
@@ -216,22 +308,22 @@ namespace SoundExplorers.Tests.Data {
       }
     }
 
-    private void AddDefaultAct(SessionBase session) {
+    private void InsertDefaultAct(SessionBase session) {
       var act = Act.CreateDefault();
       session.Persist(act);
-      Acts.Add(act);
+      Acts.Insert(0, act);
     }
 
-    private void AddDefaultNewsletter(SessionBase session) {
+    private void InsertDefaultNewsletter(SessionBase session) {
       var newsletter = Newsletter.CreateDefault();
       session.Persist(newsletter);
-      Newsletters.Add(newsletter);
+      Newsletters.Insert(0, newsletter);
     }
 
-    private void AddDefaultSeries(SessionBase session) {
+    private void InsertDefaultSeries(SessionBase session) {
       var series = SoundExplorers.Data.Series.CreateDefault();
       session.Persist(series);
-      Series.Add(series);
+      Series.Insert(0, series);
     }
 
     private Event GetDefaultEvent() {
@@ -266,7 +358,7 @@ namespace SoundExplorers.Tests.Data {
         : throw new InvalidOperationException("A Set must be added first.");
     }
 
-    private static string GenerateUniqueName(int size) {
+    private string GenerateUniqueName(int size) {
       byte[] data = new byte[4 * size];
       using (var crypto = new RNGCryptoServiceProvider()) {
         crypto.GetBytes(data);
@@ -280,9 +372,25 @@ namespace SoundExplorers.Tests.Data {
       return result.ToString();
     }
 
-    private static string GenerateUniqueUrl() {
+    private string GenerateUniqueUrl() {
       return new Uri($"https://{GenerateUniqueName(8)}.com/{GenerateUniqueName(6)}",
         UriKind.Absolute).ToString();
+    }
+    
+    private static void Shuffle(IList list) {
+      RNGCryptoServiceProvider provider = new RNGCryptoServiceProvider();
+      int n = list.Count;
+      while (n > 1)
+      {
+        byte[] box = new byte[1];
+        do provider.GetBytes(box);
+        while (!(box[0] < n * (byte.MaxValue / n)));
+        int k = (box[0] % n);
+        n--;
+        var value = list[k];
+        list[k] = list[n];
+        list[n] = value;
+      }
     }
 
     private static void Sort<TEntity>(IList<TEntity> list) where TEntity : IEntity {
