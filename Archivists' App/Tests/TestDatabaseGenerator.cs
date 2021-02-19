@@ -12,7 +12,7 @@ namespace SoundExplorers.Tests {
     /// <summary>
     ///   1 to enable generate
     /// </summary>
-    private static int DoIt => 1;
+    private static int DoIt => 0;
 
     private TestData Data { get; set; } = null!;
     private TestSession Session { get; set; } = null!;
@@ -39,7 +39,7 @@ namespace SoundExplorers.Tests {
       Data.AddEventTypesPersisted(Session);
       Data.AddGenresPersisted(Session);
       Data.AddLocationsPersisted(Session);
-      Data.AddNewslettersPersisted(2000, Session);
+      Data.AddNewslettersPersisted(50, Session);
       Data.AddRolesPersisted(Session);
       Data.AddSeriesPersisted(Session);
       AddEvents();
@@ -49,7 +49,7 @@ namespace SoundExplorers.Tests {
 
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
     private void AddEvents() {
-      Data.AddEventsPersisted(2000, Session);
+      Data.AddEventsPersisted(50, Session);
       for (int i = 0; i < Data.Events.Count; i++) {
         var @event = Data.Events[i];
         @event.EventType = Data.GetRandomEventType();

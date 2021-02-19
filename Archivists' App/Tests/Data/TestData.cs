@@ -387,7 +387,7 @@ namespace SoundExplorers.Tests.Data {
       byte[] buffer = new byte[4];
       rng.GetBytes(buffer);
       int result = BitConverter.ToInt32(buffer, 0);
-      return new Random(result).Next(min, max);
+      return new Random(result).Next(min, max + 1);
     }
 
     public Location GetRandomLocation() {
