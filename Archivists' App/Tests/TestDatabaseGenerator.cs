@@ -12,7 +12,7 @@ namespace SoundExplorers.Tests {
     /// <summary>
     ///   1 to enable generate
     /// </summary>
-    private static int DoIt => 0;
+    private static int DoIt => 1;
 
     private TestData Data { get; set; } = null!;
     private TestSession Session { get; set; } = null!;
@@ -39,7 +39,7 @@ namespace SoundExplorers.Tests {
       Data.AddEventTypesPersisted(Session);
       Data.AddGenresPersisted(Session);
       Data.AddLocationsPersisted(Session);
-      Data.AddNewslettersPersisted(64, Session);
+      Data.AddNewslettersPersisted(2000, Session);
       Data.AddRolesPersisted(Session);
       Data.AddSeriesPersisted(Session);
       AddEvents();
@@ -49,7 +49,7 @@ namespace SoundExplorers.Tests {
 
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
     private void AddEvents() {
-      Data.AddEventsPersisted(18, Session);
+      Data.AddEventsPersisted(2000, Session);
       for (int i = 0; i < Data.Events.Count; i++) {
         var @event = Data.Events[i];
         @event.EventType = Data.GetRandomEventType();
@@ -63,17 +63,8 @@ namespace SoundExplorers.Tests {
 
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
     private void AddSets() {
-      for (int i = 0; i < 5; i++) {
-        Data.AddSetsPersisted(i + 1, Session, Data.Events[i]);
-      }
-      for (int i = 5; i < 10; i++) {
-        Data.AddSetsPersisted(i - 4, Session, Data.Events[i]);
-      }
-      for (int i = 10; i < Data.Events.Count; i++) {
-        Data.AddSetsPersisted(i - 9, Session, Data.Events[i]);
-      }
-      foreach (var set in Data.Sets) {
-        set.Genre = Data.GetRandomGenre();
+      foreach (var @event in Data.Events) {
+        Data.AddSetsPersisted(TestData.GetRandomInteger(1, 4), Session, @event);
       }
       for (int i = 0; i < Data.Sets.Count; i++) {
         var set = Data.Sets[i];

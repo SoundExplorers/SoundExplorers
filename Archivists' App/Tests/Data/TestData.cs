@@ -382,7 +382,7 @@ namespace SoundExplorers.Tests.Data {
       return GetRandomEntity<Genre, IList<Genre>>(Genres);
     }
 
-    private static int GetRandomInteger(int min, int max) {
+    public static int GetRandomInteger(int min, int max) {
       RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider();
       byte[] buffer = new byte[4];
       rng.GetBytes(buffer);
