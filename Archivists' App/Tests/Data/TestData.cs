@@ -13,14 +13,18 @@ namespace SoundExplorers.Tests.Data {
     private char[]? _chars;
     private EventType? _defaultEventType;
     private IList<string>? _eventTypeNames;
+    private IList<string>? _forenames;
     private IList<string>? _genreNames;
     private IList<string>? _locationNames;
     private IList<string>? _roleNames;
     private IList<string>? _seriesNames;
+    private IList<string>? _surnames;
 
     public TestData(QueryHelper queryHelper) {
       QueryHelper = queryHelper;
       Acts = new List<Act>();
+      Artists = new List<Artist>();
+      Credits = new List<Credit>();
       Events = new List<Event>();
       EventTypes = new List<EventType>();
       Genres = new List<Genre>();
@@ -33,6 +37,8 @@ namespace SoundExplorers.Tests.Data {
     }
 
     public IList<Act> Acts { get; }
+    public IList<Artist> Artists { get; }
+    public IList<Credit> Credits { get; }
     public IList<Event> Events { get; }
     public IList<EventType> EventTypes { get; }
     public IList<Genre> Genres { get; }
@@ -47,10 +53,13 @@ namespace SoundExplorers.Tests.Data {
     private char[] Chars => _chars ??= CreateChars();
     private EventType DefaultEventType => _defaultEventType ??= GetDefaultEventType();
     private IList<string> EventTypeNames => _eventTypeNames ??= CreateEventTypeNames();
+    private IList<string> Forenames => _forenames ??= CreateForenames();
+
     private IList<string> GenreNames => _genreNames ??= CreateGenreNames();
     private IList<string> LocationNames => _locationNames ??= CreateLocationNames();
     private IList<string> RoleNames => _roleNames ??= CreateRoleNames();
     private IList<string> SeriesNames => _seriesNames ??= CreateSeriesNames();
+    private IList<string> Surnames => _surnames ??= CreateSurnames();
 
     public void AddActsPersisted(SessionBase session) {
       AddActsPersisted(ActNames.Count, session);
@@ -72,7 +81,36 @@ namespace SoundExplorers.Tests.Data {
       Acts.Sort();
     }
 
-    //public void AddCreditsPersisted
+    public void AddArtistsPersisted(int count, SessionBase session) {
+      for (int i = 1; i < count; i++) {
+        var artist = new Artist {
+          QueryHelper = QueryHelper,
+          Forename = GetRandomForename(),
+          Surname = GetRandomSurname(),
+          Notes = GenerateUniqueName(16)
+        };
+        session.Persist(artist);
+        Artists.Add(artist);
+      }
+      Artists.Sort();
+    }
+
+    public void AddCreditsPersisted(int count, SessionBase session,
+      Piece? piece = null, Artist? artist = null, Role? role = null) {
+      int creditNo = 1;
+      for (int i = 0; i < count; i++) {
+        var credit = new Credit {
+          QueryHelper = QueryHelper,
+          CreditNo = creditNo,
+          Piece = piece ?? GetDefaultPiece(),
+          Artist = artist ?? GetDefaultArtist(),
+          Role = role ?? GetDefaultRole()
+        };
+        session.Persist(credit);
+        Credits.Add(credit);
+        creditNo++;
+      }
+    }
 
     public void AddEventsPersisted(int count, SessionBase session,
       Location? location = null, EventType? eventType = null) {
@@ -269,6 +307,33 @@ namespace SoundExplorers.Tests.Data {
       };
     }
 
+    [SuppressMessage("ReSharper", "StringLiteralTypo")]
+    private static IList<string> CreateForenames() {
+      return new List<string> {
+        "Simon", "Dan", "Siobhan", "Jessica", "Peter", "Patricia", "Sara", "Sean", 
+        "Giovanni", "Francois", "Francoise", "Terry", "Joanne", "John", "Susan", 
+        "Gaston", "Pierre", "Gerry", "Geoff", "Andy", "Andrea", "Scot", "Seamus",
+        "Rose", "Rory", "Alice", "Alison", "Mike", "Morton", "Quentin", "Jim", "James", 
+        "Portia", "Jill", "Sam", "Samantha", "Maria", "Mary", "Bill", "William", "Will",
+        "Andrew", "Gloria", "Sean", "Martin", "Martina", "Paul", "Paula", "Paulo", 
+        "Pauline", "Vivian", "Vivienne", "Constance", "Connie", "Jon", "Jonathan", 
+        "Jonny", "Gerard", "Gerd", "Astrid", "Zoe", "Yvette", "Olive", "Chris", 
+        "Christine", "Barbara", "Frank", "Bernard", "Brenda", "Tom", "Thomas", "Fergus",
+        "Molly", "Katherine", "Linda", "Lionel", "Len", "Ben", "Benjamin", "Leonard",
+        "Leonardo", "Francesca", "Francis", "Frances", "Terri", "Miguel", "Joan", 
+        "Catherine", "Maia", "Julie", "Julian", "Robert", "Bob", "Robbie", "Rachael",
+        "Rebecca", "Jude", "Judy", "Henry", "Enrico", "Harriet", "Harry", "Barry", 
+        "Larry", "Laurence", "Lawrence", "Stan", "Sally", "Tim", "Charlotte", "Charles",
+        "Charlie", "Karen", "Kieran", "Victoria", "Laurel", "Gary", "Giselle", "Derek",
+        "Richard", "Rick", "Ricardo", "Sandra", "Dai", "Saed", "George", "Charmaine",
+        "Hermione", "Allan", "Francesco", "Toshio", "Mauricio", "Luigi", "Tristan", 
+        "Antony", "Anthony", "Antonia", "Toni", "Olga", "Roberto", "Thierry", "Mauro",
+        "Liza", "Robin", "Aaron", "Eduardo", "Enno", "Iannis", "Arnulf", "Uwe", "Stefan",
+        "Simeon", "Kaija", "Brian", "Gerald", "Geraldine", "Claude", "Conrad", "Heather",
+        "Tracy", "Carlos"
+      }.Shuffle();
+    }
+
     private static IList<string> CreateGenreNames() {
       return new List<string> {
         "Free Improvisation", "Jazz", "Composed", "Ambient", "Dance", "Noise", "Folk",
@@ -307,6 +372,29 @@ namespace SoundExplorers.Tests.Data {
       }.Shuffle();
     }
 
+    [SuppressMessage("ReSharper", "StringLiteralTypo")]
+    private static IList<string> CreateSurnames() {
+      return new List<string> {
+        "O'Rorke", "Beban", "Marks", "Monaghan", "Daly", "Richardson", "Prosser", 
+        "Murray", "Monks", "Jenkins", "Franks", "Torriteli", "Meunes", "Jervois",
+        "Smithson", "Jackson", "Bern", "Norris", "Anderson", "Brandt", "Brand", 
+        "Sanderson", "O'Leary", "Beethoven", "Bach", "Coltrane", "Bartlet", "Fujikura",
+        "Grisey", "Feldman", "Stockhausen", "Brown", "Levinas", "Pesson", "Keller", 
+        "Haddad", "Lewis", "Lee", "Cheung", "Pluta", "Webern", "Wuorinen", "Schoenberg",
+        "Johnson", "Babbitt", "Petterson", "Filidei", "Markoulaki", "Penderecki", 
+        "Hosokawa", "Kagel", "Nono", "Carter", "Murail", "Ligeti", "Turnage", "Neuwirth",
+        "Gerhard", "Barrett", "Blondeau", "Saunders", "Lanza", "Dillon", "Lim", 
+        "Hoffman", "Cassidy", "Hayden", "Pelzel", "Moguillansky", "Poppe", "Xenakis",
+        "Herrmann", "Dierksen", "Crumb", "Prins", "Cage", "ten Holt", "Saariaho", 
+        "Ferneyhough", "Boulez", "Gahn", "Eckert", "Adams", "Psathas", "Edlund", "Wood",
+        "Hendrickson", "Larsen", "Li", "van Bavel", "Scheidel", "Lowe", "Shaughnesy", 
+        "Brook", "Beard", "Comninel", "Teschke", "Post", "Dimmock", "Wickham", "Brenner",
+        "Huang", "Meillassoux", "Prakash", "Luxemburg", "Hall", "Sahlins", "Cunliffe",
+        "Goldthwaite", "Totman", "Bellwood", "Wolf", "Calloway", "Renfrew", "Wilkinson",
+        "Heather", "Banks", "Chevalier", "Zafon", "Pickard"
+      }.Shuffle();
+    }
+
     private string GenerateUniqueName(int size) {
       byte[] data = new byte[4 * size];
       using (var crypto = new RNGCryptoServiceProvider()) {
@@ -325,6 +413,10 @@ namespace SoundExplorers.Tests.Data {
       return new Uri(
         $"https://{GenerateUniqueName(8)}.com/{GenerateUniqueName(6)}",
         UriKind.Absolute).ToString();
+    }
+
+    private Artist GetDefaultArtist() {
+      return GetEntity<Artist, IList<Artist>>(Artists, 0);
     }
 
     private Event GetDefaultEvent() {
@@ -348,6 +440,14 @@ namespace SoundExplorers.Tests.Data {
       return GetEntity<Location, IList<Location>>(Locations, 0);
     }
 
+    private Piece GetDefaultPiece() {
+      return GetEntity<Piece, IList<Piece>>(Pieces, 0);
+    }
+
+    private Role GetDefaultRole() {
+      return GetEntity<Role, IList<Role>>(Roles, 0);
+    }
+
     private Set GetDefaultSet() {
       return GetEntity<Set, IList<Set>>(Sets, 0);
     }
@@ -365,6 +465,10 @@ namespace SoundExplorers.Tests.Data {
       return GetRandomEntity<Act, IList<Act>>(Acts);
     }
 
+    public Artist GetRandomArtist() {
+      return GetRandomEntity<Artist, IList<Artist>>(Artists);
+    }
+
     private static TEntity GetRandomEntity<TEntity, TList>(TList list) 
       where TEntity : EntityBase
       where TList : IList<TEntity> {
@@ -376,6 +480,10 @@ namespace SoundExplorers.Tests.Data {
 
     public EventType GetRandomEventType() {
       return GetRandomEntity<EventType, IList<EventType>>(EventTypes);
+    }
+
+    private string GetRandomForename() {
+      return Forenames[GetRandomInteger(0, Forenames.Count - 1)];
     }
 
     public Genre GetRandomGenre() {
@@ -394,8 +502,16 @@ namespace SoundExplorers.Tests.Data {
       return GetRandomEntity<Location, IList<Location>>(Locations);
     }
 
+    public Role GetRandomRole() {
+      return GetRandomEntity<Role, IList<Role>>(Roles);
+    }
+
     public Series GetRandomSeries() {
       return GetRandomEntity<Series, IList<Series>>(Series);
+    }
+
+    private string GetRandomSurname() {
+      return Surnames[GetRandomInteger(0, Surnames.Count - 1)];
     }
 
     private void InsertDefaultAct(SessionBase session) {

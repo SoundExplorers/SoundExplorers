@@ -36,6 +36,7 @@ namespace SoundExplorers.Tests {
       Session = new TestSession(DatabaseConfig.DefaultDatabaseFolderPath);
       Session.BeginUpdate();
       Data.AddActsPersisted(Session);
+      Data.AddArtistsPersisted(200, Session);
       Data.AddEventTypesPersisted(Session);
       Data.AddGenresPersisted(Session);
       Data.AddLocationsPersisted(Session);
@@ -48,30 +49,33 @@ namespace SoundExplorers.Tests {
     }
 
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
+    private void AddCredits() {
+      foreach (var piece in Data.Pieces) {
+        Data.AddCreditsPersisted(TestData.GetRandomInteger(1, 4), Session, piece,
+          Data.GetRandomArtist(), Data.GetRandomRole());
+      }
+    }
+
+    [SuppressMessage("ReSharper", "UnusedMember.Local")]
     private void AddEvents() {
-      Data.AddEventsPersisted(50, Session);
-      for (int i = 0; i < Data.Events.Count; i++) {
+      Data.AddEventsPersisted(50, Session, Data.GetRandomLocation(),
+        Data.GetRandomEventType());
+      for (int i = 0; i < Data.Events.Count - 2; i++) {
         var @event = Data.Events[i];
-        @event.EventType = Data.GetRandomEventType();
-        @event.Location = Data.GetRandomLocation();
-        if (i < Data.Events.Count - 2) {
-          @event.Newsletter = Data.Newsletters[i];
-          @event.Series = Data.GetRandomSeries();
-        }
+        @event.Newsletter = Data.Newsletters[i];
+        @event.Series = Data.GetRandomSeries();
       }
     }
 
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
     private void AddSets() {
       foreach (var @event in Data.Events) {
-        Data.AddSetsPersisted(TestData.GetRandomInteger(1, 4), Session, @event);
+        Data.AddSetsPersisted(TestData.GetRandomInteger(1, 4), Session, @event,
+          Data.GetRandomGenre());
       }
-      for (int i = 0; i < Data.Sets.Count; i++) {
+      for (int i = 0; i < Data.Sets.Count - 2; i++) {
         var set = Data.Sets[i];
-        set.Genre = Data.GetRandomGenre();
-        if (i < Data.Sets.Count - 2) {
-          set.Act = Data.GetRandomAct();
-        }
+        set.Act = Data.GetRandomAct();
       }
     }
   }
