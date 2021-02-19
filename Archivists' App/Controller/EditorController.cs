@@ -2,7 +2,6 @@ using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using JetBrains.Annotations;
-using JetBrains.Profiler.Api;
 using SoundExplorers.Model;
 
 namespace SoundExplorers.Controller {
@@ -151,7 +150,8 @@ namespace SoundExplorers.Controller {
     /// </summary>
     public void Populate() {
       Debug.WriteLine("EditorController.Populate");
-      MeasureProfiler.StartCollectingData();
+      // Warning: Profiling blocks code coverage analysis
+      // MeasureProfiler.StartCollectingData();
       if (IsParentGridToBeShown) {
         View.ParentGrid.Populate();
       } else {

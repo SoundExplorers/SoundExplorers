@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Data;
 using System.Diagnostics;
-using JetBrains.Profiler.Api;
 using SoundExplorers.Model;
 
 namespace SoundExplorers.Controller {
@@ -102,7 +101,8 @@ namespace SoundExplorers.Controller {
         Grid.CellColorScheme.Invert();
       }
       base.OnPopulatedAsync();
-      MeasureProfiler.SaveData();
+      // Warning: Profiling blocks code coverage analysis
+      // MeasureProfiler.SaveData();
       if (List.IsChildList && ParentGrid.Controller.LastRowNeedsToBeScrolledIntoView) {
         ParentGrid.Controller.ScrollLastRowIntoView();
       } else {
