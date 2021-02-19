@@ -133,16 +133,16 @@ namespace SoundExplorers.Tests.Model {
 
     [Test]
     public void GetIdentifyingParentChildrenForMainList() {
-      // List = CreatePieceList();
-      // Session.BeginUpdate();
-      // Data.AddCreditsPersisted(5, Session);
-      // Session.Commit();
-      // List.Populate();
-      // var identifyingParentChildren = List.GetIdentifyingParentChildrenForMainList(0);
-      // Assert.AreSame(Data.Pieces[0], identifyingParentChildren.IdentifyingParent,
-      //   "IdentifyingParent");
-      // Assert.AreEqual(5, identifyingParentChildren.Children.Count, "Count");
-      // Assert.IsInstanceOf<Piece>(identifyingParentChildren.Children[0], "Child type");
+      List = CreatePieceList();
+      Session.BeginUpdate();
+      Data.AddCreditsPersisted(5, Session);
+      Session.Commit();
+      List.Populate();
+      var identifyingParentChildren = List.GetIdentifyingParentChildrenForMainList(0);
+      Assert.AreSame(Data.Pieces[0], identifyingParentChildren.IdentifyingParent,
+        "IdentifyingParent");
+      Assert.AreEqual(5, identifyingParentChildren.Children.Count, "Count");
+      Assert.IsInstanceOf<Credit>(identifyingParentChildren.Children[0], "Child type");
     }
 
     [Test]
@@ -188,6 +188,8 @@ namespace SoundExplorers.Tests.Model {
       Data.AddActsPersisted(1, Session);
       Data.AddGenresPersisted(1, Session);
       Data.AddSetsPersisted(1, Session);
+      Data.AddArtistsPersisted(1, Session);
+      Data.AddRolesPersisted(1, Session);
       if (includingPieces) {
         Data.AddPiecesPersisted(3, Session);
       }

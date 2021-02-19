@@ -82,7 +82,7 @@ namespace SoundExplorers.Tests.Data {
     }
 
     public void AddArtistsPersisted(int count, SessionBase session) {
-      for (int i = 1; i < count; i++) {
+      for (int i = 0; i < count; i++) {
         var artist = new Artist {
           QueryHelper = QueryHelper,
           Forename = GetRandomForename(),
