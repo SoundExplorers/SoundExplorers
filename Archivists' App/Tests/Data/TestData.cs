@@ -246,10 +246,10 @@ namespace SoundExplorers.Tests.Data {
         "Spontaneous Music Ensemble", "Massacre", "Supersilent", "Voice Crack",
         "Musica Elettronica Viva", "Necks, The", "Iskra 1903", "Fushitsusha",
         "Die Like a Dog Quartet", "nmperign", "Thing, The", "Company",
-        "Blue Humans, The", "Naked City", "Music Improvisation Company, The", "NoHome",
+        "Blue Humans", "Naked City", "Music Improvisation Company", "NoHome",
         "Knead", "Spring Heel Jack", "Family Underground", "Diskaholics Anonymous Trio",
-        "Sonic Youth", "Globe Unity Orchestra", "A Handful of Dust", "Vandermark 5, The",
-        "Bark!", "Sult", "Sandoz Lab Technicians", "Baloni", "Red Trio",
+        "Sonic Youth", "Globe Unity Orchestra", "A Handful of Dust", "Vandermark 5",
+        "Bark!", "Sandoz Lab Technicians", "Baloni", "Red Trio",
         "Jazz Group Arkhangelsk", "Ground Zero", "Revolutionary Ensemble",
         "Quartet Noir", "DKV Trio", "Full Blast", "Tim Berne's Snakeoil", "Amalgam",
         "SSSD", "Trockeneis"
