@@ -16,8 +16,6 @@ namespace SoundExplorers.View {
       // Allow things to be dropped on to the PictureBox.
       FittedPictureBox1.AllowDrop = true;
       GridSplitContainer.MouseCaptureChanged += GridSplitContainer_MouseCaptureChanged;
-      // THE FOLLOWING RELATES TO A FEATURE THAT IS NOT YET IN USE BUT MAY BE LATER
-      ImageSplitContainer.MouseCaptureChanged += GridSplitContainer_MouseCaptureChanged;
     }
 
     private EditorController Controller { get; set; } = null!;
@@ -51,8 +49,16 @@ namespace SoundExplorers.View {
     public void OnParentAndMainGridsShown() {
       Debug.WriteLine("EditorView.OnParentAndMainGridsShown");
       int savedGridSplitterDistance = Controller.GridSplitterDistance;
-      GridSplitContainer.SplitterDistance =
+      int requiredGridSplitterDistance = 
         savedGridSplitterDistance > 0 ? savedGridSplitterDistance : 180;
+      // Debug.WriteLine(
+      //   $"    Saved splitter {savedGridSplitterDistance}; required splitter {requiredGridSplitterDistance}");
+      if (GridSplitContainer.SplitterDistance != requiredGridSplitterDistance) {
+        GridSplitContainer.SplitterDistance = requiredGridSplitterDistance;
+        if (Controller.GridSplitterDistance  != requiredGridSplitterDistance) {
+          Controller.GridSplitterDistance = requiredGridSplitterDistance;
+        }
+      }
     }
 
     public void SetMouseCursorToDefault() {
@@ -178,7 +184,13 @@ namespace SoundExplorers.View {
     ///   splitter with the mouse.
     /// </summary>
     private void GridSplitContainer_MouseCaptureChanged(object? sender, EventArgs e) {
-      BeginInvoke((Action)Controller.FocusCurrentGrid);
+      // Debug.WriteLine("EditorView.GridSplitContainer_MouseCaptureChanged");
+      // Debug.WriteLine(
+      //   $"    Controller splitter {Controller.GridSplitterDistance}; view splitter {GridSplitContainer.SplitterDistance}");
+      BeginInvoke((Action)delegate {
+        Controller.GridSplitterDistance = GridSplitContainer.SplitterDistance;
+        Controller.FocusCurrentGrid();
+      });
     }
 
     /// <summary>
@@ -189,7 +201,7 @@ namespace SoundExplorers.View {
     ///   corresponding protected method in <see cref="MainGrid" /> does not work.
     /// </remarks>
     private void MainGrid_DataError(object? sender, DataGridViewDataErrorEventArgs e) {
-      // Debug.WriteLine("MainGrid_DataError");
+      // Debug.WriteLine("EditorView.MainGrid_DataError");
       string columnName = MainGrid.Columns[e.ColumnIndex].Name;
       MainGrid.Controller.OnCellEditException(e.RowIndex, columnName,
         e.Exception);
@@ -276,9 +288,6 @@ namespace SoundExplorers.View {
       //     || Entities is ImageList) {
       //   Controller.ImageSplitterDistance = ImageSplitContainer.SplitterDistance;
       // }
-      if (Controller.IsParentGridToBeShown) {
-        Controller.GridSplitterDistance = GridSplitContainer.SplitterDistance;
-      }
     }
 
     protected override void OnKeyDown(KeyEventArgs e) {
