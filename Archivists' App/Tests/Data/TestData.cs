@@ -8,6 +8,7 @@ using SoundExplorers.Data;
 using VelocityDb.Session;
 
 namespace SoundExplorers.Tests.Data {
+  [ExcludeFromCodeCoverage]
   public class TestData {
     private IList<string>? _actNames;
     private char[]? _chars;

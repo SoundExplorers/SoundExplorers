@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using JetBrains.Annotations;
 using SoundExplorers.Data;
@@ -7,6 +8,7 @@ using SoundExplorers.Data;
 namespace SoundExplorers.Model {
   public class PieceList : EntityListBase<Piece, PieceBindingItem> {
     [UsedImplicitly]
+    [ExcludeFromCodeCoverage]
     public PieceList() : this(true) { }
 
     public PieceList(bool isChildList) :
