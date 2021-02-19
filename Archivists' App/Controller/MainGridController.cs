@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data;
 using System.Diagnostics;
+using JetBrains.Profiler.Api;
 using SoundExplorers.Model;
 
 namespace SoundExplorers.Controller {
@@ -95,13 +96,13 @@ namespace SoundExplorers.Controller {
 
     protected override void OnPopulatedAsync() {
       Debug.WriteLine("MainGridController.OnPopulatedAsync");
-      // IsFixingFocus = true;
       if (List.IsChildList) {
         IsFixingFocus = true;
         EditorController.View.OnParentAndMainGridsShown();
         Grid.CellColorScheme.Invert();
       }
       base.OnPopulatedAsync();
+      MeasureProfiler.SaveData();
       if (List.IsChildList && ParentGrid.Controller.LastRowNeedsToBeScrolledIntoView) {
         ParentGrid.Controller.ScrollLastRowIntoView();
       } else {

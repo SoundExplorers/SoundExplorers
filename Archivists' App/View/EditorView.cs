@@ -76,7 +76,6 @@ namespace SoundExplorers.View {
     }
 
     public void ShowErrorMessage(string text) {
-      //MeasureProfiler.SaveData();
       ShowMessage(text, MessageBoxIcon.Error);
     }
 
