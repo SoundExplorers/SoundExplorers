@@ -71,7 +71,7 @@ namespace SoundExplorers.Data {
     ///   Combines forename and surname into a single name,
     ///   allowing for artists who go by a single name.
     /// </summary>
-    private static string MakeName(string? forename,
+    public static string MakeName(string? forename,
       string? surname) {
       string result;
       if (!string.IsNullOrWhiteSpace(forename)) {

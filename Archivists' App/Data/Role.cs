@@ -2,7 +2,7 @@
 using System.Collections;
 
 namespace SoundExplorers.Data {
-  public class Role : EntityBase {
+  public class Role : EntityBase, INamedEntity {
     /// <summary>
     ///   Role entity, usually representing a musical instrument.
     /// </summary>
