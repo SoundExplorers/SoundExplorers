@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -11,11 +12,11 @@ namespace SoundExplorers.Tests.Data {
   [ExcludeFromCodeCoverage]
   public class TestData {
     private IList<string>? _actNames;
-    private char[]? _chars;
     private EventType? _defaultEventType;
     private IList<string>? _eventTypeNames;
     private IList<string>? _forenames;
     private IList<string>? _genreNames;
+    private static char[]? _letters;
     private IList<string>? _locationNames;
     private IList<string>? _roleNames;
     private IList<string>? _seriesNames;
@@ -51,12 +52,12 @@ namespace SoundExplorers.Tests.Data {
     public IList<Set> Sets { get; }
     private IList<string> ActNames => _actNames ??= CreateActNames();
     private QueryHelper QueryHelper { get; }
-    private char[] Chars => _chars ??= CreateChars();
     private EventType DefaultEventType => _defaultEventType ??= GetDefaultEventType();
     private IList<string> EventTypeNames => _eventTypeNames ??= CreateEventTypeNames();
     private IList<string> Forenames => _forenames ??= CreateForenames();
 
     private IList<string> GenreNames => _genreNames ??= CreateGenreNames();
+    private static char[] Letters => _letters ??= CreateLetters();
     private IList<string> LocationNames => _locationNames ??= CreateLocationNames();
     private IList<string> RoleNames => _roleNames ??= CreateRoleNames();
     private IList<string> SeriesNames => _seriesNames ??= CreateSeriesNames();
@@ -74,7 +75,7 @@ namespace SoundExplorers.Tests.Data {
           Name = Acts.Count < ActNames.Count
             ? ActNames[Acts.Count]
             : GenerateUniqueName(8),
-          Notes = GenerateUniqueName(16)
+          Notes = GenerateNotes()
         };
         session.Persist(act);
         Acts.Add(act);
@@ -83,13 +84,17 @@ namespace SoundExplorers.Tests.Data {
     }
 
     public void AddArtistsPersisted(int count, SessionBase session) {
+      var names = new HashSet<string>(count);
       for (int i = 0; i < count; i++) {
         var artist = new Artist {
           QueryHelper = QueryHelper,
-          Forename = GetRandomForename(),
-          Surname = GetRandomSurname(),
-          Notes = GenerateUniqueName(16)
+          Notes = GenerateNotes()
         };
+        do {
+          artist.Forename = GetRandomForename();
+          artist.Surname = GetRandomSurname();
+        } while (names.Contains(artist.Name));
+        names.Add(artist.Name);
         session.Persist(artist);
         Artists.Add(artist);
       }
@@ -122,7 +127,7 @@ namespace SoundExplorers.Tests.Data {
           Date = date,
           Location = location ?? GetDefaultLocation(),
           EventType = eventType ?? DefaultEventType,
-          Notes = GenerateUniqueName(16)
+          Notes = GenerateNotes()
         };
         session.Persist(@event);
         Events.Add(@event);
@@ -177,7 +182,7 @@ namespace SoundExplorers.Tests.Data {
           Name = Locations.Count < LocationNames.Count
             ? LocationNames[Locations.Count]
             : GenerateUniqueName(8),
-          Notes = GenerateUniqueName(16)
+          Notes = GenerateNotes()
         };
         session.Persist(location);
         Locations.Add(location);
@@ -212,7 +217,7 @@ namespace SoundExplorers.Tests.Data {
           VideoUrl = GenerateUniqueUrl(),
           Title = GenerateUniqueName(8),
           Duration = TimeSpan.FromSeconds((i + 1) * 10),
-          Notes = GenerateUniqueName(16)
+          Notes = GenerateNotes()
         };
         session.Persist(piece);
         Pieces.Add(piece);
@@ -250,7 +255,7 @@ namespace SoundExplorers.Tests.Data {
           Name = Series.Count < SeriesNames.Count
             ? SeriesNames[Series.Count]
             : GenerateUniqueName(8),
-          Notes = GenerateUniqueName(16)
+          Notes = GenerateNotes()
         };
         session.Persist(series);
         Series.Add(series);
@@ -267,7 +272,7 @@ namespace SoundExplorers.Tests.Data {
           SetNo = setNo,
           Event = @event ?? GetDefaultEvent(),
           Genre = genre ?? GetDefaultGenre(),
-          Notes = GenerateUniqueName(16)
+          Notes = GenerateNotes()
         };
         session.Persist(set);
         Sets.Add(set);
@@ -293,13 +298,6 @@ namespace SoundExplorers.Tests.Data {
         "Quartet Noir", "DKV Trio", "Full Blast", "Tim Berne's Snakeoil", "Amalgam",
         "SSSD", "Trockeneis"
       }.Shuffle();
-    }
-
-    private static char[] CreateChars() {
-      // ReSharper disable once StringLiteralTypo
-      return
-        ("abcdefghijklmnopqrstuvwxyz" +
-         "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890").ToCharArray();
     }
 
     private static IList<string> CreateEventTypeNames() {
@@ -343,6 +341,13 @@ namespace SoundExplorers.Tests.Data {
     }
 
     [SuppressMessage("ReSharper", "StringLiteralTypo")]
+    private static char[] CreateLetters() {
+      return
+        ("abcdefghijklmnopqrstuvwxyz" +
+         "ABCDEFGHIJKLMNOPQRSTUVWXYZ").ToCharArray();
+    }
+
+    [SuppressMessage("ReSharper", "StringLiteralTypo")]
     private static IList<string> CreateLocationNames() {
       return new List<string> {
         "Fred's", "Pyramid Club", "Knitting Factory", "Make It Up Club",
@@ -377,7 +382,7 @@ namespace SoundExplorers.Tests.Data {
     private static IList<string> CreateSurnames() {
       return new List<string> {
         "O'Rorke", "Beban", "Marks", "Monaghan", "Daly", "Richardson", "Prosser", 
-        "Murray", "Monks", "Jenkins", "Franks", "Torriteli", "Meunes", "Jervois",
+        "Murray", "Monks", "Jenkins", "Franks", "Torricelli", "Meunes", "Jervois",
         "Smithson", "Jackson", "Bern", "Norris", "Anderson", "Brandt", "Brand", 
         "Sanderson", "O'Leary", "Beethoven", "Bach", "Coltrane", "Bartlet", "Fujikura",
         "Grisey", "Feldman", "Stockhausen", "Brown", "Levinas", "Pesson", "Keller", 
@@ -392,11 +397,42 @@ namespace SoundExplorers.Tests.Data {
         "Brook", "Beard", "Comninel", "Teschke", "Post", "Dimmock", "Wickham", "Brenner",
         "Huang", "Meillassoux", "Prakash", "Luxemburg", "Hall", "Sahlins", "Cunliffe",
         "Goldthwaite", "Totman", "Bellwood", "Wolf", "Calloway", "Renfrew", "Wilkinson",
-        "Heather", "Banks", "Chevalier", "Zafon", "Pickard"
+        "Heather", "Banks", "Chevalier", "Zafon", "Young", "Wright", "Wong", "Winant",
+        "Wilson", "Whitehead", "Westbrook", "Watkins", "Wallace", "Vinkeloe", "Ueno",
+        "Swanagon", "Staiano", "Stackpole", "Sonami", "Skatchit", "Shola", "Shiurba",
+        "Shen", "Scandura", "Santomieri", "Ryan", "Ruviaro", "Romus", "Rodriguez", 
+        "Robinson", "Robair", "Rivero", "Rieman", "Reid", "Reed", "Raskin", "Powell",
+        "Pontecorvo", "Plonsey", "Perley", "Perkis", "Pek", "Pearce", "Payne", 
+        "Pascucci", "Orr", "Ochs", "Nunn", "Nordeson", "Noertker", "Neuburg", "Moller",
+        "Mitchell", "Mihaly", "Michalak", "Mezzacappa", "Menegon", "McKean", "McDonas",
+        "McCaslin", "Marshall", "Lynner", "Lopez", "Lockhart", "Levin", "Leikam", "Lee",
+        "Koskinen", "Josephson", "Jordan", "Johnston", "Jamieson", "Jahde", "Ingle", 
+        "Ingalls", "Hsu", "Honda", "Holm", "Hikage", "Heule", "Hertz", "Herndon", 
+        "Heglin", "Hardy", "Hammond", "Golden", "Goldberg", "Gelb", "Gale", "Frith",
+        "Fei", "Farhadian", "Everett", "Dutton", "Dunkelman", "Dubowsky", "Djll", 
+        "Diomede", "Dingalls", "Dimuzio", "Diaz-Infante", "DeGruttola", "Decosta",
+        "DeCillis", "Day", "Davignon", "Crossman", "Corcoran", "Cooke", "Condry", 
+        "Coleman", "Clevenger", "Chen", "Chaudhary", "Chandavarkar", "Carson", "Carroll",
+        "Carey", "Cahill", "Burns", "Bruckmann", "Boisen", "Bischoff", "Bickley", 
+        "Bennett", "Benedict", "Beckman", "Banerji", "Ateria", "Atchley", "Arkin", 
+        "Amendola"
       }.Shuffle();
     }
 
-    private string GenerateUniqueName(int size) {
+    private static string GenerateNotes() {
+      var writer = new StringWriter();
+      int chance = GetRandomInteger(1, 3);
+      if (chance == 1) {
+        int wordCount = GetRandomInteger(1, 4);
+        for (int i = 0; i < wordCount; i++) {
+          int wordLength = GetRandomInteger(2, 10);
+          writer.Write($"{GenerateUniqueName(wordLength)} ");
+        }
+      }
+      return writer.ToString().TrimEnd();
+    }
+
+    private static string GenerateUniqueName(int size) {
       byte[] data = new byte[4 * size];
       using (var crypto = new RNGCryptoServiceProvider()) {
         crypto.GetBytes(data);
@@ -404,8 +440,8 @@ namespace SoundExplorers.Tests.Data {
       var result = new StringBuilder(size);
       for (int i = 0; i < size; i++) {
         uint rnd = BitConverter.ToUInt32(data, i * 4);
-        uint idx = Convert.ToUInt32(rnd % Chars.Length);
-        result.Append(Chars[idx]);
+        uint idx = Convert.ToUInt32(rnd % Letters.Length);
+        result.Append(Letters[idx]);
       }
       return result.ToString();
     }
