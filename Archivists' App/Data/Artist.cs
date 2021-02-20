@@ -76,7 +76,7 @@ namespace SoundExplorers.Data {
       string result;
       if (!string.IsNullOrWhiteSpace(forename)) {
         if (!string.IsNullOrWhiteSpace(surname)) {
-          result = forename.Trim() + " " + surname.Trim();
+          result = $"{surname.Trim()}, {forename.Trim()}";
         } else {
           result = forename.Trim();
         }

@@ -5,23 +5,23 @@ namespace SoundExplorers.Model {
   [NoReorder]
   public class ArtistBindingItem
     : BindingItemBase<Artist, ArtistBindingItem> {
-    private string _forename = null!;
     private string _surname = null!;
+    private string _forename = null!;
     private string _notes = null!;
-
-    public string Forename {
-      get => _forename;
-      set {
-        _forename = value;
-        OnPropertyChanged(nameof(Forename));
-      }
-    }
 
     public string Surname {
       get => _surname;
       set {
         _surname = value;
         OnPropertyChanged(nameof(Surname));
+      }
+    }
+
+    public string Forename {
+      get => _forename;
+      set {
+        _forename = value;
+        OnPropertyChanged(nameof(Forename));
       }
     }
 

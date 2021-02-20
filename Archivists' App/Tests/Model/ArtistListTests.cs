@@ -28,8 +28,8 @@ namespace SoundExplorers.Tests.Model {
     public void A010_Initial() {
       Assert.AreEqual("Artist", List.EntityTypeName, "EntityName");
       Assert.AreEqual(3, List.Columns.Count, "Columns.Count");
-      Assert.AreEqual("Forename", List.Columns[0].PropertyName, "Columns[0].Name");
-      Assert.AreEqual("Surname", List.Columns[1].PropertyName, "Columns[1].Name");
+      Assert.AreEqual("Surname", List.Columns[0].PropertyName, "Columns[0].Name");
+      Assert.AreEqual("Forename", List.Columns[1].PropertyName, "Columns[1].Name");
       Assert.AreEqual("Notes", List.Columns[2].PropertyName, "Columns[2].Name");
     }
 
@@ -38,19 +38,19 @@ namespace SoundExplorers.Tests.Model {
       Session.BeginUpdate();
       Data.AddArtistsPersisted(1, Session);
       Session.Commit();
-      const string forename = "Dai";
       // ReSharper disable once StringLiteralTypo
       const string surname = "Fujikura";
+      const string forename = "Dai";
       // ReSharper disable once StringLiteralTypo
       const string notes = "Zawazawa";
       // ReSharper disable once StringLiteralTypo
-      const string name = "Dai Fujikura";
+      const string name = "Fujikura, Dai";
       List.Populate();
       var bindingList = List.BindingList;
       List.OnRowEnter(0);
       var bindingItem = bindingList[0]; 
-      bindingItem.Forename = forename;
       bindingItem.Surname = surname;
+      bindingItem.Forename = forename;
       bindingItem.Notes = notes;
       Assert.AreEqual(name, bindingItem.CreateKey().ToString(), "CreateKey");
       var artist = List[0];

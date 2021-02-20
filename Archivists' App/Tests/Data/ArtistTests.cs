@@ -106,7 +106,7 @@ namespace SoundExplorers.Tests.Data {
     private const string ClarissaForename = " Clarissa ";
     private const string ClarissaName = "Clarissa";
     private const string RalphJenkinsForename = " Ralph ";
-    private const string RalphJenkinsName = "Ralph Jenkins";
+    private const string RalphJenkinsName = "Jenkins, Ralph";
     private const string RalphJenkinsSurname = " Jenkins ";
     private const string RalphJenkinsNotes = "My notes.";
     private const int Credit1CreditNo = 1;
