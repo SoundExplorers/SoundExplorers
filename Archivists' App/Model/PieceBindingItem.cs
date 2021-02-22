@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 using JetBrains.Annotations;
 using SoundExplorers.Data;
 
@@ -11,7 +12,7 @@ namespace SoundExplorers.Model {
     private int _setNo;
     private int _pieceNo;
     private string _title = null!;
-    private TimeSpan _duration;
+    private string _duration = null!;
     private string _audioUrl = null!;
     private string _videoUrl = null!;
     private string _notes = null!;
@@ -56,7 +57,7 @@ namespace SoundExplorers.Model {
       }
     }
 
-    public TimeSpan Duration {
+    public string Duration {
       get => _duration;
       set {
         _duration = value;
@@ -71,7 +72,7 @@ namespace SoundExplorers.Model {
         OnPropertyChanged(nameof(AudioUrl));
       }
     }
-    
+
     public string VideoUrl {
       get => _videoUrl;
       set {
@@ -118,16 +119,50 @@ namespace SoundExplorers.Model {
       // default value. If we were to attempt to set the Piece entity's Duration to Zero
       // we would get the less meaningful error message that the Duration is out of
       // range.
-      if (Duration != TimeSpan.Zero) {
-        piece.Duration = Duration;
+      string durationString = GetPropertyValue(nameof(Duration))?.ToString()!;
+      var durationTimeSpan = ToDurationTimeSpan(durationString);
+      if (durationTimeSpan != TimeSpan.Zero) {
+        piece.Duration = durationTimeSpan;
       }
       piece.AudioUrl = AudioUrl;
       piece.VideoUrl = VideoUrl;
       piece.Notes = Notes;
     }
 
+    protected override object? GetEntityPropertyValue(PropertyInfo property,
+      PropertyInfo entityProperty) {
+      if (property.Name != nameof(Duration)) {
+        return base.GetEntityPropertyValue(property, entityProperty);
+      }
+      string durationString = GetPropertyValue(nameof(Duration))!.ToString()!;
+      return ToDurationTimeSpan(durationString);
+    }
+
     protected override string GetSimpleKey() {
       return EntityBase.IntegerToSimpleKey(PieceNo, nameof(PieceNo));
+    }
+
+    internal static TimeSpan ToDurationTimeSpan(string value) {
+      if (string.IsNullOrWhiteSpace(value)) {
+        return TimeSpan.Zero;
+      }
+      bool isValid = TimeSpan.TryParseExact(
+        value.Trim(), new[] {"h\\:m\\:s", "m\\:s"},
+        null, out var duration);
+      if (isValid) {
+        return duration;
+      }
+      throw new PropertyConstraintException(
+        Piece.DurationErrorMessage + Environment.NewLine +
+        "Accepted formats" + Environment.NewLine +
+        "    minutes:seconds" + Environment.NewLine +
+        "        Examples" + Environment.NewLine +
+        "            1:2 or 01:02 or 1:02 or 12:34 but not 62:34" +
+        Environment.NewLine +
+        "    hours:minutes:seconds" + Environment.NewLine +
+        "        Examples" + Environment.NewLine +
+        "            0:1:2 or 1:2:3 or 01:02:03 or 1:02:34 or 1:23:04 or 1:23:45",
+        nameof(Duration));
     }
   }
 }

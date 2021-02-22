@@ -26,7 +26,7 @@ namespace SoundExplorers.Model {
     ///   Gets whether this is a main list that is to be populated with children of an
     ///   identifying parent entity.
     /// </summary>
-    bool IsChildList { get; }
+    bool IsMainList { get; }
 
     /// <summary>
     ///   Gets whether the current grid row is the insertion row, which is for adding new
@@ -122,7 +122,11 @@ namespace SoundExplorers.Model {
     void Populate(IdentifyingParentChildren? identifyingParentChildren = null,
       bool createBindingList = true);
 
+    /// <summary>
+    ///   After showing an error message for an invalid cell value on editing an existing
+    ///   entity's row with the invalid value still shown, we now need to revert the cell
+    ///   value to its original, as on the database.
+    /// </summary>
     void ReplaceErrorBindingValueWithOriginal();
-    // void RestoreCurrentBindingItemOriginalValues();
   }
 }

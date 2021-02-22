@@ -8,6 +8,8 @@ namespace SoundExplorers.Data {
   ///   recording is archived.
   /// </summary>
   public class Piece : EntityBase {
+    public const string DurationErrorMessage =
+      "Duration must be between 1 second and 9 hours, 59 minutes, 59 seconds.";
     private string _audioUrl = null!;
     private TimeSpan _duration;
     private string _notes = null!;
@@ -190,8 +192,9 @@ namespace SoundExplorers.Data {
  
     private static void ValidateDuration(TimeSpan value) {
       if (value < TimeSpan.FromSeconds(1) || value >= TimeSpan.FromHours(10)) {
-        throw new PropertyValueOutOfRangeException(
-          "Duration must be between 1 second and 9 hours, 59 minutes, 59 seconds.", 
+        // throw new PropertyValueOutOfRangeException(
+        throw new PropertyConstraintException(
+          DurationErrorMessage, 
           nameof(Duration));
       }
     }

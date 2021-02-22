@@ -98,9 +98,9 @@ namespace SoundExplorers.View {
     ///   binding item will be added (unless the new row is already current).
     /// </summary>
     public void MakeRowCurrent(int rowIndex, bool async = false) {
-      Debug.WriteLine($"GridBase.MakeRowCurrent {Name}: row {rowIndex}");
+      Debug.WriteLine($"GridBase.MakeRowCurrent {Name}: row {rowIndex}, async {async}");
       if (async) {
-        BeginInvoke((Action)delegate { MakeRowCurrentAsync(rowIndex); });
+        BeginInvoke((Action)delegate { MakeRowCurrent(rowIndex); });
       } else {
         CurrentCell = Rows[rowIndex].Cells[Controller.FirstVisibleColumnIndex];
       }
@@ -186,10 +186,10 @@ namespace SoundExplorers.View {
       return null;
     }
 
-    private void MakeRowCurrentAsync(int rowIndex) {
-      Debug.WriteLine($"GridBase.MakeRowCurrentAsync {Name}: row {rowIndex}");
-      MakeRowCurrent(rowIndex);
-    }
+    // private void MakeRowCurrentAsync(int rowIndex) {
+    //   Debug.WriteLine($"GridBase.MakeRowCurrentAsync {Name}: row {rowIndex}");
+    //   MakeRowCurrent(rowIndex);
+    // }
 
     protected override void OnCurrentCellChanged(EventArgs e) {
       base.OnCurrentCellChanged(e);

@@ -285,14 +285,14 @@ namespace SoundExplorers.Tests.Data {
     public void DisallowOutOfRangeDuration() {
       Session.BeginUpdate();
       var exception =
-        Assert.Catch<PropertyValueOutOfRangeException>(
+        Assert.Catch<PropertyConstraintException>(
           () => Piece2.Duration = TimeSpan.FromMilliseconds(999),
           "999 milliseconds disallowed");
       Assert.AreEqual(
         "Duration must be between 1 second and 9 hours, 59 minutes, 59 seconds.", 
         exception.Message, "Error message when 999 milliseconds");
       exception =
-        Assert.Catch<PropertyValueOutOfRangeException>(
+        Assert.Catch<PropertyConstraintException>(
           () => Piece2.Duration = TimeSpan.FromHours(10),
           "10 hours disallowed");
       Assert.AreEqual(

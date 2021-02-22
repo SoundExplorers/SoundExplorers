@@ -95,7 +95,7 @@ namespace SoundExplorers.Controller {
 
     protected override void OnPopulatedAsync() {
       Debug.WriteLine("MainGridController.OnPopulatedAsync");
-      if (List.IsChildList) {
+      if (List.IsMainList) {
         IsFixingFocus = true;
         EditorController.View.OnParentAndMainGridsShown();
         Grid.CellColorScheme.Invert();
@@ -103,7 +103,7 @@ namespace SoundExplorers.Controller {
       base.OnPopulatedAsync();
       // Warning: Profiling blocks code coverage analysis
       // MeasureProfiler.SaveData();
-      if (List.IsChildList && ParentGrid.Controller.LastRowNeedsToBeScrolledIntoView) {
+      if (List.IsMainList && ParentGrid.Controller.LastRowNeedsToBeScrolledIntoView) {
         ParentGrid.Controller.ScrollLastRowIntoView();
       } else {
         // Show that the population process is finished.
@@ -200,18 +200,6 @@ namespace SoundExplorers.Controller {
       EditorController.View.ShowErrorMessage(
         List.LastDatabaseUpdateErrorException.Message);
       // Debug.WriteLine("Error message shown");
-      switch (List.LastDatabaseUpdateErrorException.ErrorType) {
-        case ErrorType.Format:
-          return;
-        case ErrorType.Duplicate:
-        case ErrorType.OutOfRange:
-        case ErrorType.ReferencingValueNotFound:
-          if (LastChangeAction == StatementType.Update) {
-            List.ReplaceErrorBindingValueWithOriginal();
-            return;
-          }
-          break;
-      }
       switch (LastChangeAction) {
         case StatementType.Delete:
           break;
@@ -219,12 +207,7 @@ namespace SoundExplorers.Controller {
           CancelInsertion();
           break;
         case StatementType.Update:
-          //List.RestoreCurrentBindingItemOriginalValues(); // ???
-          Grid.EditCurrentCell();
-          Grid.RestoreCurrentRowCellErrorValue(
-            List.LastDatabaseUpdateErrorException.ColumnIndex,
-            List.GetErrorValues()[
-              List.LastDatabaseUpdateErrorException.ColumnIndex]);
+          CancelUpdate();
           break;
         default:
           throw new NotSupportedException(
@@ -285,6 +268,33 @@ namespace SoundExplorers.Controller {
       //     List.LastDatabaseUpdateErrorException!.ColumnIndex));
       Grid.MakeCellCurrent(insertionRowIndex,
         List.LastDatabaseUpdateErrorException!.ColumnIndex);
+    }
+
+    /// <summary>
+    ///   Invoked when the user clicks OK on an existing row cell update error message
+    ///   box.
+    /// </summary>
+    private void CancelUpdate() {
+      // Restore the original i.e. valid value. If we are then going to allow the user to
+      // correct the error value, this is still useful, as it will allow the user to
+      // cancel out of the error correction edit instead of trying to modify the error
+      // value to make it valid. If the user does cancel out of the error correction
+      // edit, the cell value will then revert to the original i.e. valid value.   
+      ReplaceErrorBindingValueWithOriginal();
+      var exception = List.LastDatabaseUpdateErrorException!;
+      if (exception.ErrorType != ErrorType.Database) {
+        // Allowing the user to correct the error value is not possible.
+        return;
+      }
+      // Allow the user to correct the error value.
+      Grid.EditCurrentCell();
+      Grid.RestoreCurrentRowCellErrorValue(
+        exception.ColumnIndex,
+        List.GetErrorValues()[exception.ColumnIndex]);
+    }
+
+    protected virtual void ReplaceErrorBindingValueWithOriginal() {
+      List.ReplaceErrorBindingValueWithOriginal();
     }
   }
 }

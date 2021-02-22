@@ -76,7 +76,7 @@ namespace SoundExplorers.Tests.Model {
     [Test]
     public void AddSet() {
       List = CreateSetList();
-      Assert.IsTrue(List.IsChildList, "IsChildList");
+      Assert.IsTrue(List.IsMainList, "IsMainList");
       var @event = Data.Events[0];
       var eventChildren = CreateEventChildren(@event);
       List.Populate(eventChildren);
@@ -196,7 +196,7 @@ namespace SoundExplorers.Tests.Model {
     [Test]
     public void ReadAsParentList() {
       List = CreateSetList(true, true, false);
-      Assert.IsFalse(List.IsChildList, "IsChildList");
+      Assert.IsFalse(List.IsMainList, "IsMainList");
       Session.BeginUpdate();
       var set = Data.Sets[2];
       set.Act = Data.Acts[1];
@@ -233,9 +233,9 @@ namespace SoundExplorers.Tests.Model {
     }
 
     private SetList CreateSetList(
-      bool addSets = true, bool addActs = true, bool isChildList = true) {
+      bool addSets = true, bool addActs = true, bool isMainList = true) {
       AddData(addSets, addActs);
-      return new SetList(isChildList) {Session = Session};
+      return new SetList(isMainList) {Session = Session};
     }
   }
 }

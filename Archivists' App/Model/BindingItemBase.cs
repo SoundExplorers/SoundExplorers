@@ -137,7 +137,7 @@ namespace SoundExplorers.Model {
         : null;
     }
 
-    private object? GetEntityPropertyValue(PropertyInfo property,
+    protected virtual object? GetEntityPropertyValue(PropertyInfo property,
       PropertyInfo entityProperty) {
       return entityProperty.PropertyType == property.PropertyType
         ? property.GetValue(this)

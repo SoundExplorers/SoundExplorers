@@ -11,8 +11,8 @@ namespace SoundExplorers.Model {
     [ExcludeFromCodeCoverage]
     public PieceList() : this(true) { }
 
-    public PieceList(bool isChildList) :
-      base(isChildList ? typeof(SetList) : null) { }
+    public PieceList(bool isMainList) :
+      base(isMainList ? typeof(SetList) : null) { }
 
     protected override PieceBindingItem CreateBindingItem(Piece piece) {
       return new PieceBindingItem {
@@ -21,7 +21,7 @@ namespace SoundExplorers.Model {
         SetNo = piece.Set.SetNo,
         PieceNo = piece.PieceNo,
         Title = piece.Title,
-        Duration = piece.Duration,
+        Duration = piece.Duration.ToString("h\\:mm\\:ss"),
         AudioUrl = piece.AudioUrl,
         VideoUrl = piece.VideoUrl,
         Notes = piece.Notes
@@ -36,17 +36,17 @@ namespace SoundExplorers.Model {
     protected override BindingColumnList CreateColumns() {
       var result = new BindingColumnList {
         new BindingColumn(nameof(Event.Date), typeof(DateTime)) {
-          IsVisible = !IsChildList
+          IsVisible = !IsMainList
         },
         new BindingColumn(nameof(Event.Location), typeof(string)) {
-          IsVisible = !IsChildList
+          IsVisible = !IsMainList
         },
         new BindingColumn(nameof(Set.SetNo), typeof(int)) {
-          IsVisible = !IsChildList
+          IsVisible = !IsMainList
         },
         new BindingColumn(nameof(Piece.PieceNo), typeof(int)) {IsInKey = true},
         new BindingColumn(nameof(Piece.Title), typeof(string)),
-        new BindingColumn(nameof(Piece.Duration), typeof(TimeSpan)),
+        new BindingColumn(nameof(Piece.Duration), typeof(string)),
         new BindingColumn(nameof(Piece.AudioUrl), typeof(string)) {DisplayName = "Audio URL"},
         new BindingColumn(nameof(Piece.VideoUrl), typeof(string)) {DisplayName = "Video URL"},
         new BindingColumn(nameof(Piece.Notes), typeof(string))

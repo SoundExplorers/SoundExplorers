@@ -15,6 +15,7 @@ namespace SoundExplorers.Tests.Controller {
 
     internal new EditorController EditorController => base.EditorController;
     internal new bool IsFixingFocus => base.IsFixingFocus;
+    internal int ReplaceErrorBindingValueWithOriginalCount { get; private set; } 
     internal bool TestUnsupportedLastChangeAction { get; set; }
 
     public override void OnRowEnter(int rowIndex) {
@@ -23,6 +24,11 @@ namespace SoundExplorers.Tests.Controller {
         OnRowValidated(Grid.CurrentRowIndex);
       }
       base.OnRowEnter(rowIndex);
+    }
+
+    protected override void ReplaceErrorBindingValueWithOriginal() {
+      ReplaceErrorBindingValueWithOriginalCount++;
+      base.ReplaceErrorBindingValueWithOriginal();
     }
 
     internal void CreateAndGoToNewRow() {

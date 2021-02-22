@@ -668,6 +668,31 @@ namespace SoundExplorers.Tests.Controller {
     }
 
     [Test]
+    public void RestoreValueOnUpdateError() {
+      AddDataForPieceList();
+      CreateControllers(typeof(PieceList));
+      Controller.Populate(); // Populate grid
+      Assert.AreEqual(5, Controller.MainList.Count, "Count after Populate");
+      var bindingList =
+        (TypedBindingList<Piece, PieceBindingItem>)Controller.MainList
+          .BindingList!;
+      // Leave insertion row, which will be current on Populate
+      MainGridController.OnRowValidated(5); 
+      MainGridController.OnRowEnter(1);
+      const string invalidDuration = "abc";
+      var exception = Assert.Catch<DatabaseUpdateErrorException>(
+        () => bindingList[1].Duration = invalidDuration,
+        "Invalid Duration disallowed");
+      MainGridController.OnCellEditException(1, "Duration", exception);
+      Assert.AreEqual(1, MainGridController.ReplaceErrorBindingValueWithOriginalCount,
+        "ReplaceErrorBindingValueWithOriginalCount");
+      Assert.AreEqual(1, MainGrid.RestoreCurrentRowCellErrorValueCount,
+        "RestoreCurrentRowCellErrorValueCount");
+      Assert.AreEqual(1, MainGrid.EditCurrentCellCount,
+        "EditCurrentCellCount");
+    }
+
+    [Test]
     public void ShowWarningMessage() {
       CreateControllers(typeof(NewsletterList));
       MainGridController.ShowWarningMessage("Warning! Warning!");
@@ -681,6 +706,21 @@ namespace SoundExplorers.Tests.Controller {
       Data.AddNewslettersPersisted(1, Session);
       Data.AddSeriesPersisted(1, Session);
       Data.AddEventsPersisted(3, Session);
+      Session.Commit();
+    }
+
+    private void AddDataForPieceList() {
+      Session.BeginUpdate();
+      Data.AddActsPersisted(1, Session);
+      Data.AddSeriesPersisted(1, Session);
+      Data.AddEventTypesPersisted(1, Session);
+      Data.AddGenresPersisted(1, Session);
+      Data.AddLocationsPersisted(1, Session);
+      Data.AddNewslettersPersisted(1, Session);
+      Data.AddEventsPersisted(1, Session);
+      Data.AddSetsPersisted(2, Session);
+      Data.AddPiecesPersisted(3, Session, Data.Sets[0]);
+      Data.AddPiecesPersisted(5, Session, Data.Sets[1]);
       Session.Commit();
     }
 

@@ -54,14 +54,14 @@ namespace SoundExplorers.Tests.Model {
     [Test]
     public void AddPiece() {
       List = CreatePieceList();
-      Assert.IsTrue(List.IsChildList, "IsChildList");
+      Assert.IsTrue(List.IsMainList, "IsMainList");
       var set = Data.Sets[0];
       var setChildren = CreateSetChildren(set);
       List.Populate(setChildren);
       var bindingList = List.BindingList;
       bindingList.AddNew();
       List.OnRowEnter(3);
-      bindingList[3].Duration = TimeSpan.FromMinutes(3);
+      bindingList[3].Duration = "3:00";
       List.OnRowValidated(3);
       Assert.AreEqual(4, set.Pieces.Count, "Count");
       setChildren = CreateSetChildren(set);
@@ -88,6 +88,26 @@ namespace SoundExplorers.Tests.Model {
     }
 
     [Test]
+    public void DisallowAddPieceWithInvalidDuration() {
+      List = CreatePieceList(false);
+      var set = Data.Sets[0];
+      var setChildren = CreateSetChildren(set);
+      List.Populate(setChildren);
+      var bindingList = List.BindingList;
+      bindingList.AddNew();
+      List.OnRowEnter(0);
+      bindingList[0].Duration = "abc";
+      var exception = Assert.Catch<DatabaseUpdateErrorException>(
+        () => List.OnRowValidated(0),
+        "Adding Piece with invalid Duration disallowed.");
+      Assert.IsTrue(
+        exception.Message.StartsWith(
+          "Duration must be between 1 second and 9 hours, 59 minutes, 59 seconds." + 
+          "\r\nAccepted formats\r\n"), 
+        "Message");
+    }
+
+    [Test]
     public void DisallowAddPieceWithoutDuration() {
       List = CreatePieceList(false);
       var set = Data.Sets[0];
@@ -106,7 +126,23 @@ namespace SoundExplorers.Tests.Model {
     }
 
     [Test]
-    public void DisallowDuplicateKey() {
+    public void DisallowChangeDurationToInvalid() {
+      List = CreatePieceList();
+      List.Populate();
+      List.OnRowEnter(2);
+      var bindingList = List.BindingList;
+      var exception = Assert.Catch<DatabaseUpdateErrorException>(
+        () => bindingList[2].Duration = "abc",
+        "Changing Duration to invalid value disallowed");
+      Assert.IsTrue(
+        exception.Message.StartsWith(
+          "Duration must be between 1 second and 9 hours, 59 minutes, 59 seconds." + 
+          "\r\nAccepted formats\r\n"), 
+        "Message");
+    }
+
+    [Test]
+    public void DisallowChangeKeyToDuplicate() {
       List = CreatePieceList();
       var setChildren = CreateSetChildren(Data.Sets[0]);
       List.Populate(setChildren);
@@ -159,7 +195,7 @@ namespace SoundExplorers.Tests.Model {
     public void ReadAsParentList() {
       var newDuration = TimeSpan.FromHours(1);
       List = CreatePieceList(true, false);
-      Assert.IsFalse(List.IsChildList, "IsChildList");
+      Assert.IsFalse(List.IsMainList, "IsMainList");
       Session.BeginUpdate();
       var piece = Data.Pieces[2];
       piece.Duration = newDuration;
@@ -172,7 +208,8 @@ namespace SoundExplorers.Tests.Model {
       Assert.AreEqual(piece.Set.SetNo, bindingList[2].SetNo, "SetNo");
       Assert.AreEqual(piece.PieceNo, bindingList[2].PieceNo, "PieceNo");
       Assert.AreEqual(piece.Title, bindingList[2].Title, "Title");
-      Assert.AreEqual(newDuration, bindingList[2].Duration, "Duration");
+      Assert.AreEqual(newDuration,
+        PieceBindingItem.ToDurationTimeSpan(bindingList[2].Duration), "Duration");
       Assert.AreEqual(piece.AudioUrl, bindingList[2].AudioUrl, "AudioUrl");
       Assert.AreEqual(piece.VideoUrl, bindingList[2].VideoUrl, "VideoUrl");
       Assert.AreEqual(piece.Notes, bindingList[2].Notes, "Notes");
@@ -201,9 +238,9 @@ namespace SoundExplorers.Tests.Model {
     }
 
     private PieceList CreatePieceList(
-      bool addPieces = true, bool isChildList = true) {
+      bool addPieces = true, bool isMainList = true) {
       AddData(addPieces);
-      return new PieceList(isChildList) {Session = Session};
+      return new PieceList(isMainList) {Session = Session};
     }
   }
 }
