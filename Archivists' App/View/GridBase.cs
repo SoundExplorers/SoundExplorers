@@ -161,6 +161,8 @@ namespace SoundExplorers.View {
       }
       if (result.ValueType == typeof(DateTime)) {
         result.DefaultCellStyle.Format = EditorController.DateFormat;
+      } else if (result.ValueType == typeof(TimeSpan)) {
+        result.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
       }
       Columns.Add(result);
       return result;

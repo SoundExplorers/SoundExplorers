@@ -68,7 +68,7 @@ namespace SoundExplorers.View {
         result.CellTemplate = ComboBoxCell.Create(Controller, result.Name);
       } else if (result.ValueType == typeof(DateTime)) {
         result.CellTemplate = new CalendarCell();
-      } else if (result.ValueType == typeof(string) || result.ValueType == typeof(int)) {
+      } else if (result is DataGridViewTextBoxColumn) {
         result.CellTemplate = new TextBoxCell();
         result.DefaultCellStyle.DataSourceNullValue = string.Empty;
       }

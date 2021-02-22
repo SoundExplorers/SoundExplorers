@@ -193,26 +193,35 @@ namespace SoundExplorers.Tests.Model {
 
     [Test]
     public void ReadAsParentList() {
-      var newDuration = TimeSpan.FromHours(1);
+      var newDuration2 = TimeSpan.FromMinutes(59);
+      var newDuration3 = TimeSpan.FromHours(1);
       List = CreatePieceList(true, false);
       Assert.IsFalse(List.IsMainList, "IsMainList");
       Session.BeginUpdate();
-      var piece = Data.Pieces[2];
-      piece.Duration = newDuration;
+      var piece2 = Data.Pieces[1];
+      piece2.Duration = newDuration2;
+      var piece3 = Data.Pieces[2];
+      piece3.Duration = newDuration3;
       Session.Commit();
       List.Populate();
       var bindingList = List.BindingList;
-      Assert.AreEqual(piece.Set.Event.Date, bindingList[2].Date, "Date");
-      Assert.AreEqual(piece.Set.Event.Location.Name, bindingList[2].Location, 
+      Assert.AreEqual("59:00", bindingList[1].Duration, "Duration string 2");
+      Assert.AreEqual(newDuration2,
+        PieceBindingItem.ToDurationTimeSpan(bindingList[1].Duration), 
+        "Duration TimeSpan 2");
+      Assert.AreEqual(piece3.Set.Event.Date, bindingList[2].Date, "Date");
+      Assert.AreEqual(piece3.Set.Event.Location.Name, bindingList[2].Location, 
         "Location");
-      Assert.AreEqual(piece.Set.SetNo, bindingList[2].SetNo, "SetNo");
-      Assert.AreEqual(piece.PieceNo, bindingList[2].PieceNo, "PieceNo");
-      Assert.AreEqual(piece.Title, bindingList[2].Title, "Title");
-      Assert.AreEqual(newDuration,
-        PieceBindingItem.ToDurationTimeSpan(bindingList[2].Duration), "Duration");
-      Assert.AreEqual(piece.AudioUrl, bindingList[2].AudioUrl, "AudioUrl");
-      Assert.AreEqual(piece.VideoUrl, bindingList[2].VideoUrl, "VideoUrl");
-      Assert.AreEqual(piece.Notes, bindingList[2].Notes, "Notes");
+      Assert.AreEqual(piece3.Set.SetNo, bindingList[2].SetNo, "SetNo");
+      Assert.AreEqual(piece3.PieceNo, bindingList[2].PieceNo, "PieceNo");
+      Assert.AreEqual(piece3.Title, bindingList[2].Title, "Title");
+      Assert.AreEqual("1:00:00", bindingList[2].Duration, "Duration string 3");
+      Assert.AreEqual(newDuration3,
+        PieceBindingItem.ToDurationTimeSpan(bindingList[2].Duration), 
+        "Duration TimeSpan 3");
+      Assert.AreEqual(piece3.AudioUrl, bindingList[2].AudioUrl, "AudioUrl");
+      Assert.AreEqual(piece3.VideoUrl, bindingList[2].VideoUrl, "VideoUrl");
+      Assert.AreEqual(piece3.Notes, bindingList[2].Notes, "Notes");
     }
 
     private void AddData(bool includingPieces = true) {

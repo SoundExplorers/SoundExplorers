@@ -16,12 +16,15 @@ namespace SoundExplorers.Model {
 
     protected override PieceBindingItem CreateBindingItem(Piece piece) {
       return new PieceBindingItem {
-        Date = piece.Set.Event.Date, 
+        Date = piece.Set.Event.Date,
         Location = piece.Set.Event.Location.Name!,
         SetNo = piece.Set.SetNo,
         PieceNo = piece.PieceNo,
         Title = piece.Title,
-        Duration = piece.Duration.ToString("h\\:mm\\:ss"),
+        // Duration = piece.Duration.ToString("h\\:mm\\:ss"),
+        Duration = piece.Duration.ToString(piece.Duration < TimeSpan.FromHours(1)
+          ? "m\\:ss"
+          : "h\\:mm\\:ss"),
         AudioUrl = piece.AudioUrl,
         VideoUrl = piece.VideoUrl,
         Notes = piece.Notes
@@ -46,9 +49,11 @@ namespace SoundExplorers.Model {
         },
         new BindingColumn(nameof(Piece.PieceNo), typeof(int)) {IsInKey = true},
         new BindingColumn(nameof(Piece.Title), typeof(string)),
-        new BindingColumn(nameof(Piece.Duration), typeof(string)),
-        new BindingColumn(nameof(Piece.AudioUrl), typeof(string)) {DisplayName = "Audio URL"},
-        new BindingColumn(nameof(Piece.VideoUrl), typeof(string)) {DisplayName = "Video URL"},
+        new BindingColumn(nameof(Piece.Duration), typeof(TimeSpan)),
+        new BindingColumn(nameof(Piece.AudioUrl), typeof(string))
+          {DisplayName = "Audio URL"},
+        new BindingColumn(nameof(Piece.VideoUrl), typeof(string))
+          {DisplayName = "Video URL"},
         new BindingColumn(nameof(Piece.Notes), typeof(string))
       };
       return result;
