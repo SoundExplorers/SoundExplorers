@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Reflection;
@@ -81,6 +82,13 @@ namespace SoundExplorers.Model {
     ///   A derived class representing a row of a main grid that is a child of a parent
     ///   grid row must override this method.
     /// </summary>
+    /// <remarks>
+    ///   If referencing properties are not set in the right order in the overriding
+    ///   methods, EntityBase.UpdateNonIndexField will eventually throw an
+    ///   <see cref="InvalidOperationException" /> as a result of handling a
+    ///   <see cref="NullReferenceException" /> thrown by VelocityDB's internal
+    ///   SessionBase.FlushUpdates() method within SessionBase.AllObjects(). 
+    /// </remarks>
     protected virtual void CopyValuesToEntityProperties(TEntity entity) {
       foreach (var property in Properties.Values) {
         CopyValueToEntityProperty(property.Name, entity);
@@ -102,18 +110,6 @@ namespace SoundExplorers.Model {
     }
 
     internal TEntity CreateEntity() {
-      // Fetch any parent reference values from the database
-      // before instantiating the entity.
-      // After the entity has been instantiated,
-      // set its properties to the corresponding values that have
-      // been fetched in advance.
-      // Otherwise, i.e. if we were to attempt to
-      // fetch the parent reference values from the database
-      // after the entity had been instantiated, 
-      // in QueryHelper, SessionBase.AllObjects would invoke SessionBase.FlushUpdates,
-      // which prematurely attempts to persist the new entity before all its properties 
-      // have been set.  For Event and probably some other entity types,
-      // that causes a persistence failure.
       EntityPropertyValues = CreateEntityPropertyValueDictionary();
       var result = new TEntity();
       CopyValuesToEntityProperties(result);

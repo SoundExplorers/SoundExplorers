@@ -108,8 +108,8 @@ namespace SoundExplorers.Model {
     }
 
     protected override void CopyValuesToEntityProperties(Piece piece) {
-      // PieceNo must be set before Set so that Set.Pieces will be in the right sort
-      // order.
+      // PieceNo must be set before Set so that Set.Pieces will have the correct key for
+      // the Piece and therefore be in the right sort order.
       piece.PieceNo = PieceNo;
       piece.Set = Set;
       piece.Title = Title;
