@@ -55,6 +55,12 @@ namespace SoundExplorers.Model {
     void BackupAndRemoveInsertionErrorBindingItem();
 
     /// <summary>
+    ///   A main list that is a child list must implement this to instantiate its
+    ///   parent list. 
+    /// </summary>
+    IEntityList CreateParentList();
+
+    /// <summary>
     ///   Deletes the entity at the specified row index from the database and removes it
     ///   from the list.
     /// </summary>

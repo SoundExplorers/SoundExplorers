@@ -87,7 +87,7 @@ namespace SoundExplorers.Controller {
     private Type MainListType { get; }
 
     internal IEntityList? ParentList => IsParentGridToBeShown
-      ? _parentList ??= CreateEntityList(MainList.ParentListType!)
+      ? _parentList ??= MainList.CreateParentList()
       : null;
 
     internal IEditorView View { get; }

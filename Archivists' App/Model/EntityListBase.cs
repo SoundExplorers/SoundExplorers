@@ -167,6 +167,14 @@ namespace SoundExplorers.Model {
     }
 
     /// <summary>
+    ///   A derived class that can be a child list must override this method to
+    ///   instantiate its parent list. 
+    /// </summary>
+    public virtual IEntityList CreateParentList() {
+      throw new NotSupportedException();
+    }
+
+    /// <summary>
     ///   Deletes the entity at the specified row index from the database and removes it
     ///   from the list.
     /// </summary>
@@ -383,7 +391,7 @@ namespace SoundExplorers.Model {
     ///   entity's row with the invalid value still shown, we now need to revert the cell
     ///   value to its original, as on the database.
     /// </summary>
-    public virtual void ReplaceErrorBindingValueWithOriginal() {
+    public void ReplaceErrorBindingValueWithOriginal() {
       int errorRowIndex = LastDatabaseUpdateErrorException!.RowIndex;
       Debug.WriteLine(
         $"EntityListBase.ReplaceErrorBindingValueWithOriginal: row {errorRowIndex}");

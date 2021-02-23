@@ -59,6 +59,10 @@ namespace SoundExplorers.Model {
       return result;
     }
 
+    public override IEntityList CreateParentList() {
+      return new SetList(false);
+    }
+
     public override IdentifyingParentChildren GetIdentifyingParentChildrenForMainList(
       int rowIndex) {
       return new IdentifyingParentChildren(this[rowIndex],
