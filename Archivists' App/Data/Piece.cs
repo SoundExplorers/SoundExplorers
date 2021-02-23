@@ -147,7 +147,7 @@ namespace SoundExplorers.Data {
         duplicate = FindDuplicateAudioUrl(AudioUrl, session);
         if (duplicate != null) {
           throw new PropertyConstraintException(
-            "Piece '{Key}' cannot be added because Piece " +
+            $"Piece '{Key}' cannot be added because Piece " +
             $"'{duplicate.Key}' " +
             $"already exists with the same Audio URL '{AudioUrl}'.", nameof(AudioUrl));
         }

@@ -60,7 +60,7 @@ namespace SoundExplorers.Model {
     }
 
     public override IEntityList CreateParentList() {
-      return new SetList(false);
+      return new SetList(false) {Session = Session};
     }
 
     public override IdentifyingParentChildren GetIdentifyingParentChildrenForMainList(

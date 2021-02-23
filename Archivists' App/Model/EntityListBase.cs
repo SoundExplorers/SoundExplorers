@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using SoundExplorers.Data;
 using VelocityDb.Session;
@@ -170,6 +171,7 @@ namespace SoundExplorers.Model {
     ///   A derived class that can be a child list must override this method to
     ///   instantiate its parent list. 
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public virtual IEntityList CreateParentList() {
       throw new NotSupportedException();
     }
