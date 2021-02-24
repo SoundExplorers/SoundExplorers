@@ -38,6 +38,7 @@ namespace SoundExplorers.Model {
     where TBindingItem : BindingItemBase<TEntity, TBindingItem>, new() {
     private IDictionary<string, PropertyInfo>? _entityProperties;
     private IDictionary<string, PropertyInfo>? _properties;
+    private Key? _key;
     internal EntityListBase<TEntity, TBindingItem> EntityList { get; set; } = null!;
 
     private IDictionary<string, PropertyInfo> EntityProperties =>
@@ -45,7 +46,10 @@ namespace SoundExplorers.Model {
 
     private IDictionary<string, object?>? EntityPropertyValues { get; set; }
 
-    internal Key? Key { get; private set; }
+    internal Key Key {
+      get => _key ??= CreateKey();
+      private set => _key = value;
+    }
 
     protected IDictionary<string, PropertyInfo> Properties =>
       _properties ??= new PropertyDictionary(typeof(TBindingItem));
@@ -54,7 +58,7 @@ namespace SoundExplorers.Model {
     // appear as a column on the grid!
     IDictionary<string, PropertyInfo> IBindingItem.Properties => Properties;
 
-    internal virtual Key CreateKey() {
+    protected virtual Key CreateKey() {
       return new Key(GetSimpleKey(), EntityList.IdentifyingParent);
     }
 

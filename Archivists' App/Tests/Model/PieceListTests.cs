@@ -116,7 +116,7 @@ namespace SoundExplorers.Tests.Model {
         () => List.OnRowValidated(0),
         "Adding Piece without Duration disallowed.");
       Assert.AreEqual(
-        $"Piece '{bindingList[0].Key!}' cannot be added because its Duration has not been specified.",
+        $"Piece '{bindingList[0].Key}' cannot be added because its Duration has not been specified.",
         exception.Message, "Error message");
     }
 
@@ -148,7 +148,7 @@ namespace SoundExplorers.Tests.Model {
         () => bindingList[2].PieceNo = 1,
         "Changing PieceNo to duplicate for Set disallowed");
       Assert.AreEqual(
-        $"Another Piece with key '{bindingList[2].Key!}' already exists.",
+        $"Another Piece with key '{bindingList[2].Key}' already exists.",
         exception.Message,
         "Error message on trying to change PieceNo to duplicate for Set");
       bindingList.AddNew();
@@ -157,7 +157,7 @@ namespace SoundExplorers.Tests.Model {
       exception = Assert.Catch<DatabaseUpdateErrorException>(() => List.OnRowValidated(3),
         "Adding Piece with PieceNo duplicate for Set disallowed");
       Assert.AreEqual(
-        $"Another Piece with key '{bindingList[3].Key!}' already exists.",
+        $"Another Piece with key '{bindingList[3].Key}' already exists.",
         exception.Message,
         "Error message on trying to add Piece with duplicate PieceNo for Set");
     }
@@ -264,7 +264,7 @@ namespace SoundExplorers.Tests.Model {
       List.OnRowEnter(2);
       var bindingList = List.BindingList;
       string uniqueUrl = TestData.GenerateUniqueUrl();
-      Key otherKey = bindingList[0].CreateKey();
+      Key otherKey = bindingList[0].Key;
       string otherUrl = bindingList[0].AudioUrl;
       Assert.DoesNotThrow(
         () => bindingList[2].AudioUrl = uniqueUrl,
@@ -280,7 +280,7 @@ namespace SoundExplorers.Tests.Model {
       bindingList.AddNew();
       List.OnRowEnter(3);
       bindingList[3].EntityList = List;
-      Key newKey = bindingList[3].CreateKey();
+      Key newKey = bindingList[3].Key;
       bindingList[3].Duration = "3:45";
       bindingList[3].AudioUrl = otherUrl;
       exception = Assert.Catch<DatabaseUpdateErrorException>(() => List.OnRowValidated(3),
@@ -304,7 +304,7 @@ namespace SoundExplorers.Tests.Model {
       List.OnRowEnter(2);
       var bindingList = List.BindingList;
       string uniqueUrl = TestData.GenerateUniqueUrl();
-      Key otherKey = bindingList[0].CreateKey();
+      Key otherKey = bindingList[0].Key;
       string otherUrl = bindingList[0].VideoUrl;
       Assert.DoesNotThrow(
         () => bindingList[2].VideoUrl = uniqueUrl,
@@ -320,7 +320,7 @@ namespace SoundExplorers.Tests.Model {
       bindingList.AddNew();
       List.OnRowEnter(3);
       bindingList[3].EntityList = List;
-      Key newKey = bindingList[3].CreateKey();
+      Key newKey = bindingList[3].Key;
       bindingList[3].Duration = "3:45";
       bindingList[3].VideoUrl = otherUrl;
       exception = Assert.Catch<DatabaseUpdateErrorException>(() => List.OnRowValidated(3),

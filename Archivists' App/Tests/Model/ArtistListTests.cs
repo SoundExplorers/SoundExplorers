@@ -52,7 +52,7 @@ namespace SoundExplorers.Tests.Model {
       bindingItem.Surname = surname;
       bindingItem.Forename = forename;
       bindingItem.Notes = notes;
-      Assert.AreEqual(name, bindingItem.Key!.ToString(), "CreateKey");
+      Assert.AreEqual(name, bindingItem.Key.ToString(), "CreateKey");
       var artist = List[0];
       Assert.AreEqual(forename, artist.Forename, "Forename");
       Assert.AreEqual(surname, artist.Surname, "Surname");
