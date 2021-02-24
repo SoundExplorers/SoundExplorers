@@ -510,5 +510,14 @@ namespace SoundExplorers.Data {
           "because it already exists.", ex);
       }
     }
+
+    internal static void ValidateUrlFormat(string url, string propertyName) {
+      try {
+        var dummy = new Uri(url, UriKind.Absolute);
+      } catch (UriFormatException) {
+        throw new PropertyConstraintException(
+          $"Invalid {propertyName} format: '{url}'.", propertyName);
+      }
+    }
   }
 }

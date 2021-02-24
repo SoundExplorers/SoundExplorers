@@ -28,7 +28,7 @@ namespace SoundExplorers.Data {
     public string AudioUrl {
       get => _audioUrl;
       set {
-        CheckCanChangeAudioUrl(_audioUrl, value);
+        ValidateAudioUrl(_audioUrl, value);
         UpdateNonIndexField();
         _audioUrl = value;
       }
@@ -39,7 +39,7 @@ namespace SoundExplorers.Data {
     public TimeSpan Duration {
       get => _duration;
       set {
-        ValidateDuration(value);
+        ValidateDurationRange(value);
         UpdateNonIndexField();
         _duration = value;
       }
@@ -85,52 +85,9 @@ namespace SoundExplorers.Data {
     public string VideoUrl {
       get => _videoUrl;
       set {
-        CheckCanChangeVideoUrl(_videoUrl, value);
+        ValidateVideoUrl(_videoUrl, value);
         UpdateNonIndexField();
         _videoUrl = value;
-      }
-    }
-
-    private void CheckCanChangeAudioUrl(string? oldAudioUrl,
-      string? newAudioUrl) {
-      if (string.IsNullOrWhiteSpace(newAudioUrl)) {
-        return;
-      }
-      try {
-        var dummy = new Uri(newAudioUrl, UriKind.Absolute);
-      } catch (UriFormatException) {
-        throw new PropertyConstraintException(
-          $"Invalid AudioUrl format: '{newAudioUrl}'.", nameof(AudioUrl));
-      }
-      if (IsPersistent && Session != null && newAudioUrl != oldAudioUrl) {
-        // If there's no session, which means we cannot check for a duplicate,
-        // EntityBase.UpdateNonIndexField will throw 
-        // an InvalidOperationException anyway.
-        var duplicate = FindDuplicateAudioUrl(newAudioUrl, Session);
-        if (duplicate != null) {
-          throw CreateDuplicateAudioUrlUpdateException(duplicate);
-        }
-      }
-    }
-
-    private void CheckCanChangeVideoUrl(string? oldVideoUrl, string? newVideoUrl) {
-      if (string.IsNullOrWhiteSpace(newVideoUrl)) {
-        return;
-      }
-      try {
-        var dummy = new Uri(newVideoUrl, UriKind.Absolute);
-      } catch (UriFormatException) {
-        throw new PropertyConstraintException(
-          $"Invalid VideoUrl format: '{newVideoUrl}'.", nameof(VideoUrl));
-      }
-      if (IsPersistent && Session != null && newVideoUrl != oldVideoUrl) {
-        // If there's no session, which means we cannot check for a duplicate,
-        // EntityBase.UpdateNonIndexField will throw 
-        // an InvalidOperationException anyway.
-        var duplicate = FindDuplicateVideoUrl(newVideoUrl, Session);
-        if (duplicate != null) {
-          throw CreateDuplicateVideoUrlUpdateException(duplicate);
-        }
       }
     }
 
@@ -149,9 +106,13 @@ namespace SoundExplorers.Data {
           throw CreateDuplicateVideoUrlInsertException(Key, duplicate); 
         }
       }
-      if (Duration == TimeSpan.Zero) {
+      CheckThatDurationHasBeenSpecified(Key, Duration);
+    }
+
+    public static void CheckThatDurationHasBeenSpecified(Key key, TimeSpan duration) {
+      if (duration == TimeSpan.Zero) {
         throw new PropertyConstraintException(
-          $"Piece '{Key}' cannot be added because its Duration has not been specified.", 
+          $"Piece '{key}' cannot be added because its Duration has not been specified.",
           nameof(Duration));
       }
     }
@@ -211,14 +172,53 @@ namespace SoundExplorers.Data {
     protected override IDictionary GetChildren(Type childType) {
       return Credits;
     }
+
+    private void ValidateAudioUrl(string? oldAudioUrl,
+      string? newAudioUrl) {
+      if (string.IsNullOrWhiteSpace(newAudioUrl)) {
+        return;
+      }
+      ValidateAudioUrlFormat(newAudioUrl);
+      if (IsPersistent && Session != null && newAudioUrl != oldAudioUrl) {
+        // If there's no session, which means we cannot check for a duplicate,
+        // EntityBase.UpdateNonIndexField will throw an InvalidOperationException anyway.
+        var duplicate = FindDuplicateAudioUrl(newAudioUrl, Session);
+        if (duplicate != null) {
+          throw CreateDuplicateAudioUrlUpdateException(duplicate);
+        }
+      }
+    }
+
+    public static void ValidateAudioUrlFormat(string audioUrl) {
+      ValidateUrlFormat(audioUrl, nameof(AudioUrl));
+    }
  
-    private static void ValidateDuration(TimeSpan value) {
+    public static void ValidateDurationRange(TimeSpan value) {
       if (value < TimeSpan.FromSeconds(1) || value >= TimeSpan.FromHours(10)) {
-        // throw new PropertyValueOutOfRangeException(
         throw new PropertyConstraintException(
           DurationErrorMessage, 
           nameof(Duration));
       }
+    }
+
+    private void ValidateVideoUrl(string? oldVideoUrl,
+      string? newVideoUrl) {
+      if (string.IsNullOrWhiteSpace(newVideoUrl)) {
+        return;
+      }
+      ValidateVideoUrlFormat(newVideoUrl);
+      if (IsPersistent && Session != null && newVideoUrl != oldVideoUrl) {
+        // If there's no session, which means we cannot check for a duplicate,
+        // EntityBase.UpdateNonIndexField will throw an InvalidOperationException anyway.
+        var duplicate = FindDuplicateVideoUrl(newVideoUrl, Session);
+        if (duplicate != null) {
+          throw CreateDuplicateVideoUrlUpdateException(duplicate);
+        }
+      }
+    }
+
+    public static void ValidateVideoUrlFormat(string videoUrl) {
+      ValidateUrlFormat(videoUrl, nameof(VideoUrl));
     }
   }
 }

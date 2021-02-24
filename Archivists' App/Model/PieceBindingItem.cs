@@ -132,8 +132,7 @@ namespace SoundExplorers.Model {
     }
 
     private void DisallowChangeAudioUrlToDuplicate(Piece piece) {
-      if (AudioUrl != piece.AudioUrl &&
-          !string.IsNullOrWhiteSpace(AudioUrl)) {
+      if (AudioUrl != piece.AudioUrl) {
         var foundPiece = FindPieceWithAudioUrl(AudioUrl);
         if (foundPiece != null && !foundPiece.Oid.Equals(piece.Oid)) {
           throw Piece.CreateDuplicateAudioUrlUpdateException(foundPiece);
@@ -142,8 +141,7 @@ namespace SoundExplorers.Model {
     }
 
     private void DisallowChangeVideoUrlToDuplicate(Piece piece) {
-      if (VideoUrl != piece.VideoUrl &&
-          !string.IsNullOrWhiteSpace(VideoUrl)) {
+      if (VideoUrl != piece.VideoUrl) {
         var foundPiece = FindPieceWithVideoUrl(VideoUrl);
         if (foundPiece != null && !foundPiece.Oid.Equals(piece.Oid)) {
           throw Piece.CreateDuplicateVideoUrlUpdateException(foundPiece);
@@ -152,39 +150,16 @@ namespace SoundExplorers.Model {
     }
 
     private void DisallowInsertWithDuplicateAudioUrl() {
-      if (!string.IsNullOrWhiteSpace(AudioUrl)) {
-        var duplicate = FindPieceWithAudioUrl(AudioUrl);
-        if (duplicate != null) {
-          throw Piece.CreateDuplicateAudioUrlInsertException(CreateKey(), duplicate); 
-        }
+      var duplicate = FindPieceWithAudioUrl(AudioUrl);
+      if (duplicate != null) {
+        throw Piece.CreateDuplicateAudioUrlInsertException(Key!, duplicate); 
       }
     }
 
     private void DisallowInsertWithDuplicateVideoUrl() {
-      if (!string.IsNullOrWhiteSpace(VideoUrl)) {
-        var duplicate = FindPieceWithVideoUrl(VideoUrl);
-        if (duplicate != null) {
-          throw Piece.CreateDuplicateVideoUrlInsertException(CreateKey(), duplicate); 
-        }
-      }
-    }
-
-    internal override void ValidateInsertion() {
-      base.ValidateInsertion();
-      DisallowInsertWithDuplicateAudioUrl();
-      DisallowInsertWithDuplicateVideoUrl();
-    }
-
-    internal override void ValidatePropertyUpdate(string propertyName,
-      Piece piece) {
-      base.ValidatePropertyUpdate(propertyName, piece);
-      switch (propertyName) {
-        case nameof(Piece.AudioUrl):
-          DisallowChangeAudioUrlToDuplicate(piece);
-          break;
-        case nameof(Piece.VideoUrl):
-          DisallowChangeVideoUrlToDuplicate(piece);
-          break;
+      var duplicate = FindPieceWithVideoUrl(VideoUrl);
+      if (duplicate != null) {
+        throw Piece.CreateDuplicateVideoUrlInsertException(Key!, duplicate); 
       }
     }
 
@@ -240,6 +215,67 @@ namespace SoundExplorers.Model {
         "        Examples" + Environment.NewLine +
         "            0:1:2 or 1:2:3 or 01:02:03 or 1:02:34 or 1:23:04 or 1:23:45",
         nameof(Duration));
+    }
+
+    private void ValidateAudioUrlOnInsertion() {
+      if (!string.IsNullOrWhiteSpace(AudioUrl)) {
+        Piece.ValidateAudioUrlFormat(AudioUrl);
+        DisallowInsertWithDuplicateAudioUrl();
+      }
+    }
+
+    private void ValidateAudioUrlOnUpdate(Piece piece) {
+      if (!string.IsNullOrWhiteSpace(AudioUrl)) {
+        Piece.ValidateAudioUrlFormat(AudioUrl);
+        DisallowChangeAudioUrlToDuplicate(piece);
+      }
+    }
+
+    private void ValidateDurationOnInsertion() {
+      var durationTimeSpan = ToDurationTimeSpan(Duration);
+      Piece.CheckThatDurationHasBeenSpecified(Key!, durationTimeSpan);
+      Piece.ValidateDurationRange(durationTimeSpan);
+    }
+
+    private void ValidateDurationOnUpdate() {
+      Piece.ValidateDurationRange(ToDurationTimeSpan(Duration));
+    }
+
+    internal override void ValidateInsertion() {
+      base.ValidateInsertion();
+      ValidateDurationOnInsertion();
+      ValidateAudioUrlOnInsertion();
+      ValidateVideoUrlOnInsertion();
+    }
+
+    private void ValidateVideoUrlOnInsertion() {
+      if (!string.IsNullOrWhiteSpace(VideoUrl)) {
+        Piece.ValidateVideoUrlFormat(VideoUrl);
+        DisallowInsertWithDuplicateVideoUrl();
+      }
+    }
+
+    private void ValidateVideoUrlOnUpdate(Piece piece) {
+      if (!string.IsNullOrWhiteSpace(VideoUrl)) {
+        Piece.ValidateVideoUrlFormat(VideoUrl);
+        DisallowChangeVideoUrlToDuplicate(piece);
+      }
+    }
+
+    internal override void ValidatePropertyUpdate(string propertyName,
+      Piece piece) {
+      base.ValidatePropertyUpdate(propertyName, piece);
+      switch (propertyName) {
+        case nameof(Piece.Duration):
+          ValidateDurationOnUpdate();
+          break;
+        case nameof(Piece.AudioUrl):
+          ValidateAudioUrlOnUpdate(piece);
+          break;
+        case nameof(Piece.VideoUrl):
+          ValidateVideoUrlOnUpdate(piece);
+          break;
+      }
     }
   }
 }

@@ -45,6 +45,8 @@ namespace SoundExplorers.Model {
 
     private IDictionary<string, object?>? EntityPropertyValues { get; set; }
 
+    internal Key? Key { get; private set; }
+
     protected IDictionary<string, PropertyInfo> Properties =>
       _properties ??= new PropertyDictionary(typeof(TBindingItem));
 
@@ -91,19 +93,19 @@ namespace SoundExplorers.Model {
     ///   the ones in the Data layer, but I think they are fine.
     /// </remarks>
     private void CheckForDuplicateKey(TEntity? entity = null) {
-      var newKey = CreateKey();
+      Key = CreateKey();
       if (entity != null) {
-        if (newKey == entity.Key) {
+        if (Key == entity.Key) {
           return;
         }
       }
       // Entity list could be a sorted list. Duplicate check might be faster. But it
       // would be a big job to do and I don't think there will be a performance problem.
       if ((from otherEntity in EntityList
-        where otherEntity.Key == newKey
+        where otherEntity.Key == Key
         select otherEntity).Any()) {
         string message =
-          $"Another {EntityList.EntityTypeName} with key '{newKey}' already exists.";
+          $"Another {EntityList.EntityTypeName} with key '{Key}' already exists.";
         throw new DuplicateNameException(message);
       }
     }
