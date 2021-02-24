@@ -11,12 +11,12 @@ using VelocityDb.Session;
 namespace SoundExplorers.Tests.Data {
   [ExcludeFromCodeCoverage]
   public class TestData {
+    private static char[]? _letters;
     private IList<string>? _actNames;
     private EventType? _defaultEventType;
     private IList<string>? _eventTypeNames;
     private IList<string>? _forenames;
     private IList<string>? _genreNames;
-    private static char[]? _letters;
     private IList<string>? _locationNames;
     private IList<string>? _roleNames;
     private IList<string>? _seriesNames;
@@ -55,7 +55,6 @@ namespace SoundExplorers.Tests.Data {
     private EventType DefaultEventType => _defaultEventType ??= GetDefaultEventType();
     private IList<string> EventTypeNames => _eventTypeNames ??= CreateEventTypeNames();
     private IList<string> Forenames => _forenames ??= CreateForenames();
-
     private IList<string> GenreNames => _genreNames ??= CreateGenreNames();
     private static char[] Letters => _letters ??= CreateLetters();
     private IList<string> LocationNames => _locationNames ??= CreateLocationNames();
@@ -103,12 +102,15 @@ namespace SoundExplorers.Tests.Data {
 
     public void AddCreditsPersisted(int count, SessionBase session,
       Piece? piece = null, Artist? artist = null, Role? role = null) {
-      int creditNo = 1;
+      var parentPiece = piece ?? GetDefaultPiece();
+      int creditNo = parentPiece.Credits.Count == 0
+        ? 1
+        : parentPiece.Credits[^1].CreditNo + 1;
       for (int i = 0; i < count; i++) {
         var credit = new Credit {
           QueryHelper = QueryHelper,
           CreditNo = creditNo,
-          Piece = piece ?? GetDefaultPiece(),
+          Piece = parentPiece,
           Artist = artist ?? GetDefaultArtist(),
           Role = role ?? GetDefaultRole()
         };
@@ -120,7 +122,9 @@ namespace SoundExplorers.Tests.Data {
 
     public void AddEventsPersisted(int count, SessionBase session,
       Location? location = null, EventType? eventType = null) {
-      var date = DateTime.Parse("2020/01/09");
+      var date = Events.Count == 0
+        ? DateTime.Parse("2020/01/09")
+        : Events[^1].Date.AddDays(7);
       for (int i = 0; i < count; i++) {
         var @event = new Event {
           QueryHelper = QueryHelper,
@@ -207,12 +211,13 @@ namespace SoundExplorers.Tests.Data {
 
     public void AddPiecesPersisted(int count, SessionBase session,
       Set? set = null) {
-      int pieceNo = 1;
+      var parentSet = set ?? GetDefaultSet();
+      int pieceNo = parentSet.Pieces.Count == 0 ? 1 : parentSet.Pieces[^1].PieceNo + 1;
       for (int i = 0; i < count; i++) {
         var piece = new Piece {
           QueryHelper = QueryHelper,
           PieceNo = pieceNo,
-          Set = set ?? GetDefaultSet(),
+          Set = parentSet,
           AudioUrl = GenerateUniqueUrl(),
           VideoUrl = GenerateUniqueUrl(),
           Title = GenerateUniqueName(8),
@@ -265,12 +270,13 @@ namespace SoundExplorers.Tests.Data {
 
     public void AddSetsPersisted(int count, SessionBase session,
       Event? @event = null, Genre? genre = null) {
-      int setNo = 1;
+      var parentEvent = @event ?? GetDefaultEvent();
+      int setNo = parentEvent.Sets.Count == 0 ? 1 : parentEvent.Sets[^1].SetNo + 1;
       for (int i = 0; i < count; i++) {
         var set = new Set {
           QueryHelper = QueryHelper,
           SetNo = setNo,
-          Event = @event ?? GetDefaultEvent(),
+          Event = parentEvent,
           Genre = genre ?? GetDefaultGenre(),
           Notes = GenerateNotes()
         };
@@ -309,23 +315,23 @@ namespace SoundExplorers.Tests.Data {
     [SuppressMessage("ReSharper", "StringLiteralTypo")]
     private static IList<string> CreateForenames() {
       return new List<string> {
-        "Simon", "Dan", "Siobhan", "Jessica", "Peter", "Patricia", "Sara", "Sean", 
-        "Giovanni", "Francois", "Francoise", "Terry", "Joanne", "John", "Susan", 
+        "Simon", "Dan", "Siobhan", "Jessica", "Peter", "Patricia", "Sara", "Sean",
+        "Giovanni", "Francois", "Francoise", "Terry", "Joanne", "John", "Susan",
         "Gaston", "Pierre", "Gerry", "Geoff", "Andy", "Andrea", "Scot", "Seamus",
-        "Rose", "Rory", "Alice", "Alison", "Mike", "Morton", "Quentin", "Jim", "James", 
+        "Rose", "Rory", "Alice", "Alison", "Mike", "Morton", "Quentin", "Jim", "James",
         "Portia", "Jill", "Sam", "Samantha", "Maria", "Mary", "Bill", "William", "Will",
-        "Andrew", "Gloria", "Sean", "Martin", "Martina", "Paul", "Paula", "Paulo", 
-        "Pauline", "Vivian", "Vivienne", "Constance", "Connie", "Jon", "Jonathan", 
-        "Jonny", "Gerard", "Gerd", "Astrid", "Zoe", "Yvette", "Olive", "Chris", 
+        "Andrew", "Gloria", "Sean", "Martin", "Martina", "Paul", "Paula", "Paulo",
+        "Pauline", "Vivian", "Vivienne", "Constance", "Connie", "Jon", "Jonathan",
+        "Jonny", "Gerard", "Gerd", "Astrid", "Zoe", "Yvette", "Olive", "Chris",
         "Christine", "Barbara", "Frank", "Bernard", "Brenda", "Tom", "Thomas", "Fergus",
         "Molly", "Katherine", "Linda", "Lionel", "Len", "Ben", "Benjamin", "Leonard",
-        "Leonardo", "Francesca", "Francis", "Frances", "Terri", "Miguel", "Joan", 
+        "Leonardo", "Francesca", "Francis", "Frances", "Terri", "Miguel", "Joan",
         "Catherine", "Maia", "Julie", "Julian", "Robert", "Bob", "Robbie", "Rachael",
-        "Rebecca", "Jude", "Judy", "Henry", "Enrico", "Harriet", "Harry", "Barry", 
+        "Rebecca", "Jude", "Judy", "Henry", "Enrico", "Harriet", "Harry", "Barry",
         "Larry", "Laurence", "Lawrence", "Stan", "Sally", "Tim", "Charlotte", "Charles",
         "Charlie", "Karen", "Kieran", "Victoria", "Laurel", "Gary", "Giselle", "Derek",
         "Richard", "Rick", "Ricardo", "Sandra", "Dai", "Saed", "George", "Charmaine",
-        "Hermione", "Allan", "Francesco", "Toshio", "Mauricio", "Luigi", "Tristan", 
+        "Hermione", "Allan", "Francesco", "Toshio", "Mauricio", "Luigi", "Tristan",
         "Antony", "Anthony", "Antonia", "Toni", "Olga", "Roberto", "Thierry", "Mauro",
         "Liza", "Robin", "Aaron", "Eduardo", "Enno", "Iannis", "Arnulf", "Uwe", "Stefan",
         "Simeon", "Kaija", "Brian", "Gerald", "Geraldine", "Claude", "Conrad", "Heather",
@@ -381,40 +387,40 @@ namespace SoundExplorers.Tests.Data {
     [SuppressMessage("ReSharper", "StringLiteralTypo")]
     private static IList<string> CreateSurnames() {
       return new List<string> {
-        "O'Rorke", "Beban", "Marks", "Monaghan", "Daly", "Richardson", "Prosser", 
+        "O'Rorke", "Beban", "Marks", "Monaghan", "Daly", "Richardson", "Prosser",
         "Murray", "Monks", "Jenkins", "Franks", "Torricelli", "Meunes", "Jervois",
-        "Smithson", "Jackson", "Bern", "Norris", "Anderson", "Brandt", "Brand", 
+        "Smithson", "Jackson", "Bern", "Norris", "Anderson", "Brandt", "Brand",
         "Sanderson", "O'Leary", "Beethoven", "Bach", "Coltrane", "Bartlet", "Fujikura",
-        "Grisey", "Feldman", "Stockhausen", "Brown", "Levinas", "Pesson", "Keller", 
+        "Grisey", "Feldman", "Stockhausen", "Brown", "Levinas", "Pesson", "Keller",
         "Haddad", "Lewis", "Lee", "Cheung", "Pluta", "Webern", "Wuorinen", "Schoenberg",
-        "Johnson", "Babbitt", "Petterson", "Filidei", "Markoulaki", "Penderecki", 
+        "Johnson", "Babbitt", "Petterson", "Filidei", "Markoulaki", "Penderecki",
         "Hosokawa", "Kagel", "Nono", "Carter", "Murail", "Ligeti", "Turnage", "Neuwirth",
-        "Gerhard", "Barrett", "Blondeau", "Saunders", "Lanza", "Dillon", "Lim", 
+        "Gerhard", "Barrett", "Blondeau", "Saunders", "Lanza", "Dillon", "Lim",
         "Hoffman", "Cassidy", "Hayden", "Pelzel", "Moguillansky", "Poppe", "Xenakis",
-        "Herrmann", "Dierksen", "Crumb", "Prins", "Cage", "ten Holt", "Saariaho", 
+        "Herrmann", "Dierksen", "Crumb", "Prins", "Cage", "ten Holt", "Saariaho",
         "Ferneyhough", "Boulez", "Gahn", "Eckert", "Adams", "Psathas", "Edlund", "Wood",
-        "Hendrickson", "Larsen", "Li", "van Bavel", "Scheidel", "Lowe", "Shaughnesy", 
+        "Hendrickson", "Larsen", "Li", "van Bavel", "Scheidel", "Lowe", "Shaughnesy",
         "Brook", "Beard", "Comninel", "Teschke", "Post", "Dimmock", "Wickham", "Brenner",
         "Huang", "Meillassoux", "Prakash", "Luxemburg", "Hall", "Sahlins", "Cunliffe",
         "Goldthwaite", "Totman", "Bellwood", "Wolf", "Calloway", "Renfrew", "Wilkinson",
         "Heather", "Banks", "Chevalier", "Zafon", "Young", "Wright", "Wong", "Winant",
         "Wilson", "Whitehead", "Westbrook", "Watkins", "Wallace", "Vinkeloe", "Ueno",
         "Swanagon", "Staiano", "Stackpole", "Sonami", "Skatchit", "Shola", "Shiurba",
-        "Shen", "Scandura", "Santomieri", "Ryan", "Ruviaro", "Romus", "Rodriguez", 
+        "Shen", "Scandura", "Santomieri", "Ryan", "Ruviaro", "Romus", "Rodriguez",
         "Robinson", "Robair", "Rivero", "Rieman", "Reid", "Reed", "Raskin", "Powell",
-        "Pontecorvo", "Plonsey", "Perley", "Perkis", "Pek", "Pearce", "Payne", 
+        "Pontecorvo", "Plonsey", "Perley", "Perkis", "Pek", "Pearce", "Payne",
         "Pascucci", "Orr", "Ochs", "Nunn", "Nordeson", "Noertker", "Neuburg", "Moller",
         "Mitchell", "Mihaly", "Michalak", "Mezzacappa", "Menegon", "McKean", "McDonas",
         "McCaslin", "Marshall", "Lynner", "Lopez", "Lockhart", "Levin", "Leikam", "Lee",
-        "Koskinen", "Josephson", "Jordan", "Johnston", "Jamieson", "Jahde", "Ingle", 
-        "Ingalls", "Hsu", "Honda", "Holm", "Hikage", "Heule", "Hertz", "Herndon", 
+        "Koskinen", "Josephson", "Jordan", "Johnston", "Jamieson", "Jahde", "Ingle",
+        "Ingalls", "Hsu", "Honda", "Holm", "Hikage", "Heule", "Hertz", "Herndon",
         "Heglin", "Hardy", "Hammond", "Golden", "Goldberg", "Gelb", "Gale", "Frith",
-        "Fei", "Farhadian", "Everett", "Dutton", "Dunkelman", "Dubowsky", "Djll", 
+        "Fei", "Farhadian", "Everett", "Dutton", "Dunkelman", "Dubowsky", "Djll",
         "Diomede", "Dingalls", "Dimuzio", "Diaz-Infante", "DeGruttola", "Decosta",
-        "DeCillis", "Day", "Davignon", "Crossman", "Corcoran", "Cooke", "Condry", 
+        "DeCillis", "Day", "Davignon", "Crossman", "Corcoran", "Cooke", "Condry",
         "Coleman", "Clevenger", "Chen", "Chaudhary", "Chandavarkar", "Carson", "Carroll",
-        "Carey", "Cahill", "Burns", "Bruckmann", "Boisen", "Bischoff", "Bickley", 
-        "Bennett", "Benedict", "Beckman", "Banerji", "Ateria", "Atchley", "Arkin", 
+        "Carey", "Cahill", "Burns", "Bruckmann", "Boisen", "Bischoff", "Bickley",
+        "Bennett", "Benedict", "Beckman", "Banerji", "Ateria", "Atchley", "Arkin",
         "Amendola"
       }.Shuffle();
     }
@@ -489,7 +495,7 @@ namespace SoundExplorers.Tests.Data {
       return GetEntity<Set, IList<Set>>(Sets, 0);
     }
 
-    private static TEntity GetEntity<TEntity, TList>(TList list, int index) 
+    private static TEntity GetEntity<TEntity, TList>(TList list, int index)
       where TEntity : EntityBase
       where TList : IList<TEntity> {
       return index >= 0 && index < list.Count
@@ -506,7 +512,7 @@ namespace SoundExplorers.Tests.Data {
       return GetRandomEntity<Artist, IList<Artist>>(Artists);
     }
 
-    private static TEntity GetRandomEntity<TEntity, TList>(TList list) 
+    private static TEntity GetRandomEntity<TEntity, TList>(TList list)
       where TEntity : EntityBase
       where TList : IList<TEntity> {
       return list.Count > 0

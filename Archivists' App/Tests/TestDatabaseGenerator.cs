@@ -45,37 +45,74 @@ namespace SoundExplorers.Tests {
       Data.AddSeriesPersisted(Session);
       AddEvents();
       AddSets();
+      AddPieces();
       Session.Commit();
     }
 
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
     private void AddCredits() {
       foreach (var piece in Data.Pieces) {
-        Data.AddCreditsPersisted(TestData.GetRandomInteger(1, 4), Session, piece,
-          Data.GetRandomArtist(), Data.GetRandomRole());
+        int creditCount = TestData.GetRandomInteger(1, 4);
+        for (int i = 0; i < creditCount; i++) {
+          Data.AddCreditsPersisted(1, Session, piece, Data.GetRandomArtist(),
+            Data.GetRandomRole());
+        }
       }
     }
 
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
     private void AddEvents() {
-      Data.AddEventsPersisted(50, Session, Data.GetRandomLocation(),
-        Data.GetRandomEventType());
-      for (int i = 0; i < Data.Events.Count - 2; i++) {
-        var @event = Data.Events[i];
-        @event.Newsletter = Data.Newsletters[i];
-        @event.Series = Data.GetRandomSeries();
+      for (int i = 0; i < 50; i++) {
+        Data.AddEventsPersisted(1, Session, Data.GetRandomLocation(),
+          Data.GetRandomEventType());
+        if (i < 48) {
+          var @event = Data.Events[i];
+          @event.Newsletter = Data.Newsletters[i + 1];
+          @event.Series = Data.GetRandomSeries();
+        }
+      }
+    }
+
+    [SuppressMessage("ReSharper", "UnusedMember.Local")]
+    private void AddPieces() {
+      foreach (var set in Data.Sets) {
+        int pieceCount = TestData.GetRandomInteger(1, 4);
+        for (int i = 0; i < pieceCount; i++) {
+          Data.AddPiecesPersisted(1, Session, set);
+        }
+      }
+      for (int i = 0; i < Data.Pieces.Count - 2; i++) {
+        var piece = Data.Pieces[i];
+        int chance = TestData.GetRandomInteger(1, 5);
+        if (chance == 1) {
+          piece.AudioUrl = string.Empty;
+        }
+        chance = TestData.GetRandomInteger(1, 5);
+        if (chance > 1) {
+          piece.VideoUrl = string.Empty;
+        }
+      }
+      for (int i = Data.Pieces.Count - 2; i < Data.Pieces.Count; i++) {
+        var piece = Data.Pieces[i];
+        piece.AudioUrl = string.Empty;
+        piece.VideoUrl = string.Empty;
       }
     }
 
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
     private void AddSets() {
       foreach (var @event in Data.Events) {
-        Data.AddSetsPersisted(TestData.GetRandomInteger(1, 4), Session, @event,
-          Data.GetRandomGenre());
+        int setCount = TestData.GetRandomInteger(1, 4);
+        for (int i = 0; i < setCount; i++) {
+          Data.AddSetsPersisted(1, Session, @event, Data.GetRandomGenre());
+        }
       }
       for (int i = 0; i < Data.Sets.Count - 2; i++) {
         var set = Data.Sets[i];
-        set.Act = Data.GetRandomAct();
+        int chance = TestData.GetRandomInteger(1, 3);
+        if (chance > 1) {
+          set.Act = Data.GetRandomAct();
+        }
       }
     }
   }
