@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Data;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using JetBrains.Annotations;
@@ -50,7 +52,7 @@ namespace SoundExplorers.Model {
     // appear as a column on the grid!
     IDictionary<string, PropertyInfo> IBindingItem.Properties => Properties;
 
-    public virtual Key CreateKey() {
+    internal virtual Key CreateKey() {
       return new Key(GetSimpleKey(), EntityList.IdentifyingParent);
     }
 
@@ -79,15 +81,45 @@ namespace SoundExplorers.Model {
     }
 
     /// <summary>
+    ///   There are also checks for duplicate keys in <see cref="EntityBase" /> in the
+    ///   Data layer. This method preempts those by searching application data, on hand
+    ///   in memory, rather than the database. So it is hoped that it will turn out to be
+    ///   quicker with large volumes of data.
+    /// </summary>
+    /// <remarks>
+    ///   Arguably this duplicate key check does not give such nice error messages as
+    ///   the ones in the Data layer, but I think they are fine.
+    /// </remarks>
+    private void CheckForDuplicateKey(TEntity? entity = null) {
+      var newKey = CreateKey();
+      if (entity != null) {
+        if (newKey == entity.Key) {
+          return;
+        }
+      }
+      // Entity list could be a sorted list. Duplicate check might be faster. But it
+      // would be a big job to do and I don't think there will be a performance problem.
+      if ((from otherEntity in EntityList
+        where otherEntity.Key == newKey
+        select otherEntity).Any()) {
+        string message =
+          $"Another {EntityList.EntityTypeName} with key '{newKey}' already exists.";
+        throw new DuplicateNameException(message);
+      }
+    }
+
+    /// <summary>
     ///   A derived class representing a row of a main grid that is a child of a parent
     ///   grid row must override this method.
     /// </summary>
     /// <remarks>
+    ///   I'M NOT SURE HOW ACCURATE THIS IS, AS I NOW CANNOT REVERT CODE TO REPRODUCE THE
+    ///   EXACT EXCEPTION
     ///   If referencing properties are not set in the right order in the overriding
-    ///   methods, EntityBase.UpdateNonIndexField will eventually throw an
+    ///   methods, Session.Commit will eventually throw an
     ///   <see cref="InvalidOperationException" /> as a result of handling a
     ///   <see cref="NullReferenceException" /> thrown by VelocityDB's internal
-    ///   SessionBase.FlushUpdates() method within SessionBase.AllObjects(). 
+    ///   SessionBase.FlushUpdates() method within SessionBase.AllObjects().
     /// </remarks>
     protected virtual void CopyValuesToEntityProperties(TEntity entity) {
       foreach (var property in Properties.Values) {
@@ -159,6 +191,27 @@ namespace SoundExplorers.Model {
       var newEntityPropertyValue =
         GetEntityPropertyValue(Properties[propertyName], entityProperty);
       SetEntityPropertyValue(entity, entityProperty, newEntityPropertyValue);
+    }
+
+    /// <summary>
+    ///   Derived classes should override this method to implement any entity
+    ///   type-specific validation that needs to be done at insertion time against other
+    ///   entities in the entity list or related entities.
+    /// </summary>
+    internal virtual void ValidateInsertion() {
+      CheckForDuplicateKey();
+    }
+
+    /// <summary>
+    ///   Derived classes should override this method to implement any entity
+    ///   type-specific validation that needs to be done at existing entity property
+    ///   update time against other entities on the entity list or related entities.
+    /// </summary>
+    internal virtual void ValidatePropertyUpdate(
+      string propertyName, TEntity entity) {
+      if (EntityList.Columns[propertyName].IsInKey) {
+        CheckForDuplicateKey(entity);
+      }
     }
   }
 }

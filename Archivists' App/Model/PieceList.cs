@@ -14,6 +14,8 @@ namespace SoundExplorers.Model {
     public PieceList(bool isMainList) :
       base(isMainList ? typeof(SetList) : null) { }
 
+    internal SetList SetList { get; private set; } = null!;
+
     protected override PieceBindingItem CreateBindingItem(Piece piece) {
       return new PieceBindingItem {
         Date = piece.Set.Event.Date,
@@ -60,7 +62,7 @@ namespace SoundExplorers.Model {
     }
 
     public override IEntityList CreateParentList() {
-      return new SetList(false) {Session = Session};
+      return SetList = new SetList(false) {Session = Session};
     }
 
     public override IdentifyingParentChildren GetIdentifyingParentChildrenForMainList(

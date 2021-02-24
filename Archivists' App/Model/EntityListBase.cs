@@ -157,13 +157,14 @@ namespace SoundExplorers.Model {
     public void BackupAndRemoveInsertionErrorBindingItem() {
       // Debug.WriteLine("EntityListBase.BackupAndRemoveInsertionErrorBindingItem");
       int insertionRowIndex = BindingList.Count - 1;
-      // I have not worked out how to return to the insertion row after showing an out of
-      // range error message. The workaround is not to back up the insertion error
-      // binding item. Otherwise it would appear on the insertion row when the user 
-      // navigates to it manually, which does not look right.
-      if (LastDatabaseUpdateErrorException!.ErrorType != ErrorType.OutOfRange) {
-        BindingList.InsertionErrorItem = BindingList[insertionRowIndex];
-      }
+      BindingList.InsertionErrorItem = BindingList[insertionRowIndex];
+      // // I have not worked out how to return to the insertion row after showing an out of
+      // // range error message. The workaround is not to back up the insertion error
+      // // binding item. Otherwise it would appear on the insertion row when the user 
+      // // navigates to it manually, which does not look right.
+      // if (LastDatabaseUpdateErrorException!.ErrorType != ErrorType.OutOfRange) {
+      //   BindingList.InsertionErrorItem = BindingList[insertionRowIndex];
+      // }
       BindingList.RemoveAt(insertionRowIndex);
     }
 
@@ -444,7 +445,7 @@ namespace SoundExplorers.Model {
       var bindingItem = BindingList[rowIndex]!;
       bindingItem.EntityList = this;
       try {
-        CheckForDuplicateKey(bindingItem);
+        bindingItem.ValidateInsertion();
       } catch (Exception exception) {
         OnValidationError(rowIndex, null, exception);
         throw LastDatabaseUpdateErrorException!;
@@ -489,38 +490,9 @@ namespace SoundExplorers.Model {
       }
     }
 
-    /// <summary>
-    ///   There are also checks for duplicate keys in <see cref="EntityBase" /> in the
-    ///   Data layer. This method preempts those by searching application data, on hand
-    ///   in memory, rather than the database. So it is hoped that it will turn out to be
-    ///   quicker with large volumes of data.
-    /// </summary>
-    /// <remarks>
-    ///   Arguably this duplicate key check does not give such nice error messages as
-    ///   the ones in the Data layer, but I think they are fine.
-    /// </remarks>
-    private void CheckForDuplicateKey(
-      TBindingItem currentBindingItem, TEntity? currentEntity = null) {
-      var newKey = currentBindingItem.CreateKey();
-      if (currentEntity != null) {
-        if (newKey == currentEntity.Key) {
-          return;
-        }
-      }
-      // Entity list could be a sorted list. Duplicate check might be faster. But it
-      // would be a big job to do and I don't think there will be a performance problem.
-      if ((from entity in this where entity.Key == newKey select entity).Any()) {
-        string message =
-          $"Another {EntityTypeName} with key '{newKey}' already exists.";
-        throw new DuplicateNameException(message);
-      }
-    }
-
     private DatabaseUpdateErrorException CreateDatabaseUpdateErrorException(
       Exception exception, int rowIndex) {
       if (!IsDatabaseUpdateError(exception)) {
-        // Terminal error.  In the Release compilation, the stack trace will be shown by
-        // the terminal error handler in Program.cs.
         //Debug.WriteLine(exception);
         throw exception;
       }
@@ -550,8 +522,8 @@ namespace SoundExplorers.Model {
     ///   Returns whether the specified exception indicates that, for an anticipated
     ///   reason, a requested database update could not be done, in which case the
     ///   exception's message will need to be shown to the user to explain the error that
-    ///   cause the update to be disallowed. If false, the exception should be treated as
-    ///   a terminal error.
+    ///   cause the update to be disallowed. If false, the exception either requires
+    ///   special handling or should be treated as a terminal error.
     /// </summary>
     private static bool IsDatabaseUpdateError(Exception exception) {
       return exception is ConstraintException; // Includes PropertyConstraintException
@@ -576,11 +548,9 @@ namespace SoundExplorers.Model {
         return;
       }
       var entity = this[rowIndex];
-      if (Columns[propertyName].IsInKey) {
-        CheckForDuplicateKey(bindingItem, entity);
-      }
-      Session.BeginUpdate();
       try {
+        bindingItem.ValidatePropertyUpdate(propertyName, entity);
+        Session.BeginUpdate();
         bindingItem.UpdateEntityProperty(propertyName, entity);
         Session.Commit();
         BackupItem = CreateBackupItem(bindingItem);

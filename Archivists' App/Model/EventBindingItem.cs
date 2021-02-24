@@ -69,7 +69,7 @@ namespace SoundExplorers.Model {
       }
     }
 
-    public override Key CreateKey() {
+    internal override Key CreateKey() {
       return new Key(GetSimpleKey(), FindParent(Properties[nameof(Location)]));
     }
 

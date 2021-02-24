@@ -108,10 +108,7 @@ namespace SoundExplorers.Data {
         // an InvalidOperationException anyway.
         var duplicate = FindDuplicateAudioUrl(newAudioUrl, Session);
         if (duplicate != null) {
-          throw new PropertyConstraintException(
-            "Audio URL cannot be set to " +
-            $"'{newAudioUrl}'. Piece '{duplicate.Key}' " +
-            "already exists with that Audio URL.", nameof(AudioUrl));
+          throw CreateDuplicateAudioUrlUpdateException(duplicate);
         }
       }
     }
@@ -132,10 +129,7 @@ namespace SoundExplorers.Data {
         // an InvalidOperationException anyway.
         var duplicate = FindDuplicateVideoUrl(newVideoUrl, Session);
         if (duplicate != null) {
-          throw new PropertyConstraintException(
-            "Video URL cannot be set to " +
-            $"'{newVideoUrl}'. Piece '{duplicate.Key}' " +
-            "already exists with that Video URL.", nameof(VideoUrl));
+          throw CreateDuplicateVideoUrlUpdateException(duplicate);
         }
       }
     }
@@ -146,19 +140,13 @@ namespace SoundExplorers.Data {
       if (!string.IsNullOrWhiteSpace(AudioUrl)) {
         duplicate = FindDuplicateAudioUrl(AudioUrl, session);
         if (duplicate != null) {
-          throw new PropertyConstraintException(
-            $"Piece '{Key}' cannot be added because Piece " +
-            $"'{duplicate.Key}' " +
-            $"already exists with the same Audio URL '{AudioUrl}'.", nameof(AudioUrl));
+          throw CreateDuplicateAudioUrlInsertException(Key, duplicate); 
         }
       }
       if (!string.IsNullOrWhiteSpace(VideoUrl)) {
         duplicate = FindDuplicateVideoUrl(VideoUrl, session);
         if (duplicate != null) {
-          throw new PropertyConstraintException(
-            $"Piece '{Key}' cannot be added because Piece " +
-            $"'{duplicate.Key}' " +
-            $"already exists with the same Video URL '{VideoUrl}'.", nameof(VideoUrl));
+          throw CreateDuplicateVideoUrlInsertException(Key, duplicate); 
         }
       }
       if (Duration == TimeSpan.Zero) {
@@ -166,6 +154,40 @@ namespace SoundExplorers.Data {
           $"Piece '{Key}' cannot be added because its Duration has not been specified.", 
           nameof(Duration));
       }
+    }
+
+    public static PropertyConstraintException CreateDuplicateAudioUrlInsertException(
+      Key newKey, Piece duplicate) {
+      return new PropertyConstraintException(
+        $"Piece '{newKey}' cannot be added because Piece " +
+        $"'{duplicate.Key}' " +
+        $"already exists with the same Audio URL '{duplicate.AudioUrl}'.", 
+        nameof(AudioUrl));
+    }
+
+    public static PropertyConstraintException CreateDuplicateAudioUrlUpdateException(
+      Piece duplicate) {
+      return new PropertyConstraintException(
+        "Audio URL cannot be set to " +
+        $"'{duplicate.AudioUrl}'. Piece '{duplicate.Key}' " +
+        "already exists with that Audio URL.", nameof(AudioUrl));
+    }
+
+    public static PropertyConstraintException CreateDuplicateVideoUrlInsertException(
+      Key newKey, Piece duplicate) {
+      return new PropertyConstraintException(
+        $"Piece '{newKey}' cannot be added because Piece " +
+        $"'{duplicate.Key}' " +
+        $"already exists with the same Video URL '{duplicate.VideoUrl}'.", 
+        nameof(VideoUrl));
+    }
+
+    public static PropertyConstraintException CreateDuplicateVideoUrlUpdateException(
+      Piece duplicate) {
+      return new PropertyConstraintException(
+        "Video URL cannot be set to " +
+        $"'{duplicate.VideoUrl}'. Piece '{duplicate.Key}' " +
+        "already exists with that Video URL.", nameof(VideoUrl));
     }
 
     private Piece? FindDuplicateAudioUrl(string audioUrl,

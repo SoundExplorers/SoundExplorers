@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Data;
-using System.Linq;
 using NUnit.Framework;
 using SoundExplorers.Data;
 using SoundExplorers.Model;
@@ -22,9 +21,10 @@ namespace SoundExplorers.Tests.Model {
     }
 
     private TestData Data { get; set; } = null!;
-    private PieceList List { get; set; } = null!;
     private QueryHelper QueryHelper { get; set; } = null!;
     private TestSession Session { get; set; } = null!;
+    private PieceList List { get; set; } = null!;
+    private SetList ParentList { get; set; } = null!;
 
     [Test]
     public void A010_InitialiseAsChildList() {
@@ -55,17 +55,16 @@ namespace SoundExplorers.Tests.Model {
     public void AddPiece() {
       List = CreatePieceList();
       Assert.IsTrue(List.IsMainList, "IsMainList");
+      Populate();
       var set = Data.Sets[0];
-      var setChildren = CreateSetChildren(set);
-      List.Populate(setChildren);
+      Populate();
       var bindingList = List.BindingList;
       bindingList.AddNew();
       List.OnRowEnter(3);
       bindingList[3].Duration = "3:00";
       List.OnRowValidated(3);
       Assert.AreEqual(4, set.Pieces.Count, "Count");
-      setChildren = CreateSetChildren(set);
-      List.Populate(setChildren);
+      Populate();
       Assert.AreEqual(4, bindingList[3].PieceNo, "PieceNo in binding list");
       Assert.AreEqual(4, List[3].PieceNo, "PieceNo in List");
       Assert.AreEqual(4, set.Pieces[3].PieceNo, "PieceNo in Event.Pieces");
@@ -74,7 +73,7 @@ namespace SoundExplorers.Tests.Model {
     [Test]
     public void DefaultPieceNoWithExistingPieces() {
       List = CreatePieceList();
-      List.Populate();
+      Populate();
       List.BindingList.AddNew();
       Assert.AreEqual(4, List.BindingList[3].PieceNo);
     }
@@ -82,7 +81,7 @@ namespace SoundExplorers.Tests.Model {
     [Test]
     public void DefaultPieceNoWithNoExistingPieces() {
       List = CreatePieceList(false);
-      List.Populate();
+      Populate();
       List.BindingList.AddNew();
       Assert.AreEqual(1, List.BindingList[0].PieceNo);
     }
@@ -90,9 +89,7 @@ namespace SoundExplorers.Tests.Model {
     [Test]
     public void DisallowAddPieceWithInvalidDuration() {
       List = CreatePieceList(false);
-      var set = Data.Sets[0];
-      var setChildren = CreateSetChildren(set);
-      List.Populate(setChildren);
+      Populate();
       var bindingList = List.BindingList;
       bindingList.AddNew();
       List.OnRowEnter(0);
@@ -110,9 +107,7 @@ namespace SoundExplorers.Tests.Model {
     [Test]
     public void DisallowAddPieceWithoutDuration() {
       List = CreatePieceList(false);
-      var set = Data.Sets[0];
-      var setChildren = CreateSetChildren(set);
-      List.Populate(setChildren);
+      Populate();
       var bindingList = List.BindingList;
       bindingList.AddNew();
       List.OnRowEnter(0);
@@ -128,7 +123,7 @@ namespace SoundExplorers.Tests.Model {
     [Test]
     public void DisallowChangeDurationToInvalid() {
       List = CreatePieceList();
-      List.Populate();
+      Populate();
       List.OnRowEnter(2);
       var bindingList = List.BindingList;
       var exception = Assert.Catch<DatabaseUpdateErrorException>(
@@ -144,8 +139,7 @@ namespace SoundExplorers.Tests.Model {
     [Test]
     public void DisallowChangeKeyToDuplicate() {
       List = CreatePieceList();
-      var setChildren = CreateSetChildren(Data.Sets[0]);
-      List.Populate(setChildren);
+      Populate();
       List.OnRowEnter(2);
       var bindingList = List.BindingList;
       Assert.DoesNotThrow(() => bindingList[2].PieceNo = 3);
@@ -173,7 +167,7 @@ namespace SoundExplorers.Tests.Model {
       Session.BeginUpdate();
       Data.AddCreditsPersisted(5, Session);
       Session.Commit();
-      List.Populate();
+      Populate();
       var identifyingParentChildren = List.GetIdentifyingParentChildrenForMainList(0);
       Assert.AreSame(Data.Pieces[0], identifyingParentChildren.IdentifyingParent,
         "IdentifyingParent");
@@ -184,7 +178,7 @@ namespace SoundExplorers.Tests.Model {
     [Test]
     public void InvalidFormatPieceNo() {
       List = CreatePieceList();
-      List.Populate();
+      Populate();
       List.OnValidationError(1, "PieceNo",
         new FormatException("Value cannot be cast to Int32"));
       Assert.AreEqual("PieceNo must be an integer between 1 and 99.",
@@ -192,7 +186,7 @@ namespace SoundExplorers.Tests.Model {
     }
 
     [Test]
-    public void ReadAsParentList() {
+    public void ReadAsChildList() {
       var newDuration2 = TimeSpan.FromMinutes(59);
       var newDuration3 = TimeSpan.FromHours(1);
       List = CreatePieceList(true, false);
@@ -203,7 +197,7 @@ namespace SoundExplorers.Tests.Model {
       var piece3 = Data.Pieces[2];
       piece3.Duration = newDuration3;
       Session.Commit();
-      List.Populate();
+      Populate();
       var bindingList = List.BindingList;
       Assert.AreEqual("59:00", bindingList[1].Duration, "Duration string 2");
       Assert.AreEqual(newDuration2,
@@ -242,14 +236,104 @@ namespace SoundExplorers.Tests.Model {
       Session.Commit();
     }
 
-    private static IdentifyingParentChildren CreateSetChildren(Set set) {
-      return new IdentifyingParentChildren(set, set.Pieces.Values.ToList());
-    }
-
     private PieceList CreatePieceList(
       bool addPieces = true, bool isMainList = true) {
       AddData(addPieces);
-      return new PieceList(isMainList) {Session = Session};
+      var result = new PieceList(isMainList) {Session = Session};
+      if (isMainList) {
+        ParentList = (result.CreateParentList() as SetList)!;
+      }
+      return result;
+    }
+
+    private void Populate() {
+      if (List.IsMainList) {
+        ParentList.Populate();
+        List.Populate(ParentList.GetIdentifyingParentChildrenForMainList(
+          ParentList.Count - 1));
+      } else {
+        List.Populate();
+      }
+    }
+
+    [Test]
+    public void ValidateAudioUrl() {
+      List = CreatePieceList();
+      Populate();
+      List.OnRowEnter(2);
+      var bindingList = List.BindingList;
+      string uniqueUrl = TestData.GenerateUniqueUrl();
+      Key otherKey = bindingList[0].CreateKey();
+      string otherUrl = bindingList[0].AudioUrl;
+      Assert.DoesNotThrow(
+        () => bindingList[2].AudioUrl = uniqueUrl,
+        "Changing AudioUrl to unique allowed");
+      var exception = Assert.Catch<DatabaseUpdateErrorException>(
+        () => bindingList[2].AudioUrl = otherUrl,
+        "Changing AudioUrl to duplicate disallowed");
+      Assert.AreEqual(
+        $"Audio URL cannot be set to '{otherUrl}'. " + 
+        $"Piece '{otherKey}' already exists with that Audio URL.",
+        exception.Message,
+        "Error message on trying to change AudioUrl to duplicate");
+      bindingList.AddNew();
+      List.OnRowEnter(3);
+      bindingList[3].EntityList = List;
+      Key newKey = bindingList[3].CreateKey();
+      bindingList[3].Duration = "3:45";
+      bindingList[3].AudioUrl = otherUrl;
+      exception = Assert.Catch<DatabaseUpdateErrorException>(() => List.OnRowValidated(3),
+        "Adding Piece with duplicate AudioUrl disallowed");
+      Assert.AreEqual(
+        $"Piece '{newKey}' cannot be added because Piece '{otherKey}' already exists " +
+        $"with the same Audio URL '{otherUrl}'.",
+        exception.Message,
+        "Error message on trying to add Piece with duplicate AudioUrl");
+      uniqueUrl = TestData.GenerateUniqueUrl();
+      bindingList[3].AudioUrl = uniqueUrl;
+      Assert.DoesNotThrow(
+        () => List.OnRowValidated(3),
+        "Adding Piece with unique AudioUrl allowed");
+    }
+
+    [Test]
+    public void ValidateVideoUrl() {
+      List = CreatePieceList();
+      Populate();
+      List.OnRowEnter(2);
+      var bindingList = List.BindingList;
+      string uniqueUrl = TestData.GenerateUniqueUrl();
+      Key otherKey = bindingList[0].CreateKey();
+      string otherUrl = bindingList[0].VideoUrl;
+      Assert.DoesNotThrow(
+        () => bindingList[2].VideoUrl = uniqueUrl,
+        "Changing VideoUrl to unique allowed");
+      var exception = Assert.Catch<DatabaseUpdateErrorException>(
+        () => bindingList[2].VideoUrl = otherUrl,
+        "Changing VideoUrl to duplicate disallowed");
+      Assert.AreEqual(
+        $"Video URL cannot be set to '{otherUrl}'. " + 
+        $"Piece '{otherKey}' already exists with that Video URL.",
+        exception.Message,
+        "Error message on trying to change VideoUrl to duplicate");
+      bindingList.AddNew();
+      List.OnRowEnter(3);
+      bindingList[3].EntityList = List;
+      Key newKey = bindingList[3].CreateKey();
+      bindingList[3].Duration = "3:45";
+      bindingList[3].VideoUrl = otherUrl;
+      exception = Assert.Catch<DatabaseUpdateErrorException>(() => List.OnRowValidated(3),
+        "Adding Piece with duplicate VideoUrl disallowed");
+      Assert.AreEqual(
+        $"Piece '{newKey}' cannot be added because Piece '{otherKey}' already exists " +
+        $"with the same Video URL '{otherUrl}'.",
+        exception.Message,
+        "Error message on trying to add Piece with duplicate VideoUrl");
+      uniqueUrl = TestData.GenerateUniqueUrl();
+      bindingList[3].VideoUrl = uniqueUrl;
+      Assert.DoesNotThrow(
+        () => List.OnRowValidated(3),
+        "Adding Piece with unique VideoUrl allowed");
     }
   }
 }

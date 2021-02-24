@@ -96,9 +96,8 @@ namespace SoundExplorers.Model {
     protected override void CopyValuesToEntityProperties(Set set) {
       // SetNo must be set before Genre and Event so that Genre.Sets and Event.Sets will
       // have the correct key for the Set and therefore be in the right sort order. And,
-      // to avoid VelocityDB FlushUpdates exceptions (see
-      // base.CopyValuesToEntityProperties documentation), Genre must be set before
-      // Event, which must be set before Act.
+      // to avoid VelocityDB exceptions (I am now not sure what), Genre must be set
+      // before Event, which must be set before Act.
       set.SetNo = SetNo;
       set.Genre = (Genre)FindParent(Properties[nameof(Genre)])!;
       set.Event = Event;

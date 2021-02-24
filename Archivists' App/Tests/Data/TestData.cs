@@ -446,7 +446,7 @@ namespace SoundExplorers.Tests.Data {
       return result.ToString();
     }
 
-    private string GenerateUniqueUrl() {
+    public static string GenerateUniqueUrl() {
       return new Uri(
         $"https://{GenerateUniqueName(8)}.com/{GenerateUniqueName(6)}",
         UriKind.Absolute).ToString();

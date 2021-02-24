@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using JetBrains.Annotations;
 using SoundExplorers.Data;
@@ -90,6 +91,7 @@ namespace SoundExplorers.Model {
     }
 
     private Set Set { get; set; } = null!;
+    private SetList SetList => (EntityList as PieceList)!.SetList;
 
     protected override IDictionary<string, object?>
       CreateEntityPropertyValueDictionary() {
@@ -127,6 +129,81 @@ namespace SoundExplorers.Model {
       piece.AudioUrl = AudioUrl;
       piece.VideoUrl = VideoUrl;
       piece.Notes = Notes;
+    }
+
+    private void DisallowChangeAudioUrlToDuplicate(Piece piece) {
+      if (AudioUrl != piece.AudioUrl &&
+          !string.IsNullOrWhiteSpace(AudioUrl)) {
+        var foundPiece = FindPieceWithAudioUrl(AudioUrl);
+        if (foundPiece != null && !foundPiece.Oid.Equals(piece.Oid)) {
+          throw Piece.CreateDuplicateAudioUrlUpdateException(foundPiece);
+        }
+      }
+    }
+
+    private void DisallowChangeVideoUrlToDuplicate(Piece piece) {
+      if (VideoUrl != piece.VideoUrl &&
+          !string.IsNullOrWhiteSpace(VideoUrl)) {
+        var foundPiece = FindPieceWithVideoUrl(VideoUrl);
+        if (foundPiece != null && !foundPiece.Oid.Equals(piece.Oid)) {
+          throw Piece.CreateDuplicateVideoUrlUpdateException(foundPiece);
+        }
+      }
+    }
+
+    private void DisallowInsertWithDuplicateAudioUrl() {
+      if (!string.IsNullOrWhiteSpace(AudioUrl)) {
+        var duplicate = FindPieceWithAudioUrl(AudioUrl);
+        if (duplicate != null) {
+          throw Piece.CreateDuplicateAudioUrlInsertException(CreateKey(), duplicate); 
+        }
+      }
+    }
+
+    private void DisallowInsertWithDuplicateVideoUrl() {
+      if (!string.IsNullOrWhiteSpace(VideoUrl)) {
+        var duplicate = FindPieceWithVideoUrl(VideoUrl);
+        if (duplicate != null) {
+          throw Piece.CreateDuplicateVideoUrlInsertException(CreateKey(), duplicate); 
+        }
+      }
+    }
+
+    internal override void ValidateInsertion() {
+      base.ValidateInsertion();
+      DisallowInsertWithDuplicateAudioUrl();
+      DisallowInsertWithDuplicateVideoUrl();
+    }
+
+    internal override void ValidatePropertyUpdate(string propertyName,
+      Piece piece) {
+      base.ValidatePropertyUpdate(propertyName, piece);
+      switch (propertyName) {
+        case nameof(Piece.AudioUrl):
+          DisallowChangeAudioUrlToDuplicate(piece);
+          break;
+        case nameof(Piece.VideoUrl):
+          DisallowChangeVideoUrlToDuplicate(piece);
+          break;
+      }
+    }
+
+    private Piece? FindPieceWithAudioUrl(string audioUrl) {
+      return SetList
+        .Select(set => (
+            from piece in set.Pieces.Values
+            where piece.AudioUrl == audioUrl
+            select piece)
+          .FirstOrDefault()).FirstOrDefault(foundPiece => foundPiece != null);
+    }
+
+    private Piece? FindPieceWithVideoUrl(string videoUrl) {
+      return SetList
+        .Select(set => (
+            from piece in set.Pieces.Values
+            where piece.VideoUrl == videoUrl
+            select piece)
+          .FirstOrDefault()).FirstOrDefault(foundPiece => foundPiece != null);
     }
 
     protected override object? GetEntityPropertyValue(PropertyInfo property,

@@ -189,6 +189,10 @@ namespace SoundExplorers.Controller {
       LastCurrentRowIndex = -1;
     }
 
+    protected virtual void ReplaceErrorBindingValueWithOriginal() {
+      List.ReplaceErrorBindingValueWithOriginal();
+    }
+
     public void ShowError() {
       Debug.WriteLine(
         $"MainGridController.ShowError: LastChangeAction == {LastChangeAction}");
@@ -256,7 +260,10 @@ namespace SoundExplorers.Controller {
       int insertionRowIndex = List.BindingList.Count - 1;
       // Backs up the error insertion item
       List.BackupAndRemoveInsertionErrorBindingItem();
+      Grid.MakeCellCurrent(insertionRowIndex,
+        List.LastDatabaseUpdateErrorException!.ColumnIndex);
       // DOES NOT HELP WITH FAILURE TO RETURN TO INSERTION ROW ON OUT OF RANGE ERROR
+      // OR SAME PROBLEM WITH Piece.AudioUrl AND Piece.VideoUrl DUPLICATE ERRORS.
       // if (insertionRowIndex > 0) {
       //   Grid.MakeCellCurrent(insertionRowIndex - 1, 
       //     List.LastDatabaseUpdateErrorException!.ColumnIndex);
@@ -266,8 +273,6 @@ namespace SoundExplorers.Controller {
       // Grid.BeginInvoke(() =>
       //   Grid.MakeCellCurrent(insertionRowIndex,
       //     List.LastDatabaseUpdateErrorException!.ColumnIndex));
-      Grid.MakeCellCurrent(insertionRowIndex,
-        List.LastDatabaseUpdateErrorException!.ColumnIndex);
     }
 
     /// <summary>
@@ -291,10 +296,6 @@ namespace SoundExplorers.Controller {
       Grid.RestoreCurrentRowCellErrorValue(
         exception.ColumnIndex,
         List.GetErrorValues()[exception.ColumnIndex]);
-    }
-
-    protected virtual void ReplaceErrorBindingValueWithOriginal() {
-      List.ReplaceErrorBindingValueWithOriginal();
     }
   }
 }
