@@ -51,7 +51,6 @@ namespace SoundExplorers.Model {
     private BackupItem<TBindingItem>? BackupItem { get; set; }
     private BackupItem<TBindingItem>? BackupItemToRestoreFrom { get; set; }
 
-    // private TBindingItem? BindingItemToFix { get; set; }
     private EntityComparer<TEntity> EntityComparer { get; }
 
     /// <summary>
