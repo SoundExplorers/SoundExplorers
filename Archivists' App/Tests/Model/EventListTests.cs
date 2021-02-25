@@ -19,7 +19,7 @@ namespace SoundExplorers.Tests.Model {
       Data.AddActsPersisted(1, Session);
       Data.AddNewslettersPersisted(3, Session);
       Data.AddSeriesPersisted(2, Session);
-      Data.AddEventsPersisted(4, Session);
+      Data.AddEventsPersisted(4, Session, Data.Locations[0]);
       Session.Commit();
       List = new EventList {QueryHelper = QueryHelper, Session = Session};
     }

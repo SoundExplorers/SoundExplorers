@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using SoundExplorers.Data;
@@ -13,7 +12,7 @@ namespace SoundExplorers.Tests.Data {
   public class TestData {
     private static char[]? _letters;
     private IList<string>? _actNames;
-    private EventType? _defaultEventType;
+    // private EventType? _defaultEventType;
     private IList<string>? _eventTypeNames;
     private IList<string>? _forenames;
     private IList<string>? _genreNames;
@@ -52,7 +51,7 @@ namespace SoundExplorers.Tests.Data {
     public IList<Set> Sets { get; }
     private IList<string> ActNames => _actNames ??= CreateActNames();
     private QueryHelper QueryHelper { get; }
-    private EventType DefaultEventType => _defaultEventType ??= GetDefaultEventType();
+    // private EventType DefaultEventType => _defaultEventType ??= GetDefaultEventType();
     private IList<string> EventTypeNames => _eventTypeNames ??= CreateEventTypeNames();
     private IList<string> Forenames => _forenames ??= CreateForenames();
     private IList<string> GenreNames => _genreNames ??= CreateGenreNames();
@@ -111,8 +110,8 @@ namespace SoundExplorers.Tests.Data {
           QueryHelper = QueryHelper,
           CreditNo = creditNo,
           Piece = parentPiece,
-          Artist = artist ?? GetDefaultArtist(),
-          Role = role ?? GetDefaultRole()
+          Artist = artist ?? GetRandomArtist(),
+          Role = role ?? GetRandomRole()
         };
         session.Persist(credit);
         Credits.Add(credit);
@@ -129,10 +128,16 @@ namespace SoundExplorers.Tests.Data {
         var @event = new Event {
           QueryHelper = QueryHelper,
           Date = date,
-          Location = location ?? GetDefaultLocation(),
-          EventType = eventType ?? DefaultEventType,
+          Location = location ?? GetRandomLocation(),
+          EventType = eventType ?? GetRandomEventType(),
           Notes = GenerateNotes()
         };
+        if (Newsletters.Count > i + 1) {
+          @event.Newsletter = Newsletters[i + 1];
+        }
+        if (Series.Count > 0) {
+          @event.Series = GetRandomSeries();
+        }
         session.Persist(@event);
         Events.Add(@event);
         date = date.AddDays(7);
@@ -218,12 +223,18 @@ namespace SoundExplorers.Tests.Data {
           QueryHelper = QueryHelper,
           PieceNo = pieceNo,
           Set = parentSet,
-          AudioUrl = GenerateUniqueUrl(),
-          VideoUrl = GenerateUniqueUrl(),
           Title = GenerateUniqueName(8),
           Duration = GetRandomDuration(),
           Notes = GenerateNotes()
         };
+        int chance = GetRandomInteger(1, 5);
+        if (chance > 1) {
+          piece.AudioUrl = GenerateUniqueUrl();
+        }
+        chance = GetRandomInteger(1, 5);
+        if (chance == 1) {
+          piece.VideoUrl = GenerateUniqueUrl();
+        }
         session.Persist(piece);
         Pieces.Add(piece);
         pieceNo++;
@@ -277,9 +288,15 @@ namespace SoundExplorers.Tests.Data {
           QueryHelper = QueryHelper,
           SetNo = setNo,
           Event = parentEvent,
-          Genre = genre ?? GetDefaultGenre(),
+          Genre = genre ?? GetRandomGenre(),
           Notes = GenerateNotes()
         };
+        if (Acts.Count > 0) {
+          int chance = GetRandomInteger(1, 3);
+          if (chance > 1) {
+            set.Act = GetRandomAct();
+          }
+        }
         session.Persist(set);
         Sets.Add(set);
         setNo++;
@@ -458,38 +475,38 @@ namespace SoundExplorers.Tests.Data {
         UriKind.Absolute).ToString();
     }
 
-    private Artist GetDefaultArtist() {
-      return GetEntity<Artist, IList<Artist>>(Artists, 0);
-    }
+    // private Artist GetDefaultArtist() {
+    //   return GetEntity<Artist, IList<Artist>>(Artists, 0);
+    // }
 
     private Event GetDefaultEvent() {
       return GetEntity<Event, IList<Event>>(Events, 0);
     }
 
-    private EventType GetDefaultEventType() {
-      return EventTypes.Count >= 0
-        ? (from eventType in EventTypes
-          where eventType.Name == "Performance"
-          select eventType).First()
-        : throw new InvalidOperationException(
-          "Default EventType 'Performance' must be added first.");
-    }
+    // private EventType GetDefaultEventType() {
+    //   return EventTypes.Count >= 0
+    //     ? (from eventType in EventTypes
+    //       where eventType.Name == "Performance"
+    //       select eventType).First()
+    //     : throw new InvalidOperationException(
+    //       "Default EventType 'Performance' must be added first.");
+    // }
 
-    private Genre GetDefaultGenre() {
-      return GetEntity<Genre, IList<Genre>>(Genres, 0);
-    }
+    // private Genre GetDefaultGenre() {
+    //   return GetEntity<Genre, IList<Genre>>(Genres, 0);
+    // }
 
-    private Location GetDefaultLocation() {
-      return GetEntity<Location, IList<Location>>(Locations, 0);
-    }
+    // private Location GetDefaultLocation() {
+    //   return GetEntity<Location, IList<Location>>(Locations, 0);
+    // }
 
     private Piece GetDefaultPiece() {
       return GetEntity<Piece, IList<Piece>>(Pieces, 0);
     }
 
-    private Role GetDefaultRole() {
-      return GetEntity<Role, IList<Role>>(Roles, 0);
-    }
+    // private Role GetDefaultRole() {
+    //   return GetEntity<Role, IList<Role>>(Roles, 0);
+    // }
 
     private Set GetDefaultSet() {
       return GetEntity<Set, IList<Set>>(Sets, 0);
@@ -504,15 +521,15 @@ namespace SoundExplorers.Tests.Data {
           $"{typeof(TEntity).Name} {index} has not been added.");
     }
 
-    public Act GetRandomAct() {
+    private Act GetRandomAct() {
       return GetRandomEntity<Act, IList<Act>>(Acts);
     }
 
-    public Artist GetRandomArtist() {
+    private Artist GetRandomArtist() {
       return GetRandomEntity<Artist, IList<Artist>>(Artists);
     }
 
-    public static TimeSpan GetRandomDuration() {
+    private static TimeSpan GetRandomDuration() {
       int minutes = GetRandomInteger(1, 14);
       int seconds = GetRandomInteger(0, 59);
       return new TimeSpan(0, minutes, seconds);
@@ -527,7 +544,7 @@ namespace SoundExplorers.Tests.Data {
           $"No {typeof(TEntity).Name}s have been added.");
     }
 
-    public EventType GetRandomEventType() {
+    private EventType GetRandomEventType() {
       return GetRandomEntity<EventType, IList<EventType>>(EventTypes);
     }
 
@@ -535,7 +552,7 @@ namespace SoundExplorers.Tests.Data {
       return Forenames[GetRandomInteger(0, Forenames.Count - 1)];
     }
 
-    public Genre GetRandomGenre() {
+    private Genre GetRandomGenre() {
       return GetRandomEntity<Genre, IList<Genre>>(Genres);
     }
 
@@ -547,15 +564,15 @@ namespace SoundExplorers.Tests.Data {
       return new Random(result).Next(min, max + 1);
     }
 
-    public Location GetRandomLocation() {
+    private Location GetRandomLocation() {
       return GetRandomEntity<Location, IList<Location>>(Locations);
     }
 
-    public Role GetRandomRole() {
+    private Role GetRandomRole() {
       return GetRandomEntity<Role, IList<Role>>(Roles);
     }
 
-    public Series GetRandomSeries() {
+    private Series GetRandomSeries() {
       return GetRandomEntity<Series, IList<Series>>(Series);
     }
 

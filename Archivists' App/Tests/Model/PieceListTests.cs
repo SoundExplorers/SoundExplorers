@@ -228,11 +228,11 @@ namespace SoundExplorers.Tests.Model {
       Data.AddEventsPersisted(1, Session);
       Data.AddActsPersisted(1, Session);
       Data.AddGenresPersisted(1, Session);
-      Data.AddSetsPersisted(1, Session);
+      Data.AddSetsPersisted(1, Session, Data.Events[0]);
       Data.AddArtistsPersisted(1, Session);
       Data.AddRolesPersisted(1, Session);
       if (includingPieces) {
-        Data.AddPiecesPersisted(3, Session);
+        Data.AddPiecesPersisted(3, Session, Data.Sets[0]);
       }
       Session.Commit();
     }
@@ -265,7 +265,7 @@ namespace SoundExplorers.Tests.Model {
       var bindingList = List.BindingList;
       string uniqueUrl = TestData.GenerateUniqueUrl();
       Key otherKey = bindingList[0].Key;
-      string otherUrl = bindingList[0].AudioUrl;
+      string otherUrl = bindingList[0].AudioUrl = TestData.GenerateUniqueUrl();
       Assert.DoesNotThrow(
         () => bindingList[2].AudioUrl = uniqueUrl,
         "Changing AudioUrl to unique allowed");
@@ -305,7 +305,7 @@ namespace SoundExplorers.Tests.Model {
       var bindingList = List.BindingList;
       string uniqueUrl = TestData.GenerateUniqueUrl();
       Key otherKey = bindingList[0].Key;
-      string otherUrl = bindingList[0].VideoUrl;
+      string otherUrl = bindingList[0].VideoUrl = TestData.GenerateUniqueUrl();
       Assert.DoesNotThrow(
         () => bindingList[2].VideoUrl = uniqueUrl,
         "Changing VideoUrl to unique allowed");
