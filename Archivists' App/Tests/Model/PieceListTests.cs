@@ -54,7 +54,7 @@ namespace SoundExplorers.Tests.Model {
     [Test]
     public void AddPiece() {
       List = CreatePieceList();
-      Assert.IsTrue(List.IsMainList, "IsMainList");
+      Assert.IsTrue(List.IsChildList, "IsChildList");
       Populate();
       var set = Data.Sets[0];
       Populate();
@@ -191,7 +191,7 @@ namespace SoundExplorers.Tests.Model {
       var newDuration2 = TimeSpan.FromMinutes(59);
       var newDuration3 = TimeSpan.FromHours(1);
       List = CreatePieceList(true, false);
-      Assert.IsFalse(List.IsMainList, "IsMainList");
+      Assert.IsFalse(List.IsChildList, "IsChildList");
       Session.BeginUpdate();
       var piece2 = Data.Pieces[1];
       piece2.Duration = newDuration2;
@@ -248,7 +248,7 @@ namespace SoundExplorers.Tests.Model {
     }
 
     private void Populate() {
-      if (List.IsMainList) {
+      if (List.IsChildList) {
         ParentList.Populate();
         List.Populate(ParentList.GetIdentifyingParentChildrenForMainList(
           ParentList.Count - 1));

@@ -41,13 +41,13 @@ namespace SoundExplorers.Model {
     protected override BindingColumnList CreateColumns() {
       var result = new BindingColumnList {
         new BindingColumn(nameof(Event.Date), typeof(DateTime)) {
-          IsVisible = !IsMainList
+          IsVisible = !IsChildList
         },
         new BindingColumn(nameof(Event.Location), typeof(string)) {
-          IsVisible = !IsMainList
+          IsVisible = !IsChildList
         },
         new BindingColumn(nameof(Set.SetNo), typeof(int)) {
-          IsVisible = !IsMainList
+          IsVisible = !IsChildList
         },
         new BindingColumn(nameof(Piece.PieceNo), typeof(int)) {IsInKey = true},
         new BindingColumn(nameof(Piece.Title), typeof(string)),

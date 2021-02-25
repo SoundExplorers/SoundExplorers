@@ -112,7 +112,7 @@ namespace SoundExplorers.Model {
     ///   Gets whether this is a main list that is to be populated with children of an
     ///   identifying parent entity.
     /// </summary>
-    public bool IsMainList => ParentListType != null;
+    public bool IsChildList => ParentListType != null;
 
     /// <summary>
     ///   Gets whether the current grid row is the insertion row, which is for adding new
@@ -381,7 +381,7 @@ namespace SoundExplorers.Model {
       if (isTransactionRequired) {
         Session.Commit();
       }
-      if (!IsMainList) {
+      if (!IsChildList) {
         Sort(EntityComparer);
       }
       if (createBindingList) {
