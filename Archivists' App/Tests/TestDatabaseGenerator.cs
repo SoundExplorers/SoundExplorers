@@ -81,7 +81,7 @@ namespace SoundExplorers.Tests {
           Data.AddPiecesPersisted(1, Session, set);
         }
       }
-      for (int i = 0; i < Data.Pieces.Count - 2; i++) {
+      for (int i = 0; i < Data.Pieces.Count; i++) {
         var piece = Data.Pieces[i];
         int chance = TestData.GetRandomInteger(1, 5);
         if (chance == 1) {
@@ -92,11 +92,12 @@ namespace SoundExplorers.Tests {
           piece.VideoUrl = string.Empty;
         }
       }
-      for (int i = Data.Pieces.Count - 2; i < Data.Pieces.Count; i++) {
-        var piece = Data.Pieces[i];
-        piece.AudioUrl = string.Empty;
-        piece.VideoUrl = string.Empty;
-      }
+      // Does not work to stick the blank cells at the end.
+      // for (int i = Data.Pieces.Count - 2; i < Data.Pieces.Count; i++) {
+      //   var piece = Data.Pieces[i];
+      //   piece.AudioUrl = string.Empty;
+      //   piece.VideoUrl = string.Empty;
+      // }
     }
 
     [SuppressMessage("ReSharper", "UnusedMember.Local")]

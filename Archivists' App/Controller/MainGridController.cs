@@ -260,6 +260,7 @@ namespace SoundExplorers.Controller {
       int insertionRowIndex = List.BindingList.Count - 1;
       // Backs up the error insertion item
       List.BackupAndRemoveInsertionErrorBindingItem();
+      // Force a new row to be created with the erroneous data restored to it.
       Grid.MakeCellCurrent(insertionRowIndex,
         List.LastDatabaseUpdateErrorException!.ColumnIndex);
       // DOES NOT HELP WITH FAILURE TO RETURN TO INSERTION ROW ON OUT OF RANGE ERROR
@@ -268,11 +269,17 @@ namespace SoundExplorers.Controller {
       //   Grid.MakeCellCurrent(insertionRowIndex - 1, 
       //     List.LastDatabaseUpdateErrorException!.ColumnIndex);
       // }
-      // Force a new row to be created with the erroneous data restored to it.
-      // DOES NOT HELP WITH FAILURE TO RETURN TO INSERTION ROW ON OUT OF RANGE ERROR
+      // NEITHER DOES THIS
       // Grid.BeginInvoke(() =>
       //   Grid.MakeCellCurrent(insertionRowIndex,
       //     List.LastDatabaseUpdateErrorException!.ColumnIndex));
+      // NEITHER DOES THIS
+      // var timer = new Timer {AutoReset = false, Enabled = true, Interval = 1000};
+      // timer.Elapsed += (sender, args) => {
+      //   Debug.WriteLine("timer");
+      //   Grid.MakeCellCurrent(insertionRowIndex,
+      //     List.LastDatabaseUpdateErrorException!.ColumnIndex);
+      // };
     }
 
     /// <summary>

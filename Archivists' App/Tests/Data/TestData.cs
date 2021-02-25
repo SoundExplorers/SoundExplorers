@@ -221,7 +221,7 @@ namespace SoundExplorers.Tests.Data {
           AudioUrl = GenerateUniqueUrl(),
           VideoUrl = GenerateUniqueUrl(),
           Title = GenerateUniqueName(8),
-          Duration = TimeSpan.FromSeconds((i + 1) * 10),
+          Duration = GetRandomDuration(),
           Notes = GenerateNotes()
         };
         session.Persist(piece);
@@ -510,6 +510,12 @@ namespace SoundExplorers.Tests.Data {
 
     public Artist GetRandomArtist() {
       return GetRandomEntity<Artist, IList<Artist>>(Artists);
+    }
+
+    public static TimeSpan GetRandomDuration() {
+      int minutes = GetRandomInteger(1, 14);
+      int seconds = GetRandomInteger(0, 59);
+      return new TimeSpan(0, minutes, seconds);
     }
 
     private static TEntity GetRandomEntity<TEntity, TList>(TList list)
