@@ -24,6 +24,7 @@ namespace SoundExplorers.Model {
     where TBindingItem : BindingItemBase<TEntity, TBindingItem>, new() {
     private TypedBindingList<TEntity, TBindingItem>? _bindingList;
     private BindingColumnList? _columns;
+    private IComparer<TEntity>? _entityComparer;
     private QueryHelper? _queryHelper;
     private SessionBase? _session;
 
@@ -45,13 +46,13 @@ namespace SoundExplorers.Model {
       } else {
         ParentListType = null;
       }
-      EntityComparer = new EntityComparer<TEntity>();
     }
 
     private BackupItem<TBindingItem>? BackupItem { get; set; }
     private BackupItem<TBindingItem>? BackupItemToRestoreFrom { get; set; }
 
-    private EntityComparer<TEntity> EntityComparer { get; }
+    private IComparer<TEntity> EntityComparer =>
+      _entityComparer ??= CreateEntityComparer();
 
     /// <summary>
     ///   Used for restoring the error value for correction or edit cancellation after an
@@ -118,8 +119,6 @@ namespace SoundExplorers.Model {
     ///   entities and is located at the bottom of the grid.
     /// </summary>
     /// <remarks>
-    ///   TODO: Check reliability of IsInsertionRowCurrent throughout when the main grid has been entered
-    ///   from the parent grid.
     ///   What we here call the insertion row is not necessarily the grid's new (i.e.
     ///   empty) row. Rather it is the row that, if committed, will provide the data for
     ///   an entity to be inserted into the database. The new row becomes the insertion
@@ -169,7 +168,7 @@ namespace SoundExplorers.Model {
 
     /// <summary>
     ///   A derived class that can be a child list must override this method to
-    ///   instantiate its parent list. 
+    ///   instantiate its parent list.
     /// </summary>
     [ExcludeFromCodeCoverage]
     public virtual IEntityList CreateParentList() {
@@ -428,6 +427,10 @@ namespace SoundExplorers.Model {
         column.Session = Session;
       }
       return result;
+    }
+
+    protected virtual IComparer<TEntity> CreateEntityComparer() {
+      return new EntityComparer<TEntity>();
     }
 
     /// <summary>

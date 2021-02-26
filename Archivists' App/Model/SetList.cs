@@ -61,6 +61,10 @@ namespace SoundExplorers.Model {
       return result;
     }
 
+    protected override IComparer<Set> CreateEntityComparer() {
+      return new SetComparer();
+    }
+
     public override IEntityList CreateParentList() {
       return new EventList {Session = Session};
     }

@@ -114,13 +114,12 @@ namespace SoundExplorers.Data {
       if (key2 == null) {
         return false;
       }
-      if (string.Compare(key1.SimpleKey, key2.SimpleKey,
-        StringComparison.OrdinalIgnoreCase) < 0) {
-        return true;
-      }
-      if (string.Compare(key1.SimpleKey, key2.SimpleKey,
-        StringComparison.OrdinalIgnoreCase) > 0) {
-        return false;
+      // Order by simple key first
+      switch (CompareSimpleKeys(key1, key2)) {
+        case < 0:
+          return true;
+        case > 0:
+          return false;
       }
       // Simple keys are equal. So compare identifying parents.
       if (key1.IdentifyingParent != null && key2.IdentifyingParent != null) {
@@ -136,6 +135,11 @@ namespace SoundExplorers.Data {
           : SimpleKey;
       }
       return string.Empty;
+    }
+
+    public static int CompareSimpleKeys(Key key1, Key key2) {
+      return string.Compare(key1.SimpleKey, key2.SimpleKey,
+        StringComparison.OrdinalIgnoreCase);
     }
   }
 }
