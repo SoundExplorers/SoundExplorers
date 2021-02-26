@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace SoundExplorers.Data {
   /// <summary>
@@ -25,8 +25,9 @@ namespace SoundExplorers.Data {
     ///   The entity whose Key property is set to this key.
     /// </param>
     /// <param name="identifyingParent">
-    ///   For comparative use only, optionally specifies
-    ///   the identifying parent entity.
+    ///   For entity types that have an identifying parent, specifies the identifying
+    ///   parent entity. Otherwise null, the default. This is for comparative use only,
+    ///   as only the owner's simple key is relevant its order in the sorted child list.
     /// </param>
     internal Key(IEntity owner,
       IEntity? identifyingParent = null) {
@@ -36,15 +37,14 @@ namespace SoundExplorers.Data {
     }
 
     /// <summary>
-    ///   Use this constructor for a Key that can be used for
-    ///   comparisons with Keys that are properties of entities.
+    ///   Use this constructor for a Key that can be used for comparisons with Keys that
+    ///   are properties of entities.
     /// </summary>
     /// <param name="simpleKey">
     ///   The simple key to be used for comparison.
     /// </param>
     /// <param name="identifyingParent">
-    ///   The identifying parent entity, if applicable,
-    ///   to be used for comparison.
+    ///   The identifying parent entity, if applicable, to be used for comparison.
     /// </param>
     public Key(string? simpleKey,
       IEntity? identifyingParent) {

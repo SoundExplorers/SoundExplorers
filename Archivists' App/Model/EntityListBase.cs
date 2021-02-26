@@ -380,6 +380,8 @@ namespace SoundExplorers.Model {
       if (isTransactionRequired) {
         Session.Commit();
       }
+      // If this is a child list, it is already in the right order, as its data source
+      // consists of the values of a SortedChildList.
       if (!IsChildList) {
         Sort(EntityComparer);
       }
