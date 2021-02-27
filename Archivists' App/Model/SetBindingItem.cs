@@ -109,5 +109,17 @@ namespace SoundExplorers.Model {
     protected override string GetSimpleKey() {
       return EntityBase.IntegerToSimpleKey(SetNo, nameof(SetNo));
     }
+
+    private void ValidateGenreOnInsertion() {
+      if (string.IsNullOrWhiteSpace(Genre)) {
+        throw EntityBase.CreateParentNotSpecifiedException(
+          nameof(Set), Key, nameof(Genre));
+      }
+    }
+
+    internal override void ValidateInsertion() {
+      base.ValidateInsertion();
+      ValidateGenreOnInsertion();
+    }
   }
 }

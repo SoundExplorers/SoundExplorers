@@ -277,14 +277,10 @@ namespace SoundExplorers.Data {
           $"A {SimpleKeyName} has not yet been specified. " +
           $"So the {EntityType.Name} cannot be added.", SimpleKeyName);
       }
-      foreach (var parentKeyValuePair in Parents) {
-        var parentType = parentKeyValuePair.Key;
-        var parent = parentKeyValuePair.Value;
+      foreach (var (parentType, parent) in Parents) {
         if (parent == null && ParentRelations[parentType].IsMandatory) {
-          throw new PropertyConstraintException(
-            $"{EntityType.Name} '{Key}' " +
-            $"cannot be added because its {parentType.Name} "
-            + "has not been specified.", parentType.Name);
+          throw CreateParentNotSpecifiedException(
+            EntityType.Name, Key, parentType.Name);
         }
       }
       if (IsTopLevel &&
@@ -336,6 +332,14 @@ namespace SoundExplorers.Data {
         select relation;
       return values.ToDictionary<RelationInfo, Type, IRelationInfo>(
         value => value.ChildType, value => value);
+    }
+
+    public static PropertyConstraintException CreateParentNotSpecifiedException(
+      string entityTypeName, Key key, string parentTypeName) {
+      return new PropertyConstraintException(
+        $"{entityTypeName} '{key}' " +
+        $"cannot be added because its {parentTypeName} "
+        + "has not been specified.", parentTypeName);
     }
 
     private IDictionary<Type, IRelationInfo> CreateParentRelations() {
