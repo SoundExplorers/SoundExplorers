@@ -8,15 +8,14 @@ namespace SoundExplorers.Model {
     public PieceBindingList(IList<PieceBindingItem> bindingItems) :
       base(bindingItems) { }
 
+    private string GetDefaultPieceNo() {
+      return PieceBindingItem.GetDefaultIntegerSimpleKey(
+        (from item in Items select item.PieceNo).ToList());
+    }
+
     protected override void OnAddingNew(AddingNewEventArgs e) {
       base.OnAddingNew(e);
       e.NewObject ??= new PieceBindingItem {PieceNo = GetDefaultPieceNo()};
-    }
-
-    private int GetDefaultPieceNo() {
-      return Count > 0
-        ? (from pieceBindingItem in Items select pieceBindingItem.PieceNo).Max() + 1
-        : 1;
     }
   }
 }

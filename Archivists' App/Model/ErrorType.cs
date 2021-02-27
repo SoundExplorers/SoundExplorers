@@ -3,7 +3,6 @@
     Database,
     Duplicate,
     Format,
-    OutOfRange,
     ReferencingValueNotFound
   }
 }

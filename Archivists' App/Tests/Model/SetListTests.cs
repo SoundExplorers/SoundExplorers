@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Data;
-using System.Linq;
 using NUnit.Framework;
 using SoundExplorers.Data;
 using SoundExplorers.Model;
@@ -22,9 +21,10 @@ namespace SoundExplorers.Tests.Model {
     }
 
     private TestData Data { get; set; } = null!;
-    private SetList List { get; set; } = null!;
     private QueryHelper QueryHelper { get; set; } = null!;
     private TestSession Session { get; set; } = null!;
+    private SetList List { get; set; } = null!;
+    private EventList ParentList { get; set; } = null!;
 
     [Test]
     public void A010_InitialiseAsChildList() {
@@ -59,13 +59,11 @@ namespace SoundExplorers.Tests.Model {
     [Test]
     public void AddDefaultAct() {
       List = CreateSetList(false, false);
-      var @event = Data.Events[0];
-      var eventChildren = CreateEventChildren(@event);
       Session.BeginRead();
       var defaultAct = QueryHelper.Find<Act>(string.Empty, Session);
       Session.Commit();
       Assert.IsNull(defaultAct, "Default Act before Populate");
-      List.Populate(eventChildren);
+      Populate();
       Session.BeginRead();
       defaultAct = QueryHelper.Find<Act>(string.Empty, Session);
       Session.Commit();
@@ -78,17 +76,15 @@ namespace SoundExplorers.Tests.Model {
       List = CreateSetList();
       Assert.IsTrue(List.IsChildList, "IsChildList");
       var @event = Data.Events[0];
-      var eventChildren = CreateEventChildren(@event);
-      List.Populate(eventChildren);
+      Populate();
       var bindingList = List.BindingList;
       bindingList.AddNew();
       List.OnRowEnter(3);
       bindingList[3].Genre = Data.Genres[0].Name;
       List.OnRowValidated(3);
       Assert.AreEqual(4, @event.Sets.Count, "Count");
-      eventChildren = CreateEventChildren(@event);
-      List.Populate(eventChildren);
-      Assert.AreEqual(4, bindingList[3].SetNo, "SetNo in binding list");
+      Populate();
+      Assert.AreEqual("4", bindingList[3].SetNo, "SetNo in binding list");
       Assert.AreEqual(4, List[3].SetNo, "SetNo in List");
       Assert.AreEqual(4, @event.Sets[3].SetNo, "SetNo in Event.Sets");
       Assert.AreEqual(4, Data.Genres[0].Sets[3].SetNo, "SetNo in Genre.Sets");
@@ -102,7 +98,7 @@ namespace SoundExplorers.Tests.Model {
       Session.BeginUpdate();
       Data.Sets[0].Act = nonDefaultAct;
       Session.Commit();
-      List.Populate();
+      Populate();
       List.OnRowEnter(0);
       Assert.AreEqual(nonDefaultAct.Name, List.BindingList[0].Act,
         "Binding Act after populate");
@@ -112,27 +108,35 @@ namespace SoundExplorers.Tests.Model {
     }
 
     [Test]
+    public void ChangeSetNo() {
+      List = CreateSetList();
+      Populate();
+      List.OnRowEnter(2);
+      Assert.AreEqual("3", List.BindingList[2].SetNo, "Binding SetNo after populate");
+      List.BindingList[2].SetNo = "9";
+      Assert.AreEqual(9, Data.Sets[2].SetNo, "List SetNo after change");
+    }
+
+    [Test]
     public void DefaultSetNoWithExistingSets() {
       List = CreateSetList();
-      List.Populate();
+      Populate();
       List.BindingList.AddNew();
-      Assert.AreEqual(4, List.BindingList[3].SetNo);
+      Assert.AreEqual("4", List.BindingList[3].SetNo);
     }
 
     [Test]
     public void DefaultSetNoWithNoExistingSets() {
       List = CreateSetList(false);
-      List.Populate();
+      Populate();
       List.BindingList.AddNew();
-      Assert.AreEqual(1, List.BindingList[0].SetNo);
+      Assert.AreEqual("1", List.BindingList[0].SetNo);
     }
 
     [Test]
     public void DisallowAddSetWithoutGenre() {
       List = CreateSetList(false);
-      var @event = Data.Events[0];
-      var eventChildren = CreateEventChildren(@event);
-      List.Populate(eventChildren);
+      Populate();
       var bindingList = List.BindingList;
       bindingList.AddNew();
       List.OnRowEnter(0);
@@ -144,24 +148,93 @@ namespace SoundExplorers.Tests.Model {
         $"Set '{bindingList[0].Key}' cannot be added because its Genre has not been specified.",
         exception.Message, "Error message");
     }
+    
+    [Test]
+    public void DisallowAddSetWithInvalidSetNo() {
+      List = CreateSetList();
+      Populate();
+      var bindingList = List.BindingList;
+      bindingList.AddNew();
+      const string defaultSetNo = "4";
+      const int newRowIndex = 3;
+      List.OnRowEnter(newRowIndex);
+      Assert.AreEqual(defaultSetNo, bindingList[newRowIndex].SetNo, "SetNo initially"); 
+      bindingList[newRowIndex].SetNo = "ABC"; // Invalid format
+      var exception = Assert.Catch<DatabaseUpdateErrorException>(
+        () => List.OnRowValidated(newRowIndex),
+        "Adding Set with invalid format SetNo disallowed.");
+      Assert.AreEqual("SetNo must be an integer between 1 and 99.",
+        exception.Message, "Error message when SetNo invalid format");
+      // Simulate insertion cancellation on error.
+      // AddNew does occur at this point when the user commits an insertion. As the SetNo
+      // is invalid, the AddNew will exercise the format error handling logic in
+      // BindingItemBase.SimpleKeyToInteger.
+      bindingList.AddNew(); 
+      List.OnRowEnter(newRowIndex - 1);
+      bindingList.RemoveAt(newRowIndex);
+      List.OnRowEnter(newRowIndex);
+      // After the AddNew on a grid, MainGridController.CancelInsertion restores the error
+      // value to the new row for correction or cancellation of the insertion. Here, we 
+      // are checking before that step, which we don't need to simulate, to confirm that
+      // the AddNew will not have crashed on attempting to work out the default SetNo
+      // from a binding list whose last item contains an invalid SetNo. See
+      // BindingItemBase.SimpleKeyToInteger.
+      Assert.AreEqual(defaultSetNo, bindingList[newRowIndex].SetNo, 
+        "SetNo on reentering new row after SetNo format error"); 
+      bindingList[newRowIndex].SetNo = "999"; // Out of range
+      exception = Assert.Catch<DatabaseUpdateErrorException>(
+        () => List.OnRowValidated(newRowIndex),
+        "Adding Set with out of range SetNo disallowed.");
+      Assert.AreEqual("SetNo must be an integer between 1 and 99.",
+        exception.Message, "Error message when SetNo out of range");
+      // Simulate insertion cancellation on error.
+      // AddNew does occur at this point when the user commits an insertion. As the SetNo
+      // is invalid, the AddNew will exercise the out of range error handling logic in
+      // BindingItemBase.SimpleKeyToInteger.
+      bindingList.AddNew();
+      List.OnRowEnter(newRowIndex - 1);
+      bindingList.RemoveAt(newRowIndex);
+      List.OnRowEnter(newRowIndex);
+      // After the AddNew on a grid, MainGridController.CancelInsertion restores the error
+      // value to the new row for correction or cancellation of the insertion. Here, we 
+      // are checking before that step, which we don't need to simulate, to confirm that
+      // the AddNew will not have crashed on attempting to work out the default SetNo
+      // from a binding list whose last item contains an invalid SetNo. See
+      // BindingItemBase.SimpleKeyToInteger.
+      Assert.AreEqual(defaultSetNo, bindingList[newRowIndex].SetNo, 
+        "SetNo on reentering new row after SetNo out of range error"); 
+    }
+
+    [Test]
+    public void DisallowChangeSetNoToInvalidFormat() {
+      List = CreateSetList();
+      Populate();
+      List.OnRowEnter(2);
+      var bindingList = List.BindingList;
+      Exception exception = Assert.Catch<DatabaseUpdateErrorException>(
+        () => bindingList[2].SetNo = "ABC",
+        "Changing SetNo to invalid format disallowed");
+      Assert.AreEqual("SetNo must be an integer between 1 and 99.",
+        exception.Message,
+        "Error message on trying to change SetNo to invalid format");
+    }
 
     [Test]
     public void DisallowDuplicateKey() {
       List = CreateSetList();
-      var eventChildren = CreateEventChildren(Data.Events[0]);
-      List.Populate(eventChildren);
+      Populate();
       List.OnRowEnter(2);
       var bindingList = List.BindingList;
-      Assert.DoesNotThrow(() => bindingList[2].SetNo = 3);
+      Assert.DoesNotThrow(() => bindingList[2].SetNo = "3");
       Exception exception = Assert.Catch<DuplicateNameException>(
-        () => bindingList[2].SetNo = 1,
+        () => bindingList[2].SetNo = "1",
         "Changing SetNo to duplicate for Event disallowed");
       Assert.AreEqual($"Another Set with key '{bindingList[2].Key}' already exists.",
         exception.Message,
         "Error message on trying to change SetNo to duplicate for Event");
       bindingList.AddNew();
       List.OnRowEnter(3);
-      bindingList[3].SetNo = 2;
+      bindingList[3].SetNo = "2";
       exception = Assert.Catch<DatabaseUpdateErrorException>(() => List.OnRowValidated(3),
         "Adding Set with SetNo duplicate for Event disallowed");
       Assert.AreEqual($"Another Set with key '{bindingList[3].Key}' already exists.",
@@ -175,7 +248,7 @@ namespace SoundExplorers.Tests.Model {
       Session.BeginUpdate();
       Data.AddPiecesPersisted(5, Session);
       Session.Commit();
-      List.Populate();
+      Populate();
       var identifyingParentChildren = List.GetIdentifyingParentChildrenForMainList(0);
       Assert.AreSame(Data.Sets[0], identifyingParentChildren.IdentifyingParent,
         "IdentifyingParent");
@@ -183,15 +256,15 @@ namespace SoundExplorers.Tests.Model {
       Assert.IsInstanceOf<Piece>(identifyingParentChildren.Children[0], "Child type");
     }
 
-    [Test]
-    public void InvalidFormatSetNo() {
-      List = CreateSetList();
-      List.Populate();
-      List.OnValidationError(1, "SetNo",
-        new FormatException("Value cannot be cast to Int32"));
-      Assert.AreEqual("SetNo must be an integer between 1 and 99.",
-        List.LastDatabaseUpdateErrorException!.Message, "Error message");
-    }
+    // [Test]
+    // public void InvalidFormatSetNo() {
+    //   List = CreateSetList();
+    //   Populate();
+    //   List.OnValidationError(1, "SetNo",
+    //     new FormatException("Value cannot be cast to Int32"));
+    //   Assert.AreEqual("SetNo must be an integer between 1 and 99.",
+    //     List.LastDatabaseUpdateErrorException!.Message, "Error message");
+    // }
 
     [Test]
     public void ReadAsParentList() {
@@ -201,11 +274,11 @@ namespace SoundExplorers.Tests.Model {
       var set = Data.Sets[2];
       set.Act = Data.Acts[1];
       Session.Commit();
-      List.Populate();
+      Populate();
       var bindingList = List.BindingList;
       Assert.AreEqual(set.Event.Date, bindingList[2].Date, "Date");
       Assert.AreEqual(set.Event.Location.Name, bindingList[2].Location, "Location");
-      Assert.AreEqual(set.SetNo, bindingList[2].SetNo, "SetNo");
+      Assert.AreEqual(set.SetNo, int.Parse(bindingList[2].SetNo), "SetNo");
       Assert.AreEqual(set.Act?.Name, bindingList[2].Act, "Act");
       Assert.AreEqual(set.Genre.Name, bindingList[2].Genre, "Genre");
       Assert.AreEqual(set.Notes, bindingList[2].Notes, "Notes");
@@ -228,14 +301,24 @@ namespace SoundExplorers.Tests.Model {
       Session.Commit();
     }
 
-    private static IdentifyingParentChildren CreateEventChildren(Event @event) {
-      return new IdentifyingParentChildren(@event, @event.Sets.Values.ToList());
-    }
-
     private SetList CreateSetList(
       bool addSets = true, bool addActs = true, bool isMainList = true) {
       AddData(addSets, addActs);
-      return new SetList(isMainList) {Session = Session};
+      var result = new SetList(isMainList) {Session = Session};
+      if (isMainList) {
+        ParentList = (result.CreateParentList() as EventList)!;
+      }
+      return result;
+    }
+
+    private void Populate() {
+      if (List.IsChildList) {
+        ParentList.Populate();
+        List.Populate(ParentList.GetIdentifyingParentChildrenForMainList(
+          ParentList.Count - 1));
+      } else {
+        List.Populate();
+      }
     }
   }
 }

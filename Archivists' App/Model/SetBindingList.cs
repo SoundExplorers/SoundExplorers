@@ -8,15 +8,14 @@ namespace SoundExplorers.Model {
     public SetBindingList(IList<SetBindingItem> bindingItems) :
       base(bindingItems) { }
 
+    private string GetDefaultSetNo() {
+      return SetBindingItem.GetDefaultIntegerSimpleKey(
+        (from item in Items select item.SetNo).ToList());
+    }
+
     protected override void OnAddingNew(AddingNewEventArgs e) {
       base.OnAddingNew(e);
       e.NewObject ??= new SetBindingItem {SetNo = GetDefaultSetNo()};
-    }
-
-    private int GetDefaultSetNo() {
-      return Count > 0
-        ? (from setBindingItem in Items select setBindingItem.SetNo).Max() + 1
-        : 1;
     }
   }
 }

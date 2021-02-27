@@ -172,7 +172,7 @@ namespace SoundExplorers.Tests.Controller {
     public void DeleteSet() {
       AddDataForSetList();
       CreateControllers(typeof(SetList));
-      Controller.Populate(); // Populate grid
+      Controller.Populate(); // Populate parent Event and child Set grids
       // The last Event parent's Sets should be in the main grid.
       Assert.AreEqual(5, Controller.MainList.Count, "Count after Populate");
       MainGridController.OnRowRemoved(1);
@@ -208,6 +208,7 @@ namespace SoundExplorers.Tests.Controller {
       Assert.AreEqual(bindingList[0].Name, bindingList[1].Name,
         "Duplicate Name restored to insertion row for correction or edit cancellation after message shown");
     }
+
 
     [Test]
     public void DisallowAddWithoutIdentifyingParent() {
@@ -285,23 +286,23 @@ namespace SoundExplorers.Tests.Controller {
         "Unsupported exception type");
     }
 
-    [Test]
-    public void EmptyIntegerCellException() {
-      AddDataForSetList();
-      CreateControllers(typeof(SetList));
-      Controller.Populate(); // Populate grid
-      MainGridController.CreateAndGoToNewRow();
-      var exception = new ArgumentException(
-        " is not a valid value for Int32. (Parameter 'value').");
-      MainGridController.OnCellEditException(5, "SetNo", exception);
-      Assert.AreEqual(1, View.ShowErrorMessageCount, "ShowErrorMessageCount");
-      Assert.AreEqual("SetNo must be an integer between 1 and 99.",
-        View.LastErrorMessage, "LastErrorMessage");
-      exception = new ArgumentException("Unexpected message");
-      Assert.Throws<ArgumentException>(() =>
-          MainGridController.OnCellEditException(5, "SetNo", exception),
-        "ArgumentException with unexpected message rethrown");
-    }
+    // [Test]
+    // public void EmptyIntegerCellException() {
+    //   AddDataForSetList();
+    //   CreateControllers(typeof(SetList));
+    //   Controller.Populate(); // Populate grid
+    //   MainGridController.CreateAndGoToNewRow();
+    //   var exception = new ArgumentException(
+    //     " is not a valid value for Int32. (Parameter 'value').");
+    //   MainGridController.OnCellEditException(5, "SetNo", exception);
+    //   Assert.AreEqual(1, View.ShowErrorMessageCount, "ShowErrorMessageCount");
+    //   Assert.AreEqual("SetNo must be an integer between 1 and 99.",
+    //     View.LastErrorMessage, "LastErrorMessage");
+    //   exception = new ArgumentException("Unexpected message");
+    //   Assert.Throws<ArgumentException>(() =>
+    //       MainGridController.OnCellEditException(5, "SetNo", exception),
+    //     "ArgumentException with unexpected message rethrown");
+    // }
 
     [Test]
     public void ErrorOnDelete() {
@@ -650,21 +651,6 @@ namespace SoundExplorers.Tests.Controller {
       ParentGridController.OnWindowActivated();
       Assert.AreEqual("Event 1 of 2", View.StatusBarText, 
         "StatusBarText when editor window reactivated");
-    }
-
-    [Test]
-    public void OutOfRangeIntegerCellException() {
-      AddDataForSetList();
-      CreateControllers(typeof(SetList));
-      Controller.Populate(); // Populate grid
-      MainGridController.CreateAndGoToNewRow();
-      var exception = new PropertyValueOutOfRangeException(
-        "SetNo must be an integer between 1 and 99.", "SetNo");
-      MainGridController.OnCellEditException(5,
-        exception.PropertyName, exception);
-      Assert.AreEqual(1, View.ShowErrorMessageCount, "ShowErrorMessageCount");
-      Assert.AreEqual("Invalid SetNo:\r\nSetNo must be an integer between 1 and 99.",
-        View.LastErrorMessage, "LastErrorMessage");
     }
 
     [Test]

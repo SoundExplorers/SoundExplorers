@@ -20,10 +20,9 @@ namespace SoundExplorers.Model {
       return new PieceBindingItem {
         Date = piece.Set.Event.Date,
         Location = piece.Set.Event.Location.Name!,
-        SetNo = piece.Set.SetNo,
-        PieceNo = piece.PieceNo,
+        SetNo = piece.Set.SetNo.ToString(),
+        PieceNo = piece.PieceNo.ToString(),
         Title = piece.Title,
-        // Duration = piece.Duration.ToString("h\\:mm\\:ss"),
         Duration = piece.Duration.ToString(piece.Duration < TimeSpan.FromHours(1)
           ? "m\\:ss"
           : "h\\:mm\\:ss"),

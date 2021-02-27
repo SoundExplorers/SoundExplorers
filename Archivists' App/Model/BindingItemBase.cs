@@ -100,13 +100,8 @@ namespace SoundExplorers.Model {
     ///   general error message generated here is fine as it is. So I don't think it is
     ///   worth the hassle of making that change.
     /// </remarks>
-    private void CheckForDuplicateKey(TEntity? entity = null) {
+    private void CheckForDuplicateKey() {
       Key = CreateKey();
-      if (entity != null) {
-        if (Key == entity.Key) {
-          return;
-        }
-      }
       // Entity list could be a sorted list. Duplicate check might be faster. But it
       // would be a big job to do and I don't think there will be a performance problem.
       if ((from otherEntity in EntityList
@@ -175,6 +170,15 @@ namespace SoundExplorers.Model {
         : null;
     }
 
+    internal static string GetDefaultIntegerSimpleKey(
+      IList<string> existingSimpleKeys) {
+      return existingSimpleKeys.Count > 0
+        ? ((from existingSimpleKey in existingSimpleKeys
+          select SimpleKeyToInteger(existingSimpleKey,
+            string.Empty, true)).Max() + 1).ToString()
+        : "1";
+    }
+
     protected virtual object? GetEntityPropertyValue(PropertyInfo property,
       PropertyInfo entityProperty) {
       return entityProperty.PropertyType == property.PropertyType
@@ -183,6 +187,28 @@ namespace SoundExplorers.Model {
     }
 
     protected abstract string GetSimpleKey();
+
+    internal static int SimpleKeyToInteger(string simpleKey, string simpleKeyName, 
+      bool minusOneIfError = false) {
+      // Validate format
+      int result = ToIntegerOrIfErrorMinusOne(simpleKey);
+      bool isFormatValid = result != -1;
+      if (!isFormatValid) {
+        if (minusOneIfError) {
+          return -1;
+        } 
+        throw new PropertyConstraintException(
+          EntityBase.GetIntegerSimpleKeyErrorMessage(simpleKeyName), simpleKeyName);
+      }
+      // Validate range
+      bool emptyIfError = minusOneIfError;
+      string checkedSimpleKey = EntityBase.IntegerToSimpleKey(
+        result, simpleKeyName, emptyIfError);
+      if (minusOneIfError && string.IsNullOrWhiteSpace(checkedSimpleKey)) {
+        return -1;
+      } 
+      return result;
+    }
 
     private static void SetEntityPropertyValue(TEntity entity,
       PropertyInfo entityProperty, object? newEntityPropertyValue) {
@@ -194,6 +220,11 @@ namespace SoundExplorers.Model {
         // via SetValue, e.g. by overriding CopyValuesToEntityProperties. 
         throw exception.InnerException ?? exception;
       }
+    }
+
+    private static int ToIntegerOrIfErrorMinusOne(string text) {
+      bool isValid = int.TryParse(text.Trim(), out int result);
+      return isValid ? result : -1;
     }
 
     internal void UpdateEntityProperty(string propertyName, TEntity entity) {
@@ -226,7 +257,7 @@ namespace SoundExplorers.Model {
     internal virtual void ValidatePropertyUpdate(
       string propertyName, TEntity entity) {
       if (EntityList.Columns[propertyName].IsInKey) {
-        CheckForDuplicateKey(entity);
+        CheckForDuplicateKey();
       }
     }
   }

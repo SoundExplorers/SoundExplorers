@@ -29,7 +29,7 @@ namespace SoundExplorers.Model {
     protected override SetBindingItem CreateBindingItem(Set set) {
       return new SetBindingItem {
         Date = set.Event.Date, Location = set.Event.Location.Name!,
-        SetNo = set.SetNo,
+        SetNo = set.SetNo.ToString(),
         Act = set.Act.Name,
         Genre = set.Genre.Name,
         IsPublic = set.IsPublic,

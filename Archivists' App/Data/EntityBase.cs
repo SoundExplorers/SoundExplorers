@@ -382,11 +382,15 @@ namespace SoundExplorers.Data {
       return $"{propertyName} must be an integer between 1 and 99.";
     }
 
-    public static string IntegerToSimpleKey(int integer, string propertyName) {
+    public static string IntegerToSimpleKey(int integer, string propertyName, 
+      bool emptyIfError = false) {
       if (integer >= 1 && integer <= 99) {
         return integer.ToString().PadLeft(2, '0');
       }
-      throw new PropertyValueOutOfRangeException(
+      if (emptyIfError) {
+        return string.Empty;
+      } 
+      throw new PropertyConstraintException(
         GetIntegerSimpleKeyErrorMessage(propertyName), propertyName);
     }
 

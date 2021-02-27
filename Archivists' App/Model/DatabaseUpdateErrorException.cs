@@ -71,7 +71,6 @@ namespace SoundExplorers.Model {
         {typeof(DuplicateNameException), ErrorType.Duplicate},
         {typeof(FormatException), ErrorType.Format},
         {typeof(PropertyConstraintException), ErrorType.Database},
-        {typeof(PropertyValueOutOfRangeException), ErrorType.OutOfRange},
         {typeof(RowNotInTableException), ErrorType.ReferencingValueNotFound}
       };
     }

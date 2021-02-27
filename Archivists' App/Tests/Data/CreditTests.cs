@@ -242,12 +242,12 @@ namespace SoundExplorers.Tests.Data {
     public void DisallowOutOfRangeCreditNo() {
       Session.BeginUpdate();
       var exception =
-        Assert.Catch<PropertyValueOutOfRangeException>(() => Credit2.CreditNo = 0,
+        Assert.Catch<PropertyConstraintException>(() => Credit2.CreditNo = 0,
           "Zero disallowed");
       Assert.AreEqual("CreditNo must be an integer between 1 and 99.", exception.Message,
         "Error message when zero");
       exception =
-        Assert.Catch<PropertyValueOutOfRangeException>(() => Credit2.CreditNo = 100,
+        Assert.Catch<PropertyConstraintException>(() => Credit2.CreditNo = 100,
           "100 disallowed");
       Assert.AreEqual("CreditNo must be an integer between 1 and 99.", exception.Message,
         "Error message when 100");

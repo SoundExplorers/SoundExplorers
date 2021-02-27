@@ -10,8 +10,8 @@ namespace SoundExplorers.Model {
   public class PieceBindingItem : BindingItemBase<Piece, PieceBindingItem> {
     private DateTime _date;
     private string _location = null!;
-    private int _setNo;
-    private int _pieceNo;
+    private string _setNo = null!;
+    private string _pieceNo = null!;
     private string _title = null!;
     private string _duration = null!;
     private string _audioUrl = null!;
@@ -34,7 +34,7 @@ namespace SoundExplorers.Model {
       }
     }
 
-    public int SetNo {
+    public string SetNo {
       get => _setNo;
       set {
         _setNo = value;
@@ -42,7 +42,7 @@ namespace SoundExplorers.Model {
       }
     }
 
-    public int PieceNo {
+    public string PieceNo {
       get => _pieceNo;
       set {
         _pieceNo = value;
@@ -112,7 +112,7 @@ namespace SoundExplorers.Model {
     protected override void CopyValuesToEntityProperties(Piece piece) {
       // PieceNo must be set before Set so that Set.Pieces will have the correct key for
       // the Piece and therefore be in the right sort order.
-      piece.PieceNo = PieceNo;
+      piece.PieceNo = SimpleKeyToInteger(PieceNo, nameof(PieceNo));
       piece.Set = Set;
       piece.Title = Title;
       // If Duration has not been specified (i.e. is Zero), we want the more meaningful
@@ -152,14 +152,14 @@ namespace SoundExplorers.Model {
     private void DisallowInsertWithDuplicateAudioUrl() {
       var duplicate = FindPieceWithAudioUrl(AudioUrl);
       if (duplicate != null) {
-        throw Piece.CreateDuplicateAudioUrlInsertException(Key!, duplicate); 
+        throw Piece.CreateDuplicateAudioUrlInsertException(Key!, duplicate);
       }
     }
 
     private void DisallowInsertWithDuplicateVideoUrl() {
       var duplicate = FindPieceWithVideoUrl(VideoUrl);
       if (duplicate != null) {
-        throw Piece.CreateDuplicateVideoUrlInsertException(Key!, duplicate); 
+        throw Piece.CreateDuplicateVideoUrlInsertException(Key!, duplicate);
       }
     }
 
@@ -183,15 +183,23 @@ namespace SoundExplorers.Model {
 
     protected override object? GetEntityPropertyValue(PropertyInfo property,
       PropertyInfo entityProperty) {
-      if (property.Name != nameof(Duration)) {
-        return base.GetEntityPropertyValue(property, entityProperty);
+      switch (property.Name) {
+        case nameof(PieceNo):
+          string pieceNoString = GetPropertyValue(nameof(PieceNo))!.ToString()!;
+          return SimpleKeyToInteger(pieceNoString, nameof(PieceNo));
+        case nameof(Duration):
+          string durationString = GetPropertyValue(nameof(Duration))!.ToString()!;
+          return ToDurationTimeSpan(durationString);
+        default:
+          return base.GetEntityPropertyValue(property, entityProperty);
       }
-      string durationString = GetPropertyValue(nameof(Duration))!.ToString()!;
-      return ToDurationTimeSpan(durationString);
     }
 
     protected override string GetSimpleKey() {
-      return EntityBase.IntegerToSimpleKey(PieceNo, nameof(PieceNo));
+      // Validate and format the PieceNo, which may have been entered by the user.
+      return EntityBase.IntegerToSimpleKey(SimpleKeyToInteger(
+          PieceNo, nameof(PieceNo)),
+        nameof(PieceNo));
     }
 
     internal static TimeSpan ToDurationTimeSpan(string value) {

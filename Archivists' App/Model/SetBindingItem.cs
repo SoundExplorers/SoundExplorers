@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using JetBrains.Annotations;
 using SoundExplorers.Data;
 
@@ -8,7 +9,7 @@ namespace SoundExplorers.Model {
   public class SetBindingItem : BindingItemBase<Set, SetBindingItem> {
     private DateTime _date;
     private string _location = null!;
-    private int _setNo;
+    private string _setNo = null!;
     private string? _act;
     private string? _genre;
     private bool _isPublic;
@@ -35,7 +36,7 @@ namespace SoundExplorers.Model {
       }
     }
 
-    public int SetNo {
+    public string SetNo {
       get => _setNo;
       set {
         _setNo = value;
@@ -98,7 +99,7 @@ namespace SoundExplorers.Model {
       // have the correct key for the Set and therefore be in the right sort order. And,
       // to avoid VelocityDB exceptions (I am now not sure what), Genre must be set
       // before Event, which must be set before Act.
-      set.SetNo = SetNo;
+      set.SetNo = SimpleKeyToInteger(SetNo, nameof(SetNo));
       set.Genre = (Genre)FindParent(Properties[nameof(Genre)])!;
       set.Event = Event;
       set.Act = (Act)FindParent(Properties[nameof(Act)])!;
@@ -106,8 +107,22 @@ namespace SoundExplorers.Model {
       set.Notes = Notes;
     }
 
+    protected override object? GetEntityPropertyValue(PropertyInfo property,
+      PropertyInfo entityProperty) {
+      switch (property.Name) {
+        case nameof(SetNo):
+          string setNoString = GetPropertyValue(nameof(SetNo))!.ToString()!;
+          return SimpleKeyToInteger(setNoString, nameof(SetNo));
+        default:
+          return base.GetEntityPropertyValue(property, entityProperty);
+      }
+    }
+
     protected override string GetSimpleKey() {
-      return EntityBase.IntegerToSimpleKey(SetNo, nameof(SetNo));
+      // Validate and format the SetNo, which may have been entered by the user.
+      return EntityBase.IntegerToSimpleKey(SimpleKeyToInteger(
+          SetNo, nameof(SetNo)),
+        nameof(SetNo));
     }
 
     private void ValidateGenreOnInsertion() {

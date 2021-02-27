@@ -156,13 +156,6 @@ namespace SoundExplorers.Model {
       // Debug.WriteLine("EntityListBase.BackupAndRemoveInsertionErrorBindingItem");
       int insertionRowIndex = BindingList.Count - 1;
       BindingList.InsertionErrorItem = BindingList[insertionRowIndex];
-      // // I have not worked out how to return to the insertion row after showing an out of
-      // // range error message. The workaround is not to back up the insertion error
-      // // binding item. Otherwise it would appear on the insertion row when the user 
-      // // navigates to it manually, which does not look right.
-      // if (LastDatabaseUpdateErrorException!.ErrorType != ErrorType.OutOfRange) {
-      //   BindingList.InsertionErrorItem = BindingList[insertionRowIndex];
-      // }
       BindingList.RemoveAt(insertionRowIndex);
     }
 
@@ -233,19 +226,6 @@ namespace SoundExplorers.Model {
       Debug.WriteLine(
         $"EntityListBase.OnCellEditException: rowIndex = {rowIndex}; columnName = {columnName}, {exception.GetType().Name}");
       switch (exception) {
-        case ArgumentException argumentException:
-          if (argumentException.Message.StartsWith(" is not a valid value for")) {
-            // Thrown when an integer cell is empty
-            OnValidationError(rowIndex, columnName,
-              new FormatException(argumentException.Message, argumentException));
-          } else {
-            throw argumentException; // Terminal error
-          }
-          break;
-        case PropertyValueOutOfRangeException outOfRangeException:
-          // Thrown when an integer cell value is out of range.
-          OnValidationError(rowIndex, columnName, outOfRangeException);
-          break;
         case DatabaseUpdateErrorException databaseUpdateErrorException:
           LastDatabaseUpdateErrorException = databaseUpdateErrorException;
           break;
@@ -254,7 +234,6 @@ namespace SoundExplorers.Model {
           break;
         case FormatException formatException:
           // An invalid value was pasted into a cell, e.g. text into a date.
-          // Or invalid text was entered into an integer cell, e.g. Set.SetNo.
           OnValidationError(rowIndex, columnName, formatException);
           break;
         case RowNotInTableException referencedEntityNotFoundException:
