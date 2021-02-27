@@ -255,6 +255,11 @@ namespace SoundExplorers.Controller {
     ///   If this were not done, the user could go to a new row below the error row,
     ///   leaving the error row on the grid but not bound to an entity.
     /// </summary>
+    /// <remarks>
+    ///   For child grids, for unknown reason, there is a problem. The row before the new
+    ///   row remains current. However, if the user then manually navigates to the new
+    ///   row, the error values are shown for correction or cancellation.
+    /// </remarks>
     private void CancelInsertion() {
       Debug.WriteLine("EditorController.CancelInsertion");
       int insertionRowIndex = List.BindingList.Count - 1;
@@ -263,17 +268,16 @@ namespace SoundExplorers.Controller {
       // Force a new row to be created with the erroneous data restored to it.
       Grid.MakeCellCurrent(insertionRowIndex,
         List.LastDatabaseUpdateErrorException!.ColumnIndex);
-      // DOES NOT HELP WITH FAILURE TO RETURN TO INSERTION ROW ON OUT OF RANGE ERROR
-      // OR SAME PROBLEM WITH Piece.AudioUrl AND Piece.VideoUrl DUPLICATE ERRORS.
+      // DOES NOT HELP WITH FAILURE TO RETURN TO NEW ROW ON CHILD GRIDS:
       // if (insertionRowIndex > 0) {
       //   Grid.MakeCellCurrent(insertionRowIndex - 1, 
       //     List.LastDatabaseUpdateErrorException!.ColumnIndex);
       // }
-      // NEITHER DOES THIS
+      // NEITHER DOES THIS:
       // Grid.BeginInvoke(() =>
       //   Grid.MakeCellCurrent(insertionRowIndex,
       //     List.LastDatabaseUpdateErrorException!.ColumnIndex));
-      // NEITHER DOES THIS
+      // NEITHER DOES THIS:
       // var timer = new Timer {AutoReset = false, Enabled = true, Interval = 1000};
       // timer.Elapsed += (sender, args) => {
       //   Debug.WriteLine("timer");
