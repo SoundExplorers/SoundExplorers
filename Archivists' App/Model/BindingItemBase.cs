@@ -93,8 +93,12 @@ namespace SoundExplorers.Model {
     ///   quicker with large volumes of data.
     /// </summary>
     /// <remarks>
-    ///   Arguably this duplicate key check does not give such nice error messages as
-    ///   the ones in the Data layer, but I think they are fine.
+    ///   This duplicate key check gives a standard error message, while there are more
+    ///   varied duplicate key error message in the Data layer, reflecting top-level vs
+    ///   child and insertion vs update. I did try to replicate those more varied error
+    ///   messages here. But the extra complexity caused problems. And I think the more
+    ///   general error message generated here is fine as it is. So I don't think it is
+    ///   worth the hassle of making that change.
     /// </remarks>
     private void CheckForDuplicateKey(TEntity? entity = null) {
       Key = CreateKey();
