@@ -204,18 +204,24 @@ namespace SoundExplorers.Model {
     }
 
     /// <summary>
-    ///   Derived classes should override this method to implement any entity
-    ///   type-specific validation that needs to be done at insertion time against other
-    ///   entities in the entity list or related entities.
+    ///   Derived classes that represent items on child lists must override this method
+    ///   to implement any entity type-specific validation that needs to be done at
+    ///   insertion time against other entities in the entity list or related entities.
+    ///   This prevents an InvalidOperationException from being thrown in
+    ///   EntityBase.UpdateNonIndexField, which happens if other entities are repeatedly
+    ///   retrieved from the database while an insertion is in progress.
     /// </summary>
     internal virtual void ValidateInsertion() {
       CheckForDuplicateKey();
     }
 
     /// <summary>
-    ///   Derived classes should override this method to implement any entity
-    ///   type-specific validation that needs to be done at existing entity property
-    ///   update time against other entities on the entity list or related entities.
+    ///   Derived classes that represent items on child lists must override this method
+    ///   to implement any entity type-specific validation that needs to be done at
+    ///   existing entity property update time against other entities on the entity list
+    ///   or related entities. This prevents an InvalidOperationException from being
+    ///   thrown in EntityBase.UpdateNonIndexField, which happens if other entities are
+    ///   repeatedly retrieved from the database while an update is in progress.
     /// </summary>
     internal virtual void ValidatePropertyUpdate(
       string propertyName, TEntity entity) {
