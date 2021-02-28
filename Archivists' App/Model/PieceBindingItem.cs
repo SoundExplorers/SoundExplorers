@@ -133,7 +133,7 @@ namespace SoundExplorers.Model {
 
     private void DisallowChangeAudioUrlToDuplicate(Piece piece) {
       if (AudioUrl != piece.AudioUrl) {
-        var foundPiece = FindPieceWithAudioUrl(AudioUrl);
+        var foundPiece = FindPieceWithAudioUrl();
         if (foundPiece != null && !foundPiece.Oid.Equals(piece.Oid)) {
           throw Piece.CreateDuplicateAudioUrlUpdateException(foundPiece);
         }
@@ -142,41 +142,41 @@ namespace SoundExplorers.Model {
 
     private void DisallowChangeVideoUrlToDuplicate(Piece piece) {
       if (VideoUrl != piece.VideoUrl) {
-        var foundPiece = FindPieceWithVideoUrl(VideoUrl);
+        var foundPiece = FindPieceWithVideoUrl();
         if (foundPiece != null && !foundPiece.Oid.Equals(piece.Oid)) {
           throw Piece.CreateDuplicateVideoUrlUpdateException(foundPiece);
         }
       }
     }
 
-    private void DisallowInsertWithDuplicateAudioUrl() {
-      var duplicate = FindPieceWithAudioUrl(AudioUrl);
+    private void DisallowInsertionWithDuplicateAudioUrl() {
+      var duplicate = FindPieceWithAudioUrl();
       if (duplicate != null) {
-        throw Piece.CreateDuplicateAudioUrlInsertException(Key!, duplicate);
+        throw Piece.CreateDuplicateAudioUrlInsertionException(Key!, duplicate);
       }
     }
 
-    private void DisallowInsertWithDuplicateVideoUrl() {
-      var duplicate = FindPieceWithVideoUrl(VideoUrl);
+    private void DisallowInsertionWithDuplicateVideoUrl() {
+      var duplicate = FindPieceWithVideoUrl();
       if (duplicate != null) {
         throw Piece.CreateDuplicateVideoUrlInsertException(Key!, duplicate);
       }
     }
 
-    private Piece? FindPieceWithAudioUrl(string audioUrl) {
+    private Piece? FindPieceWithAudioUrl() {
       return SetList
         .Select(set => (
             from piece in set.Pieces.Values
-            where piece.AudioUrl == audioUrl
+            where piece.AudioUrl == AudioUrl
             select piece)
           .FirstOrDefault()).FirstOrDefault(foundPiece => foundPiece != null);
     }
 
-    private Piece? FindPieceWithVideoUrl(string videoUrl) {
+    private Piece? FindPieceWithVideoUrl() {
       return SetList
         .Select(set => (
             from piece in set.Pieces.Values
-            where piece.VideoUrl == videoUrl
+            where piece.VideoUrl == VideoUrl
             select piece)
           .FirstOrDefault()).FirstOrDefault(foundPiece => foundPiece != null);
     }
@@ -228,7 +228,7 @@ namespace SoundExplorers.Model {
     private void ValidateAudioUrlOnInsertion() {
       if (!string.IsNullOrWhiteSpace(AudioUrl)) {
         Piece.ValidateAudioUrlFormat(AudioUrl);
-        DisallowInsertWithDuplicateAudioUrl();
+        DisallowInsertionWithDuplicateAudioUrl();
       }
     }
 
@@ -259,7 +259,7 @@ namespace SoundExplorers.Model {
     private void ValidateVideoUrlOnInsertion() {
       if (!string.IsNullOrWhiteSpace(VideoUrl)) {
         Piece.ValidateVideoUrlFormat(VideoUrl);
-        DisallowInsertWithDuplicateVideoUrl();
+        DisallowInsertionWithDuplicateVideoUrl();
       }
     }
 
@@ -274,13 +274,13 @@ namespace SoundExplorers.Model {
       Piece piece) {
       base.ValidatePropertyUpdate(propertyName, piece);
       switch (propertyName) {
-        case nameof(Piece.Duration):
+        case nameof(Duration):
           ValidateDurationOnUpdate();
           break;
-        case nameof(Piece.AudioUrl):
+        case nameof(AudioUrl):
           ValidateAudioUrlOnUpdate(piece);
           break;
-        case nameof(Piece.VideoUrl):
+        case nameof(VideoUrl):
           ValidateVideoUrlOnUpdate(piece);
           break;
       }

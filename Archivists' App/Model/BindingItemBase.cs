@@ -242,6 +242,11 @@ namespace SoundExplorers.Model {
     ///   EntityBase.UpdateNonIndexField, which happens if other entities are repeatedly
     ///   retrieved from the database while an insertion is in progress.
     /// </summary>
+    /// <remarks>
+    ///   Though we are duplicating entity-level validation here, the entity-level
+    ///   validation should be retained as a last-resort defence against corrupting the
+    ///   database. 
+    /// </remarks>
     internal virtual void ValidateInsertion() {
       CheckForDuplicateKey();
     }
@@ -254,6 +259,11 @@ namespace SoundExplorers.Model {
     ///   thrown in EntityBase.UpdateNonIndexField, which happens if other entities are
     ///   repeatedly retrieved from the database while an update is in progress.
     /// </summary>
+    /// <remarks>
+    ///   Though we are duplicating entity-level validation here, the entity-level
+    ///   validation should be retained as a last-resort defence against corrupting the
+    ///   database. 
+    /// </remarks>
     internal virtual void ValidatePropertyUpdate(
       string propertyName, TEntity entity) {
       if (EntityList.Columns[propertyName].IsInKey) {

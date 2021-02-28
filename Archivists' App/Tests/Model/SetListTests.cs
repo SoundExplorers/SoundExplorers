@@ -256,16 +256,6 @@ namespace SoundExplorers.Tests.Model {
       Assert.IsInstanceOf<Piece>(identifyingParentChildren.Children[0], "Child type");
     }
 
-    // [Test]
-    // public void InvalidFormatSetNo() {
-    //   List = CreateSetList();
-    //   Populate();
-    //   List.OnValidationError(1, "SetNo",
-    //     new FormatException("Value cannot be cast to Int32"));
-    //   Assert.AreEqual("SetNo must be an integer between 1 and 99.",
-    //     List.LastDatabaseUpdateErrorException!.Message, "Error message");
-    // }
-
     [Test]
     public void ReadAsParentList() {
       List = CreateSetList(true, true, false);

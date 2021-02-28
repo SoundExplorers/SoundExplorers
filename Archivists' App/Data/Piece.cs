@@ -97,7 +97,7 @@ namespace SoundExplorers.Data {
       if (!string.IsNullOrWhiteSpace(AudioUrl)) {
         duplicate = FindDuplicateAudioUrl(AudioUrl, session);
         if (duplicate != null) {
-          throw CreateDuplicateAudioUrlInsertException(Key, duplicate); 
+          throw CreateDuplicateAudioUrlInsertionException(Key, duplicate); 
         }
       }
       if (!string.IsNullOrWhiteSpace(VideoUrl)) {
@@ -117,7 +117,7 @@ namespace SoundExplorers.Data {
       }
     }
 
-    public static PropertyConstraintException CreateDuplicateAudioUrlInsertException(
+    public static PropertyConstraintException CreateDuplicateAudioUrlInsertionException(
       Key newKey, Piece duplicate) {
       return new PropertyConstraintException(
         $"Piece '{newKey}' cannot be added because Piece " +

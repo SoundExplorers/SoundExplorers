@@ -200,16 +200,6 @@ namespace SoundExplorers.Tests.Model {
       Assert.IsInstanceOf<Credit>(identifyingParentChildren.Children[0], "Child type");
     }
 
-    // [Test]
-    // public void InvalidFormatPieceNo() {
-    //   List = CreatePieceList();
-    //   Populate();
-    //   List.OnValidationError(1, "PieceNo",
-    //     new FormatException("Value cannot be cast to Int32"));
-    //   Assert.AreEqual("PieceNo must be an integer between 1 and 99.",
-    //     List.LastDatabaseUpdateErrorException!.Message, "Error message");
-    // }
-
     [Test]
     public void ReadAsChildList() {
       var newDuration2 = TimeSpan.FromMinutes(59);
@@ -258,11 +248,6 @@ namespace SoundExplorers.Tests.Model {
       var exception = Assert.Catch<DatabaseUpdateErrorException>(
         () => bindingList[2].AudioUrl = otherUrl,
         "Changing AudioUrl to duplicate disallowed");
-      // string expected =
-      //   $"Audio URL cannot be set to '{otherUrl}'. " +
-      //   $"Piece '{otherKey}' already exists with that Audio URL.";
-      // Debug.WriteLine(expected);
-      // Debug.WriteLine(exception.Message);
       Assert.AreEqual(
         $"Audio URL cannot be set to '{otherUrl}'. " + 
         $"Piece '{otherKey}' already exists with that Audio URL.",
