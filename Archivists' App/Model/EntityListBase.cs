@@ -233,7 +233,14 @@ namespace SoundExplorers.Model {
           OnValidationError(rowIndex, columnName, duplicateKeyException);
           break;
         case FormatException formatException:
-          // An invalid value was pasted into a cell, e.g. text into a date.
+          // An invalid value was pasted into a cell. Currently that can only happen when
+          // text is pasted into a Date or boolean cell, i.e. an Event's Date or
+          // Newsletter cell or a Newsletter's Date cell or a Set's IsPublic cell.
+          // Integer and TimeSpan cells are bound to string properties of binding items,
+          // in order to ensure that the application has total control over validation.
+          // So there should be no possibility of a FormatException or other system
+          // exception when an invalid value is typed or pasted into a cell of one of
+          // those types.
           OnValidationError(rowIndex, columnName, formatException);
           break;
         case RowNotInTableException referencedEntityNotFoundException:
