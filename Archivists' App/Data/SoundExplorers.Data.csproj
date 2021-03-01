@@ -21,9 +21,6 @@
     </AssemblyAttribute>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Entity Relationship Diagram.cd" />
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="JetBrains.Annotations">
       <Version>2020.1.0</Version>
     </PackageReference>
