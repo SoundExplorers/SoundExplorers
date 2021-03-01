@@ -5,7 +5,7 @@ Its intended initial use is to archive the recordings that have been accumulated
 years by New Zealand's Sound and Light Exploration Society ('Sound Explorers')
 http://www.soundexplorers.co.nz/.  The recordings are mostly of musical performances presented
 by Sound Explorers at various locations, mostly its main venue, which is currently the
-Pyramid Club in Wellington https://www.pyramidclub.org.nz/https://www.pyramidclub.org.nz/.
+Pyramid Club in Wellington https://www.pyramidclub.org.nz.
 
 However, though development is for Sound Explorers in the first instance, the nature of the data
 would lend itself to the modification of the software to allow other organisations or individuals
