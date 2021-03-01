@@ -74,6 +74,10 @@ namespace SoundExplorers.Data {
       }
     }
 
+    /// <summary>
+    ///   Creates a dummy Newsletter, to be the default for Events for which a Newsletter
+    ///   has not yet been specified.
+    /// </summary>
     public static Newsletter CreateDefault() {
       return new Newsletter {
         Date = DefaultDate,
@@ -131,6 +135,9 @@ namespace SoundExplorers.Data {
           nameof(Url));
       }
       if (date == DefaultDate) {
+        // The default Newsletter is an automatically created dummy, used as the default
+        // for Events for which a Newsletter has not yet been specified. So it just has a
+        // "Required default" comment in its URL property.
         return;
       }
       ValidateUrlFormat(url, nameof(Url));
