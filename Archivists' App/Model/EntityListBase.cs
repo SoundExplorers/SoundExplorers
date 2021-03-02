@@ -49,12 +49,6 @@ namespace SoundExplorers.Model {
     }
 
     /// <summary>
-    ///   Only applicable to a main list that is to be populated with children of an
-    ///   identifying parent entity, this specifies the identifying parent entity.
-    /// </summary>
-    public IEntity? IdentifyingParent { get; private set; }
-
-    /// <summary>
     ///   Gets a strongly typed view of the binding list representing the list of
     ///   entities and bound to the grid.
     /// </summary>
@@ -68,6 +62,12 @@ namespace SoundExplorers.Model {
         _bindingList.ListChanged += BindingList_ListChanged;
       }
     }
+
+    /// <summary>
+    ///   Only applicable to a main list that is to be populated with children of an
+    ///   identifying parent entity, this specifies the identifying parent entity.
+    /// </summary>
+    internal IEntity? IdentifyingParent { get; private set; }
 
     /// <summary>
     ///   The setter should only be needed for testing.
