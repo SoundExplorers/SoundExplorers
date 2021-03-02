@@ -292,10 +292,10 @@ namespace SoundExplorers.Tests.Model {
     }
 
     private SetList CreateSetList(
-      bool addSets = true, bool addActs = true, bool isMainList = true) {
+      bool addSets = true, bool addActs = true, bool isChildList = true) {
       AddData(addSets, addActs);
-      var result = new SetList(isMainList) {Session = Session};
-      if (isMainList) {
+      var result = new SetList(isChildList) {Session = Session};
+      if (isChildList) {
         ParentList = (result.CreateParentList() as EventList)!;
       }
       return result;

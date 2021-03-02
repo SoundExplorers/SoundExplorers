@@ -11,8 +11,8 @@ namespace SoundExplorers.Model {
     [ExcludeFromCodeCoverage]
     public PieceList() : this(true) { }
 
-    public PieceList(bool isMainList) :
-      base(isMainList ? typeof(SetList) : null) { }
+    public PieceList(bool isChildList) :
+      base(isChildList ? typeof(SetList) : null) { }
 
     internal SetList SetList { get; private set; } = null!;
 

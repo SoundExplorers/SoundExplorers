@@ -182,7 +182,7 @@ namespace SoundExplorers.Model {
     }
 
     protected override object? GetEntityPropertyValue(PropertyInfo property,
-      PropertyInfo entityProperty) {
+      PropertyInfo pieceProperty) {
       switch (property.Name) {
         case nameof(PieceNo):
           string pieceNoString = GetPropertyValue(nameof(PieceNo))!.ToString()!;
@@ -191,7 +191,7 @@ namespace SoundExplorers.Model {
           string durationString = GetPropertyValue(nameof(Duration))!.ToString()!;
           return ToDurationTimeSpan(durationString);
         default:
-          return base.GetEntityPropertyValue(property, entityProperty);
+          return base.GetEntityPropertyValue(property, pieceProperty);
       }
     }
 

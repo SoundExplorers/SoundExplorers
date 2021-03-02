@@ -165,9 +165,16 @@ namespace SoundExplorers.Model {
 
     protected IEntity? FindParent(PropertyInfo property) {
       var propertyValue = property.GetValue(this);
-      return propertyValue != null
-        ? EntityList.Columns[property.Name].ReferenceableItems.GetEntity(propertyValue)
-        : null;
+      if (propertyValue == null) {
+        return null;
+      }
+      var column = EntityList.Columns[property.Name];
+      var referenceableItems = column.ReferenceableItems;
+      var entity = referenceableItems.GetEntity(propertyValue);
+      return entity;
+      // return propertyValue != null
+      //   ? EntityList.Columns[property.Name].ReferenceableItems.GetEntity(propertyValue)
+      //   : null;
     }
 
     internal static string GetDefaultIntegerSimpleKey(

@@ -9,8 +9,8 @@ namespace SoundExplorers.Model {
     [UsedImplicitly]
     public SetList() : this(true) { }
 
-    public SetList(bool isMainList) :
-      base(isMainList ? typeof(EventList) : null) { }
+    public SetList(bool isChildList) :
+      base(isChildList ? typeof(EventList) : null) { }
 
     private bool HasDefaultActBeenFound { get; set; }
 

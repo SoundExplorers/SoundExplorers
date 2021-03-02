@@ -108,13 +108,13 @@ namespace SoundExplorers.Model {
     }
 
     protected override object? GetEntityPropertyValue(PropertyInfo property,
-      PropertyInfo entityProperty) {
+      PropertyInfo setProperty) {
       switch (property.Name) {
         case nameof(SetNo):
           string setNoString = GetPropertyValue(nameof(SetNo))!.ToString()!;
           return SimpleKeyToInteger(setNoString, nameof(SetNo));
         default:
-          return base.GetEntityPropertyValue(property, entityProperty);
+          return base.GetEntityPropertyValue(property, setProperty);
       }
     }
 

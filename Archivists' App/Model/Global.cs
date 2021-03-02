@@ -41,6 +41,7 @@ namespace SoundExplorers.Model {
       return new SortedDictionary<string, Type> {
         {nameof(Act), typeof(ActList)},
         {nameof(Artist), typeof(ArtistList)},
+        {nameof(Credit), typeof(CreditList)},
         {nameof(Event), typeof(EventList)},
         {nameof(EventType), typeof(EventTypeList)},
         {nameof(Genre), typeof(GenreList)},

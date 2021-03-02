@@ -55,7 +55,6 @@ namespace SoundExplorers.Tests.Model {
     public void AddPiece() {
       List = CreatePieceList();
       Assert.IsTrue(List.IsChildList, "IsChildList");
-      Populate();
       var set = Data.Sets[0];
       Populate();
       var bindingList = List.BindingList;
@@ -332,10 +331,10 @@ namespace SoundExplorers.Tests.Model {
     }
 
     private PieceList CreatePieceList(
-      bool addPieces = true, bool isMainList = true) {
+      bool addPieces = true, bool isChildList = true) {
       AddData(addPieces);
-      var result = new PieceList(isMainList) {Session = Session};
-      if (isMainList) {
+      var result = new PieceList(isChildList) {Session = Session};
+      if (isChildList) {
         ParentList = (result.CreateParentList() as SetList)!;
       }
       return result;
