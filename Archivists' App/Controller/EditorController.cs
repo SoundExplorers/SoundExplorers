@@ -87,7 +87,7 @@ namespace SoundExplorers.Controller {
     private Type MainListType { get; }
 
     internal IEntityList? ParentList => IsParentGridToBeShown
-      ? _parentList ??= MainList.CreateParentList()
+      ? _parentList ??= CreateParentList()
       : null;
 
     internal IEditorView View { get; }
@@ -114,6 +114,12 @@ namespace SoundExplorers.Controller {
     [ExcludeFromCodeCoverage]
     protected virtual Option CreateOption(string name) {
       return new Option(name);
+    }
+
+    private IEntityList CreateParentList() {
+      var result = MainList.CreateParentList();
+      result.ChildListType = MainListType;
+      return result;
     }
 
     public void FocusCurrentGrid() {

@@ -10,7 +10,6 @@ namespace SoundExplorers.Model {
   ///   for populating a ComboBox for selecting a referenced entity.
   /// </summary>
   public class ReferenceableItemList : List<object> {
-    //private static Newsletter _dummyNewsletter;
 
     public ReferenceableItemList(BindingColumn referencingColumn) {
       ReferencingColumn = referencingColumn;
@@ -26,14 +25,7 @@ namespace SoundExplorers.Model {
     private static IDictionary<string, IEntity?> CreateEntityDictionary(
       // ReSharper disable once SuggestBaseTypeForParameter
       IEntityList entities) {
-      var result = new Dictionary<string, IEntity?>();
-      // if (entities is NewsletterList) {
-      //   result.Add(EntityBase.DateToSimpleKey(EntityBase.DefaultDate), null);
-      // }
-      foreach (IEntity entity in entities) {
-        result.Add(ToSimpleKey(entity)!, entity);
-      }
-      return result;
+      return entities.Cast<IEntity>().ToDictionary(entity => ToSimpleKey(entity)!)!;
     }
 
     private IEntityList CreateEntityList() {
@@ -79,11 +71,6 @@ namespace SoundExplorers.Model {
       // ReSharper disable once SuggestBaseTypeForParameter
       IEntityList entities) {
       Clear();
-      // if (entities is NewsletterList) {
-      //   Add(new KeyValuePair<object, object?>(
-      //     Format(EntityBase.DefaultDate.ToString(Global.DateFormat))!,
-      //     null));
-      // }
       AddRange(
         from IEntity entity in entities
         select (object)new KeyValuePair<object?, object>(Format(entity.SimpleKey), entity)

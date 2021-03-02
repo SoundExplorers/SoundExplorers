@@ -8,7 +8,6 @@ namespace SoundExplorers.Model {
   /// </summary>
   public class BindingColumn : IBindingColumn {
     private string? _displayName;
-    private ReferenceableItemList? _referenceableItems;
     private SessionBase? _session;
 
     internal BindingColumn(string propertyName, Type valueType,
@@ -32,8 +31,7 @@ namespace SoundExplorers.Model {
       set => _session = value;
     }
 
-    public ReferenceableItemList ReferenceableItems =>
-      _referenceableItems ??= FetchReferenceableItems();
+    public ReferenceableItemList? ReferenceableItems { get; private set; }
 
     /// <summary>
     ///   Gets the type of the referenced entity list. Null if the column does not
@@ -92,17 +90,16 @@ namespace SoundExplorers.Model {
     /// </remarks>
     public Type ValueType { get; }
 
-    private ReferenceableItemList FetchReferenceableItems() {
-      var result = new ReferenceableItemList(this);
+    internal void FetchReferenceableItems() {
+      ReferenceableItems = new ReferenceableItemList(this);
       bool isTransactionRequired = !Session.InTransaction;
       if (isTransactionRequired) {
         Session.BeginRead();
       }
-      result.Fetch();
+      ReferenceableItems.Fetch();
       if (isTransactionRequired) {
         Session.Commit();
       }
-      return result;
     }
   } //End of class
 } //End of namespace

@@ -50,7 +50,7 @@ namespace SoundExplorers.Model {
 
     private BackupItem<TBindingItem>? BackupItem { get; set; }
     private BackupItem<TBindingItem>? BackupItemToRestoreFrom { get; set; }
-
+    
     private IComparer<TEntity> EntityComparer =>
       _entityComparer ??= CreateEntityComparer();
 
@@ -60,6 +60,8 @@ namespace SoundExplorers.Model {
     /// </summary>
     private BackupItem<TBindingItem>? ExistingEntityPropertyErrorBackupItem { get; set; }
 
+
+    private bool IsParentList => ChildListType != null;
     private StatementType LastDatabaseChangeAction { get; set; }
 
     /// <summary>
@@ -98,6 +100,8 @@ namespace SoundExplorers.Model {
     ///   Gets the binding list representing the list of entities and bound to the grid.
     /// </summary>
     IBindingList IEntityList.BindingList => BindingList;
+    
+    public Type? ChildListType { get; set; }
 
     /// <summary>
     ///   Gets metadata for the columns of the editor grid that represents the list of
@@ -131,7 +135,9 @@ namespace SoundExplorers.Model {
     /// </remarks>
     public bool IsInsertionRowCurrent { get; private set; }
 
-    public DatabaseUpdateErrorException? LastDatabaseUpdateErrorException { get; set; }
+    public DatabaseUpdateErrorException? LastDatabaseUpdateErrorException {
+      get; private set;
+    }
 
     /// <summary>
     ///   Gets the type of parent list (IEntityList) required when this is the main list.
@@ -363,6 +369,7 @@ namespace SoundExplorers.Model {
       } else {
         AddRange(Session.AllObjects<TEntity>());
       }
+      // ReferenceLists = IsParentList ? FetchChildReferenceLists() : FetchReferenceLists();
       if (isTransactionRequired) {
         Session.Commit();
       }
@@ -400,25 +407,26 @@ namespace SoundExplorers.Model {
 
     protected abstract TBindingItem CreateBindingItem(TEntity entity);
 
-    private TBindingItem CreateBindingItemWithEntityList(TEntity entity) {
-      var result = CreateBindingItem(entity);
-      result.EntityList = this;
-      return result;
+    protected virtual TypedBindingList<TEntity, TBindingItem> CreateBindingList(
+      IList<TBindingItem> list) {
+      return new TypedBindingList<TEntity, TBindingItem>(list);
     }
 
     protected abstract BindingColumnList CreateColumns();
 
-    private BindingColumnList CreateColumnsWithSession() {
-      var result = CreateColumns();
-      foreach (var column in result) {
-        column.Session = Session;
-      }
-      return result;
-    }
-
     protected virtual IComparer<TEntity> CreateEntityComparer() {
       return new EntityComparer<TEntity>();
     }
+
+    protected virtual IDictionary<Type, IEntityList> FetchChildReferenceLists() {
+      return new Dictionary<Type, IEntityList>();
+    }
+
+    // internal IDictionary<Type, IEntityList> FetchReferenceLists() {
+    //   return ReferenceListTypes.ToDictionary(
+    //     referenceListType => referenceListType, 
+    //     FetchReferenceList);
+    // }
 
     /// <summary>
     ///   Adds a new entity to the list with the data in the specified grid row, which
@@ -481,6 +489,27 @@ namespace SoundExplorers.Model {
       }
     }
 
+    private TBindingItem CreateBindingItemWithEntityList(TEntity entity) {
+      var result = CreateBindingItem(entity);
+      result.EntityList = this;
+      return result;
+    }
+
+    private TypedBindingList<TEntity, TBindingItem> CreateBindingList() {
+      return CreateBindingList((
+        from entity in this
+        select CreateBindingItemWithEntityList(entity)
+      ).ToList());
+    }
+
+    private BindingColumnList CreateColumnsWithSession() {
+      var result = CreateColumns();
+      foreach (var column in result) {
+        column.Session = Session;
+      }
+      return result;
+    }
+
     private DatabaseUpdateErrorException CreateDatabaseUpdateErrorException(
       Exception exception, int rowIndex) {
       if (!IsDatabaseUpdateError(exception)) {
@@ -495,18 +524,6 @@ namespace SoundExplorers.Model {
       LastDatabaseUpdateErrorException = new DatabaseUpdateErrorException(
         LastDatabaseChangeAction, exception.Message, rowIndex, columnIndex, exception);
       return LastDatabaseUpdateErrorException;
-    }
-
-    private TypedBindingList<TEntity, TBindingItem> CreateBindingList() {
-      return CreateBindingList((
-        from entity in this
-        select CreateBindingItemWithEntityList(entity)
-      ).ToList());
-    }
-
-    protected virtual TypedBindingList<TEntity, TBindingItem> CreateBindingList(
-      IList<TBindingItem> list) {
-      return new TypedBindingList<TEntity, TBindingItem>(list);
     }
 
     /// <summary>

@@ -13,6 +13,8 @@ namespace SoundExplorers.Model {
     ///   Gets the binding list representing the list of entities.
     /// </summary>
     IBindingList BindingList { get; }
+    
+    Type? ChildListType { get; set; }
 
     /// <summary>
     ///   Gets metadata for the columns of the editor grid that represents the list of
@@ -33,8 +35,10 @@ namespace SoundExplorers.Model {
     ///   entities and is located at the bottom of the grid.
     /// </summary>
     bool IsInsertionRowCurrent { get; }
+    
+    // bool IsParentList { get; set; }
 
-    DatabaseUpdateErrorException? LastDatabaseUpdateErrorException { get; set; }
+    DatabaseUpdateErrorException? LastDatabaseUpdateErrorException { get; }
 
     /// <summary>
     ///   Gets the type of parent list (IEntityList) required when this is the main list.

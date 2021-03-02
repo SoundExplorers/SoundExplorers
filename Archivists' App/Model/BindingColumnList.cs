@@ -11,6 +11,8 @@ namespace SoundExplorers.Model {
   ///   <see cref="BindingColumn.PropertyName" /> as the key.
   /// </remarks>
   public class BindingColumnList : List<BindingColumn> {
+    private IList<BindingColumn>? _referencingColumns;
+
     /// <summary>
     ///   Returns the entity column with the specified name (case-insensitive).
     /// </summary>
@@ -21,6 +23,9 @@ namespace SoundExplorers.Model {
     ///   The entity column with the specified name (case-insensitive).
     /// </returns>
     public BindingColumn this[string name] => FindColumn(name)!;
+
+    private IList<BindingColumn> ReferencingColumns =>
+      _referencingColumns ??= GetReferencingColumns();
 
     /// <summary>
     ///   Add the specified entity column to the list, provided its name is unique in the
@@ -54,16 +59,29 @@ namespace SoundExplorers.Model {
       return FindColumn(name) != null;
     }
 
+    internal void FetchReferenceableItems() {
+      foreach (var column in ReferencingColumns) {
+        column.FetchReferenceableItems();
+      }
+    }
+
     private BindingColumn? FindColumn(string name) {
       return (
-        from BindingColumn bindingColumn in this
-        where string.Compare(bindingColumn.PropertyName, name,
+        from BindingColumn column in this
+        where string.Compare(column.PropertyName, name,
           StringComparison.OrdinalIgnoreCase) == 0
-        select bindingColumn).FirstOrDefault();
+        select column).FirstOrDefault();
     }
 
     public int GetIndex(string propertyName) {
       return IndexOf(this[propertyName]);
+    }
+
+    private IList<BindingColumn> GetReferencingColumns() {
+      return
+        (from column in this
+          where column.ReferencesAnotherEntity
+          select column).ToList()!;
     }
   } //End of class
 } //End of namespace
