@@ -48,29 +48,11 @@ namespace SoundExplorers.Model {
       }
     }
 
-    private BackupItem<TBindingItem>? BackupItem { get; set; }
-    private BackupItem<TBindingItem>? BackupItemToRestoreFrom { get; set; }
-    
-    private IComparer<TEntity> EntityComparer =>
-      _entityComparer ??= CreateEntityComparer();
-
     /// <summary>
-    ///   Used for restoring the error value for correction or edit cancellation after an
-    ///   error message hase been shown for a cell edit error on an existing row.
+    ///   Only applicable to a main list that is to be populated with children of an
+    ///   identifying parent entity, this specifies the identifying parent entity.
     /// </summary>
-    private BackupItem<TBindingItem>? ExistingEntityPropertyErrorBackupItem { get; set; }
-
-
-    private bool IsParentList => ChildListType != null;
-    private StatementType LastDatabaseChangeAction { get; set; }
-
-    /// <summary>
-    ///   The setter should only be needed for testing.
-    /// </summary>
-    internal QueryHelper QueryHelper {
-      get => _queryHelper ??= QueryHelper.Instance;
-      set => _queryHelper = value;
-    }
+    public IEntity? IdentifyingParent { get; private set; }
 
     /// <summary>
     ///   Gets a strongly typed view of the binding list representing the list of
@@ -87,20 +69,36 @@ namespace SoundExplorers.Model {
       }
     }
 
-    private bool IsReplacingErrorBindingValueWithOriginal { get; set; }
-    private bool HasRowBeenEdited { get; set; }
+    /// <summary>
+    ///   The setter should only be needed for testing.
+    /// </summary>
+    internal QueryHelper QueryHelper {
+      get => _queryHelper ??= QueryHelper.Instance;
+      set => _queryHelper = value;
+    }
+
+    private BackupItem<TBindingItem>? BackupItem { get; set; }
+    private BackupItem<TBindingItem>? BackupItemToRestoreFrom { get; set; }
+
+    private IComparer<TEntity> EntityComparer =>
+      _entityComparer ??= CreateEntityComparer();
 
     /// <summary>
-    ///   Only applicable to a main list that is to be populated with children of an
-    ///   identifying parent entity, this specifies the identifying parent entity.
+    ///   Used for restoring the error value for correction or edit cancellation after an
+    ///   error message hase been shown for a cell edit error on an existing row.
     /// </summary>
-    public IEntity? IdentifyingParent { get; private set; }
+    private BackupItem<TBindingItem>? ExistingEntityPropertyErrorBackupItem { get; set; }
+
+    private bool IsParentList => ChildListType != null;
+    private StatementType LastDatabaseChangeAction { get; set; }
+    private bool IsReplacingErrorBindingValueWithOriginal { get; set; }
+    private bool HasRowBeenEdited { get; set; }
 
     /// <summary>
     ///   Gets the binding list representing the list of entities and bound to the grid.
     /// </summary>
     IBindingList IEntityList.BindingList => BindingList;
-    
+
     public Type? ChildListType { get; set; }
 
     /// <summary>
@@ -136,7 +134,8 @@ namespace SoundExplorers.Model {
     public bool IsInsertionRowCurrent { get; private set; }
 
     public DatabaseUpdateErrorException? LastDatabaseUpdateErrorException {
-      get; private set;
+      get;
+      private set;
     }
 
     /// <summary>
@@ -401,10 +400,6 @@ namespace SoundExplorers.Model {
       BackupItemToRestoreFrom = null;
     }
 
-    private static BackupItem<TBindingItem> CreateBackupItem(TBindingItem bindingItem) {
-      return new BackupItem<TBindingItem>(bindingItem);
-    }
-
     protected abstract TBindingItem CreateBindingItem(TEntity entity);
 
     protected virtual TypedBindingList<TEntity, TBindingItem> CreateBindingList(
@@ -417,16 +412,6 @@ namespace SoundExplorers.Model {
     protected virtual IComparer<TEntity> CreateEntityComparer() {
       return new EntityComparer<TEntity>();
     }
-
-    protected virtual IDictionary<Type, IEntityList> FetchChildReferenceLists() {
-      return new Dictionary<Type, IEntityList>();
-    }
-
-    // internal IDictionary<Type, IEntityList> FetchReferenceLists() {
-    //   return ReferenceListTypes.ToDictionary(
-    //     referenceListType => referenceListType, 
-    //     FetchReferenceList);
-    // }
 
     /// <summary>
     ///   Adds a new entity to the list with the data in the specified grid row, which
@@ -487,6 +472,10 @@ namespace SoundExplorers.Model {
           }
           break;
       }
+    }
+
+    private static BackupItem<TBindingItem> CreateBackupItem(TBindingItem bindingItem) {
+      return new BackupItem<TBindingItem>(bindingItem);
     }
 
     private TBindingItem CreateBindingItemWithEntityList(TEntity entity) {
