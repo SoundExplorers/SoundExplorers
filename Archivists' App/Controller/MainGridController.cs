@@ -95,7 +95,7 @@ namespace SoundExplorers.Controller {
 
     protected override void OnPopulatedAsync() {
       Debug.WriteLine("MainGridController.OnPopulatedAsync");
-      if (List.IsChildList) {
+      if (List.ListRole == ListRole.Child) {
         IsFixingFocus = true;
         EditorController.View.OnParentAndMainGridsShown();
         Grid.CellColorScheme.Invert();
@@ -103,7 +103,7 @@ namespace SoundExplorers.Controller {
       base.OnPopulatedAsync();
       // Warning: Profiling blocks code coverage analysis
       // MeasureProfiler.SaveData();
-      if (List.IsChildList && ParentGrid.Controller.LastRowNeedsToBeScrolledIntoView) {
+      if (List.ListRole == ListRole.Child && ParentGrid.Controller.LastRowNeedsToBeScrolledIntoView) {
         ParentGrid.Controller.ScrollLastRowIntoView();
       } else {
         // Show that the population process is finished.

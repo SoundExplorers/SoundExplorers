@@ -169,7 +169,7 @@ namespace SoundExplorers.Model {
         return null;
       }
       var column = EntityList.Columns[property.Name];
-      var referenceableItems = column.ReferenceableItems;
+      var referenceableItems = column.ReferenceableItems!;
       var entity = referenceableItems.GetEntity(propertyValue);
       return entity;
       // return propertyValue != null

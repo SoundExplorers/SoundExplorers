@@ -118,6 +118,7 @@ namespace SoundExplorers.Controller {
 
     private IEntityList CreateParentList() {
       var result = MainList.CreateParentList();
+      MainList.ParentList = result;
       result.ChildListType = MainListType;
       return result;
     }

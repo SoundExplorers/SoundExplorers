@@ -89,7 +89,6 @@ namespace SoundExplorers.Model {
     /// </summary>
     private BackupItem<TBindingItem>? ExistingEntityPropertyErrorBackupItem { get; set; }
 
-    private bool IsParentList => ChildListType != null;
     private StatementType LastDatabaseChangeAction { get; set; }
     private bool IsReplacingErrorBindingValueWithOriginal { get; set; }
     private bool HasRowBeenEdited { get; set; }
@@ -98,6 +97,9 @@ namespace SoundExplorers.Model {
     ///   Gets the binding list representing the list of entities and bound to the grid.
     /// </summary>
     IBindingList IEntityList.BindingList => BindingList;
+
+    public IDictionary<string, ReferenceableItemList>?
+      ChildColumnReferenceableItemLists { get; private set; }
 
     public Type? ChildListType { get; set; }
 
@@ -109,12 +111,6 @@ namespace SoundExplorers.Model {
       _columns ??= CreateColumnsWithSession();
 
     public string EntityTypeName => typeof(TEntity).Name;
-
-    /// <summary>
-    ///   Gets whether this is a main list that is to be populated with children of an
-    ///   identifying parent entity.
-    /// </summary>
-    public bool IsChildList => ParentListType != null;
 
     /// <summary>
     ///   Gets whether the current grid row is the insertion row, which is for adding new
@@ -137,6 +133,11 @@ namespace SoundExplorers.Model {
       get;
       private set;
     }
+
+    public ListRole ListRole => ParentListType != null ? ListRole.Child :
+      ChildListType != null ? ListRole.Parent : ListRole.StandAlone;
+    
+    public IEntityList? ParentList { get; set; }
 
     /// <summary>
     ///   Gets the type of parent list (IEntityList) required when this is the main list.
@@ -368,13 +369,13 @@ namespace SoundExplorers.Model {
       } else {
         AddRange(Session.AllObjects<TEntity>());
       }
-      // ReferenceLists = IsParentList ? FetchChildReferenceLists() : FetchReferenceLists();
+      GetReferenceableItemLists();
       if (isTransactionRequired) {
         Session.Commit();
       }
       // If this is a child list, it is already in the right order, as its data source
       // consists of the values of a SortedChildList.
-      if (!IsChildList) {
+      if (ListRole != ListRole.Child) {
         Sort(EntityComparer);
       }
       if (createBindingList) {
@@ -411,6 +412,29 @@ namespace SoundExplorers.Model {
 
     protected virtual IComparer<TEntity> CreateEntityComparer() {
       return new EntityComparer<TEntity>();
+    }
+
+    private static BackupItem<TBindingItem> CreateBackupItem(TBindingItem bindingItem) {
+      return new BackupItem<TBindingItem>(bindingItem);
+    }
+
+    /// <summary>
+    ///   Returns whether the specified exception indicates that, for an anticipated
+    ///   reason, a requested database update could not be done, in which case the
+    ///   exception's message will need to be shown to the user to explain the error that
+    ///   cause the update to be disallowed. If false, the exception either requires
+    ///   special handling or should be treated as a terminal error.
+    /// </summary>
+    private static bool IsDatabaseUpdateError(Exception exception) {
+      return exception is ConstraintException; // Includes PropertyConstraintException
+    }
+
+    private static bool IsIntegerSimpleKeyFormatError(Exception exception,
+      BindingColumn column) {
+      if (!(exception is FormatException)) {
+        return false;
+      }
+      return column.ValueType == typeof(int) && column.IsInKey;
     }
 
     /// <summary>
@@ -474,10 +498,6 @@ namespace SoundExplorers.Model {
       }
     }
 
-    private static BackupItem<TBindingItem> CreateBackupItem(TBindingItem bindingItem) {
-      return new BackupItem<TBindingItem>(bindingItem);
-    }
-
     private TBindingItem CreateBindingItemWithEntityList(TEntity entity) {
       var result = CreateBindingItem(entity);
       result.EntityList = this;
@@ -515,23 +535,30 @@ namespace SoundExplorers.Model {
       return LastDatabaseUpdateErrorException;
     }
 
-    /// <summary>
-    ///   Returns whether the specified exception indicates that, for an anticipated
-    ///   reason, a requested database update could not be done, in which case the
-    ///   exception's message will need to be shown to the user to explain the error that
-    ///   cause the update to be disallowed. If false, the exception either requires
-    ///   special handling or should be treated as a terminal error.
-    /// </summary>
-    private static bool IsDatabaseUpdateError(Exception exception) {
-      return exception is ConstraintException; // Includes PropertyConstraintException
+    private IDictionary<string, ReferenceableItemList>
+      FetchChildColumnReferenceableItemLists() {
+      var dummyChildList = Global.CreateEntityList(ChildListType!);
+      foreach (var column in dummyChildList.Columns) {
+        column.Session = Session;
+      }
+      dummyChildList.Columns.FetchReferenceableItems();
+      return dummyChildList.Columns.ReferencingColumns.ToDictionary(
+        column => column.PropertyName,
+        column => column.ReferenceableItems!);
     }
 
-    private static bool IsIntegerSimpleKeyFormatError(Exception exception,
-      BindingColumn column) {
-      if (!(exception is FormatException)) {
-        return false;
+    private void GetReferenceableItemLists() {
+      switch (ListRole) {
+        case ListRole.Child:
+          Columns.SetReferenceableItems(ParentList!.ChildColumnReferenceableItemLists!);
+          break;
+        case ListRole.Parent:
+          ChildColumnReferenceableItemLists = FetchChildColumnReferenceableItemLists();
+          break;
+        case ListRole.StandAlone:
+          Columns.FetchReferenceableItems();
+          break;
       }
-      return column.ValueType == typeof(int) && column.IsInKey;
     }
 
     private void UpdateExistingEntityProperty(int rowIndex, string propertyName) {

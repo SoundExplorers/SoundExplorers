@@ -26,18 +26,22 @@ namespace SoundExplorers.Tests.Model {
 
     [Test]
     public void Locations() {
-      var items = EventList.Columns["Location"].ReferenceableItems;
+      var column = EventList.Columns["Location"];
+      column.FetchReferenceableItems();
+      var items = column.ReferenceableItems!;
       Assert.AreEqual(3, items.Count, "Count");
       var item = items[0];
       Assert.IsInstanceOf<KeyValuePair<object, object>>(item, "item");
-      var pair = (KeyValuePair<object, object>)item;
-      Assert.IsInstanceOf<string>(pair.Key, "Key");
-      Assert.IsInstanceOf<Location>(pair.Value, "Value");
+      var (key, value) = (KeyValuePair<object, object>)item;
+      Assert.IsInstanceOf<string>(key, "Key");
+      Assert.IsInstanceOf<Location>(value, "Value");
     }
 
     [Test]
     public void Newsletters() {
-      var items = EventList.Columns["Newsletter"].ReferenceableItems;
+      var column = EventList.Columns["Newsletter"];
+      column.FetchReferenceableItems();
+      var items = column.ReferenceableItems!;
       Assert.AreEqual(4, items.Count, "Count");
       Assert.IsTrue(items.ContainsKey("1900/01/01"), "Contains dummy Newsletter");
       Assert.IsTrue(items.ContainsKey("2020/01/06"), "Contains real Newsletter");

@@ -72,6 +72,7 @@ namespace SoundExplorers.Tests.Controller {
       CreateControllers(typeof(SetList));
       CellController = CreateCellController("Genre");
       Assert.AreEqual("Set", CellController.TableName, "TableName");
+      CellController.Column.FetchReferenceableItems();
       var genreItems = CellController.GetItems();
       Assert.AreEqual(0, genreItems.Length, "genreItems.Length");
       Assert.AreEqual(1, EditorView.ShowWarningMessageCount, "ShowWarningMessageCount");

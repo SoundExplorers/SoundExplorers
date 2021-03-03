@@ -74,7 +74,7 @@ namespace SoundExplorers.Tests.Model {
     [Test]
     public void AddSet() {
       List = CreateSetList();
-      Assert.IsTrue(List.IsChildList, "IsChildList");
+      Assert.IsTrue(List.ListRole == ListRole.Child, "ListRole");
       var @event = Data.Events[0];
       Populate();
       var bindingList = List.BindingList;
@@ -259,7 +259,7 @@ namespace SoundExplorers.Tests.Model {
     [Test]
     public void ReadAsParentList() {
       List = CreateSetList(true, true, false);
-      Assert.IsFalse(List.IsChildList, "IsChildList");
+      Assert.IsFalse(List.ListRole == ListRole.Child, "ListRole");
       Session.BeginUpdate();
       var set = Data.Sets[2];
       set.Act = Data.Acts[1];
@@ -297,12 +297,14 @@ namespace SoundExplorers.Tests.Model {
       var result = new SetList(isChildList) {Session = Session};
       if (isChildList) {
         ParentList = (result.CreateParentList() as EventList)!;
+        ParentList.ChildListType = result.GetType();
+        result.ParentList = ParentList;
       }
       return result;
     }
 
     private void Populate() {
-      if (List.IsChildList) {
+      if (List.ListRole == ListRole.Child) {
         ParentList.Populate();
         List.Populate(ParentList.GetIdentifyingParentChildrenForMainList(
           ParentList.Count - 1));

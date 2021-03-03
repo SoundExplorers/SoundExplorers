@@ -31,7 +31,7 @@ namespace SoundExplorers.Model {
       set => _session = value;
     }
 
-    public ReferenceableItemList? ReferenceableItems { get; private set; }
+    public ReferenceableItemList? ReferenceableItems { get; internal set; }
 
     /// <summary>
     ///   Gets the type of the referenced entity list. Null if the column does not

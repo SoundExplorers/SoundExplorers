@@ -33,7 +33,7 @@ namespace SoundExplorers.Controller {
     }
 
     public object[] GetItems() {
-      if (Column.ReferenceableItems.Count == 0) {
+      if (Column.ReferenceableItems!.Count == 0) {
         MainGridController.ShowWarningMessage(CreateNoAvailableReferencesMessage());
       }
       return Column.ReferenceableItems.ToArray();
@@ -64,7 +64,7 @@ namespace SoundExplorers.Controller {
         return;
       }
       string simpleKey = ReferenceableItemList.ToSimpleKey(cellValue)!;
-      if (Column.ReferenceableItems.ContainsKey(simpleKey)) {
+      if (Column.ReferenceableItems!.ContainsKey(simpleKey)) {
         return;
       }
       MainGridController.OnInsertionRowReferencedEntityNotFound(

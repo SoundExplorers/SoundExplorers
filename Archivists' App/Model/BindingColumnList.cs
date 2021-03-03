@@ -11,7 +11,7 @@ namespace SoundExplorers.Model {
   ///   <see cref="BindingColumn.PropertyName" /> as the key.
   /// </remarks>
   public class BindingColumnList : List<BindingColumn> {
-    private IList<BindingColumn>? _referencingColumns;
+    private IEnumerable<BindingColumn>? _referencingColumns;
 
     /// <summary>
     ///   Returns the entity column with the specified name (case-insensitive).
@@ -24,7 +24,7 @@ namespace SoundExplorers.Model {
     /// </returns>
     public BindingColumn this[string name] => FindColumn(name)!;
 
-    private IList<BindingColumn> ReferencingColumns =>
+    internal IEnumerable<BindingColumn> ReferencingColumns =>
       _referencingColumns ??= GetReferencingColumns();
 
     /// <summary>
@@ -37,13 +37,30 @@ namespace SoundExplorers.Model {
     /// <exception cref="ArgumentException">
     ///   The list already contains an entity column of the same name.
     /// </exception>
-    public new void Add(BindingColumn bindingColumn) {
+    internal new void Add(BindingColumn bindingColumn) {
       if (ContainsKey(bindingColumn.PropertyName)) {
         throw new ArgumentException(
           $"The list already contains an entity column named {bindingColumn.PropertyName}.",
           nameof(bindingColumn));
       }
       base.Add(bindingColumn);
+    }
+
+    internal void FetchReferenceableItems() {
+      foreach (var column in ReferencingColumns) {
+        column.FetchReferenceableItems();
+      }
+    }
+
+    internal int GetIndex(string propertyName) {
+      return IndexOf(this[propertyName]);
+    }
+
+    internal void SetReferenceableItems(
+      IDictionary<string, ReferenceableItemList> referenceableItemLists) {
+      foreach (var column in ReferencingColumns) {
+        column.ReferenceableItems = referenceableItemLists[column.PropertyName];
+      }
     }
 
     /// <summary>
@@ -59,12 +76,6 @@ namespace SoundExplorers.Model {
       return FindColumn(name) != null;
     }
 
-    internal void FetchReferenceableItems() {
-      foreach (var column in ReferencingColumns) {
-        column.FetchReferenceableItems();
-      }
-    }
-
     private BindingColumn? FindColumn(string name) {
       return (
         from BindingColumn column in this
@@ -73,11 +84,7 @@ namespace SoundExplorers.Model {
         select column).FirstOrDefault();
     }
 
-    public int GetIndex(string propertyName) {
-      return IndexOf(this[propertyName]);
-    }
-
-    private IList<BindingColumn> GetReferencingColumns() {
+    private IEnumerable<BindingColumn> GetReferencingColumns() {
       return
         (from column in this
           where column.ReferencesAnotherEntity

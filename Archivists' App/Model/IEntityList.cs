@@ -13,8 +13,11 @@ namespace SoundExplorers.Model {
     ///   Gets the binding list representing the list of entities.
     /// </summary>
     IBindingList BindingList { get; }
-    
-    Type? ChildListType { get; set; }
+
+    IDictionary<string, ReferenceableItemList>?
+      ChildColumnReferenceableItemLists { get; }
+
+    Type? ChildListType { set; }
 
     /// <summary>
     ///   Gets metadata for the columns of the editor grid that represents the list of
@@ -25,20 +28,16 @@ namespace SoundExplorers.Model {
     string EntityTypeName { get; }
 
     /// <summary>
-    ///   Gets whether this is a main list that is to be populated with children of an
-    ///   identifying parent entity.
-    /// </summary>
-    bool IsChildList { get; }
-
-    /// <summary>
     ///   Gets whether the current grid row is the insertion row, which is for adding new
     ///   entities and is located at the bottom of the grid.
     /// </summary>
     bool IsInsertionRowCurrent { get; }
-    
-    // bool IsParentList { get; set; }
 
     DatabaseUpdateErrorException? LastDatabaseUpdateErrorException { get; }
+    
+    ListRole ListRole { get; }
+    
+    IEntityList? ParentList { set; }
 
     /// <summary>
     ///   Gets the type of parent list (IEntityList) required when this is the main list.

@@ -51,7 +51,7 @@ namespace SoundExplorers.Tests.Model {
     [Test]
     public void AddCredit() {
       List = CreateCreditList();
-      Assert.IsTrue(List.IsChildList, "IsChildList");
+      Assert.IsTrue(List.ListRole == ListRole.Child, "ListRole");
       var piece = Data.Pieces[0];
       Populate();
       var bindingList = List.BindingList;
@@ -129,6 +129,28 @@ namespace SoundExplorers.Tests.Model {
         exception.Message, "Error message");
     }
 
+    [Test]
+    public void UpdateCredit() {
+      List = CreateCreditList();
+      var oldArtist = Data.Artists[0];
+      var oldRole = Data.Roles[0];
+      var newArtist = Data.Artists[1];
+      var newRole = Data.Roles[1];
+      Session.BeginUpdate();
+      Data.Credits[0].Artist = oldArtist;
+      Data.Credits[0].Role = oldRole;
+      Session.Commit();
+      Populate();
+      List.OnRowEnter(0);
+      Assert.AreEqual(oldArtist.Name, List.BindingList[0].Artist,
+        "Binding Artist after populate");
+      Assert.AreEqual(oldRole.Name, List.BindingList[0].Role, "Binding Role after populate");
+      List.BindingList[0].Artist = newArtist.Name;
+      Assert.AreSame(newArtist, Data.Credits[0].Artist, "List Artist after change");
+      List.BindingList[0].Role = newRole.Name;
+      Assert.AreSame(newRole, Data.Credits[0].Role, "List Role after change");
+    }
+
     private void AddData(bool includingCredits = true) {
       Session.BeginUpdate();
       Data.AddEventTypesPersisted(1, Session);
@@ -139,8 +161,8 @@ namespace SoundExplorers.Tests.Model {
       Data.AddActsPersisted(1, Session);
       Data.AddGenresPersisted(1, Session);
       Data.AddSetsPersisted(1, Session, Data.Events[0]);
-      Data.AddArtistsPersisted(1, Session);
-      Data.AddRolesPersisted(1, Session);
+      Data.AddArtistsPersisted(2, Session);
+      Data.AddRolesPersisted(2, Session);
       Data.AddPiecesPersisted(1, Session, Data.Sets[0]);
       if (includingCredits) {
         Data.AddCreditsPersisted(3, Session, Data.Pieces[0]);
@@ -152,6 +174,8 @@ namespace SoundExplorers.Tests.Model {
       AddData(addCredits);
       var result = new CreditList {Session = Session};
       ParentList = (result.CreateParentList() as PieceList)!;
+      ParentList.ChildListType = result.GetType();
+      result.ParentList = ParentList;
       return result;
     }
 
