@@ -46,7 +46,7 @@ namespace SoundExplorers.Tests {
       Data.AddEventsPersisted(50, Session);
       AddSets();
       AddPieces();
-      AddCredits();
+      // AddCredits();
       Session.Commit();
     }
 

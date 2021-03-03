@@ -60,6 +60,10 @@ namespace SoundExplorers.Model {
       return result;
     }
 
+    protected override IComparer<Piece> CreateEntityComparer() {
+      return new PieceComparer();
+    }
+
     public override IEntityList CreateParentList() {
       return SetList = new SetList(false) {Session = Session};
     }
