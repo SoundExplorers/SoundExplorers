@@ -7,6 +7,9 @@ namespace SoundExplorers.Tests.Data {
   internal class TestSession : SessionNoServer {
     public const string DatabaseParentFolderPath = "C:\\Simon\\Databases";
 
+    /// <summary>
+    ///   TODO Replace hard coded VelocityDbLicenceFilePath value to support multiple developers.
+    /// </summary>
     public const string VelocityDbLicenceFilePath =
       @"E:\Simon\OneDrive\Documents\My Installers\VelocityDB\License Database\4.odb";
 
