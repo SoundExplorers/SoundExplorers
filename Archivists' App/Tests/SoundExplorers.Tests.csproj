@@ -32,10 +32,10 @@
     </PackageReference>
     <PackageReference Include="NUnit3TestAdapter" Version="3.17.0" />
     <PackageReference Include="VelocityDB">
-      <Version>9.1.2</Version>
+      <Version>10.1.1</Version>
     </PackageReference>
     <PackageReference Include="VelocityDBExtensions">
-      <Version>9.1.2</Version>
+      <Version>10.1.1</Version>
     </PackageReference>
   </ItemGroup>
 </Project>

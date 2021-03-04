@@ -12,7 +12,6 @@ namespace SoundExplorers.Tests.Data {
   public class TestData {
     private static char[]? _letters;
     private IList<string>? _actNames;
-    // private EventType? _defaultEventType;
     private IList<string>? _eventTypeNames;
     private IList<string>? _forenames;
     private IList<string>? _genreNames;
@@ -525,7 +524,7 @@ namespace SoundExplorers.Tests.Data {
       return GetRandomEntity<Act, IList<Act>>(Acts);
     }
 
-    private Artist GetRandomArtist() {
+    public Artist GetRandomArtist() {
       return GetRandomEntity<Artist, IList<Artist>>(Artists);
     }
 
@@ -568,7 +567,7 @@ namespace SoundExplorers.Tests.Data {
       return GetRandomEntity<Location, IList<Location>>(Locations);
     }
 
-    private Role GetRandomRole() {
+    public Role GetRandomRole() {
       return GetRandomEntity<Role, IList<Role>>(Roles);
     }
 
