@@ -19,7 +19,7 @@ namespace SoundExplorers.Data {
 
     public TChild this[int index] => Values[index];
 
-    public TChild this[[CanBeNull] string simpleKey,
+    public TChild this[string? simpleKey,
       EntityBase? identifyingParent = null] =>
       this[new Key(simpleKey, identifyingParent)];
 
