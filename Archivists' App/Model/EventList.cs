@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using SoundExplorers.Data;
 
@@ -41,6 +42,10 @@ namespace SoundExplorers.Model {
       }
       Session.Commit();
       HasDefaultSeriesBeenFound = true;
+    }
+
+    protected override IComparer<Event> CreateEntityComparer() {
+      return new EventComparer();
     }
 
     protected override EventBindingItem CreateBindingItem(Event @event) {

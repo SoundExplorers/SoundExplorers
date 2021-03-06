@@ -12,7 +12,7 @@ namespace SoundExplorers.Model {
       return setComparison != 0
         ? setComparison
         // Same Set. Compare PieceNos. 
-        : Key.CompareSimpleKeys(piece1.Key, piece2.Key);
+        : Key.CompareSimpleKeys(piece1.SimpleKey, piece2.SimpleKey);
     }
   }
 }

@@ -58,6 +58,11 @@ namespace SoundExplorers.Data {
     private IEntity? Owner { get; }
     private string? SimpleKey => Owner?.SimpleKey ?? _simpleKey;
 
+    public static int CompareSimpleKeys(string? simpleKey1, string? simpleKey2) {
+      return string.Compare(simpleKey1, simpleKey2,
+        StringComparison.OrdinalIgnoreCase);
+    }
+
     public override bool Equals(object? obj) {
       var keyToMatch = obj as Key;
       // We have to cast the key to a nullable object for the == comparison. Otherwise
@@ -67,14 +72,12 @@ namespace SoundExplorers.Data {
       }
       if (IdentifyingParent != null && keyToMatch.IdentifyingParent != null) {
         if (IdentifyingParent.Key.Equals(keyToMatch.IdentifyingParent.Key)) {
-          return string.Compare(SimpleKey, keyToMatch.SimpleKey,
-            StringComparison.OrdinalIgnoreCase) == 0;
+          return CompareSimpleKeys(SimpleKey, keyToMatch.SimpleKey) == 0;
         }
         return false;
       }
       if (IdentifyingParent == null && keyToMatch.IdentifyingParent == null) {
-        return string.Compare(SimpleKey, keyToMatch.SimpleKey,
-          StringComparison.OrdinalIgnoreCase) == 0;
+        return CompareSimpleKeys(SimpleKey, keyToMatch.SimpleKey) == 0;
       }
       return false;
     }
@@ -115,7 +118,7 @@ namespace SoundExplorers.Data {
         return false;
       }
       // Order by simple key first
-      switch (CompareSimpleKeys(key1, key2)) {
+      switch (CompareSimpleKeys(key1.SimpleKey, key2.SimpleKey)) {
         case < 0:
           return true;
         case > 0:
@@ -135,11 +138,6 @@ namespace SoundExplorers.Data {
           : SimpleKey;
       }
       return string.Empty;
-    }
-
-    public static int CompareSimpleKeys(Key key1, Key key2) {
-      return string.Compare(key1.SimpleKey, key2.SimpleKey,
-        StringComparison.OrdinalIgnoreCase);
     }
   }
 }
