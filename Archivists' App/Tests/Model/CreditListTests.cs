@@ -30,7 +30,7 @@ namespace SoundExplorers.Tests.Model {
       Assert.AreEqual("Credit", List.EntityTypeName, "EntityName");
       Assert.AreEqual(typeof(PieceList), List.ParentListType, "ParentListType");
       Assert.AreEqual(3, List.Columns.Count, "Columns.Count");
-      Assert.AreEqual("CreditNo", List.Columns[0].PropertyName, 
+      Assert.AreEqual("CreditNo", List.Columns[0].PropertyName,
         "Columns[0].PropertyName");
       Assert.AreEqual("Artist", List.Columns[1].PropertyName, "Columns[1].PropertyName");
       Assert.AreEqual(typeof(ArtistList), List.Columns[1].ReferencedEntityListType,
@@ -65,17 +65,17 @@ namespace SoundExplorers.Tests.Model {
       Assert.AreEqual("4", bindingList[3].CreditNo, "CreditNo in binding list");
       Assert.AreEqual(4, List[3].CreditNo, "CreditNo in List");
       Assert.AreEqual(4, piece.Credits[3].CreditNo, "CreditNo in Event.Credits");
-      Assert.AreEqual(4, Data.Artists[0].Credits[3].CreditNo, 
+      Assert.AreEqual(4, Data.Artists[0].Credits[3].CreditNo,
         "CreditNo in Artist.Credits");
       Assert.AreEqual(4, Data.Roles[0].Credits[3].CreditNo, "CreditNo in Roles.Credits");
     }
- 
+
     [Test]
     public void ChangeCreditNo() {
       List = CreateCreditList();
       Populate();
       List.OnRowEnter(2);
-      Assert.AreEqual("3", List.BindingList[2].CreditNo, 
+      Assert.AreEqual("3", List.BindingList[2].CreditNo,
         "Binding CreditNo after populate");
       List.BindingList[2].CreditNo = "9";
       Assert.AreEqual(9, Data.Credits[2].CreditNo, "List CreditNo after change");
@@ -144,7 +144,8 @@ namespace SoundExplorers.Tests.Model {
       List.OnRowEnter(0);
       Assert.AreEqual(oldArtist.Name, List.BindingList[0].Artist,
         "Binding Artist after populate");
-      Assert.AreEqual(oldRole.Name, List.BindingList[0].Role, "Binding Role after populate");
+      Assert.AreEqual(oldRole.Name, List.BindingList[0].Role,
+        "Binding Role after populate");
       List.BindingList[0].Artist = newArtist.Name;
       Assert.AreSame(newArtist, Data.Credits[0].Artist, "List Artist after change");
       List.BindingList[0].Role = newRole.Name;
@@ -165,7 +166,8 @@ namespace SoundExplorers.Tests.Model {
       Data.AddRolesPersisted(2, Session);
       Data.AddPiecesPersisted(1, Session, Data.Sets[0]);
       if (includingCredits) {
-        Data.AddCreditsPersisted(3, Session, Data.Pieces[0]);
+        Data.AddCreditsPersisted(3, Session, Data.Pieces[0], Data.Artists[0],
+          Data.Roles[0]);
       }
       Session.Commit();
     }
