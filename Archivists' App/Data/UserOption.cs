@@ -47,7 +47,7 @@ namespace SoundExplorers.Data {
     }
 
     [ExcludeFromCodeCoverage]
-    protected override IDictionary GetChildren(Type childType) {
+    protected override IEnumerable GetChildren(Type childType) {
       throw new NotSupportedException();
     }
 

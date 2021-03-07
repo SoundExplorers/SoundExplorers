@@ -376,7 +376,7 @@ namespace SoundExplorers.Data {
     ///   Allows a derived entity to return
     ///   its SortedChildList of child entities of the specified entity type.
     /// </summary>
-    protected abstract IDictionary GetChildren(Type childType);
+    protected abstract IEnumerable GetChildren(Type childType);
 
     public static string GetIntegerSimpleKeyErrorMessage(string propertyName) {
       return $"{propertyName} must be an integer between 1 and 99.";
@@ -394,6 +394,11 @@ namespace SoundExplorers.Data {
         GetIntegerSimpleKeyErrorMessage(propertyName), propertyName);
     }
 
+    private IDictionary GetChildDictionary(Type childType) {
+      var children = GetChildren(childType);
+      return children.Cast<EntityBase>().ToDictionary(child => child.Key);
+    }
+
     private void Initialise() {
       ParentRelations = CreateParentRelations();
       Parents = new Dictionary<Type, EntityBase?>();
@@ -403,7 +408,7 @@ namespace SoundExplorers.Data {
       ChildrenRelations = CreateChildrenRelations();
       ChildrenOfType = new Dictionary<Type, IDictionary>();
       foreach (var relationPair in ChildrenRelations) {
-        ChildrenOfType.Add(relationPair.Key, GetChildren(relationPair.Key));
+        ChildrenOfType.Add(relationPair.Key, GetChildDictionary(relationPair.Key));
       }
     }
 

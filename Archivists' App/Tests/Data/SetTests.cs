@@ -165,8 +165,8 @@ namespace SoundExplorers.Tests.Data {
       Assert.AreEqual(1, Act2.Sets.Count, "Act2.Sets.Count");
       Assert.AreSame(Set1, Event1.Sets[0], "Event1.Sets[0]");
       Assert.AreSame(Set1, Event1.Sets[Set1.Key], "Event1.Sets[Set1.Key]");
-      Assert.AreSame(Set1, Event1.Sets[Set1SimpleKey, Event1],
-        "Event1.Sets[Set1SimpleKey, Event1]");
+      // Assert.AreSame(Set1, Event1.Sets[Set1SimpleKey, Event1],
+      //   "Event1.Sets[Set1SimpleKey, Event1]");
       Assert.AreSame(Set1AtEvent2, Event2.Sets[0], "Event2.Sets[0]");
       Assert.AreSame(Set2, Event1.Sets[1], "Event1.Sets[1]");
       Assert.AreSame(Set1, Act1.Sets[0], "Act1.Sets[0]");

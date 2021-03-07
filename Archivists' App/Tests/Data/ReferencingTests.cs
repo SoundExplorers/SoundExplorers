@@ -182,9 +182,6 @@ namespace SoundExplorers.Tests.Data {
       Assert.Throws<NotSupportedException>(
         () => Mother1.Daughters.Remove(Daughter1.Key),
         "Unsupported Mother.Daughters.Remove");
-      Assert.Throws<NotSupportedException>(
-        () => Mother1.Daughters.RemoveAt(0),
-        "Unsupported Mother.Daughters.RemoveAt");
       session.Commit();
     }
 

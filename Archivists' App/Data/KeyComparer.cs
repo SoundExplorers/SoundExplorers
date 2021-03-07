@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using VelocityDb.Collection.Comparer;
 
 namespace SoundExplorers.Data {
-  public class KeyComparer : Comparer<Key> {
+  public class KeyComparer : VelocityDbComparer<Key> {
     public override int Compare(Key? x, Key? y) {
       if (x < y) {
         return -1;

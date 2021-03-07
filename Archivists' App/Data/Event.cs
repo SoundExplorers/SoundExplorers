@@ -81,7 +81,7 @@ namespace SoundExplorers.Data {
 
     public SortedChildList<Set> Sets { get; }
 
-    protected override IDictionary GetChildren(Type childType) {
+    protected override IEnumerable GetChildren(Type childType) {
       return Sets;
     }
 

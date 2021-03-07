@@ -59,6 +59,9 @@ namespace SoundExplorers.Tests.Data {
       session.Persist(Set2);
       Set1.Act = Act1;
       session.Commit();
+      // session.BeginUpdate();
+      // Set1.Act = Act1;
+      // session.Commit();
     }
 
     [TearDown]

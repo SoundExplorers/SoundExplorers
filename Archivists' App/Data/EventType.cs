@@ -29,7 +29,7 @@ namespace SoundExplorers.Data {
       };
     }
 
-    protected override IDictionary GetChildren(Type childType) {
+    protected override IEnumerable GetChildren(Type childType) {
       return Events;
     }
   }

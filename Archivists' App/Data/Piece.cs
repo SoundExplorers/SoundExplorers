@@ -169,7 +169,7 @@ namespace SoundExplorers.Data {
         session);
     }
 
-    protected override IDictionary GetChildren(Type childType) {
+    protected override IEnumerable GetChildren(Type childType) {
       return Credits;
     }
 

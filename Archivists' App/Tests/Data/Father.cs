@@ -26,7 +26,7 @@ namespace SoundExplorers.Tests.Data {
 
     public SortedChildList<Son> Sons { get; }
 
-    protected override IDictionary GetChildren(Type childType) {
+    protected override IEnumerable GetChildren(Type childType) {
       if (childType == typeof(Daughter)) {
         return Daughters;
       }

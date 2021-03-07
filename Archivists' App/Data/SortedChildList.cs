@@ -1,6 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using JetBrains.Annotations;
+﻿using System.Linq;
+using VelocityDb.Collection.BTree;
 
 namespace SoundExplorers.Data {
   /// <summary>
@@ -10,32 +9,13 @@ namespace SoundExplorers.Data {
   /// <typeparam name="TChild">
   ///   The entity type of the child entities in the collection.
   /// </typeparam>
-  public class SortedChildList<TChild> : SortedList<Key, TChild>
+  public class SortedChildList<TChild> : BTreeMap<Key, TChild>
     where TChild : EntityBase {
     /// <summary>
     ///   Creates a SortedChildList instance.
     /// </summary>
-    internal SortedChildList() : base(new KeyComparer()) { }
+    internal SortedChildList() : base(new KeyComparer(), null) { }
 
-    public TChild this[int index] => Values[index];
-
-    public TChild this[string? simpleKey,
-      EntityBase? identifyingParent = null] =>
-      this[new Key(simpleKey, identifyingParent)];
-
-    [UsedImplicitly]
-    public new void Add(Key notSupported, TChild doNotUse) {
-      throw new NotSupportedException();
-    }
-
-    [UsedImplicitly]
-    public new bool Remove(Key notSupported) {
-      throw new NotSupportedException();
-    }
-
-    [UsedImplicitly]
-    public new bool RemoveAt(int notSupported) {
-      throw new NotSupportedException();
-    }
+    public TChild this[int index] => this[Keys.ToList()[index]];
   }
 }
