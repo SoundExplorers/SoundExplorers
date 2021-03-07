@@ -24,10 +24,7 @@ namespace SoundExplorers.Tests.Data {
       const string dateString = "1900/12/25";
       const string locationName = "Fred's";
       const int setNo = 1;
-      var event1 = new Event();
-      Assert.IsEmpty(event1.Key.ToString(),
-        "Null SimpleKey and Identifying Parent");
-      event1.Date = DateTime.Parse(dateString);
+      var event1 = new Event {Date = DateTime.Parse(dateString)};
       Assert.AreEqual(event1.Key.ToString(), dateString, "SimpleKey only");
       event1.Location = new Location {Name = locationName};
       Assert.AreEqual(event1.Key.ToString(), "1900/12/25 | Fred's",

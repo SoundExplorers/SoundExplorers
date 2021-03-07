@@ -11,7 +11,7 @@ namespace SoundExplorers.Data {
   /// </remarks>
   public class Key {
     private readonly IEntity? _identifyingParent;
-    private readonly string? _simpleKey;
+    private readonly string _simpleKey;
 
     /// <summary>
     ///   Use this constructor to instantiate a key that
@@ -46,7 +46,7 @@ namespace SoundExplorers.Data {
     /// <param name="identifyingParent">
     ///   The identifying parent entity, if applicable, to be used for comparison.
     /// </param>
-    public Key(string? simpleKey,
+    public Key(string simpleKey,
       IEntity? identifyingParent) {
       _simpleKey = simpleKey;
       _identifyingParent = identifyingParent;
@@ -56,7 +56,7 @@ namespace SoundExplorers.Data {
       Owner?.IdentifyingParent ?? _identifyingParent;
 
     private IEntity? Owner { get; }
-    private string? SimpleKey => Owner?.SimpleKey ?? _simpleKey;
+    private string SimpleKey => Owner?.SimpleKey ?? _simpleKey;
 
     public static int CompareSimpleKeys(string? simpleKey1, string? simpleKey2) {
       return string.Compare(simpleKey1, simpleKey2,
@@ -83,7 +83,7 @@ namespace SoundExplorers.Data {
     }
 
     public override int GetHashCode() {
-      int hashCode1 = SimpleKey != null ? SimpleKey.GetHashCode() : 0;
+      int hashCode1 = SimpleKey.GetHashCode();
       int hashCode2 = IdentifyingParent != null
         ? IdentifyingParent.Key.GetHashCode()
         : 0;
@@ -132,12 +132,9 @@ namespace SoundExplorers.Data {
     }
 
     public override string ToString() {
-      if (SimpleKey != null) {
-        return IdentifyingParent != null
-          ? $"{SimpleKey} | {IdentifyingParent?.Key}"
-          : SimpleKey;
-      }
-      return string.Empty;
+      return IdentifyingParent != null
+        ? $"{SimpleKey} | {IdentifyingParent?.Key}"
+        : SimpleKey;
     }
   }
 }

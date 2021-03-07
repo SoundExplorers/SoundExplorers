@@ -242,7 +242,7 @@ namespace SoundExplorers.Data {
     }
 
     private void CheckCanChangeSimpleKey(
-      string? oldSimpleKey, string? newSimpleKey) {
+      string oldSimpleKey, string newSimpleKey) {
       if (!AllowBlankSimpleKey && string.IsNullOrWhiteSpace(newSimpleKey)) {
         throw new PropertyConstraintException(
           $"The {SimpleKeyName} is blank. " +
