@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections;
-using JetBrains.Annotations;
 using SoundExplorers.Data;
 
 namespace SoundExplorers.Tests.Data {
   public class Father : EntityBase {
-    public Father([NotNull] QueryHelper queryHelper) : base(
+    public Father(QueryHelper queryHelper) : base(
       typeof(Father),
       nameof(Name), null) {
       QueryHelper = queryHelper ??
@@ -15,7 +14,7 @@ namespace SoundExplorers.Tests.Data {
       Sons = new SortedChildList<Son>();
     }
 
-    [NotNull] public SortedChildList<Daughter> Daughters { get; }
+    public SortedChildList<Daughter> Daughters { get; }
 
     public string Name {
       get => SimpleKey;
@@ -25,7 +24,7 @@ namespace SoundExplorers.Tests.Data {
       }
     }
 
-    [NotNull] public SortedChildList<Son> Sons { get; }
+    public SortedChildList<Son> Sons { get; }
 
     protected override IDictionary GetChildren(Type childType) {
       if (childType == typeof(Daughter)) {
