@@ -91,8 +91,7 @@ namespace SoundExplorers.Model {
     }
 
     [ExcludeFromCodeCoverage]
-    private TResult DoGetConfigFileObject<TResult>(
-      [JetBrains.Annotations.NotNull] Func<TResult> function) {
+    private TResult DoGetConfigFileObject<TResult>(Func<TResult> function) {
       try {
         return function.Invoke();
       } catch (Exception exception) {
@@ -125,7 +124,7 @@ namespace SoundExplorers.Model {
       return DefaultDatabaseFolderPath;
     }
 
-    private void SetPropertyValue([JetBrains.Annotations.NotNull] PropertyInfo property) {
+    private void SetPropertyValue(PropertyInfo property) {
       var element = Data.Element(property.Name);
       if (element == null) {
         throw new ApplicationException(
@@ -137,8 +136,7 @@ namespace SoundExplorers.Model {
 
     [ExcludeFromCodeCoverage]
     private void SetPropertyValueFromXmlElement(
-      [JetBrains.Annotations.NotNull] PropertyInfo property,
-      [JetBrains.Annotations.NotNull] XElement element) {
+      PropertyInfo property, XElement element) {
       try {
         property.SetValue(
           this,
@@ -154,9 +152,7 @@ namespace SoundExplorers.Model {
       WriteCommentedElement(nameof(VelocityDbLicenceFilePath), "For developer use only");
     }
 
-    private void WriteCommentedElement(
-      [JetBrains.Annotations.NotNull] string name,
-      [JetBrains.Annotations.NotNull] string value) {
+    private void WriteCommentedElement(string name, string value) {
       XmlWriter.WriteComment(GetPropertyDescription(name));
       XmlWriter.WriteElementString(name, value);
     }

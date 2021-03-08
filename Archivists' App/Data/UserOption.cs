@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Diagnostics.CodeAnalysis;
-
-namespace SoundExplorers.Data {
+﻿namespace SoundExplorers.Data {
   /// <summary>
   ///   An entity for persisting a user option for the application.
   /// </summary>
@@ -44,11 +40,6 @@ namespace SoundExplorers.Data {
         SetSimpleKey(value, OptionName);
         _userId = value;
       }
-    }
-
-    [ExcludeFromCodeCoverage]
-    protected override IEnumerable GetChildren(Type childType) {
-      throw new NotSupportedException();
     }
 
     private void SetSimpleKey(string userId, string optionName) {

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Diagnostics.CodeAnalysis;
 using SoundExplorers.Data;
 
 namespace SoundExplorers.Tests.Data {
@@ -8,11 +6,10 @@ namespace SoundExplorers.Tests.Data {
     private Father? _father;
     private Mother? _mother;
 
-    public Son([JetBrains.Annotations.NotNull] QueryHelper queryHelper) : base(
+    public Son(QueryHelper queryHelper) : base(
       typeof(Son),
       nameof(Name), null) {
-      QueryHelper = queryHelper ??
-                    throw new ArgumentNullException(nameof(queryHelper));
+      QueryHelper = queryHelper ;
       Schema = TestSchema.Instance;
     }
 
@@ -40,11 +37,6 @@ namespace SoundExplorers.Tests.Data {
         UpdateNonIndexField();
         SimpleKey = value;
       }
-    }
-
-    [ExcludeFromCodeCoverage]
-    protected override IEnumerable GetChildren(Type childType) {
-      throw new NotSupportedException();
     }
 
     protected override void SetNonIdentifyingParentField(

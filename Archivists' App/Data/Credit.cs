@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Diagnostics.CodeAnalysis;
 
 namespace SoundExplorers.Data {
   /// <summary>
@@ -46,11 +44,6 @@ namespace SoundExplorers.Data {
         ChangeNonIdentifyingParent(typeof(Role), value);
         _role = value;
       }
-    }
-
-    [ExcludeFromCodeCoverage]
-    protected override IEnumerable GetChildren(Type childType) {
-      throw new NotSupportedException();
     }
 
     protected override void SetNonIdentifyingParentField(

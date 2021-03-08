@@ -376,7 +376,10 @@ namespace SoundExplorers.Data {
     ///   Allows a derived entity to return
     ///   its SortedChildList of child entities of the specified entity type.
     /// </summary>
-    protected abstract IEnumerable GetChildren(Type childType);
+    [ExcludeFromCodeCoverage]
+    protected virtual IEnumerable GetChildren(Type childType) {
+      throw new NotSupportedException();
+    }
 
     public static string GetIntegerSimpleKeyErrorMessage(string propertyName) {
       return $"{propertyName} must be an integer between 1 and 99.";
