@@ -15,7 +15,7 @@ namespace SoundExplorers.Tests.Controller {
 
     internal new EditorController EditorController => base.EditorController;
     internal new bool IsFixingFocus => base.IsFixingFocus;
-    internal int ReplaceErrorBindingValueWithOriginalCount { get; private set; } 
+    internal int ReplaceErrorBindingValueWithOriginalCount { get; private set; }
     internal bool TestUnsupportedLastChangeAction { get; set; }
 
     public override void OnRowEnter(int rowIndex) {

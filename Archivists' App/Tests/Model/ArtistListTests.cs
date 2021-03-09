@@ -48,7 +48,7 @@ namespace SoundExplorers.Tests.Model {
       List.Populate();
       var bindingList = List.BindingList;
       List.OnRowEnter(0);
-      var bindingItem = bindingList[0]; 
+      var bindingItem = bindingList[0];
       bindingItem.Surname = surname;
       bindingItem.Forename = forename;
       bindingItem.Notes = notes;

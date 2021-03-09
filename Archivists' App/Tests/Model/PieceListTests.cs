@@ -41,7 +41,8 @@ namespace SoundExplorers.Tests.Model {
       Assert.IsFalse(List.Columns[2].IsVisible, "Columns[2].IsVisible");
       Assert.AreEqual("PieceNo", List.Columns[3].PropertyName, "Columns[3].PropertyName");
       Assert.AreEqual("Title", List.Columns[4].PropertyName, "Columns[4].PropertyName");
-      Assert.AreEqual("Duration", List.Columns[5].PropertyName, "Columns[5].PropertyName");
+      Assert.AreEqual("Duration", List.Columns[5].PropertyName,
+        "Columns[5].PropertyName");
       Assert.AreEqual("Audio URL", List.Columns[6].DisplayName, "Columns[6].DisplayName");
       Assert.AreEqual("AudioUrl", List.Columns[6].PropertyName,
         "Columns[6].PropertyName");
@@ -66,7 +67,9 @@ namespace SoundExplorers.Tests.Model {
       Populate();
       Assert.AreEqual("4", bindingList[3].PieceNo, "PieceNo in binding list");
       Assert.AreEqual(4, List[3].PieceNo, "PieceNo in List");
+      Session.BeginRead();
       Assert.AreEqual(4, set.Pieces[3].PieceNo, "PieceNo in Event.Pieces");
+      Session.Commit();
     }
 
     [Test]
@@ -108,8 +111,8 @@ namespace SoundExplorers.Tests.Model {
         "Adding Piece with invalid Duration disallowed.");
       Assert.IsTrue(
         exception.Message.StartsWith(
-          "Duration must be between 1 second and 9 hours, 59 minutes, 59 seconds." + 
-          "\r\nAccepted formats\r\n"), 
+          "Duration must be between 1 second and 9 hours, 59 minutes, 59 seconds." +
+          "\r\nAccepted formats\r\n"),
         "Message");
     }
 
@@ -141,8 +144,8 @@ namespace SoundExplorers.Tests.Model {
         "Changing Duration to invalid value disallowed");
       Assert.IsTrue(
         exception.Message.StartsWith(
-          "Duration must be between 1 second and 9 hours, 59 minutes, 59 seconds." + 
-          "\r\nAccepted formats\r\n"), 
+          "Duration must be between 1 second and 9 hours, 59 minutes, 59 seconds." +
+          "\r\nAccepted formats\r\n"),
         "Message");
     }
 
@@ -215,17 +218,17 @@ namespace SoundExplorers.Tests.Model {
       var bindingList = List.BindingList;
       Assert.AreEqual("59:00", bindingList[1].Duration, "Duration string 2");
       Assert.AreEqual(newDuration2,
-        PieceBindingItem.ToDurationTimeSpan(bindingList[1].Duration), 
+        PieceBindingItem.ToDurationTimeSpan(bindingList[1].Duration),
         "Duration TimeSpan 2");
       Assert.AreEqual(piece3.Set.Event.Date, bindingList[2].Date, "Date");
-      Assert.AreEqual(piece3.Set.Event.Location.Name, bindingList[2].Location, 
+      Assert.AreEqual(piece3.Set.Event.Location.Name, bindingList[2].Location,
         "Location");
       Assert.AreEqual(piece3.Set.SetNo, int.Parse(bindingList[2].SetNo), "SetNo");
       Assert.AreEqual(piece3.PieceNo, int.Parse(bindingList[2].PieceNo), "PieceNo");
       Assert.AreEqual(piece3.Title, bindingList[2].Title, "Title");
       Assert.AreEqual("1:00:00", bindingList[2].Duration, "Duration string 3");
       Assert.AreEqual(newDuration3,
-        PieceBindingItem.ToDurationTimeSpan(bindingList[2].Duration), 
+        PieceBindingItem.ToDurationTimeSpan(bindingList[2].Duration),
         "Duration TimeSpan 3");
       Assert.AreEqual(piece3.AudioUrl, bindingList[2].AudioUrl, "AudioUrl");
       Assert.AreEqual(piece3.VideoUrl, bindingList[2].VideoUrl, "VideoUrl");
@@ -248,7 +251,7 @@ namespace SoundExplorers.Tests.Model {
         () => bindingList[2].AudioUrl = otherUrl,
         "Changing AudioUrl to duplicate disallowed");
       Assert.AreEqual(
-        $"Audio URL cannot be set to '{otherUrl}'. " + 
+        $"Audio URL cannot be set to '{otherUrl}'. " +
         $"Piece '{otherKey}' already exists with that Audio URL.",
         exception.Message,
         "Error message on trying to change AudioUrl to duplicate");
@@ -288,7 +291,7 @@ namespace SoundExplorers.Tests.Model {
         () => bindingList[2].VideoUrl = otherUrl,
         "Changing VideoUrl to duplicate disallowed");
       Assert.AreEqual(
-        $"Video URL cannot be set to '{otherUrl}'. " + 
+        $"Video URL cannot be set to '{otherUrl}'. " +
         $"Piece '{otherKey}' already exists with that Video URL.",
         exception.Message,
         "Error message on trying to change VideoUrl to duplicate");
@@ -311,7 +314,7 @@ namespace SoundExplorers.Tests.Model {
         () => List.OnRowValidated(3),
         "Adding Piece with unique VideoUrl allowed");
     }
- 
+
     private void AddData(bool includingPieces = true) {
       Session.BeginUpdate();
       Data.AddEventTypesPersisted(1, Session);

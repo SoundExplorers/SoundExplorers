@@ -153,6 +153,10 @@ namespace SoundExplorers.Tests.Data {
         "RalphJenkins.Credits.Count");
       Assert.AreEqual(2, RalphJenkins.References.Count,
         "RalphJenkins.References.Count");
+      Session.BeginRead();
+      RalphJenkins = QueryHelper.Read<Artist>(RalphJenkinsName, Session);
+      Credit1 = QueryHelper.Read<Credit>(Credit1.SimpleKey, Piece1, Session);
+      Credit2 = QueryHelper.Read<Credit>(Credit2.SimpleKey, Piece1, Session);
       Assert.AreSame(Credit1, RalphJenkins.Credits[0],
         "RalphJenkins.Credits[0]");
       Assert.AreSame(Credit2, RalphJenkins.Credits[1],
@@ -161,6 +165,7 @@ namespace SoundExplorers.Tests.Data {
       Assert.AreEqual(RalphJenkinsName, Credit1.Artist.Name,
         "Credit1.Artist.Name");
       Assert.AreSame(RalphJenkins, Credit2.Artist, "Credit2.Artist");
+      Session.Commit();
     }
 
     [Test]

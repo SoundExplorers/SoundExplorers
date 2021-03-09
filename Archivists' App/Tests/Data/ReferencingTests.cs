@@ -1,5 +1,4 @@
-﻿using System;
-using System.Data;
+﻿using System.Data;
 using NUnit.Framework;
 using SoundExplorers.Data;
 
@@ -80,7 +79,6 @@ namespace SoundExplorers.Tests.Data {
       Father2 = QueryHelper.Read<Father>(Father2Name, session);
       Son1 = QueryHelper.Read<Son>(Son1Name, session);
       Son2 = QueryHelper.Read<Son>(Son2Name, session);
-      session.Commit();
       Assert.IsTrue(Daughter1.IsPersistent,
         "Daughter1.IsPersistent initially");
       Assert.AreEqual(Daughter1Name, Daughter1.Name, "Daughter1.Name");
@@ -168,20 +166,6 @@ namespace SoundExplorers.Tests.Data {
       Assert.AreEqual(0, Father2.References.Count,
         "Father2.References.Count initially");
       Assert.IsNull(Son2.Father, "Son2.Father initially");
-    }
-
-    [Test]
-    public void T020_SortedChildListUnsupportedMethods() {
-      using var session = new TestSession(DatabaseFolderPath);
-      session.BeginUpdate();
-      Mother1 = QueryHelper.Read<Mother>(Mother1Name, session);
-      Daughter2 = QueryHelper.Read<Daughter>(Daughter2Name, session);
-      Assert.Throws<NotSupportedException>(
-        () => Mother1.Daughters.Add(Daughter2.Key, Daughter2),
-        "Unsupported Mother.Daughters.Add");
-      Assert.Throws<NotSupportedException>(
-        () => Mother1.Daughters.Remove(Daughter1.Key),
-        "Unsupported Mother.Daughters.Remove");
       session.Commit();
     }
 
@@ -199,7 +183,6 @@ namespace SoundExplorers.Tests.Data {
       Daughter1.Father = Father2;
       Son1.Mother = Mother2;
       Son1.Father = Father2;
-      session.Commit();
       Assert.AreSame(Father2, Daughter1.Father,
         "Daughter1.Father after Daughter1 changes Father");
       Assert.AreSame(Mother2, Daughter1.Mother,
@@ -240,6 +223,7 @@ namespace SoundExplorers.Tests.Data {
         "Father2 1st Son after Son1 changes Father");
       Assert.AreSame(Daughter1, Father2.Daughters[0],
         "Father2 1st Daughter after Daughter1 changes Father");
+      session.Commit();
     }
 
     [Test]
@@ -252,7 +236,6 @@ namespace SoundExplorers.Tests.Data {
       Father2 = QueryHelper.Read<Father>(Father2Name, session);
       Son2 = QueryHelper.Read<Son>(Son2Name, session);
       Son2.Father = Father2;
-      session.Commit();
       Assert.AreSame(Mother2, Daughter2.Mother, "Daughter2.Mother");
       Assert.AreEqual(1, Mother2.Daughters.Count,
         "Mother2.Daughters.Count");
@@ -267,6 +250,7 @@ namespace SoundExplorers.Tests.Data {
         "Father2.References.Count");
       Assert.AreSame(Son2, Father2.Sons[0],
         "Father2 1st child after change Father");
+      session.Commit();
     }
 
     [Test]

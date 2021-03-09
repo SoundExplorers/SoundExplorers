@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -68,10 +69,8 @@ namespace SoundExplorers.Model {
       return SetList = new SetList(false) {Session = Session};
     }
 
-    public override IdentifyingParentChildren GetIdentifyingParentChildrenForMainList(
-      int rowIndex) {
-      return new IdentifyingParentChildren(this[rowIndex],
-        this[rowIndex].Credits.Values.ToList());
+    protected override IList GetChildList(int rowIndex) {
+      return this[rowIndex].Credits.Values.ToList();
     }
   }
 }

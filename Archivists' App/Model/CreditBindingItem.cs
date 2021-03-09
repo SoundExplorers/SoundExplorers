@@ -33,6 +33,7 @@ namespace SoundExplorers.Model {
         OnPropertyChanged(nameof(Role));
       }
     }
+
     private Piece Piece { get; set; } = null!;
 
     protected override IDictionary<string, object?>
@@ -66,7 +67,7 @@ namespace SoundExplorers.Model {
           return base.GetEntityPropertyValue(property, creditProperty);
       }
     }
-    
+
     protected override string GetSimpleKey() {
       // Validate and format the CreditNo, which may have been entered by the user.
       return EntityBase.IntegerToSimpleKey(SimpleKeyToInteger(

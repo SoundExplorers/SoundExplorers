@@ -75,7 +75,7 @@ namespace SoundExplorers.Controller {
         ? EditorController.View.ParentGrid
         : EditorController.View.MainGrid;
     }
-    
+
     public virtual void OnGotFocus() {
       Debug.WriteLine($"GridControllerBase.OnGotFocus {Grid.Name}");
       if (!IsPopulating) {

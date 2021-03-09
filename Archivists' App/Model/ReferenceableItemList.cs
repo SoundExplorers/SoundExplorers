@@ -10,7 +10,6 @@ namespace SoundExplorers.Model {
   ///   for populating a ComboBox for selecting a referenced entity.
   /// </summary>
   public class ReferenceableItemList : List<object> {
-
     public ReferenceableItemList(BindingColumn referencingColumn) {
       ReferencingColumn = referencingColumn;
     }

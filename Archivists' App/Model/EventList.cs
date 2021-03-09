@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using SoundExplorers.Data;
@@ -75,10 +76,8 @@ namespace SoundExplorers.Model {
       };
     }
 
-    public override IdentifyingParentChildren GetIdentifyingParentChildrenForMainList(
-      int rowIndex) {
-      return new IdentifyingParentChildren(this[rowIndex],
-        this[rowIndex].Sets.Values.ToList());
+    protected override IList GetChildList(int rowIndex) {
+      return this[rowIndex].Sets.Values.ToList();
     }
 
     public override void Populate(

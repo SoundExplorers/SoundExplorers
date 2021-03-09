@@ -20,7 +20,7 @@ namespace SoundExplorers.Tests.Model {
       Data.AddGenresPersisted(1, Session);
       Session.Commit();
     }
-    
+
     private TestData Data { get; set; } = null!;
     private QueryHelper QueryHelper { get; set; } = null!;
     private TestSession Session { get; set; } = null!;

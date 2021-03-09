@@ -55,7 +55,7 @@ namespace SoundExplorers.Tests.Data {
       Piece2 = new Piece {
         QueryHelper = QueryHelper,
         PieceNo = Piece2PieceNo,
-        Duration = Piece2Duration = new TimeSpan(1, 46, 3),
+        Duration = Piece2Duration = new TimeSpan(1, 46, 3)
       };
       Credit1 = new Credit {
         QueryHelper = QueryHelper,
@@ -175,9 +175,16 @@ namespace SoundExplorers.Tests.Data {
       Assert.AreEqual(2, Set1.Pieces.Count, "Set1.Pieces.Count");
       Assert.AreEqual(2, Set1.References.Count, "Set1.References.Count");
       Assert.AreEqual(1, Set2.Pieces.Count, "Set1.Pieces.Count");
+      Session.BeginRead();
+      Event1 = QueryHelper.Read<Event>(Event1.SimpleKey, Location1, Session);
+      Set1 = QueryHelper.Read<Set>(Set1.SimpleKey, Event1, Session);
+      Piece1 = QueryHelper.Read<Piece>(Piece1SimpleKey, Set1, Session);
+      Piece2 = QueryHelper.Read<Piece>(Piece2SimpleKey, Set1, Session);
+      Credit1 = QueryHelper.Read<Credit>(Credit1.SimpleKey, Piece1, Session);
+      Credit2 = QueryHelper.Read<Credit>(Credit2.SimpleKey, Piece1, Session);
       Assert.AreSame(Piece1, Set1.Pieces[0], "Set1.Pieces[0]");
       Assert.AreSame(Piece1AtSet2, Set2.Pieces[0], "Set2.Pieces[0]");
-      Assert.AreEqual(Piece1AtSet2Duration, Piece1AtSet2.Duration, 
+      Assert.AreEqual(Piece1AtSet2Duration, Piece1AtSet2.Duration,
         "Piece1AtSet2.Duration");
       Assert.AreSame(Piece2, Set1.Pieces[1], "Set1.Pieces[1]");
       Assert.AreSame(Set1, Piece1.Set, "Piece1.Set");
@@ -200,6 +207,7 @@ namespace SoundExplorers.Tests.Data {
         "Credit2.Piece.PieceNo");
       Assert.AreSame(Set1, Credit1.Piece.Set, "Credit1.Piece.Set");
       Assert.AreSame(Set1, Credit2.Piece.Set, "Credit2.Piece.Set");
+      Session.Commit();
     }
 
     [Test]
@@ -215,13 +223,16 @@ namespace SoundExplorers.Tests.Data {
     [Test]
     public void ChangeSet() {
       Session.BeginUpdate();
+      Set2 = QueryHelper.Read<Set>(Set2.SimpleKey, Event1, Session);
+      Piece1AtSet2 = QueryHelper.Read<Piece>(Piece1SimpleKey, Set2, Session);
+      Piece2 = QueryHelper.Read<Piece>(Piece2SimpleKey, Set1, Session);
       Piece2.Set = Set2;
-      Session.Commit();
       Assert.AreSame(Set2, Piece2.Set, "Piece2.Set");
       Assert.AreEqual(1, Set1.Pieces.Count, "Set1.Pieces.Count");
       Assert.AreEqual(2, Set2.Pieces.Count, "Set2.Pieces.Count");
       Assert.AreSame(Piece1AtSet2, Set2.Pieces[0], "Set2 1st Piece");
       Assert.AreSame(Piece2, Set2.Pieces[1], "Set2 2nd Piece");
+      Session.Commit();
     }
 
     [Test]
@@ -289,14 +300,14 @@ namespace SoundExplorers.Tests.Data {
           () => Piece2.Duration = TimeSpan.FromMilliseconds(999),
           "999 milliseconds disallowed");
       Assert.AreEqual(
-        "Duration must be between 1 second and 9 hours, 59 minutes, 59 seconds.", 
+        "Duration must be between 1 second and 9 hours, 59 minutes, 59 seconds.",
         exception.Message, "Error message when 999 milliseconds");
       exception =
         Assert.Catch<PropertyConstraintException>(
           () => Piece2.Duration = TimeSpan.FromHours(10),
           "10 hours disallowed");
       Assert.AreEqual(
-        "Duration must be between 1 second and 9 hours, 59 minutes, 59 seconds.", 
+        "Duration must be between 1 second and 9 hours, 59 minutes, 59 seconds.",
         exception.Message,
         "Error message when 10 hours");
       Session.Commit();
@@ -359,7 +370,7 @@ namespace SoundExplorers.Tests.Data {
         () => Session.Persist(noDuration), "Unspecified Duration disallowed");
       Session.Abort();
       Assert.AreEqual(
-        "Piece '09 | 01 | 2020/03/01 | Pyramid Club' cannot be added because its Duration has not been specified.", 
+        "Piece '09 | 01 | 2020/03/01 | Pyramid Club' cannot be added because its Duration has not been specified.",
         exception.Message, "Message");
       Assert.AreEqual("Duration", exception.PropertyName, "PropertyName");
     }

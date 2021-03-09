@@ -45,8 +45,8 @@ namespace SoundExplorers.Tests.Data {
       session.Persist(DefaultSeries);
       session.Persist(Location1);
       Data.AddEventTypesPersisted(1, session);
-      Event1.EventType = Data.EventTypes[0];
       Event1.Location = Location1;
+      Event1.EventType = Data.EventTypes[0];
       session.Persist(Event1);
       session.Persist(Act1);
       session.Persist(Act2);
@@ -59,9 +59,6 @@ namespace SoundExplorers.Tests.Data {
       session.Persist(Set2);
       Set1.Act = Act1;
       session.Commit();
-      // session.BeginUpdate();
-      // Set1.Act = Act1;
-      // session.Commit();
     }
 
     [TearDown]

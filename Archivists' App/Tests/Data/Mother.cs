@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using SoundExplorers.Data;
 
 namespace SoundExplorers.Tests.Data {
@@ -26,7 +25,7 @@ namespace SoundExplorers.Tests.Data {
 
     public SortedChildList<Son> Sons { get; }
 
-    protected override IEnumerable GetChildren(Type childType) {
+    protected override ISortedChildList GetChildren(Type childType) {
       if (childType == typeof(Daughter)) {
         return Daughters;
       }

@@ -49,13 +49,13 @@ namespace SoundExplorers.View {
     public void OnParentAndMainGridsShown() {
       Debug.WriteLine("EditorView.OnParentAndMainGridsShown");
       int savedGridSplitterDistance = Controller.GridSplitterDistance;
-      int requiredGridSplitterDistance = 
+      int requiredGridSplitterDistance =
         savedGridSplitterDistance > 0 ? savedGridSplitterDistance : 180;
       // Debug.WriteLine(
       //   $"    Saved splitter {savedGridSplitterDistance}; required splitter {requiredGridSplitterDistance}");
       if (GridSplitContainer.SplitterDistance != requiredGridSplitterDistance) {
         GridSplitContainer.SplitterDistance = requiredGridSplitterDistance;
-        if (Controller.GridSplitterDistance  != requiredGridSplitterDistance) {
+        if (Controller.GridSplitterDistance != requiredGridSplitterDistance) {
           Controller.GridSplitterDistance = requiredGridSplitterDistance;
         }
       }

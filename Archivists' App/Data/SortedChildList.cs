@@ -9,13 +9,18 @@ namespace SoundExplorers.Data {
   /// <typeparam name="TChild">
   ///   The entity type of the child entities in the collection.
   /// </typeparam>
-  public class SortedChildList<TChild> : BTreeMap<Key, TChild>
+  public class SortedChildList<TChild> : BTreeMap<Key, TChild>, ISortedChildList
     where TChild : EntityBase {
-    /// <summary>
-    ///   Creates a SortedChildList instance.
-    /// </summary>
     internal SortedChildList() : base(new KeyComparer(), null) { }
+    public TChild this[int index] => Values.ToList()[index];
+    IEntity ISortedChildList.this[Key key] => this[key];
 
-    public TChild this[int index] => this[Keys.ToList()[index]];
+    void ISortedChildList.Add(Key key, IEntity child) {
+      Add(key, (TChild)child);
+    }
+
+    void ISortedChildList.Remove(Key key) {
+      Remove(key);
+    }
   }
 }

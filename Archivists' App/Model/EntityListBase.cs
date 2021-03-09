@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -136,7 +137,7 @@ namespace SoundExplorers.Model {
 
     public ListRole ListRole => ParentListType != null ? ListRole.Child :
       ChildListType != null ? ListRole.Parent : ListRole.StandAlone;
-    
+
     public IEntityList? ParentList { get; set; }
 
     /// <summary>
@@ -210,9 +211,12 @@ namespace SoundExplorers.Model {
     /// <param name="rowIndex">
     ///   Zero-based row index.
     /// </param>
-    public virtual IdentifyingParentChildren GetIdentifyingParentChildrenForMainList(
+    public IdentifyingParentChildren GetIdentifyingParentChildrenForMainList(
       int rowIndex) {
-      throw new NotSupportedException();
+      Session.BeginRead();
+      var children = GetChildList(rowIndex);
+      Session.Commit();
+      return new IdentifyingParentChildren(this[rowIndex], children);
     }
 
     public IList<object?> GetErrorValues() {
@@ -399,6 +403,16 @@ namespace SoundExplorers.Model {
       IsReplacingErrorBindingValueWithOriginal = true;
       bindingItem.SetPropertyValue(propertyName, originalValue);
       BackupItemToRestoreFrom = null;
+    }
+
+    /// <summary>
+    ///   Derived classes that are identifying parents should return a list of the child
+    ///   entities of the entity at the specified row index that are to populate the main
+    ///   list when this is the parent list.
+    /// </summary>
+    [ExcludeFromCodeCoverage]
+    protected virtual IList GetChildList(int rowIndex) {
+      throw new NotSupportedException();
     }
 
     protected abstract TBindingItem CreateBindingItem(TEntity entity);

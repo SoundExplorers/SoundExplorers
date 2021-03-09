@@ -71,7 +71,7 @@ namespace SoundExplorers.Tests.Model {
         "Changing Url to duplicate disallowed");
       Debug.WriteLine(exception.Message);
       Assert.AreEqual(
-        $"URL cannot be set to '{otherUrl}'. " + 
+        $"URL cannot be set to '{otherUrl}'. " +
         $"Newsletter {otherKey} already exists with that URL.",
         exception.Message,
         "Error message on trying to change Url to duplicate");
@@ -83,7 +83,7 @@ namespace SoundExplorers.Tests.Model {
       exception = Assert.Catch<DatabaseUpdateErrorException>(() => List.OnRowValidated(3),
         "Adding Newsletter with duplicate Url disallowed");
       Assert.AreEqual(
-        $"Newsletter {newKey} cannot be added because Newsletter {otherKey} " + 
+        $"Newsletter {newKey} cannot be added because Newsletter {otherKey} " +
         $"already exists with the same URL '{otherUrl}'.",
         exception.Message,
         "Error message on trying to add Newsletter with duplicate Url");

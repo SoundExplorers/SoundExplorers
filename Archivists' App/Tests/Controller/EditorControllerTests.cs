@@ -90,7 +90,9 @@ namespace SoundExplorers.Tests.Controller {
         "ShowErrorMessageCount after valid Series pasted");
       MainGridController.OnRowValidated(0);
       Assert.AreEqual(1, validLocation.Events.Count, "Events.Count after 1st add");
+      Session.BeginRead();
       var event1 = validLocation.Events[0];
+      Session.Commit();
       Assert.AreSame(validLocation, event1.Location, "event1.Location");
       Assert.AreSame(validNewsletter, event1.Newsletter, "event1.Newsletter");
       Assert.AreSame(validSeries, event1.Series, "event1.Series");
@@ -102,7 +104,9 @@ namespace SoundExplorers.Tests.Controller {
       MainGridController.SetComboBoxCellValue(1, "Newsletter", EntityBase.DefaultDate);
       MainGridController.OnRowValidated(1);
       Assert.AreEqual(2, validLocation.Events.Count, "Events.Count after 2nd add");
+      Session.BeginRead();
       var event2 = validLocation.Events[1];
+      Session.Commit();
       Assert.AreSame(defaultNewsletter, event2.Newsletter, "event2.Newsletter");
     }
 
@@ -208,7 +212,6 @@ namespace SoundExplorers.Tests.Controller {
       Assert.AreEqual(bindingList[0].Name, bindingList[1].Name,
         "Duplicate Name restored to insertion row for correction or edit cancellation after message shown");
     }
-
 
     [Test]
     public void DisallowAddWithoutIdentifyingParent() {
@@ -601,7 +604,7 @@ namespace SoundExplorers.Tests.Controller {
       Assert.AreEqual(1, View.SetMouseCursorToDefaultCount,
         "SetMouseCursorToDefaultCount after focusing main grid");
       Controller.Populate(); // Populate parent and main grids
-      Assert.AreEqual("Event 2 of 2", View.StatusBarText, 
+      Assert.AreEqual("Event 2 of 2", View.StatusBarText,
         "StatusBarText after Populate");
       Assert.AreEqual(1, View.OnParentAndMainGridsShownAsyncCount,
         "OnParentAndMainGridsShownAsyncCount after Populate");
@@ -634,22 +637,22 @@ namespace SoundExplorers.Tests.Controller {
       Assert.IsFalse(MainGridController.IsFixingFocus,
         "IsFixingFocus after OnRowValidated");
       MainGrid.Focus();
-      Assert.AreEqual("Set 6 of 6", View.StatusBarText, 
+      Assert.AreEqual("Set 6 of 6", View.StatusBarText,
         "StatusBarText when main grid focused");
       MainGridController.OnRowEnter(1);
-      Assert.AreEqual("Set 2 of 6", View.StatusBarText, 
+      Assert.AreEqual("Set 2 of 6", View.StatusBarText,
         "StatusBarText when 2nd main grid row entered");
       ParentGrid.Focus();
-      Assert.AreEqual("Event 2 of 2", View.StatusBarText, 
+      Assert.AreEqual("Event 2 of 2", View.StatusBarText,
         "StatusBarText after focusing parent grid");
       ParentGridController.OnRowEnter(0);
-      Assert.AreEqual("Event 1 of 2", View.StatusBarText, 
+      Assert.AreEqual("Event 1 of 2", View.StatusBarText,
         "StatusBarText when 1st parent selected");
       Assert.AreEqual(4, MainGridController.BindingList.Count,
         "Main list count when 1st parent selected"); // Includes insertion row
       View.StatusBarText = string.Empty; // Simulates editor window deactivated.
       ParentGridController.OnWindowActivated();
-      Assert.AreEqual("Event 1 of 2", View.StatusBarText, 
+      Assert.AreEqual("Event 1 of 2", View.StatusBarText,
         "StatusBarText when editor window reactivated");
     }
 
@@ -663,7 +666,7 @@ namespace SoundExplorers.Tests.Controller {
         (TypedBindingList<Piece, PieceBindingItem>)Controller.MainList
           .BindingList!;
       // Leave insertion row, which will be current on Populate
-      MainGridController.OnRowValidated(5); 
+      MainGridController.OnRowValidated(5);
       MainGridController.OnRowEnter(1);
       const string invalidDuration = "abc";
       var exception = Assert.Catch<DatabaseUpdateErrorException>(

@@ -1,5 +1,4 @@
-﻿using System;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using SoundExplorers.Data;
 
 namespace SoundExplorers.Tests.Data {

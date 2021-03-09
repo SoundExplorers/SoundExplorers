@@ -128,11 +128,16 @@ namespace SoundExplorers.Tests.Data {
         "ElectricGuitar.Name initially");
       Assert.AreEqual(2, Drums.Credits.Count, "Drums.Credits.Count");
       Assert.AreEqual(2, Drums.References.Count, "Drums.References.Count");
+      Session.BeginRead();
+      Drums = QueryHelper.Read<Role>(DrumsName, Session);
+      Credit1 = QueryHelper.Read<Credit>(Credit1.SimpleKey, Piece1, Session);
+      Credit2 = QueryHelper.Read<Credit>(Credit2.SimpleKey, Piece1, Session);
       Assert.AreSame(Credit1, Drums.Credits[0], "Drums.Credits[0]");
       Assert.AreSame(Credit2, Drums.Credits[1], "Drums.Credits[1]");
       Assert.AreSame(Drums, Credit1.Role, "Credit1.Role");
       Assert.AreEqual(DrumsName, Credit1.Role.Name, "Credit1.Role.Name");
       Assert.AreSame(Drums, Credit2.Role, "Credit2.Role");
+      Session.Commit();
     }
 
     [Test]

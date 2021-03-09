@@ -9,7 +9,7 @@ namespace SoundExplorers.Tests.Data {
     public Son(QueryHelper queryHelper) : base(
       typeof(Son),
       nameof(Name), null) {
-      QueryHelper = queryHelper ;
+      QueryHelper = queryHelper;
       Schema = TestSchema.Instance;
     }
 

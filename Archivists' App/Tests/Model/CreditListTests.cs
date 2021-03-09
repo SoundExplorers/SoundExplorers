@@ -64,10 +64,12 @@ namespace SoundExplorers.Tests.Model {
       Populate();
       Assert.AreEqual("4", bindingList[3].CreditNo, "CreditNo in binding list");
       Assert.AreEqual(4, List[3].CreditNo, "CreditNo in List");
+      Session.BeginRead();
       Assert.AreEqual(4, piece.Credits[3].CreditNo, "CreditNo in Event.Credits");
       Assert.AreEqual(4, Data.Artists[0].Credits[3].CreditNo,
         "CreditNo in Artist.Credits");
       Assert.AreEqual(4, Data.Roles[0].Credits[3].CreditNo, "CreditNo in Roles.Credits");
+      Session.Commit();
     }
 
     [Test]

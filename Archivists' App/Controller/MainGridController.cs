@@ -103,7 +103,8 @@ namespace SoundExplorers.Controller {
       base.OnPopulatedAsync();
       // Warning: Profiling blocks code coverage analysis
       // MeasureProfiler.SaveData();
-      if (List.ListRole == ListRole.Child && ParentGrid.Controller.LastRowNeedsToBeScrolledIntoView) {
+      if (List.ListRole == ListRole.Child &&
+          ParentGrid.Controller.LastRowNeedsToBeScrolledIntoView) {
         ParentGrid.Controller.ScrollLastRowIntoView();
       } else {
         // Show that the population process is finished.
@@ -114,7 +115,8 @@ namespace SoundExplorers.Controller {
     public override void OnRowEnter(int rowIndex) {
       // Debug.WriteLine(
       //   "MainGridController.OnRowEnter:  Any row entered (after ItemAdded if insertion row)");
-      Debug.WriteLine($"MainGridController.OnRowEnter: row {rowIndex} of {BindingList.Count}");
+      Debug.WriteLine(
+        $"MainGridController.OnRowEnter: row {rowIndex} of {BindingList.Count}");
       base.OnRowEnter(rowIndex);
       if (!IsPopulating) {
         List.OnRowEnter(rowIndex);

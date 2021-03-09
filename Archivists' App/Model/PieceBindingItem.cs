@@ -164,21 +164,27 @@ namespace SoundExplorers.Model {
     }
 
     private Piece? FindPieceWithAudioUrl() {
-      return SetList
+      EntityList.Session.BeginRead();
+      var result = SetList
         .Select(set => (
             from piece in set.Pieces.Values
             where piece.AudioUrl == AudioUrl
             select piece)
           .FirstOrDefault()).FirstOrDefault(foundPiece => foundPiece != null);
+      EntityList.Session.Commit();
+      return result;
     }
 
     private Piece? FindPieceWithVideoUrl() {
-      return SetList
+      EntityList.Session.BeginRead();
+      var result = SetList
         .Select(set => (
             from piece in set.Pieces.Values
             where piece.VideoUrl == VideoUrl
             select piece)
           .FirstOrDefault()).FirstOrDefault(foundPiece => foundPiece != null);
+      EntityList.Session.Commit();
+      return result;
     }
 
     protected override object? GetEntityPropertyValue(PropertyInfo property,

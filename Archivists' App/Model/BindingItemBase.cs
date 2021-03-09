@@ -37,8 +37,8 @@ namespace SoundExplorers.Model {
     where TEntity : EntityBase, new()
     where TBindingItem : BindingItemBase<TEntity, TBindingItem>, new() {
     private IDictionary<string, PropertyInfo>? _entityProperties;
-    private IDictionary<string, PropertyInfo>? _properties;
     private Key? _key;
+    private IDictionary<string, PropertyInfo>? _properties;
     internal EntityListBase<TEntity, TBindingItem> EntityList { get; set; } = null!;
 
     private IDictionary<string, PropertyInfo> EntityProperties =>
@@ -58,10 +58,6 @@ namespace SoundExplorers.Model {
     // appear as a column on the grid!
     IDictionary<string, PropertyInfo> IBindingItem.Properties => Properties;
 
-    protected virtual Key CreateKey() {
-      return new Key(GetSimpleKey(), EntityList.IdentifyingParent);
-    }
-
     public object? GetPropertyValue(string propertyName) {
       return Properties[propertyName].GetValue(this);
     }
@@ -79,6 +75,10 @@ namespace SoundExplorers.Model {
     }
 
     public event PropertyChangedEventHandler? PropertyChanged;
+
+    protected virtual Key CreateKey() {
+      return new Key(GetSimpleKey(), EntityList.IdentifyingParent);
+    }
 
     [NotifyPropertyChangedInvocator]
     protected void OnPropertyChanged(
@@ -195,7 +195,7 @@ namespace SoundExplorers.Model {
 
     protected abstract string GetSimpleKey();
 
-    internal static int SimpleKeyToInteger(string simpleKey, string simpleKeyName, 
+    internal static int SimpleKeyToInteger(string simpleKey, string simpleKeyName,
       bool minusOneIfError = false) {
       // Validate format
       int result = ToIntegerOrIfErrorMinusOne(simpleKey);
@@ -203,7 +203,7 @@ namespace SoundExplorers.Model {
       if (!isFormatValid) {
         if (minusOneIfError) {
           return -1;
-        } 
+        }
         throw new PropertyConstraintException(
           EntityBase.GetIntegerSimpleKeyErrorMessage(simpleKeyName), simpleKeyName);
       }
@@ -213,7 +213,7 @@ namespace SoundExplorers.Model {
         result, simpleKeyName, emptyIfError);
       if (minusOneIfError && string.IsNullOrWhiteSpace(checkedSimpleKey)) {
         return -1;
-      } 
+      }
       return result;
     }
 
@@ -252,7 +252,7 @@ namespace SoundExplorers.Model {
     /// <remarks>
     ///   Though we are duplicating entity-level validation here, the entity-level
     ///   validation should be retained as a last-resort defence against corrupting the
-    ///   database. 
+    ///   database.
     /// </remarks>
     internal virtual void ValidateInsertion() {
       CheckForDuplicateKey();
@@ -269,7 +269,7 @@ namespace SoundExplorers.Model {
     /// <remarks>
     ///   Though we are duplicating entity-level validation here, the entity-level
     ///   validation should be retained as a last-resort defence against corrupting the
-    ///   database. 
+    ///   database.
     /// </remarks>
     internal virtual void ValidatePropertyUpdate(
       string propertyName, TEntity entity) {

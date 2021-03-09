@@ -100,16 +100,7 @@ namespace SoundExplorers.Tests.Data {
       }
       Session = new TestSession(DatabaseFolderPath);
       Session.BeginRead();
-      Baker = QueryHelper.Read<Artist>(BakerName, Session);
-      Clarissa = QueryHelper.Read<Artist>(ClarissaName, Session);
-      Drums = QueryHelper.Read<Role>(DrumsName, Session);
-      ElectricGuitar = QueryHelper.Read<Role>(ElectricGuitarName, Session);
-      Set1 = QueryHelper.Read<Set>(Set1.SimpleKey, Event1, Session);
-      Piece1 = QueryHelper.Read<Piece>(Piece1.SimpleKey, Set1, Session);
-      Piece2 = QueryHelper.Read<Piece>(Piece2.SimpleKey, Set1, Session);
-      Credit1 = QueryHelper.Read<Credit>(Credit1SimpleKey, Piece1, Session);
-      Credit2 = QueryHelper.Read<Credit>(Credit2SimpleKey, Piece1, Session);
-      Credit3 = QueryHelper.Read<Credit>(Credit3SimpleKey, Piece2, Session);
+      FetchData();
       Session.Commit();
     }
 
@@ -173,6 +164,7 @@ namespace SoundExplorers.Tests.Data {
       Assert.AreSame(Baker, Credit3.Artist, "Credit3.Artist");
       Assert.AreSame(Drums, Credit3.Role, "Credit3.Role");
       Assert.AreEqual(3, Baker.Credits.Count, "Baker.Credits.Count");
+      Session.BeginRead();
       Assert.AreSame(Credit1, Baker.Credits[0], "Baker.Credits[0]");
       Assert.AreSame(Credit2, Baker.Credits[1], "Baker.Credits[2]");
       Assert.AreSame(Credit3, Baker.Credits[2], "Baker.Credits[1]");
@@ -185,24 +177,24 @@ namespace SoundExplorers.Tests.Data {
       Assert.AreSame(Credit1, Piece1.Credits[0], "Piece1.Credits[0]");
       Assert.AreSame(Credit2, Piece1.Credits[1], "Piece1.Credits[1]");
       Assert.AreSame(Credit3, Piece2.Credits[0], "Piece2.Credits[0]");
+      Session.Commit();
     }
 
     [Test]
     public void ChangeArtist() {
       Session.BeginUpdate();
       Credit2.Artist = Clarissa;
-      Session.Commit();
       Assert.AreSame(Clarissa, Credit2.Artist, "Credit2.Artist");
       Assert.AreEqual(2, Baker.Credits.Count, "Baker.Credits.Count");
       Assert.AreEqual(1, Clarissa.Credits.Count, "Clarissa.Credits.Count");
       Assert.AreSame(Credit2, Clarissa.Credits[0], "Clarissa 2nd Credit");
+      Session.Commit();
     }
 
     [Test]
     public void ChangePiece() {
       Session.BeginUpdate();
       Credit2.Piece = Piece2;
-      Session.Commit();
       Assert.AreSame(Piece2, Credit2.Piece, "Credit2.Piece");
       Assert.AreEqual(1, Piece1.Credits.Count, "Piece1.Credits.Count");
       Assert.AreEqual(2, Piece2.Credits.Count, "Piece2.Credits.Count");
@@ -214,19 +206,20 @@ namespace SoundExplorers.Tests.Data {
         "Baker.Credits[Credit2.Key]");
       Assert.AreSame(Credit2, Drums.Credits[Credit2.Key],
         "Drums.Credits[Credit2.Key]");
+      Session.Commit();
     }
 
     [Test]
     public void ChangeRole() {
       Session.BeginUpdate();
       Credit2.Role = ElectricGuitar;
-      Session.Commit();
       Assert.AreSame(ElectricGuitar, Credit2.Role, "Credit2.Role");
       Assert.AreEqual(2, Drums.Credits.Count, "Drums.Credits.Count");
       Assert.AreEqual(1, ElectricGuitar.Credits.Count,
         "ElectricGuitar.Credits.Count");
       Assert.AreSame(Credit2, ElectricGuitar.Credits[0],
         "ElectricGuitar 2nd Credit");
+      Session.Commit();
     }
 
     [Test]
@@ -281,6 +274,19 @@ namespace SoundExplorers.Tests.Data {
       Session.BeginUpdate();
       Assert.DoesNotThrow(() => Session.Unpersist(Credit1));
       Session.Commit();
+    }
+
+    private void FetchData() {
+      Baker = QueryHelper.Read<Artist>(BakerName, Session);
+      Clarissa = QueryHelper.Read<Artist>(ClarissaName, Session);
+      Drums = QueryHelper.Read<Role>(DrumsName, Session);
+      ElectricGuitar = QueryHelper.Read<Role>(ElectricGuitarName, Session);
+      Set1 = QueryHelper.Read<Set>(Set1.SimpleKey, Event1, Session);
+      Piece1 = QueryHelper.Read<Piece>(Piece1.SimpleKey, Set1, Session);
+      Piece2 = QueryHelper.Read<Piece>(Piece2.SimpleKey, Set1, Session);
+      Credit1 = QueryHelper.Read<Credit>(Credit1SimpleKey, Piece1, Session);
+      Credit2 = QueryHelper.Read<Credit>(Credit2SimpleKey, Piece1, Session);
+      Credit3 = QueryHelper.Read<Credit>(Credit3SimpleKey, Piece2, Session);
     }
   }
 }

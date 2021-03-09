@@ -34,9 +34,7 @@ namespace SoundExplorers.Model {
     bool IsInsertionRowCurrent { get; }
 
     DatabaseUpdateErrorException? LastDatabaseUpdateErrorException { get; }
-    
     ListRole ListRole { get; }
-    
     IEntityList? ParentList { set; }
 
     /// <summary>
@@ -59,7 +57,7 @@ namespace SoundExplorers.Model {
 
     /// <summary>
     ///   A main list that is a child list must implement this to instantiate its
-    ///   parent list. 
+    ///   parent list.
     /// </summary>
     IEntityList CreateParentList();
 
@@ -72,16 +70,7 @@ namespace SoundExplorers.Model {
     /// </param>
     void DeleteEntity(int rowIndex);
 
-    /// <summary>
-    ///   Derived classes that are identifying parents should return a list of the child
-    ///   entities of the entity at the specified row index that are to populate the main
-    ///   list when this is the parent list.
-    /// </summary>
-    /// <param name="rowIndex">
-    ///   Zero-based row index.
-    /// </param>
     IdentifyingParentChildren? GetIdentifyingParentChildrenForMainList(int rowIndex);
-
     IList<object?> GetErrorValues();
 
     /// <summary>

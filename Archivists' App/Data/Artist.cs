@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 
 namespace SoundExplorers.Data {
   /// <summary>
@@ -63,7 +62,7 @@ namespace SoundExplorers.Data {
       }
     }
 
-    protected override IEnumerable GetChildren(Type childType) {
+    protected override ISortedChildList GetChildren(Type childType) {
       return Credits;
     }
 

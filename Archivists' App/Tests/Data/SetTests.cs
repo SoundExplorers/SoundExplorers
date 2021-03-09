@@ -87,6 +87,7 @@ namespace SoundExplorers.Tests.Data {
         Set2.Genre = Genre1;
         session.Persist(Set1);
         session.Persist(Set2);
+        session.Persist(Set1AtEvent2);
         Set1.Act = Act1;
         Set1AtEvent2.Act = Act2;
         Set2.Act = Act1;
@@ -98,17 +99,7 @@ namespace SoundExplorers.Tests.Data {
       }
       Session = new TestSession(DatabaseFolderPath);
       Session.BeginRead();
-      Event1 = QueryHelper.Read<Event>(Event1.SimpleKey, Location1, Session);
-      Event2 = QueryHelper.Read<Event>(Event2.SimpleKey, Location1, Session);
-      Genre1 = QueryHelper.Read<Genre>(Genre1Name, Session);
-      Act2 = QueryHelper.Read<Act>(Act2Name, Session);
-      Act1 = QueryHelper.Read<Act>(Act1Name, Session);
-      Act2 = QueryHelper.Read<Act>(Act2Name, Session);
-      Set1 = QueryHelper.Read<Set>(Set1SimpleKey, Event1, Session);
-      Set1AtEvent2 = QueryHelper.Read<Set>(Set1SimpleKey, Event2, Session);
-      Set2 = QueryHelper.Read<Set>(Set2SimpleKey, Event1, Session);
-      Piece1 = QueryHelper.Read<Piece>(Piece1.SimpleKey, Set1, Session);
-      Piece2 = QueryHelper.Read<Piece>(Piece2.SimpleKey, Set1, Session);
+      FetchData();
       Session.Commit();
     }
 
@@ -163,6 +154,7 @@ namespace SoundExplorers.Tests.Data {
       Assert.AreEqual(1, Event2.Sets.Count, "Event1.Sets.Count");
       Assert.AreEqual(2, Act1.Sets.Count, "Act1.Sets.Count");
       Assert.AreEqual(1, Act2.Sets.Count, "Act2.Sets.Count");
+      Session.BeginRead();
       Assert.AreSame(Set1, Event1.Sets[0], "Event1.Sets[0]");
       Assert.AreSame(Set1, Event1.Sets[Set1.Key], "Event1.Sets[Set1.Key]");
       Assert.AreSame(Set1AtEvent2, Event2.Sets[0], "Event2.Sets[0]");
@@ -178,6 +170,7 @@ namespace SoundExplorers.Tests.Data {
       Assert.AreEqual(Set1.SetNo, Piece2.Set.SetNo, "Piece2.Set.SetNo");
       Assert.AreSame(Event1, Piece1.Set.Event, "Piece1.Set.Event");
       Assert.AreSame(Event1, Piece2.Set.Event, "Piece2.Set.Event");
+      Session.Commit();
     }
 
     /// <summary>
@@ -193,12 +186,12 @@ namespace SoundExplorers.Tests.Data {
       Assert.AreNotSame(Set1.Event, Set1AtEvent2.Event,
         "Set1AtEvent2.Event");
       Set1.Act = Act2;
-      Session.Commit();
       Assert.AreSame(Act2, Set1.Act, "Set1.Act");
       Assert.AreEqual(1, Act1.Sets.Count, "Act1.Sets.Count");
       Assert.AreEqual(2, Act2.Sets.Count, "Act2.Sets.Count");
       Assert.AreSame(Set1, Act2.Sets[0], "Act2 1st Set");
       Assert.AreSame(Set1AtEvent2, Act2.Sets[1], "Act2 2nd Set");
+      Session.Commit();
     }
 
     [Test]
@@ -280,7 +273,6 @@ namespace SoundExplorers.Tests.Data {
       set3.Event = Event1;
       set3.Genre = Genre1;
       Session.Persist(set3);
-      Session.Commit();
       Assert.AreEqual(2, Act2.Sets.Count, "Act2.Sets.Count after Persist");
       Assert.AreEqual(3, Event1.Sets.Count, "Event1.Sets.Count after Persist");
       Assert.AreSame(set3, Act2.Sets[set3.Key],
@@ -289,14 +281,29 @@ namespace SoundExplorers.Tests.Data {
         "Event1.Sets[set3.Key] after Persist");
       Assert.AreSame(Act2, set3.Act, "set3.Act after Persist");
       Assert.AreSame(Event1, set3.Event, "set3.Event after Persist");
+      Session.Commit();
       Session.BeginUpdate();
       Session.Unpersist(set3);
-      Session.Commit();
       Assert.AreEqual(1, Act2.Sets.Count, "Act2.Sets.Count after Unpersist");
       Assert.AreEqual(2, Event1.Sets.Count,
         "Event1.Sets.Count after Unpersist");
       Assert.IsNull(set3.Act, "set3.Act after Unpersist");
       Assert.IsNull(set3.Event, "set3.Event after Unpersist");
+      Session.Commit();
+    }
+
+    private void FetchData() {
+      Event1 = QueryHelper.Read<Event>(Event1.SimpleKey, Location1, Session);
+      Event2 = QueryHelper.Read<Event>(Event2.SimpleKey, Location1, Session);
+      Genre1 = QueryHelper.Read<Genre>(Genre1Name, Session);
+      Act2 = QueryHelper.Read<Act>(Act2Name, Session);
+      Act1 = QueryHelper.Read<Act>(Act1Name, Session);
+      Act2 = QueryHelper.Read<Act>(Act2Name, Session);
+      Set1 = QueryHelper.Read<Set>(Set1SimpleKey, Event1, Session);
+      Set1AtEvent2 = QueryHelper.Read<Set>(Set1SimpleKey, Event2, Session);
+      Set2 = QueryHelper.Read<Set>(Set2SimpleKey, Event1, Session);
+      Piece1 = QueryHelper.Read<Piece>(Piece1.SimpleKey, Set1, Session);
+      Piece2 = QueryHelper.Read<Piece>(Piece2.SimpleKey, Set1, Session);
     }
   }
 }

@@ -50,6 +50,7 @@ namespace SoundExplorers.Tests.Data {
     public IList<Set> Sets { get; }
     private IList<string> ActNames => _actNames ??= CreateActNames();
     private QueryHelper QueryHelper { get; }
+
     // private EventType DefaultEventType => _defaultEventType ??= GetDefaultEventType();
     private IList<string> EventTypeNames => _eventTypeNames ??= CreateEventTypeNames();
     private IList<string> Forenames => _forenames ??= CreateForenames();

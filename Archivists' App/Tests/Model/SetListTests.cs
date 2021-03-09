@@ -86,8 +86,10 @@ namespace SoundExplorers.Tests.Model {
       Populate();
       Assert.AreEqual("4", bindingList[3].SetNo, "SetNo in binding list");
       Assert.AreEqual(4, List[3].SetNo, "SetNo in List");
+      Session.BeginRead();
       Assert.AreEqual(4, @event.Sets[3].SetNo, "SetNo in Event.Sets");
       Assert.AreEqual(4, Data.Genres[0].Sets[3].SetNo, "SetNo in Genre.Sets");
+      Session.Commit();
     }
 
     [Test]
@@ -148,7 +150,7 @@ namespace SoundExplorers.Tests.Model {
         $"Set '{bindingList[0].Key}' cannot be added because its Genre has not been specified.",
         exception.Message, "Error message");
     }
-    
+
     [Test]
     public void DisallowAddSetWithInvalidSetNo() {
       List = CreateSetList();
@@ -158,7 +160,7 @@ namespace SoundExplorers.Tests.Model {
       const string defaultSetNo = "4";
       const int newRowIndex = 3;
       List.OnRowEnter(newRowIndex);
-      Assert.AreEqual(defaultSetNo, bindingList[newRowIndex].SetNo, "SetNo initially"); 
+      Assert.AreEqual(defaultSetNo, bindingList[newRowIndex].SetNo, "SetNo initially");
       bindingList[newRowIndex].SetNo = "ABC"; // Invalid format
       var exception = Assert.Catch<DatabaseUpdateErrorException>(
         () => List.OnRowValidated(newRowIndex),
@@ -169,7 +171,7 @@ namespace SoundExplorers.Tests.Model {
       // AddNew does occur at this point when the user commits an insertion. As the SetNo
       // is invalid, the AddNew will exercise the format error handling logic in
       // BindingItemBase.SimpleKeyToInteger.
-      bindingList.AddNew(); 
+      bindingList.AddNew();
       List.OnRowEnter(newRowIndex - 1);
       bindingList.RemoveAt(newRowIndex);
       List.OnRowEnter(newRowIndex);
@@ -179,8 +181,8 @@ namespace SoundExplorers.Tests.Model {
       // the AddNew will not have crashed on attempting to work out the default SetNo
       // from a binding list whose last item contains an invalid SetNo. See
       // BindingItemBase.SimpleKeyToInteger.
-      Assert.AreEqual(defaultSetNo, bindingList[newRowIndex].SetNo, 
-        "SetNo on reentering new row after SetNo format error"); 
+      Assert.AreEqual(defaultSetNo, bindingList[newRowIndex].SetNo,
+        "SetNo on reentering new row after SetNo format error");
       bindingList[newRowIndex].SetNo = "999"; // Out of range
       exception = Assert.Catch<DatabaseUpdateErrorException>(
         () => List.OnRowValidated(newRowIndex),
@@ -201,8 +203,8 @@ namespace SoundExplorers.Tests.Model {
       // the AddNew will not have crashed on attempting to work out the default SetNo
       // from a binding list whose last item contains an invalid SetNo. See
       // BindingItemBase.SimpleKeyToInteger.
-      Assert.AreEqual(defaultSetNo, bindingList[newRowIndex].SetNo, 
-        "SetNo on reentering new row after SetNo out of range error"); 
+      Assert.AreEqual(defaultSetNo, bindingList[newRowIndex].SetNo,
+        "SetNo on reentering new row after SetNo out of range error");
     }
 
     [Test]

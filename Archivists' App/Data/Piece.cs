@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using VelocityDb.Session;
 
 namespace SoundExplorers.Data {
@@ -10,6 +9,7 @@ namespace SoundExplorers.Data {
   public class Piece : EntityBase {
     public const string DurationErrorMessage =
       "Duration must be between 1 second and 9 hours, 59 minutes, 59 seconds.";
+
     private string _audioUrl = null!;
     private TimeSpan _duration;
     private string _notes = null!;
@@ -97,13 +97,13 @@ namespace SoundExplorers.Data {
       if (!string.IsNullOrWhiteSpace(AudioUrl)) {
         duplicate = FindDuplicateAudioUrl(AudioUrl, session);
         if (duplicate != null) {
-          throw CreateDuplicateAudioUrlInsertionException(Key, duplicate); 
+          throw CreateDuplicateAudioUrlInsertionException(Key, duplicate);
         }
       }
       if (!string.IsNullOrWhiteSpace(VideoUrl)) {
         duplicate = FindDuplicateVideoUrl(VideoUrl, session);
         if (duplicate != null) {
-          throw CreateDuplicateVideoUrlInsertException(Key, duplicate); 
+          throw CreateDuplicateVideoUrlInsertException(Key, duplicate);
         }
       }
       CheckThatDurationHasBeenSpecified(Key, Duration);
@@ -122,7 +122,7 @@ namespace SoundExplorers.Data {
       return new PropertyConstraintException(
         $"Piece '{newKey}' cannot be added because Piece " +
         $"'{duplicate.Key}' " +
-        $"already exists with the same Audio URL '{duplicate.AudioUrl}'.", 
+        $"already exists with the same Audio URL '{duplicate.AudioUrl}'.",
         nameof(AudioUrl));
     }
 
@@ -139,7 +139,7 @@ namespace SoundExplorers.Data {
       return new PropertyConstraintException(
         $"Piece '{newKey}' cannot be added because Piece " +
         $"'{duplicate.Key}' " +
-        $"already exists with the same Video URL '{duplicate.VideoUrl}'.", 
+        $"already exists with the same Video URL '{duplicate.VideoUrl}'.",
         nameof(VideoUrl));
     }
 
@@ -169,7 +169,7 @@ namespace SoundExplorers.Data {
         session);
     }
 
-    protected override IEnumerable GetChildren(Type childType) {
+    protected override ISortedChildList GetChildren(Type childType) {
       return Credits;
     }
 
@@ -192,11 +192,11 @@ namespace SoundExplorers.Data {
     public static void ValidateAudioUrlFormat(string audioUrl) {
       ValidateUrlFormat(audioUrl, nameof(AudioUrl));
     }
- 
+
     public static void ValidateDurationRange(TimeSpan value) {
       if (value < TimeSpan.FromSeconds(1) || value >= TimeSpan.FromHours(10)) {
         throw new PropertyConstraintException(
-          DurationErrorMessage, 
+          DurationErrorMessage,
           nameof(Duration));
       }
     }

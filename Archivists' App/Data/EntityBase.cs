@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics.CodeAnalysis;
@@ -15,9 +14,10 @@ namespace SoundExplorers.Data {
   ///   and/or many-to-one relations with other entity types.
   /// </summary>
   public abstract class EntityBase : ReferenceTracked, IEntity {
-    private IDictionary<Type, IDictionary>? _childrenOfType;
+    private IDictionary<Type, ISortedChildList>? _childrenOfType;
     private IDictionary<Type, IRelationInfo>? _childrenRelations;
     private EntityBase? _identifyingParent;
+    private IList<Action>? _onPersistedActions;
     private IDictionary<Type, IRelationInfo>? _parentRelations;
     private IDictionary<Type, EntityBase?>? _parents;
     private QueryHelper? _queryHelper;
@@ -54,7 +54,8 @@ namespace SoundExplorers.Data {
 
     protected bool AllowBlankSimpleKey { get; set; }
 
-    private IDictionary<Type, IDictionary> ChildrenOfType {
+    // private IDictionary<Type, IDictionary> ChildrenOfType {
+    private IDictionary<Type, ISortedChildList> ChildrenOfType {
       get {
         InitialiseIfNull(_childrenOfType);
         return _childrenOfType!;
@@ -124,6 +125,9 @@ namespace SoundExplorers.Data {
       get => _schema ??= Schema.Instance;
       set => _schema = value;
     }
+
+    private IList<Action> OnPersistedActions =>
+      _onPersistedActions ??= new List<Action>();
 
     private string SimpleKeyName { get; }
 
@@ -212,11 +216,15 @@ namespace SoundExplorers.Data {
     }
 
     private void AddChild(EntityBase child) {
-      UpdateNonIndexField();
-      ChildrenOfType[child.EntityType].Add(CreateChildKey(child), child);
-      // Full referential integrity is implemented in this class.
-      // But, for added safety, update VelocityDB's internal referential integrity data. 
-      References.AddFast(new Reference(child, "_children"));
+      if (child.IsPersistent) {
+        UpdateNonIndexField();
+        ChildrenOfType[child.EntityType].Add(CreateChildKey(child), child);
+        // Full referential integrity is implemented in this class.
+        // But, for added safety, update VelocityDB's internal referential integrity data. 
+        References.AddFast(new Reference(child, "_children"));
+      } else {
+        child.OnPersistedActions.Add(() => AddChild(child));
+      }
     }
 
     internal void AddNonIdentifiedChild(EntityBase child) {
@@ -377,7 +385,7 @@ namespace SoundExplorers.Data {
     ///   its SortedChildList of child entities of the specified entity type.
     /// </summary>
     [ExcludeFromCodeCoverage]
-    protected virtual IEnumerable GetChildren(Type childType) {
+    protected virtual ISortedChildList GetChildren(Type childType) {
       throw new NotSupportedException();
     }
 
@@ -385,22 +393,22 @@ namespace SoundExplorers.Data {
       return $"{propertyName} must be an integer between 1 and 99.";
     }
 
-    public static string IntegerToSimpleKey(int integer, string propertyName, 
+    public static string IntegerToSimpleKey(int integer, string propertyName,
       bool emptyIfError = false) {
       if (integer >= 1 && integer <= 99) {
         return integer.ToString().PadLeft(2, '0');
       }
       if (emptyIfError) {
         return string.Empty;
-      } 
+      }
       throw new PropertyConstraintException(
         GetIntegerSimpleKeyErrorMessage(propertyName), propertyName);
     }
 
-    private IDictionary GetChildDictionary(Type childType) {
-      var children = GetChildren(childType);
-      return children.Cast<EntityBase>().ToDictionary(child => child.Key);
-    }
+    // private IDictionary GetChildDictionary(Type childType) {
+    //   var children = GetChildren(childType);
+    //   return children.Cast<EntityBase>().ToDictionary(child => child.Key);
+    // }
 
     private void Initialise() {
       ParentRelations = CreateParentRelations();
@@ -409,9 +417,11 @@ namespace SoundExplorers.Data {
         Parents.Add(relationPair.Key, null);
       }
       ChildrenRelations = CreateChildrenRelations();
-      ChildrenOfType = new Dictionary<Type, IDictionary>();
-      foreach (var relationPair in ChildrenRelations) {
-        ChildrenOfType.Add(relationPair.Key, GetChildDictionary(relationPair.Key));
+      // ChildrenOfType = new Dictionary<Type, IDictionary>();
+      ChildrenOfType = new Dictionary<Type, ISortedChildList>();
+      foreach (var (key, _) in ChildrenRelations) {
+        // ChildrenOfType.Add(key, GetChildDictionary(key));
+        ChildrenOfType.Add(key, GetChildren(key));
       }
     }
 
@@ -427,7 +437,12 @@ namespace SoundExplorers.Data {
       Queue<IOptimizedPersistable>? toPersist = null) {
       // Debug.WriteLine($"EntityBase.Persist {EntityType.Name}");
       CheckCanPersist(session);
-      return base.Persist(place, session, persistRefs, disableFlush, toPersist);
+      ulong result = base.Persist(place, session, persistRefs, disableFlush, toPersist);
+      foreach (var action in OnPersistedActions) {
+        action.Invoke();
+      }
+      OnPersistedActions.Clear();
+      return result;
     }
 
     private void RemoveChild(EntityBase child) {
@@ -453,8 +468,8 @@ namespace SoundExplorers.Data {
     private void RemoveFromAllParents() {
       // Debug.WriteLine($"EntityBase.RemoveFromAllParents {EntityType.Name}");
       var nonIdentifyingParents = (
-        from parent in Parents.Values 
-        where parent != null && !parent.Equals(IdentifyingParent) 
+        from parent in Parents.Values
+        where parent != null && !parent.Equals(IdentifyingParent)
         select parent).ToList();
       if (nonIdentifyingParents.Count > 0) {
         foreach (var nonIdentifyingParent in nonIdentifyingParents) {

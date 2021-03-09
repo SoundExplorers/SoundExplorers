@@ -13,7 +13,7 @@ namespace SoundExplorers.Model {
       return new CreditBindingItem {
         CreditNo = credit.CreditNo.ToString(),
         Artist = credit.Artist.Name,
-        Role = credit.Role.Name,
+        Role = credit.Role.Name
       };
     }
 
@@ -28,7 +28,7 @@ namespace SoundExplorers.Model {
         new BindingColumn(nameof(Credit.Artist), typeof(string),
           new ReferenceType(typeof(ArtistList), nameof(Artist.Name))),
         new BindingColumn(nameof(Credit.Role), typeof(string),
-          new ReferenceType(typeof(RoleList), nameof(Role.Name))),
+          new ReferenceType(typeof(RoleList), nameof(Role.Name)))
       };
       return result;
     }

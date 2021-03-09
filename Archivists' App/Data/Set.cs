@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using VelocityDb;
 using VelocityDb.Session;
 
 namespace SoundExplorers.Data {
@@ -77,17 +74,15 @@ namespace SoundExplorers.Data {
       }
     }
 
-    protected override IEnumerable GetChildren(Type childType) {
+    protected override ISortedChildList GetChildren(Type childType) {
       return Pieces;
     }
 
-    public override ulong Persist(Placement place, SessionBase session,
-      bool persistRefs = true,
-      bool disableFlush = false, Queue<IOptimizedPersistable>? toPersist = null) {
+    protected override void CheckCanPersist(SessionBase session) {
       if (_act == null) {
         Act = QueryHelper.Read<Act>(Act.DefaultName, session);
       }
-      return base.Persist(place, session, persistRefs, disableFlush, toPersist);
+      base.CheckCanPersist(session);
     }
 
     protected override void SetNonIdentifyingParentField(

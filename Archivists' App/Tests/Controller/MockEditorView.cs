@@ -17,7 +17,6 @@ namespace SoundExplorers.Tests.Controller {
     internal int ShowErrorMessageCount { get; private set; }
     internal int ShowWarningMessageCount { get; private set; }
     internal string StatusBarText { get; set; } = null!;
-
     public IGrid? CurrentGrid { get; set; }
     public IMainGrid MainGrid { get; }
     public IParentGrid ParentGrid { get; }

@@ -1,7 +1,7 @@
 ﻿using SoundExplorers.Data;
 
 namespace SoundExplorers.Model {
-  public class ArtistList  : EntityListBase<Artist, ArtistBindingItem> {
+  public class ArtistList : EntityListBase<Artist, ArtistBindingItem> {
     protected override ArtistBindingItem CreateBindingItem(Artist artist) {
       return new ArtistBindingItem {
         Forename = artist.Forename,

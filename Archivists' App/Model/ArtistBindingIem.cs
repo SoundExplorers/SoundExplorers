@@ -32,6 +32,7 @@ namespace SoundExplorers.Model {
         OnPropertyChanged(nameof(Notes));
       }
     }
+
     protected override string GetSimpleKey() {
       return Artist.MakeName(Forename, Surname);
     }

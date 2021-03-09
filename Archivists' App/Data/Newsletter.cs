@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Linq;
 using VelocityDb.Session;
 
@@ -115,7 +114,7 @@ namespace SoundExplorers.Data {
       //   session);
     }
 
-    protected override IEnumerable GetChildren(Type childType) {
+    protected override ISortedChildList GetChildren(Type childType) {
       return Events;
     }
 
@@ -130,7 +129,7 @@ namespace SoundExplorers.Data {
     public static void ValidateUrlFormatOnUpdate(string? url, DateTime date) {
       if (string.IsNullOrWhiteSpace(url)) {
         throw new PropertyConstraintException(
-          "A valid URL has not been specified for Newsletter " + 
+          "A valid URL has not been specified for Newsletter " +
           $"{DateToSimpleKey(date)}.",
           nameof(Url));
       }
