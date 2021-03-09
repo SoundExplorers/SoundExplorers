@@ -14,9 +14,9 @@ namespace SoundExplorers.Tests {
     /// <summary>
     ///   1 to enable generate
     /// </summary>
-    private static int DoIt => 1;
+    private static int DoIt => 0;
 
-    private static int EventCount => 5;
+    private static int EventCount => 100;
     private TestData Data { get; set; } = null!;
     private TestSession Session { get; set; } = null!;
 
