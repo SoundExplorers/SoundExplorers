@@ -16,7 +16,7 @@ namespace SoundExplorers.Tests {
     /// </summary>
     private static int DoIt => 0;
 
-    private static int EventCount => 100;
+    private static int EventCount => 40;
     private TestData Data { get; set; } = null!;
     private TestSession Session { get; set; } = null!;
 
@@ -38,8 +38,10 @@ namespace SoundExplorers.Tests {
       }
       Session = new TestSession(DatabaseConfig.DefaultDatabaseFolderPath);
       Session.BeginRead();
+      var acts = Session.AllObjects<Act>().ToList();
       var newsletters = Session.AllObjects<Newsletter>().ToList();
       Session.Commit();
+      Assert.AreEqual(Data.Acts.Count, acts.Count);
       Assert.AreEqual(EventCount, newsletters.Count);
     }
 
