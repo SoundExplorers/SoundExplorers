@@ -369,9 +369,10 @@ namespace SoundExplorers.Model {
       }
       if (identifyingParentChildren != null) {
         IdentifyingParent = identifyingParentChildren.IdentifyingParent;
-        AddRange((IList<TEntity>)identifyingParentChildren.Children);
+        AddRange((IEnumerable<TEntity>)identifyingParentChildren.Children);
       } else {
-        AddRange(Session.AllObjects<TEntity>());
+        var entities = Session.AllObjects<TEntity>();  
+        AddRange(entities);
       }
       GetReferenceableItemLists();
       if (isTransactionRequired) {
