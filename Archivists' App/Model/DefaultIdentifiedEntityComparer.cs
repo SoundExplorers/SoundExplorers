@@ -6,7 +6,7 @@ namespace SoundExplorers.Model {
   /// <summary>
   ///   Base class for a default comparer to be used when sorting a parent entity list
   ///   containing entities with identifying parents. It currently works with Sets and
-  ///   Pieces but not Events. 
+  ///   Pieces but not Events.
   /// </summary>
   /// <remarks>
   ///   This class would not be suitable for determining the order of SortedChildLists

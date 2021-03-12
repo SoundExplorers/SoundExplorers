@@ -205,8 +205,8 @@ namespace SoundExplorers.Model {
 
     /// <summary>
     ///   Derived classes that can be parent lists must return a list of the child
-    ///   entities of the entity at the specified row index that are to populate the main
-    ///   list when this is the parent list.
+    ///   entities of the entity at the specified row index that are to populate the
+    ///   child (main) list when this is the parent list.
     /// </summary>
     /// <param name="rowIndex">
     ///   Zero-based row index.
@@ -371,7 +371,7 @@ namespace SoundExplorers.Model {
         IdentifyingParent = identifyingParentChildren.IdentifyingParent;
         AddRange((IEnumerable<TEntity>)identifyingParentChildren.Children);
       } else {
-        var entities = Session.AllObjects<TEntity>();  
+        var entities = Session.AllObjects<TEntity>();
         AddRange(entities);
       }
       GetReferenceableItemLists();

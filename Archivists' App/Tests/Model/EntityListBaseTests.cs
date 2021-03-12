@@ -16,8 +16,7 @@ namespace SoundExplorers.Tests.Model {
       Session.DeleteDatabaseFolderIfExists();
     }
 
-    private class DudErrorThrowerList : NamedEntityList<ErrorThrowingEventType> {
-    }
+    private class DudErrorThrowerList : NamedEntityList<ErrorThrowingEventType> { }
 
     private TestSession Session { get; set; } = null!;
 
