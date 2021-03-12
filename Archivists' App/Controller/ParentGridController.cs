@@ -31,8 +31,8 @@ namespace SoundExplorers.Controller {
     private IdentifyingParentAndChildren GetIdentifyingParentChildrenForMainList(
       int rowIndex) {
       Debug.WriteLine(
-        $"ParentGridController.GetIdentifyingParentAndChildrenForMainList: row {rowIndex}");
-      return List.GetIdentifyingParentAndChildrenForMainList(rowIndex)!;
+        $"ParentGridController.GetIdentifyingParentAndChildrenForChildList: row {rowIndex}");
+      return List.GetIdentifyingParentAndChildrenForChildList(rowIndex)!;
     }
 
     protected override void OnPopulatedAsync() {

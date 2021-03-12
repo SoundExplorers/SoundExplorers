@@ -70,7 +70,7 @@ namespace SoundExplorers.Model {
     /// </param>
     void DeleteEntity(int rowIndex);
 
-    IdentifyingParentAndChildren? GetIdentifyingParentAndChildrenForMainList(int rowIndex);
+    IdentifyingParentAndChildren? GetIdentifyingParentAndChildrenForChildList(int rowIndex);
     IList<object?> GetErrorValues();
 
     /// <summary>

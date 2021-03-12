@@ -185,7 +185,7 @@ namespace SoundExplorers.Tests.Model {
 
     private void Populate() {
       ParentList.Populate();
-      List.Populate(ParentList.GetIdentifyingParentAndChildrenForMainList(
+      List.Populate(ParentList.GetIdentifyingParentAndChildrenForChildList(
         ParentList.Count - 1));
     }
   }

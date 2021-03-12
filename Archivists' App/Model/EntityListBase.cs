@@ -211,7 +211,7 @@ namespace SoundExplorers.Model {
     /// <param name="rowIndex">
     ///   Zero-based row index.
     /// </param>
-    public IdentifyingParentAndChildren GetIdentifyingParentAndChildrenForMainList(
+    public IdentifyingParentAndChildren GetIdentifyingParentAndChildrenForChildList(
       int rowIndex) {
       Session.BeginRead();
       var children = GetChildList(rowIndex);
