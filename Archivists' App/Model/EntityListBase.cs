@@ -426,7 +426,7 @@ namespace SoundExplorers.Model {
     protected abstract BindingColumnList CreateColumns();
 
     protected virtual IComparer<TEntity> CreateEntityComparer() {
-      return new EntityComparer<TEntity>();
+      return new TopLevelEntityComparer<TEntity>();
     }
 
     private static BackupItem<TBindingItem> CreateBackupItem(TBindingItem bindingItem) {

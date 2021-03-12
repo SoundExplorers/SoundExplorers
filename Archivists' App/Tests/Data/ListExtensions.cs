@@ -24,7 +24,7 @@ namespace SoundExplorers.Tests.Data {
     }
 
     public static void Sort<TEntity>(this IList<TEntity> list) where TEntity : IEntity {
-      ((List<TEntity>)list).Sort(new EntityComparer<TEntity>());
+      ((List<TEntity>)list).Sort(new TopLevelEntityComparer<TEntity>());
     }
   }
 }

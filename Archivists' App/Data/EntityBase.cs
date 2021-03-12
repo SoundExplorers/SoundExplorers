@@ -52,9 +52,40 @@ namespace SoundExplorers.Data {
       Key = new Key(this);
     }
 
+    /// <summary>
+    ///   From VelocityDB User's Guide:
+    ///   'It is recommended that you make the following override in your
+    ///   OptimizedPersistable subclass for better performance. ...
+    ///   We may make this default but it could break existing code
+    ///   so it is not a trivial change.'
+    /// </summary>
+    public override bool AllowOtherTypesOnSamePage => false;
+
+    /// <summary>
+    ///   A hopefully safely old date, suitable for initialising Date fields
+    ///   because it is compatible with calendar controls.
+    /// </summary>
+    public static DateTime DefaultDate { get; }
+
+    /// <summary>
+    ///   The main Type as which the entity will be persisted on the database.
+    ///   Entities of subtypes may be persisted but will be members of the same
+    ///   child collections, if any, as entities of the main Type.
+    /// </summary>
+    public Type EntityType { get; }
+
+    internal QueryHelper QueryHelper {
+      get => _queryHelper ??= QueryHelper.Instance;
+      set => _queryHelper = value;
+    }
+
     protected bool AllowBlankSimpleKey { get; set; }
 
-    // private IDictionary<Type, IDictionary> ChildrenOfType {
+    protected Schema Schema {
+      get => _schema ??= Schema.Instance;
+      set => _schema = value;
+    }
+
     private IDictionary<Type, ISortedChildList> ChildrenOfType {
       get {
         InitialiseIfNull(_childrenOfType);
@@ -76,19 +107,6 @@ namespace SoundExplorers.Data {
         _childrenRelations = value;
       }
     }
-
-    /// <summary>
-    ///   A hopefully safely old date, suitable for initialising Date fields
-    ///   because it is compatible with calendar controls.
-    /// </summary>
-    public static DateTime DefaultDate { get; }
-
-    /// <summary>
-    ///   The main Type as which the entity will be persisted on the database.
-    ///   Entities of subtypes may be persisted but will be members of the same
-    ///   child collections, if any, as entities of the main Type.
-    /// </summary>
-    internal Type EntityType { get; }
 
     private Type? IdentifyingParentType { get; }
     private bool IsAddingToOrRemovingFromIdentifyingParent { get; set; }
@@ -116,29 +134,10 @@ namespace SoundExplorers.Data {
       }
     }
 
-    internal QueryHelper QueryHelper {
-      get => _queryHelper ??= QueryHelper.Instance;
-      set => _queryHelper = value;
-    }
-
-    protected Schema Schema {
-      get => _schema ??= Schema.Instance;
-      set => _schema = value;
-    }
-
     private IList<Action> OnPersistedActions =>
       _onPersistedActions ??= new List<Action>();
 
     private string SimpleKeyName { get; }
-
-    /// <summary>
-    ///   From VelocityDB User's Guide:
-    ///   'It is recommended that you make the following override in your
-    ///   OptimizedPersistable subclass for better performance. ...
-    ///   We may make this default but it could break existing code
-    ///   so it is not a trivial change.'
-    /// </summary>
-    public override bool AllowOtherTypesOnSamePage => false;
 
     /// <summary>
     ///   The identifying parent entity, which, where applicable,
@@ -215,6 +214,138 @@ namespace SoundExplorers.Data {
       }
     }
 
+    public static PropertyConstraintException CreateParentNotSpecifiedException(
+      string entityTypeName, Key key, string parentTypeName) {
+      return new PropertyConstraintException(
+        $"{entityTypeName} '{key}' " +
+        $"cannot be added because its {parentTypeName} "
+        + "has not been specified.", parentTypeName);
+    }
+
+    public static string DateToSimpleKey(DateTime date) {
+      return $"{date:yyyy/MM/dd}";
+    }
+
+    public static string GetIntegerSimpleKeyErrorMessage(string propertyName) {
+      return $"{propertyName} must be an integer between 1 and 99.";
+    }
+
+    public static string IntegerToSimpleKey(int integer, string propertyName,
+      bool emptyIfError = false) {
+      if (integer >= 1 && integer <= 99) {
+        return integer.ToString().PadLeft(2, '0');
+      }
+      if (emptyIfError) {
+        return string.Empty;
+      }
+      throw new PropertyConstraintException(
+        GetIntegerSimpleKeyErrorMessage(propertyName), propertyName);
+    }
+
+    public override ulong Persist(Placement place, SessionBase session,
+      bool persistRefs = true,
+      bool disableFlush = false,
+      Queue<IOptimizedPersistable>? toPersist = null) {
+      // Debug.WriteLine($"EntityBase.Persist {EntityType.Name}");
+      CheckCanPersist(session);
+      ulong result = base.Persist(place, session, persistRefs, disableFlush, toPersist);
+      foreach (var action in OnPersistedActions) {
+        action.Invoke();
+      }
+      OnPersistedActions.Clear();
+      return result;
+    }
+
+    public override void Unpersist(SessionBase session) {
+      // Debug.WriteLine($"EntityBase.Unpersist {EntityType.Name}");
+      if (References.Count > 0) {
+        // If we did not do this, VelocityDB would throw a ReferentialIntegrityException
+        // on base.Unpersist.
+        throw new ConstraintException(
+          CreateReferentialIntegrityViolationMessage());
+      }
+      RemoveFromAllParents();
+      base.Unpersist(session);
+    }
+
+    protected static void ValidateUrlFormat(string url, string propertyName) {
+      try {
+        var dummy = new Uri(url, UriKind.Absolute);
+      } catch (UriFormatException) {
+        throw new PropertyConstraintException(
+          $"Invalid {propertyName} format: '{url}'.", propertyName);
+      }
+    }
+
+    protected void ChangeNonIdentifyingParent(Type parentEntityType,
+      EntityBase? newParent) {
+      Parents[parentEntityType]?.RemoveChildWhenNonIdentifyingParentOrUnpersistingChild(
+        this, newParent != null);
+      newParent?.AddNonIdentifiedChild(this);
+    }
+
+    protected virtual void CheckCanPersist(SessionBase session) {
+      if (!AllowBlankSimpleKey && string.IsNullOrWhiteSpace(SimpleKey)) {
+        throw new PropertyConstraintException(
+          $"A {SimpleKeyName} has not yet been specified. " +
+          $"So the {EntityType.Name} cannot be added.", SimpleKeyName);
+      }
+      foreach (var (parentType, parent) in Parents) {
+        if (parent == null && ParentRelations[parentType].IsMandatory) {
+          throw CreateParentNotSpecifiedException(
+            EntityType.Name, Key, parentType.Name);
+        }
+      }
+      if (IsTopLevel &&
+          QueryHelper.FindDuplicateSimpleKey(EntityType, Oid, SimpleKey,
+            session) != null) {
+        throw new PropertyConstraintException(
+          $"{EntityType.Name} '{Key}' " +
+          $"cannot be added because another {EntityType.Name} "
+          + "with the same key already exists.", SimpleKeyName);
+      }
+    }
+
+    /// <summary>
+    ///   Allows a derived entity to return
+    ///   its SortedChildList of child entities of the specified entity type.
+    /// </summary>
+    [ExcludeFromCodeCoverage]
+    protected virtual ISortedChildList GetChildren(Type childType) {
+      throw new NotSupportedException();
+    }
+
+    /// <summary>
+    ///   Allows a derived entity to update the field (not property)
+    ///   corresponding to the parent entity of the specified entity type
+    ///   with the specified new value.
+    /// </summary>
+    [ExcludeFromCodeCoverage]
+    protected virtual void SetNonIdentifyingParentField(
+      Type parentEntityType, EntityBase? newParent) {
+      throw new NotSupportedException();
+    }
+
+    /// <summary>
+    ///   Marks the entity as being updated, so that the entity will be written
+    ///   at commit transaction. In this application, this is used instead of
+    ///   OptimizedPersistable.Update, even for key properties,
+    ///   because we don't use VelocityDbList for collections and indexing.
+    /// </summary>
+    /// <exception cref="InvalidOperationException">
+    ///   If an update of a persisted entity is attempted outside a session,
+    ///   provides an meaningful error message.
+    /// </exception>
+    protected new void UpdateNonIndexField() {
+      try {
+        base.UpdateNonIndexField();
+      } catch (NullReferenceException ex) {
+        throw new InvalidOperationException(
+          $"{EntityType.Name} '{SimpleKey}' cannot be updated outside a session " +
+          "because it already exists.", ex);
+      }
+    }
+
     private void AddChild(EntityBase child) {
       if (child.IsPersistent) {
         UpdateNonIndexField();
@@ -227,25 +358,13 @@ namespace SoundExplorers.Data {
       }
     }
 
-    internal void AddNonIdentifiedChild(EntityBase child) {
+    private void AddNonIdentifiedChild(EntityBase child) {
       CheckCanAddNonIdentifiedChild(child);
       AddChild(child);
       UpdateChild(child, this);
     }
 
-    protected void ChangeNonIdentifyingParent(Type parentEntityType,
-      EntityBase? newParent) {
-      Parents[parentEntityType]?.RemoveChildWhenNonIdentifyingParentOrUnpersistingChild(
-        this, newParent != null);
-      newParent?.AddNonIdentifiedChild(this);
-    }
-
     private void CheckCanAddNonIdentifiedChild(EntityBase child) {
-      if (child == null) {
-        throw new ConstraintException(
-          "A null reference has been specified. " +
-          $"So addition to {EntityType.Name} '{Key}' is not supported.");
-      }
       CheckForDuplicateChild(child, CreateChildKey(child));
     }
 
@@ -276,28 +395,6 @@ namespace SoundExplorers.Data {
           $"The {EntityType.Name}'s {SimpleKeyName} cannot be set to " +
           $"'{newSimpleKey}' because another {EntityType.Name} " +
           $"with that {SimpleKeyName} already exists.", SimpleKeyName);
-      }
-    }
-
-    protected virtual void CheckCanPersist(SessionBase session) {
-      if (!AllowBlankSimpleKey && string.IsNullOrWhiteSpace(SimpleKey)) {
-        throw new PropertyConstraintException(
-          $"A {SimpleKeyName} has not yet been specified. " +
-          $"So the {EntityType.Name} cannot be added.", SimpleKeyName);
-      }
-      foreach (var (parentType, parent) in Parents) {
-        if (parent == null && ParentRelations[parentType].IsMandatory) {
-          throw CreateParentNotSpecifiedException(
-            EntityType.Name, Key, parentType.Name);
-        }
-      }
-      if (IsTopLevel &&
-          QueryHelper.FindDuplicateSimpleKey(EntityType, Oid, SimpleKey,
-            session) != null) {
-        throw new PropertyConstraintException(
-          $"{EntityType.Name} '{Key}' " +
-          $"cannot be added because another {EntityType.Name} "
-          + "with the same key already exists.", SimpleKeyName);
       }
     }
 
@@ -342,14 +439,6 @@ namespace SoundExplorers.Data {
         value => value.ChildType, value => value);
     }
 
-    public static PropertyConstraintException CreateParentNotSpecifiedException(
-      string entityTypeName, Key key, string parentTypeName) {
-      return new PropertyConstraintException(
-        $"{entityTypeName} '{key}' " +
-        $"cannot be added because its {parentTypeName} "
-        + "has not been specified.", parentTypeName);
-    }
-
     private IDictionary<Type, IRelationInfo> CreateParentRelations() {
       var values =
         from relation in Schema.Relations
@@ -376,40 +465,6 @@ namespace SoundExplorers.Data {
       return writer.ToString();
     }
 
-    public static string DateToSimpleKey(DateTime date) {
-      return $"{date:yyyy/MM/dd}";
-    }
-
-    /// <summary>
-    ///   Allows a derived entity to return
-    ///   its SortedChildList of child entities of the specified entity type.
-    /// </summary>
-    [ExcludeFromCodeCoverage]
-    protected virtual ISortedChildList GetChildren(Type childType) {
-      throw new NotSupportedException();
-    }
-
-    public static string GetIntegerSimpleKeyErrorMessage(string propertyName) {
-      return $"{propertyName} must be an integer between 1 and 99.";
-    }
-
-    public static string IntegerToSimpleKey(int integer, string propertyName,
-      bool emptyIfError = false) {
-      if (integer >= 1 && integer <= 99) {
-        return integer.ToString().PadLeft(2, '0');
-      }
-      if (emptyIfError) {
-        return string.Empty;
-      }
-      throw new PropertyConstraintException(
-        GetIntegerSimpleKeyErrorMessage(propertyName), propertyName);
-    }
-
-    // private IDictionary GetChildDictionary(Type childType) {
-    //   var children = GetChildren(childType);
-    //   return children.Cast<EntityBase>().ToDictionary(child => child.Key);
-    // }
-
     private void Initialise() {
       ParentRelations = CreateParentRelations();
       Parents = new Dictionary<Type, EntityBase?>();
@@ -429,20 +484,6 @@ namespace SoundExplorers.Data {
       if (backingField == null) {
         Initialise();
       }
-    }
-
-    public override ulong Persist(Placement place, SessionBase session,
-      bool persistRefs = true,
-      bool disableFlush = false,
-      Queue<IOptimizedPersistable>? toPersist = null) {
-      // Debug.WriteLine($"EntityBase.Persist {EntityType.Name}");
-      CheckCanPersist(session);
-      ulong result = base.Persist(place, session, persistRefs, disableFlush, toPersist);
-      foreach (var action in OnPersistedActions) {
-        action.Invoke();
-      }
-      OnPersistedActions.Clear();
-      return result;
     }
 
     private void RemoveChild(EntityBase child) {
@@ -485,29 +526,6 @@ namespace SoundExplorers.Data {
       }
     }
 
-    /// <summary>
-    ///   Allows a derived entity to update the field (not property)
-    ///   corresponding to the parent entity of the specified entity type
-    ///   with the specified new value.
-    /// </summary>
-    [ExcludeFromCodeCoverage]
-    protected virtual void SetNonIdentifyingParentField(
-      Type parentEntityType, EntityBase? newParent) {
-      throw new NotSupportedException();
-    }
-
-    public override void Unpersist(SessionBase session) {
-      // Debug.WriteLine($"EntityBase.Unpersist {EntityType.Name}");
-      if (References.Count > 0) {
-        // If we did not do this, VelocityDB would throw a ReferentialIntegrityException
-        // on base.Unpersist.
-        throw new ConstraintException(
-          CreateReferentialIntegrityViolationMessage());
-      }
-      RemoveFromAllParents();
-      base.Unpersist(session);
-    }
-
     private void UpdateChild(EntityBase child,
       EntityBase? newParent) {
       child.UpdateNonIndexField();
@@ -519,35 +537,6 @@ namespace SoundExplorers.Data {
       } else {
         child.SetNonIdentifyingParentField(EntityType,
           newParent);
-      }
-    }
-
-    /// <summary>
-    ///   Marks the entity as being updated, so that the entity will be written
-    ///   at commit transaction. In this application, this is used instead of
-    ///   OptimizedPersistable.Update, even for key properties,
-    ///   because we don't use VelocityDbList for collections and indexing.
-    /// </summary>
-    /// <exception cref="InvalidOperationException">
-    ///   If an update of a persisted entity is attempted outside a session,
-    ///   provides an meaningful error message.
-    /// </exception>
-    protected new void UpdateNonIndexField() {
-      try {
-        base.UpdateNonIndexField();
-      } catch (NullReferenceException ex) {
-        throw new InvalidOperationException(
-          $"{EntityType.Name} '{SimpleKey}' cannot be updated outside a session " +
-          "because it already exists.", ex);
-      }
-    }
-
-    internal static void ValidateUrlFormat(string url, string propertyName) {
-      try {
-        var dummy = new Uri(url, UriKind.Absolute);
-      } catch (UriFormatException) {
-        throw new PropertyConstraintException(
-          $"Invalid {propertyName} format: '{url}'.", propertyName);
       }
     }
   }

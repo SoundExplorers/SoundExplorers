@@ -81,6 +81,8 @@ namespace SoundExplorers.Tests.Data {
         "Location1.Notes initially");
       Assert.AreEqual(Location2Name, Location2.Name,
         "Location2.Name initially");
+      Assert.IsFalse(Location1.Events.AllowOtherTypesOnSamePage,
+        "Location1.Events.AllowOtherTypesOnSamePage");
       Assert.AreEqual(2, Location1.Events.Count,
         "Location1.Events.Count initially");
       Assert.AreSame(Location1, Event1.Location, "Event1.Location initially");

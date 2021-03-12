@@ -360,16 +360,16 @@ namespace SoundExplorers.Tests.Data {
       session.Commit();
     }
 
-    [Test]
-    public void T160_DisallowAddNullChild() {
-      using var session = new TestSession(DatabaseFolderPath);
-      session.BeginUpdate();
-      Father1 = QueryHelper.Read<Father>(Father1Name, session);
-      Assert.Throws<ConstraintException>(() =>
-        // Cannot use [Children].Add, as it is an ambiguous reference 
-        // when a null parameter is specified.
-        Father1.AddNonIdentifiedChild(null!));
-      session.Commit();
-    }
+    // [Test]
+    // public void T160_DisallowAddNullChild() {
+    //   using var session = new TestSession(DatabaseFolderPath);
+    //   session.BeginUpdate();
+    //   Father1 = QueryHelper.Read<Father>(Father1Name, session);
+    //   Assert.Throws<ConstraintException>(() =>
+    //     // Cannot use [Children].Add, as it is an ambiguous reference 
+    //     // when a null parameter is specified.
+    //     Father1.AddNonIdentifiedChild(null!));
+    //   session.Commit();
+    // }
   }
 }

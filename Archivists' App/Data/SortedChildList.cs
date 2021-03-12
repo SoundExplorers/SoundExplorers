@@ -12,6 +12,16 @@ namespace SoundExplorers.Data {
   public class SortedChildList<TChild> : BTreeMap<Key, TChild>, ISortedChildList
     where TChild : EntityBase {
     internal SortedChildList() : base(new KeyComparer(), null) { }
+
+    /// <summary>
+    ///   From VelocityDB User's Guide:
+    ///   'It is recommended that you make the following override in your
+    ///   OptimizedPersistable subclass for better performance. ...
+    ///   We may make this default but it could break existing code
+    ///   so it is not a trivial change.'
+    /// </summary>
+    public override bool AllowOtherTypesOnSamePage => false;
+
     public TChild this[int index] => Values.ToList()[index];
     IEntity ISortedChildList.this[Key key] => this[key];
 
