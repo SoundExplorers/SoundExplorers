@@ -69,12 +69,24 @@ namespace SoundExplorers.Model {
       }
     }
 
+    internal override void ValidateInsertion() {
+      base.ValidateInsertion();
+      ValidateLocationOnInsertion();
+    }
+
     protected override Key CreateKey() {
       return new Key(GetSimpleKey(), FindParent(Properties[nameof(Location)]));
     }
 
     protected override string GetSimpleKey() {
       return EntityBase.DateToSimpleKey(Date);
+    }
+
+    private void ValidateLocationOnInsertion() {
+      if (string.IsNullOrWhiteSpace(Location)) {
+        throw EntityBase.CreateParentNotSpecifiedException(
+          nameof(Event), Key, nameof(Location));
+      }
     }
   }
 }

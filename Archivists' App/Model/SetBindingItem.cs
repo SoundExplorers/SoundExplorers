@@ -80,6 +80,11 @@ namespace SoundExplorers.Model {
 
     private Event Event { get; set; } = null!;
 
+    internal override void ValidateInsertion() {
+      base.ValidateInsertion();
+      ValidateGenreOnInsertion();
+    }
+
     protected override IDictionary<string, object?>
       CreateEntityPropertyValueDictionary() {
       Event = (EntityList.IdentifyingParent as Event)!;
@@ -130,11 +135,6 @@ namespace SoundExplorers.Model {
         throw EntityBase.CreateParentNotSpecifiedException(
           nameof(Set), Key, nameof(Genre));
       }
-    }
-
-    internal override void ValidateInsertion() {
-      base.ValidateInsertion();
-      ValidateGenreOnInsertion();
     }
   }
 }
