@@ -76,105 +76,11 @@ namespace SoundExplorers.Model {
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
-    protected virtual Key CreateKey() {
-      return new Key(GetSimpleKey(), EntityList.IdentifyingParent);
-    }
-
-    [NotifyPropertyChangedInvocator]
-    protected void OnPropertyChanged(
-      [CallerMemberName] string? propertyName = null) {
-      PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
-
-    /// <summary>
-    ///   There are also checks for duplicate keys in <see cref="EntityBase" /> in the
-    ///   Data layer. This method preempts those by searching application data, on hand
-    ///   in memory, rather than the database. So it is hoped that it will turn out to be
-    ///   quicker with large volumes of data.
-    /// </summary>
-    /// <remarks>
-    ///   This duplicate key check gives a standard error message, while there are more
-    ///   varied duplicate key error message in the Data layer, reflecting top-level vs
-    ///   child and insertion vs update. I did try to replicate those more varied error
-    ///   messages here. But the extra complexity caused problems. And I think the more
-    ///   general error message generated here is fine as it is. So I don't think it is
-    ///   worth the hassle of making that change.
-    /// </remarks>
-    private void CheckForDuplicateKey() {
-      Key = CreateKey();
-      // Entity list could be a sorted list. Duplicate check might be faster. But it
-      // would be a big job to do and I don't think there will be a performance problem.
-      if ((from otherEntity in EntityList
-        where otherEntity.Key == Key
-        select otherEntity).Any()) {
-        string message =
-          $"Another {EntityList.EntityTypeName} with key '{Key}' already exists.";
-        throw new DuplicateNameException(message);
-      }
-    }
-
-    /// <summary>
-    ///   A derived class representing a row of a main grid that is a child of a parent
-    ///   grid row must override this method.
-    /// </summary>
-    /// <remarks>
-    ///   I'M NOT SURE HOW ACCURATE THIS IS, AS I NOW CANNOT REVERT CODE TO REPRODUCE THE
-    ///   EXACT EXCEPTION
-    ///   If referencing properties are not set in the right order in the overriding
-    ///   methods, Session.Commit will eventually throw an
-    ///   <see cref="InvalidOperationException" /> as a result of handling a
-    ///   <see cref="NullReferenceException" /> thrown by VelocityDB's internal
-    ///   SessionBase.FlushUpdates() method within SessionBase.AllObjects().
-    /// </remarks>
-    protected virtual void CopyValuesToEntityProperties(TEntity entity) {
-      foreach (var property in Properties.Values) {
-        CopyValueToEntityProperty(property.Name, entity);
-      }
-    }
-
-    private void CopyValueToEntityProperty(string propertyName,
-      TEntity entity) {
-      var entityProperty = EntityProperties[propertyName];
-      var oldEntityPropertyValue = entityProperty.GetValue(entity);
-      var newEntityPropertyValue = EntityPropertyValues![propertyName];
-      if (oldEntityPropertyValue == null && newEntityPropertyValue == null) {
-        return;
-      }
-      if (oldEntityPropertyValue == null ||
-          !oldEntityPropertyValue.Equals(newEntityPropertyValue)) {
-        SetEntityPropertyValue(entity, entityProperty, newEntityPropertyValue);
-      }
-    }
-
     internal TEntity CreateEntity() {
       EntityPropertyValues = CreateEntityPropertyValueDictionary();
       var result = new TEntity();
       CopyValuesToEntityProperties(result);
       return result;
-    }
-
-    protected virtual IDictionary<string, object?> CreateEntityPropertyValueDictionary() {
-      // Debug.WriteLine("BindingItemBase.CreateEntityPropertyValueDictionary");
-      var result = new Dictionary<string, object?>();
-      foreach (var property in Properties.Values) {
-        result[property.Name] =
-          GetEntityPropertyValue(property, EntityProperties[property.Name])!;
-      }
-      return result;
-    }
-
-    protected IEntity? FindParent(PropertyInfo property) {
-      var propertyValue = property.GetValue(this);
-      if (propertyValue == null) {
-        return null;
-      }
-      var column = EntityList.Columns[property.Name];
-      var referenceableItems = column.ReferenceableItems!;
-      var entity = referenceableItems.GetEntity(propertyValue);
-      return entity;
-      // return propertyValue != null
-      //   ? EntityList.Columns[property.Name].ReferenceableItems.GetEntity(propertyValue)
-      //   : null;
     }
 
     internal static string GetDefaultIntegerSimpleKey(
@@ -185,15 +91,6 @@ namespace SoundExplorers.Model {
             string.Empty, true)).Max() + 1).ToString()
         : "1";
     }
-
-    protected virtual object? GetEntityPropertyValue(PropertyInfo property,
-      PropertyInfo entityProperty) {
-      return entityProperty.PropertyType == property.PropertyType
-        ? property.GetValue(this)
-        : FindParent(property);
-    }
-
-    protected abstract string GetSimpleKey();
 
     internal static int SimpleKeyToInteger(string simpleKey, string simpleKeyName,
       bool minusOneIfError = false) {
@@ -215,23 +112,6 @@ namespace SoundExplorers.Model {
         return -1;
       }
       return result;
-    }
-
-    private static void SetEntityPropertyValue(TEntity entity,
-      PropertyInfo entityProperty, object? newEntityPropertyValue) {
-      try {
-        entityProperty.SetValue(entity, newEntityPropertyValue);
-      } catch (TargetInvocationException exception) {
-        // The only way to get a detailed diagnostic trace for a crash on
-        // PropertyInfo.SetValue is to explicitly set the property's value rather than
-        // via SetValue, e.g. by overriding CopyValuesToEntityProperties. 
-        throw exception.InnerException ?? exception;
-      }
-    }
-
-    private static int ToIntegerOrIfErrorMinusOne(string text) {
-      bool isValid = int.TryParse(text.Trim(), out int result);
-      return isValid ? result : -1;
     }
 
     internal void UpdateEntityProperty(string propertyName, TEntity entity) {
@@ -275,6 +155,123 @@ namespace SoundExplorers.Model {
       string propertyName, TEntity entity) {
       if (EntityList.Columns[propertyName].IsInKey) {
         CheckForDuplicateKey();
+      }
+    }
+
+    protected virtual Key CreateKey() {
+      return new Key(GetSimpleKey(), EntityList.IdentifyingParent);
+    }
+
+    [NotifyPropertyChangedInvocator]
+    protected void OnPropertyChanged(
+      [CallerMemberName] string? propertyName = null) {
+      PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+
+    /// <summary>
+    ///   A derived class representing a row of a main grid that is a child of a parent
+    ///   grid row must override this method.
+    /// </summary>
+    /// <remarks>
+    ///   I'M NOT SURE HOW ACCURATE THIS IS, AS I NOW CANNOT REVERT CODE TO REPRODUCE THE
+    ///   EXACT EXCEPTION
+    ///   If referencing properties are not set in the right order in the overriding
+    ///   methods, Session.Commit will eventually throw an
+    ///   <see cref="InvalidOperationException" /> as a result of handling a
+    ///   <see cref="NullReferenceException" /> thrown by VelocityDB's internal
+    ///   SessionBase.FlushUpdates() method within SessionBase.AllObjects().
+    /// </remarks>
+    protected virtual void CopyValuesToEntityProperties(TEntity entity) {
+      foreach (var property in Properties.Values) {
+        CopyValueToEntityProperty(property.Name, entity);
+      }
+    }
+
+    protected virtual IDictionary<string, object?> CreateEntityPropertyValueDictionary() {
+      // Debug.WriteLine("BindingItemBase.CreateEntityPropertyValueDictionary");
+      var result = new Dictionary<string, object?>();
+      foreach (var property in Properties.Values) {
+        result[property.Name] =
+          GetEntityPropertyValue(property, EntityProperties[property.Name])!;
+      }
+      return result;
+    }
+
+    protected IEntity? FindParent(PropertyInfo property) {
+      var propertyValue = property.GetValue(this);
+      if (propertyValue == null) {
+        return null;
+      }
+      var column = EntityList.Columns[property.Name];
+      var referenceableItems = column.ReferenceableItems!;
+      var entity = referenceableItems.GetEntity(propertyValue);
+      return entity;
+    }
+
+    protected virtual object? GetEntityPropertyValue(PropertyInfo property,
+      PropertyInfo entityProperty) {
+      return entityProperty.PropertyType == property.PropertyType
+        ? property.GetValue(this)
+        : FindParent(property);
+    }
+
+    protected abstract string GetSimpleKey();
+
+    private static void SetEntityPropertyValue(TEntity entity,
+      PropertyInfo entityProperty, object? newEntityPropertyValue) {
+      try {
+        entityProperty.SetValue(entity, newEntityPropertyValue);
+      } catch (TargetInvocationException exception) {
+        // The only way to get a detailed diagnostic trace for a crash on
+        // PropertyInfo.SetValue is to explicitly set the property's value rather than
+        // via SetValue, e.g. by overriding CopyValuesToEntityProperties. 
+        throw exception.InnerException ?? exception;
+      }
+    }
+
+    private static int ToIntegerOrIfErrorMinusOne(string text) {
+      bool isValid = int.TryParse(text.Trim(), out int result);
+      return isValid ? result : -1;
+    }
+
+    /// <summary>
+    ///   There are also checks for duplicate keys in <see cref="EntityBase" /> in the
+    ///   Data layer. This method preempts those by searching application data, on hand
+    ///   in memory, rather than the database. So it is hoped that it will turn out to be
+    ///   quicker with large volumes of data.
+    /// </summary>
+    /// <remarks>
+    ///   This duplicate key check gives a standard error message, while there are more
+    ///   varied duplicate key error message in the Data layer, reflecting top-level vs
+    ///   child and insertion vs update. I did try to replicate those more varied error
+    ///   messages here. But the extra complexity caused problems. And I think the more
+    ///   general error message generated here is fine as it is. So I don't think it is
+    ///   worth the hassle of making that change.
+    /// </remarks>
+    private void CheckForDuplicateKey() {
+      Key = CreateKey();
+      // Entity list could be a sorted list. Duplicate check might be faster. But it
+      // would be a big job to do and I don't think there will be a performance problem.
+      if ((from otherEntity in EntityList
+        where otherEntity.Key == Key
+        select otherEntity).Any()) {
+        string message =
+          $"Another {EntityList.EntityTypeName} with key '{Key}' already exists.";
+        throw new DuplicateNameException(message);
+      }
+    }
+
+    private void CopyValueToEntityProperty(string propertyName,
+      TEntity entity) {
+      var entityProperty = EntityProperties[propertyName];
+      var oldEntityPropertyValue = entityProperty.GetValue(entity);
+      var newEntityPropertyValue = EntityPropertyValues![propertyName];
+      if (oldEntityPropertyValue == null && newEntityPropertyValue == null) {
+        return;
+      }
+      if (oldEntityPropertyValue == null ||
+          !oldEntityPropertyValue.Equals(newEntityPropertyValue)) {
+        SetEntityPropertyValue(entity, entityProperty, newEntityPropertyValue);
       }
     }
   }
