@@ -10,16 +10,16 @@ using VelocityDb.TypeInfo;
 
 namespace SoundExplorers.Data {
   /// <summary>
-  ///   Base class for entity types that have one-to-many
-  ///   and/or many-to-one relations with other entity types.
+  ///   Base class for entity types that have one-to-many and/or many-to-one relations
+  ///   with other entity types.
   /// </summary>
   public abstract class EntityBase : ReferenceTracked, IEntity {
     private IDictionary<Type, ISortedChildList>? _childrenOfType;
     private IDictionary<Type, IRelationInfo>? _childrenRelations;
     private EntityBase? _identifyingParent;
-    private IList<Action>? _onPersistedActions;
     private IDictionary<Type, IRelationInfo>? _parentRelations;
     private IDictionary<Type, EntityBase?>? _parents;
+    private IList<Action>? _postPersistenceActions;
     private QueryHelper? _queryHelper;
     private Schema? _schema;
     private string _simpleKey = null!;
@@ -35,8 +35,8 @@ namespace SoundExplorers.Data {
     ///   The main Type as which the entity will be persisted on the database.
     /// </param>
     /// <param name="simpleKeyName">
-    ///   The name, for use in error messages, of the perstistable
-    ///   public property corresponding to the simple key.
+    ///   The name, for use in error messages, of the perstistable public property
+    ///   corresponding to the simple key.
     /// </param>
     /// <param name="identifyingParentType">
     ///   Where applicable, the entity type of the identifying parent entity.
@@ -55,9 +55,8 @@ namespace SoundExplorers.Data {
     /// <summary>
     ///   From VelocityDB User's Guide:
     ///   'It is recommended that you make the following override in your
-    ///   OptimizedPersistable subclass for better performance. ...
-    ///   We may make this default but it could break existing code
-    ///   so it is not a trivial change.'
+    ///   OptimizedPersistable subclass for better performance. ... We may make this
+    ///   default but it could break existing code so it is not a trivial change.'
     /// </summary>
     public override bool AllowOtherTypesOnSamePage => false;
 
@@ -68,9 +67,9 @@ namespace SoundExplorers.Data {
     public static DateTime DefaultDate { get; }
 
     /// <summary>
-    ///   The main Type as which the entity will be persisted on the database.
-    ///   Entities of subtypes may be persisted but will be members of the same
-    ///   child collections, if any, as entities of the main Type.
+    ///   The main Type as which the entity will be persisted on the database. Entities
+    ///   of subtypes may be persisted but will be members of the same child collections,
+    ///   if any, as entities of the main Type.
     /// </summary>
     public Type EntityType { get; }
 
@@ -134,23 +133,21 @@ namespace SoundExplorers.Data {
       }
     }
 
-    private IList<Action> OnPersistedActions =>
-      _onPersistedActions ??= new List<Action>();
+    private IList<Action> PostPersistenceActions =>
+      _postPersistenceActions ??= new List<Action>();
 
     private string SimpleKeyName { get; }
 
     /// <summary>
-    ///   The identifying parent entity, which, where applicable,
-    ///   uniquely identifies this entity in combination with SimpleKey.
+    ///   The identifying parent entity, which, where applicable, uniquely identifies
+    ///   this entity in combination with SimpleKey.
     /// </summary>
     /// <remarks>
-    ///   Not applicable to top-level entity types,
-    ///   i.e. those with no many-to-one  relations to other entity types.
-    ///   Derived classes should set this to the value of the corresponding
-    ///   perstistable public property.
-    ///   This is null initially and must be set before persistence
-    ///   to a parent entity, of type specified by IdentifyingParentType,
-    ///   that already exists.
+    ///   Not applicable to top-level entity types, i.e. those with no many-to-one
+    ///   relations to other entity types. Derived classes should set this to the value
+    ///   of the corresponding perstistable public property. This is null initially and
+    ///   must be set before persistence to a parent entity, of type specified by
+    ///   IdentifyingParentType, that already exists.
     /// </remarks>
     public EntityBase? IdentifyingParent {
       get => _identifyingParent;
@@ -190,21 +187,19 @@ namespace SoundExplorers.Data {
     }
 
     /// <summary>
-    ///   Derived from SimpleKey and, where applicable, IdentifyingParent,
-    ///   this is used as the key of this entity in any
-    ///   SortedChildLists of which it is a member.
+    ///   Derived from SimpleKey and, where applicable, IdentifyingParent, this is used
+    ///   as the key of this entity in any SortedChildLists of which it is a member.
     /// </summary>
     public Key Key { get; }
 
     /// <summary>
-    ///   In combination with the optional IdentifyingParent,
-    ///   uniquely identifies the entity.
+    ///   In combination with the optional IdentifyingParent, uniquely identifies the
+    ///   entity.
     /// </summary>
     /// <remarks>
-    ///   Derived classes should set this to the value,
-    ///   converted to string if necessary, of the corresponding
-    ///   perstistable public property.
-    ///   It is null only initially.  It must be set before persistence.
+    ///   Derived classes should set this to the value, converted to string if necessary,
+    ///   of the corresponding perstistable public property. It is null only initially.
+    ///   It must be set before persistence.
     /// </remarks>
     public string SimpleKey {
       get => _simpleKey;
@@ -249,10 +244,10 @@ namespace SoundExplorers.Data {
       // Debug.WriteLine($"EntityBase.Persist {EntityType.Name}");
       CheckCanPersist(session);
       ulong result = base.Persist(place, session, persistRefs, disableFlush, toPersist);
-      foreach (var action in OnPersistedActions) {
+      foreach (var action in PostPersistenceActions) {
         action.Invoke();
       }
-      OnPersistedActions.Clear();
+      PostPersistenceActions.Clear();
       return result;
     }
 
@@ -307,8 +302,8 @@ namespace SoundExplorers.Data {
     }
 
     /// <summary>
-    ///   Allows a derived entity to return
-    ///   its SortedChildList of child entities of the specified entity type.
+    ///   Allows a derived entity to return its SortedChildList of child entities of the
+    ///   specified entity type.
     /// </summary>
     [ExcludeFromCodeCoverage]
     protected virtual ISortedChildList GetChildren(Type childType) {
@@ -316,9 +311,8 @@ namespace SoundExplorers.Data {
     }
 
     /// <summary>
-    ///   Allows a derived entity to update the field (not property)
-    ///   corresponding to the parent entity of the specified entity type
-    ///   with the specified new value.
+    ///   Allows a derived entity to update the field (not property) corresponding to the
+    ///   parent entity of the specified entity type with the specified new value.
     /// </summary>
     [ExcludeFromCodeCoverage]
     protected virtual void SetNonIdentifyingParentField(
@@ -327,14 +321,14 @@ namespace SoundExplorers.Data {
     }
 
     /// <summary>
-    ///   Marks the entity as being updated, so that the entity will be written
-    ///   at commit transaction. In this application, this is used instead of
-    ///   OptimizedPersistable.Update, even for key properties,
-    ///   because we don't use VelocityDbList for collections and indexing.
+    ///   Marks the entity as being updated, so that the entity will be written at commit
+    ///   transaction. In this application, this is used instead of
+    ///   OptimizedPersistable.Update, even for key properties, because we don't use
+    ///   VelocityDbList for collections and indexing.
     /// </summary>
     /// <exception cref="InvalidOperationException">
-    ///   If an update of a persisted entity is attempted outside a session,
-    ///   provides an meaningful error message.
+    ///   If an update of a persisted entity is attempted outside a session, provides a
+    ///   meaningful error message.
     /// </exception>
     protected new void UpdateNonIndexField() {
       try {
@@ -350,11 +344,11 @@ namespace SoundExplorers.Data {
       if (child.IsPersistent) {
         UpdateNonIndexField();
         ChildrenOfType[child.EntityType].Add(CreateChildKey(child), child);
-        // Full referential integrity is implemented in this class.
-        // But, for added safety, update VelocityDB's internal referential integrity data. 
+        // Full referential integrity is implemented in this class. But, for added
+        // safety, update VelocityDB's internal referential integrity data. 
         References.AddFast(new Reference(child, "_children"));
       } else {
-        child.OnPersistedActions.Add(() => AddChild(child));
+        child.PostPersistenceActions.Add(() => AddChild(child));
       }
     }
 
@@ -387,8 +381,8 @@ namespace SoundExplorers.Data {
         return;
       }
       // If there's no session, which means we cannot check for a duplicate,
-      // EntityBase.UpdateNonIndexField should already have thrown 
-      // an InvalidOperationException.
+      // EntityBase.UpdateNonIndexField should already have thrown an
+      // InvalidOperationException.
       if (QueryHelper.FindDuplicateSimpleKey(EntityType, Oid, newSimpleKey,
         Session) != null) {
         throw new PropertyConstraintException(
@@ -450,9 +444,9 @@ namespace SoundExplorers.Data {
 
     private string CreateReferentialIntegrityViolationMessage() {
       var list = new SortedList<string, int>();
-      foreach (var childOfTypePair in ChildrenOfType) {
-        if (childOfTypePair.Value.Count > 0) {
-          list.Add(childOfTypePair.Key.Name, childOfTypePair.Value.Count);
+      foreach (var (key, value) in ChildrenOfType) {
+        if (value.Count > 0) {
+          list.Add(key.Name, value.Count);
         }
       }
       var writer = new StringWriter();
@@ -472,10 +466,8 @@ namespace SoundExplorers.Data {
         Parents.Add(relationPair.Key, null);
       }
       ChildrenRelations = CreateChildrenRelations();
-      // ChildrenOfType = new Dictionary<Type, IDictionary>();
       ChildrenOfType = new Dictionary<Type, ISortedChildList>();
       foreach (var (key, _) in ChildrenRelations) {
-        // ChildrenOfType.Add(key, GetChildDictionary(key));
         ChildrenOfType.Add(key, GetChildren(key));
       }
     }
@@ -490,8 +482,8 @@ namespace SoundExplorers.Data {
       // Debug.WriteLine($"EntityBase.RemoveChild {EntityType.Name}: removing {child.EntityType.Name} '{child.Key}'");
       UpdateNonIndexField();
       ChildrenOfType[child.EntityType].Remove(child.Key);
-      // Full referential integrity is implemented in this class.
-      // But, for added safety, update VelocityDB's internal referential integrity data. 
+      // Full referential integrity is implemented in this class. But, for added safety,
+      // update VelocityDB's internal referential integrity data. 
       References.Remove(References.First(r => r.To.Equals(child)));
     }
 
