@@ -195,7 +195,7 @@ namespace SoundExplorers.Tests.Model {
       Data.AddCreditsPersisted(5, Session);
       Session.Commit();
       Populate();
-      var identifyingParentChildren = List.GetIdentifyingParentChildrenForMainList(0);
+      var identifyingParentChildren = List.GetIdentifyingParentAndChildrenForMainList(0);
       Assert.AreSame(Data.Pieces[0], identifyingParentChildren.IdentifyingParent,
         "IdentifyingParent");
       Assert.AreEqual(5, identifyingParentChildren.Children.Count, "Count");
@@ -348,7 +348,7 @@ namespace SoundExplorers.Tests.Model {
     private void Populate() {
       if (List.ListRole == ListRole.Child) {
         ParentList.Populate();
-        List.Populate(ParentList.GetIdentifyingParentChildrenForMainList(
+        List.Populate(ParentList.GetIdentifyingParentAndChildrenForMainList(
           ParentList.Count - 1));
       } else {
         List.Populate();

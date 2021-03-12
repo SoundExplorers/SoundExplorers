@@ -211,12 +211,12 @@ namespace SoundExplorers.Model {
     /// <param name="rowIndex">
     ///   Zero-based row index.
     /// </param>
-    public IdentifyingParentChildren GetIdentifyingParentChildrenForMainList(
+    public IdentifyingParentAndChildren GetIdentifyingParentAndChildrenForMainList(
       int rowIndex) {
       Session.BeginRead();
       var children = GetChildList(rowIndex);
       Session.Commit();
-      return new IdentifyingParentChildren(this[rowIndex], children);
+      return new IdentifyingParentAndChildren(this[rowIndex], children);
     }
 
     public IList<object?> GetErrorValues() {
@@ -360,7 +360,7 @@ namespace SoundExplorers.Model {
     ///   populate a grid.
     /// </param>
     public virtual void Populate(
-      IdentifyingParentChildren? identifyingParentChildren = null,
+      IdentifyingParentAndChildren? identifyingParentChildren = null,
       bool createBindingList = true) {
       Clear();
       bool isTransactionRequired = !Session.InTransaction;

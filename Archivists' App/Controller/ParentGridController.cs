@@ -28,11 +28,11 @@ namespace SoundExplorers.Controller {
 
     private int PreviousRowIndex { get; set; }
 
-    private IdentifyingParentChildren GetIdentifyingParentChildrenForMainList(
+    private IdentifyingParentAndChildren GetIdentifyingParentChildrenForMainList(
       int rowIndex) {
       Debug.WriteLine(
-        $"ParentGridController.GetIdentifyingParentChildrenForMainList: row {rowIndex}");
-      return List.GetIdentifyingParentChildrenForMainList(rowIndex)!;
+        $"ParentGridController.GetIdentifyingParentAndChildrenForMainList: row {rowIndex}");
+      return List.GetIdentifyingParentAndChildrenForMainList(rowIndex)!;
     }
 
     protected override void OnPopulatedAsync() {

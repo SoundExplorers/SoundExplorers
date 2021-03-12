@@ -245,9 +245,9 @@ namespace SoundExplorers.Controller {
     }
 
     internal void SetIdentifyingParentChildrenForList(
-      IdentifyingParentChildren identifyingParentChildrenForList) {
+      IdentifyingParentAndChildren identifyingParentAndChildrenForList) {
       IsFixingFocus = true;
-      IdentifyingParentChildrenForList = identifyingParentChildrenForList;
+      IdentifyingParentChildrenForList = identifyingParentAndChildrenForList;
     }
 
     /// <summary>

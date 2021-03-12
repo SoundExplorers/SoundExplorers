@@ -75,7 +75,7 @@ namespace SoundExplorers.Model {
     }
 
     public override void Populate(
-      IdentifyingParentChildren? identifyingParentChildren = null,
+      IdentifyingParentAndChildren? identifyingParentChildren = null,
       bool createBindingList = true) {
       if (!HasDefaultActBeenFound) {
         AddDefaultActIfItDoesNotExist();

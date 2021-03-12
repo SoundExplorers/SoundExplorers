@@ -70,7 +70,7 @@ namespace SoundExplorers.Model {
     /// </param>
     void DeleteEntity(int rowIndex);
 
-    IdentifyingParentChildren? GetIdentifyingParentChildrenForMainList(int rowIndex);
+    IdentifyingParentAndChildren? GetIdentifyingParentAndChildrenForMainList(int rowIndex);
     IList<object?> GetErrorValues();
 
     /// <summary>
@@ -117,7 +117,7 @@ namespace SoundExplorers.Model {
     ///   entities. Default: true. Set to false if entity list is not to be used to
     ///   populate a grid.
     /// </param>
-    void Populate(IdentifyingParentChildren? identifyingParentChildren = null,
+    void Populate(IdentifyingParentAndChildren? identifyingParentChildren = null,
       bool createBindingList = true);
 
     /// <summary>
