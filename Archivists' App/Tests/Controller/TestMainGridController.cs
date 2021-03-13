@@ -2,7 +2,6 @@
 using System.Linq;
 using SoundExplorers.Common;
 using SoundExplorers.Controller;
-using SoundExplorers.Model;
 
 namespace SoundExplorers.Tests.Controller {
   public class TestMainGridController : MainGridController {
@@ -41,23 +40,6 @@ namespace SoundExplorers.Tests.Controller {
       return (from bindingColumn in BindingColumns
         where bindingColumn.PropertyName == propertyName
         select bindingColumn).First();
-    }
-
-    internal void SetComboBoxCellValue(
-      int rowIndex, string columnName, object value) {
-      var comboBoxCellController =
-        CreateComboBoxCellControllerWithItems(columnName);
-      ((IBindingItem)BindingList[rowIndex]!).SetPropertyValue(columnName, value);
-      comboBoxCellController.OnCellValueChanged(0, value);
-    }
-
-    private ComboBoxCellController CreateComboBoxCellControllerWithItems(
-      string columnName) {
-      var comboBoxCell = new MockView<ComboBoxCellController>();
-      var comboBoxCellController =
-        new ComboBoxCellController(comboBoxCell, this, columnName);
-      comboBoxCellController.GetItems();
-      return comboBoxCellController;
     }
   }
 }

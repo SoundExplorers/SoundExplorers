@@ -114,16 +114,6 @@ namespace SoundExplorers.View {
       }
     }
 
-    protected override void OnCellValueChanged(DataGridViewCellEventArgs e) {
-      base.OnCellValueChanged(e);
-      if (CurrentCell is ComboBoxCell comboBoxCell) {
-        // Debug.WriteLine("MainGrid_CellValueChanged, ComboBoxCell");
-        var cellValue = CurrentCell.Value;
-        int rowIndex = CurrentRow!.Index;
-        comboBoxCell.Controller.OnCellValueChanged(rowIndex, cellValue);
-      }
-    }
-
     /// <summary>
     ///   Emulates the ComboBox's SelectedIndexChanged event.
     /// </summary>

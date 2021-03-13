@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -11,26 +12,23 @@ using SoundExplorers.Data;
 namespace SoundExplorers.Model {
   /// <summary>
   ///   Each derived class must call <see cref="OnPropertyChanged" />
-  ///   in each of its property setters,
-  ///   in order that the BindingList of which instantiations are items
-  ///   will raise its ListChanged event
-  ///   (with ListChangedEventArgs.ListChangedType == ListChangedType.ItemChanged)
-  ///   when there there is a change to the value of a property of a new or existing item.
-  ///   Each derived class should also be marked with
-  ///   <see cref="NoReorderAttribute" /> to ensure that the order in which properties
-  ///   are declared in the derived class will not change
+  ///   in each of its property setters, in order that the BindingList of which
+  ///   instantiations are items will raise its ListChanged event (with
+  ///   ListChangedEventArgs.ListChangedType == ListChangedType.ItemChanged) when there
+  ///   is a change to the value of a property of a new or existing item. Each derived
+  ///   class should also be marked with <see cref="NoReorderAttribute" /> to ensure that
+  ///   the order in which properties are declared in the derived class will not change
   ///   when the Resharper code cleanup is run.
   /// </summary>
   /// <remarks>
   ///   The <see cref="NoReorderAttribute" /> is important because the property order
   ///   determines the order in which the corresponding columns will be displayed
-  ///   on the grid.
-  ///   Derived classes that were developed without <see cref="NoReorderAttribute" />
-  ///   did not actually have their property order changed by code cleanup,
-  ///   presumably because their structure is so simple and, in particular,
-  ///   they don't implement interfaces, which affect the code cleanup order.
-  ///   Other derived classes are expected to be just as simple.
-  ///   So the <see cref="NoReorderAttribute" /> is a safety feature.
+  ///   on the grid. Derived classes that were developed without
+  ///   <see cref="NoReorderAttribute" />  did not actually have their property order
+  ///   changed by code cleanup, presumably because their structure is so simple and, in
+  ///   particular, they don't implement interfaces, which affect the code cleanup order.
+  ///   Other derived classes are expected to be just as simple. So the
+  ///   <see cref="NoReorderAttribute" /> is a safety feature.
   /// </remarks>
   public abstract class BindingItemBase<TEntity, TBindingItem> :
     IBindingItem, INotifyPropertyChanged
@@ -63,15 +61,10 @@ namespace SoundExplorers.Model {
     }
 
     public void SetPropertyValue(string propertyName, object? value) {
-      try {
+      DoSetPropertyValue(() => {
         var property = Properties[propertyName];
         property.SetValue(this, value);
-        // The only way to get a detailed diagnostic trace for a crash on
-        // PropertyInfo.SetValue is to explicitly set the property's value rather than
-        // via SetValue, e.g. by overriding BackupItem.RestoreTo.
-      } catch (TargetInvocationException exception) {
-        throw exception.InnerException ?? exception;
-      }
+      });
     }
 
     public event PropertyChangedEventHandler? PropertyChanged;
@@ -136,6 +129,10 @@ namespace SoundExplorers.Model {
     /// </remarks>
     internal virtual void ValidateInsertion() {
       CheckForDuplicateKey();
+      foreach (var column in EntityList.Columns.Where(column =>
+        column.ReferencesAnotherEntity)) {
+        CheckForReferencedEntityNotFound(column);
+      }
     }
 
     /// <summary>
@@ -153,8 +150,12 @@ namespace SoundExplorers.Model {
     /// </remarks>
     internal virtual void ValidatePropertyUpdate(
       string propertyName, TEntity entity) {
-      if (EntityList.Columns[propertyName].IsInKey) {
+      var column = EntityList.Columns[propertyName];
+      if (column.IsInKey) {
         CheckForDuplicateKey();
+      }
+      if (column.ReferencesAnotherEntity) {
+        CheckForReferencedEntityNotFound(column);
       }
     }
 
@@ -217,6 +218,18 @@ namespace SoundExplorers.Model {
 
     protected abstract string GetSimpleKey();
 
+    [ExcludeFromCodeCoverage]
+    private static void DoSetPropertyValue(Action action) {
+      try {
+        action.Invoke();
+        // The only way to get a detailed diagnostic trace for a crash on
+        // PropertyInfo.SetValue is to explicitly set the property's value rather than
+        // via SetValue, e.g. by overriding BackupItem.RestoreTo.
+      } catch (TargetInvocationException exception) {
+        throw exception.InnerException ?? exception;
+      }
+    }
+
     private static void SetEntityPropertyValue(TEntity entity,
       PropertyInfo entityProperty, object? newEntityPropertyValue) {
       try {
@@ -258,6 +271,33 @@ namespace SoundExplorers.Model {
         string message =
           $"Another {EntityList.EntityTypeName} with key '{Key}' already exists.";
         throw new DuplicateNameException(message);
+      }
+    }
+
+    /// <summary>
+    ///   Check that combo box cell value on the main grid matches one of its embedded
+    ///   combo box's items. If not, the combo box's selected index and text cannot not
+    ///   be updated. As the combo boxes are all dropdown lists, the only way there can
+    ///   be a mismatch is when an unmatched value is pasted into the cell. If the cell
+    ///   value is changed by selecting an item on the embedded combo box, it can only be
+    ///   a matching value.
+    /// </summary>
+    private void CheckForReferencedEntityNotFound(BindingColumn column) {
+      var value = GetPropertyValue(column.PropertyName);
+      // It is impossible to paste null, so, when we detect it here, it must be a
+      // programming artefact. And a null cell value has only been found when we can
+      // ignore it: on pasting an invalid format date into Event.Newsletter on the
+      // insertion row when there are no existing rows and Location has not been
+      // specified. A format error message will be shown for the invalid Newsletter in
+      // MainGridController.OnCellEditException.
+      if (value != null) {
+        string simpleKey = ReferenceableItemList.ToSimpleKey(value)!;
+        if (!column.ReferenceableItems!.ContainsKey(simpleKey)) {
+          string message =
+            $"{column.PropertyName} not found: " +
+            $"'{ReferenceableItemList.Format(simpleKey)}'";
+          throw new RowNotInTableException(message);
+        }
       }
     }
 

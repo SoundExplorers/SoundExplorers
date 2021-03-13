@@ -37,8 +37,6 @@ namespace SoundExplorers.Tests.Controller {
     public void AddEvents() {
       var event1Date = DateTime.Parse("2020/03/01");
       var event2Date = event1Date.AddDays(1);
-      var notFoundNewsletterDate = DateTime.Parse("2345/12/31");
-      const string notFoundSeriesName = "Not-Found Name";
       Session.BeginUpdate();
       try {
         Data.AddLocationsPersisted(1, Session);
@@ -67,27 +65,10 @@ namespace SoundExplorers.Tests.Controller {
         (TypedBindingList<Event, EventBindingItem>)Controller.MainList.BindingList!;
       MainGridController.CreateAndGoToNewRow();
       bindingList[0].Date = event1Date;
-      MainGridController.SetComboBoxCellValue(0, "Location", validLocationName);
+      bindingList[0].Location = validLocationName;
       // Newsletter
-      MainGridController.SetComboBoxCellValue(0, "Newsletter", notFoundNewsletterDate);
-      Assert.AreEqual(1, View.ShowErrorMessageCount,
-        "ShowErrorMessageCount after not-found Newsletter pasted");
-      Assert.AreEqual("Invalid Newsletter:\r\nNewsletter not found: '31 Dec 2345'",
-        View.LastErrorMessage,
-        "LastErrorMessage after not-found Newsletter pasted");
-      MainGridController.SetComboBoxCellValue(0, "Newsletter", validNewsletterDate);
-      Assert.AreEqual(1, View.ShowErrorMessageCount,
-        "ShowErrorMessageCount after valid Newsletter pasted");
-      // Series
-      MainGridController.SetComboBoxCellValue(0, "Series", notFoundSeriesName);
-      Assert.AreEqual(2, View.ShowErrorMessageCount,
-        "ShowErrorMessageCount after not-found Series pasted");
-      Assert.AreEqual("Invalid Series:\r\nSeries not found: 'Not-Found Name'",
-        View.LastErrorMessage,
-        "LastErrorMessage after not-found Series pasted");
-      MainGridController.SetComboBoxCellValue(0, "Series", validSeriesName);
-      Assert.AreEqual(2, View.ShowErrorMessageCount,
-        "ShowErrorMessageCount after valid Series pasted");
+      bindingList[0].Newsletter = validNewsletterDate;
+      bindingList[0].Series = validSeriesName;
       MainGridController.OnRowValidated(0);
       Assert.AreEqual(1, validLocation.Events.Count, "Events.Count after 1st add");
       Session.BeginRead();
@@ -98,10 +79,10 @@ namespace SoundExplorers.Tests.Controller {
       Assert.AreSame(validSeries, event1.Series, "event1.Series");
       MainGridController.CreateAndGoToNewRow();
       bindingList[1].Date = event2Date;
-      MainGridController.SetComboBoxCellValue(1, "Location", validLocationName);
+      bindingList[1].Location = validLocationName;
       // Test that the user can reset the newsletter date to the special date
       // that indicated that the event's newsletter is to be unassigned.
-      MainGridController.SetComboBoxCellValue(1, "Newsletter", EntityBase.DefaultDate);
+      bindingList[1].Newsletter = EntityBase.DefaultDate;
       MainGridController.OnRowValidated(1);
       Assert.AreEqual(2, validLocation.Events.Count, "Events.Count after 2nd add");
       Session.BeginRead();
@@ -289,24 +270,6 @@ namespace SoundExplorers.Tests.Controller {
         "Unsupported exception type");
     }
 
-    // [Test]
-    // public void EmptyIntegerCellException() {
-    //   AddDataForSetList();
-    //   CreateControllers(typeof(SetList));
-    //   Controller.Populate(); // Populate grid
-    //   MainGridController.CreateAndGoToNewRow();
-    //   var exception = new ArgumentException(
-    //     " is not a valid value for Int32. (Parameter 'value').");
-    //   MainGridController.OnCellEditException(5, "SetNo", exception);
-    //   Assert.AreEqual(1, View.ShowErrorMessageCount, "ShowErrorMessageCount");
-    //   Assert.AreEqual("SetNo must be an integer between 1 and 99.",
-    //     View.LastErrorMessage, "LastErrorMessage");
-    //   exception = new ArgumentException("Unexpected message");
-    //   Assert.Throws<ArgumentException>(() =>
-    //       MainGridController.OnCellEditException(5, "SetNo", exception),
-    //     "ArgumentException with unexpected message rethrown");
-    // }
-
     [Test]
     public void ErrorOnDelete() {
       AddDataForEventList();
@@ -356,7 +319,8 @@ namespace SoundExplorers.Tests.Controller {
       var selectedNewsletter = Data.Newsletters[0];
       var selectedNewsletterDate = selectedNewsletter.Date;
       MainGridController.OnRowEnter(0);
-      MainGridController.SetComboBoxCellValue(0, "Newsletter", selectedNewsletterDate);
+      bindingList[0].Newsletter = selectedNewsletterDate;
+      // MainGridController.SetComboBoxCellValue(0, "Newsletter", selectedNewsletterDate);
       Assert.AreEqual(0, View.ShowErrorMessageCount,
         "ShowErrorMessageCount after valid Newsletter selection");
       Assert.AreEqual(selectedNewsletterDate, bindingList[0].Newsletter,
@@ -366,8 +330,8 @@ namespace SoundExplorers.Tests.Controller {
       var notFoundDate = DateTime.Parse("2345/12/31");
       MainGridController.OnRowEnter(0);
       var exception = Assert.Catch(
-        () => MainGridController.SetComboBoxCellValue(
-          0, "Newsletter", notFoundDate));
+        () => bindingList[0].Newsletter = notFoundDate, 
+        "Not found Newsletter disallowed");
       Assert.IsInstanceOf<RowNotInTableException>(exception,
         "Exception on not-found Newsletter pasted");
       Assert.AreEqual(0, View.ShowErrorMessageCount,
@@ -387,7 +351,7 @@ namespace SoundExplorers.Tests.Controller {
       string selectedSeriesName = selectedSeries.Name!;
       Assert.IsNotNull(selectedSeriesName, "selectedSeriesName");
       MainGridController.OnRowEnter(0);
-      MainGridController.SetComboBoxCellValue(0, "Series", selectedSeriesName);
+      bindingList[0].Series = selectedSeriesName;
       Assert.AreEqual(1, View.ShowErrorMessageCount,
         "ShowErrorMessageCount after valid Series selection");
       Assert.AreEqual(selectedSeriesName, bindingList[0].Series,
@@ -397,8 +361,8 @@ namespace SoundExplorers.Tests.Controller {
       const string notFoundName = "Not-Found Name";
       MainGridController.OnRowEnter(0);
       exception = Assert.Catch(
-        () => MainGridController.SetComboBoxCellValue(
-          0, "Series", notFoundName));
+        () => bindingList[0].Series = notFoundName, 
+        "Not found Series disallowed");
       Assert.IsInstanceOf<RowNotInTableException>(exception,
         "Exception on not-found Series pasted");
       Assert.AreEqual(1, View.ShowErrorMessageCount,

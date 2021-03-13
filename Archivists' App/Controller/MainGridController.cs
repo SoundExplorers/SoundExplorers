@@ -38,12 +38,6 @@ namespace SoundExplorers.Controller {
     protected bool IsFixingFocus { get; private set; }
 
     /// <summary>
-    ///   Gets whether the current main grid row is the insertion row,
-    ///   which is for adding new entities and is located at the bottom of the grid.
-    /// </summary>
-    public bool IsInsertionRowCurrent => List.IsInsertionRowCurrent;
-
-    /// <summary>
     ///   Gets the list of entities represented in the grid.
     /// </summary>
     protected override IEntityList List => EditorController.MainList;
@@ -223,25 +217,6 @@ namespace SoundExplorers.Controller {
 
     public void ShowWarningMessage(string message) {
       EditorController.View.ShowWarningMessage(message);
-    }
-
-    /// <summary>
-    ///   A combo box cell value on the main grid's insertion row does not match any of
-    ///   it's embedded combo box's items. So the combo box's selected index and text
-    ///   could not be updated. As the combo boxes are all dropdown lists, the only way
-    ///   this can have happened is that the unmatched value was pasted into the cell. If
-    ///   the cell value had been changed by selecting an item on the embedded combo box,
-    ///   it could only be a matching value.
-    /// </summary>
-    internal void OnInsertionRowReferencedEntityNotFound(
-      int rowIndex, string columnName,
-      string simpleKey) {
-      var referencedEntityNotFoundException =
-        ReferenceableItemList.CreateReferencedEntityNotFoundException(
-          columnName, simpleKey);
-      List.OnValidationError(
-        rowIndex, columnName, referencedEntityNotFoundException);
-      EditorController.View.OnError();
     }
 
     internal void SetIdentifyingParentChildrenForList(

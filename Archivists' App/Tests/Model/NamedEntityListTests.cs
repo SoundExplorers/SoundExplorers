@@ -106,7 +106,6 @@ namespace SoundExplorers.Tests.Model {
     }
 
     private void ErrorOnDelete<TEntityList>()
-      // private void ErrorOnDelete<TEntityList>(IList entities)
       where TEntityList : IEntityList, new() {
       var list = new TEntityList {Session = Session};
       list.Populate();
