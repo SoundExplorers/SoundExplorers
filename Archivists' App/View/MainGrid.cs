@@ -57,6 +57,12 @@ namespace SoundExplorers.View {
       CurrentRow!.Selected = true;
     }
 
+    public void OnError() {
+      Debug.WriteLine("MainGrid.OnError");
+      CancelEdit();
+      Controller.ShowError();
+    }
+
     protected override DataGridViewColumn AddColumn(IBindingColumn bindingColumn) {
       var result = base.AddColumn(bindingColumn);
       result.Visible = bindingColumn.IsVisible;
@@ -101,9 +107,8 @@ namespace SoundExplorers.View {
     protected override void OnCellEndEdit(DataGridViewCellEventArgs e) {
       base.OnCellEndEdit(e);
       if (IsTextBoxCellCurrent) {
-        // Now that the TextBox cell edit has finished,
-        // whether text can be cut or copied reverts to depending on
-        // whether there is any text in the cell.
+        // Now that the TextBox cell edit has finished, whether text can be cut or copied
+        // reverts to depending on whether there is any text in the cell.
         MainView.CutToolStripButton.Enabled = CanCut;
         MainView.CopyToolStripButton.Enabled = CanCopy;
       }
@@ -123,14 +128,12 @@ namespace SoundExplorers.View {
     ///   Emulates the ComboBox's SelectedIndexChanged event.
     /// </summary>
     /// <remarks>
-    ///   A known problem with <see cref="DataGridView" /> is that,
-    ///   where there are multiple ComboBox columns,
-    ///   ComboBox events can get spuriously raised against the ComboBoxes
-    ///   in multiple cells of the row that is being edited.
-    ///   So this event handler provides a workaround by
-    ///   emulating a cell ComboBox's SelectedIndexChange event
-    ///   but without the spurious occurrences.
-    ///   The fix is based on the second answer here:
+    ///   A known problem with <see cref="DataGridView" /> is that, where there are
+    ///   multiple ComboBox columns, ComboBox events can get spuriously raised against
+    ///   the ComboBoxes in multiple cells of the row that is being edited. So this event
+    ///   handler provides a workaround by emulating a cell ComboBox's
+    ///   SelectedIndexChange event but without the spurious occurrences. The fix is
+    ///   based on the second answer here:
     ///   https://stackoverflow.com/questions/11141872/event-that-fires-during-MainGridcomboboxcolumn-selectedindexchanged
     /// </remarks>
     protected override void OnCurrentCellDirtyStateChanged(EventArgs e) {
@@ -154,18 +157,6 @@ namespace SoundExplorers.View {
         MainView.PasteToolStripButton.Enabled = !CurrentCell.ReadOnly;
       }
     }
-
-    public void OnError() {
-      Debug.WriteLine("MainGrid.OnError");
-      CancelEdit();
-      Controller.ShowError();
-    }
-
-    // protected override void OnGotFocus(EventArgs e) {
-    //   base.OnGotFocus(e);
-    //   // Shows error message to help the 1-row problem
-    //   EditorView.IsFixingFocus = false; 
-    // }
 
     protected override void OnKeyDown(KeyEventArgs e) {
       switch (e.KeyData) {
