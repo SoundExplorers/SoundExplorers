@@ -24,14 +24,6 @@ namespace SoundExplorers.Controller {
       view.SetController(this);
     }
 
-    private string CreateNoAvailableReferencesMessage() {
-      return $"There are no {Column.ReferencedTableName} " +
-             $"{Column.ReferencedPropertyName}s " +
-             "to choose between. You need to add at least one row to the " +
-             $"{Column.ReferencedTableName} table before you can select a " +
-             $"{Column.ReferencedTableName} for a {TableName}.";
-    }
-
     public object[] GetItems() {
       if (Column.ReferenceableItems!.Count == 0) {
         MainGridController.ShowWarningMessage(CreateNoAvailableReferencesMessage());
@@ -69,6 +61,14 @@ namespace SoundExplorers.Controller {
       }
       MainGridController.OnInsertionRowReferencedEntityNotFound(
         rowIndex, Column.PropertyName, simpleKey);
+    }
+
+    private string CreateNoAvailableReferencesMessage() {
+      return $"There are no {Column.ReferencedTableName} " +
+             $"{Column.ReferencedPropertyName}s " +
+             "to choose between. You need to add at least one row to the " +
+             $"{Column.ReferencedTableName} table before you can select a " +
+             $"{Column.ReferencedTableName} for a {TableName}.";
     }
   }
 }
