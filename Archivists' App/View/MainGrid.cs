@@ -12,6 +12,9 @@ namespace SoundExplorers.View {
       ShowCellErrors = false;
     }
 
+    private bool IsComboBoxCellCurrent =>
+      CurrentCell?.OwningColumn.CellTemplate is ComboBoxCell;
+
     public TextBox TextBox =>
       (TextBox)EditingControl ??
       throw new InvalidOperationException(
