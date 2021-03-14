@@ -339,7 +339,7 @@ namespace SoundExplorers.Tests.Controller {
       MainGridController.OnCellEditException(0, "Newsletter", exception);
       Assert.AreEqual(1, View.ShowErrorMessageCount,
         "ShowErrorMessageCount after not-found Newsletter pasted and after OnCellEditException");
-      Assert.AreEqual("Invalid Newsletter:\r\nNewsletter not found: '31 Dec 2345'",
+      Assert.AreEqual("Newsletter not found: '31 Dec 2345'",
         View.LastErrorMessage,
         "LastErrorMessage after not-found Newsletter pasted");
       Assert.AreEqual(selectedNewsletterDate, bindingList[0].Newsletter,
@@ -370,7 +370,7 @@ namespace SoundExplorers.Tests.Controller {
       MainGridController.OnCellEditException(0, "Series", exception);
       Assert.AreEqual(2, View.ShowErrorMessageCount,
         "ShowErrorMessageCount after not-found Series pasted and after OnCellEditException");
-      Assert.AreEqual("Invalid Series:\r\nSeries not found: 'Not-Found Name'",
+      Assert.AreEqual("Series not found: 'Not-Found Name'",
         View.LastErrorMessage,
         "LastErrorMessage after not-found Series pasted");
       Assert.AreEqual(selectedSeriesName, bindingList[0].Series,
@@ -480,9 +480,11 @@ namespace SoundExplorers.Tests.Controller {
       CreateControllers(typeof(NewsletterList));
       Controller.Populate(); // Populate grid
       MainGridController.CreateAndGoToNewRow();
-      var exception = new FormatException("Potato is not a valid DateTime.");
+      var exception = new FormatException("Potato is not a valid value for DateTime.");
       MainGridController.OnCellEditException(3, "Date", exception);
       Assert.AreEqual(1, View.ShowErrorMessageCount, "ShowErrorMessageCount");
+      Assert.AreEqual("Invalid Date:\r\nPotato is not a valid value for DateTime.", 
+        View.LastErrorMessage, "LastErrorMessage");
     }
 
     [Test]
@@ -507,6 +509,8 @@ namespace SoundExplorers.Tests.Controller {
       var exception = new FormatException("Potato is not a valid value for DateTime.");
       MainGridController.OnCellEditException(2, "Date", exception);
       Assert.AreEqual(1, View.ShowErrorMessageCount, "ShowErrorMessageCount");
+      Assert.AreEqual("Invalid Date:\r\nPotato is not a valid value for DateTime.", 
+        View.LastErrorMessage, "LastErrorMessage");
       Assert.AreEqual(changedEventType, bindingList[2].EventType, "EventType");
       Assert.AreEqual(changedLocation, bindingList[2].Location, "Location");
       Assert.AreEqual(changedNewsletter, bindingList[2].Newsletter, "Newsletter");
