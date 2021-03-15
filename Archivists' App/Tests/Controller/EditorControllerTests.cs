@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data;
+using System.Linq;
 using NUnit.Framework;
 using SoundExplorers.Data;
 using SoundExplorers.Model;
@@ -127,6 +128,18 @@ namespace SoundExplorers.Tests.Controller {
       Assert.AreEqual(
         "The Set editor cannot be used yet because the Event table is empty.",
         View.LastErrorMessage, "LastErrorMessage");
+    }
+
+    [Test]
+    public void ColumnEditWidth() {
+      AddDataForPieceList();
+      CreateControllers(typeof(PieceList));
+      Controller.Populate(); // Populate parent and main grids
+      var durationColumn = (
+        from column in MainGridController.BindingColumns
+        where column.PropertyName == nameof(Piece.Duration)
+        select column).First();
+      Assert.AreEqual(-1, durationColumn.EditWidth);
     }
 
     [Test]
@@ -628,7 +641,7 @@ namespace SoundExplorers.Tests.Controller {
     public void RestoreValueOnUpdateError() {
       AddDataForPieceList();
       CreateControllers(typeof(PieceList));
-      Controller.Populate(); // Populate grid
+      Controller.Populate(); // Populate parent and main grids
       Assert.AreEqual(5, Controller.MainList.Count, "Count after Populate");
       var bindingList =
         (TypedBindingList<Piece, PieceBindingItem>)Controller.MainList

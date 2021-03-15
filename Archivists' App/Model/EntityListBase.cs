@@ -219,7 +219,7 @@ namespace SoundExplorers.Model {
       return new IdentifyingParentAndChildren(this[rowIndex], children);
     }
 
-    public IList<object?> GetErrorValues() {
+    public IList<object> GetErrorValues() {
       return ExistingEntityPropertyErrorBackupItem!.GetValues();
     }
 
@@ -382,7 +382,9 @@ namespace SoundExplorers.Model {
         var entities = Session.AllObjects<TEntity>();
         AddRange(entities);
       }
-      GetReferenceableItemLists();
+      if (createBindingList) {
+        GetReferenceableItemLists();
+      }
       if (isTransactionRequired) {
         Session.Commit();
       }

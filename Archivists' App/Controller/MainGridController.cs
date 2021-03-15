@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data;
 using System.Diagnostics;
+using System.Linq;
 using SoundExplorers.Model;
 
 namespace SoundExplorers.Controller {
@@ -10,13 +11,10 @@ namespace SoundExplorers.Controller {
       IMainGrid grid, EditorController editorController) :
       base(grid, editorController) { }
 
-    private new IMainGrid Grid => (IMainGrid)base.Grid;
-    private bool IsRestoringRowCurrency { get; set; }
+    internal int LastCurrentRowIndex { get; set; }
 
     protected virtual StatementType LastChangeAction =>
       List.LastDatabaseUpdateErrorException!.ChangeAction;
-
-    internal int LastCurrentRowIndex { get; set; }
 
     /// <summary>
     ///   This flag is used in a workaround for an unwanted feature of
@@ -42,6 +40,8 @@ namespace SoundExplorers.Controller {
     /// </summary>
     protected override IEntityList List => EditorController.MainList;
 
+    private new IMainGrid Grid => (IMainGrid)base.Grid;
+    private bool IsRestoringRowCurrency { get; set; }
     private IParentGrid ParentGrid => EditorController.View.ParentGrid;
 
     /// <summary>
@@ -84,25 +84,6 @@ namespace SoundExplorers.Controller {
       } else {
         LastCurrentRowIndex = -1;
         base.OnGotFocus();
-      }
-    }
-
-    protected override void OnPopulatedAsync() {
-      Debug.WriteLine("MainGridController.OnPopulatedAsync");
-      if (List.ListRole == ListRole.Child) {
-        IsFixingFocus = true;
-        EditorController.View.OnParentAndMainGridsShown();
-        Grid.CellColorScheme.Invert();
-      }
-      base.OnPopulatedAsync();
-      // Warning: Profiling blocks code coverage analysis
-      // MeasureProfiler.SaveData();
-      if (List.ListRole == ListRole.Child &&
-          ParentGrid.Controller.LastRowNeedsToBeScrolledIntoView) {
-        ParentGrid.Controller.ScrollLastRowIntoView();
-      } else {
-        // Show that the population process is finished.
-        EditorController.View.SetMouseCursorToDefault();
       }
     }
 
@@ -183,10 +164,9 @@ namespace SoundExplorers.Controller {
       Debug.WriteLine("MainGridController.Populate");
       base.Populate();
       LastCurrentRowIndex = -1;
-    }
-
-    protected virtual void ReplaceErrorBindingValueWithOriginal() {
-      List.ReplaceErrorBindingValueWithOriginal();
+      foreach (var column in Columns) {
+        column.EditWidth = GetColumnEditWidthInPixels(column);
+      }
     }
 
     public void ShowError() {
@@ -211,7 +191,8 @@ namespace SoundExplorers.Controller {
           break;
         default:
           throw new NotSupportedException(
-            $"{nameof(DatabaseUpdateErrorException.ChangeAction)} '{LastChangeAction}' is not supported.");
+            $"{nameof(DatabaseUpdateErrorException.ChangeAction)} " +
+            $"'{LastChangeAction}' is not supported.");
       }
     }
 
@@ -223,6 +204,29 @@ namespace SoundExplorers.Controller {
       IdentifyingParentAndChildren identifyingParentAndChildrenForList) {
       IsFixingFocus = true;
       IdentifyingParentChildrenForList = identifyingParentAndChildrenForList;
+    }
+
+    protected override void OnPopulatedAsync() {
+      Debug.WriteLine("MainGridController.OnPopulatedAsync");
+      if (List.ListRole == ListRole.Child) {
+        IsFixingFocus = true;
+        EditorController.View.OnParentAndMainGridsShown();
+        Grid.CellColorScheme.Invert();
+      }
+      base.OnPopulatedAsync();
+      // Warning: Profiling blocks code coverage analysis
+      // MeasureProfiler.SaveData();
+      if (List.ListRole == ListRole.Child &&
+          ParentGrid.Controller.LastRowNeedsToBeScrolledIntoView) {
+        ParentGrid.Controller.ScrollLastRowIntoView();
+      } else {
+        // Show that the population process is finished.
+        EditorController.View.SetMouseCursorToDefault();
+      }
+    }
+
+    protected virtual void ReplaceErrorBindingValueWithOriginal() {
+      List.ReplaceErrorBindingValueWithOriginal();
     }
 
     /// <summary>
@@ -263,6 +267,27 @@ namespace SoundExplorers.Controller {
       Grid.RestoreCurrentRowCellErrorValue(
         exception.ColumnIndex,
         List.GetErrorValues()[exception.ColumnIndex]);
+    }
+
+    private int GetColumnEditWidthInPixels(BindingColumn column) {
+      const int margin = 21;
+      const int textColumnEditWidth = 200;
+      if (column.ValueType == typeof(DateTime)) {
+        return Grid.GetTextWidthInPixels(Global.DateFormat.ToUpper()) + margin;
+      }
+      if (column.ReferencesAnotherEntity) {
+        var keys = column.ReferenceableItems?.GetKeys();
+        if (keys?.Count > 0) {
+          return (
+            from key in keys
+            select Grid.GetTextWidthInPixels(key)).Max() + margin;
+        }
+        return -1;
+      }
+      return column.ValueType == typeof(string) &&
+             column.PropertyName != nameof(PieceBindingItem.Duration)
+        ? textColumnEditWidth
+        : -1;
     }
   }
 }

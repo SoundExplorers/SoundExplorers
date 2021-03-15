@@ -31,7 +31,7 @@ namespace SoundExplorers.Controller {
       return Column.ReferenceableItems.ToArray();
     }
 
-    public static string? GetKey(object? value) {
+    public static string GetKey(object value) {
       return ReferenceableItemList.ToSimpleKey(value);
     }
 

@@ -16,13 +16,12 @@ namespace SoundExplorers.Model {
     private IDictionary<string, IEntity?>? EntityDictionary { get; set; }
     private BindingColumn ReferencingColumn { get; }
 
-    public static string? ToSimpleKey(object? value) {
+    public static string ToSimpleKey(object value) {
       return value switch {
-        null => null,
         Newsletter newsletter => EntityBase.DateToSimpleKey(newsletter.Date),
         IEntity entity => entity.SimpleKey,
         DateTime date => EntityBase.DateToSimpleKey(date),
-        _ => value.ToString()
+        _ => value.ToString()!
       };
     }
 
@@ -30,10 +29,14 @@ namespace SoundExplorers.Model {
       return EntityDictionary!.ContainsKey(simpleKey);
     }
 
+    public IList<string> GetKeys() {
+      return EntityDictionary!.Keys.ToList();
+    }
+
     /// <summary>
     ///   Returns the specified simple key formatted as it appears on the grid.
     /// </summary>
-    internal static string? Format(string? simpleKey) {
+    internal static string Format(string simpleKey) {
       return DateTime.TryParse(simpleKey, out var date)
         ? date.ToString(Global.DateFormat)
         : simpleKey;
@@ -69,7 +72,7 @@ namespace SoundExplorers.Model {
       Clear();
       AddRange(
         from IEntity entity in entities
-        select (object)new KeyValuePair<object?, object>(Format(entity.SimpleKey), entity)
+        select (object)new KeyValuePair<object, object>(Format(entity.SimpleKey), entity)
       );
     }
   }

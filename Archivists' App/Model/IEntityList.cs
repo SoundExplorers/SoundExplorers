@@ -81,7 +81,7 @@ namespace SoundExplorers.Model {
     IdentifyingParentAndChildren? GetIdentifyingParentAndChildrenForChildList(
       int rowIndex);
 
-    IList<object?> GetErrorValues();
+    IList<object> GetErrorValues();
 
     /// <summary>
     ///   Occurs when an exception is thrown on ending a cell edit.

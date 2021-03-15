@@ -4,13 +4,13 @@ using System.Linq;
 namespace SoundExplorers.Model {
   public class BackupItem<TBindingItem> where TBindingItem : IBindingItem, new() {
     public BackupItem(TBindingItem bindingItem) {
-      Dictionary = new Dictionary<string, object?>();
+      Dictionary = new Dictionary<string, object>();
       foreach (var propertyName in bindingItem.Properties.Keys) {
-        Dictionary.Add(propertyName, bindingItem.GetPropertyValue(propertyName));
+        Dictionary.Add(propertyName, bindingItem.GetPropertyValue(propertyName)!);
       }
     }
 
-    private IDictionary<string, object?> Dictionary { get; }
+    private IDictionary<string, object> Dictionary { get; }
 
     public TBindingItem CreateBindingItem() {
       var result = new TBindingItem();
@@ -18,7 +18,7 @@ namespace SoundExplorers.Model {
       return result;
     }
 
-    public IList<object?> GetValues() {
+    public IList<object> GetValues() {
       return Dictionary.Values.ToList();
     }
 

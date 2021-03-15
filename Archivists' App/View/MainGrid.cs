@@ -1,24 +1,26 @@
 using System;
 using System.Diagnostics;
+using System.Drawing;
 using System.Windows.Forms;
 using SoundExplorers.Common;
 using SoundExplorers.Controller;
 
 namespace SoundExplorers.View {
   internal class MainGrid : GridBase, IMainGrid {
+    private Graphics? _graphics;
+
     public MainGrid() {
       // Fixes a .Net 5 problem where, when the user cancelled (by pressing Esc) an edit
       // of a text cell on the insertion row after typing text, the program would crash.
       ShowCellErrors = false;
     }
 
-    private bool IsComboBoxCellCurrent =>
-      CurrentCell?.OwningColumn.CellTemplate is ComboBoxCell;
-
     public TextBox TextBox =>
       (TextBox)EditingControl ??
       throw new InvalidOperationException(
         "The current cell is not in edit mode or its editor is not a TextBox.");
+
+    private Graphics Graphics => _graphics ??= CreateGraphics();
 
     public new MainGridController Controller {
       get => (MainGridController)base.Controller;
@@ -31,6 +33,10 @@ namespace SoundExplorers.View {
 
     public void EditCurrentCell() {
       BeginEdit(true);
+    }
+
+    public int GetTextWidthInPixels(string text) {
+      return GetTextWidthInPixels(text, Font, Graphics);
     }
 
     public void MakeCellCurrent(int rowIndex, int columnIndex) {
@@ -49,7 +55,7 @@ namespace SoundExplorers.View {
       Focus();
     }
 
-    public void RestoreCurrentRowCellErrorValue(int columnIndex, object? errorValue) {
+    public void RestoreCurrentRowCellErrorValue(int columnIndex, object errorValue) {
       Debug.WriteLine("MainGrid.RestoreCurrentRowCellErrorValue");
       ((ICanRestoreErrorValue)CurrentRow!.Cells[columnIndex]).RestoreErrorValue(
         errorValue);
@@ -86,15 +92,16 @@ namespace SoundExplorers.View {
 
     protected override void OnCellBeginEdit(DataGridViewCellCancelEventArgs e) {
       base.OnCellBeginEdit(e);
-      if (IsTextBoxCellCurrent
-          // On pasting into or deleting the contents of a cell that is not yet in edit
-          // mode, the cell temporarily goes into edit mode but the EditingControl is
-          // null instead of a TextBox. So we cannot subscribe to the TextBox's events.
-          // However, the cell comes out of edit mode immediately the deletion or paste
-          // is done. So in those cases there is no need to subscribe to the TextBox
-          // events anyway.
-          && EditingControl is TextBox) {
-        BeginInvoke((Action)SubscribeToTextBoxEvents);
+      // On pasting into or deleting the contents of a cell that is not yet in edit mode,
+      // the cell temporarily goes into edit mode but the EditingControl is null and the
+      // cell comes out of edit mode immediately the deletion or paste is done. So in
+      // those cases we should not need to do any of the following (and we would not be
+      // able to subscribe to a TextBox's events).
+      if (CurrentCell != null) {
+        if (IsTextBoxCellCurrent) {
+          BeginInvoke((Action)SubscribeToTextBoxEvents);
+        }
+        SetCurrentColumnWidthToEditWidth();
       }
       // THE FOLLOWING IS NOT YET IN USE BUT MAY BE LATER:
       // This is only relevant if the Path cell of an Image row is being edited. If the
@@ -109,6 +116,7 @@ namespace SoundExplorers.View {
 
     protected override void OnCellEndEdit(DataGridViewCellEventArgs e) {
       base.OnCellEndEdit(e);
+      AutoResizeColumns();
       if (IsTextBoxCellCurrent) {
         // Now that the TextBox cell edit has finished, whether text can be cut or copied
         // reverts to depending on whether there is any text in the cell.
@@ -165,6 +173,29 @@ namespace SoundExplorers.View {
     }
 
     /// <summary>
+    ///   Returns the width in pixels (rounded up) of the specified text in the specified
+    ///   font.
+    /// </summary>
+    /// <param name="text">
+    ///   The text whose width is to be measured.
+    /// </param>
+    /// <param name="font">
+    ///   The font in which the specified text is to be drawn.
+    /// </param>
+    /// <param name="graphics">
+    ///   The <see cref="Graphics" /> object that is to be used
+    ///   to do the measurement.
+    /// </param>
+    /// <remarks>
+    ///   The <see cref="Control.CreateGraphics" /> method of any <see cref="Control" />
+    ///   can be used to create the <see cref="Graphics" /> object to which the
+    ///   <paramref name="graphics" /> parameter is set.
+    /// </remarks>
+    private static int GetTextWidthInPixels(string text, Font font, Graphics graphics) {
+      return (int)Math.Ceiling(graphics.MeasureString(text, font).Width);
+    }
+
+    /// <summary>
     ///   While a text box cell is being edited, whether text can be cut or copied
     ///   depends on whether any text in the cell is selected.
     /// </summary>
@@ -172,6 +203,14 @@ namespace SoundExplorers.View {
       //Debug.WriteLine("MainGrid.OnTextBoxSelectionMayHaveChanged");
       MainView.CutToolStripButton.Enabled = CanCut;
       MainView.CopyToolStripButton.Enabled = CanCopy;
+    }
+
+    private void SetCurrentColumnWidthToEditWidth() {
+      var column = CurrentCell.OwningColumn;
+      int editWidth = Controller.BindingColumns[column.Index].EditWidth;
+      if (editWidth > column.Width) {
+        column.Width = editWidth;
+      }
     }
 
     private void SubscribeToTextBoxEvents() {

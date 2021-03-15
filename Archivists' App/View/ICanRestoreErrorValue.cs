@@ -5,6 +5,6 @@
     ///   This will allow the user to correct the error value or,
     ///   by cancelling the edit, restore the original value.
     /// </summary>
-    void RestoreErrorValue(object? errorValue);
+    void RestoreErrorValue(object errorValue);
   }
 }

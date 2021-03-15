@@ -46,12 +46,10 @@ namespace SoundExplorers.Tests.Controller {
 
     [Test]
     public void FetchItems() {
-      string key = ComboBoxCellController.GetKey(null)!;
-      Assert.IsNull(key, "Null key");
       Session.BeginUpdate();
       Data.Newsletters[0].Date = DateTime.Parse("1960-09-13");
       Session.Commit();
-      key = ComboBoxCellController.GetKey(Data.Newsletters[0])!;
+      string key = ComboBoxCellController.GetKey(Data.Newsletters[0])!;
       Assert.AreEqual("1960/09/13", key, "Date key");
       CellController = CreateCellController("Series");
       Assert.AreEqual("Event", CellController.TableName, "TableName");
