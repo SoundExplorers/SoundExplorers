@@ -20,7 +20,12 @@ namespace SoundExplorers.View {
       throw new InvalidOperationException(
         "The current cell is not in edit mode or its editor is not a TextBox.");
 
+    private bool DisplayDropDownList { get; set; }
+
     private Graphics Graphics => _graphics ??= CreateGraphics();
+
+    private bool IsComboBoxCellCurrent =>
+      CurrentCell?.OwningColumn.CellTemplate is ComboBoxCell;
 
     public new MainGridController Controller {
       get => (MainGridController)base.Controller;
@@ -98,10 +103,16 @@ namespace SoundExplorers.View {
       // those cases we should not need to do any of the following (and we would not be
       // able to subscribe to a TextBox's events).
       if (CurrentCell != null) {
+        SetCurrentColumnWidthToEditWidth();
         if (IsTextBoxCellCurrent) {
           BeginInvoke((Action)SubscribeToTextBoxEvents);
         }
-        SetCurrentColumnWidthToEditWidth();
+        if (IsComboBoxCellCurrent && DisplayDropDownList) {
+          BeginInvoke((Action)delegate {
+            ((ComboBoxCell)CurrentCell).ComboBox.DroppedDown = true;
+            DisplayDropDownList = false;
+          });
+        }
       }
       // THE FOLLOWING IS NOT YET IN USE BUT MAY BE LATER:
       // This is only relevant if the Path cell of an Image row is being edited. If the
@@ -163,6 +174,14 @@ namespace SoundExplorers.View {
       switch (e.KeyData) {
         case Keys.F2:
           if (CurrentCell != null) {
+            BeginEdit(false);
+          }
+          break;
+        case Keys.F4:
+        case Keys.Alt | Keys.Up:
+        case Keys.Alt | Keys.Down:
+          if (IsComboBoxCellCurrent) {
+            DisplayDropDownList = true;
             BeginEdit(false);
           }
           break;

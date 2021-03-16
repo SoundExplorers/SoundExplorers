@@ -9,14 +9,14 @@ namespace SoundExplorers.View {
   internal class ComboBoxCell : DataGridViewTextBoxCell, IView<ComboBoxCellController>,
     ICanRestoreErrorValue {
     /// <summary>
+    ///   Gets the cell's combo box.
+    /// </summary>
+    public ComboBox ComboBox => (ComboBox)DataGridView!.EditingControl;
+    
+    /// <summary>
     ///   Gets the type of the editing control that the ComboBoxCell is to use.
     /// </summary>
     public override Type EditType => typeof(DataGridViewComboBoxEditingControl);
-
-    /// <summary>
-    ///   Gets the cell's combo box.
-    /// </summary>
-    private ComboBox ComboBox => (ComboBox)DataGridView!.EditingControl;
 
     private ComboBoxCellController Controller => (ComboBoxCellController)Tag;
 
