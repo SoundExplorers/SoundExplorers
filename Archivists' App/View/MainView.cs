@@ -276,6 +276,9 @@ namespace SoundExplorers.View {
       }
     }
 
+    private void ToolsLinkMenuItem_Click(object? sender, EventArgs e) {
+    }
+
     private void ToolsOptionsMenuItem_Click(object? sender, EventArgs e) {
       var optionsView = OptionsView.Create();
       optionsView.ShowDialog();

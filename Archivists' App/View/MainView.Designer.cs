@@ -47,6 +47,7 @@ namespace SoundExplorers.View {
       this.ViewToolBarMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.ViewStatusBarMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.ToolsMenu = new System.Windows.Forms.ToolStripMenuItem();
+      this.ToolsLinkMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.ToolsOptionsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.WindowsMenu = new System.Windows.Forms.ToolStripMenuItem();
       this.WindowsCascadeMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -70,8 +71,8 @@ namespace SoundExplorers.View {
       this.CutToolStripButton = new System.Windows.Forms.ToolStripButton();
       this.CopyToolStripButton = new System.Windows.Forms.ToolStripButton();
       this.PasteToolStripButton = new System.Windows.Forms.ToolStripButton();
-      this.StatusLabel = new System.Windows.Forms.Label();
       this.LinkToolStripButton = new System.Windows.Forms.ToolStripButton();
+      this.StatusLabel = new System.Windows.Forms.Label();
       this.MenuStrip.SuspendLayout();
       this.ToolStrip.SuspendLayout();
       this.SuspendLayout();
@@ -265,16 +266,26 @@ namespace SoundExplorers.View {
       // ToolsMenu
       // 
       this.ToolsMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.ToolsLinkMenuItem,
             this.ToolsOptionsMenuItem});
       this.ToolsMenu.Name = "ToolsMenu";
       this.ToolsMenu.Size = new System.Drawing.Size(46, 20);
       this.ToolsMenu.Text = "&Tools";
       // 
+      // ToolsLinkMenuItem
+      // 
+      this.ToolsLinkMenuItem.ImageTransparentColor = System.Drawing.Color.Black;
+      this.ToolsLinkMenuItem.Name = "ToolsLinkMenuItem";
+      this.ToolsLinkMenuItem.ShortcutKeyDisplayString = "Space, double-click";
+      this.ToolsLinkMenuItem.Size = new System.Drawing.Size(244, 22);
+      this.ToolsLinkMenuItem.Text = "Follow &Link";
+      this.ToolsLinkMenuItem.Click += new System.EventHandler(this.ToolsLinkMenuItem_Click);
+      // 
       // ToolsOptionsMenuItem
       // 
       this.ToolsOptionsMenuItem.ImageTransparentColor = System.Drawing.Color.Black;
       this.ToolsOptionsMenuItem.Name = "ToolsOptionsMenuItem";
-      this.ToolsOptionsMenuItem.Size = new System.Drawing.Size(116, 22);
+      this.ToolsOptionsMenuItem.Size = new System.Drawing.Size(244, 22);
       this.ToolsOptionsMenuItem.Text = "&Options";
       this.ToolsOptionsMenuItem.Click += new System.EventHandler(this.ToolsOptionsMenuItem_Click);
       // 
@@ -483,6 +494,17 @@ namespace SoundExplorers.View {
       this.PasteToolStripButton.Text = "Paste (Ctrl+V)";
       this.PasteToolStripButton.Click += new System.EventHandler(this.EditPasteMenuItem_Click);
       // 
+      // LinkToolStripButton
+      // 
+      this.LinkToolStripButton.AutoSize = false;
+      this.LinkToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+      this.LinkToolStripButton.Image = global::SoundExplorers.View.Properties.Resources.Link_Noto_Emoji_32x32;
+      this.LinkToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+      this.LinkToolStripButton.Name = "LinkToolStripButton";
+      this.LinkToolStripButton.Size = new System.Drawing.Size(24, 38);
+      this.LinkToolStripButton.Text = "Follow Link (Space or double-click)";
+      this.LinkToolStripButton.Click += new System.EventHandler(this.ToolsLinkMenuItem_Click);
+      // 
       // StatusLabel
       // 
       this.StatusLabel.Dock = System.Windows.Forms.DockStyle.Bottom;
@@ -493,15 +515,6 @@ namespace SoundExplorers.View {
       this.StatusLabel.TabIndex = 2;
       this.StatusLabel.Text = "StatusLabel";
       this.StatusLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-      // 
-      // LinkToolStripButton
-      // 
-      this.LinkToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-      this.LinkToolStripButton.Image = global::SoundExplorers.View.Properties.Resources.Link_Noto_Emoji_32x32;
-      this.LinkToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-      this.LinkToolStripButton.Name = "LinkToolStripButton";
-      this.LinkToolStripButton.Size = new System.Drawing.Size(24, 38);
-      this.LinkToolStripButton.Text = "LinkToolStripButton";
       // 
       // MainView
       // 
@@ -550,6 +563,7 @@ namespace SoundExplorers.View {
         private System.Windows.Forms.ToolStripMenuItem ViewToolBarMenuItem;
         private System.Windows.Forms.ToolStripMenuItem ViewStatusBarMenuItem;
         private System.Windows.Forms.ToolStripMenuItem ToolsMenu;
+        private System.Windows.Forms.ToolStripMenuItem ToolsLinkMenuItem;
         private System.Windows.Forms.ToolStripMenuItem ToolsOptionsMenuItem;
         private System.Windows.Forms.ToolStripMenuItem WindowsMenu;
         private System.Windows.Forms.ToolStripMenuItem WindowsCascadeMenuItem;
@@ -572,7 +586,7 @@ namespace SoundExplorers.View {
         public System.Windows.Forms.ToolStripButton CutToolStripButton;
         public System.Windows.Forms.ToolStripButton CopyToolStripButton;
         public System.Windows.Forms.ToolStripButton PasteToolStripButton;
+        public System.Windows.Forms.ToolStripButton LinkToolStripButton;
         public System.Windows.Forms.Label StatusLabel;
-    private ToolStripButton LinkToolStripButton;
   }
 }
