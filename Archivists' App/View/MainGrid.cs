@@ -113,6 +113,9 @@ namespace SoundExplorers.View {
             DisplayDropDownList = false;
           });
         }
+        if (Controller.BindingColumns[e.ColumnIndex].ValueType == typeof(Uri)) {
+          Debug.WriteLine($"MainGrid.OnCellBeginEdit: {CurrentCell.Value}");
+        }
       }
       // THE FOLLOWING IS NOT YET IN USE BUT MAY BE LATER:
       // This is only relevant if the Path cell of an Image row is being edited. If the
@@ -123,6 +126,13 @@ namespace SoundExplorers.View {
       // Image label that an image file can be dragged onto the label will not apply, as
       // dragging and dropping is disabled while the Path cell is being edited.
       EditorView.MissingImageLabel.Visible = false;
+    }
+
+    protected override void OnCellDoubleClick(DataGridViewCellEventArgs e) {
+      base.OnCellDoubleClick(e);
+      if (Controller.BindingColumns[e.ColumnIndex].ValueType == typeof(Uri)) {
+        Debug.WriteLine($"MainGrid.OnCellDoubleClick: {CurrentCell.Value}");
+      }
     }
 
     protected override void OnCellEndEdit(DataGridViewCellEventArgs e) {

@@ -13,7 +13,7 @@ namespace SoundExplorers.Model {
     protected override BindingColumnList CreateColumns() {
       return new BindingColumnList {
         new BindingColumn(nameof(Newsletter.Date), typeof(DateTime)) {IsInKey = true},
-        new BindingColumn(nameof(Newsletter.Url), typeof(string)) {DisplayName = "URL"}
+        new BindingColumn(nameof(Newsletter.Url), typeof(Uri)) {DisplayName = "URL"}
       };
     }
   }
