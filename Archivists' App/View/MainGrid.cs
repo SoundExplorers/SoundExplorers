@@ -113,9 +113,9 @@ namespace SoundExplorers.View {
             DisplayDropDownList = false;
           });
         }
-        if (Controller.BindingColumns[e.ColumnIndex].ValueType == typeof(Uri)) {
-          Debug.WriteLine($"MainGrid.OnCellBeginEdit: {CurrentCell.Value}");
-        }
+        // if (Controller.BindingColumns[e.ColumnIndex].ValueType == typeof(Uri)) {
+        //   Debug.WriteLine($"MainGrid.OnCellBeginEdit: {CurrentCell.Value}");
+        // }
       }
       // THE FOLLOWING IS NOT YET IN USE BUT MAY BE LATER:
       // This is only relevant if the Path cell of an Image row is being edited. If the
