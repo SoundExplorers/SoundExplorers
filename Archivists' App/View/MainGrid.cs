@@ -114,6 +114,11 @@ namespace SoundExplorers.View {
           });
         }
         if (Controller.IsUrlColumn(CurrentCell.OwningColumn.Name)) {
+          MainView.ToolsLinkMenuItem.Enabled =
+            MainView.LinkToolStripButton.Enabled = false;
+          // When a URL is not being edited, its text is underlined blue, to encourage
+          // linking. But that looks weird if the URL is being edited. So make the text
+          // plain-old while the URL is in edit mode.
           BeginInvoke((Action)delegate {
             var textBox = (CurrentCell as TextBoxCell)!.TextBox; 
             textBox.BackColor = DefaultCellStyle.BackColor;
@@ -133,13 +138,6 @@ namespace SoundExplorers.View {
       EditorView.MissingImageLabel.Visible = false;
     }
 
-    // protected override void OnCellDoubleClick(DataGridViewCellEventArgs e) {
-    //   base.OnCellDoubleClick(e);
-    //   if (Controller.BindingColumns[e.ColumnIndex].ValueType == typeof(Uri)) {
-    //     Debug.WriteLine($"MainGrid.OnCellDoubleClick: {CurrentCell.Value}");
-    //   }
-    // }
-
     protected override void OnCellEndEdit(DataGridViewCellEventArgs e) {
       base.OnCellEndEdit(e);
       AutoResizeColumns();
@@ -148,6 +146,10 @@ namespace SoundExplorers.View {
         // reverts to depending on whether there is any text in the cell.
         MainView.CutToolStripButton.Enabled = CanCut;
         MainView.CopyToolStripButton.Enabled = CanCopy;
+        if (Controller.IsUrlColumn(CurrentCell.OwningColumn.Name)) {
+          MainView.ToolsLinkMenuItem.Enabled =
+            MainView.LinkToolStripButton.Enabled = true;
+        }
       }
     }
 

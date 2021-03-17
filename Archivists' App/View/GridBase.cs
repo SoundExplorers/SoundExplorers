@@ -8,6 +8,7 @@ using SoundExplorers.Controller;
 
 namespace SoundExplorers.View {
   internal abstract class GridBase : DataGridView, IGrid {
+    private IGridCellColorScheme? _cellColorScheme;
     private GridContextMenu? _contextMenu;
 
     protected GridBase() {
@@ -16,7 +17,6 @@ namespace SoundExplorers.View {
       Margin = new Padding(4);
       RowHeadersWidth = 51;
       ShowCellToolTips = false; // Before .Net 5, tooltips were off by default.
-      CellColorScheme = new GridCellColorScheme(this);
     }
 
     public bool CanCut => CanSelectAll && CopyableText.Length > 0;
@@ -63,7 +63,9 @@ namespace SoundExplorers.View {
 
     public GridControllerBase Controller { get; protected set; } = null!;
     public int CurrentRowIndex => CurrentRow?.Index ?? -1;
-    public IGridCellColorScheme CellColorScheme { get; }
+
+    public IGridCellColorScheme CellColorScheme =>
+      _cellColorScheme ??= new GridCellColorScheme(this);
 
     bool IGrid.Enabled {
       get => Enabled;
@@ -161,12 +163,6 @@ namespace SoundExplorers.View {
           DefaultCellStyle.Font, FontStyle.Underline);
         result.DefaultCellStyle.BackColor = Color.White;
         result.DefaultCellStyle.ForeColor = Color.Blue;
-        //result.DefaultCellStyle.SelectionBackColor = Color.Blue;
-        result.DefaultCellStyle.SelectionForeColor = Color.White;
-        // result.DefaultCellStyle.BackColor = DefaultCellStyle.SelectionForeColor;
-        // result.DefaultCellStyle.ForeColor = DefaultCellStyle.SelectionBackColor;
-        result.DefaultCellStyle.SelectionBackColor = DefaultCellStyle.SelectionBackColor;
-        // result.DefaultCellStyle.SelectionForeColor = DefaultCellStyle.SelectionForeColor;
       }
       Columns.Add(result);
       return result;

@@ -131,15 +131,19 @@ namespace SoundExplorers.Tests.Controller {
     }
 
     [Test]
-    public void ColumnEditWidth() {
+    public void ColumnFormatting() {
       AddDataForPieceList();
       CreateControllers(typeof(PieceList));
       Controller.Populate(); // Populate parent and main grids
+      Assert.IsTrue(MainGridController.IsUrlColumn(nameof(Piece.AudioUrl)), 
+        "AudioUrl is URL");
+      Assert.IsTrue(MainGridController.IsUrlColumn(nameof(Piece.VideoUrl)), 
+        "VideoUrl is URL");
       var durationColumn = (
         from column in MainGridController.BindingColumns
         where column.PropertyName == nameof(Piece.Duration)
         select column).First();
-      Assert.AreEqual(-1, durationColumn.EditWidth);
+      Assert.AreEqual(-1, durationColumn.EditWidth, "Duration edit width unspecified");
     }
 
     [Test]
