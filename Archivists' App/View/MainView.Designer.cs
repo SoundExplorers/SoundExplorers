@@ -407,7 +407,7 @@ namespace SoundExplorers.View {
       // ToolStrip
       // 
       this.ToolStrip.AutoSize = false;
-      this.ToolStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
+      this.ToolStrip.ImageScalingSize = new System.Drawing.Size(40, 40);
       this.ToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.NewToolStripButton,
             this.OpenToolStripButton,
@@ -498,10 +498,11 @@ namespace SoundExplorers.View {
       // 
       this.LinkToolStripButton.AutoSize = false;
       this.LinkToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-      this.LinkToolStripButton.Image = global::SoundExplorers.View.Properties.Resources.Link_Noto_Emoji_32x32;
+      this.LinkToolStripButton.Image = global::SoundExplorers.View.Properties.Resources.Link_Webuosities_32x32;
+      this.LinkToolStripButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
       this.LinkToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
       this.LinkToolStripButton.Name = "LinkToolStripButton";
-      this.LinkToolStripButton.Size = new System.Drawing.Size(24, 38);
+      this.LinkToolStripButton.Size = new System.Drawing.Size(38, 38);
       this.LinkToolStripButton.Text = "Follow Link (Space or double-click)";
       this.LinkToolStripButton.Click += new System.EventHandler(this.ToolsLinkMenuItem_Click);
       // 
