@@ -98,7 +98,8 @@ namespace SoundExplorers.View {
 
     private void DisableGridToolStripButtons() {
       RefreshToolStripButton.Enabled = CutToolStripButton.Enabled =
-        CopyToolStripButton.Enabled = PasteToolStripButton.Enabled = false;
+        CopyToolStripButton.Enabled = PasteToolStripButton.Enabled = 
+          ToolsLinkMenuItem.Enabled = LinkToolStripButton.Enabled = false;
     }
 
     private void OnEditorClosed() {

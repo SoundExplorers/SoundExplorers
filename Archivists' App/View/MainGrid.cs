@@ -113,9 +113,14 @@ namespace SoundExplorers.View {
             DisplayDropDownList = false;
           });
         }
-        // if (Controller.BindingColumns[e.ColumnIndex].ValueType == typeof(Uri)) {
-        //   Debug.WriteLine($"MainGrid.OnCellBeginEdit: {CurrentCell.Value}");
-        // }
+        if (Controller.IsUrlColumn(CurrentCell.OwningColumn.Name)) {
+          BeginInvoke((Action)delegate {
+            var textBox = (CurrentCell as TextBoxCell)!.TextBox; 
+            textBox.BackColor = DefaultCellStyle.BackColor;
+            textBox.ForeColor = DefaultCellStyle.ForeColor;
+            textBox.Font = DefaultCellStyle.Font;
+          });
+        }
       }
       // THE FOLLOWING IS NOT YET IN USE BUT MAY BE LATER:
       // This is only relevant if the Path cell of an Image row is being edited. If the
@@ -128,12 +133,12 @@ namespace SoundExplorers.View {
       EditorView.MissingImageLabel.Visible = false;
     }
 
-    protected override void OnCellDoubleClick(DataGridViewCellEventArgs e) {
-      base.OnCellDoubleClick(e);
-      if (Controller.BindingColumns[e.ColumnIndex].ValueType == typeof(Uri)) {
-        Debug.WriteLine($"MainGrid.OnCellDoubleClick: {CurrentCell.Value}");
-      }
-    }
+    // protected override void OnCellDoubleClick(DataGridViewCellEventArgs e) {
+    //   base.OnCellDoubleClick(e);
+    //   if (Controller.BindingColumns[e.ColumnIndex].ValueType == typeof(Uri)) {
+    //     Debug.WriteLine($"MainGrid.OnCellDoubleClick: {CurrentCell.Value}");
+    //   }
+    // }
 
     protected override void OnCellEndEdit(DataGridViewCellEventArgs e) {
       base.OnCellEndEdit(e);
@@ -184,7 +189,7 @@ namespace SoundExplorers.View {
       switch (e.KeyData) {
         case Keys.F2:
           if (CurrentCell != null) {
-            BeginEdit(false);
+            BeginEdit(true);
           }
           break;
         case Keys.F4:
@@ -192,7 +197,7 @@ namespace SoundExplorers.View {
         case Keys.Alt | Keys.Down:
           if (IsComboBoxCellCurrent) {
             DisplayDropDownList = true;
-            BeginEdit(false);
+            BeginEdit(true);
           }
           break;
         default:

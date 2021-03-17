@@ -52,9 +52,9 @@ namespace SoundExplorers.Model {
         new BindingColumn(nameof(Piece.PieceNo), typeof(int)) {IsInKey = true},
         new BindingColumn(nameof(Piece.Title), typeof(string)),
         new BindingColumn(nameof(Piece.Duration), typeof(TimeSpan)),
-        new BindingColumn(nameof(Piece.AudioUrl), typeof(string))
+        new BindingColumn(nameof(Piece.AudioUrl), typeof(Uri))
           {DisplayName = "Audio URL"},
-        new BindingColumn(nameof(Piece.VideoUrl), typeof(string))
+        new BindingColumn(nameof(Piece.VideoUrl), typeof(Uri))
           {DisplayName = "Video URL"},
         new BindingColumn(nameof(Piece.Notes), typeof(string))
       };

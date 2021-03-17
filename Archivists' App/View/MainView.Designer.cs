@@ -276,7 +276,7 @@ namespace SoundExplorers.View {
       // 
       this.ToolsLinkMenuItem.ImageTransparentColor = System.Drawing.Color.Black;
       this.ToolsLinkMenuItem.Name = "ToolsLinkMenuItem";
-      this.ToolsLinkMenuItem.ShortcutKeyDisplayString = "Space, double-click";
+      this.ToolsLinkMenuItem.ShortcutKeyDisplayString = "Space, Ctrl+Click";
       this.ToolsLinkMenuItem.Size = new System.Drawing.Size(244, 22);
       this.ToolsLinkMenuItem.Text = "Follow &Link";
       this.ToolsLinkMenuItem.Click += new System.EventHandler(this.ToolsLinkMenuItem_Click);
@@ -503,7 +503,7 @@ namespace SoundExplorers.View {
       this.LinkToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
       this.LinkToolStripButton.Name = "LinkToolStripButton";
       this.LinkToolStripButton.Size = new System.Drawing.Size(38, 38);
-      this.LinkToolStripButton.Text = "Follow Link (Space or double-click)";
+      this.LinkToolStripButton.Text = "Follow Link (Space or Ctrl+Click)";
       this.LinkToolStripButton.Click += new System.EventHandler(this.ToolsLinkMenuItem_Click);
       // 
       // StatusLabel
@@ -564,7 +564,7 @@ namespace SoundExplorers.View {
         private System.Windows.Forms.ToolStripMenuItem ViewToolBarMenuItem;
         private System.Windows.Forms.ToolStripMenuItem ViewStatusBarMenuItem;
         private System.Windows.Forms.ToolStripMenuItem ToolsMenu;
-        private System.Windows.Forms.ToolStripMenuItem ToolsLinkMenuItem;
+        public System.Windows.Forms.ToolStripMenuItem ToolsLinkMenuItem;
         private System.Windows.Forms.ToolStripMenuItem ToolsOptionsMenuItem;
         private System.Windows.Forms.ToolStripMenuItem WindowsMenu;
         private System.Windows.Forms.ToolStripMenuItem WindowsCascadeMenuItem;

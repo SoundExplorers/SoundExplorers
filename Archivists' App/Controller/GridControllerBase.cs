@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -24,6 +25,12 @@ namespace SoundExplorers.Controller {
 
     public IBindingList BindingList => List.BindingList;
 
+    public int FirstVisibleColumnIndex => _firstVisibleColumnIndex >= 0
+      ? _firstVisibleColumnIndex
+      : _firstVisibleColumnIndex = GetFirstVisibleColumnIndex();
+    
+    public string TableName => List.EntityTypeName;
+
     /// <summary>
     ///   Gets metadata about the database columns represented by the Entity's field
     ///   properties.
@@ -31,10 +38,6 @@ namespace SoundExplorers.Controller {
     internal BindingColumnList Columns => List.Columns;
 
     protected EditorController EditorController { get; }
-
-    public int FirstVisibleColumnIndex => _firstVisibleColumnIndex >= 0
-      ? _firstVisibleColumnIndex
-      : _firstVisibleColumnIndex = GetFirstVisibleColumnIndex();
 
     protected IGrid Grid { get; }
 
@@ -53,27 +56,9 @@ namespace SoundExplorers.Controller {
     protected bool IsPopulating { get; private set; }
     private IGrid OtherGrid => _otherGrid ??= GetOtherGrid();
     private string? RowText { get; set; }
-    public string TableName => List.EntityTypeName;
 
-    private IList<IBindingColumn> CreateBindingColumns() {
-      return (from column in Columns select (IBindingColumn)column).ToList();
-    }
-
-    private int GetFirstVisibleColumnIndex() {
-      int result = -1;
-      for (int i = 0; i < Columns.Count; i++) {
-        if (Columns[i].IsVisible) {
-          result = i;
-          break;
-        }
-      }
-      return result;
-    }
-
-    private IGrid GetOtherGrid() {
-      return Grid == EditorController.View.MainGrid
-        ? EditorController.View.ParentGrid
-        : EditorController.View.MainGrid;
+    public bool IsUrlColumn(string columnName) {
+      return Columns[columnName].ValueType == typeof(Uri);
     }
 
     public virtual void OnGotFocus() {
@@ -127,6 +112,27 @@ namespace SoundExplorers.Controller {
           PrepareToSwitchFocusFromOtherGridToThis();
         }
       }
+    }
+
+    private IList<IBindingColumn> CreateBindingColumns() {
+      return (from column in Columns select (IBindingColumn)column).ToList();
+    }
+
+    private int GetFirstVisibleColumnIndex() {
+      int result = -1;
+      for (int i = 0; i < Columns.Count; i++) {
+        if (Columns[i].IsVisible) {
+          result = i;
+          break;
+        }
+      }
+      return result;
+    }
+
+    private IGrid GetOtherGrid() {
+      return Grid == EditorController.View.MainGrid
+        ? EditorController.View.ParentGrid
+        : EditorController.View.MainGrid;
     }
 
     private void PrepareToSwitchFocusFromOtherGridToThis() {

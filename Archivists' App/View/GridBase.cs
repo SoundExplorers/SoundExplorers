@@ -30,8 +30,6 @@ namespace SoundExplorers.View {
       !ReadOnly && !IsCurrentCellInEditMode && SelectedRows.Count > 0 &&
       !SelectedRows.Contains(NewRow);
 
-    public GridControllerBase Controller { get; protected set; } = null!;
-
     public GridContextMenu ContextMenu =>
       _contextMenu ??= new GridContextMenu(this);
 
@@ -63,6 +61,7 @@ namespace SoundExplorers.View {
       }
     }
 
+    public GridControllerBase Controller { get; protected set; } = null!;
     public int CurrentRowIndex => CurrentRow?.Index ?? -1;
     public IGridCellColorScheme CellColorScheme { get; }
 
@@ -140,12 +139,6 @@ namespace SoundExplorers.View {
       deleteSelectedRowsMenuItem.Enabled = CanDeleteSelectedRows;
     }
 
-    private void AddColumns() {
-      foreach (var bindingColumn in Controller.BindingColumns) {
-        AddColumn(bindingColumn);
-      }
-    }
-
     protected virtual DataGridViewColumn AddColumn(IBindingColumn bindingColumn) {
       DataGridViewColumn result = bindingColumn.ValueType == typeof(bool)
         ? new DataGridViewCheckBoxColumn {FlatStyle = FlatStyle.Flat}
@@ -163,40 +156,27 @@ namespace SoundExplorers.View {
         result.DefaultCellStyle.Format = EditorController.DateFormat;
       } else if (result.ValueType == typeof(TimeSpan)) {
         result.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+      } else if (Controller.IsUrlColumn(bindingColumn.PropertyName)) {
+        result.DefaultCellStyle.Font = new Font(
+          DefaultCellStyle.Font, FontStyle.Underline);
+        result.DefaultCellStyle.BackColor = Color.White;
+        result.DefaultCellStyle.ForeColor = Color.Blue;
+        //result.DefaultCellStyle.SelectionBackColor = Color.Blue;
+        result.DefaultCellStyle.SelectionForeColor = Color.White;
+        // result.DefaultCellStyle.BackColor = DefaultCellStyle.SelectionForeColor;
+        // result.DefaultCellStyle.ForeColor = DefaultCellStyle.SelectionBackColor;
+        result.DefaultCellStyle.SelectionBackColor = DefaultCellStyle.SelectionBackColor;
+        // result.DefaultCellStyle.SelectionForeColor = DefaultCellStyle.SelectionForeColor;
       }
       Columns.Add(result);
       return result;
     }
 
-    /// <summary>
-    ///   Returns the cell that is at the specified client co-ordinates of the main grid.
-    ///   Null if there is no cell at the coordinates.
-    /// </summary>
-    /// <param name="x">
-    ///   The x co-ordinate relative to the main grid's client rectangle.
-    /// </param>
-    /// <param name="y">
-    ///   The y co-ordinate relative to the main grid's client rectangle.
-    /// </param>
-    private DataGridViewCell? GetCellAtClientCoOrdinates(int x, int y) {
-      var hitTestInfo = HitTest(x, y);
-      if (hitTestInfo.Type == DataGridViewHitTestType.Cell) {
-        return Rows[
-          hitTestInfo.RowIndex].Cells[
-          hitTestInfo.ColumnIndex];
-      }
-      return null;
-    }
-
-    // private void MakeRowCurrentAsync(int rowIndex) {
-    //   Debug.WriteLine($"GridBase.MakeRowCurrentAsync {Name}: row {rowIndex}");
-    //   MakeRowCurrent(rowIndex);
-    // }
-
     protected override void OnCurrentCellChanged(EventArgs e) {
       base.OnCurrentCellChanged(e);
       if (CurrentCell != null) {
         MainView.CopyToolStripButton.Enabled = CanCopy;
+        EnableDisableLinkControls();
       }
     }
 
@@ -204,6 +184,9 @@ namespace SoundExplorers.View {
       Debug.WriteLine($"GridBase.OnGotFocus {Name}");
       base.OnGotFocus(e);
       EditorView.CurrentGrid = this;
+      if (CurrentCell != null) {
+        EnableDisableLinkControls();
+      }
       Controller.OnGotFocus();
     }
 
@@ -284,6 +267,38 @@ namespace SoundExplorers.View {
         Controller.PrepareForFocus();
       }
       base.WndProc(ref m);
+    }
+
+    private void AddColumns() {
+      foreach (var bindingColumn in Controller.BindingColumns) {
+        AddColumn(bindingColumn);
+      }
+    }
+
+    private void EnableDisableLinkControls() {
+      MainView.ToolsLinkMenuItem.Enabled =
+        MainView.LinkToolStripButton.Enabled =
+          Controller.IsUrlColumn(CurrentCell.OwningColumn.Name);
+    }
+
+    /// <summary>
+    ///   Returns the cell that is at the specified client co-ordinates of the main grid.
+    ///   Null if there is no cell at the coordinates.
+    /// </summary>
+    /// <param name="x">
+    ///   The x co-ordinate relative to the main grid's client rectangle.
+    /// </param>
+    /// <param name="y">
+    ///   The y co-ordinate relative to the main grid's client rectangle.
+    /// </param>
+    private DataGridViewCell? GetCellAtClientCoOrdinates(int x, int y) {
+      var hitTestInfo = HitTest(x, y);
+      if (hitTestInfo.Type == DataGridViewHitTestType.Cell) {
+        return Rows[
+          hitTestInfo.RowIndex].Cells[
+          hitTestInfo.ColumnIndex];
+      }
+      return null;
     }
   }
 }
