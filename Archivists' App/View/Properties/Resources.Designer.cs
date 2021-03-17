@@ -65,7 +65,7 @@ namespace SoundExplorers.View.Properties {
         /// </summary>
         internal static System.Drawing.Bitmap Actions_Document_New_32x32 {
             get {
-                object obj = ResourceManager.GetObject("Actions Document New 32x32", resourceCulture);
+                object obj = ResourceManager.GetObject("Actions_Document_New_32x32", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -75,7 +75,7 @@ namespace SoundExplorers.View.Properties {
         /// </summary>
         internal static System.Drawing.Bitmap Actions_Document_Open_32x32 {
             get {
-                object obj = ResourceManager.GetObject("Actions Document Open 32x32", resourceCulture);
+                object obj = ResourceManager.GetObject("Actions_Document_Open_32x32", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -85,7 +85,7 @@ namespace SoundExplorers.View.Properties {
         /// </summary>
         internal static System.Drawing.Bitmap Actions_View_Refresh_32x32 {
             get {
-                object obj = ResourceManager.GetObject("Actions View Refresh 32x32", resourceCulture);
+                object obj = ResourceManager.GetObject("Actions_View_Refresh_32x32", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -95,7 +95,7 @@ namespace SoundExplorers.View.Properties {
         /// </summary>
         internal static System.Drawing.Bitmap Copy_Flatastic_32x32 {
             get {
-                object obj = ResourceManager.GetObject("Copy Flatastic 32x32", resourceCulture);
+                object obj = ResourceManager.GetObject("Copy_Flatastic_32x32", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -105,7 +105,7 @@ namespace SoundExplorers.View.Properties {
         /// </summary>
         internal static System.Drawing.Bitmap Cut_Flatastic_32x32 {
             get {
-                object obj = ResourceManager.GetObject("Cut Flatastic 32x32", resourceCulture);
+                object obj = ResourceManager.GetObject("Cut_Flatastic_32x32", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -115,7 +115,17 @@ namespace SoundExplorers.View.Properties {
         /// </summary>
         internal static System.Drawing.Bitmap Fred_Flintstone {
             get {
-                object obj = ResourceManager.GetObject("Fred Flintstone", resourceCulture);
+                object obj = ResourceManager.GetObject("Fred_Flintstone", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Link_Noto_Emoji_32x32 {
+            get {
+                object obj = ResourceManager.GetObject("Link_Noto_Emoji_32x32", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -125,7 +135,7 @@ namespace SoundExplorers.View.Properties {
         /// </summary>
         internal static System.Drawing.Bitmap Paste_Flatastic_32x32 {
             get {
-                object obj = ResourceManager.GetObject("Paste Flatastic 32x32", resourceCulture);
+                object obj = ResourceManager.GetObject("Paste_Flatastic_32x32", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

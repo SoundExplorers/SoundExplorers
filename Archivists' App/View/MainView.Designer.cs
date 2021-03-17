@@ -71,6 +71,7 @@ namespace SoundExplorers.View {
       this.CopyToolStripButton = new System.Windows.Forms.ToolStripButton();
       this.PasteToolStripButton = new System.Windows.Forms.ToolStripButton();
       this.StatusLabel = new System.Windows.Forms.Label();
+      this.LinkToolStripButton = new System.Windows.Forms.ToolStripButton();
       this.MenuStrip.SuspendLayout();
       this.ToolStrip.SuspendLayout();
       this.SuspendLayout();
@@ -88,7 +89,7 @@ namespace SoundExplorers.View {
       this.MenuStrip.Location = new System.Drawing.Point(0, 0);
       this.MenuStrip.MdiWindowListItem = this.WindowsMenu;
       this.MenuStrip.Name = "MenuStrip";
-      this.MenuStrip.Size = new System.Drawing.Size(843, 25);
+      this.MenuStrip.Size = new System.Drawing.Size(843, 24);
       this.MenuStrip.TabIndex = 0;
       this.MenuStrip.Text = "MenuStrip";
       this.MenuStrip.ItemAdded += new System.Windows.Forms.ToolStripItemEventHandler(this.MenuStrip_ItemAdded);
@@ -103,7 +104,7 @@ namespace SoundExplorers.View {
             this.FileExitMenuItem});
       this.FileMenu.ImageTransparentColor = System.Drawing.SystemColors.ActiveBorder;
       this.FileMenu.Name = "FileMenu";
-      this.FileMenu.Size = new System.Drawing.Size(41, 21);
+      this.FileMenu.Size = new System.Drawing.Size(37, 20);
       this.FileMenu.Text = "&File";
       // 
       // FileNewMenuItem
@@ -111,7 +112,7 @@ namespace SoundExplorers.View {
       this.FileNewMenuItem.ImageTransparentColor = System.Drawing.Color.Black;
       this.FileNewMenuItem.Name = "FileNewMenuItem";
       this.FileNewMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
-      this.FileNewMenuItem.Size = new System.Drawing.Size(237, 26);
+      this.FileNewMenuItem.Size = new System.Drawing.Size(205, 22);
       this.FileNewMenuItem.Text = "&New Table Editor";
       this.FileNewMenuItem.Click += new System.EventHandler(this.FileNewMenuItem_Click);
       // 
@@ -120,7 +121,7 @@ namespace SoundExplorers.View {
       this.FileOpenMenuItem.ImageTransparentColor = System.Drawing.Color.Black;
       this.FileOpenMenuItem.Name = "FileOpenMenuItem";
       this.FileOpenMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
-      this.FileOpenMenuItem.Size = new System.Drawing.Size(237, 26);
+      this.FileOpenMenuItem.Size = new System.Drawing.Size(205, 22);
       this.FileOpenMenuItem.Text = "&Open Table";
       this.FileOpenMenuItem.Click += new System.EventHandler(this.FileOpenMenuItem_Click);
       // 
@@ -129,14 +130,14 @@ namespace SoundExplorers.View {
       this.FileRefreshMenuItem.ImageTransparentColor = System.Drawing.Color.Black;
       this.FileRefreshMenuItem.Name = "FileRefreshMenuItem";
       this.FileRefreshMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F5;
-      this.FileRefreshMenuItem.Size = new System.Drawing.Size(237, 26);
+      this.FileRefreshMenuItem.Size = new System.Drawing.Size(205, 22);
       this.FileRefreshMenuItem.Text = "&Refresh Current Table";
       this.FileRefreshMenuItem.Click += new System.EventHandler(this.FileRefreshMenuItem_Click);
       // 
       // FileSeparator1
       // 
       this.FileSeparator1.Name = "FileSeparator1";
-      this.FileSeparator1.Size = new System.Drawing.Size(234, 6);
+      this.FileSeparator1.Size = new System.Drawing.Size(202, 6);
       // 
       // FileExitMenuItem
       // 
@@ -144,7 +145,7 @@ namespace SoundExplorers.View {
       this.FileExitMenuItem.Name = "FileExitMenuItem";
       this.FileExitMenuItem.ShortcutKeyDisplayString = "Alt+F4, Ctrl+Q";
       this.FileExitMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Q)));
-      this.FileExitMenuItem.Size = new System.Drawing.Size(237, 26);
+      this.FileExitMenuItem.Size = new System.Drawing.Size(205, 22);
       this.FileExitMenuItem.Text = "E&xit";
       this.FileExitMenuItem.Click += new System.EventHandler(this.FileExitMenuItem_Click);
       // 
@@ -160,7 +161,7 @@ namespace SoundExplorers.View {
             this.EditSelectRowMenuItem,
             this.EditDeleteSelectedRowsMenuItem});
       this.EditMenu.Name = "EditMenu";
-      this.EditMenu.Size = new System.Drawing.Size(44, 21);
+      this.EditMenu.Size = new System.Drawing.Size(39, 20);
       this.EditMenu.Text = "&Edit";
       // 
       // EditCutMenuItem
@@ -168,7 +169,7 @@ namespace SoundExplorers.View {
       this.EditCutMenuItem.ImageTransparentColor = System.Drawing.Color.Black;
       this.EditCutMenuItem.Name = "EditCutMenuItem";
       this.EditCutMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.X)));
-      this.EditCutMenuItem.Size = new System.Drawing.Size(279, 26);
+      this.EditCutMenuItem.Size = new System.Drawing.Size(244, 22);
       this.EditCutMenuItem.Text = "Cu&t";
       this.EditCutMenuItem.Click += new System.EventHandler(this.EditCutMenuItem_Click);
       // 
@@ -177,7 +178,7 @@ namespace SoundExplorers.View {
       this.EditCopyMenuItem.ImageTransparentColor = System.Drawing.Color.Black;
       this.EditCopyMenuItem.Name = "EditCopyMenuItem";
       this.EditCopyMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C)));
-      this.EditCopyMenuItem.Size = new System.Drawing.Size(279, 26);
+      this.EditCopyMenuItem.Size = new System.Drawing.Size(244, 22);
       this.EditCopyMenuItem.Text = "&Copy";
       this.EditCopyMenuItem.Click += new System.EventHandler(this.EditCopyMenuItem_Click);
       // 
@@ -186,7 +187,7 @@ namespace SoundExplorers.View {
       this.EditPasteMenuItem.ImageTransparentColor = System.Drawing.Color.Black;
       this.EditPasteMenuItem.Name = "EditPasteMenuItem";
       this.EditPasteMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.V)));
-      this.EditPasteMenuItem.Size = new System.Drawing.Size(279, 26);
+      this.EditPasteMenuItem.Size = new System.Drawing.Size(244, 22);
       this.EditPasteMenuItem.Text = "&Paste";
       this.EditPasteMenuItem.Click += new System.EventHandler(this.EditPasteMenuItem_Click);
       // 
@@ -195,21 +196,21 @@ namespace SoundExplorers.View {
       this.EditDeleteMenuItem.ImageTransparentColor = System.Drawing.Color.Black;
       this.EditDeleteMenuItem.Name = "EditDeleteMenuItem";
       this.EditDeleteMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Delete;
-      this.EditDeleteMenuItem.Size = new System.Drawing.Size(279, 26);
+      this.EditDeleteMenuItem.Size = new System.Drawing.Size(244, 22);
       this.EditDeleteMenuItem.Text = "&Delete";
       this.EditDeleteMenuItem.Click += new System.EventHandler(this.EditDeleteMenuItem_Click);
       // 
       // EditSeparator1
       // 
       this.EditSeparator1.Name = "EditSeparator1";
-      this.EditSeparator1.Size = new System.Drawing.Size(276, 6);
+      this.EditSeparator1.Size = new System.Drawing.Size(241, 6);
       // 
       // EditSelectAllMenuItem
       // 
       this.EditSelectAllMenuItem.ImageTransparentColor = System.Drawing.Color.Black;
       this.EditSelectAllMenuItem.Name = "EditSelectAllMenuItem";
       this.EditSelectAllMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.A)));
-      this.EditSelectAllMenuItem.Size = new System.Drawing.Size(279, 26);
+      this.EditSelectAllMenuItem.Size = new System.Drawing.Size(244, 22);
       this.EditSelectAllMenuItem.Text = "Select &All";
       this.EditSelectAllMenuItem.Click += new System.EventHandler(this.EditSelectAllMenuItem_Click);
       // 
@@ -218,7 +219,7 @@ namespace SoundExplorers.View {
       this.EditSelectRowMenuItem.ImageTransparentColor = System.Drawing.Color.Black;
       this.EditSelectRowMenuItem.Name = "EditSelectRowMenuItem";
       this.EditSelectRowMenuItem.ShortcutKeyDisplayString = "Shift+Space";
-      this.EditSelectRowMenuItem.Size = new System.Drawing.Size(279, 26);
+      this.EditSelectRowMenuItem.Size = new System.Drawing.Size(244, 22);
       this.EditSelectRowMenuItem.Text = "&Select Row";
       this.EditSelectRowMenuItem.Click += new System.EventHandler(this.EditSelectRowMenuItem_Click);
       // 
@@ -226,16 +227,17 @@ namespace SoundExplorers.View {
       // 
       this.EditDeleteSelectedRowsMenuItem.Name = "EditDeleteSelectedRowsMenuItem";
       this.EditDeleteSelectedRowsMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Delete)));
-      this.EditDeleteSelectedRowsMenuItem.Size = new System.Drawing.Size(279, 26);
+      this.EditDeleteSelectedRowsMenuItem.Size = new System.Drawing.Size(244, 22);
       this.EditDeleteSelectedRowsMenuItem.Text = "&Delete Selected Row(s)";
       this.EditDeleteSelectedRowsMenuItem.Click += new System.EventHandler(this.EditDeleteSelectedRowsMenuItem_Click);
       // 
       // ViewMenu
       // 
       this.ViewMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.ViewToolBarMenuItem, this.ViewStatusBarMenuItem});
+            this.ViewToolBarMenuItem,
+            this.ViewStatusBarMenuItem});
       this.ViewMenu.Name = "ViewMenu";
-      this.ViewMenu.Size = new System.Drawing.Size(49, 21);
+      this.ViewMenu.Size = new System.Drawing.Size(44, 20);
       this.ViewMenu.Text = "&View";
       // 
       // ViewToolBarMenuItem
@@ -245,7 +247,7 @@ namespace SoundExplorers.View {
       this.ViewToolBarMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
       this.ViewToolBarMenuItem.ImageTransparentColor = System.Drawing.Color.Black;
       this.ViewToolBarMenuItem.Name = "ViewToolBarMenuItem";
-      this.ViewToolBarMenuItem.Size = new System.Drawing.Size(135, 26);
+      this.ViewToolBarMenuItem.Size = new System.Drawing.Size(123, 22);
       this.ViewToolBarMenuItem.Text = "&Toolbar";
       this.ViewToolBarMenuItem.Click += new System.EventHandler(this.ViewToolBarMenuItem_Click);
       // 
@@ -256,7 +258,7 @@ namespace SoundExplorers.View {
       this.ViewStatusBarMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
       this.ViewStatusBarMenuItem.ImageTransparentColor = System.Drawing.Color.Black;
       this.ViewStatusBarMenuItem.Name = "ViewStatusBarMenuItem";
-      this.ViewStatusBarMenuItem.Size = new System.Drawing.Size(135, 26);
+      this.ViewStatusBarMenuItem.Size = new System.Drawing.Size(123, 22);
       this.ViewStatusBarMenuItem.Text = "&Statusbar";
       this.ViewStatusBarMenuItem.Click += new System.EventHandler(this.ViewStatusBarMenuItem_Click);
       // 
@@ -265,14 +267,14 @@ namespace SoundExplorers.View {
       this.ToolsMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.ToolsOptionsMenuItem});
       this.ToolsMenu.Name = "ToolsMenu";
-      this.ToolsMenu.Size = new System.Drawing.Size(53, 21);
+      this.ToolsMenu.Size = new System.Drawing.Size(46, 20);
       this.ToolsMenu.Text = "&Tools";
       // 
       // ToolsOptionsMenuItem
       // 
       this.ToolsOptionsMenuItem.ImageTransparentColor = System.Drawing.Color.Black;
       this.ToolsOptionsMenuItem.Name = "ToolsOptionsMenuItem";
-      this.ToolsOptionsMenuItem.Size = new System.Drawing.Size(136, 26);
+      this.ToolsOptionsMenuItem.Size = new System.Drawing.Size(116, 22);
       this.ToolsOptionsMenuItem.Text = "&Options";
       this.ToolsOptionsMenuItem.Click += new System.EventHandler(this.ToolsOptionsMenuItem_Click);
       // 
@@ -291,14 +293,14 @@ namespace SoundExplorers.View {
             this.WindowsCloseAllMenuItem,
             this.WindowsSeparator3});
       this.WindowsMenu.Name = "WindowsMenu";
-      this.WindowsMenu.Size = new System.Drawing.Size(75, 21);
+      this.WindowsMenu.Size = new System.Drawing.Size(68, 20);
       this.WindowsMenu.Text = "&Windows";
       // 
       // WindowsCascadeMenuItem
       // 
       this.WindowsCascadeMenuItem.ImageTransparentColor = System.Drawing.Color.Black;
       this.WindowsCascadeMenuItem.Name = "WindowsCascadeMenuItem";
-      this.WindowsCascadeMenuItem.Size = new System.Drawing.Size(341, 26);
+      this.WindowsCascadeMenuItem.Size = new System.Drawing.Size(300, 22);
       this.WindowsCascadeMenuItem.Text = "&Cascade";
       this.WindowsCascadeMenuItem.Click += new System.EventHandler(this.WindowsCascadeMenuItem_Click);
       // 
@@ -306,7 +308,7 @@ namespace SoundExplorers.View {
       // 
       this.WindowsTileSideBySideMenuItem.ImageTransparentColor = System.Drawing.Color.Black;
       this.WindowsTileSideBySideMenuItem.Name = "WindowsTileSideBySideMenuItem";
-      this.WindowsTileSideBySideMenuItem.Size = new System.Drawing.Size(341, 26);
+      this.WindowsTileSideBySideMenuItem.Size = new System.Drawing.Size(300, 22);
       this.WindowsTileSideBySideMenuItem.Text = "Tile &Side By Side";
       this.WindowsTileSideBySideMenuItem.Click += new System.EventHandler(this.WindowsTileSideBySideMenuItem_Click);
       // 
@@ -314,7 +316,7 @@ namespace SoundExplorers.View {
       // 
       this.WindowsTileStackedMenuItem.ImageTransparentColor = System.Drawing.Color.Black;
       this.WindowsTileStackedMenuItem.Name = "WindowsTileStackedMenuItem";
-      this.WindowsTileStackedMenuItem.Size = new System.Drawing.Size(341, 26);
+      this.WindowsTileStackedMenuItem.Size = new System.Drawing.Size(300, 22);
       this.WindowsTileStackedMenuItem.Text = "Tile S&tacked";
       this.WindowsTileStackedMenuItem.Click += new System.EventHandler(this.WindowsTileStackedMenuItem_Click);
       // 
@@ -322,20 +324,20 @@ namespace SoundExplorers.View {
       // 
       this.WindowsArrangeIconsMenuItem.ImageTransparentColor = System.Drawing.Color.Black;
       this.WindowsArrangeIconsMenuItem.Name = "WindowsArrangeIconsMenuItem";
-      this.WindowsArrangeIconsMenuItem.Size = new System.Drawing.Size(341, 26);
+      this.WindowsArrangeIconsMenuItem.Size = new System.Drawing.Size(300, 22);
       this.WindowsArrangeIconsMenuItem.Text = "&Arrange Icons";
       this.WindowsArrangeIconsMenuItem.Click += new System.EventHandler(this.WindowsArrangeIconsMenuItem_Click);
       // 
       // WindowsSeparator1
       // 
       this.WindowsSeparator1.Name = "WindowsSeparator1";
-      this.WindowsSeparator1.Size = new System.Drawing.Size(338, 6);
+      this.WindowsSeparator1.Size = new System.Drawing.Size(297, 6);
       // 
       // WindowsNextMenuItem
       // 
       this.WindowsNextMenuItem.Name = "WindowsNextMenuItem";
       this.WindowsNextMenuItem.ShortcutKeyDisplayString = "Ctrl+F6";
-      this.WindowsNextMenuItem.Size = new System.Drawing.Size(341, 26);
+      this.WindowsNextMenuItem.Size = new System.Drawing.Size(300, 22);
       this.WindowsNextMenuItem.Text = "&Next";
       this.WindowsNextMenuItem.Click += new System.EventHandler(this.WindowsNextMenuItem_Click);
       // 
@@ -343,21 +345,21 @@ namespace SoundExplorers.View {
       // 
       this.WindowsPreviousMenuItem.Name = "WindowsPreviousMenuItem";
       this.WindowsPreviousMenuItem.ShortcutKeyDisplayString = "Ctrl+Shift+F6";
-      this.WindowsPreviousMenuItem.Size = new System.Drawing.Size(341, 26);
+      this.WindowsPreviousMenuItem.Size = new System.Drawing.Size(300, 22);
       this.WindowsPreviousMenuItem.Text = "&Previous";
       this.WindowsPreviousMenuItem.Click += new System.EventHandler(this.WindowsPreviousMenuItem_Click);
       // 
       // WindowsSeparator2
       // 
       this.WindowsSeparator2.Name = "WindowsSeparator2";
-      this.WindowsSeparator2.Size = new System.Drawing.Size(338, 6);
+      this.WindowsSeparator2.Size = new System.Drawing.Size(297, 6);
       // 
       // WindowsCloseCurrentTableEditorMenuItem
       // 
       this.WindowsCloseCurrentTableEditorMenuItem.Name = "WindowsCloseCurrentTableEditorMenuItem";
       this.WindowsCloseCurrentTableEditorMenuItem.ShortcutKeyDisplayString = "Ctrl+F4, Ctrl+W";
       this.WindowsCloseCurrentTableEditorMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.W)));
-      this.WindowsCloseCurrentTableEditorMenuItem.Size = new System.Drawing.Size(341, 26);
+      this.WindowsCloseCurrentTableEditorMenuItem.Size = new System.Drawing.Size(300, 22);
       this.WindowsCloseCurrentTableEditorMenuItem.Text = "C&lose Current Table Editor";
       this.WindowsCloseCurrentTableEditorMenuItem.Click += new System.EventHandler(this.WindowsCloseCurrentTableEditorMenuItem_Click);
       // 
@@ -365,14 +367,14 @@ namespace SoundExplorers.View {
       // 
       this.WindowsCloseAllMenuItem.ImageTransparentColor = System.Drawing.Color.Black;
       this.WindowsCloseAllMenuItem.Name = "WindowsCloseAllMenuItem";
-      this.WindowsCloseAllMenuItem.Size = new System.Drawing.Size(341, 26);
+      this.WindowsCloseAllMenuItem.Size = new System.Drawing.Size(300, 22);
       this.WindowsCloseAllMenuItem.Text = "Cl&ose All";
       this.WindowsCloseAllMenuItem.Click += new System.EventHandler(this.WindowsCloseAllMenuItem_Click);
       // 
       // WindowsSeparator3
       // 
       this.WindowsSeparator3.Name = "WindowsSeparator3";
-      this.WindowsSeparator3.Size = new System.Drawing.Size(338, 6);
+      this.WindowsSeparator3.Size = new System.Drawing.Size(297, 6);
       this.WindowsSeparator3.Visible = false;
       // 
       // HelpMenu
@@ -380,14 +382,14 @@ namespace SoundExplorers.View {
       this.HelpMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.HelpAboutMenuItem});
       this.HelpMenu.Name = "HelpMenu";
-      this.HelpMenu.Size = new System.Drawing.Size(49, 21);
+      this.HelpMenu.Size = new System.Drawing.Size(44, 20);
       this.HelpMenu.Text = "&Help";
       // 
       // HelpAboutMenuItem
       // 
       this.HelpAboutMenuItem.ImageTransparentColor = System.Drawing.Color.Black;
       this.HelpAboutMenuItem.Name = "HelpAboutMenuItem";
-      this.HelpAboutMenuItem.Size = new System.Drawing.Size(134, 26);
+      this.HelpAboutMenuItem.Size = new System.Drawing.Size(116, 22);
       this.HelpAboutMenuItem.Text = "&About...";
       this.HelpAboutMenuItem.Click += new System.EventHandler(this.HelpAboutMenuItem_Click);
       // 
@@ -401,8 +403,9 @@ namespace SoundExplorers.View {
             this.RefreshToolStripButton,
             this.CutToolStripButton,
             this.CopyToolStripButton,
-            this.PasteToolStripButton});
-      this.ToolStrip.Location = new System.Drawing.Point(0, 25);
+            this.PasteToolStripButton,
+            this.LinkToolStripButton});
+      this.ToolStrip.Location = new System.Drawing.Point(0, 24);
       this.ToolStrip.Name = "ToolStrip";
       this.ToolStrip.Size = new System.Drawing.Size(843, 41);
       this.ToolStrip.TabIndex = 1;
@@ -482,18 +485,27 @@ namespace SoundExplorers.View {
       // 
       // StatusLabel
       // 
-      this.StatusLabel.BorderStyle = System.Windows.Forms.BorderStyle.None;
-      this.StatusLabel.Dock = DockStyle.Bottom;
+      this.StatusLabel.Dock = System.Windows.Forms.DockStyle.Bottom;
       this.StatusLabel.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+      this.StatusLabel.Location = new System.Drawing.Point(0, 524);
       this.StatusLabel.Name = "StatusLabel";
-      this.StatusLabel.Size = new System.Drawing.Size(310, 34);
+      this.StatusLabel.Size = new System.Drawing.Size(843, 34);
       this.StatusLabel.TabIndex = 2;
       this.StatusLabel.Text = "StatusLabel";
       this.StatusLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-      //
+      // 
+      // LinkToolStripButton
+      // 
+      this.LinkToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+      this.LinkToolStripButton.Image = global::SoundExplorers.View.Properties.Resources.Link_Noto_Emoji_32x32;
+      this.LinkToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+      this.LinkToolStripButton.Name = "LinkToolStripButton";
+      this.LinkToolStripButton.Size = new System.Drawing.Size(24, 38);
+      this.LinkToolStripButton.Text = "LinkToolStripButton";
+      // 
       // MainView
       // 
-      this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 18F);
+      this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.ClientSize = new System.Drawing.Size(843, 558);
       this.Controls.Add(this.ToolStrip);
@@ -561,5 +573,6 @@ namespace SoundExplorers.View {
         public System.Windows.Forms.ToolStripButton CopyToolStripButton;
         public System.Windows.Forms.ToolStripButton PasteToolStripButton;
         public System.Windows.Forms.Label StatusLabel;
-    }
+    private ToolStripButton LinkToolStripButton;
+  }
 }
