@@ -75,7 +75,7 @@ namespace SoundExplorers.Controller {
           UseShellExecute = true
         });
       } else {
-        throw new ApplicationException(
+        throw new NotSupportedException(
           "Follow Link is not (yet) supported for " + 
           $"{RuntimeInformation.OSDescription}");
       }
