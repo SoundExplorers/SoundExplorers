@@ -5,8 +5,14 @@ using System.Windows.Forms;
 using SoundExplorers.Controller;
 
 namespace SoundExplorers.View {
+  
+  /// <summary>
+  ///   The colour scheme of a grid's cells, with support for inverting the foreground
+  ///   and background colours of a parent or child grid when the other grid of the pair
+  ///   is focused.
+  /// </summary>
   internal class GridCellColorScheme : IGridCellColorScheme {
-    public GridCellColorScheme(GridBase grid) {
+    public GridCellColorScheme(DataGridView grid) {
       Grid = grid;
       DefaultBackColors = CreateDefaultBackColors(); 
       DefaultForeColors = CreateDefaultForeColors(); 
@@ -18,7 +24,7 @@ namespace SoundExplorers.View {
     private IList<Color> DefaultForeColors { get; }
     private IList<Color> DefaultSelectionBackColors { get; }
     private IList<Color> DefaultSelectionForeColors { get; }
-    private GridBase Grid { get; }
+    private DataGridView Grid { get; }
 
     /// <summary>
     ///   Inverts the foreground and background colours of both selected and unselected
@@ -28,8 +34,8 @@ namespace SoundExplorers.View {
     /// <remarks>
     ///   We use the grid's default colours for all columns, as we do not want URL cells
     ///   to appear with an inversion of their special blue-on-white colours when the
-    ///   grid they are in is not focused.  It is less distracting if they don't stand
-    ///   out in that context.
+    ///   grid they are in is not focused. It could be misleading or distracting if they
+    ///   were to stand out in that context.
     /// </remarks>
     public void Invert() {
       for (int i = 0; i < Grid.Columns.Count; i++) {
@@ -57,36 +63,56 @@ namespace SoundExplorers.View {
       }
     }
 
+    /// <summary>
+    ///   Creates a list of the default background colours of all columns.
+    /// </summary>
+    /// <remarks>
+    ///   Currently, a specific background colour is specified only for URL columns. All
+    ///   other columns default their background colours to the default for the grid.
+    /// </remarks>
     private IList<Color> CreateDefaultBackColors() {
       return (
         from DataGridViewColumn column in Grid.Columns
-        select Grid.Controller.IsUrlColumn(column.Name)
-          ? column.DefaultCellStyle.BackColor
-          : Grid.DefaultCellStyle.BackColor).ToList();
+        select column.DefaultCellStyle.BackColor).ToList();
     }
-
+    
+    /// <summary>
+    ///   Creates a list of the default foreground colours of all columns.
+    /// </summary>
+    /// <remarks>
+    ///   Currently, a specific foreground colour is specified only for URL columns. All
+    ///   other columns default their foreground colours to the default for the grid.
+    /// </remarks>
     private IList<Color> CreateDefaultForeColors() {
       return (
         from DataGridViewColumn column in Grid.Columns
-        select Grid.Controller.IsUrlColumn(column.Name)
-          ? column.DefaultCellStyle.ForeColor
-          : Grid.DefaultCellStyle.ForeColor).ToList();
+        select column.DefaultCellStyle.ForeColor).ToList();
     }
 
+    /// <summary>
+    ///   Creates a list of the default selection background colours of all columns.
+    /// </summary>
+    /// <remarks>
+    ///   Currently, all columns default their selection background colours to the
+    ///   default for the grid.
+    /// </remarks>
     private IList<Color> CreateDefaultSelectionBackColors() {
       return (
         from DataGridViewColumn column in Grid.Columns
-        select Grid.Controller.IsUrlColumn(column.Name)
-          ? column.DefaultCellStyle.SelectionBackColor
-          : Grid.DefaultCellStyle.SelectionBackColor).ToList();
+        select column.DefaultCellStyle.SelectionBackColor).ToList();
     }
 
+    /// <summary>
+    ///   Creates a list of the default selection foreground colours of all columns.
+    /// </summary>
+    /// <remarks>
+    ///   Currently, all columns default their selection foreground colours to the
+    ///   default for the grid.
+    /// </remarks>
     private IList<Color> CreateDefaultSelectionForeColors() {
       return (
         from DataGridViewColumn column in Grid.Columns
-        select Grid.Controller.IsUrlColumn(column.Name)
-          ? column.DefaultCellStyle.SelectionForeColor
-          : Grid.DefaultCellStyle.SelectionForeColor).ToList();
+        select column.DefaultCellStyle.SelectionForeColor).ToList();
     }
   }
 }
