@@ -241,7 +241,7 @@ namespace SoundExplorers.View {
     private void FileRefreshMenuItem_Click(object? sender, EventArgs e) {
       if (MdiChildren.Any()) {
         Cursor = Cursors.WaitCursor;
-        EditorView?.RefreshData();
+        EditorView?.Controller.Populate();
       }
     }
 
@@ -278,6 +278,7 @@ namespace SoundExplorers.View {
     }
 
     private void ToolsLinkMenuItem_Click(object? sender, EventArgs e) {
+      EditorView?.CurrentGrid?.Controller.FollowLink();
     }
 
     private void ToolsOptionsMenuItem_Click(object? sender, EventArgs e) {

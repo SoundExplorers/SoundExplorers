@@ -276,7 +276,7 @@ namespace SoundExplorers.View {
       // 
       this.ToolsLinkMenuItem.ImageTransparentColor = System.Drawing.Color.Black;
       this.ToolsLinkMenuItem.Name = "ToolsLinkMenuItem";
-      this.ToolsLinkMenuItem.ShortcutKeyDisplayString = "Space, Ctrl+Click";
+      this.ToolsLinkMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Enter)));
       this.ToolsLinkMenuItem.Size = new System.Drawing.Size(244, 22);
       this.ToolsLinkMenuItem.Text = "Follow &Link";
       this.ToolsLinkMenuItem.Click += new System.EventHandler(this.ToolsLinkMenuItem_Click);
@@ -503,7 +503,7 @@ namespace SoundExplorers.View {
       this.LinkToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
       this.LinkToolStripButton.Name = "LinkToolStripButton";
       this.LinkToolStripButton.Size = new System.Drawing.Size(38, 38);
-      this.LinkToolStripButton.Text = "Follow Link (Space or Ctrl+Click)";
+      this.LinkToolStripButton.Text = "Follow Link (Ctrl+Enter)";
       this.LinkToolStripButton.Click += new System.EventHandler(this.ToolsLinkMenuItem_Click);
       // 
       // StatusLabel

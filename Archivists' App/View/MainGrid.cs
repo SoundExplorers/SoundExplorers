@@ -148,7 +148,8 @@ namespace SoundExplorers.View {
         MainView.CopyToolStripButton.Enabled = CanCopy;
         if (Controller.IsUrlColumn(CurrentCell.OwningColumn.Name)) {
           MainView.ToolsLinkMenuItem.Enabled =
-            MainView.LinkToolStripButton.Enabled = true;
+            MainView.LinkToolStripButton.Enabled = 
+              !string.IsNullOrWhiteSpace(CurrentCell.Value?.ToString()); 
         }
       }
     }

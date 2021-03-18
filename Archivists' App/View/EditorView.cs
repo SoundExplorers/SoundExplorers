@@ -18,7 +18,7 @@ namespace SoundExplorers.View {
       GridSplitContainer.MouseCaptureChanged += GridSplitContainer_MouseCaptureChanged;
     }
 
-    private EditorController Controller { get; set; } = null!;
+    public EditorController Controller { get; private set; } = null!;
     public GridBase? CurrentGrid { get; internal set; }
     private MainView MainView => (MainView)MdiParent;
     private bool IsClosed { get; set; }
@@ -331,10 +331,6 @@ namespace SoundExplorers.View {
       base.OnResize(e);
       // Stop ghost border lines appearing on main window background.
       ParentForm?.Refresh();
-    }
-
-    public void RefreshData() {
-      Controller.Populate();
     }
 
     /// <summary>

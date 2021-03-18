@@ -57,6 +57,11 @@ namespace SoundExplorers.Controller {
     private IGrid OtherGrid => _otherGrid ??= GetOtherGrid();
     private string? RowText { get; set; }
 
+    public void FollowLink() {
+      Debug.WriteLine(
+        $"GridControllerBase.FollowLink {Grid.Name}: {Grid.CurrentCellValue}");
+    }
+
     public bool IsUrlColumn(string columnName) {
       return Columns[columnName].ValueType == typeof(Uri);
     }
