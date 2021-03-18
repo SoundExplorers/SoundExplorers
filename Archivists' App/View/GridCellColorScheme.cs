@@ -32,7 +32,8 @@ namespace SoundExplorers.View {
     ///   grid is focused.
     /// </summary>
     /// <remarks>
-    ///   We use the grid's default colours for all columns, as we do not want URL cells
+    ///   We use the grid's default colours for all columns, as we do not want URL cells,
+    ///   the only ones for which column-specific defaults have actually been defined,
     ///   to appear with an inversion of their special blue-on-white colours when the
     ///   grid they are in is not focused. It could be misleading or distracting if they
     ///   were to stand out in that context.
