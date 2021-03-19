@@ -92,14 +92,26 @@ namespace SoundExplorers.Controller {
       //   "MainGridController.OnRowEnter:  Any row entered (after ItemAdded if insertion row)");
       Debug.WriteLine(
         $"MainGridController.OnRowEnter: row {rowIndex} of {BindingList.Count}");
-      base.OnRowEnter(rowIndex);
-      if (!IsPopulating) {
-        List.OnRowEnter(rowIndex);
+      // We need to guard against out of range rowIndex, which happens if the user
+      // presses Tab from the last cell of a child grid.
+      if (rowIndex < List.BindingList.Count) {
+        base.OnRowEnter(rowIndex);
+        if (!IsPopulating) {
+          List.OnRowEnter(rowIndex);
+        }
+        if (IsRestoringRowCurrency) {
+          IsRestoringRowCurrency = false;
+          base.OnGotFocus();
+        }
       }
-      if (IsRestoringRowCurrency) {
-        IsRestoringRowCurrency = false;
-        base.OnGotFocus();
-      }
+      // base.OnRowEnter(rowIndex);
+      // if (!IsPopulating) {
+      //   List.OnRowEnter(rowIndex);
+      // }
+      // if (IsRestoringRowCurrency) {
+      //   IsRestoringRowCurrency = false;
+      //   base.OnGotFocus();
+      // }
     }
 
     /// <summary>
