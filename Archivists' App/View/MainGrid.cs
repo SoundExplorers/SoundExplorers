@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
 using SoundExplorers.Common;
 using SoundExplorers.Controller;
@@ -173,8 +174,22 @@ namespace SoundExplorers.View {
       if (CurrentCell is ComboBoxCell && IsCurrentCellDirty) {
         // Debug.WriteLine(
         //   "MainGrid.OnCurrentCellDirtyStateChanged: ComboBoxCell, IsCurrentCellDirty");
-        // This fires the cell value changed handler MainGrid_CellValueChanged.
-        CommitEdit(DataGridViewDataErrorContexts.CurrentCellChange);
+        // This fires the cell value changed handler OnCellValueChanged (or would if it
+        // still existed).
+        try {
+          CommitEdit(DataGridViewDataErrorContexts.CurrentCellChange);
+        } catch (IOException exception) {
+          // Very occasionally, IOException
+          // "The process cannot access the file '[A DATABASE FILE PATH].odb' because it
+          // is being used by another process."
+          // is thrown if the user rapidly keys up or down a drop-down list (at least
+          // when the list is extended). Rather than let it crash or display an unclear
+          // error message, we shall just ignore it for now, as I don't know how to fix
+          // it. The downside of ignoring the error is that the selection committed can
+          // end up being not what the user thinks it will be.  Let's hope it will be
+          // very rare in practice.
+          Console.WriteLine(exception.Message);
+        }
       }
     }
 

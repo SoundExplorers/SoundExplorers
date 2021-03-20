@@ -580,8 +580,8 @@ namespace SoundExplorers.Model {
     }
 
     private void UpdateExistingEntityProperty(int rowIndex, string propertyName) {
-      Debug.WriteLine(
-        $"EntityListBase.UpdateExistingEntityProperty: row {rowIndex}; property {propertyName}");
+      // Debug.WriteLine(
+      //   $"EntityListBase.UpdateExistingEntityProperty: row {rowIndex}; property {propertyName}");
       LastDatabaseChangeAction = StatementType.Update;
       var bindingItem = BindingList[rowIndex]!;
       var newValue = bindingItem.GetPropertyValue(propertyName);
