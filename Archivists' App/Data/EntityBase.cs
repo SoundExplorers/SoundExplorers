@@ -62,7 +62,7 @@ namespace SoundExplorers.Data {
 
     /// <summary>
     ///   A hopefully safely old date, suitable for initialising Date fields
-    ///   because it is compatible with calendar controls.
+    ///   because it is compatible with calendar / date picker controls.
     /// </summary>
     public static DateTime DefaultDate { get; }
 

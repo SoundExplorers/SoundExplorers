@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Windows.Forms;
 using SoundExplorers.Common;
@@ -20,12 +21,16 @@ namespace SoundExplorers.View {
       throw new InvalidOperationException(
         "The current cell is not in edit mode or its editor is not a TextBox.");
 
+    private bool DisplayCalendar { get; set; }
     private bool DisplayDropDownList { get; set; }
 
     private Graphics Graphics => _graphics ??= CreateGraphics();
 
     private bool IsComboBoxCellCurrent =>
       CurrentCell?.OwningColumn.CellTemplate is ComboBoxCell;
+
+    private bool IsDatePickerCellCurrent =>
+      CurrentCell?.OwningColumn.CellTemplate is DatePickerCell;
 
     public new MainGridController Controller {
       get => (MainGridController)base.Controller;
@@ -87,7 +92,7 @@ namespace SoundExplorers.View {
       if (bindingColumn.ReferencesAnotherEntity) {
         result.CellTemplate = ComboBoxCell.Create(Controller, result.Name);
       } else if (result.ValueType == typeof(DateTime)) {
-        result.CellTemplate = new CalendarCell();
+        result.CellTemplate = new DatePickerCell();
       } else if (result is DataGridViewTextBoxColumn) {
         result.CellTemplate = new TextBoxCell();
         result.DefaultCellStyle.DataSourceNullValue = string.Empty;
@@ -106,24 +111,28 @@ namespace SoundExplorers.View {
         SetCurrentColumnWidthToEditWidth();
         if (IsTextBoxCellCurrent) {
           BeginInvoke((Action)SubscribeToTextBoxEvents);
-        }
-        if (IsComboBoxCellCurrent && DisplayDropDownList) {
+          if (Controller.IsUrlColumn(CurrentCell.OwningColumn.Name)) {
+            MainView.ToolsLinkMenuItem.Enabled =
+              MainView.LinkToolStripButton.Enabled = false;
+            // When a URL is not being edited, its text is underlined blue, to encourage
+            // linking. But that looks weird if the URL is being edited. So make the text
+            // plain-old while the URL is in edit mode.
+            BeginInvoke((Action)delegate {
+              var textBox = (CurrentCell as TextBoxCell)!.TextBox; 
+              textBox.BackColor = DefaultCellStyle.BackColor;
+              textBox.ForeColor = DefaultCellStyle.ForeColor;
+              textBox.Font = DefaultCellStyle.Font;
+            });
+          }
+        } else if (IsComboBoxCellCurrent && DisplayDropDownList) {
+          DisplayDropDownList = false;
           BeginInvoke((Action)delegate {
             ((ComboBoxCell)CurrentCell).ComboBox.DroppedDown = true;
-            DisplayDropDownList = false;
           });
-        }
-        if (Controller.IsUrlColumn(CurrentCell.OwningColumn.Name)) {
-          MainView.ToolsLinkMenuItem.Enabled =
-            MainView.LinkToolStripButton.Enabled = false;
-          // When a URL is not being edited, its text is underlined blue, to encourage
-          // linking. But that looks weird if the URL is being edited. So make the text
-          // plain-old while the URL is in edit mode.
+        } else if (IsDatePickerCellCurrent && DisplayCalendar) {
+          DisplayCalendar = false;
           BeginInvoke((Action)delegate {
-            var textBox = (CurrentCell as TextBoxCell)!.TextBox; 
-            textBox.BackColor = DefaultCellStyle.BackColor;
-            textBox.ForeColor = DefaultCellStyle.ForeColor;
-            textBox.Font = DefaultCellStyle.Font;
+            ShowCalendar(((DatePickerCell)CurrentCell).DateTimePicker);
           });
         }
       }
@@ -177,6 +186,9 @@ namespace SoundExplorers.View {
           if (IsComboBoxCellCurrent) {
             DisplayDropDownList = true;
             BeginEdit(true);
+          } else if (IsDatePickerCellCurrent) {
+            DisplayCalendar = true;
+            BeginEdit(true);
           }
           break;
         default:
@@ -206,6 +218,17 @@ namespace SoundExplorers.View {
     /// </remarks>
     private static int GetTextWidthInPixels(string text, Font font, Graphics graphics) {
       return (int)Math.Ceiling(graphics.MeasureString(text, font).Width);
+    }
+
+    /// <summary>
+    ///   As <see cref="DateTimePicker" /> does not have a property or method to
+    ///   programatically display the calendar, we have to do it by sending the
+    ///   DateTimePicker the corresponding keyboard shortcut as a Windows message. 
+    /// </summary>
+    [SuppressMessage("ReSharper", "SuggestBaseTypeForParameter")]
+    private static void ShowCalendar(DateTimePicker datePicker) {
+      int dummy = SafeNativeMethods.SendMessage(datePicker.Handle, 
+        (uint)WindowsMessage.WM_KEYDOWN, (int)Keys.F4, 0);
     }
 
     /// <summary>

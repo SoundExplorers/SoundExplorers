@@ -4,16 +4,16 @@ using SoundExplorers.Controller;
 
 namespace SoundExplorers.View {
   /// <summary>
-  ///   Editing control for a calendar cell of a DataGridView.
+  ///   Editing control for a date picker cell of a DataGridView.
   /// </summary>
   /// <remarks>
   ///   Code modified from
   ///   MSDN/"How to: Host Controls in Windows Forms DataGridView Cells"
   ///   http://msdn.microsoft.com/en-us/library/7tas5c80.aspx.
   /// </remarks>
-  internal class CalendarEditingControl : DateTimePicker,
+  internal class DatePickerEditingControl : DateTimePicker,
     IDataGridViewEditingControl {
-    public CalendarEditingControl() {
+    public DatePickerEditingControl() {
       Format = DateTimePickerFormat.Custom;
       CustomFormat = EditorController.DateFormat;
     }

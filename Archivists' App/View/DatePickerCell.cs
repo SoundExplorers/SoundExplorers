@@ -3,7 +3,7 @@ using System.Windows.Forms;
 
 namespace SoundExplorers.View {
   /// <summary>
-  ///   Calendar cell of a DataGridView.
+  ///   Date picker cell of a DataGridView.
   /// </summary>
   /// <remarks>
   ///   The cell displays dates in ordinary text box cells,
@@ -15,12 +15,12 @@ namespace SoundExplorers.View {
   ///     http://msdn.microsoft.com/en-us/library/7tas5c80.aspx.
   ///   </para>
   /// </remarks>
-  internal class CalendarCell : DataGridViewTextBoxCell, ICanRestoreErrorValue {
+  internal class DatePickerCell : DataGridViewTextBoxCell, ICanRestoreErrorValue {
     public override Type EditType =>
-      // Return the type of the editing control that CalendarCell uses.
-      typeof(CalendarEditingControl);
+      // Return the type of the editing control that DatePickerCell uses.
+      typeof(DatePickerEditingControl);
 
-    private DateTimePicker DateTimePicker =>
+    public DateTimePicker DateTimePicker =>
       (DateTimePicker)DataGridView!.EditingControl;
 
     public void RestoreErrorValue(object? errorValue) {

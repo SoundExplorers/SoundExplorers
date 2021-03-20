@@ -3,8 +3,9 @@
 namespace SoundExplorers.View {
   [SuppressMessage("ReSharper", "InconsistentNaming")]
   [SuppressMessage("ReSharper", "IdentifierTypo")]
-  public enum WindowsMessage {
+  internal enum WindowsMessage {
     WM_CLOSE = 0x0010,
-    WM_SETFOCUS = 0x0007
+    WM_SETFOCUS = 0x0007,
+    WM_KEYDOWN = 0x100
   }
 }
