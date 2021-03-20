@@ -1,7 +1,6 @@
 using System;
 using System.Diagnostics;
 using System.Drawing;
-using System.IO;
 using System.Windows.Forms;
 using SoundExplorers.Common;
 using SoundExplorers.Controller;
@@ -155,50 +154,12 @@ namespace SoundExplorers.View {
       }
     }
 
-    /// <summary>
-    ///   Emulates the ComboBox's SelectedIndexChanged event.
-    /// </summary>
-    /// <remarks>
-    ///   A known problem with <see cref="DataGridView" /> is that, where there are
-    ///   multiple ComboBox columns, ComboBox events can get spuriously raised against
-    ///   the ComboBoxes in multiple cells of the row that is being edited. So this event
-    ///   handler provides a workaround by emulating a cell ComboBox's
-    ///   SelectedIndexChange event but without the spurious occurrences. The fix is
-    ///   based on the second answer here:
-    ///   https://stackoverflow.com/questions/11141872/event-that-fires-during-MainGridcomboboxcolumn-selectedindexchanged
-    /// </remarks>
-    protected override void OnCurrentCellDirtyStateChanged(EventArgs e) {
-      base.OnCurrentCellDirtyStateChanged(e);
-      // Debug.WriteLine(
-      //   $"MainGrid.CurrentCellDirtyStateChanged: IsCurrentCellDirty = {IsCurrentCellDirty}");
-      if (CurrentCell is ComboBoxCell && IsCurrentCellDirty) {
-        // Debug.WriteLine(
-        //   "MainGrid.OnCurrentCellDirtyStateChanged: ComboBoxCell, IsCurrentCellDirty");
-        // This fires the cell value changed handler OnCellValueChanged (or would if it
-        // still existed).
-        try {
-          CommitEdit(DataGridViewDataErrorContexts.CurrentCellChange);
-        } catch (IOException exception) {
-          // Very occasionally, IOException
-          // "The process cannot access the file '[A DATABASE FILE PATH].odb' because it
-          // is being used by another process."
-          // is thrown if the user rapidly keys up or down a drop-down list (at least
-          // when the list is extended). Rather than let it crash or display an unclear
-          // error message, we shall just ignore it for now, as I don't know how to fix
-          // it. The downside of ignoring the error is that the selection committed can
-          // end up being not what the user thinks it will be.  Let's hope it will be
-          // very rare in practice.
-          Console.WriteLine(exception.Message);
-        }
-      }
-    }
-
     protected override void OnCurrentCellChanged(EventArgs e) {
       base.OnCurrentCellChanged(e);
       if (CurrentCell != null) {
         MainView.CutToolStripButton.Enabled = CanCut;
         // I don't think it is practicable to continually enable or disable the Paste
-        // button depending on the change in whether to clipboard contain text.
+        // button depending on the change in whether the clipboard contains text.
         MainView.PasteToolStripButton.Enabled = !CurrentCell.ReadOnly;
       }
     }

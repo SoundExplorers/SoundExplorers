@@ -589,6 +589,8 @@ namespace SoundExplorers.Model {
       if (newValue == oldValue) {
         return;
       }
+      // Debug.WriteLine(
+      //   $"EntityListBase.UpdateExistingEntityProperty: row {rowIndex}; property {propertyName}; new value '{newValue}'");
       var entity = this[rowIndex];
       try {
         bindingItem.ValidatePropertyUpdate(propertyName, entity);
