@@ -21,9 +21,7 @@ namespace SoundExplorers.View {
       throw new InvalidOperationException(
         "The current cell is not in edit mode or its editor is not a TextBox.");
 
-    private bool DisplayCalendar { get; set; }
-    private bool DisplayDropDownList { get; set; }
-
+    private bool IsCalendarToBeDisplayed { get; set; }
     private Graphics Graphics => _graphics ??= CreateGraphics();
 
     private bool IsComboBoxCellCurrent =>
@@ -31,6 +29,8 @@ namespace SoundExplorers.View {
 
     private bool IsDatePickerCellCurrent =>
       CurrentCell?.OwningColumn.CellTemplate is DatePickerCell;
+    
+    private bool IsDropDownListToBeDisplayed { get; set; }
 
     public new MainGridController Controller {
       get => (MainGridController)base.Controller;
@@ -124,16 +124,14 @@ namespace SoundExplorers.View {
               textBox.Font = DefaultCellStyle.Font;
             });
           }
-        } else if (IsComboBoxCellCurrent && DisplayDropDownList) {
-          DisplayDropDownList = false;
+        } else if (IsDropDownListToBeDisplayed) {
+          IsDropDownListToBeDisplayed = false;
           BeginInvoke((Action)delegate {
             ((ComboBoxCell)CurrentCell).ComboBox.DroppedDown = true;
           });
-        } else if (IsDatePickerCellCurrent && DisplayCalendar) {
-          DisplayCalendar = false;
-          BeginInvoke((Action)delegate {
-            ShowCalendar(((DatePickerCell)CurrentCell).DateTimePicker);
-          });
+        } else if (IsCalendarToBeDisplayed) {
+          IsCalendarToBeDisplayed = false;
+          BeginInvoke((Action)DisplayCalendar);
         }
       }
       // THE FOLLOWING IS NOT YET IN USE BUT MAY BE LATER:
@@ -184,10 +182,10 @@ namespace SoundExplorers.View {
         case Keys.Alt | Keys.Up:
         case Keys.Alt | Keys.Down:
           if (IsComboBoxCellCurrent) {
-            DisplayDropDownList = true;
+            IsDropDownListToBeDisplayed = true;
             BeginEdit(true);
           } else if (IsDatePickerCellCurrent) {
-            DisplayCalendar = true;
+            IsCalendarToBeDisplayed = true;
             BeginEdit(true);
           }
           break;
@@ -221,13 +219,16 @@ namespace SoundExplorers.View {
     }
 
     /// <summary>
+    /// </summary>
+    /// <remarks>
     ///   As <see cref="DateTimePicker" /> does not have a property or method to
     ///   programatically display the calendar, we have to do it by sending the
-    ///   DateTimePicker the corresponding keyboard shortcut as a Windows message. 
-    /// </summary>
+    ///   date picker the F4 keyboard shortcut as a Windows message. 
+    /// </remarks>
     [SuppressMessage("ReSharper", "SuggestBaseTypeForParameter")]
-    private static void ShowCalendar(DateTimePicker datePicker) {
-      int dummy = SafeNativeMethods.SendMessage(datePicker.Handle, 
+    private void DisplayCalendar() {
+      int dummy = SafeNativeMethods.SendMessage(
+        ((DatePickerCell)CurrentCell).DatePicker.Handle, 
         (uint)WindowsMessage.WM_KEYDOWN, (int)Keys.F4, 0);
     }
 

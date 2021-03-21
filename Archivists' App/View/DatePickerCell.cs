@@ -20,12 +20,12 @@ namespace SoundExplorers.View {
       // Return the type of the editing control that DatePickerCell uses.
       typeof(DatePickerEditingControl);
 
-    public DateTimePicker DateTimePicker =>
+    public DateTimePicker DatePicker =>
       (DateTimePicker)DataGridView!.EditingControl;
 
     public void RestoreErrorValue(object? errorValue) {
       if (errorValue is DateTime dateTime) {
-        DateTimePicker.Value = dateTime.Date;
+        DatePicker.Value = dateTime.Date;
       }
     }
 
@@ -40,10 +40,10 @@ namespace SoundExplorers.View {
       // or, more to the point in this case, empty.
       if (Value == null
           || Value == DBNull.Value) {
-        DateTimePicker.Value = DateTime.Now;
-        Value = DateTimePicker.Value;
+        DatePicker.Value = DateTime.Now;
+        Value = DatePicker.Value;
       } else {
-        DateTimePicker.Value = (DateTime)Value;
+        DatePicker.Value = (DateTime)Value;
       }
     }
   } //End of class
