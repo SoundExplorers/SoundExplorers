@@ -36,7 +36,9 @@ namespace SoundExplorers.View {
       // Set the value of the editing control to the current cell value.
       base.InitializeEditingControl(rowIndex, initialFormattedValue,
         dataGridViewCellStyle);
-      // Use the default row value when Value property is null
+      DatePicker.MinDate = DateTime.Parse("1900/01/02");
+      DatePicker.MaxDate = DateTime.Parse("2099/12/31");
+      // Use the default value when Value property is null
       // or, more to the point in this case, empty.
       if (Value == null
           || Value == DBNull.Value) {
