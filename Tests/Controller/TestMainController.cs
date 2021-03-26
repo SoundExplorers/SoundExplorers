@@ -6,7 +6,7 @@ using VelocityDb.Session;
 
 namespace SoundExplorers.Tests.Controller {
   public class TestMainController : MainController {
-    public TestMainController(IView<MainController> view,
+    public TestMainController(IMainView view,
       QueryHelper queryHelper, SessionBase session) : base(view) {
       QueryHelper = queryHelper;
       Session = session;

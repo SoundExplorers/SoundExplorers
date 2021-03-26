@@ -5,7 +5,8 @@ using System.Windows.Forms;
 using SoundExplorers.Controller;
 
 namespace SoundExplorers.View {
-  public partial class MainView : Form, IView<MainController> {
+  // public partial class MainView : Form, IView<MainController> {
+  public partial class MainView : Form, IMainView {
     /// <summary>
     ///   Initialises a new instance of the <see cref="MainView" /> class.
     /// </summary>
@@ -52,20 +53,16 @@ namespace SoundExplorers.View {
       }
     }
 
+    public void ShowErrorMessage(string text) {
+      ShowMessage(text, MessageBoxIcon.Error);
+    }
+
     /// <summary>
     ///   Creates a MainView and its associated controller, as per the
     ///   Model-View-Controller design pattern, returning the view instance created.
     /// </summary>
     public static MainView Create() {
       return (MainView)ViewFactory.Create<MainView, MainController>();
-    }
-
-    private EditorView CreateEditorView() {
-      WindowsSeparator3.Visible = true; // See comment in OnEditorClosed 
-      var result = EditorView.Create(SelectEditorView.Controller.SelectedEntityListType!,
-        Controller);
-      result.FormClosed += EditorView_FormClosed;
-      return result;
     }
 
     protected override void OnFormClosed(FormClosedEventArgs e) {
@@ -92,13 +89,29 @@ namespace SoundExplorers.View {
       SplashManager.Close();
     }
 
+    protected override void WndProc(ref Message m) {
+      if (m.Msg == (int)WindowsMessage.WM_CLOSE) {
+        // Attempting to close Form
+        Controller.IsClosing = true;
+      }
+      base.WndProc(ref m);
+    }
+
+    private EditorView CreateEditorView() {
+      WindowsSeparator3.Visible = true; // See comment in OnEditorClosed 
+      var result = EditorView.Create(SelectEditorView.Controller.SelectedEntityListType!,
+        Controller);
+      result.FormClosed += EditorView_FormClosed;
+      return result;
+    }
+
     private SelectEditorView CreateSelectEditorView() {
       return SelectEditorView.Create(Controller.TableName);
     }
 
     private void DisableGridToolStripButtons() {
       RefreshToolStripButton.Enabled = CutToolStripButton.Enabled =
-        CopyToolStripButton.Enabled = PasteToolStripButton.Enabled = 
+        CopyToolStripButton.Enabled = PasteToolStripButton.Enabled =
           ToolsLinkMenuItem.Enabled = LinkToolStripButton.Enabled = false;
     }
 
@@ -245,6 +258,15 @@ namespace SoundExplorers.View {
       }
     }
 
+    private void HelpEntityRelationshipDiagramMenuItem_Click(
+      object? sender, EventArgs e) {
+      Controller.ShowEntityRelationshipDiagram();
+    }
+
+    private void HelpKeyboardShortcutsMenuItem_Click(object? sender, EventArgs e) {
+      Controller.ShowKeyboardShortcuts();
+    }
+
     private void HelpAboutMenuItem_Click(object? sender, EventArgs e) {
       new AboutView().ShowDialog();
     }
@@ -275,6 +297,12 @@ namespace SoundExplorers.View {
       if (e.Item.Text == string.Empty) {
         e.Item.Visible = false;
       }
+    }
+
+    private void ShowMessage(string text, MessageBoxIcon icon) {
+      Cursor = Cursors.Default;
+      MessageBox.Show(
+        this, text, Application.ProductName, MessageBoxButtons.OK, icon);
     }
 
     private void ToolsLinkMenuItem_Click(object? sender, EventArgs e) {
@@ -365,14 +393,6 @@ namespace SoundExplorers.View {
       foreach (var childForm in MdiChildren) {
         childForm.Close();
       }
-    }
-
-    protected override void WndProc(ref Message m) {
-      if (m.Msg == (int)WindowsMessage.WM_CLOSE) {
-        // Attempting to close Form
-        Controller.IsClosing = true;
-      }
-      base.WndProc(ref m);
     }
   } //End of class
 } //End of namespace

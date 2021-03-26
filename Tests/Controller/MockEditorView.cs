@@ -1,7 +1,7 @@
 ﻿using SoundExplorers.Controller;
 
 namespace SoundExplorers.Tests.Controller {
-  public class MockEditorView : IEditorView {
+  public class MockEditorView : MockView<EditorController>, IEditorView {
     public MockEditorView(IMainGrid mainGrid, IParentGrid parentGrid) {
       MainGrid = mainGrid;
       ParentGrid = parentGrid;
@@ -20,10 +20,6 @@ namespace SoundExplorers.Tests.Controller {
     public IGrid? CurrentGrid { get; set; }
     public IMainGrid MainGrid { get; }
     public IParentGrid ParentGrid { get; }
-
-    public void SetController(EditorController controller) {
-      // Controller = controller;
-    }
 
     public void Close() {
       CloseCount++;
