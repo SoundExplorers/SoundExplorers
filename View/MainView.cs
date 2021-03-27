@@ -245,6 +245,15 @@ namespace SoundExplorers.View {
       }
     }
 
+    private void HelpEntityRelationshipDiagramMenuItem_Click(
+      object? sender, EventArgs e) {
+      Controller.ShowEntityRelationshipDiagram();
+    }
+
+    private void HelpKeyboardShortcutsMenuItem_Click(object? sender, EventArgs e) {
+      Controller.ShowKeyboardShortcuts();
+    }
+
     private void HelpAboutMenuItem_Click(object? sender, EventArgs e) {
       new AboutView().ShowDialog();
     }
