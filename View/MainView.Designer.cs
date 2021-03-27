@@ -279,7 +279,7 @@ namespace SoundExplorers.View {
       this.ToolsLinkMenuItem.ImageTransparentColor = System.Drawing.Color.Black;
       this.ToolsLinkMenuItem.Name = "ToolsLinkMenuItem";
       this.ToolsLinkMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.L)));
-      this.ToolsLinkMenuItem.Size = new System.Drawing.Size(244, 22);
+      this.ToolsLinkMenuItem.Size = new System.Drawing.Size(174, 22);
       this.ToolsLinkMenuItem.Text = "Follow &Link";
       this.ToolsLinkMenuItem.Click += new System.EventHandler(this.ToolsLinkMenuItem_Click);
       // 
@@ -287,7 +287,7 @@ namespace SoundExplorers.View {
       // 
       this.ToolsOptionsMenuItem.ImageTransparentColor = System.Drawing.Color.Black;
       this.ToolsOptionsMenuItem.Name = "ToolsOptionsMenuItem";
-      this.ToolsOptionsMenuItem.Size = new System.Drawing.Size(244, 22);
+      this.ToolsOptionsMenuItem.Size = new System.Drawing.Size(174, 22);
       this.ToolsOptionsMenuItem.Text = "&Options";
       this.ToolsOptionsMenuItem.Click += new System.EventHandler(this.ToolsOptionsMenuItem_Click);
       // 
@@ -404,7 +404,7 @@ namespace SoundExplorers.View {
       // 
       this.HelpEntityRelationshipDiagramMenuItem.ImageTransparentColor = System.Drawing.Color.Black;
       this.HelpEntityRelationshipDiagramMenuItem.Name = "HelpEntityRelationshipDiagramMenuItem";
-      this.HelpEntityRelationshipDiagramMenuItem.Size = new System.Drawing.Size(116, 22);
+      this.HelpEntityRelationshipDiagramMenuItem.Size = new System.Drawing.Size(229, 22);
       this.HelpEntityRelationshipDiagramMenuItem.Text = "&Entity Relationship Diagram...";
       this.HelpEntityRelationshipDiagramMenuItem.Click += new System.EventHandler(this.HelpEntityRelationshipDiagramMenuItem_Click);
       // 
@@ -412,7 +412,7 @@ namespace SoundExplorers.View {
       // 
       this.HelpKeyboardShortcutsMenuItem.ImageTransparentColor = System.Drawing.Color.Black;
       this.HelpKeyboardShortcutsMenuItem.Name = "HelpKeyboardShortcutsMenuItem";
-      this.HelpKeyboardShortcutsMenuItem.Size = new System.Drawing.Size(116, 22);
+      this.HelpKeyboardShortcutsMenuItem.Size = new System.Drawing.Size(229, 22);
       this.HelpKeyboardShortcutsMenuItem.Text = "&Keyboard Shortcuts...";
       this.HelpKeyboardShortcutsMenuItem.Click += new System.EventHandler(this.HelpKeyboardShortcutsMenuItem_Click);
       // 
@@ -420,7 +420,7 @@ namespace SoundExplorers.View {
       // 
       this.HelpAboutMenuItem.ImageTransparentColor = System.Drawing.Color.Black;
       this.HelpAboutMenuItem.Name = "HelpAboutMenuItem";
-      this.HelpAboutMenuItem.Size = new System.Drawing.Size(116, 22);
+      this.HelpAboutMenuItem.Size = new System.Drawing.Size(229, 22);
       this.HelpAboutMenuItem.Text = "&About...";
       this.HelpAboutMenuItem.Click += new System.EventHandler(this.HelpAboutMenuItem_Click);
       // 

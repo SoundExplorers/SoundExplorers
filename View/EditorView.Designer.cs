@@ -85,17 +85,36 @@ namespace SoundExplorers.View {
       // 
       // ParentGrid
       // 
+      this.ParentGrid.AllowUserToAddRows = false;
+      this.ParentGrid.AllowUserToDeleteRows = false;
+      this.ParentGrid.AllowUserToOrderColumns = true;
+      this.ParentGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
       this.ParentGrid.Dock = System.Windows.Forms.DockStyle.Fill;
+      this.ParentGrid.EditorView = null;
       this.ParentGrid.Location = new System.Drawing.Point(0, 0);
+      this.ParentGrid.MainView = null;
+      this.ParentGrid.Margin = new System.Windows.Forms.Padding(4);
+      this.ParentGrid.MultiSelect = false;
       this.ParentGrid.Name = "ParentGrid";
+      this.ParentGrid.ReadOnly = true;
+      this.ParentGrid.RowHeadersWidth = 51;
+      this.ParentGrid.ShowCellToolTips = false;
       this.ParentGrid.Size = new System.Drawing.Size(379, 152);
       this.ParentGrid.TabIndex = 3;
       // 
       // MainGrid
       // 
+      this.MainGrid.AllowUserToOrderColumns = true;
+      this.MainGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
       this.MainGrid.Dock = System.Windows.Forms.DockStyle.Fill;
+      this.MainGrid.EditorView = null;
       this.MainGrid.Location = new System.Drawing.Point(0, 0);
+      this.MainGrid.MainView = null;
+      this.MainGrid.Margin = new System.Windows.Forms.Padding(4);
       this.MainGrid.Name = "MainGrid";
+      this.MainGrid.RowHeadersWidth = 51;
+      this.MainGrid.ShowCellErrors = false;
+      this.MainGrid.ShowCellToolTips = false;
       this.MainGrid.Size = new System.Drawing.Size(379, 166);
       this.MainGrid.TabIndex = 4;
       // 
@@ -126,7 +145,7 @@ namespace SoundExplorers.View {
       // 
       // EditorView
       // 
-      this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 18F);
+      this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.ClientSize = new System.Drawing.Size(379, 322);
       this.Controls.Add(this.ImageSplitContainer);

@@ -23,7 +23,6 @@ namespace SoundExplorers.View {
     /// the contents of this method with the code editor.
     /// </summary>
     private void InitializeComponent() {
-      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AboutView));
       this.OKButtion = new System.Windows.Forms.Button();
       this.CopyrightLabel = new System.Windows.Forms.Label();
       this.ProductNameLabel = new System.Windows.Forms.Label();
@@ -43,9 +42,9 @@ namespace SoundExplorers.View {
       this.OKButtion.FlatAppearance.BorderColor = System.Drawing.Color.Gold;
       this.OKButtion.Font = new System.Drawing.Font("Verdana", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
       this.OKButtion.ForeColor = System.Drawing.Color.Gold;
-      this.OKButtion.Location = new System.Drawing.Point(605, 251);
+      this.OKButtion.Location = new System.Drawing.Point(648, 269);
       this.OKButtion.Name = "OKButtion";
-      this.OKButtion.Size = new System.Drawing.Size(102, 42);
+      this.OKButtion.Size = new System.Drawing.Size(83, 33);
       this.OKButtion.TabIndex = 5;
       this.OKButtion.Text = "OK";
       this.OKButtion.UseVisualStyleBackColor = false;
@@ -57,9 +56,9 @@ namespace SoundExplorers.View {
       this.CopyrightLabel.Cursor = System.Windows.Forms.Cursors.Default;
       this.CopyrightLabel.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
       this.CopyrightLabel.ForeColor = System.Drawing.Color.Gold;
-      this.CopyrightLabel.Location = new System.Drawing.Point(251, 158);
+      this.CopyrightLabel.Location = new System.Drawing.Point(339, 132);
       this.CopyrightLabel.Name = "CopyrightLabel";
-      this.CopyrightLabel.Size = new System.Drawing.Size(516, 20);
+      this.CopyrightLabel.Size = new System.Drawing.Size(392, 16);
       this.CopyrightLabel.TabIndex = 7;
       this.CopyrightLabel.Text = "Copyright © 2021-22 Sound and Light Exploration Society";
       this.CopyrightLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -71,9 +70,9 @@ namespace SoundExplorers.View {
       this.ProductNameLabel.Cursor = System.Windows.Forms.Cursors.Default;
       this.ProductNameLabel.Font = new System.Drawing.Font("Old English Text MT", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
       this.ProductNameLabel.ForeColor = System.Drawing.Color.Gold;
-      this.ProductNameLabel.Location = new System.Drawing.Point(251, 30);
+      this.ProductNameLabel.Location = new System.Drawing.Point(339, 24);
       this.ProductNameLabel.Name = "ProductNameLabel";
-      this.ProductNameLabel.Size = new System.Drawing.Size(460, 40);
+      this.ProductNameLabel.Size = new System.Drawing.Size(370, 32);
       this.ProductNameLabel.TabIndex = 8;
       this.ProductNameLabel.Text = "Sound Explorers Audio Archive";
       this.ProductNameLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -85,9 +84,9 @@ namespace SoundExplorers.View {
       this.VersionLabel.Cursor = System.Windows.Forms.Cursors.Default;
       this.VersionLabel.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
       this.VersionLabel.ForeColor = System.Drawing.Color.Gold;
-      this.VersionLabel.Location = new System.Drawing.Point(251, 100);
+      this.VersionLabel.Location = new System.Drawing.Point(339, 77);
       this.VersionLabel.Name = "VersionLabel";
-      this.VersionLabel.Size = new System.Drawing.Size(150, 20);
+      this.VersionLabel.Size = new System.Drawing.Size(112, 16);
       this.VersionLabel.TabIndex = 9;
       this.VersionLabel.Text = "Version 2020.01";
       this.VersionLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -101,9 +100,9 @@ namespace SoundExplorers.View {
       this.Panel1.Controls.Add(this.VersionLabel);
       this.Panel1.Controls.Add(this.CopyrightLabel);
       this.Panel1.Controls.Add(this.ProductNameLabel);
-      this.Panel1.Location = new System.Drawing.Point(12, 12);
+      this.Panel1.Location = new System.Drawing.Point(10, 10);
       this.Panel1.Name = "Panel1";
-      this.Panel1.Size = new System.Drawing.Size(776, 319);
+      this.Panel1.Size = new System.Drawing.Size(778, 321);
       this.Panel1.TabIndex = 10;
       // 
       // LicenceButton
@@ -113,26 +112,26 @@ namespace SoundExplorers.View {
       this.LicenceButton.FlatAppearance.BorderColor = System.Drawing.Color.Gold;
       this.LicenceButton.Font = new System.Drawing.Font("Verdana", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
       this.LicenceButton.ForeColor = System.Drawing.Color.Gold;
-      this.LicenceButton.Location = new System.Drawing.Point(19, 251);
+      this.LicenceButton.Location = new System.Drawing.Point(339, 269);
       this.LicenceButton.Name = "LicenceButton";
-      this.LicenceButton.Size = new System.Drawing.Size(127, 42);
+      this.LicenceButton.Size = new System.Drawing.Size(103, 33);
       this.LicenceButton.TabIndex = 11;
       this.LicenceButton.Text = "&Licence...";
       this.LicenceButton.UseVisualStyleBackColor = false;
       // 
       // PictureBox1
       // 
-      this.PictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("PictureBox1.Image")));
-      this.PictureBox1.Location = new System.Drawing.Point(23, 30);
+      this.PictureBox1.Image = global::SoundExplorers.View.Properties.Resources.Grand_Piano_256x256;
+      this.PictureBox1.Location = new System.Drawing.Point(19, 24);
       this.PictureBox1.Name = "PictureBox1";
-      this.PictureBox1.Size = new System.Drawing.Size(200, 200);
+      this.PictureBox1.Size = new System.Drawing.Size(256, 256);
       this.PictureBox1.TabIndex = 10;
       this.PictureBox1.TabStop = false;
       // 
       // AboutView
       // 
       this.AcceptButton = this.OKButtion;
-      this.AutoScaleBaseSize = new System.Drawing.Size(11, 25);
+      this.AutoScaleBaseSize = new System.Drawing.Size(9, 20);
       this.BackColor = System.Drawing.Color.Gold;
       this.CancelButton = this.OKButtion;
       this.ClientSize = new System.Drawing.Size(800, 343);

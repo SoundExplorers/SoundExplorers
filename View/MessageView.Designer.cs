@@ -25,6 +25,7 @@ namespace SoundExplorers.View {
     /// the contents of this method with the code editor.
     /// </summary>
     private void InitializeComponent() {
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MessageView));
       this.StatusLabel = new System.Windows.Forms.Label();
       this.OkButton = new System.Windows.Forms.Button();
       this.CopyButton = new System.Windows.Forms.Button();
@@ -95,6 +96,7 @@ namespace SoundExplorers.View {
       this.AcceptButton = this.OkButton;
       this.CancelButton = this.OkButton;
       this.ClientSize = new System.Drawing.Size(310, 123);
+      this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
       this.Location = new System.Drawing.Point(0, 0);
       this.Name = "MessageView";
       this.Text = "MessageView";
