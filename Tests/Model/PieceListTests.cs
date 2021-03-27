@@ -189,17 +189,17 @@ namespace SoundExplorers.Tests.Model {
     }
 
     [Test]
-    public void GetIdentifyingParentChildrenForMainList() {
+    public void GetIdentifyingParentAndChildrenForMainList() {
       List = CreatePieceList();
       Session.BeginUpdate();
       Data.AddCreditsPersisted(5, Session);
       Session.Commit();
       Populate();
-      var identifyingParentChildren = List.GetIdentifyingParentAndChildrenForChildList(0);
-      Assert.AreSame(Data.Pieces[0], identifyingParentChildren.IdentifyingParent,
+      var identifyingParentAndChildren = List.GetIdentifyingParentAndChildrenForChildList(0);
+      Assert.AreSame(Data.Pieces[0], identifyingParentAndChildren.IdentifyingParent,
         "IdentifyingParent");
-      Assert.AreEqual(5, identifyingParentChildren.Children.Count, "Count");
-      Assert.IsInstanceOf<Credit>(identifyingParentChildren.Children[0], "Child type");
+      Assert.AreEqual(5, identifyingParentAndChildren.Children.Count, "Count");
+      Assert.IsInstanceOf<Credit>(identifyingParentAndChildren.Children[0], "Child type");
     }
 
     [Test]

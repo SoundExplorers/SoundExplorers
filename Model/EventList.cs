@@ -81,7 +81,7 @@ namespace SoundExplorers.Model {
     }
 
     public override void Populate(
-      IdentifyingParentAndChildren? identifyingParentChildren = null,
+      IdentifyingParentAndChildren? identifyingParentAndChildren = null,
       bool createBindingList = true) {
       if (!HasDefaultEventTypeBeenFound) {
         AddDefaultEventTypeIfItDoesNotExist();
@@ -92,7 +92,7 @@ namespace SoundExplorers.Model {
       if (!HasDefaultSeriesBeenFound) {
         AddDefaultSeriesIfItDoesNotExist();
       }
-      base.Populate(identifyingParentChildren, createBindingList);
+      base.Populate(identifyingParentAndChildren, createBindingList);
     }
   }
 }

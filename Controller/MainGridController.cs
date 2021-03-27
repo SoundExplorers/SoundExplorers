@@ -212,10 +212,10 @@ namespace SoundExplorers.Controller {
       EditorController.View.ShowWarningMessage(message);
     }
 
-    internal void SetIdentifyingParentChildrenForList(
+    internal void SetIdentifyingParentAndChildrenForList(
       IdentifyingParentAndChildren identifyingParentAndChildrenForList) {
       IsFixingFocus = true;
-      IdentifyingParentChildrenForList = identifyingParentAndChildrenForList;
+      IdentifyingParentAndChildrenForList = identifyingParentAndChildrenForList;
     }
 
     protected override void OnPopulatedAsync() {

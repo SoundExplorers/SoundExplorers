@@ -75,12 +75,12 @@ namespace SoundExplorers.Model {
     }
 
     public override void Populate(
-      IdentifyingParentAndChildren? identifyingParentChildren = null,
+      IdentifyingParentAndChildren? identifyingParentAndChildren = null,
       bool createBindingList = true) {
       if (!HasDefaultActBeenFound) {
         AddDefaultActIfItDoesNotExist();
       }
-      base.Populate(identifyingParentChildren, createBindingList);
+      base.Populate(identifyingParentAndChildren, createBindingList);
     }
   }
 }

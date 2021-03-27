@@ -356,7 +356,7 @@ namespace SoundExplorers.Model {
     /// <summary>
     ///   Populates and sorts the list and table.
     /// </summary>
-    /// <param name="identifyingParentChildren">
+    /// <param name="identifyingParentAndChildren">
     ///   Optionally specifies the required list of entities, together with their
     ///   identifying parent. If null, the default, all entities of the class's entity
     ///   type will be fetched from the database.
@@ -368,16 +368,16 @@ namespace SoundExplorers.Model {
     ///   populate a grid.
     /// </param>
     public virtual void Populate(
-      IdentifyingParentAndChildren? identifyingParentChildren = null,
+      IdentifyingParentAndChildren? identifyingParentAndChildren = null,
       bool createBindingList = true) {
       Clear();
       bool isTransactionRequired = !Session.InTransaction;
       if (isTransactionRequired) {
         Session.BeginRead();
       }
-      if (identifyingParentChildren != null) {
-        IdentifyingParent = identifyingParentChildren.IdentifyingParent;
-        AddRange((IEnumerable<TEntity>)identifyingParentChildren.Children);
+      if (identifyingParentAndChildren != null) {
+        IdentifyingParent = identifyingParentAndChildren.IdentifyingParent;
+        AddRange((IEnumerable<TEntity>)identifyingParentAndChildren.Children);
       } else {
         var entities = Session.AllObjects<TEntity>();
         AddRange(entities);

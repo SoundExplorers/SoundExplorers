@@ -45,7 +45,7 @@ namespace SoundExplorers.Controller {
     ///   specifies the grid's identifying parent entity and, for populating the grid,
     ///   its child entities.
     /// </summary>
-    protected IdentifyingParentAndChildren? IdentifyingParentChildrenForList { get; set; }
+    protected IdentifyingParentAndChildren? IdentifyingParentAndChildrenForList { get; set; }
 
     /// <summary>
     ///   Gets the list of entities represented in the grid.
@@ -105,8 +105,8 @@ namespace SoundExplorers.Controller {
     public virtual void Populate() {
       Debug.WriteLine($"GridControllerBase.Populate {Grid.Name}");
       IsPopulating = true;
-      List.Populate(IdentifyingParentChildrenForList);
-      IdentifyingParentChildrenForList = null;
+      List.Populate(IdentifyingParentAndChildrenForList);
+      IdentifyingParentAndChildrenForList = null;
       Grid.BeginInvoke(OnPopulatedAsync);
     }
 

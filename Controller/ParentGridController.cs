@@ -28,7 +28,7 @@ namespace SoundExplorers.Controller {
 
     private int PreviousRowIndex { get; set; }
 
-    private IdentifyingParentAndChildren GetIdentifyingParentChildrenForMainList(
+    private IdentifyingParentAndChildren GetIdentifyingParentAndChildrenForMainList(
       int rowIndex) {
       Debug.WriteLine(
         $"ParentGridController.GetIdentifyingParentAndChildrenForChildList: row {rowIndex}");
@@ -72,8 +72,8 @@ namespace SoundExplorers.Controller {
     private void PopulateMainGrid(int parentRowIndex) {
       Debug.WriteLine(
         $"ParentGridController.PopulateMainGrid: parent row {parentRowIndex}");
-      MainGrid.Controller.SetIdentifyingParentChildrenForList(
-        GetIdentifyingParentChildrenForMainList(parentRowIndex));
+      MainGrid.Controller.SetIdentifyingParentAndChildrenForList(
+        GetIdentifyingParentAndChildrenForMainList(parentRowIndex));
       MainGrid.Populate();
     }
 

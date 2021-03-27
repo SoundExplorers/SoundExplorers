@@ -116,7 +116,7 @@ namespace SoundExplorers.Model {
     /// <summary>
     ///   Populates and sorts the list and table.
     /// </summary>
-    /// <param name="identifyingParentChildren">
+    /// <param name="identifyingParentAndChildren">
     ///   Optionally specifies the required list of entities, together with their
     ///   identifying parent. If null, the default, all entities of the class's entity
     ///   type will be fetched from the database.
@@ -127,7 +127,7 @@ namespace SoundExplorers.Model {
     ///   entities. Default: true. Set to false if entity list is not to be used to
     ///   populate a grid.
     /// </param>
-    void Populate(IdentifyingParentAndChildren? identifyingParentChildren = null,
+    void Populate(IdentifyingParentAndChildren? identifyingParentAndChildren = null,
       bool createBindingList = true);
 
     /// <summary>
