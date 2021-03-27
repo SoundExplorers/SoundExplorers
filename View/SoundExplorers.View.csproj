@@ -7,6 +7,8 @@
     <RootNamespace>SoundExplorers.View</RootNamespace>
     <AssemblyName>SoundExplorers.View</AssemblyName>
     <Nullable>enable</Nullable>
+    <Configurations>Release;Debug</Configurations>
+    <Platforms>X64;x64</Platforms>
   </PropertyGroup>
   <PropertyGroup>
     <!-- Assembly properties. Before .Net 5, these were coded in AssemblyInfo.cs. -->
