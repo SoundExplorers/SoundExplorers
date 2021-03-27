@@ -10,17 +10,17 @@
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
-AppId={{F6E23AFF-DE5E-4F32-B84B-2689E64442A0}
+AppId={{D3E520A5-4C56-48AC-B30F-03E6D0166BC6}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
-;AppVerName={#MyAppName} {#MyAppVersion}
+AppVerName={#MyAppName}
 AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
-DefaultDirName={autopf}\{#MyAppName}
+DefaultDirName=C:\Program Files\{#MyAppName}
 DisableProgramGroupPage=yes
-LicenseFile=E:\Simon\OneDrive\Documents\Visual Studio Projects\SoundExplorers\LICENCE.txt
+LicenseFile=E:\Simon\OneDrive\Documents\Visual Studio Projects\SoundExplorers\SoundExplorers\bin\X64\Release\net5.0-windows\Licence.txt
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
 ;PrivilegesRequired=lowest
 PrivilegesRequiredOverridesAllowed=dialog
@@ -38,25 +38,24 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "E:\Simon\OneDrive\Documents\Visual Studio Projects\SoundExplorers\SoundExplorers\bin\Release\net5.0-windows\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
-Source: "E:\Simon\OneDrive\Documents\Visual Studio Projects\SoundExplorers\SoundExplorers\bin\Release\net5.0-windows\JetBrains.Annotations.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "E:\Simon\OneDrive\Documents\Visual Studio Projects\SoundExplorers\SoundExplorers\bin\Release\net5.0-windows\JetBrains.Profiler.Api.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "E:\Simon\OneDrive\Documents\Visual Studio Projects\SoundExplorers\SoundExplorers\bin\Release\net5.0-windows\Licence.txt"; DestDir: "{app}"; Flags: ignoreversion
-Source: "E:\Simon\OneDrive\Documents\Visual Studio Projects\SoundExplorers\SoundExplorers\bin\Release\net5.0-windows\LumenWorks.Framework.IO.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "E:\Simon\OneDrive\Documents\Visual Studio Projects\SoundExplorers\SoundExplorers\bin\Release\net5.0-windows\Microsoft.Data.Edm.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "E:\Simon\OneDrive\Documents\Visual Studio Projects\SoundExplorers\SoundExplorers\bin\Release\net5.0-windows\Microsoft.Data.OData.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "E:\Simon\OneDrive\Documents\Visual Studio Projects\SoundExplorers\SoundExplorers\bin\Release\net5.0-windows\Microsoft.Data.Services.Client.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "E:\Simon\OneDrive\Documents\Visual Studio Projects\SoundExplorers\SoundExplorers\bin\Release\net5.0-windows\Newtonsoft.Json.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "E:\Simon\OneDrive\Documents\Visual Studio Projects\SoundExplorers\SoundExplorers\bin\Release\net5.0-windows\SoundExplorers.Common.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "E:\Simon\OneDrive\Documents\Visual Studio Projects\SoundExplorers\SoundExplorers\bin\Release\net5.0-windows\SoundExplorers.Controller.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "E:\Simon\OneDrive\Documents\Visual Studio Projects\SoundExplorers\SoundExplorers\bin\Release\net5.0-windows\SoundExplorers.Data.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "E:\Simon\OneDrive\Documents\Visual Studio Projects\SoundExplorers\SoundExplorers\bin\Release\net5.0-windows\SoundExplorers.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "E:\Simon\OneDrive\Documents\Visual Studio Projects\SoundExplorers\SoundExplorers\bin\Release\net5.0-windows\SoundExplorers.Model.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "E:\Simon\OneDrive\Documents\Visual Studio Projects\SoundExplorers\SoundExplorers\bin\Release\net5.0-windows\SoundExplorers.View.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "E:\Simon\OneDrive\Documents\Visual Studio Projects\SoundExplorers\SoundExplorers\bin\Release\net5.0-windows\System.Spatial.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "E:\Simon\OneDrive\Documents\Visual Studio Projects\SoundExplorers\SoundExplorers\bin\Release\net5.0-windows\VelocityDb.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "E:\Simon\OneDrive\Documents\Visual Studio Projects\SoundExplorers\SoundExplorers\bin\Release\net5.0-windows\VelocityDBExtensionsCore.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "E:\Simon\OneDrive\Documents\Visual Studio Projects\SoundExplorers\Documentation\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "E:\Simon\OneDrive\Documents\Visual Studio Projects\SoundExplorers\SoundExplorers\bin\X64\Release\net5.0-windows\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
+Source: "E:\Simon\OneDrive\Documents\Visual Studio Projects\SoundExplorers\SoundExplorers\bin\X64\Release\net5.0-windows\JetBrains.Annotations.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "E:\Simon\OneDrive\Documents\Visual Studio Projects\SoundExplorers\SoundExplorers\bin\X64\Release\net5.0-windows\JetBrains.Profiler.Api.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "E:\Simon\OneDrive\Documents\Visual Studio Projects\SoundExplorers\SoundExplorers\bin\X64\Release\net5.0-windows\LumenWorks.Framework.IO.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "E:\Simon\OneDrive\Documents\Visual Studio Projects\SoundExplorers\SoundExplorers\bin\X64\Release\net5.0-windows\Microsoft.Data.Edm.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "E:\Simon\OneDrive\Documents\Visual Studio Projects\SoundExplorers\SoundExplorers\bin\X64\Release\net5.0-windows\Microsoft.Data.OData.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "E:\Simon\OneDrive\Documents\Visual Studio Projects\SoundExplorers\SoundExplorers\bin\X64\Release\net5.0-windows\Microsoft.Data.Services.Client.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "E:\Simon\OneDrive\Documents\Visual Studio Projects\SoundExplorers\SoundExplorers\bin\X64\Release\net5.0-windows\Newtonsoft.Json.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "E:\Simon\OneDrive\Documents\Visual Studio Projects\SoundExplorers\SoundExplorers\bin\X64\Release\net5.0-windows\SoundExplorers.Common.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "E:\Simon\OneDrive\Documents\Visual Studio Projects\SoundExplorers\SoundExplorers\bin\X64\Release\net5.0-windows\SoundExplorers.Controller.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "E:\Simon\OneDrive\Documents\Visual Studio Projects\SoundExplorers\SoundExplorers\bin\X64\Release\net5.0-windows\SoundExplorers.Data.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "E:\Simon\OneDrive\Documents\Visual Studio Projects\SoundExplorers\SoundExplorers\bin\X64\Release\net5.0-windows\SoundExplorers.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "E:\Simon\OneDrive\Documents\Visual Studio Projects\SoundExplorers\SoundExplorers\bin\X64\Release\net5.0-windows\SoundExplorers.Model.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "E:\Simon\OneDrive\Documents\Visual Studio Projects\SoundExplorers\SoundExplorers\bin\X64\Release\net5.0-windows\SoundExplorers.View.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "E:\Simon\OneDrive\Documents\Visual Studio Projects\SoundExplorers\SoundExplorers\bin\X64\Release\net5.0-windows\System.Spatial.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "E:\Simon\OneDrive\Documents\Visual Studio Projects\SoundExplorers\SoundExplorers\bin\X64\Release\net5.0-windows\VelocityDb.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "E:\Simon\OneDrive\Documents\Visual Studio Projects\SoundExplorers\SoundExplorers\bin\X64\Release\net5.0-windows\VelocityDBExtensionsCore.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "E:\Simon\OneDrive\Documents\Visual Studio Projects\SoundExplorers\SoundExplorers\bin\X64\Release\net5.0-windows\Documentation\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
