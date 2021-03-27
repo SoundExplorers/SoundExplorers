@@ -9,7 +9,7 @@
 		<AssemblyName>SoundExplorers</AssemblyName>
 		<Nullable>enable</Nullable>
 		<Configurations>Release;Debug</Configurations>
-		<Platforms>X64;x64</Platforms>
+		<Platforms>x64</Platforms>
         <ApplicationIcon>Fred Flintstone.ico</ApplicationIcon>
     </PropertyGroup>
     <PropertyGroup>

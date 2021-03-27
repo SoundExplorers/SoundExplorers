@@ -6,7 +6,7 @@
         <AssemblyName>SoundExplorers.Common</AssemblyName>
         <RootNamespace>SoundExplorers.Common</RootNamespace>
         <Configurations>Release;Debug</Configurations>
-        <Platforms>X64;x64</Platforms>
+        <Platforms>x64</Platforms>
     </PropertyGroup>
 
 </Project>

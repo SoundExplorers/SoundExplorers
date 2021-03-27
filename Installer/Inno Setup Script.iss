@@ -35,7 +35,7 @@ WizardStyle=modern
 Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Tasks]
-Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
+Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; 
 
 [Files]
 Source: "E:\Simon\OneDrive\Documents\Visual Studio Projects\SoundExplorers\SoundExplorers\bin\X64\Release\net5.0-windows\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
@@ -55,7 +55,7 @@ Source: "E:\Simon\OneDrive\Documents\Visual Studio Projects\SoundExplorers\Sound
 Source: "E:\Simon\OneDrive\Documents\Visual Studio Projects\SoundExplorers\SoundExplorers\bin\X64\Release\net5.0-windows\System.Spatial.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "E:\Simon\OneDrive\Documents\Visual Studio Projects\SoundExplorers\SoundExplorers\bin\X64\Release\net5.0-windows\VelocityDb.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "E:\Simon\OneDrive\Documents\Visual Studio Projects\SoundExplorers\SoundExplorers\bin\X64\Release\net5.0-windows\VelocityDBExtensionsCore.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "E:\Simon\OneDrive\Documents\Visual Studio Projects\SoundExplorers\SoundExplorers\bin\X64\Release\net5.0-windows\Documentation\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "E:\Simon\OneDrive\Documents\Visual Studio Projects\SoundExplorers\SoundExplorers\bin\X64\Release\net5.0-windows\Documentation\*"; DestDir: "{app}\Documentation"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
