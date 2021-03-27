@@ -62,8 +62,6 @@ namespace SoundExplorers.View {
       this.WindowsCloseAllMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.WindowsSeparator3 = new System.Windows.Forms.ToolStripSeparator();
       this.HelpMenu = new System.Windows.Forms.ToolStripMenuItem();
-      this.HelpEntityRelationshipDiagramMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-      this.HelpKeyboardShortcutsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.HelpAboutMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.ToolTip = new System.Windows.Forms.ToolTip(this.components);
       this.ToolStrip = new System.Windows.Forms.ToolStrip();
@@ -393,28 +391,10 @@ namespace SoundExplorers.View {
       // HelpMenu
       // 
       this.HelpMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.HelpEntityRelationshipDiagramMenuItem,
-            this.HelpKeyboardShortcutsMenuItem,
             this.HelpAboutMenuItem});
       this.HelpMenu.Name = "HelpMenu";
       this.HelpMenu.Size = new System.Drawing.Size(44, 20);
       this.HelpMenu.Text = "&Help";
-      // 
-      // HelpEntityRelationshipDiagramMenuItem
-      // 
-      this.HelpEntityRelationshipDiagramMenuItem.ImageTransparentColor = System.Drawing.Color.Black;
-      this.HelpEntityRelationshipDiagramMenuItem.Name = "HelpEntityRelationshipDiagramMenuItem";
-      this.HelpEntityRelationshipDiagramMenuItem.Size = new System.Drawing.Size(116, 22);
-      this.HelpEntityRelationshipDiagramMenuItem.Text = "&Entity Relationship Diagram...";
-      this.HelpEntityRelationshipDiagramMenuItem.Click += new System.EventHandler(this.HelpEntityRelationshipDiagramMenuItem_Click);
-      // 
-      // HelpKeyboardShortcutsMenuItem
-      // 
-      this.HelpKeyboardShortcutsMenuItem.ImageTransparentColor = System.Drawing.Color.Black;
-      this.HelpKeyboardShortcutsMenuItem.Name = "HelpKeyboardShortcutsMenuItem";
-      this.HelpKeyboardShortcutsMenuItem.Size = new System.Drawing.Size(116, 22);
-      this.HelpKeyboardShortcutsMenuItem.Text = "&Keyboard Shortcuts...";
-      this.HelpKeyboardShortcutsMenuItem.Click += new System.EventHandler(this.HelpKeyboardShortcutsMenuItem_Click);
       // 
       // HelpAboutMenuItem
       // 
@@ -599,8 +579,6 @@ namespace SoundExplorers.View {
         private System.Windows.Forms.ToolStripMenuItem WindowsCloseAllMenuItem;
         private System.Windows.Forms.ToolStripSeparator WindowsSeparator3;
         private System.Windows.Forms.ToolStripMenuItem HelpMenu;
-        private System.Windows.Forms.ToolStripMenuItem HelpEntityRelationshipDiagramMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem HelpKeyboardShortcutsMenuItem;
         private System.Windows.Forms.ToolStripMenuItem HelpAboutMenuItem;
         private System.Windows.Forms.ToolTip ToolTip;
         private System.Windows.Forms.ToolStripButton NewToolStripButton;
