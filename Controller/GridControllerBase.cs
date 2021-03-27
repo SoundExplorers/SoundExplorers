@@ -4,7 +4,6 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Runtime.InteropServices;
 using SoundExplorers.Common;
 using SoundExplorers.Model;
 
@@ -60,25 +59,9 @@ namespace SoundExplorers.Controller {
     /// <summary>
     ///   Follows the URL link in the current cell by opening it in the default browser.
     /// </summary>
-    /// <remarks>
-    ///   This works for Windows. For Mac and Linux, if we ever decide to support either
-    ///   of them, see https://github.com/dotnet/runtime/issues/17938, where other
-    ///   methods for Windows are also suggested.
-    /// </remarks>
     [ExcludeFromCodeCoverage]
     public void FollowLink() {
-      // Debug.WriteLine(
-      //   $"GridControllerBase.FollowLink {Grid.Name}: {Grid.CurrentCellValue}");
-      if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
-        Process.Start(new ProcessStartInfo {
-          FileName = Grid.CurrentCellValue!.ToString()!,
-          UseShellExecute = true
-        });
-      } else {
-        throw new NotSupportedException(
-          "Follow Link is not (yet) supported for " + 
-          $"{RuntimeInformation.OSDescription}");
-      }
+      MainController.OpenFile(Grid.CurrentCellValue!.ToString()!);
     }
 
     public bool IsUrlColumn(string columnName) {

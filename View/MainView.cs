@@ -5,7 +5,7 @@ using System.Windows.Forms;
 using SoundExplorers.Controller;
 
 namespace SoundExplorers.View {
-  public partial class MainView : Form, IView<MainController> {
+  public partial class MainView : Form, IMainView {
     /// <summary>
     ///   Initialises a new instance of the <see cref="MainView" /> class.
     /// </summary>
@@ -50,6 +50,10 @@ namespace SoundExplorers.View {
         }
         Environment.Exit(0);
       }
+    }
+
+    public void ShowErrorMessage(string text) {
+      ShowMessage(text, MessageBoxIcon.Error);
     }
 
     /// <summary>
@@ -245,6 +249,15 @@ namespace SoundExplorers.View {
       }
     }
 
+    private void HelpEntityRelationshipDiagramMenuItem_Click(
+      object? sender, EventArgs e) {
+      Controller.ShowEntityRelationshipDiagram();
+    }
+
+    private void HelpKeyboardShortcutsMenuItem_Click(object? sender, EventArgs e) {
+      Controller.ShowKeyboardShortcuts();
+    }
+
     private void HelpAboutMenuItem_Click(object? sender, EventArgs e) {
       new AboutView().ShowDialog();
     }
@@ -275,6 +288,12 @@ namespace SoundExplorers.View {
       if (e.Item.Text == string.Empty) {
         e.Item.Visible = false;
       }
+    }
+
+    private void ShowMessage(string text, MessageBoxIcon icon) {
+      Cursor = Cursors.Default;
+      MessageBox.Show(
+        this, text, Application.ProductName, MessageBoxButtons.OK, icon);
     }
 
     private void ToolsLinkMenuItem_Click(object? sender, EventArgs e) {

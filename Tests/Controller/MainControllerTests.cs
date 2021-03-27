@@ -1,5 +1,4 @@
 ﻿using NUnit.Framework;
-using SoundExplorers.Controller;
 using SoundExplorers.Data;
 using SoundExplorers.Tests.Data;
 using SoundExplorers.Tests.Model;
@@ -26,7 +25,7 @@ namespace SoundExplorers.Tests.Controller {
     [Test]
     public void TheTest() {
       const string tableName = "Set";
-      var view = new MockView<MainController>();
+      var view = new MockMainView();
       var controller = new TestMainController(view, QueryHelper, Session);
       Assert.AreSame(controller, view.Controller, "view.Controller");
       controller.DatabaseConnection = Connection;

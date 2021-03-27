@@ -11,7 +11,7 @@ namespace SoundExplorers.Tests.Controller {
       Type mainListType, IEditorView view,
       QueryHelper queryHelper, SessionBase session) :
       base(view, mainListType,
-        new TestMainController(new MockView<MainController>(), queryHelper, session)) {
+        new TestMainController(new MockMainView(), queryHelper, session)) {
       QueryHelper = queryHelper;
       Session = session;
     }
