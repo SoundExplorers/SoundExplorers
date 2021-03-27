@@ -10,6 +10,7 @@
 		<Nullable>enable</Nullable>
 		<Configurations>Release;Debug</Configurations>
 		<Platforms>X64;x64</Platforms>
+        <ApplicationIcon>Fred Flintstone.ico</ApplicationIcon>
     </PropertyGroup>
     <PropertyGroup>
         <!-- Assembly properties. Before .Net 5, these were coded in AssemblyInfo.cs.4
