@@ -14,8 +14,9 @@ namespace SoundExplorers.Controller {
     private Option? _tableOption;
     private Option? _toolBarOption;
 
-    public MainController(IView<MainController> view) {
-      view.SetController(this);
+    public MainController(IMainView view) {
+      View = view;
+      View.SetController(this);
     }
 
     /// <summary>
@@ -109,7 +110,7 @@ namespace SoundExplorers.Controller {
       if (File.Exists(path)) {
         OpenFile(path);
       } else {
-        // View.ShowErrorMessage($"Cannot find file '{path}'.");
+        View.ShowErrorMessage($"Cannot find file '{path}'.");
       }
     }
   }
