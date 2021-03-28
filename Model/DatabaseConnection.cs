@@ -39,12 +39,20 @@ namespace SoundExplorers.Model {
     }
 
     private void CheckDatabaseFolderExists() {
+      CheckDatabaseFolderPathHasBeenSpecified();
       if (!Directory.Exists(DatabaseConfig.DatabaseFolderPath)) {
         throw new ApplicationException(
           $"Database folder '{DatabaseConfig.DatabaseFolderPath}' cannot be found."
           + $"{Environment.NewLine}{Environment.NewLine}"
           + "Please specify the folder's path in database configuration file "
           + $"'{DatabaseConfig.ConfigFilePath}'.");
+      }
+    }
+
+    [ExcludeFromCodeCoverage]
+    private void CheckDatabaseFolderPathHasBeenSpecified() {
+      if (!DatabaseConfig.HasDatabaseFolderPathBeenSpecified) {
+        throw DatabaseConfig.CreateDatabaseFolderNotSpecifiedException();
       }
     }
 
