@@ -23,7 +23,7 @@ DisableProgramGroupPage=yes
 LicenseFile=E:\Simon\OneDrive\Documents\Visual Studio Projects\SoundExplorers\SoundExplorers\bin\X64\Release\net5.0-windows\Licence.txt
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
 ;PrivilegesRequired=lowest
-PrivilegesRequiredOverridesAllowed=dialog
+;PrivilegesRequiredOverridesAllowed=dialog
 OutputDir=E:\Simon\OneDrive\Documents\Visual Studio Projects\SoundExplorers\Installer
 OutputBaseFilename=SoundExplorers 2021.0.0
 SetupIconFile=E:\Simon\OneDrive\Documents\Visual Studio Projects\SoundExplorers\SoundExplorers\Grand Piano.ico
