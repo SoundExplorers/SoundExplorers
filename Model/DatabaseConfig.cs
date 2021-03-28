@@ -21,6 +21,9 @@ namespace SoundExplorers.Model {
     /// </summary>
     internal const string DefaultDatabaseFolderPath =
       @"E:\Simon\OneDrive\Documents\Software\Sound Explorers Audio Archive\Database";
+    
+    private const string InsertDatabaseFolderPathHereMessage =
+      "Insert database folder path here";
 
     private readonly string? _configFilePath;
     private XElement Data { get; set; } = null!;
@@ -43,6 +46,9 @@ namespace SoundExplorers.Model {
 
     [Description(@"Database folder path. Example: C:\Folder\Subfolder")]
     public string DatabaseFolderPath { get; protected set; } = null!;
+    
+    internal bool HasDatabaseFolderPathBeenSpecified =>
+      DatabaseFolderPath != InsertDatabaseFolderPathHereMessage;
 
     public void Load() {
       if (File.Exists(ConfigFilePath)) {
@@ -53,12 +59,16 @@ namespace SoundExplorers.Model {
           }
         }
       } else {
-        DatabaseFolderPath = SetDatabaseFolderPath();
+        DatabaseFolderPath = GetDatabaseFolderPath();
         CreateConfigFile();
-        throw new ApplicationException(
-          $"Please edit database configuration file '{ConfigFilePath}' "
-          + "to specify the database folder path.");
+        throw CreateDatabaseFolderNotSpecifiedException();
       }
+    }
+
+    internal ApplicationException CreateDatabaseFolderNotSpecifiedException() {
+      return new ApplicationException(
+        $"Please edit database configuration file '{ConfigFilePath}' "
+        + "to specify the database folder path.");
     }
 
     private void CreateConfigFile() {
@@ -120,8 +130,12 @@ namespace SoundExplorers.Model {
     }
 
     [ExcludeFromCodeCoverage]
-    protected virtual string SetDatabaseFolderPath() {
+    protected virtual string GetDatabaseFolderPath() {
+#if DEBUG
       return DefaultDatabaseFolderPath;
+#else // Release build
+      return InsertDatabaseFolderPathHereMessage;
+#endif
     }
 
     private void SetPropertyValue(PropertyInfo property) {

@@ -10,7 +10,7 @@ namespace SoundExplorers.Tests.Model {
 
     private string TestDatabaseFolderPath { get; }
 
-    protected override string SetDatabaseFolderPath() {
+    protected override string GetDatabaseFolderPath() {
       return TestDatabaseFolderPath;
     }
   }
