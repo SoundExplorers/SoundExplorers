@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Linq;
 using SoundExplorers.Data;
 using VelocityDb.Session;
 
@@ -13,6 +14,7 @@ namespace SoundExplorers.Model {
       DatabaseConfig = CreateDatabaseConfig();
       DatabaseConfig.Load();
       CheckDatabaseFolderExists();
+      CopySystemDatabaseFilesToDatabaseFolderIfRequired();
       Schema schema;
       var session = new SessionNoServer(DatabaseConfig.DatabaseFolderPath);
       session.BeginUpdate();
@@ -84,6 +86,25 @@ namespace SoundExplorers.Model {
       }
       CheckLicenceFileExists();
       CopyLicenceFile(DatabaseConfig.VelocityDbLicenceFilePath, destinationPath);
+    }
+
+    [ExcludeFromCodeCoverage]
+    private void CopySystemDatabaseFilesToDatabaseFolderIfRequired() {
+      bool isDatabaseFolderEmpty =
+        !Directory.GetFiles(DatabaseConfig.DatabaseFolderPath).Any();
+      if (isDatabaseFolderEmpty) {
+        var systemDatabaseFilesFolder = new DirectoryInfo(
+          Global.GetApplicationFolderPath() +
+          Path.DirectorySeparatorChar + "System Database Files");
+        if (systemDatabaseFilesFolder.Exists) {
+          foreach (FileInfo sourceFile in systemDatabaseFilesFolder.GetFiles()) {
+            string destinationPath = sourceFile.FullName.Replace(
+              systemDatabaseFilesFolder.FullName,
+              DatabaseConfig.DatabaseFolderPath);
+            sourceFile.CopyTo(destinationPath);
+          }
+        }
+      }
     }
   }
 }

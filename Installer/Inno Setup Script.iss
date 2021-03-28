@@ -10,10 +10,10 @@
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
-AppId={{FA790242-06B4-4EBF-A9E4-B9D7604218CC}
+AppId={{D20A07F3-1837-4E9E-83F9-6CA96A7B9A69}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
-AppVerName={#MyAppName}
+AppVerName={#MyAppName} {#MyAppVersion}
 AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
@@ -23,10 +23,9 @@ DisableProgramGroupPage=yes
 LicenseFile=E:\Simon\OneDrive\Documents\Visual Studio Projects\SoundExplorers\SoundExplorers\bin\X64\Release\net5.0-windows\Licence.txt
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
 ;PrivilegesRequired=lowest
-;PrivilegesRequiredOverridesAllowed=dialog
 OutputDir=E:\Simon\OneDrive\Documents\Visual Studio Projects\SoundExplorers\Installer
 OutputBaseFilename=SoundExplorers 2021.0.0
-SetupIconFile=E:\Simon\OneDrive\Documents\Visual Studio Projects\SoundExplorers\SoundExplorers\Grand Piano.ico
+SetupIconFile=E:\Simon\OneDrive\Documents\Visual Studio Projects\SoundExplorers\SoundExplorers\Kettle Drum (multi-size).ico
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern

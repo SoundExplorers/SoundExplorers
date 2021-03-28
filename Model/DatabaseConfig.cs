@@ -21,7 +21,7 @@ namespace SoundExplorers.Model {
     /// </summary>
     internal const string DefaultDatabaseFolderPath =
       @"E:\Simon\OneDrive\Documents\Software\Sound Explorers Audio Archive\Database";
-    
+
     internal const string InsertDatabaseFolderPathHereMessage =
       "Insert database folder path here";
 
@@ -32,6 +32,9 @@ namespace SoundExplorers.Model {
     [Description(
       "Path of the licence file for the VelocityDB object-oriented database management system.")]
     public string VelocityDbLicenceFilePath { get; protected init; } = null!;
+
+    internal bool HasDatabaseFolderPathBeenSpecified =>
+      DatabaseFolderPath != InsertDatabaseFolderPathHereMessage;
 
     /// <summary>
     ///   Gets or sets the path of the database configuration file.
@@ -46,9 +49,6 @@ namespace SoundExplorers.Model {
 
     [Description(@"Database folder path. Example: C:\Folder\Subfolder")]
     public string DatabaseFolderPath { get; protected set; } = null!;
-    
-    internal bool HasDatabaseFolderPathBeenSpecified =>
-      DatabaseFolderPath != InsertDatabaseFolderPathHereMessage;
 
     public void Load() {
       if (File.Exists(ConfigFilePath)) {
@@ -68,7 +68,7 @@ namespace SoundExplorers.Model {
     internal ApplicationException CreateDatabaseFolderNotSpecifiedException() {
       return new ApplicationException(
         $"Please edit database configuration file '{ConfigFilePath}' "
-        + "to specify the database folder path. " + 
+        + "to specify the database folder path. " +
         "(Administrator access will be required.)");
     }
 

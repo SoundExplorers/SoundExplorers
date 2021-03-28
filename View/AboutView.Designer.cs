@@ -121,7 +121,7 @@ namespace SoundExplorers.View {
       // 
       // PictureBox1
       // 
-      this.PictureBox1.Image = global::SoundExplorers.View.Properties.Resources.Grand_Piano_256x256;
+      this.PictureBox1.Image = global::SoundExplorers.View.Properties.Resources.Kettle_Drum_256x256;
       this.PictureBox1.Location = new System.Drawing.Point(19, 24);
       this.PictureBox1.Name = "PictureBox1";
       this.PictureBox1.Size = new System.Drawing.Size(256, 256);
