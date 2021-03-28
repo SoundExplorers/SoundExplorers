@@ -33,7 +33,7 @@ namespace SoundExplorers.Tests.Model {
     private string DatabaseFolderPath { get; set; } = null!;
 
     [Test]
-    public void TheTest() {
+    public void MainTest() {
       // Neither the configuration file nor the database folder exist.
       var exception = Assert.Catch<ApplicationException>(
         () => Connection.Open(),
@@ -41,9 +41,8 @@ namespace SoundExplorers.Tests.Model {
       Assert.IsTrue(
         exception.Message.StartsWith("Please edit database configuration file '"),
         "Missing configuration file message");
-      // The configuration file has been created and already contains
-      // the database folder path we want to use.
-      // So we don't actually need to edit the configuration file.  
+      // The configuration file has been created and already contains the database folder
+      // path we want to use. So we don't actually need to edit the configuration file.  
       exception = Assert.Catch<ApplicationException>(
         () => Connection.Open(),
         "Open should have thrown ApplicationException for missing database folder.");
@@ -85,6 +84,28 @@ namespace SoundExplorers.Tests.Model {
         exception.Message.StartsWith(
           "The following XML error was found in database configuration file "),
         "XML error");
+    }
+
+    [Test] public void SimulateReleaseBuild() {
+      Connection = new TestDatabaseConnection(ConfigFilePath, 
+        DatabaseConfig.InsertDatabaseFolderPathHereMessage);
+      // Neither the configuration file nor the database folder exist.
+      var exception = Assert.Catch<ApplicationException>(
+        () => Connection.Open(),
+        "Open should have thrown ApplicationException for missing configuration file.");
+      Assert.IsTrue(
+        exception.Message.StartsWith("Please edit database configuration file '"),
+        "Missing configuration file message");
+      // The configuration file has been created but the database folder path has not
+      // been specified.  If the user attempts to reload the application without having
+      // edited the configuration file to specify the database folder path, the
+      // application load should fail with the same error message as before.
+      exception = Assert.Catch<ApplicationException>(
+        () => Connection.Open(),
+        "Open should have thrown ApplicationException for unspecified database folder path.");
+      Assert.IsTrue(
+        exception.Message.StartsWith("Please edit database configuration file '"),
+        "Unspecified database folder path file message");
     }
 
     private void MakeXmlError() {

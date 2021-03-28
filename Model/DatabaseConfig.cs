@@ -22,7 +22,7 @@ namespace SoundExplorers.Model {
     internal const string DefaultDatabaseFolderPath =
       @"E:\Simon\OneDrive\Documents\Software\Sound Explorers Audio Archive\Database";
     
-    private const string InsertDatabaseFolderPathHereMessage =
+    internal const string InsertDatabaseFolderPathHereMessage =
       "Insert database folder path here";
 
     private readonly string? _configFilePath;

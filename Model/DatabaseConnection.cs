@@ -49,7 +49,6 @@ namespace SoundExplorers.Model {
       }
     }
 
-    [ExcludeFromCodeCoverage]
     private void CheckDatabaseFolderPathHasBeenSpecified() {
       if (!DatabaseConfig.HasDatabaseFolderPathBeenSpecified) {
         throw DatabaseConfig.CreateDatabaseFolderNotSpecifiedException();
