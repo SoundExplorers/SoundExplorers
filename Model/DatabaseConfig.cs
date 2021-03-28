@@ -68,7 +68,8 @@ namespace SoundExplorers.Model {
     internal ApplicationException CreateDatabaseFolderNotSpecifiedException() {
       return new ApplicationException(
         $"Please edit database configuration file '{ConfigFilePath}' "
-        + "to specify the database folder path.");
+        + "to specify the database folder path. " + 
+        "(Administrator access will be required.)");
     }
 
     private void CreateConfigFile() {
