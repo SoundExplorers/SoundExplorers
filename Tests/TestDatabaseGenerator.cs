@@ -67,7 +67,7 @@ namespace SoundExplorers.Tests {
       Console.WriteLine($"{Data.Sets.Count} Sets added. Adding Pieces.");
       AddPieces();
       Console.WriteLine($"{Data.Pieces.Count} Pieces added. Adding Credits.");
-      // AddCredits();
+      AddCredits();
       Console.WriteLine($"{Data.Credits.Count} Credits added. Committing.");
       Session.Commit();
       Console.WriteLine(

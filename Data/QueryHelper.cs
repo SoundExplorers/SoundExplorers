@@ -16,95 +16,10 @@ namespace SoundExplorers.Data {
       AllObjectsGenericMethod = typeof(SessionBase).GetMethod("AllObjects")!;
     }
 
-    private static MethodInfo AllObjectsGenericMethod { get; }
-
     public static QueryHelper Instance =>
       _instance ??= new QueryHelper();
 
-    private static Func<TEntity, bool> CreateKeyPredicate<TEntity>(
-      string? simpleKey,
-      EntityBase? identifyingParent)
-      where TEntity : EntityBase {
-      return
-        entity => entity.SimpleKey == simpleKey &&
-                  (entity.IdentifyingParent == null &&
-                   identifyingParent == null ||
-                   entity.IdentifyingParent != null &&
-                   entity.IdentifyingParent
-                     .Equals(identifyingParent));
-    }
-
-    public TEntity? Find<TEntity>(
-      string? simpleKey,
-      SessionBase session) where TEntity : EntityBase {
-      return Find<TEntity>(simpleKey, null, session);
-    }
-
-    public TEntity? Find<TEntity>(
-      string? simpleKey,
-      EntityBase? identifyingParent,
-      SessionBase session) where TEntity : EntityBase {
-      return Find(
-        CreateKeyPredicate<TEntity>(simpleKey, identifyingParent),
-        session);
-    }
-
-    public TEntity? Find<TEntity>(
-      Func<TEntity, bool> predicate,
-      SessionBase session) where TEntity : EntityBase {
-      if (!SchemaExistsOnDatabase(session)) {
-        return null;
-      }
-      var entities = session.AllObjects<TEntity>();
-      return entities.FirstOrDefault(predicate);
-    }
-
-    /// <summary>
-    ///   Returns a top-level entity of the specified type with the specified SimpleKey
-    ///   (case-insensitive) but a different object identifier from the one specified,
-    ///   if found, otherwise a null reference.
-    /// </summary>
-    internal EntityBase? FindDuplicateSimpleKey(Type entityType,
-      Oid oid, string? simpleKey, SessionBase session) {
-      var entity = FindTopLevelEntity(entityType, simpleKey, session);
-      return entity != null && !entity.Oid.Equals(oid) ? entity : null;
-    }
-
-    private static IEnumerable FetchEntities(Type entityType,
-      SessionBase session) {
-      // This complicated rigmarole is required to allow
-      // SessionBase.AllObjects<T> to be invoked with a an ordinary parameter
-      // instead of the type parameter T.
-      // Unfortunately VelocityDB does not provide a non-generic alternative.
-      var allObjectsConstructedMethod =
-        AllObjectsGenericMethod.MakeGenericMethod(entityType);
-      return (IEnumerable)allObjectsConstructedMethod.Invoke(session,
-        new object[] {true, true})!;
-    }
-
-    /// <summary>
-    ///   Returns a top-level entity of the specified type with the specified SimpleKey
-    ///   (case-insensitive), if found, otherwise a null reference.
-    /// </summary>
-    private EntityBase? FindTopLevelEntity(Type entityType,
-      string? simpleKey, SessionBase session) {
-      if (!SchemaExistsOnDatabase(session)) {
-        return null;
-      }
-      var entities = FetchEntities(entityType, session);
-      // IEnumerable entities;
-      // try {
-      //   entities = (IEnumerable)allObjectsConstructedMethod.Invoke(session,
-      //     new object[] {true, true});
-      // } catch (Exception exception) {
-      //   Debug.WriteLine(exception);
-      //   throw;
-      // }
-      return (from EntityBase e in entities
-        where string.Compare(e.SimpleKey, simpleKey,
-          StringComparison.OrdinalIgnoreCase) == 0
-        select e).FirstOrDefault();
-    }
+    private static MethodInfo AllObjectsGenericMethod { get; }
 
     public static TEntity Read<TEntity>(
       string? simpleKey,
@@ -145,7 +60,99 @@ namespace SoundExplorers.Data {
         .First(predicate);
     }
 
-    public bool SchemaExistsOnDatabase(SessionBase session) {
+    public TEntity? Find<TEntity>(
+      string? simpleKey,
+      SessionBase session) where TEntity : EntityBase {
+      return Find<TEntity>(simpleKey, null, session);
+    }
+
+    public TEntity? Find<TEntity>(
+      string? simpleKey,
+      EntityBase? identifyingParent,
+      SessionBase session) where TEntity : EntityBase {
+      return Find(
+        CreateKeyPredicate<TEntity>(simpleKey, identifyingParent),
+        session);
+    }
+
+    public TEntity? Find<TEntity>(
+      Func<TEntity, bool> predicate,
+      SessionBase session) where TEntity : EntityBase {
+      if (!SchemaExistsOnDatabase(session)) {
+        return null;
+      }
+      var entities = session.AllObjects<TEntity>();
+      return entities.FirstOrDefault(predicate);
+    }
+
+    /// <summary>
+    ///   Returns a top-level entity of the specified type with the specified SimpleKey
+    ///   (case-insensitive) but a different object identifier from the one specified,
+    ///   if found, otherwise a null reference.
+    /// </summary>
+    internal EntityBase? FindDuplicateSimpleKey(Type entityType,
+      Oid oid, string? simpleKey, SessionBase session) {
+      var entity = FindTopLevelEntity(entityType, simpleKey, session);
+      return entity != null && !entity.Oid.Equals(oid) ? entity : null;
+    }
+
+    internal IOptimizedPersistable? FindSingleton(Type type, SessionBase session) {
+      return SchemaExistsOnDatabase(session)
+        ? session.Open(session.DatabaseNumberOf(typeof(Schema)), 2, 1,
+          session.InUpdateTransaction)
+        : null;
+    }
+
+    private static Func<TEntity, bool> CreateKeyPredicate<TEntity>(
+      string? simpleKey,
+      EntityBase? identifyingParent)
+      where TEntity : EntityBase {
+      return
+        entity => entity.SimpleKey == simpleKey &&
+                  (entity.IdentifyingParent == null &&
+                   identifyingParent == null ||
+                   entity.IdentifyingParent != null &&
+                   entity.IdentifyingParent
+                     .Equals(identifyingParent));
+    }
+
+    private static IEnumerable FetchEntities(Type entityType,
+      SessionBase session) {
+      // This complicated rigmarole is required to allow
+      // SessionBase.AllObjects<T> to be invoked with a an ordinary parameter
+      // instead of the type parameter T.
+      // Unfortunately VelocityDB does not provide a non-generic alternative.
+      var allObjectsConstructedMethod =
+        AllObjectsGenericMethod.MakeGenericMethod(entityType);
+      return (IEnumerable)allObjectsConstructedMethod.Invoke(session,
+        new object[] {true, true})!;
+    }
+
+    /// <summary>
+    ///   Returns a top-level entity of the specified type with the specified SimpleKey
+    ///   (case-insensitive), if found, otherwise a null reference.
+    /// </summary>
+    private EntityBase? FindTopLevelEntity(Type entityType,
+      string? simpleKey, SessionBase session) {
+      if (!SchemaExistsOnDatabase(session)) {
+        return null;
+      }
+      var entities = FetchEntities(entityType, session);
+      // IEnumerable entities;
+      // try {
+      //   entities = (IEnumerable)allObjectsConstructedMethod.Invoke(session,
+      //     new object[] {true, true});
+      // } catch (Exception exception) {
+      //   Debug.WriteLine(exception);
+      //   throw;
+      // }
+      return (from EntityBase e in entities
+        where string.Compare(e.SimpleKey, simpleKey,
+          StringComparison.OrdinalIgnoreCase) == 0
+        select e).FirstOrDefault();
+    }
+
+    private bool SchemaExistsOnDatabase(SessionBase session) {
       bool result;
       if (_schemaExistsOnDatabase) {
         result = true;

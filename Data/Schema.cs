@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using VelocityDb;
 using VelocityDb.Session;
 
@@ -103,9 +102,11 @@ namespace SoundExplorers.Data {
     /// </summary>
     public static Schema? Find(QueryHelper queryHelper,
       SessionBase session) {
-      return queryHelper.SchemaExistsOnDatabase(session)
-        ? session.AllObjects<Schema>().FirstOrDefault()
-        : null;
+      return queryHelper.FindSingleton(typeof(Schema), session) as Schema ?? null;
+      // return queryHelper.SchemaExistsOnDatabase(session)
+      //   ? (Schema)session.Open(session.DatabaseNumberOf(typeof(Schema)), 2, 1,
+      //     session.InUpdateTransaction)
+      //   : null;
     }
 
     /// <summary>
