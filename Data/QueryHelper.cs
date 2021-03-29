@@ -96,11 +96,17 @@ namespace SoundExplorers.Data {
       return entity != null && !entity.Oid.Equals(oid) ? entity : null;
     }
 
+    /// <summary>
+    ///   Returns an object the specified parameter type, of which there is only expected
+    ///   to be one of, if found, otherwise a null reference.
+    /// </summary>
     internal TPersistable? FindSingleton<TPersistable>(SessionBase session) 
       where TPersistable: OptimizedPersistable {
       return SchemaExistsOnDatabase(session)
         ? session.Open(
-          session.DatabaseNumberOf(typeof(TPersistable)), 
+          session.DatabaseNumberOf(typeof(TPersistable)),
+          // Why page number 2? I don't know, but it works for fetching singleton
+          // objects. See 'Looking up objects' in the VelocityDB manual.
           2, 1, session.InUpdateTransaction) as TPersistable 
         : null;
     }
