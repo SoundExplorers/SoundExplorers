@@ -10,10 +10,10 @@ namespace SoundExplorers.Data {
 
     public Act() : base(typeof(Act), nameof(Name), null) {
       AllowBlankSimpleKey = true;
-      Sets = new SortedChildList<Set>();
+      Sets = new SortedEntityCollection<Set>();
     }
 
-    public SortedChildList<Set> Sets { get; }
+    public SortedEntityCollection<Set> Sets { get; }
 
     public string Name {
       get => SimpleKey;
@@ -38,7 +38,7 @@ namespace SoundExplorers.Data {
       };
     }
 
-    protected override ISortedChildList GetChildren(Type childType) {
+    protected override ISortedEntityCollection GetChildren(Type childType) {
       return Sets;
     }
   }

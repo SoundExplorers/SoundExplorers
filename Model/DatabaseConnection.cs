@@ -22,7 +22,7 @@ namespace SoundExplorers.Model {
         schema = Schema.Find(QueryHelper.Instance, session) ?? new Schema();
         if (schema.Version < ExpectedVersion) {
           CopyLicenceToDatabaseFolderIfAbsent();
-          schema.RegisterEntityTypes(session);
+          schema.RegisterPersistableTypes(session);
           schema.Version = ExpectedVersion;
         }
         if (!schema.IsPersistent) {

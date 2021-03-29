@@ -6,10 +6,10 @@ namespace SoundExplorers.Data {
     ///   Role entity, usually representing a musical instrument.
     /// </summary>
     public Role() : base(typeof(Role), nameof(Name), null) {
-      Credits = new SortedChildList<Credit>();
+      Credits = new SortedEntityCollection<Credit>();
     }
 
-    public SortedChildList<Credit> Credits { get; }
+    public SortedEntityCollection<Credit> Credits { get; }
 
     public string Name {
       get => SimpleKey;
@@ -19,7 +19,7 @@ namespace SoundExplorers.Data {
       }
     }
 
-    protected override ISortedChildList GetChildren(Type childType) {
+    protected override ISortedEntityCollection GetChildren(Type childType) {
       return Credits;
     }
   }

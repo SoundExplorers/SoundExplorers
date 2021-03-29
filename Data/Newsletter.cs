@@ -12,7 +12,7 @@ namespace SoundExplorers.Data {
 
     public Newsletter() : base(typeof(Newsletter), nameof(Date), null) {
       _date = DefaultDate;
-      Events = new SortedChildList<Event>();
+      Events = new SortedEntityCollection<Event>();
     }
 
     /// <summary>
@@ -35,7 +35,7 @@ namespace SoundExplorers.Data {
       }
     }
 
-    public SortedChildList<Event> Events { get; }
+    public SortedEntityCollection<Event> Events { get; }
 
     /// <summary>
     ///   The URL where the newsletter is archived.
@@ -114,7 +114,7 @@ namespace SoundExplorers.Data {
       //   session);
     }
 
-    protected override ISortedChildList GetChildren(Type childType) {
+    protected override ISortedEntityCollection GetChildren(Type childType) {
       return Events;
     }
 

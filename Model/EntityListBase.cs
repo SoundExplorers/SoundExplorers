@@ -389,7 +389,7 @@ namespace SoundExplorers.Model {
         Session.Commit();
       }
       // If this is a child list, it is already in the right order, as its data source
-      // consists of the values of a SortedChildList.
+      // consists of the values of a SortedEntityCollection.
       if (ListRole != ListRole.Child) {
         Sort(EntityComparer);
       }

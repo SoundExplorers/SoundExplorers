@@ -32,7 +32,7 @@ namespace SoundExplorers.Tests.Data {
       Assert.IsFalse(schema.AllowOtherTypesOnSamePage, "AllowOtherTypesOnSamePage");
       Assert.AreEqual(0, schema.Version, "Version after creating Schema");
       Session.BeginUpdate();
-      schema.RegisterEntityTypes(Session);
+      schema.RegisterPersistableTypes(Session);
       schema.Version = 1;
       Session.Persist(schema);
       schema = Schema.Find(QueryHelper, Session);

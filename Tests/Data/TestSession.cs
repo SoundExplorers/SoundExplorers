@@ -15,7 +15,7 @@ namespace SoundExplorers.Tests.Data {
 
     public TestSession() : base(CreateDatabaseFolder()) {
       BeginUpdate();
-      new Schema().RegisterEntityTypes(this);
+      new Schema().RegisterPersistableTypes(this);
       Commit();
     }
 

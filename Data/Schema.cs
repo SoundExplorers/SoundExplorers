@@ -13,7 +13,8 @@ namespace SoundExplorers.Data {
   /// </remarks>
   public class Schema : OptimizedPersistable {
     private static Schema? _instance;
-    private IEnumerable<Type>? _entityTypes;
+    private static IDictionary<Type, Type>? _rootTypes;
+    private IEnumerable<Type>? _persistableTypes;
     private IEnumerable<RelationInfo>? _relations;
     private int _version;
 
@@ -26,31 +27,6 @@ namespace SoundExplorers.Data {
     }
 
     /// <summary>
-    ///   Enumerates the entity types persisted on the database
-    /// </summary>
-    private IEnumerable<Type> EntityTypes =>
-      _entityTypes ??= CreateEntityTypes();
-
-    /// <summary>
-    ///   The structure of on-to-many relations between entity types.
-    /// </summary>
-    public IEnumerable<RelationInfo> Relations =>
-      _relations ??= CreateRelations();
-
-    /// <summary>
-    ///   Gets or sets the schema version.
-    ///   Zero initially.
-    ///   Not the same as the application version.
-    /// </summary>
-    public int Version {
-      get => _version;
-      set {
-        UpdateNonIndexField();
-        _version = value;
-      }
-    }
-
-    /// <summary>
     ///   From VelocityDB User's Guide:
     ///   'It is recommended that you make the following override in your
     ///   OptimizedPersistable subclass for better performance. ...
@@ -59,24 +35,62 @@ namespace SoundExplorers.Data {
     /// </summary>
     public override bool AllowOtherTypesOnSamePage => false;
 
-    private static IEnumerable<Type> CreateEntityTypes() {
-      var list = new List<Type> {
-        typeof(Act),
-        typeof(Artist),
-        typeof(Credit),
-        typeof(Event),
-        typeof(EventType),
-        typeof(Genre),
-        typeof(Location),
-        typeof(Newsletter),
-        typeof(Series),
-        typeof(Piece),
-        typeof(Role),
-        typeof(Schema),
-        typeof(Set),
-        typeof(UserOption)
-      };
-      return list.ToArray();
+    /// <summary>
+    ///   The structure of on-to-many relations between entity types.
+    /// </summary>
+    public IEnumerable<RelationInfo> Relations =>
+      _relations ??= CreateRelations();
+
+    /// <summary>
+    ///   Gets or sets the schema version. Zero initially. Not the same as the
+    ///   application version.
+    /// </summary>
+    public int Version {
+      get => _version;
+      set {
+        UpdateNonIndexField();
+        _version = value;
+      }
+    }
+    
+    internal static IDictionary<Type, Type> RootTypes =>
+      _rootTypes ??= CreateRootTypes();
+
+    /// <summary>
+    ///   Enumerates the types persisted on the database.
+    /// </summary>
+    private IEnumerable<Type> PersistableTypes =>
+      _persistableTypes ??= CreatePersistableTypes();
+
+    /// <summary>
+    ///   Returns the one Schema entity, if it already exists on the database,
+    ///   otherwise null.
+    /// </summary>
+    public static Schema? Find(QueryHelper queryHelper,
+      SessionBase session) {
+      return queryHelper.FindSingleton<Schema>(session);
+    }
+
+    /// <summary>
+    ///   Registers the persistable types on the database,
+    ///   so that a VelocityDB licence file ('license database')
+    ///   will not have to be included in the user's database.
+    /// </summary>
+    /// <param name="session">Database session</param>
+    /// <remarks>
+    ///   How this will work, according to VelocityDB User Guide:
+    ///   Application Deployment and VelocityDB license check
+    ///   Normally you need to deploy the license database, 4.odb, but if you are publishing your
+    ///   application as open source or your database files in a publicly accessible directory then do not
+    ///   include 4.odb since that would enable unlicensed usage of VelocityDB. Instead register all your
+    ///   persistent classes prior to deployment and deploy database 1.odb which then contains your entire
+    ///   database schema. VelocityDB may do a license check whenever database schema is added to or is
+    ///   updated.
+    /// </remarks>
+    public void RegisterPersistableTypes(SessionBase session) {
+      foreach (var persistableType in PersistableTypes) {
+        session.RegisterClass(persistableType);
+      }
     }
 
     protected virtual IEnumerable<RelationInfo> CreateRelations() {
@@ -96,35 +110,53 @@ namespace SoundExplorers.Data {
       return list.ToArray();
     }
 
-    /// <summary>
-    ///   Returns the one Schema entity, if it already exists on the database,
-    ///   otherwise null.
-    /// </summary>
-    public static Schema? Find(QueryHelper queryHelper,
-      SessionBase session) {
-      return queryHelper.FindSingleton<Schema>( session);
+    private static IEnumerable<Type> CreatePersistableTypes() {
+      var list = new List<Type> {
+        typeof(Act),
+        typeof(SortedEntityCollection<Act>),
+        typeof(Artist),
+        typeof(SortedEntityCollection<Artist>),
+        typeof(Credit),
+        typeof(Event),
+        typeof(SortedEntityCollection<Event>),
+        typeof(EventType),
+        typeof(SortedEntityCollection<EventType>),
+        typeof(Genre),
+        typeof(SortedEntityCollection<Genre>),
+        typeof(Location),
+        typeof(SortedEntityCollection<Location>),
+        typeof(Newsletter),
+        typeof(SortedEntityCollection<Newsletter>),
+        typeof(Series),
+        typeof(SortedEntityCollection<Series>),
+        typeof(Piece),
+        typeof(SortedEntityCollection<Piece>),
+        typeof(Role),
+        typeof(SortedEntityCollection<Role>),
+        typeof(Schema),
+        typeof(Set),
+        typeof(SortedEntityCollection<Set>),
+        typeof(UserOption),
+        typeof(SortedEntityCollection<UserOption>)
+      };
+      return list.ToArray();
     }
 
-    /// <summary>
-    ///   Registers the entity types on the database,
-    ///   so that a VelocityDB licence file ('license database')
-    ///   will not have to be included in the user's database.
-    /// </summary>
-    /// <param name="session">Database session</param>
-    /// <remarks>
-    ///   How this will work, according to VelocityDB User Guide:
-    ///   Application Deployment and VelocityDB license check
-    ///   Normally you need to deploy the license database, 4.odb, but if you are publishing your
-    ///   application as open source or your database files in a publicly accessible directory then do not
-    ///   include 4.odb since that would enable unlicensed usage of VelocityDB. Instead register all your
-    ///   persistent classes prior to deployment and deploy database 1.odb which then contains your entire
-    ///   database schema. VelocityDB may do a license check whenever database schema is added to or is
-    ///   updated.
-    /// </remarks>
-    public void RegisterEntityTypes(SessionBase session) {
-      foreach (var entityType in EntityTypes) {
-        session.RegisterClass(entityType);
-      }
+    private static IDictionary<Type, Type> CreateRootTypes() {
+      return new Dictionary<Type, Type> {
+        [typeof(Act)] = typeof(SortedEntityCollection<Act>),
+        [typeof(Artist)] = typeof(SortedEntityCollection<Artist>),
+        [typeof(Event)] = typeof(SortedEntityCollection<Event>),
+        [typeof(EventType)] = typeof(SortedEntityCollection<EventType>),
+        [typeof(Genre)] = typeof(SortedEntityCollection<Genre>),
+        [typeof(Location)] = typeof(SortedEntityCollection<Location>),
+        [typeof(Newsletter)] = typeof(SortedEntityCollection<Newsletter>),
+        [typeof(Series)] = typeof(SortedEntityCollection<Series>),
+        [typeof(Piece)] = typeof(SortedEntityCollection<Piece>),
+        [typeof(Role)] = typeof(SortedEntityCollection<Role>),
+        [typeof(Set)] = typeof(SortedEntityCollection<Set>),
+        [typeof(UserOption)] = typeof(SortedEntityCollection<UserOption>)
+      };
     }
   }
 }

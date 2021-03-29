@@ -14,7 +14,7 @@ namespace SoundExplorers.Data {
     private int _setNo;
 
     public Set() : base(typeof(Set), nameof(SetNo), typeof(Event)) {
-      Pieces = new SortedChildList<Piece>();
+      Pieces = new SortedEntityCollection<Piece>();
       IsPublic = true;
     }
 
@@ -63,7 +63,7 @@ namespace SoundExplorers.Data {
       }
     }
 
-    public SortedChildList<Piece> Pieces { get; }
+    public SortedEntityCollection<Piece> Pieces { get; }
 
     public int SetNo {
       get => _setNo;
@@ -74,7 +74,7 @@ namespace SoundExplorers.Data {
       }
     }
 
-    protected override ISortedChildList GetChildren(Type childType) {
+    protected override ISortedEntityCollection GetChildren(Type childType) {
       return Pieces;
     }
 

@@ -14,7 +14,7 @@ namespace SoundExplorers.Data {
   ///   with other entity types.
   /// </summary>
   public abstract class EntityBase : ReferenceTracked, IEntity {
-    private IDictionary<Type, ISortedChildList>? _childrenOfType;
+    private IDictionary<Type, ISortedEntityCollection>? _childrenOfType;
     private IDictionary<Type, IRelationInfo>? _childrenRelations;
     private EntityBase? _identifyingParent;
     private IDictionary<Type, IRelationInfo>? _parentRelations;
@@ -72,6 +72,8 @@ namespace SoundExplorers.Data {
     ///   if any, as entities of the main Type.
     /// </summary>
     public Type EntityType { get; }
+    
+    public ISortedEntityCollection? Root { get; set; } 
 
     internal QueryHelper QueryHelper {
       get => _queryHelper ??= QueryHelper.Instance;
@@ -85,7 +87,7 @@ namespace SoundExplorers.Data {
       set => _schema = value;
     }
 
-    private IDictionary<Type, ISortedChildList> ChildrenOfType {
+    private IDictionary<Type, ISortedEntityCollection> ChildrenOfType {
       get {
         InitialiseIfNull(_childrenOfType);
         return _childrenOfType!;
@@ -302,11 +304,11 @@ namespace SoundExplorers.Data {
     }
 
     /// <summary>
-    ///   Allows a derived entity to return its SortedChildList of child entities of the
+    ///   Allows a derived entity to return its SortedEntityCollection of child entities of the
     ///   specified entity type.
     /// </summary>
     [ExcludeFromCodeCoverage]
-    protected virtual ISortedChildList GetChildren(Type childType) {
+    protected virtual ISortedEntityCollection GetChildren(Type childType) {
       throw new NotSupportedException();
     }
 
@@ -466,7 +468,7 @@ namespace SoundExplorers.Data {
         Parents.Add(relationPair.Key, null);
       }
       ChildrenRelations = CreateChildrenRelations();
-      ChildrenOfType = new Dictionary<Type, ISortedChildList>();
+      ChildrenOfType = new Dictionary<Type, ISortedEntityCollection>();
       foreach (var (key, _) in ChildrenRelations) {
         ChildrenOfType.Add(key, GetChildren(key));
       }
@@ -500,6 +502,7 @@ namespace SoundExplorers.Data {
     /// </summary>
     private void RemoveFromAllParents() {
       // Debug.WriteLine($"EntityBase.RemoveFromAllParents {EntityType.Name}");
+      Root?.Remove(Key);
       var nonIdentifyingParents = (
         from parent in Parents.Values
         where parent != null && !parent.Equals(IdentifyingParent)

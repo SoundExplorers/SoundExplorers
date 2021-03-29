@@ -10,10 +10,10 @@ namespace SoundExplorers.Data {
     private string _surname = null!;
 
     public Artist() : base(typeof(Artist), nameof(Name), null) {
-      Credits = new SortedChildList<Credit>();
+      Credits = new SortedEntityCollection<Credit>();
     }
 
-    public SortedChildList<Credit> Credits { get; }
+    public SortedEntityCollection<Credit> Credits { get; }
 
     /// <summary>
     ///   The Name of an Artist who goes by a single name
@@ -62,7 +62,7 @@ namespace SoundExplorers.Data {
       }
     }
 
-    protected override ISortedChildList GetChildren(Type childType) {
+    protected override ISortedEntityCollection GetChildren(Type childType) {
       return Credits;
     }
 

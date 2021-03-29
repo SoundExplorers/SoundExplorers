@@ -18,7 +18,7 @@ namespace SoundExplorers.Data {
     private string _videoUrl = null!;
 
     public Piece() : base(typeof(Piece), nameof(PieceNo), typeof(Set)) {
-      Credits = new SortedChildList<Credit>();
+      Credits = new SortedEntityCollection<Credit>();
     }
 
     /// <summary>
@@ -34,7 +34,7 @@ namespace SoundExplorers.Data {
       }
     }
 
-    public SortedChildList<Credit> Credits { get; }
+    public SortedEntityCollection<Credit> Credits { get; }
 
     public TimeSpan Duration {
       get => _duration;
@@ -169,7 +169,7 @@ namespace SoundExplorers.Data {
         session);
     }
 
-    protected override ISortedChildList GetChildren(Type childType) {
+    protected override ISortedEntityCollection GetChildren(Type childType) {
       return Credits;
     }
 

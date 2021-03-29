@@ -16,7 +16,7 @@ namespace SoundExplorers.Data {
 
     public Event() : base(typeof(Event), nameof(Date), typeof(Location)) {
       _date = DefaultDate;
-      Sets = new SortedChildList<Set>();
+      Sets = new SortedEntityCollection<Set>();
     }
 
     public DateTime Date {
@@ -76,9 +76,9 @@ namespace SoundExplorers.Data {
       }
     }
 
-    public SortedChildList<Set> Sets { get; }
+    public SortedEntityCollection<Set> Sets { get; }
 
-    protected override ISortedChildList GetChildren(Type childType) {
+    protected override ISortedEntityCollection GetChildren(Type childType) {
       return Sets;
     }
 

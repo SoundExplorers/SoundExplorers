@@ -6,10 +6,10 @@ namespace SoundExplorers.Data {
   /// </summary>
   public class Genre : EntityBase, INamedEntity {
     public Genre() : base(typeof(Genre), nameof(Name), null) {
-      Sets = new SortedChildList<Set>();
+      Sets = new SortedEntityCollection<Set>();
     }
 
-    public SortedChildList<Set> Sets { get; }
+    public SortedEntityCollection<Set> Sets { get; }
 
     public string Name {
       get => SimpleKey;
@@ -19,7 +19,7 @@ namespace SoundExplorers.Data {
       }
     }
 
-    protected override ISortedChildList GetChildren(Type childType) {
+    protected override ISortedEntityCollection GetChildren(Type childType) {
       return Sets;
     }
   }

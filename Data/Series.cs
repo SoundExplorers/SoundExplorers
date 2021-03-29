@@ -11,10 +11,10 @@ namespace SoundExplorers.Data {
 
     public Series() : base(typeof(Series), nameof(Name), null) {
       AllowBlankSimpleKey = true;
-      Events = new SortedChildList<Event>();
+      Events = new SortedEntityCollection<Event>();
     }
 
-    public SortedChildList<Event> Events { get; }
+    public SortedEntityCollection<Event> Events { get; }
 
     public string Name {
       get => SimpleKey;
@@ -39,7 +39,7 @@ namespace SoundExplorers.Data {
       };
     }
 
-    protected override ISortedChildList GetChildren(Type childType) {
+    protected override ISortedEntityCollection GetChildren(Type childType) {
       return Events;
     }
   }

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using VelocityDb;
 using VelocityDb.Session;
 
@@ -12,14 +12,8 @@ namespace SoundExplorers.Data {
     private static QueryHelper? _instance;
     private bool _schemaExistsOnDatabase;
 
-    static QueryHelper() {
-      AllObjectsGenericMethod = typeof(SessionBase).GetMethod("AllObjects")!;
-    }
-
     public static QueryHelper Instance =>
       _instance ??= new QueryHelper();
-
-    private static MethodInfo AllObjectsGenericMethod { get; }
 
     public static TEntity Read<TEntity>(
       string? simpleKey,
@@ -97,18 +91,12 @@ namespace SoundExplorers.Data {
     }
 
     /// <summary>
-    ///   Returns an object the specified parameter type, of which there is only expected
-    ///   to be one of, if found, otherwise a null reference.
+    ///   Returns an object the specified generic type, of which there is only expected
+    ///   to be one, if found, otherwise a null reference.
     /// </summary>
     internal TPersistable? FindSingleton<TPersistable>(SessionBase session) 
       where TPersistable: OptimizedPersistable {
-      return SchemaExistsOnDatabase(session)
-        ? session.Open(
-          session.DatabaseNumberOf(typeof(TPersistable)),
-          // Why page number 2? I don't know, but it works for fetching singleton
-          // objects. See 'Looking up objects' in the VelocityDB manual.
-          2, 1, session.InUpdateTransaction) as TPersistable 
-        : null;
+      return FindSingleton(typeof(TPersistable), session) as TPersistable; 
     }
 
     private static Func<TEntity, bool> CreateKeyPredicate<TEntity>(
@@ -124,16 +112,25 @@ namespace SoundExplorers.Data {
                      .Equals(identifyingParent));
     }
 
-    private static IEnumerable FetchEntities(Type entityType,
+    private IEnumerable FetchEntities(Type entityType,
       SessionBase session) {
-      // This complicated rigmarole is required to allow
-      // SessionBase.AllObjects<T> to be invoked with a an ordinary parameter
-      // instead of the type parameter T.
-      // Unfortunately VelocityDB does not provide a non-generic alternative.
-      var allObjectsConstructedMethod =
-        AllObjectsGenericMethod.MakeGenericMethod(entityType);
-      return (IEnumerable)allObjectsConstructedMethod.Invoke(session,
-        new object[] {true, true})!;
+      var root = FindSingleton(Schema.RootTypes[entityType], session) as 
+        ISortedEntityCollection;
+      return root?.Values ?? new List<IEntity>();
+    }
+
+    /// <summary>
+    ///   Returns an object the specified type, of which there is only expected to be
+    ///   one, if found, otherwise a null reference.
+    /// </summary>
+    private IOptimizedPersistable? FindSingleton(Type type, SessionBase session) {
+      return SchemaExistsOnDatabase(session)
+        ? session.Open(
+          session.DatabaseNumberOf(type),
+          // Why page number 2? I don't know, but it works for fetching singleton
+          // objects. See 'Looking up objects' in the VelocityDB manual.
+          2, 1, session.InUpdateTransaction) 
+        : null;
     }
 
     /// <summary>
@@ -146,14 +143,6 @@ namespace SoundExplorers.Data {
         return null;
       }
       var entities = FetchEntities(entityType, session);
-      // IEnumerable entities;
-      // try {
-      //   entities = (IEnumerable)allObjectsConstructedMethod.Invoke(session,
-      //     new object[] {true, true});
-      // } catch (Exception exception) {
-      //   Debug.WriteLine(exception);
-      //   throw;
-      // }
       return (from EntityBase e in entities
         where string.Compare(e.SimpleKey, simpleKey,
           StringComparison.OrdinalIgnoreCase) == 0
