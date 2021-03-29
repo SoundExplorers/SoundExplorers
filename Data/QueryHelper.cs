@@ -96,10 +96,12 @@ namespace SoundExplorers.Data {
       return entity != null && !entity.Oid.Equals(oid) ? entity : null;
     }
 
-    internal IOptimizedPersistable? FindSingleton(Type type, SessionBase session) {
+    internal TPersistable? FindSingleton<TPersistable>(SessionBase session) 
+      where TPersistable: OptimizedPersistable {
       return SchemaExistsOnDatabase(session)
-        ? session.Open(session.DatabaseNumberOf(typeof(Schema)), 2, 1,
-          session.InUpdateTransaction)
+        ? session.Open(
+          session.DatabaseNumberOf(typeof(TPersistable)), 
+          2, 1, session.InUpdateTransaction) as TPersistable 
         : null;
     }
 

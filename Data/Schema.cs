@@ -102,7 +102,7 @@ namespace SoundExplorers.Data {
     /// </summary>
     public static Schema? Find(QueryHelper queryHelper,
       SessionBase session) {
-      return queryHelper.FindSingleton(typeof(Schema), session) as Schema ?? null;
+      return queryHelper.FindSingleton<Schema>( session);
     }
 
     /// <summary>
