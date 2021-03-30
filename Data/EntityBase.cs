@@ -21,6 +21,7 @@ namespace SoundExplorers.Data {
     private IDictionary<Type, EntityBase?>? _parents;
     private IList<Action>? _postPersistenceActions;
     private QueryHelper? _queryHelper;
+    private ISortedEntityCollection? _root;
     private Schema? _schema;
     private string _simpleKey = null!;
 
@@ -43,11 +44,8 @@ namespace SoundExplorers.Data {
     /// </param>
     protected EntityBase(Type entityType,
       string simpleKeyName, Type? identifyingParentType) {
-      EntityType = entityType ??
-                   throw new ArgumentNullException(
-                     nameof(entityType));
-      SimpleKeyName = simpleKeyName ??
-                      throw new ArgumentNullException(nameof(simpleKeyName));
+      EntityType = entityType;
+      SimpleKeyName = simpleKeyName;
       IdentifyingParentType = identifyingParentType;
       Key = new Key(this);
     }
@@ -72,8 +70,12 @@ namespace SoundExplorers.Data {
     ///   if any, as entities of the main Type.
     /// </summary>
     public Type EntityType { get; }
-    
-    public ISortedEntityCollection? Root { get; set; } 
+
+    internal static InvalidOperationException CreateRootNotFoundException(
+      Type entityType) {
+      return new InvalidOperationException(
+        $"Cannot find the root collection for {entityType.Name}s.");
+    }
 
     internal QueryHelper QueryHelper {
       get => _queryHelper ??= QueryHelper.Instance;
@@ -81,6 +83,19 @@ namespace SoundExplorers.Data {
     }
 
     protected bool AllowBlankSimpleKey { get; set; }
+
+    protected ISortedEntityCollection Root {
+      get {
+        if (_root == null) {
+          _root = QueryHelper.FindRoot(EntityType, Session);
+          if (_root == null) {
+            throw CreateRootNotFoundException(EntityType);
+          }
+          UpdateNonIndexField();
+        }
+        return _root;
+      }
+    }
 
     protected Schema Schema {
       get => _schema ??= Schema.Instance;
@@ -184,6 +199,7 @@ namespace SoundExplorers.Data {
         }
         value.AddChild(this);
         Parents[IdentifyingParentType!] = value;
+        ChangeRootKey(new Key(SimpleKey, value));
         _identifyingParent = value;
       }
     }
@@ -207,6 +223,7 @@ namespace SoundExplorers.Data {
       get => _simpleKey;
       protected set {
         CheckCanChangeSimpleKey(_simpleKey, value);
+        ChangeRootKey(new Key(value, IdentifyingParent));
         _simpleKey = value;
       }
     }
@@ -360,6 +377,17 @@ namespace SoundExplorers.Data {
       UpdateChild(child, this);
     }
 
+    private void ChangeRootKey(Key newKey) {
+      if (IsPersistent) {
+        if (Root.Contains(Key)) {
+          Root.Remove(Key);
+        }
+        Root.Add(newKey, this);
+      } else {
+        PostPersistenceActions.Add(() => ChangeRootKey(newKey));
+      }
+    }
+
     private void CheckCanAddNonIdentifiedChild(EntityBase child) {
       CheckForDuplicateChild(child, CreateChildKey(child));
     }
@@ -502,7 +530,7 @@ namespace SoundExplorers.Data {
     /// </summary>
     private void RemoveFromAllParents() {
       // Debug.WriteLine($"EntityBase.RemoveFromAllParents {EntityType.Name}");
-      Root?.Remove(Key);
+      Root.Remove(Key);
       var nonIdentifyingParents = (
         from parent in Parents.Values
         where parent != null && !parent.Equals(IdentifyingParent)

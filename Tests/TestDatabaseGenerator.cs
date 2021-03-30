@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.Linq;
 using NUnit.Framework;
 using SoundExplorers.Data;
 using SoundExplorers.Model;
@@ -29,20 +28,6 @@ namespace SoundExplorers.Tests {
       if (DoIt == 1) {
         Generate();
       }
-    }
-
-    [Test]
-    public void A02_Fetch() {
-      if (DoIt != 1) {
-        return;
-      }
-      Session = new TestSession(DatabaseConfig.DefaultDatabaseFolderPath);
-      Session.BeginRead();
-      var acts = Session.AllObjects<Act>().ToList();
-      var newsletters = Session.AllObjects<Newsletter>().ToList();
-      Session.Commit();
-      Assert.AreEqual(Data.Acts.Count, acts.Count);
-      Assert.AreEqual(EventCount, newsletters.Count);
     }
 
     private void Generate() {
@@ -74,14 +59,7 @@ namespace SoundExplorers.Tests {
         $"Finished: {Data.Events.Count} Events; {Data.Sets.Count} Sets; " +
         $"{Data.Pieces.Count} Pieces; {Data.Credits.Count} Credits");
     }
-
-    /// <summary>
-    ///   With 10 Events, this works consistently.
-    ///   With more Events, subsequent SessionBase.AllObjects for any entity type loops,
-    ///   throwing a StackOverFlowException. See test A02_Fetch.
-    ///   11 and 12 Events are borderline, depending on the quantity of Sets, Pieces and
-    ///   Credits generated in each run.
-    /// </summary>
+    
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
     private void AddCredits() {
       foreach (var piece in Data.Pieces) {

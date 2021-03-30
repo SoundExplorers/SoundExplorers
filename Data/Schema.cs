@@ -25,6 +25,9 @@ namespace SoundExplorers.Data {
       get => _instance ??= new Schema();
       set => _instance = value;
     }
+    
+    public static IDictionary<Type, Type> RootTypes =>
+      _rootTypes ??= CreateRootTypes();
 
     /// <summary>
     ///   From VelocityDB User's Guide:
@@ -52,9 +55,6 @@ namespace SoundExplorers.Data {
         _version = value;
       }
     }
-    
-    internal static IDictionary<Type, Type> RootTypes =>
-      _rootTypes ??= CreateRootTypes();
 
     /// <summary>
     ///   Enumerates the types persisted on the database.
@@ -117,6 +117,7 @@ namespace SoundExplorers.Data {
         typeof(Artist),
         typeof(SortedEntityCollection<Artist>),
         typeof(Credit),
+        typeof(SortedEntityCollection<Credit>),
         typeof(Event),
         typeof(SortedEntityCollection<Event>),
         typeof(EventType),
@@ -146,6 +147,7 @@ namespace SoundExplorers.Data {
       return new Dictionary<Type, Type> {
         [typeof(Act)] = typeof(SortedEntityCollection<Act>),
         [typeof(Artist)] = typeof(SortedEntityCollection<Artist>),
+        [typeof(Credit)] = typeof(SortedEntityCollection<Credit>),
         [typeof(Event)] = typeof(SortedEntityCollection<Event>),
         [typeof(EventType)] = typeof(SortedEntityCollection<EventType>),
         [typeof(Genre)] = typeof(SortedEntityCollection<Genre>),

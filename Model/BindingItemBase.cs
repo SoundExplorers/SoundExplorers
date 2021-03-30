@@ -73,6 +73,7 @@ namespace SoundExplorers.Model {
       EntityPropertyValues = CreateEntityPropertyValueDictionary();
       var result = new TEntity();
       CopyValuesToEntityProperties(result);
+      
       return result;
     }
 

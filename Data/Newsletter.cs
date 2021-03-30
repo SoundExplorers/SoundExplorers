@@ -57,7 +57,7 @@ namespace SoundExplorers.Data {
         // If there's no session, which means we cannot check for a duplicate,
         // EntityBase.UpdateNonIndexField will throw 
         // an InvalidOperationException anyway.
-        var duplicate = FindDuplicateUrl(newUrl!, Session);
+        var duplicate = FindDuplicateUrl(newUrl!);
         if (duplicate != null) {
           throw CreateDuplicateUrlUpdateException(duplicate);
         }
@@ -67,7 +67,7 @@ namespace SoundExplorers.Data {
     protected override void CheckCanPersist(SessionBase session) {
       base.CheckCanPersist(session);
       ValidateUrlFormatOnInsertion(Url);
-      var urlDuplicate = FindDuplicateUrl(Url, session);
+      var urlDuplicate = FindDuplicateUrl(Url);
       if (urlDuplicate != null) {
         throw CreateDuplicateUrlInsertionException(Url, Date, urlDuplicate);
       }
@@ -100,18 +100,14 @@ namespace SoundExplorers.Data {
         "already exists with that URL.", nameof(Url));
     }
 
-    private Newsletter? FindDuplicateUrl(string url,
-      SessionBase session) {
-      var newsletters = session.AllObjects<Newsletter>().ToList();
+    private Newsletter? FindDuplicateUrl(string url) {
+      var newsletters = 
+        (Root as SortedEntityCollection<Newsletter>)!.Values;
+      // var newsletters = session.AllObjects<Newsletter>().ToList();
       return (
         from newsletter in newsletters
         where newsletter.Url == url && !newsletter.Oid.Equals(Oid)
         select newsletter).FirstOrDefault();
-      // NewsletterTests fail with this, for unknown reason.
-      // The predicate makes it throw a NullReferenceException.
-      // return QueryHelper.Find<Newsletter>(
-      //   newsletter => newsletter.Url.Equals(url) && !newsletter.Oid.Equals(Oid),
-      //   session);
     }
 
     protected override ISortedEntityCollection GetChildren(Type childType) {

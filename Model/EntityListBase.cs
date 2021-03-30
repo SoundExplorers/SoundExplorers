@@ -93,6 +93,7 @@ namespace SoundExplorers.Model {
     private StatementType LastDatabaseChangeAction { get; set; }
     private bool IsReplacingErrorBindingValueWithOriginal { get; set; }
     private bool HasRowBeenEdited { get; set; }
+    private SortedEntityCollection<TEntity> Root { get; set; } = null!; 
 
     /// <summary>
     ///   Gets the binding list representing the list of entities and bound to the grid.
@@ -370,6 +371,7 @@ namespace SoundExplorers.Model {
     public virtual void Populate(
       IdentifyingParentAndChildren? identifyingParentAndChildren = null,
       bool createBindingList = true) {
+      Root = FetchOrAddRoot();
       Clear();
       bool isTransactionRequired = !Session.InTransaction;
       if (isTransactionRequired) {
@@ -379,7 +381,8 @@ namespace SoundExplorers.Model {
         IdentifyingParent = identifyingParentAndChildren.IdentifyingParent;
         AddRange((IEnumerable<TEntity>)identifyingParentAndChildren.Children);
       } else {
-        var entities = Session.AllObjects<TEntity>();
+        var entities = Root.Values;
+        // var entities = Session.AllObjects<TEntity>();
         AddRange(entities);
       }
       if (createBindingList) {
@@ -563,6 +566,28 @@ namespace SoundExplorers.Model {
       return dummyChildList.Columns.ReferencingColumns.ToDictionary(
         column => column.PropertyName,
         column => column.ReferenceableItems!);
+    }
+
+    private SortedEntityCollection<TEntity> FetchOrAddRoot() {
+      bool isTransactionRequired = !Session.InTransaction;
+      if (isTransactionRequired) {
+        Session.BeginRead();
+      }
+      var result = QueryHelper.FindRoot<TEntity>(Session);
+      if (isTransactionRequired) {
+        Session.Commit();
+      }
+      if (result == null) {
+        result = new SortedEntityCollection<TEntity>();
+        if (isTransactionRequired) {
+          Session.BeginUpdate();
+        }
+        Session.Persist(result);
+        if (isTransactionRequired) {
+          Session.Commit();
+        }
+      }
+      return result;
     }
 
     private void GetReferenceableItemLists() {

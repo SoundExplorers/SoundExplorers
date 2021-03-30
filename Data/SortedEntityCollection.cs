@@ -7,9 +7,10 @@ namespace SoundExplorers.Data {
   ///   A sorted collection of entities of the specified type.
   /// </summary>
   public class SortedEntityCollection<TEntity> : BTreeMap<Key, TEntity>, 
+    // IDictionary<Key, IEntity>
     ISortedEntityCollection
     where TEntity : EntityBase {
-    internal SortedEntityCollection() : base(new KeyComparer(), null) { }
+    public SortedEntityCollection() : base(new KeyComparer(), null) { }
 
     /// <summary>
     ///   From VelocityDB User's Guide:

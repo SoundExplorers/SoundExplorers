@@ -16,7 +16,7 @@ namespace SoundExplorers.Data {
     /// <summary>
     ///   Use this constructor to instantiate a key that
     ///   is the property of an entity and that will be
-    ///   the entity's key in any in SortedLists
+    ///   the entity's key in any in SortedEntityCollections
     ///   of which the entity is a member.
     ///   May also be used to instantiate a key for comparison
     ///   with a key that is the property of an entity
