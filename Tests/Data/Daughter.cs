@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using SoundExplorers.Data;
 
 namespace SoundExplorers.Tests.Data {
@@ -6,8 +7,9 @@ namespace SoundExplorers.Tests.Data {
     private Father? _father;
     private Mother? _mother;
 
-    public Daughter(QueryHelper queryHelper,
-      Type? identifyingParentType = null) : base(typeof(Daughter),
+    [SuppressMessage("ReSharper", "SuggestBaseTypeForParameter")]
+    public Daughter(SortedEntityCollection<Daughter> root, QueryHelper queryHelper,
+      Type? identifyingParentType = null) : base(root,typeof(Daughter),
       nameof(Name), identifyingParentType) {
       QueryHelper = queryHelper ??
                     throw new ArgumentNullException(nameof(queryHelper));

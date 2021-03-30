@@ -1,11 +1,15 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SoundExplorers.Data {
   /// <summary>
   ///   An entity representing a Set's genre.
   /// </summary>
   public class Genre : EntityBase, INamedEntity {
-    public Genre() : base(typeof(Genre), nameof(Name), null) {
+
+    [SuppressMessage("ReSharper", "SuggestBaseTypeForParameter")]
+    public Genre(SortedEntityCollection<Genre> root) : base(
+      root,typeof(Genre), nameof(Name), null) {
       Sets = new SortedEntityCollection<Set>();
     }
 

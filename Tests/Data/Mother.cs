@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using SoundExplorers.Data;
 
 namespace SoundExplorers.Tests.Data {
   public class Mother : EntityBase {
-    public Mother(QueryHelper queryHelper) : base(
-      typeof(Mother),
+    [SuppressMessage("ReSharper", "SuggestBaseTypeForParameter")]
+    public Mother(SortedEntityCollection<Mother> root, QueryHelper queryHelper) : base(
+      root, typeof(Mother),
       nameof(Name), null) {
       QueryHelper = queryHelper ??
                     throw new ArgumentNullException(nameof(queryHelper));

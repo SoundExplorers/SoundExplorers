@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SoundExplorers.Data {
   /// <summary>
@@ -9,7 +10,9 @@ namespace SoundExplorers.Data {
   public class Location : EntityBase, INotablyNamedEntity {
     private string _notes = null!;
 
-    public Location() : base(typeof(Location), nameof(Name), null) {
+    [SuppressMessage("ReSharper", "SuggestBaseTypeForParameter")]
+    public Location(SortedEntityCollection<Location> root) : base(
+      root,typeof(Location), nameof(Name), null) {
       Events = new SortedEntityCollection<Event>();
     }
 

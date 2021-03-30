@@ -1,11 +1,14 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SoundExplorers.Data {
+  /// <summary>
+  ///   Role entity, usually representing a musical instrument.
+  /// </summary>
   public class Role : EntityBase, INamedEntity {
-    /// <summary>
-    ///   Role entity, usually representing a musical instrument.
-    /// </summary>
-    public Role() : base(typeof(Role), nameof(Name), null) {
+    [SuppressMessage("ReSharper", "SuggestBaseTypeForParameter")]
+    public Role(SortedEntityCollection<Role> root) : base(
+      root,typeof(Role), nameof(Name), null) {
       Credits = new SortedEntityCollection<Credit>();
     }
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SoundExplorers.Data {
   /// <summary>
@@ -8,7 +9,9 @@ namespace SoundExplorers.Data {
   public class EventType : EntityBase, INamedEntity {
     public const string DefaultName = "Performance";
 
-    public EventType() : base(typeof(EventType), nameof(Name), null) {
+    [SuppressMessage("ReSharper", "SuggestBaseTypeForParameter")]
+    public EventType(SortedEntityCollection<EventType> root) : base(
+      root,typeof(EventType), nameof(Name), null) {
       Events = new SortedEntityCollection<Event>();
     }
 
@@ -22,8 +25,8 @@ namespace SoundExplorers.Data {
       }
     }
 
-    public static EventType CreateDefault() {
-      return new EventType {
+    public static EventType CreateDefault(SortedEntityCollection<EventType> root) {
+      return new EventType(root) {
         Name = DefaultName
       };
     }

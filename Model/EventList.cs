@@ -15,7 +15,7 @@ namespace SoundExplorers.Model {
       var defaultEventType = QueryHelper.Find<EventType>(
         EventType.DefaultName, Session);
       if (defaultEventType == null) {
-        defaultEventType = EventType.CreateDefault();
+        defaultEventType = EventType.CreateDefault(FetchOrAddRoot<EventType>());
         Session.Persist(defaultEventType);
       }
       Session.Commit();
@@ -27,7 +27,7 @@ namespace SoundExplorers.Model {
       var defaultNewsletter = QueryHelper.Find<Newsletter>(
         EntityBase.DateToSimpleKey(EntityBase.DefaultDate), Session);
       if (defaultNewsletter == null) {
-        defaultNewsletter = Newsletter.CreateDefault();
+        defaultNewsletter = Newsletter.CreateDefault(FetchOrAddRoot<Newsletter>());
         Session.Persist(defaultNewsletter);
       }
       Session.Commit();
@@ -38,7 +38,7 @@ namespace SoundExplorers.Model {
       Session.BeginUpdate();
       var defaultSeries = QueryHelper.Find<Series>(Series.DefaultName, Session);
       if (defaultSeries == null) {
-        defaultSeries = Series.CreateDefault();
+        defaultSeries = Series.CreateDefault(FetchOrAddRoot<Series>());
         Session.Persist(defaultSeries);
       }
       Session.Commit();

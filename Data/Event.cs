@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using VelocityDb.Session;
 
 namespace SoundExplorers.Data {
@@ -14,7 +15,9 @@ namespace SoundExplorers.Data {
     private string _notes = null!;
     private Series? _series;
 
-    public Event() : base(typeof(Event), nameof(Date), typeof(Location)) {
+    [SuppressMessage("ReSharper", "SuggestBaseTypeForParameter")]
+    public Event(SortedEntityCollection<Event> root) : base(
+      root,typeof(Event), nameof(Date), typeof(Location)) {
       _date = DefaultDate;
       Sets = new SortedEntityCollection<Set>();
     }

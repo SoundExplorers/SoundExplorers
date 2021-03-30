@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SoundExplorers.Data {
   /// <summary>
@@ -9,7 +10,10 @@ namespace SoundExplorers.Data {
     private Artist _artist = null!;
     private int _creditNo;
     private Role _role = null!;
-    public Credit() : base(typeof(Credit), nameof(CreditNo), typeof(Piece)) { }
+
+    [SuppressMessage("ReSharper", "SuggestBaseTypeForParameter")]
+    public Credit(SortedEntityCollection<Credit> root) : base(
+      root, typeof(Credit), nameof(CreditNo), typeof(Piece)) { }
 
     public Artist Artist {
       get => _artist;

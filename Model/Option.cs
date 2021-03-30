@@ -160,7 +160,13 @@ namespace SoundExplorers.Model {
     ///   a new UserOption with the required key and defaulted value.
     /// </summary>
     private UserOption FetchUserOption() {
-      var temp = new UserOption {UserId = Environment.UserName, OptionName = OptionName};
+      Session.BeginUpdate();
+      var userOptionRoot = 
+        EntityBase.FetchOrAddRoot<UserOption>(QueryHelper, Session);
+      Session.Commit();
+      var temp = new UserOption(userOptionRoot) {
+        UserId = Environment.UserName, OptionName = OptionName
+      };
       Session.BeginUpdate();
       var result = QueryHelper.Find<UserOption>(temp.SimpleKey, Session);
       if (result == null) {

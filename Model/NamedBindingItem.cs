@@ -5,7 +5,7 @@ namespace SoundExplorers.Model {
   [NoReorder]
   public class NamedBindingItem<TEntity>
     : BindingItemBase<TEntity, NamedBindingItem<TEntity>>
-    where TEntity : EntityBase, INamedEntity, new() {
+    where TEntity : EntityBase, INamedEntity {
     private string _name = null!;
 
     public string Name {

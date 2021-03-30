@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SoundExplorers.Data {
   /// <summary>
@@ -9,7 +10,9 @@ namespace SoundExplorers.Data {
     private string _notes = null!;
     private string _surname = null!;
 
-    public Artist() : base(typeof(Artist), nameof(Name), null) {
+    [SuppressMessage("ReSharper", "SuggestBaseTypeForParameter")]
+    public Artist(SortedEntityCollection<Artist> root) : base(
+      root, typeof(Artist), nameof(Name), null) {
       Credits = new SortedEntityCollection<Credit>();
     }
 
@@ -74,6 +77,7 @@ namespace SoundExplorers.Data {
       string? surname) {
       string result;
       if (!string.IsNullOrWhiteSpace(forename)) {
+        // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
         if (!string.IsNullOrWhiteSpace(surname)) {
           result = $"{surname.Trim()}, {forename.Trim()}";
         } else {

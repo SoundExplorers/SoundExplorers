@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using VelocityDb.Session;
 
 namespace SoundExplorers.Data {
@@ -17,7 +18,9 @@ namespace SoundExplorers.Data {
     private string _title = null!;
     private string _videoUrl = null!;
 
-    public Piece() : base(typeof(Piece), nameof(PieceNo), typeof(Set)) {
+    [SuppressMessage("ReSharper", "SuggestBaseTypeForParameter")]
+    public Piece(SortedEntityCollection<Piece> root) : base(
+      root,typeof(Piece), nameof(PieceNo), typeof(Set)) {
       Credits = new SortedEntityCollection<Credit>();
     }
 

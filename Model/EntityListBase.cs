@@ -21,7 +21,7 @@ namespace SoundExplorers.Model {
   /// </typeparam>
   public abstract class EntityListBase<TEntity, TBindingItem> : List<TEntity>,
     IEntityList
-    where TEntity : EntityBase, new()
+    where TEntity : EntityBase
     where TBindingItem : BindingItemBase<TEntity, TBindingItem>, new() {
     private TypedBindingList<TEntity, TBindingItem>? _bindingList;
     private BindingColumnList? _columns;
@@ -78,6 +78,7 @@ namespace SoundExplorers.Model {
       set => _queryHelper = value;
     }
 
+    internal SortedEntityCollection<TEntity> Root { get; private set; } = null!; 
     private BackupItem<TBindingItem>? BackupItem { get; set; }
     private BackupItem<TBindingItem>? BackupItemToRestoreFrom { get; set; }
 
@@ -93,7 +94,6 @@ namespace SoundExplorers.Model {
     private StatementType LastDatabaseChangeAction { get; set; }
     private bool IsReplacingErrorBindingValueWithOriginal { get; set; }
     private bool HasRowBeenEdited { get; set; }
-    private SortedEntityCollection<TEntity> Root { get; set; } = null!; 
 
     /// <summary>
     ///   Gets the binding list representing the list of entities and bound to the grid.
@@ -371,7 +371,7 @@ namespace SoundExplorers.Model {
     public virtual void Populate(
       IdentifyingParentAndChildren? identifyingParentAndChildren = null,
       bool createBindingList = true) {
-      Root = FetchOrAddRoot();
+      Root = FetchOrAddRoot<TEntity>();
       Clear();
       bool isTransactionRequired = !Session.InTransaction;
       if (isTransactionRequired) {
@@ -440,6 +440,20 @@ namespace SoundExplorers.Model {
 
     protected virtual IComparer<TEntity> CreateEntityComparer() {
       return new TopLevelEntityComparer<TEntity>();
+    }
+
+    protected SortedEntityCollection<TRootedEntity> FetchOrAddRoot<TRootedEntity>()
+      where TRootedEntity : EntityBase {
+      bool isTransactionRequired = !Session.InTransaction;
+      if (isTransactionRequired) {
+        Session.BeginUpdate();
+      }
+      var result = 
+        EntityBase.FetchOrAddRoot<TRootedEntity>(QueryHelper, Session);
+      if (isTransactionRequired) {
+        Session.Commit();
+      }
+      return result;
     }
 
     private static BackupItem<TBindingItem> CreateBackupItem(TBindingItem bindingItem) {
@@ -566,28 +580,6 @@ namespace SoundExplorers.Model {
       return dummyChildList.Columns.ReferencingColumns.ToDictionary(
         column => column.PropertyName,
         column => column.ReferenceableItems!);
-    }
-
-    private SortedEntityCollection<TEntity> FetchOrAddRoot() {
-      bool isTransactionRequired = !Session.InTransaction;
-      if (isTransactionRequired) {
-        Session.BeginRead();
-      }
-      var result = QueryHelper.FindRoot<TEntity>(Session);
-      if (isTransactionRequired) {
-        Session.Commit();
-      }
-      if (result == null) {
-        result = new SortedEntityCollection<TEntity>();
-        if (isTransactionRequired) {
-          Session.BeginUpdate();
-        }
-        Session.Persist(result);
-        if (isTransactionRequired) {
-          Session.Commit();
-        }
-      }
-      return result;
     }
 
     private void GetReferenceableItemLists() {

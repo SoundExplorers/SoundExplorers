@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using VelocityDb.Session;
 
@@ -10,7 +11,9 @@ namespace SoundExplorers.Data {
     private DateTime _date;
     private string _url = null!;
 
-    public Newsletter() : base(typeof(Newsletter), nameof(Date), null) {
+    [SuppressMessage("ReSharper", "SuggestBaseTypeForParameter")]
+    public Newsletter(SortedEntityCollection<Newsletter> root) : base(root,
+      typeof(Newsletter), nameof(Date), null) {
       _date = DefaultDate;
       Events = new SortedEntityCollection<Event>();
     }
@@ -77,8 +80,8 @@ namespace SoundExplorers.Data {
     ///   Creates a dummy Newsletter, to be the default for Events for which a Newsletter
     ///   has not yet been specified.
     /// </summary>
-    public static Newsletter CreateDefault() {
-      return new Newsletter {
+    public static Newsletter CreateDefault(SortedEntityCollection<Newsletter> root) {
+      return new Newsletter(root) {
         Date = DefaultDate,
         Url = "Required default"
       };
@@ -101,7 +104,7 @@ namespace SoundExplorers.Data {
     }
 
     private Newsletter? FindDuplicateUrl(string url) {
-      var newsletters = 
+      var newsletters =
         (Root as SortedEntityCollection<Newsletter>)!.Values;
       // var newsletters = session.AllObjects<Newsletter>().ToList();
       return (

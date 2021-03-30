@@ -3,7 +3,7 @@
 namespace SoundExplorers.Model {
   public abstract class
     NamedEntityList<TEntity> : EntityListBase<TEntity, NamedBindingItem<TEntity>>
-    where TEntity : EntityBase, INamedEntity, new() {
+    where TEntity : EntityBase, INamedEntity {
     protected override NamedBindingItem<TEntity> CreateBindingItem(TEntity entity) {
       return new NamedBindingItem<TEntity> {Name = entity.Name};
     }

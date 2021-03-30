@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SoundExplorers.Data {
   /// <summary>
@@ -9,7 +10,9 @@ namespace SoundExplorers.Data {
     public const string DefaultName = "";
     private string _notes = null!;
 
-    public Series() : base(typeof(Series), nameof(Name), null) {
+    [SuppressMessage("ReSharper", "SuggestBaseTypeForParameter")]
+    public Series(SortedEntityCollection<Series> root) : base(
+      root,typeof(Series), nameof(Name), null) {
       AllowBlankSimpleKey = true;
       Events = new SortedEntityCollection<Event>();
     }
@@ -32,8 +35,8 @@ namespace SoundExplorers.Data {
       }
     }
 
-    public static Series CreateDefault() {
-      return new Series {
+    public static Series CreateDefault(SortedEntityCollection<Series> root) {
+      return new Series(root) {
         Name = DefaultName,
         Notes = "Required default"
       };

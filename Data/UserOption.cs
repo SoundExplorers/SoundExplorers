@@ -1,4 +1,6 @@
-﻿namespace SoundExplorers.Data {
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace SoundExplorers.Data {
   /// <summary>
   ///   An entity for persisting a user option for the application.
   /// </summary>
@@ -6,7 +8,10 @@
     private string _optionName = null!;
     private string _optionValue = null!;
     private string _userId = null!;
-    public UserOption() : base(typeof(UserOption), nameof(SimpleKey), null) { }
+
+    [SuppressMessage("ReSharper", "SuggestBaseTypeForParameter")]
+    public UserOption(SortedEntityCollection<UserOption> root) : base(
+      root,typeof(UserOption), nameof(SimpleKey), null) { }
 
     public string OptionName {
       get => _optionName;

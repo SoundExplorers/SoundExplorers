@@ -21,7 +21,6 @@ namespace SoundExplorers.Data {
     private IDictionary<Type, EntityBase?>? _parents;
     private IList<Action>? _postPersistenceActions;
     private QueryHelper? _queryHelper;
-    private ISortedEntityCollection? _root;
     private Schema? _schema;
     private string _simpleKey = null!;
 
@@ -32,6 +31,9 @@ namespace SoundExplorers.Data {
     /// <summary>
     ///   Creates an instance of an entity.
     /// </summary>
+    /// <param name="root">
+    ///   The root collection to which the entity is to be added.
+    /// </param>
     /// <param name="entityType">
     ///   The main Type as which the entity will be persisted on the database.
     /// </param>
@@ -42,8 +44,9 @@ namespace SoundExplorers.Data {
     /// <param name="identifyingParentType">
     ///   Where applicable, the entity type of the identifying parent entity.
     /// </param>
-    protected EntityBase(Type entityType,
+    protected EntityBase(ISortedEntityCollection root, Type entityType, 
       string simpleKeyName, Type? identifyingParentType) {
+      Root = root;
       EntityType = entityType;
       SimpleKeyName = simpleKeyName;
       IdentifyingParentType = identifyingParentType;
@@ -84,18 +87,19 @@ namespace SoundExplorers.Data {
 
     protected bool AllowBlankSimpleKey { get; set; }
 
-    protected ISortedEntityCollection Root {
-      get {
-        if (_root == null) {
-          _root = QueryHelper.FindRoot(EntityType, Session);
-          if (_root == null) {
-            throw CreateRootNotFoundException(EntityType);
-          }
-          UpdateNonIndexField();
-        }
-        return _root;
-      }
-    }
+    protected ISortedEntityCollection Root { get; }
+    // protected ISortedEntityCollection Root {
+    //   get {
+    //     if (_root == null) {
+    //       _root = QueryHelper.FindRoot(EntityType, Session);
+    //       if (_root == null) {
+    //         throw CreateRootNotFoundException(EntityType);
+    //       }
+    //       UpdateNonIndexField();
+    //     }
+    //     return _root;
+    //   }
+    // }
 
     protected Schema Schema {
       get => _schema ??= Schema.Instance;
@@ -238,6 +242,18 @@ namespace SoundExplorers.Data {
 
     public static string DateToSimpleKey(DateTime date) {
       return $"{date:yyyy/MM/dd}";
+    }
+
+    public static SortedEntityCollection<TEntity> FetchOrAddRoot<TEntity>(
+      QueryHelper queryHelper, SessionBase session)
+      where TEntity : EntityBase {
+      var result = 
+        queryHelper.FindRoot<TEntity>(session);
+      if (result == null) {
+        result = new SortedEntityCollection<TEntity>();
+        session.Persist(result);
+      }
+      return result;
     }
 
     public static string GetIntegerSimpleKeyErrorMessage(string propertyName) {
