@@ -11,94 +11,95 @@ namespace SoundExplorers.Tests.Data {
       QueryHelper = new QueryHelper();
       DatabaseFolderPath = TestSession.CreateDatabaseFolder();
       Data = new TestData(QueryHelper);
-      DefaultAct = Act.CreateDefault();
-      DefaultNewsletter = Newsletter.CreateDefault();
-      DefaultSeries = Series.CreateDefault();
-      Baker = new Artist {
+      Session = new TestSession(DatabaseFolderPath);
+      Session.BeginUpdate();
+      Data.AddRootsPersistedIfRequired(Session);
+      Session.Commit();
+      DefaultAct = Act.CreateDefault(Data.ActRoot);
+      DefaultNewsletter = Newsletter.CreateDefault(Data.NewsletterRoot);
+      DefaultSeries = Series.CreateDefault(Data.SeriesRoot);
+      Baker = new Artist(Data.ArtistRoot) {
         QueryHelper = QueryHelper,
         Surname = BakerName
       };
-      Clarissa = new Artist {
+      Clarissa = new Artist(Data.ArtistRoot) {
         QueryHelper = QueryHelper,
         Forename = ClarissaName
       };
-      Drums = new Role {
+      Drums = new Role(Data.RoleRoot) {
         QueryHelper = QueryHelper,
         Name = DrumsName
       };
-      ElectricGuitar = new Role {
+      ElectricGuitar = new Role(Data.RoleRoot) {
         QueryHelper = QueryHelper,
         Name = ElectricGuitarName
       };
-      Location1 = new Location {
+      Location1 = new Location(Data.LocationRoot) {
         QueryHelper = QueryHelper,
         Name = Location1Name
       };
-      Event1 = new Event {
+      Event1 = new Event(Data.EventRoot) {
         QueryHelper = QueryHelper,
         Date = Event1Date
       };
-      Set1 = new Set {
+      Set1 = new Set(Data.SetRoot) {
         QueryHelper = QueryHelper,
         SetNo = Set1SetNo
       };
-      Piece1 = new TestPiece {
+      Piece1 = new TestPiece(Data.PieceRoot) {
         QueryHelper = QueryHelper,
         PieceNo = Piece1PieceNo
       };
-      Piece2 = new TestPiece {
+      Piece2 = new TestPiece(Data.PieceRoot) {
         QueryHelper = QueryHelper,
         PieceNo = Piece2PieceNo
       };
-      Credit1 = new Credit {
+      Credit1 = new Credit(Data.CreditRoot) {
         QueryHelper = QueryHelper,
         CreditNo = Credit1CreditNo
       };
-      Credit2 = new Credit {
+      Credit2 = new Credit(Data.CreditRoot) {
         QueryHelper = QueryHelper,
         CreditNo = Credit2CreditNo
       };
-      Credit3 = new Credit {
+      Credit3 = new Credit(Data.CreditRoot) {
         QueryHelper = QueryHelper,
         CreditNo = Credit3CreditNo
       };
-      using (var session = new TestSession(DatabaseFolderPath)) {
-        session.BeginUpdate();
-        session.Persist(DefaultAct);
-        session.Persist(DefaultNewsletter);
-        session.Persist(DefaultSeries);
-        session.Persist(Baker);
-        session.Persist(Clarissa);
-        session.Persist(Drums);
-        session.Persist(ElectricGuitar);
-        session.Persist(Location1);
-        Data.AddEventTypesPersisted(1, session);
-        Event1.EventType = Data.EventTypes[0];
-        Event1.Location = Location1;
-        session.Persist(Event1);
-        Set1.Event = Event1;
-        Data.AddGenresPersisted(1, session);
-        Set1.Genre = Data.Genres[0];
-        session.Persist(Set1);
-        Piece1.Set = Set1;
-        Piece2.Set = Set1;
-        session.Persist(Piece1);
-        session.Persist(Piece2);
-        Credit1.Piece = Piece1;
-        Credit1.Artist = Baker;
-        Credit1.Role = Drums;
-        Credit2.Piece = Piece1;
-        Credit2.Artist = Baker;
-        Credit2.Role = Drums;
-        Credit3.Piece = Piece2;
-        Credit3.Artist = Baker;
-        Credit3.Role = Drums;
-        session.Persist(Credit1);
-        session.Persist(Credit2);
-        session.Persist(Credit3);
-        session.Commit();
-      }
-      Session = new TestSession(DatabaseFolderPath);
+      Session.BeginUpdate();
+      Session.Persist(DefaultAct);
+      Session.Persist(DefaultNewsletter);
+      Session.Persist(DefaultSeries);
+      Session.Persist(Baker);
+      Session.Persist(Clarissa);
+      Session.Persist(Drums);
+      Session.Persist(ElectricGuitar);
+      Session.Persist(Location1);
+      Data.AddEventTypesPersisted(1, Session);
+      Event1.EventType = Data.EventTypes[0];
+      Event1.Location = Location1;
+      Session.Persist(Event1);
+      Set1.Event = Event1;
+      Data.AddGenresPersisted(1, Session);
+      Set1.Genre = Data.Genres[0];
+      Session.Persist(Set1);
+      Piece1.Set = Set1;
+      Piece2.Set = Set1;
+      Session.Persist(Piece1);
+      Session.Persist(Piece2);
+      Credit1.Piece = Piece1;
+      Credit1.Artist = Baker;
+      Credit1.Role = Drums;
+      Credit2.Piece = Piece1;
+      Credit2.Artist = Baker;
+      Credit2.Role = Drums;
+      Credit3.Piece = Piece2;
+      Credit3.Artist = Baker;
+      Credit3.Role = Drums;
+      Session.Persist(Credit1);
+      Session.Persist(Credit2);
+      Session.Persist(Credit3);
+      Session.Commit();
       Session.BeginRead();
       FetchData();
       Session.Commit();
@@ -249,7 +250,7 @@ namespace SoundExplorers.Tests.Data {
 
     [Test]
     public void DisallowPersistUnspecifiedCreditNo() {
-      var noCreditNo = new Credit {
+      var noCreditNo = new Credit(Data.CreditRoot) {
         QueryHelper = QueryHelper
       };
       Session.BeginUpdate();
@@ -260,7 +261,7 @@ namespace SoundExplorers.Tests.Data {
 
     [Test]
     public void DisallowSetKeyToDuplicate() {
-      var duplicate = new Credit {
+      var duplicate = new Credit(Data.CreditRoot) {
         QueryHelper = QueryHelper,
         CreditNo = Credit1CreditNo
       };

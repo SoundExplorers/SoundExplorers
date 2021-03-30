@@ -12,43 +12,33 @@ namespace SoundExplorers.Tests.Data {
       Data = new TestData(QueryHelper);
       using var session = new TestSession(DatabaseFolderPath);
       session.BeginUpdate();
-      ActRoot = EntityBase.FetchOrAddRoot<Act>(QueryHelper, session);
-      var eventRoot = 
-        EntityBase.FetchOrAddRoot<Event>(QueryHelper, session);
-      var locationRoot = 
-        EntityBase.FetchOrAddRoot<Location>(QueryHelper, session);
-      var newsletterRoot = 
-        EntityBase.FetchOrAddRoot<Newsletter>(QueryHelper, session);
-      var seriesRoot = 
-        EntityBase.FetchOrAddRoot<Series>(QueryHelper, session);
-      var setRoot = 
-        EntityBase.FetchOrAddRoot<Set>(QueryHelper, session);
+      Data.AddRootsPersistedIfRequired(session);
       session.Commit();
-      DefaultAct = Act.CreateDefault(ActRoot);
-      DefaultNewsletter = Newsletter.CreateDefault(newsletterRoot);
-      DefaultSeries = Series.CreateDefault(seriesRoot);
-      Location1 = new Location(locationRoot) {
+      DefaultAct = Act.CreateDefault(Data.ActRoot);
+      DefaultNewsletter = Newsletter.CreateDefault(Data.NewsletterRoot);
+      DefaultSeries = Series.CreateDefault(Data.SeriesRoot);
+      Location1 = new Location(Data.LocationRoot) {
         QueryHelper = QueryHelper,
         Name = Location1Name
       };
-      Event1 = new Event(eventRoot) {
+      Event1 = new Event(Data.EventRoot) {
         QueryHelper = QueryHelper,
         Date = Event1Date
       };
-      Act1 = new Act(ActRoot) {
+      Act1 = new Act(Data.ActRoot) {
         QueryHelper = QueryHelper,
         Name = Act1Name,
         Notes = Act1Notes
       };
-      Act2 = new Act(ActRoot) {
+      Act2 = new Act(Data.ActRoot) {
         QueryHelper = QueryHelper,
         Name = Act2Name
       };
-      Set1 = new Set(setRoot) {
+      Set1 = new Set(Data.SetRoot) {
         QueryHelper = QueryHelper,
         SetNo = Set1SetNo
       };
-      Set2 = new Set(setRoot) {
+      Set2 = new Set(Data.SetRoot) {
         QueryHelper = QueryHelper,
         SetNo = Set2SetNo
       };
@@ -94,7 +84,6 @@ namespace SoundExplorers.Tests.Data {
     private Series DefaultSeries { get; set; } = null!;
     private Act Act1 { get; set; } = null!;
     private Act Act2 { get; set; } = null!;
-    private SortedEntityCollection<Act> ActRoot { get; set; } = null!;
     private Event Event1 { get; set; } = null!;
     private static DateTime Event1Date => DateTime.Parse(Event1Key);
     private Location Location1 { get; set; } = null!;
@@ -122,7 +111,7 @@ namespace SoundExplorers.Tests.Data {
 
     [Test]
     public void AllowPersistUnspecifiedName() {
-      var noName = new Act(ActRoot) {
+      var noName = new Act(Data.ActRoot) {
         QueryHelper = QueryHelper
       };
       using var session = new TestSession(DatabaseFolderPath);
@@ -153,7 +142,7 @@ namespace SoundExplorers.Tests.Data {
 
     [Test]
     public void DisallowPersistDuplicate() {
-      var duplicate = new Act(ActRoot) {
+      var duplicate = new Act(Data.ActRoot) {
         QueryHelper = QueryHelper,
         Name = Act1Name
       };

@@ -14,7 +14,8 @@ namespace SoundExplorers.Tests.Data {
     private class DudDaughter : Daughter {
       public DudDaughter(QueryHelper queryHelper,
         Type? identifyingParentType = null) :
-        base(queryHelper, identifyingParentType) { }
+        base(new SortedEntityCollection<Daughter>(), 
+          queryHelper, identifyingParentType) { }
 
       public override Mother? Mother {
         get => (IdentifyingParent as Mother)!;
@@ -29,7 +30,7 @@ namespace SoundExplorers.Tests.Data {
 
     [Test]
     public void A010_Initial() {
-      var entity = new Series();
+      var entity = new Series(new SortedEntityCollection<Series>());
       Assert.IsFalse(entity.AllowOtherTypesOnSamePage, "AllowOtherTypesOnSamePage");
     }
 
@@ -41,7 +42,9 @@ namespace SoundExplorers.Tests.Data {
         {Name = "Yvette"};
       var zoe = new DudDaughter(QueryHelper, typeof(Mother))
         {Name = "Zoe"};
-      var mother = new Mother(QueryHelper) {Name = motherName};
+      var mother = new Mother(new SortedEntityCollection<Mother>(), QueryHelper) {
+        Name = motherName
+      };
       Assert.Throws<ConstraintException>(
         () => xenia.Mother = mother,
         "IdentifyingParentType has not been specified");

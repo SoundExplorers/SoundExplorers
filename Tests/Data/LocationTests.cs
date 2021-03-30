@@ -11,39 +11,42 @@ namespace SoundExplorers.Tests.Data {
       QueryHelper = new QueryHelper();
       DatabaseFolderPath = TestSession.CreateDatabaseFolder();
       Data = new TestData(QueryHelper);
-      DefaultNewsletter = Newsletter.CreateDefault();
-      DefaultSeries = Series.CreateDefault();
-      Location1 = new Location {
+      Session = new TestSession(DatabaseFolderPath);
+      Session.BeginUpdate();
+      Data.AddRootsPersistedIfRequired(Session);
+      Session.Commit();
+      DefaultNewsletter = Newsletter.CreateDefault(Data.NewsletterRoot);
+      DefaultSeries = Series.CreateDefault(Data.SeriesRoot);
+      Location1 = new Location(Data.LocationRoot) {
         QueryHelper = QueryHelper,
         Name = Location1Name,
         Notes = Location1Notes
       };
-      Location2 = new Location {
+      Location2 = new Location(Data.LocationRoot) {
         QueryHelper = QueryHelper,
         Name = Location2Name
       };
-      Event1 = new Event {
+      Event1 = new Event(Data.EventRoot) {
         QueryHelper = QueryHelper,
         Date = Event1Date
       };
-      Event2 = new Event {
+      Event2 = new Event(Data.EventRoot) {
         QueryHelper = QueryHelper,
         Date = Event2Date
       };
-      using var session = new TestSession(DatabaseFolderPath);
-      session.BeginUpdate();
-      session.Persist(DefaultNewsletter);
-      session.Persist(DefaultSeries);
-      session.Persist(Location1);
-      session.Persist(Location2);
+      Session.BeginUpdate();
+      Session.Persist(DefaultNewsletter);
+      Session.Persist(DefaultSeries);
+      Session.Persist(Location1);
+      Session.Persist(Location2);
       Event1.Location = Location1;
       Event2.Location = Location1;
-      Data.AddEventTypesPersisted(1, session);
+      Data.AddEventTypesPersisted(1, Session);
       Event1.EventType = Data.EventTypes[0];
       Event2.EventType = Event1.EventType;
-      session.Persist(Event1);
-      session.Persist(Event2);
-      session.Commit();
+      Session.Persist(Event1);
+      Session.Persist(Event2);
+      Session.Commit();
     }
 
     [TearDown]
@@ -57,6 +60,7 @@ namespace SoundExplorers.Tests.Data {
     private string DatabaseFolderPath { get; set; } = null!;
     private QueryHelper QueryHelper { get; set; } = null!;
     private TestData Data { get; set; } = null!;
+    private TestSession Session { get; set; } = null!;
     private Newsletter DefaultNewsletter { get; set; } = null!;
     private Series DefaultSeries { get; set; } = null!;
     private Event Event1 { get; set; } = null!;
@@ -68,13 +72,11 @@ namespace SoundExplorers.Tests.Data {
 
     [Test]
     public void A010_Initial() {
-      using (var session = new TestSession(DatabaseFolderPath)) {
-        session.BeginRead();
-        Location1 = QueryHelper.Read<Location>(Location1Name, session);
-        Location2 = QueryHelper.Read<Location>(Location2Name, session);
-        Event1 = QueryHelper.Read<Event>(Event1.SimpleKey, Location1, session);
-        session.Commit();
-      }
+      Session.BeginRead();
+      Location1 = QueryHelper.Read<Location>(Location1Name, Session);
+      Location2 = QueryHelper.Read<Location>(Location2Name, Session);
+      Event1 = QueryHelper.Read<Event>(Event1.SimpleKey, Location1, Session);
+      Session.Commit();
       Assert.AreEqual(Location1Name, Location1.Name,
         "Location1.Name initially");
       Assert.AreEqual(Location1Notes, Location1.Notes,
@@ -92,42 +94,39 @@ namespace SoundExplorers.Tests.Data {
 
     [Test]
     public void DisallowChangeNameToDuplicate() {
-      using var session = new TestSession(DatabaseFolderPath);
-      session.BeginUpdate();
+      Session.BeginUpdate();
       Location2 =
-        QueryHelper.Read<Location>(Location2Name, session);
+        QueryHelper.Read<Location>(Location2Name, Session);
       Location2.Name = Location2Name;
       Assert.Throws<PropertyConstraintException>(() =>
         Location2.Name = Location1Name);
-      session.Commit();
+      Session.Commit();
     }
 
     [Test]
     public void DisallowPersistDuplicate() {
-      var duplicate = new Location {
+      var duplicate = new Location(Data.LocationRoot) {
         QueryHelper = QueryHelper,
         Name = Location1Name
       };
-      using var session = new TestSession(DatabaseFolderPath);
-      session.BeginUpdate();
-      Assert.Throws<PropertyConstraintException>(() => session.Persist(duplicate));
-      session.Commit();
+      Session.BeginUpdate();
+      Assert.Throws<PropertyConstraintException>(() => Session.Persist(duplicate));
+      Session.Commit();
     }
 
     [Test]
     public void DisallowPersistUnspecifiedName() {
-      var noName = new Location {
+      var noName = new Location(Data.LocationRoot) {
         QueryHelper = QueryHelper
       };
-      using var session = new TestSession(DatabaseFolderPath);
-      session.BeginUpdate();
-      Assert.Throws<PropertyConstraintException>(() => session.Persist(noName));
-      session.Commit();
+      Session.BeginUpdate();
+      Assert.Throws<PropertyConstraintException>(() => Session.Persist(noName));
+      Session.Commit();
     }
 
     [Test]
     public void DisallowSetNullName() {
-      var nullName = new Location {
+      var nullName = new Location(Data.LocationRoot) {
         QueryHelper = QueryHelper
       };
       Assert.Throws<PropertyConstraintException>(() => nullName.Name = null!);
@@ -135,11 +134,10 @@ namespace SoundExplorers.Tests.Data {
 
     [Test]
     public void DisallowUnpersistLocationWithEvents() {
-      using var session = new TestSession(DatabaseFolderPath);
-      session.BeginUpdate();
+      Session.BeginUpdate();
       Assert.Throws<ConstraintException>(() =>
-        Location1.Unpersist(session));
-      session.Commit();
+        Location1.Unpersist(Session));
+      Session.Commit();
     }
   }
 }

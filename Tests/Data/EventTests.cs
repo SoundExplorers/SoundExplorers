@@ -10,77 +10,81 @@ namespace SoundExplorers.Tests.Data {
     public void Setup() {
       QueryHelper = new QueryHelper();
       DatabaseFolderPath = TestSession.CreateDatabaseFolder();
-      EventType1 = new EventType {
+      Data = new TestData(QueryHelper);
+      Session = new TestSession(DatabaseFolderPath);
+      Session.BeginUpdate();
+      Data.AddRootsPersistedIfRequired(Session);
+      Session.Commit();
+      EventType1 = new EventType(Data.EventTypeRoot) {
         QueryHelper = QueryHelper,
         Name = EventType1Name
       };
-      Genre1 = new Genre {
+      Genre1 = new Genre(Data.GenreRoot) {
         QueryHelper = QueryHelper,
         Name = Genre1Name
       };
-      Location1 = new Location {
+      Location1 = new Location(Data.LocationRoot) {
         QueryHelper = QueryHelper,
         Name = Location1Name
       };
-      Location2 = new Location {
+      Location2 = new Location(Data.LocationRoot) {
         QueryHelper = QueryHelper,
         Name = Location2Name
       };
-      DefaultNewsletter = Newsletter.CreateDefault();
-      Newsletter1 = new Newsletter {
+      DefaultNewsletter = Newsletter.CreateDefault(Data.NewsletterRoot);
+      Newsletter1 = new Newsletter(Data.NewsletterRoot) {
         QueryHelper = QueryHelper,
         Date = Newsletter1Date,
         Url = Newsletter1Url
       };
-      Newsletter2 = new Newsletter {
+      Newsletter2 = new Newsletter(Data.NewsletterRoot) {
         QueryHelper = QueryHelper,
         Date = Newsletter2Date,
         Url = Newsletter2Url
       };
-      DefaultSeries = Series.CreateDefault();
-      Series1 = new Series {
+      DefaultSeries = Series.CreateDefault(Data.SeriesRoot);
+      Series1 = new Series(Data.SeriesRoot) {
         QueryHelper = QueryHelper,
         Name = Series1Name
       };
-      Series2 = new Series {
+      Series2 = new Series(Data.SeriesRoot) {
         QueryHelper = QueryHelper,
         Name = Series2Name
       };
-      Event1 = new Event {
+      Event1 = new Event(Data.EventRoot) {
         QueryHelper = QueryHelper,
         Date = Event1Date,
         Notes = Event1Notes
       };
-      Event1AtLocation2 = new Event {
+      Event1AtLocation2 = new Event(Data.EventRoot) {
         QueryHelper = QueryHelper,
         Date = Event1Date
       };
-      Event2 = new Event {
+      Event2 = new Event(Data.EventRoot) {
         QueryHelper = QueryHelper,
         Date = Event2Date
       };
-      Set1 = new Set {
+      Set1 = new Set(Data.SetRoot) {
         QueryHelper = QueryHelper,
         SetNo = Set1SetNo
       };
-      Set2 = new Set {
+      Set2 = new Set(Data.SetRoot) {
         QueryHelper = QueryHelper,
         SetNo = Set2SetNo
       };
-      DefaultAct = Act.CreateDefault();
-      using var session = new TestSession(DatabaseFolderPath);
-      session.BeginUpdate();
-      session.Persist(EventType1);
-      session.Persist(Genre1);
-      session.Persist(Location1);
-      session.Persist(Location2);
-      session.Persist(DefaultNewsletter);
-      session.Persist(Newsletter1);
-      session.Persist(Newsletter2);
-      session.Persist(DefaultSeries);
-      session.Persist(Series1);
-      session.Persist(Series2);
-      session.Persist(DefaultAct);
+      DefaultAct = Act.CreateDefault(Data.ActRoot);
+      Session.BeginUpdate();
+      Session.Persist(EventType1);
+      Session.Persist(Genre1);
+      Session.Persist(Location1);
+      Session.Persist(Location2);
+      Session.Persist(DefaultNewsletter);
+      Session.Persist(Newsletter1);
+      Session.Persist(Newsletter2);
+      Session.Persist(DefaultSeries);
+      Session.Persist(Series1);
+      Session.Persist(Series2);
+      Session.Persist(DefaultAct);
       Event1.Location = Location1;
       Event1AtLocation2.Location = Location2;
       Event2.Location = Location1;
@@ -88,9 +92,9 @@ namespace SoundExplorers.Tests.Data {
       Event1.EventType = EventType1;
       Event1AtLocation2.EventType = EventType1;
       Event2.EventType = EventType1;
-      session.Persist(Event1);
-      session.Persist(Event1AtLocation2);
-      session.Persist(Event2);
+      Session.Persist(Event1);
+      Session.Persist(Event1AtLocation2);
+      Session.Persist(Event2);
       Event1.Newsletter = Newsletter1;
       Event1AtLocation2.Newsletter = Newsletter2;
       Event1AtLocation2.Series = Series2;
@@ -98,9 +102,9 @@ namespace SoundExplorers.Tests.Data {
       Set1.Genre = Genre1;
       Set2.Event = Event1;
       Set2.Genre = Genre1;
-      session.Persist(Set1);
-      session.Persist(Set2);
-      session.Commit();
+      Session.Persist(Set1);
+      Session.Persist(Set2);
+      Session.Commit();
     }
 
     [TearDown]
@@ -123,6 +127,8 @@ namespace SoundExplorers.Tests.Data {
     private const int Set2SetNo = 2;
     private string DatabaseFolderPath { get; set; } = null!;
     private QueryHelper QueryHelper { get; set; } = null!;
+    private TestData Data { get; set; } = null!;
+    private TestSession Session { get; set; } = null!;
     private Act DefaultAct { get; set; } = null!;
     private Newsletter DefaultNewsletter { get; set; } = null!;
     private Series DefaultSeries { get; set; } = null!;
@@ -158,21 +164,20 @@ namespace SoundExplorers.Tests.Data {
 
     [Test]
     public void A010_Initial() {
-      using var session = new TestSession(DatabaseFolderPath);
-      session.BeginRead();
-      Event1 = QueryHelper.Read<Event>(Event1SimpleKey, Location1, session);
+      Session.BeginRead();
+      Event1 = QueryHelper.Read<Event>(Event1SimpleKey, Location1, Session);
       Event1AtLocation2 =
-        QueryHelper.Read<Event>(Event1SimpleKey, Location2, session);
-      Event2 = QueryHelper.Read<Event>(Event2SimpleKey, Location1, session);
-      EventType1 = QueryHelper.Read<EventType>(EventType1Name, session);
-      Location1 = QueryHelper.Read<Location>(Location1Name, session);
-      Location2 = QueryHelper.Read<Location>(Location2Name, session);
+        QueryHelper.Read<Event>(Event1SimpleKey, Location2, Session);
+      Event2 = QueryHelper.Read<Event>(Event2SimpleKey, Location1, Session);
+      EventType1 = QueryHelper.Read<EventType>(EventType1Name, Session);
+      Location1 = QueryHelper.Read<Location>(Location1Name, Session);
+      Location2 = QueryHelper.Read<Location>(Location2Name, Session);
       Newsletter1 =
-        QueryHelper.Read<Newsletter>(Newsletter1SimpleKey, session);
-      DefaultSeries = QueryHelper.Read<Series>(DefaultSeries.Name, session);
-      Series1 = QueryHelper.Read<Series>(Series1Name, session);
-      Set1 = QueryHelper.Read<Set>(Set1.SimpleKey, Event1, session);
-      Set2 = QueryHelper.Read<Set>(Set2.SimpleKey, Event1, session);
+        QueryHelper.Read<Newsletter>(Newsletter1SimpleKey, Session);
+      DefaultSeries = QueryHelper.Read<Series>(DefaultSeries.Name, Session);
+      Series1 = QueryHelper.Read<Series>(Series1Name, Session);
+      Set1 = QueryHelper.Read<Set>(Set1.SimpleKey, Event1, Session);
+      Set2 = QueryHelper.Read<Set>(Set2.SimpleKey, Event1, Session);
       Assert.AreEqual(3, EventType1.Events.Count, "EventType1.Events.Count");
       Assert.AreEqual(Event1Date, Event1.Date, "Event1.Date");
       Assert.AreEqual(Event1Notes, Event1.Notes, "Event1.Notes");
@@ -210,7 +215,7 @@ namespace SoundExplorers.Tests.Data {
       Assert.AreEqual(Event1.Date, Set1.Event.Date, "Set1.Event.Date");
       Assert.AreSame(Event1, Set2.Event, "Set2.Event");
       Assert.AreEqual(Event1.Date, Set2.Event.Date, "Set2.Event.Date");
-      session.Commit();
+      Session.Commit();
     }
 
     /// <summary>
@@ -219,26 +224,24 @@ namespace SoundExplorers.Tests.Data {
     /// </summary>
     [Test]
     public void AddToSeries() {
-      using var session = new TestSession(DatabaseFolderPath);
-      session.BeginUpdate();
-      Series2 = QueryHelper.Read<Series>(Series2Name, session);
-      Event1 = QueryHelper.Read<Event>(Event1SimpleKey, Location1, session);
+      Session.BeginUpdate();
+      Series2 = QueryHelper.Read<Series>(Series2Name, Session);
+      Event1 = QueryHelper.Read<Event>(Event1SimpleKey, Location1, Session);
       Event1.Series = Series2;
       Assert.AreSame(Series2, Event1.Series, "Event1.Series");
       Assert.AreEqual(2, Series2.Events.Count, "Series2.Events.Count");
       Assert.AreSame(Event1, Series2.Events[0], "Series2 1st Event");
-      Assert.AreSame(Series2, Event1.Series, "Event1.Series in new session");
-      Assert.AreEqual(2, Series2.Events.Count, "Series2.Events.Count in new session");
-      Assert.AreSame(Event1, Series2.Events[0], "Series2 1st Event in new session");
-      session.Commit();
+      Assert.AreSame(Series2, Event1.Series, "Event1.Series in new Session");
+      Assert.AreEqual(2, Series2.Events.Count, "Series2.Events.Count in new Session");
+      Assert.AreSame(Event1, Series2.Events[0], "Series2 1st Event in new Session");
+      Session.Commit();
     }
 
     [Test]
     public void ChangeLocation() {
-      using var session = new TestSession(DatabaseFolderPath);
-      session.BeginUpdate();
-      Location1 = QueryHelper.Read<Location>(Location1Name, session);
-      Location2 = QueryHelper.Read<Location>(Location2Name, session);
+      Session.BeginUpdate();
+      Location1 = QueryHelper.Read<Location>(Location1Name, Session);
+      Location2 = QueryHelper.Read<Location>(Location2Name, Session);
       Event1 = Location1.Events[0];
       Event1AtLocation2 = Location2.Events[0];
       Event2 = Location1.Events[1];
@@ -249,23 +252,22 @@ namespace SoundExplorers.Tests.Data {
       Assert.AreSame(Event1AtLocation2, Location2.Events[0],
         "Location2 1st Event");
       Assert.AreSame(Event2, Location2.Events[1], "Location2 2nd Event");
-      Assert.AreSame(Location2, Event2.Location, "Event2.Location in new session");
-      Assert.AreEqual(1, Location1.Events.Count, "Location1.Events.Count in new session");
-      Assert.AreEqual(2, Location2.Events.Count, "Location2.Events.Count in new session");
+      Assert.AreSame(Location2, Event2.Location, "Event2.Location in new Session");
+      Assert.AreEqual(1, Location1.Events.Count, "Location1.Events.Count in new Session");
+      Assert.AreEqual(2, Location2.Events.Count, "Location2.Events.Count in new Session");
       Assert.AreSame(Event1AtLocation2, Location2.Events[0],
-        "Location2 1st Event in new session");
-      Assert.AreSame(Event2, Location2.Events[1], "Location2 2nd Event in new session");
-      session.Commit();
+        "Location2 1st Event in new Session");
+      Assert.AreSame(Event2, Location2.Events[1], "Location2 2nd Event in new Session");
+      Session.Commit();
     }
 
     [Test]
     public void ChangeLocationToSame() {
-      using var session = new TestSession(DatabaseFolderPath);
-      session.BeginUpdate();
-      Location1 = QueryHelper.Read<Location>(Location1Name, session);
+      Session.BeginUpdate();
+      Location1 = QueryHelper.Read<Location>(Location1Name, Session);
       Event1 = Location1.Events[0];
       Assert.DoesNotThrow(() => Event1.Location = Location1);
-      session.Commit();
+      Session.Commit();
     }
 
     /// <summary>
@@ -275,12 +277,11 @@ namespace SoundExplorers.Tests.Data {
     [Test]
     public void ChangeNewsletter() {
       const string newNotes = "My new notes";
-      using var session = new TestSession(DatabaseFolderPath);
-      session.BeginUpdate();
+      Session.BeginUpdate();
       Newsletter1 =
-        QueryHelper.Read<Newsletter>(Newsletter1SimpleKey, session);
+        QueryHelper.Read<Newsletter>(Newsletter1SimpleKey, Session);
       Newsletter2 =
-        QueryHelper.Read<Newsletter>(Newsletter2SimpleKey, session);
+        QueryHelper.Read<Newsletter>(Newsletter2SimpleKey, Session);
       Event1 = Newsletter1.Events[0];
       Event1.Newsletter = Newsletter2;
       Event1.Notes = newNotes;
@@ -290,13 +291,13 @@ namespace SoundExplorers.Tests.Data {
       Assert.AreEqual(2, Newsletter2.Events.Count,
         "Newsletter2.Events.Count");
       Assert.AreSame(Event1, Newsletter2.Events[0], "Newsletter2 1st Event");
-      Assert.AreEqual(newNotes, Event1.Notes, "Event1.Notes in new session");
-      Assert.AreSame(Newsletter2, Event1.Newsletter, "Event1.Newsletter in new session");
+      Assert.AreEqual(newNotes, Event1.Notes, "Event1.Notes in new Session");
+      Assert.AreSame(Newsletter2, Event1.Newsletter, "Event1.Newsletter in new Session");
       Assert.AreEqual(0, Newsletter1.Events.Count,
-        "Newsletter1.Events.Count in new session");
+        "Newsletter1.Events.Count in new Session");
       Assert.AreEqual(2, Newsletter2.Events.Count,
-        "Newsletter2.Events.Count in new session");
-      session.Commit();
+        "Newsletter2.Events.Count in new Session");
+      Session.Commit();
     }
 
     [Test]
@@ -306,36 +307,32 @@ namespace SoundExplorers.Tests.Data {
         "DefaultNewsletter.Events.Count initially");
       Assert.AreEqual(1, Newsletter1.Events.Count,
         "Newsletter1.Events.Count initially");
-      using (var session = new TestSession(DatabaseFolderPath)) {
-        session.BeginUpdate();
-        DefaultNewsletter =
-          QueryHelper.Read<Newsletter>(DefaultNewsletter.SimpleKey, session);
-        Newsletter1 =
-          QueryHelper.Read<Newsletter>(Newsletter1SimpleKey, session);
-        Event1 = QueryHelper.Read<Event>(Event1SimpleKey, Location1, session);
-        Event1.Newsletter = DefaultNewsletter;
-        session.Commit();
-      }
+      Session.BeginUpdate();
+      DefaultNewsletter =
+        QueryHelper.Read<Newsletter>(DefaultNewsletter.SimpleKey, Session);
+      Newsletter1 =
+        QueryHelper.Read<Newsletter>(Newsletter1SimpleKey, Session);
+      Event1 = QueryHelper.Read<Event>(Event1SimpleKey, Location1, Session);
+      Event1.Newsletter = DefaultNewsletter;
+      Session.Commit();
       Assert.AreSame(DefaultNewsletter, Event1.Newsletter, "Event1.Newsletter");
       Assert.AreEqual(2, DefaultNewsletter.Events.Count,
         "DefaultNewsletter.Events.Count after update");
       Assert.AreEqual(0, Newsletter1.Events.Count,
         "Newsletter1.Events.Count after update");
-      using (var session = new TestSession(DatabaseFolderPath)) {
-        session.BeginRead();
-        DefaultNewsletter =
-          QueryHelper.Read<Newsletter>(DefaultNewsletter.SimpleKey, session);
-        Newsletter1 =
-          QueryHelper.Read<Newsletter>(Newsletter1SimpleKey, session);
-        Event1 = QueryHelper.Read<Event>(Event1SimpleKey, Location1, session);
-        session.Commit();
-      }
+      Session.BeginRead();
+      DefaultNewsletter =
+        QueryHelper.Read<Newsletter>(DefaultNewsletter.SimpleKey, Session);
+      Newsletter1 =
+        QueryHelper.Read<Newsletter>(Newsletter1SimpleKey, Session);
+      Event1 = QueryHelper.Read<Event>(Event1SimpleKey, Location1, Session);
+      Session.Commit();
       Assert.AreSame(DefaultNewsletter, Event1.Newsletter,
-        "Event1.Newsletter in new session");
+        "Event1.Newsletter in new Session");
       Assert.AreEqual(2, DefaultNewsletter.Events.Count,
-        "DefaultNewsletter.Events.Count in new session");
+        "DefaultNewsletter.Events.Count in new Session");
       Assert.AreEqual(0, Newsletter1.Events.Count,
-        "Newsletter1.Events.Count in new session");
+        "Newsletter1.Events.Count in new Session");
     }
 
     [Test]
@@ -345,119 +342,108 @@ namespace SoundExplorers.Tests.Data {
         "DefaultSeries.Events.Count initially");
       Assert.AreEqual(1, Series1.Events.Count,
         "Series1.Events.Count initially");
-      using (var session = new TestSession(DatabaseFolderPath)) {
-        session.BeginUpdate();
-        DefaultSeries =
-          QueryHelper.Read<Series>(DefaultSeries.SimpleKey, session);
-        Series1 =
-          QueryHelper.Read<Series>(Series1.SimpleKey, session);
-        Event2 = QueryHelper.Read<Event>(Event2SimpleKey, Location1, session);
-        Event2.Series = DefaultSeries;
-        session.Commit();
-      }
+      Session.BeginUpdate();
+      DefaultSeries =
+        QueryHelper.Read<Series>(DefaultSeries.SimpleKey, Session);
+      Series1 =
+        QueryHelper.Read<Series>(Series1.SimpleKey, Session);
+      Event2 = QueryHelper.Read<Event>(Event2SimpleKey, Location1, Session);
+      Event2.Series = DefaultSeries;
+      Session.Commit();
       Assert.AreSame(DefaultSeries, Event2.Series, "Event2.Series");
       Assert.AreEqual(2, DefaultSeries.Events.Count,
         "DefaultSeries.Events.Count after update");
       Assert.AreEqual(0, Series1.Events.Count,
         "Series1.Events.Count after update");
-      using (var session = new TestSession(DatabaseFolderPath)) {
-        session.BeginRead();
-        DefaultSeries =
-          QueryHelper.Read<Series>(DefaultSeries.SimpleKey, session);
-        Series1 =
-          QueryHelper.Read<Series>(Series1.SimpleKey, session);
-        Event2 = QueryHelper.Read<Event>(Event2SimpleKey, Location1, session);
-        session.Commit();
-      }
+      Session.BeginRead();
+      DefaultSeries =
+        QueryHelper.Read<Series>(DefaultSeries.SimpleKey, Session);
+      Series1 =
+        QueryHelper.Read<Series>(Series1.SimpleKey, Session);
+      Event2 = QueryHelper.Read<Event>(Event2SimpleKey, Location1, Session);
+      Session.Commit();
       Assert.AreSame(DefaultSeries, Event2.Series,
-        "Event2.Series in new session");
+        "Event2.Series in new Session");
       Assert.AreEqual(2, DefaultSeries.Events.Count,
-        "DefaultSeries.Events.Count in new session");
+        "DefaultSeries.Events.Count in new Session");
       Assert.AreEqual(0, Series1.Events.Count,
-        "Series1.Events.Count in new session");
+        "Series1.Events.Count in new Session");
     }
 
     [Test]
     public void DisallowChangeDateToDuplicate() {
-      using var session = new TestSession(DatabaseFolderPath);
-      session.BeginUpdate();
+      Session.BeginUpdate();
       Event2 =
-        QueryHelper.Read<Event>(Event2SimpleKey, Location1, session);
+        QueryHelper.Read<Event>(Event2SimpleKey, Location1, Session);
       Event2.Date = Event2Date;
       Assert.Throws<ConstraintException>(() => Event2.Date = Event1Date);
-      session.Commit();
+      Session.Commit();
     }
 
     [Test]
     public void DisallowChangeDateToMinimum() {
-      using var session = new TestSession(DatabaseFolderPath);
-      session.BeginUpdate();
-      Event2 = QueryHelper.Read<Event>(Event2SimpleKey, Location1, session);
+      Session.BeginUpdate();
+      Event2 = QueryHelper.Read<Event>(Event2SimpleKey, Location1, Session);
       Assert.Throws<PropertyConstraintException>(() =>
         Event2.Date = DateTime.MinValue);
-      session.Commit();
+      Session.Commit();
     }
 
     [Test]
     public void DisallowChangeEventTypeToNull() {
-      using var session = new TestSession(DatabaseFolderPath);
-      session.BeginUpdate();
-      EventType1 = QueryHelper.Read<EventType>(EventType1Name, session);
-      Event1 = QueryHelper.Read<Event>(Event1SimpleKey, Location1, session);
+      Session.BeginUpdate();
+      EventType1 = QueryHelper.Read<EventType>(EventType1Name, Session);
+      Event1 = QueryHelper.Read<Event>(Event1SimpleKey, Location1, Session);
       Assert.Throws<ConstraintException>(() => Event1.EventType = null!);
-      session.Commit();
+      Session.Commit();
     }
 
     [Test]
     public void DisallowChangeLocationToNull() {
-      using var session = new TestSession(DatabaseFolderPath);
-      session.BeginUpdate();
-      Location1 = QueryHelper.Read<Location>(Location1Name, session);
-      Event1 = QueryHelper.Read<Event>(Event1SimpleKey, Location1, session);
+      Session.BeginUpdate();
+      Location1 = QueryHelper.Read<Location>(Location1Name, Session);
+      Event1 = QueryHelper.Read<Event>(Event1SimpleKey, Location1, Session);
       Assert.Throws<PropertyConstraintException>(() => Event1.Location = null!);
-      session.Commit();
+      Session.Commit();
     }
 
     [Test]
     public void DisallowPersistUnspecifiedDate() {
-      var noDate = new Event {
+      var noDate = new Event(Data.EventRoot) {
         QueryHelper = QueryHelper
       };
-      using var session = new TestSession(DatabaseFolderPath);
-      session.BeginUpdate();
-      Location1 = QueryHelper.Read<Location>(Location1.SimpleKey, session);
+      Session.BeginUpdate();
+      Location1 = QueryHelper.Read<Location>(Location1.SimpleKey, Session);
       noDate.Location = Location1;
-      Assert.Throws<PropertyConstraintException>(() => session.Persist(noDate));
-      session.Abort();
+      Assert.Throws<PropertyConstraintException>(() => Session.Persist(noDate));
+      Session.Abort();
     }
 
     [Test]
     public void DisallowSetKeyToDuplicate() {
-      var duplicate = new Event {
+      var duplicate = new Event(Data.EventRoot) {
         QueryHelper = QueryHelper,
         Date = Event1Date
       };
-      using var session = new TestSession(DatabaseFolderPath);
-      session.BeginUpdate();
-      Location1 = QueryHelper.Read<Location>(Location1Name, session);
+      Session.BeginUpdate();
+      Location1 = QueryHelper.Read<Location>(Location1Name, Session);
       Assert.Throws<ConstraintException>(() =>
         duplicate.Location = Location1);
-      session.Commit();
+      Session.Commit();
     }
 
     [Test]
     public void DisallowUnpersistEventWithSets() {
-      using var session = new TestSession(DatabaseFolderPath);
-      session.BeginUpdate();
-      Event1 = QueryHelper.Read<Event>(Event1SimpleKey, Location1, session);
+      Session.BeginUpdate();
+      Event1 = QueryHelper.Read<Event>(Event1SimpleKey, Location1, Session);
       Assert.Throws<ConstraintException>(() =>
-        Event1.Unpersist(session));
-      session.Commit();
+        Event1.Unpersist(Session));
+      Session.Commit();
     }
 
     [Test]
     public void GetNullLocation() {
-      var @event = new Event {
+      var @event = new Event(Data.EventRoot) {
         QueryHelper = QueryHelper,
         Date = Event2Date
       };
@@ -466,82 +452,75 @@ namespace SoundExplorers.Tests.Data {
 
     [Test]
     public void OrderOfSets() {
-      var set3 = new Set {
+      var set3 = new Set(Data.SetRoot) {
         QueryHelper = QueryHelper,
         SetNo = 3
       };
-      var set4 = new Set {
+      var set4 = new Set(Data.SetRoot) {
         QueryHelper = QueryHelper,
         SetNo = 4
       };
-      using var session = new TestSession(DatabaseFolderPath);
-      session.BeginUpdate();
-      Event1 = QueryHelper.Read<Event>(Event1SimpleKey, Location1, session);
-      Genre1 = QueryHelper.Read<Genre>(Genre1Name, session);
+      Session.BeginUpdate();
+      Event1 = QueryHelper.Read<Event>(Event1SimpleKey, Location1, Session);
+      Genre1 = QueryHelper.Read<Genre>(Genre1Name, Session);
       set4.Event = Event1;
       set4.Genre = Genre1;
-      session.Persist(set4);
+      Session.Persist(set4);
       set3.Event = Event1;
       set3.Genre = Genre1;
-      session.Persist(set3);
+      Session.Persist(set3);
       Assert.AreEqual(4, Event1.Sets.Count, "Sets.Count");
       Assert.AreEqual(1, Event1.Sets[0].SetNo, "Sets[0].SetNo");
       Assert.AreEqual(2, Event1.Sets[1].SetNo, "Sets[1].SetNo");
       Assert.AreEqual(3, Event1.Sets[2].SetNo, "Sets[2].SetNo");
       Assert.AreEqual(4, Event1.Sets[3].SetNo, "Sets[3].SetNo");
-      session.Commit();
+      Session.Commit();
     }
 
     [Test]
     public void Unpersist() {
-      ConstraintException exception;
-      using (var session = new TestSession(DatabaseFolderPath)) {
-        session.BeginUpdate();
-        Event1 = QueryHelper.Read<Event>(Event1SimpleKey, Location1, session);
-        Set1 = QueryHelper.Read<Set>(Set1.SimpleKey, Event1, session);
-        Set2 = QueryHelper.Read<Set>(Set2.SimpleKey, Event1, session);
-        exception = Assert.Catch<ConstraintException>(() => session.Unpersist(Event1),
-          "Unpersist Event with Sets");
-        session.Unpersist(Set1);
-        session.Unpersist(Set2);
-        session.Commit();
-      }
+      Session.BeginUpdate();
+      Event1 = QueryHelper.Read<Event>(Event1SimpleKey, Location1, Session);
+      Set1 = QueryHelper.Read<Set>(Set1.SimpleKey, Event1, Session);
+      Set2 = QueryHelper.Read<Set>(Set2.SimpleKey, Event1, Session);
+      ConstraintException exception = 
+        Assert.Catch<ConstraintException>(() => Session.Unpersist(Event1),
+        "Unpersist Event with Sets");
+      Session.Unpersist(Set1);
+      Session.Unpersist(Set2);
+      Session.Commit();
       Assert.IsTrue(
         exception.Message.Contains("' cannot be deleted because it is referenced by "),
         "ConstraintException message");
-      using (var session = new TestSession(DatabaseFolderPath)) {
-        session.BeginUpdate();
-        Event1 = QueryHelper.Read<Event>(Event1SimpleKey, Location1, session);
-        EventType1 = QueryHelper.Read<EventType>(EventType1Name, session);
-        Location1 = QueryHelper.Read<Location>(Location1Name, session);
-        Newsletter1 =
-          QueryHelper.Read<Newsletter>(Newsletter1SimpleKey, session);
-        session.Unpersist(Event1);
-        session.Commit();
-      }
+      Session.BeginUpdate();
+      Event1 = QueryHelper.Read<Event>(Event1SimpleKey, Location1, Session);
+      EventType1 = QueryHelper.Read<EventType>(EventType1Name, Session);
+      Location1 = QueryHelper.Read<Location>(Location1Name, Session);
+      Newsletter1 =
+        QueryHelper.Read<Newsletter>(Newsletter1SimpleKey, Session);
+      Session.Unpersist(Event1);
+      Session.Commit();
       Assert.AreEqual(2, EventType1.Events.Count,
         "EventType1.Events.Count after deleting Event1");
       Assert.AreEqual(1, Location1.Events.Count,
         "Location1.Events.Count after deleting Event1");
       Assert.AreEqual(0, Newsletter1.Events.Count,
         "Newsletter1.Events.Count after deleting Event1");
-      using (var session = new TestSession(DatabaseFolderPath)) {
-        session.BeginUpdate();
-        Event1 = QueryHelper.Find<Event>(Event1SimpleKey, Location1, session)!;
-        EventType1 = QueryHelper.Read<EventType>(EventType1Name, session);
-        Location1 = QueryHelper.Read<Location>(Location1Name, session);
-        Newsletter1 =
-          QueryHelper.Read<Newsletter>(Newsletter1SimpleKey, session);
-        session.Unpersist(Event1);
-        session.Commit();
-      }
-      Assert.IsNull(Event1, "Event1 in new session");
+      Session.BeginUpdate();
+      Event1 = QueryHelper.Find<Event>(Event1SimpleKey, Location1, Session)!;
+      EventType1 = QueryHelper.Read<EventType>(EventType1Name, Session);
+      Location1 = QueryHelper.Read<Location>(Location1Name, Session);
+      Newsletter1 =
+        QueryHelper.Read<Newsletter>(Newsletter1SimpleKey, Session);
+      Session.Unpersist(Event1);
+      Session.Commit();
+      Assert.IsNull(Event1, "Event1 in new Session");
       Assert.AreEqual(2, EventType1.Events.Count,
-        "EventType1.Events.Count in new session");
+        "EventType1.Events.Count in new Session");
       Assert.AreEqual(1, Location1.Events.Count,
-        "Location1.Events.Count in new session");
+        "Location1.Events.Count in new Session");
       Assert.AreEqual(0, Newsletter1.Events.Count,
-        "Newsletter1.Events.Count in new session");
+        "Newsletter1.Events.Count in new Session");
     }
   }
 }
