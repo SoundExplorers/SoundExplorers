@@ -261,7 +261,7 @@ namespace SoundExplorers.Tests.Model {
     [Test]
     public void ReadAsParentList() {
       List = CreateSetList(true, true, false);
-      Assert.IsFalse(List.ListRole == ListRole.Child, "ListRole");
+      Assert.AreEqual(ListRole.Parent, List.ListRole, "ListRole");
       Session.BeginUpdate();
       var set = Data.Sets[2];
       set.Act = Data.Acts[1];
@@ -301,6 +301,8 @@ namespace SoundExplorers.Tests.Model {
         ParentList = (result.CreateParentList() as EventList)!;
         ParentList.ChildListType = result.GetType();
         result.ParentList = ParentList;
+      } else {
+        result.ChildListType = typeof(PieceList);
       }
       return result;
     }

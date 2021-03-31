@@ -203,7 +203,9 @@ namespace SoundExplorers.Data {
         }
         value.AddChild(this);
         Parents[IdentifyingParentType!] = value;
-        ChangeRootKey(new Key(SimpleKey, value));
+        if (IsPersistent) {
+          ChangeRootKey(new Key(SimpleKey, value));
+        }
         _identifyingParent = value;
       }
     }
@@ -227,7 +229,9 @@ namespace SoundExplorers.Data {
       get => _simpleKey;
       protected set {
         CheckCanChangeSimpleKey(_simpleKey, value);
-        ChangeRootKey(new Key(value, IdentifyingParent));
+        if (IsPersistent) {
+          ChangeRootKey(new Key(value, IdentifyingParent));
+        }
         _simpleKey = value;
       }
     }
@@ -283,6 +287,7 @@ namespace SoundExplorers.Data {
         action.Invoke();
       }
       PostPersistenceActions.Clear();
+      Root.Add(Key, this);
       return result;
     }
 
@@ -374,14 +379,8 @@ namespace SoundExplorers.Data {
     }
 
     private void ChangeRootKey(Key newKey) {
-      if (IsPersistent) {
-        if (Root.Contains(Key)) {
-          Root.Remove(Key);
-        }
-        Root.Add(newKey, this);
-      } else {
-        PostPersistenceActions.Add(() => ChangeRootKey(newKey));
-      }
+      Root.Remove(Key);
+      Root.Add(newKey, this);
     }
 
     private void CheckCanAddNonIdentifiedChild(EntityBase child) {

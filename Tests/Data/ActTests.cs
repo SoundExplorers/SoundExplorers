@@ -8,12 +8,12 @@ namespace SoundExplorers.Tests.Data {
     [SetUp]
     public void Setup() {
       QueryHelper = new QueryHelper();
-      DatabaseFolderPath = TestSession.CreateDatabaseFolder();
       Data = new TestData(QueryHelper);
-      using var session = new TestSession(DatabaseFolderPath);
-      session.BeginUpdate();
-      Data.AddRootsPersistedIfRequired(session);
-      session.Commit();
+      DatabaseFolderPath = TestSession.CreateDatabaseFolder();
+      Session = new TestSession(DatabaseFolderPath);
+      Session.BeginUpdate();
+      Data.AddRootsPersistedIfRequired(Session);
+      Session.Commit();
       DefaultAct = Act.CreateDefault(Data.ActRoot);
       DefaultNewsletter = Newsletter.CreateDefault(Data.NewsletterRoot);
       DefaultSeries = Series.CreateDefault(Data.SeriesRoot);
@@ -42,26 +42,26 @@ namespace SoundExplorers.Tests.Data {
         QueryHelper = QueryHelper,
         SetNo = Set2SetNo
       };
-      session.BeginUpdate();
-      session.Persist(DefaultAct);
-      session.Persist(DefaultNewsletter);
-      session.Persist(DefaultSeries);
-      session.Persist(Location1);
-      Data.AddEventTypesPersisted(1, session);
+      Session.BeginUpdate();
+      Session.Persist(DefaultAct);
+      Session.Persist(DefaultNewsletter);
+      Session.Persist(DefaultSeries);
+      Session.Persist(Location1);
+      Data.AddEventTypesPersisted(1, Session);
       Event1.Location = Location1;
       Event1.EventType = Data.EventTypes[0];
-      session.Persist(Event1);
-      session.Persist(Act1);
-      session.Persist(Act2);
+      Session.Persist(Event1);
+      Session.Persist(Act1);
+      Session.Persist(Act2);
       Set1.Event = Event1;
       Set2.Event = Event1;
-      Data.AddGenresPersisted(1, session);
+      Data.AddGenresPersisted(1, Session);
       Set1.Genre = Data.Genres[0];
       Set2.Genre = Set1.Genre;
-      session.Persist(Set1);
-      session.Persist(Set2);
+      Session.Persist(Set1);
+      Session.Persist(Set2);
       Set1.Act = Act1;
-      session.Commit();
+      Session.Commit();
     }
 
     [TearDown]
@@ -76,9 +76,10 @@ namespace SoundExplorers.Tests.Data {
     private const string Location1Name = "Pyramid Club";
     private const int Set1SetNo = 1;
     private const int Set2SetNo = 2;
-    private string DatabaseFolderPath { get; set; } = null!;
     private QueryHelper QueryHelper { get; set; } = null!;
     private TestData Data { get; set; } = null!;
+    private string DatabaseFolderPath { get; set; } = null!;
+    private TestSession Session { get; set; } = null!;
     private Act DefaultAct { get; set; } = null!;
     private Newsletter DefaultNewsletter { get; set; } = null!;
     private Series DefaultSeries { get; set; } = null!;
@@ -92,14 +93,13 @@ namespace SoundExplorers.Tests.Data {
 
     [Test]
     public void A010_Initial() {
-      using var session = new TestSession(DatabaseFolderPath);
-      session.BeginRead();
-      DefaultAct = QueryHelper.Read<Act>(DefaultAct.Name, session);
-      Act1 = QueryHelper.Read<Act>(Act1Name, session);
-      Act2 = QueryHelper.Read<Act>(Act2Name, session);
-      Set1 = QueryHelper.Read<Set>(Set1.SimpleKey, Event1, session);
-      Set2 = QueryHelper.Read<Set>(Set2.SimpleKey, Event1, session);
-      session.Commit();
+      Session.BeginRead();
+      DefaultAct = QueryHelper.Read<Act>(DefaultAct.Name, Session);
+      Act1 = QueryHelper.Read<Act>(Act1Name, Session);
+      Act2 = QueryHelper.Read<Act>(Act2Name, Session);
+      Set1 = QueryHelper.Read<Set>(Set1.SimpleKey, Event1, Session);
+      Set2 = QueryHelper.Read<Set>(Set2.SimpleKey, Event1, Session);
+      Session.Commit();
       Assert.AreEqual(Act1Name, Act1.Name, "Act1.Name");
       Assert.AreEqual(Act1Notes, Act1.Notes, "Act1.Notes");
       Assert.AreEqual(Act2Name, Act2.Name, "Act2.Name");
@@ -114,30 +114,27 @@ namespace SoundExplorers.Tests.Data {
       var noName = new Act(Data.ActRoot) {
         QueryHelper = QueryHelper
       };
-      using var session = new TestSession(DatabaseFolderPath);
-      session.BeginUpdate();
-      Assert.DoesNotThrow(() => session.Persist(noName));
-      session.Commit();
+      Session.BeginUpdate();
+      Assert.DoesNotThrow(() => Session.Persist(noName));
+      Session.Commit();
     }
 
     [Test]
     public void DisallowChangeNameToDuplicate() {
-      using var session = new TestSession(DatabaseFolderPath);
-      session.BeginUpdate();
+      Session.BeginUpdate();
       Act2 =
-        QueryHelper.Read<Act>(Act2Name, session);
+        QueryHelper.Read<Act>(Act2Name, Session);
       Act2.Name = Act2Name;
       Assert.Throws<PropertyConstraintException>(() => Act2.Name = Act1Name);
-      session.Commit();
+      Session.Commit();
     }
 
     [Test]
     public void DisallowChangeNameToNull() {
-      using var session = new TestSession(DatabaseFolderPath);
-      session.BeginUpdate();
-      Act1 = QueryHelper.Read<Act>(Act1Name, session);
+      Session.BeginUpdate();
+      Act1 = QueryHelper.Read<Act>(Act1Name, Session);
       Assert.Throws<PropertyConstraintException>(() => Act1.Name = string.Empty);
-      session.Commit();
+      Session.Commit();
     }
 
     [Test]
@@ -146,10 +143,9 @@ namespace SoundExplorers.Tests.Data {
         QueryHelper = QueryHelper,
         Name = Act1Name
       };
-      using var session = new TestSession(DatabaseFolderPath);
-      session.BeginUpdate();
-      Assert.Throws<PropertyConstraintException>(() => session.Persist(duplicate));
-      session.Commit();
+      Session.BeginUpdate();
+      Assert.Throws<PropertyConstraintException>(() => Session.Persist(duplicate));
+      Session.Commit();
     }
   }
 }

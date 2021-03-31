@@ -203,11 +203,11 @@ namespace SoundExplorers.Tests.Model {
     }
 
     [Test]
-    public void ReadAsChildList() {
+    public void ReadAsParentList() {
       var newDuration2 = TimeSpan.FromMinutes(59);
       var newDuration3 = TimeSpan.FromHours(1);
       List = CreatePieceList(true, false);
-      Assert.IsFalse(List.ListRole == ListRole.Child, "ListRole");
+      Assert.AreEqual(ListRole.Parent, List.ListRole, "ListRole");
       Session.BeginUpdate();
       var piece2 = Data.Pieces[1];
       piece2.Duration = newDuration2;
@@ -341,6 +341,8 @@ namespace SoundExplorers.Tests.Model {
         ParentList = (result.CreateParentList() as SetList)!;
         ParentList.ChildListType = result.GetType();
         result.ParentList = ParentList;
+      } else {
+        result.ChildListType = typeof(CreditList);
       }
       return result;
     }
