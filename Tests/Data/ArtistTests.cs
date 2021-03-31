@@ -9,8 +9,8 @@ namespace SoundExplorers.Tests.Data {
     [SetUp]
     public void Setup() {
       QueryHelper = new QueryHelper();
-      DatabaseFolderPath = TestSession.CreateDatabaseFolder();
       Data = new TestData(QueryHelper);
+      DatabaseFolderPath = TestSession.CreateDatabaseFolder();
       Session = new TestSession(DatabaseFolderPath);
       Session.BeginUpdate();
       Data.AddRootsPersistedIfRequired(Session);
@@ -116,9 +116,9 @@ namespace SoundExplorers.Tests.Data {
     private const int Piece1PieceNo = 1;
     private const string Role1Name = "Banjo";
     private const int Set1SetNo = 1;
-    private string DatabaseFolderPath { get; set; } = null!;
     private QueryHelper QueryHelper { get; set; } = null!;
     private TestData Data { get; set; } = null!;
+    private string DatabaseFolderPath { get; set; } = null!;
     private TestSession Session { get; set; } = null!;
     private Act DefaultAct { get; set; } = null!;
     private Newsletter DefaultNewsletter { get; set; } = null!;

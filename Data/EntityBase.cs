@@ -355,26 +355,6 @@ namespace SoundExplorers.Data {
       throw new NotSupportedException();
     }
 
-    /// <summary>
-    ///   Marks the entity as being updated, so that the entity will be written at commit
-    ///   transaction. In this application, this is used instead of
-    ///   OptimizedPersistable.Update, even for key properties, because we don't use
-    ///   VelocityDbList for collections and indexing.
-    /// </summary>
-    /// <exception cref="InvalidOperationException">
-    ///   If an update of a persisted entity is attempted outside a session, provides a
-    ///   meaningful error message.
-    /// </exception>
-    protected new void UpdateNonIndexField() {
-      try {
-        base.UpdateNonIndexField();
-      } catch (NullReferenceException ex) {
-        throw new InvalidOperationException(
-          $"{EntityType.Name} '{SimpleKey}' cannot be updated outside a session " +
-          "because it already exists.", ex);
-      }
-    }
-
     private void AddChild(EntityBase child) {
       if (child.IsPersistent) {
         UpdateNonIndexField();

@@ -8,18 +8,20 @@ namespace SoundExplorers.Tests.Data {
     public void Setup() {
       QueryHelper = new QueryHelper();
       DatabaseFolderPath = TestSession.CreateDatabaseFolder();
-      UserOption1 = new UserOption {
+      Data = new TestData(QueryHelper);
+      Session = new TestSession(DatabaseFolderPath);
+      Session.BeginUpdate();
+      Data.AddRootsPersistedIfRequired(Session);
+      Session.Commit();
+      UserOption1 = new UserOption(Data.UserOptionRoot) {
         QueryHelper = QueryHelper,
         UserId = UserOption1UserId,
         OptionName = UserOption1OptionName,
         OptionValue = UserOption1OptionValue
       };
-      using (var session = new TestSession(DatabaseFolderPath)) {
-        session.BeginUpdate();
-        session.Persist(UserOption1);
-        session.Commit();
-      }
-      Session = new TestSession(DatabaseFolderPath);
+      Session.BeginUpdate();
+      Session.Persist(UserOption1);
+      Session.Commit();
       Session.BeginRead();
       UserOption1 = QueryHelper.Read<UserOption>(UserOptionSimpleKey, Session);
       Session.Commit();
@@ -36,6 +38,7 @@ namespace SoundExplorers.Tests.Data {
     private const string UserOption1UserId = "Alice";
     private string DatabaseFolderPath { get; set; } = null!;
     private QueryHelper QueryHelper { get; set; } = null!;
+    private TestData Data { get; set; } = null!;
     private TestSession Session { get; set; } = null!;
     private UserOption UserOption1 { get; set; } = null!;
 
@@ -59,7 +62,7 @@ namespace SoundExplorers.Tests.Data {
 
     [Test]
     public void DisallowChangeToDuplicate() {
-      var userOption2 = new UserOption {
+      var userOption2 = new UserOption(Data.UserOptionRoot) {
         QueryHelper = QueryHelper,
         UserId = UserOption1UserId,
         OptionName = "Different"
@@ -74,7 +77,7 @@ namespace SoundExplorers.Tests.Data {
     [Test]
     public void DisallowPersistDuplicate() {
       // Tests that comparison is case-insensitive.
-      var duplicate = new UserOption {
+      var duplicate = new UserOption(Data.UserOptionRoot) {
         QueryHelper = QueryHelper,
         UserId = "alice",
         // ReSharper disable once StringLiteralTypo

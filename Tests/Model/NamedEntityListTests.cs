@@ -11,16 +11,18 @@ namespace SoundExplorers.Tests.Model {
     public void Setup() {
       QueryHelper = new QueryHelper();
       Data = new TestData(QueryHelper);
-      Session = new TestSession();
+      DatabaseFolderPath = TestSession.CreateDatabaseFolder();
+      Session = new TestSession(DatabaseFolderPath);
     }
 
     [TearDown]
     public void TearDown() {
-      Session.DeleteDatabaseFolderIfExists();
+      TestSession.DeleteFolderIfExists(DatabaseFolderPath);
     }
 
-    private TestData Data { get; set; } = null!;
     private QueryHelper QueryHelper { get; set; } = null!;
+    private TestData Data { get; set; } = null!;
+    private string DatabaseFolderPath { get; set; } = null!;
     private TestSession Session { get; set; } = null!;
 
     [Test]
@@ -46,7 +48,7 @@ namespace SoundExplorers.Tests.Model {
     }
 
     private void Edit<TEntity, TEntityList>()
-      where TEntity : EntityBase, INamedEntity, new()
+      where TEntity : EntityBase, INamedEntity
       where TEntityList : EntityListBase<TEntity, NamedBindingItem<TEntity>>, new() {
       const string name1 = "Performance";
       const string name2 = "Interview";
@@ -130,7 +132,7 @@ namespace SoundExplorers.Tests.Model {
     }
 
     private void ErrorOnInsert<TEntity, TEntityList>()
-      where TEntity : EntityBase, INamedEntity, new()
+      where TEntity : EntityBase, INamedEntity
       where TEntityList : EntityListBase<TEntity, NamedBindingItem<TEntity>>, new() {
       const string name = "Performance";
       var list = new TEntityList {Session = Session};
@@ -162,7 +164,7 @@ namespace SoundExplorers.Tests.Model {
     }
 
     private void ErrorOnUpdate<TEntity, TEntityList>()
-      where TEntity : EntityBase, INamedEntity, new()
+      where TEntity : EntityBase, INamedEntity
       where TEntityList : EntityListBase<TEntity, NamedBindingItem<TEntity>>, new() {
       const string name1 = "Performance";
       const string name2 = "Rehearsal";

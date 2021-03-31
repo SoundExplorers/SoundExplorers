@@ -9,95 +9,97 @@ namespace SoundExplorers.Tests.Data {
     [SetUp]
     public void Setup() {
       QueryHelper = new QueryHelper();
+      Data = new TestData(QueryHelper);
       DatabaseFolderPath = TestSession.CreateDatabaseFolder();
-      DefaultAct = Act.CreateDefault();
-      DefaultNewsletter = Newsletter.CreateDefault();
-      DefaultSeries = Series.CreateDefault();
-      Location1 = new Location {
+      Session = new TestSession(DatabaseFolderPath);
+      Session.BeginUpdate();
+      Data.AddRootsPersistedIfRequired(Session);
+      Session.Commit();
+      DefaultAct = Act.CreateDefault(Data.ActRoot);
+      DefaultNewsletter = Newsletter.CreateDefault(Data.NewsletterRoot);
+      DefaultSeries = Series.CreateDefault(Data.SeriesRoot);
+      Location1 = new Location(Data.LocationRoot) {
         QueryHelper = QueryHelper,
         Name = Location1Name
       };
-      EventType1 = new EventType {
+      EventType1 = new EventType(Data.EventTypeRoot) {
         QueryHelper = QueryHelper,
         Name = EventType1Name
       };
-      Event1 = new Event {
+      Event1 = new Event(Data.EventRoot) {
         QueryHelper = QueryHelper,
         Date = Event1Date
       };
-      Event2 = new Event {
+      Event2 = new Event(Data.EventRoot) {
         QueryHelper = QueryHelper,
         Date = Event2Date
       };
-      Genre1 = new Genre {
+      Genre1 = new Genre(Data.GenreRoot) {
         QueryHelper = QueryHelper,
         Name = Genre1Name
       };
-      Act1 = new Act {
+      Act1 = new Act(Data.ActRoot) {
         QueryHelper = QueryHelper,
         Name = Act1Name
       };
-      Act2 = new Act {
+      Act2 = new Act(Data.ActRoot) {
         QueryHelper = QueryHelper,
         Name = Act2Name
       };
-      Set1 = new Set {
+      Set1 = new Set(Data.SetRoot) {
         QueryHelper = QueryHelper,
         SetNo = Set1SetNo,
         Notes = Set1Notes,
         IsPublic = false
       };
-      Set1AtEvent2 = new Set {
+      Set1AtEvent2 = new Set(Data.SetRoot) {
         QueryHelper = QueryHelper,
         SetNo = Set1SetNo
       };
-      Set2 = new Set {
+      Set2 = new Set(Data.SetRoot) {
         QueryHelper = QueryHelper,
         SetNo = Set2SetNo
       };
-      Piece1 = new TestPiece {
+      Piece1 = new TestPiece(Data.PieceRoot) {
         QueryHelper = QueryHelper,
         PieceNo = Piece1PieceNo
       };
-      Piece2 = new TestPiece {
+      Piece2 = new TestPiece(Data.PieceRoot) {
         QueryHelper = QueryHelper,
         PieceNo = Piece2PieceNo
       };
-      using (var session = new TestSession(DatabaseFolderPath)) {
-        session.BeginUpdate();
-        session.Persist(DefaultAct);
-        session.Persist(DefaultNewsletter);
-        session.Persist(DefaultSeries);
-        session.Persist(EventType1);
-        session.Persist(Location1);
-        Event1.Location = Location1;
-        Event2.Location = Location1;
-        Event1.EventType = EventType1;
-        Event2.EventType = EventType1;
-        session.Persist(Event1);
-        session.Persist(Event2);
-        session.Persist(Act1);
-        session.Persist(Act2);
-        session.Persist(Genre1);
-        Set1.Event = Event1;
-        Set1AtEvent2.Event = Event2;
-        Set2.Event = Event1;
-        Set1.Genre = Genre1;
-        Set1AtEvent2.Genre = Genre1;
-        Set2.Genre = Genre1;
-        session.Persist(Set1);
-        session.Persist(Set2);
-        session.Persist(Set1AtEvent2);
-        Set1.Act = Act1;
-        Set1AtEvent2.Act = Act2;
-        Set2.Act = Act1;
-        Piece1.Set = Set1;
-        Piece2.Set = Set1;
-        session.Persist(Piece1);
-        session.Persist(Piece2);
-        session.Commit();
-      }
-      Session = new TestSession(DatabaseFolderPath);
+      Session.BeginUpdate();
+      Session.Persist(DefaultAct);
+      Session.Persist(DefaultNewsletter);
+      Session.Persist(DefaultSeries);
+      Session.Persist(EventType1);
+      Session.Persist(Location1);
+      Event1.Location = Location1;
+      Event2.Location = Location1;
+      Event1.EventType = EventType1;
+      Event2.EventType = EventType1;
+      Session.Persist(Event1);
+      Session.Persist(Event2);
+      Session.Persist(Act1);
+      Session.Persist(Act2);
+      Session.Persist(Genre1);
+      Set1.Event = Event1;
+      Set1AtEvent2.Event = Event2;
+      Set2.Event = Event1;
+      Set1.Genre = Genre1;
+      Set1AtEvent2.Genre = Genre1;
+      Set2.Genre = Genre1;
+      Session.Persist(Set1);
+      Session.Persist(Set2);
+      Session.Persist(Set1AtEvent2);
+      Set1.Act = Act1;
+      Set1AtEvent2.Act = Act2;
+      Set2.Act = Act1;
+      Piece1.Set = Set1;
+      Piece2.Set = Set1;
+      Session.Persist(Piece1);
+      Session.Persist(Piece2);
+      Session.Commit();
       Session.BeginRead();
       FetchData();
       Session.Commit();
@@ -120,8 +122,9 @@ namespace SoundExplorers.Tests.Data {
     private const int Set1SetNo = 1;
     private const int Set2SetNo = 2;
     private const string Set2SimpleKey = "02";
-    private string DatabaseFolderPath { get; set; } = null!;
     private QueryHelper QueryHelper { get; set; } = null!;
+    private TestData Data { get; set; } = null!;
+    private string DatabaseFolderPath { get; set; } = null!;
     private TestSession Session { get; set; } = null!;
     private Act DefaultAct { get; set; } = null!;
     private Newsletter DefaultNewsletter { get; set; } = null!;
@@ -234,7 +237,7 @@ namespace SoundExplorers.Tests.Data {
 
     [Test]
     public void DisallowPersistUnspecifiedSetNo() {
-      var noSetNo = new Set {
+      var noSetNo = new Set(Data.SetRoot) {
         QueryHelper = QueryHelper
       };
       Session.BeginUpdate();
@@ -245,7 +248,7 @@ namespace SoundExplorers.Tests.Data {
 
     [Test]
     public void DisallowSetKeyToDuplicate() {
-      var duplicate = new Set {
+      var duplicate = new Set(Data.SetRoot) {
         QueryHelper = QueryHelper,
         SetNo = Set1SetNo
       };
@@ -264,7 +267,7 @@ namespace SoundExplorers.Tests.Data {
 
     [Test]
     public void Unpersist() {
-      var set3 = new Set {
+      var set3 = new Set(Data.SetRoot) {
         QueryHelper = QueryHelper,
         SetNo = 3
       };

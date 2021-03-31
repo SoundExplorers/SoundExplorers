@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
+using JetBrains.Annotations;
 using SoundExplorers.Data;
 using VelocityDb.Session;
 
@@ -60,6 +61,7 @@ namespace SoundExplorers.Tests.Data {
     public IList<Series> Series { get; }
     public SortedEntityCollection<Set> SetRoot { get; private set; } = null!;
     public IList<Set> Sets { get; }
+    public SortedEntityCollection<UserOption> UserOptionRoot { get; private set; } = null!;
     private IList<string> ActNames => _actNames ??= CreateActNames();
     private QueryHelper QueryHelper { get; }
 
@@ -277,6 +279,7 @@ namespace SoundExplorers.Tests.Data {
       RoleRoot = EntityBase.FetchOrAddRoot<Role>(QueryHelper, session);
       SeriesRoot = EntityBase.FetchOrAddRoot<Series>(QueryHelper, session);
       SetRoot = EntityBase.FetchOrAddRoot<Set>(QueryHelper, session);
+      UserOptionRoot = EntityBase.FetchOrAddRoot<UserOption>(QueryHelper, session);
     }
 
     public void AddRolesPersisted(SessionBase session) {
@@ -541,6 +544,7 @@ namespace SoundExplorers.Tests.Data {
       return GetRandomEntity<Act, IList<Act>>(Acts);
     }
 
+    [PublicAPI]
     public Artist GetRandomArtist() {
       return GetRandomEntity<Artist, IList<Artist>>(Artists);
     }
@@ -584,6 +588,7 @@ namespace SoundExplorers.Tests.Data {
       return GetRandomEntity<Location, IList<Location>>(Locations);
     }
 
+    [PublicAPI]
     public Role GetRandomRole() {
       return GetRandomEntity<Role, IList<Role>>(Roles);
     }

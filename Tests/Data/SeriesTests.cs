@@ -8,47 +8,50 @@ namespace SoundExplorers.Tests.Data {
     [SetUp]
     public void Setup() {
       QueryHelper = new QueryHelper();
-      DatabaseFolderPath = TestSession.CreateDatabaseFolder();
       Data = new TestData(QueryHelper);
-      DefaultNewsletter = Newsletter.CreateDefault();
-      DefaultSeries = Series.CreateDefault();
-      Location1 = new Location {
+      DatabaseFolderPath = TestSession.CreateDatabaseFolder();
+      Session = new TestSession(DatabaseFolderPath);
+      Session.BeginUpdate();
+      Data.AddRootsPersistedIfRequired(Session);
+      Session.Commit();
+      DefaultNewsletter = Newsletter.CreateDefault(Data.NewsletterRoot);
+      DefaultSeries = Series.CreateDefault(Data.SeriesRoot);
+      Location1 = new Location(Data.LocationRoot) {
         QueryHelper = QueryHelper,
         Name = Location1Name
       };
-      Series1 = new Series {
+      Series1 = new Series(Data.SeriesRoot) {
         QueryHelper = QueryHelper,
         Name = Series1Name,
         Notes = Series1Notes
       };
-      Series2 = new Series {
+      Series2 = new Series(Data.SeriesRoot) {
         QueryHelper = QueryHelper,
         Name = Series2Name
       };
-      Event1 = new Event {
+      Event1 = new Event(Data.EventRoot) {
         QueryHelper = QueryHelper,
         Date = Event1Date
       };
-      Event2 = new Event {
+      Event2 = new Event(Data.EventRoot) {
         QueryHelper = QueryHelper,
         Date = Event2Date
       };
-      using var session = new TestSession(DatabaseFolderPath);
-      session.BeginUpdate();
-      session.Persist(DefaultNewsletter);
-      session.Persist(DefaultSeries);
-      session.Persist(Location1);
-      session.Persist(Series1);
-      session.Persist(Series2);
+      Session.BeginUpdate();
+      Session.Persist(DefaultNewsletter);
+      Session.Persist(DefaultSeries);
+      Session.Persist(Location1);
+      Session.Persist(Series1);
+      Session.Persist(Series2);
       Event1.Location = Location1;
       Event1.Series = Series1;
       Event2.Location = Location1;
-      Data.AddEventTypesPersisted(1, session);
+      Data.AddEventTypesPersisted(1, Session);
       Event1.EventType = Data.EventTypes[0];
       Event2.EventType = Event1.EventType;
-      session.Persist(Event1);
-      session.Persist(Event2);
-      session.Commit();
+      Session.Persist(Event1);
+      Session.Persist(Event2);
+      Session.Commit();
     }
 
     [TearDown]
@@ -60,9 +63,10 @@ namespace SoundExplorers.Tests.Data {
     private const string Series1Name = "Jazz Festival 2014";
     private const string Series1Notes = "My notes.";
     private const string Series2Name = "Field Recordings";
-    private string DatabaseFolderPath { get; set; } = null!;
     private QueryHelper QueryHelper { get; set; } = null!;
     private TestData Data { get; set; } = null!;
+    private string DatabaseFolderPath { get; set; } = null!;
+    private TestSession Session { get; set; } = null!;
     private Newsletter DefaultNewsletter { get; set; } = null!;
     private Series DefaultSeries { get; set; } = null!;
     private Event Event1 { get; set; } = null!;
@@ -75,15 +79,13 @@ namespace SoundExplorers.Tests.Data {
 
     [Test]
     public void T010_Initial() {
-      using (var session = new TestSession(DatabaseFolderPath)) {
-        session.BeginRead();
-        DefaultSeries = QueryHelper.Read<Series>(DefaultSeries.Name, session);
-        Series1 = QueryHelper.Read<Series>(Series1Name, session);
-        Series2 = QueryHelper.Read<Series>(Series2Name, session);
-        Event1 = QueryHelper.Read<Event>(Event1.SimpleKey, Location1, session);
-        Event2 = QueryHelper.Read<Event>(Event2.SimpleKey, Location1, session);
-        session.Commit();
-      }
+      Session.BeginRead();
+      DefaultSeries = QueryHelper.Read<Series>(DefaultSeries.Name, Session);
+      Series1 = QueryHelper.Read<Series>(Series1Name, Session);
+      Series2 = QueryHelper.Read<Series>(Series2Name, Session);
+      Event1 = QueryHelper.Read<Event>(Event1.SimpleKey, Location1, Session);
+      Event2 = QueryHelper.Read<Event>(Event2.SimpleKey, Location1, Session);
+      Session.Commit();
       Assert.AreEqual(Series1Name, Series1.Name, "Series1.Name initially");
       Assert.AreEqual(Series1Notes, Series1.Notes, "Series1.Notes initially");
       Assert.AreEqual(Series2Name, Series2.Name, "Series2.Name initially");
@@ -97,15 +99,14 @@ namespace SoundExplorers.Tests.Data {
 
     [Test]
     public void T030_DisallowDuplicate() {
-      var duplicate = new Series {
+      var duplicate = new Series(Data.SeriesRoot) {
         QueryHelper = QueryHelper,
         Name = Series1Name
       };
-      using var session = new TestSession(DatabaseFolderPath);
-      session.BeginUpdate();
+      Session.BeginUpdate();
       Assert.Throws<PropertyConstraintException>(() =>
-        session.Persist(duplicate), "Duplicate");
-      session.Commit();
+        Session.Persist(duplicate), "Duplicate");
+      Session.Commit();
     }
   }
 }

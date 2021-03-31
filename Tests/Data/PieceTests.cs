@@ -9,36 +9,40 @@ namespace SoundExplorers.Tests.Data {
     [SetUp]
     public void Setup() {
       QueryHelper = new QueryHelper();
-      DatabaseFolderPath = TestSession.CreateDatabaseFolder();
       Data = new TestData(QueryHelper);
-      DefaultAct = Act.CreateDefault();
-      DefaultNewsletter = Newsletter.CreateDefault();
-      DefaultSeries = Series.CreateDefault();
-      Baker = new Artist {
+      DatabaseFolderPath = TestSession.CreateDatabaseFolder();
+      Session = new TestSession(DatabaseFolderPath);
+      Session.BeginUpdate();
+      Data.AddRootsPersistedIfRequired(Session);
+      Session.Commit();
+      DefaultAct = Act.CreateDefault(Data.ActRoot);
+      DefaultNewsletter = Newsletter.CreateDefault(Data.NewsletterRoot);
+      DefaultSeries = Series.CreateDefault(Data.SeriesRoot);
+      Baker = new Artist(Data.ArtistRoot) {
         QueryHelper = QueryHelper,
         Surname = BakerName
       };
-      Drums = new Role {
+      Drums = new Role(Data.RoleRoot) {
         QueryHelper = QueryHelper,
         Name = DrumsName
       };
-      Location1 = new Location {
+      Location1 = new Location(Data.LocationRoot) {
         QueryHelper = QueryHelper,
         Name = Location1Name
       };
-      Event1 = new Event {
+      Event1 = new Event(Data.EventRoot) {
         QueryHelper = QueryHelper,
         Date = DateTime.Parse("2020/03/01")
       };
-      Set1 = new Set {
+      Set1 = new Set(Data.SetRoot) {
         QueryHelper = QueryHelper,
         SetNo = Set1SetNo
       };
-      Set2 = new Set {
+      Set2 = new Set(Data.SetRoot) {
         QueryHelper = QueryHelper,
         SetNo = Set2SetNo
       };
-      Piece1 = new Piece {
+      Piece1 = new Piece(Data.PieceRoot) {
         QueryHelper = QueryHelper,
         PieceNo = Piece1PieceNo,
         AudioUrl = Piece1AudioUrl,
@@ -47,60 +51,57 @@ namespace SoundExplorers.Tests.Data {
         Title = Piece1Title,
         VideoUrl = Piece1VideoUrl
       };
-      Piece1AtSet2 = new Piece {
+      Piece1AtSet2 = new Piece(Data.PieceRoot) {
         QueryHelper = QueryHelper,
         PieceNo = Piece1PieceNo,
         Duration = Piece1AtSet2Duration = new TimeSpan(0, 2, 8)
       };
-      Piece2 = new Piece {
+      Piece2 = new Piece(Data.PieceRoot) {
         QueryHelper = QueryHelper,
         PieceNo = Piece2PieceNo,
         Duration = Piece2Duration = new TimeSpan(1, 46, 3)
       };
-      Credit1 = new Credit {
+      Credit1 = new Credit(Data.CreditRoot) {
         QueryHelper = QueryHelper,
         CreditNo = Credit1CreditNo
       };
-      Credit2 = new Credit {
+      Credit2 = new Credit(Data.CreditRoot) {
         QueryHelper = QueryHelper,
         CreditNo = Credit2CreditNo
       };
-      using (var session = new TestSession(DatabaseFolderPath)) {
-        session.BeginUpdate();
-        session.Persist(DefaultAct);
-        session.Persist(DefaultNewsletter);
-        session.Persist(DefaultSeries);
-        session.Persist(Baker);
-        session.Persist(Drums);
-        session.Persist(Location1);
-        Event1.Location = Location1;
-        Data.AddEventTypesPersisted(1, session);
-        Event1.EventType = Data.EventTypes[0];
-        session.Persist(Event1);
-        Set1.Event = Event1;
-        Set2.Event = Event1;
-        Data.AddGenresPersisted(1, session);
-        Set1.Genre = Data.Genres[0];
-        Set2.Genre = Set1.Genre;
-        session.Persist(Set1);
-        session.Persist(Set2);
-        Piece1.Set = Set1;
-        Piece1AtSet2.Set = Set2;
-        Piece2.Set = Set1;
-        session.Persist(Piece1);
-        session.Persist(Piece1AtSet2);
-        session.Persist(Piece2);
-        Credit1.Artist = Baker;
-        Credit1.Piece = Piece1;
-        Credit1.Role = Drums;
-        Credit2.Artist = Baker;
-        Credit2.Piece = Piece1;
-        Credit2.Role = Drums;
-        session.Persist(Credit1);
-        session.Persist(Credit2);
-        session.Commit();
-      }
-      Session = new TestSession(DatabaseFolderPath);
+      Session.BeginUpdate();
+      Session.Persist(DefaultAct);
+      Session.Persist(DefaultNewsletter);
+      Session.Persist(DefaultSeries);
+      Session.Persist(Baker);
+      Session.Persist(Drums);
+      Session.Persist(Location1);
+      Event1.Location = Location1;
+      Data.AddEventTypesPersisted(1, Session);
+      Event1.EventType = Data.EventTypes[0];
+      Session.Persist(Event1);
+      Set1.Event = Event1;
+      Set2.Event = Event1;
+      Data.AddGenresPersisted(1, Session);
+      Set1.Genre = Data.Genres[0];
+      Set2.Genre = Set1.Genre;
+      Session.Persist(Set1);
+      Session.Persist(Set2);
+      Piece1.Set = Set1;
+      Piece1AtSet2.Set = Set2;
+      Piece2.Set = Set1;
+      Session.Persist(Piece1);
+      Session.Persist(Piece1AtSet2);
+      Session.Persist(Piece2);
+      Credit1.Artist = Baker;
+      Credit1.Piece = Piece1;
+      Credit1.Role = Drums;
+      Credit2.Artist = Baker;
+      Credit2.Piece = Piece1;
+      Credit2.Role = Drums;
+      Session.Persist(Credit1);
+      Session.Persist(Credit2);
+      Session.Commit();
       Session.BeginRead();
       Location1 = QueryHelper.Read<Location>(Location1Name, Session);
       Event1 = QueryHelper.Read<Event>(Event1.SimpleKey, Location1, Session);
@@ -270,7 +271,7 @@ namespace SoundExplorers.Tests.Data {
 
     [Test]
     public void DisallowInvalidAudioUrl() {
-      var piece = new Piece();
+      var piece = new Piece(Data.PieceRoot);
       var exception = Assert.Catch<PropertyConstraintException>(
         () => piece.AudioUrl = "blah",
         "A PropertyConstraintException should have been thrown.");
@@ -282,7 +283,7 @@ namespace SoundExplorers.Tests.Data {
 
     [Test]
     public void DisallowInvalidVideoUrl() {
-      var piece = new Piece();
+      var piece = new Piece(Data.PieceRoot);
       var exception = Assert.Catch<PropertyConstraintException>(
         () => piece.VideoUrl = "blah",
         "A PropertyConstraintException should have been thrown.");
@@ -333,7 +334,7 @@ namespace SoundExplorers.Tests.Data {
 
     [Test]
     public void DisallowPersistDuplicateAudioUrl() {
-      var duplicate = new Piece {
+      var duplicate = new Piece(Data.PieceRoot) {
         QueryHelper = QueryHelper,
         PieceNo = 9,
         AudioUrl = Piece1AudioUrl
@@ -346,7 +347,7 @@ namespace SoundExplorers.Tests.Data {
 
     [Test]
     public void DisallowPersistDuplicateVideoUrl() {
-      var duplicate = new Piece {
+      var duplicate = new Piece(Data.PieceRoot) {
         QueryHelper = QueryHelper,
         PieceNo = 9,
         VideoUrl = Piece1VideoUrl
@@ -359,7 +360,7 @@ namespace SoundExplorers.Tests.Data {
 
     [Test]
     public void DisallowPersistUnspecifiedDuration() {
-      var noDuration = new Piece {
+      var noDuration = new Piece(Data.PieceRoot) {
         QueryHelper = QueryHelper,
         PieceNo = 9
       };
@@ -377,7 +378,7 @@ namespace SoundExplorers.Tests.Data {
 
     [Test]
     public void DisallowPersistUnspecifiedPieceNo() {
-      var noPieceNo = new Piece {
+      var noPieceNo = new Piece(Data.PieceRoot) {
         QueryHelper = QueryHelper
       };
       Session.BeginUpdate();
@@ -388,7 +389,7 @@ namespace SoundExplorers.Tests.Data {
 
     [Test]
     public void DisallowSetKeyToDuplicate() {
-      var duplicate = new Piece {
+      var duplicate = new Piece(Data.PieceRoot) {
         QueryHelper = QueryHelper,
         PieceNo = Piece1PieceNo
       };
