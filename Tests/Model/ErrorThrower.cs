@@ -6,12 +6,12 @@ using SoundExplorers.Data;
 namespace SoundExplorers.Tests.Model {
   [UsedImplicitly]
   [SuppressMessage("ReSharper", "UnusedMember.Local")]
-  public class ErrorThrowingEventType : EventType {
-    public ErrorThrowingEventType(SortedEntityCollection<EventType> root) : base(
-      root) { }
+  public class ErrorThrower : EntityBase, INamedEntity {
+    public ErrorThrower(SortedEntityCollection<ErrorThrower> root) : base(root,
+      typeof(ErrorThrower), nameof(Name), null) { }
 
     [ExcludeFromCodeCoverage]
-    public new string Name {
+    public string Name {
       get => SimpleKey;
       set => throw new InvalidOperationException();
     }

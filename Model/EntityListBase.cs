@@ -371,7 +371,7 @@ namespace SoundExplorers.Model {
     public virtual void Populate(
       IdentifyingParentAndChildren? identifyingParentAndChildren = null,
       bool createBindingList = true) {
-      Root = FetchOrAddRoot<TEntity>();
+      Root = FetchOrAddListRoot();
       Clear();
       bool isTransactionRequired = !Session.InTransaction;
       if (isTransactionRequired) {
@@ -454,6 +454,10 @@ namespace SoundExplorers.Model {
         Session.Commit();
       }
       return result;
+    }
+
+    protected virtual SortedEntityCollection<TEntity> FetchOrAddListRoot() {
+      return FetchOrAddRoot<TEntity>();
     }
 
     private static BackupItem<TBindingItem> CreateBackupItem(TBindingItem bindingItem) {
