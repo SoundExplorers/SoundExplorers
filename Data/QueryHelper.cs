@@ -10,18 +10,24 @@ using VelocityDb.Session;
 namespace SoundExplorers.Data {
   public class QueryHelper {
     private static QueryHelper? _instance;
+    private Schema? _schema;
     private bool _schemaExistsOnDatabase;
 
     public static QueryHelper Instance =>
       _instance ??= new QueryHelper();
 
-    public static TEntity Read<TEntity>(
+    internal Schema Schema {
+      get => _schema ??= Schema.Instance;
+      set => _schema = value;
+    }
+
+    public TEntity Read<TEntity>(
       string? simpleKey,
       SessionBase session) where TEntity : EntityBase {
       return Read<TEntity>(simpleKey, null, session);
     }
 
-    public static TEntity Read<TEntity>(
+    public TEntity Read<TEntity>(
       string? simpleKey,
       EntityBase? identifyingParent,
       SessionBase session) where TEntity : EntityBase {
@@ -47,7 +53,7 @@ namespace SoundExplorers.Data {
       }
     }
 
-    public static TEntity Read<TEntity>(
+    public TEntity Read<TEntity>(
       Func<TEntity, bool> predicate,
       SessionBase session) where TEntity : EntityBase {
       var root = FetchRoot<TEntity>(session);
@@ -99,11 +105,6 @@ namespace SoundExplorers.Data {
       return entity != null && !entity.Oid.Equals(oid) ? entity : null;
     }
 
-    internal ISortedEntityCollection? FindRoot(Type entityType, SessionBase session) {
-      return FindSingleton(Schema.RootTypes[entityType], session) as 
-        ISortedEntityCollection;
-    }
-
     /// <summary>
     ///   Returns an object the specified generic type, of which there is only expected
     ///   to be one, if found, otherwise a null reference.
@@ -113,7 +114,7 @@ namespace SoundExplorers.Data {
       return FindSingleton(typeof(TPersistable), session) as TPersistable; 
     }
 
-    private static Func<TEntity, bool> CreateKeyPredicate<TEntity>(
+    private Func<TEntity, bool> CreateKeyPredicate<TEntity>(
       string? simpleKey,
       EntityBase? identifyingParent)
       where TEntity : EntityBase {
@@ -126,7 +127,7 @@ namespace SoundExplorers.Data {
                      .Equals(identifyingParent));
     }
 
-    private static SortedEntityCollection<TEntity>? FetchRoot<TEntity>(
+    private SortedEntityCollection<TEntity>? FetchRoot<TEntity>(
       SessionBase session) where TEntity : EntityBase {
       return 
         FetchSingleton(Schema.RootTypes[typeof(TEntity)], session) as 
@@ -137,9 +138,10 @@ namespace SoundExplorers.Data {
     ///   Fetches an object the specified type, of which there is only expected to be
     ///   one, if found, otherwise a null reference.
     /// </summary>
-    private static IOptimizedPersistable? FetchSingleton(Type type, SessionBase session) {
+    private static IOptimizedPersistable? FetchSingleton(
+      Type persistableType, SessionBase session) {
       return session.Open(
-        session.DatabaseNumberOf(type),
+        session.DatabaseNumberOf(persistableType),
         // Why page number 2? I don't know, but it works for fetching singleton
         // objects. See 'Looking up objects' in the VelocityDB manual.
         2, 1, session.InUpdateTransaction);
@@ -148,6 +150,11 @@ namespace SoundExplorers.Data {
     private IEnumerable FetchEntities(Type entityType, SessionBase session) {
       var root = FindRoot(entityType, session);
       return root?.Values ?? new List<IEntity>();
+    }
+
+    private ISortedEntityCollection? FindRoot(Type entityType, SessionBase session) {
+      return FindSingleton(Schema.RootTypes[entityType], session) as 
+        ISortedEntityCollection;
     }
 
     /// <summary>

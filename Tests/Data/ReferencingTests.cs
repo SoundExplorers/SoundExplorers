@@ -4,11 +4,10 @@ using SoundExplorers.Data;
 
 namespace SoundExplorers.Tests.Data {
   [TestFixture]
-  [Ignore("Static Schema.RootTypes does not reference test entity types")]
   public class ReferencingTests {
     [SetUp]
     public void Setup() {
-      QueryHelper = new QueryHelper();
+      QueryHelper = new QueryHelper { Schema = new TestSchema()};
       DatabaseFolderPath = TestSession.CreateDatabaseFolder();
       Session = new TestSession(DatabaseFolderPath);
       Session.BeginUpdate();

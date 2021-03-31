@@ -13,9 +13,9 @@ namespace SoundExplorers.Data {
   /// </remarks>
   public class Schema : OptimizedPersistable {
     private static Schema? _instance;
-    private static IDictionary<Type, Type>? _rootTypes;
     private IEnumerable<Type>? _persistableTypes;
     private IEnumerable<RelationInfo>? _relations;
+    private IDictionary<Type, Type>? _rootTypes;
     private int _version;
 
     /// <summary>
@@ -25,9 +25,6 @@ namespace SoundExplorers.Data {
       get => _instance ??= new Schema();
       set => _instance = value;
     }
-    
-    public static IDictionary<Type, Type> RootTypes =>
-      _rootTypes ??= CreateRootTypes();
 
     /// <summary>
     ///   From VelocityDB User's Guide:
@@ -43,6 +40,9 @@ namespace SoundExplorers.Data {
     /// </summary>
     public IEnumerable<RelationInfo> Relations =>
       _relations ??= CreateRelations();
+    
+    public IDictionary<Type, Type> RootTypes =>
+      _rootTypes ??= CreateRootTypes();
 
     /// <summary>
     ///   Gets or sets the schema version. Zero initially. Not the same as the
@@ -93,24 +93,7 @@ namespace SoundExplorers.Data {
       }
     }
 
-    protected virtual IEnumerable<RelationInfo> CreateRelations() {
-      var list = new List<RelationInfo> {
-        new RelationInfo(typeof(Act), typeof(Set), false),
-        new RelationInfo(typeof(Artist), typeof(Credit), true),
-        new RelationInfo(typeof(Event), typeof(Set), true),
-        new RelationInfo(typeof(EventType), typeof(Event), true),
-        new RelationInfo(typeof(Genre), typeof(Set), true),
-        new RelationInfo(typeof(Location), typeof(Event), true),
-        new RelationInfo(typeof(Newsletter), typeof(Event), false),
-        new RelationInfo(typeof(Series), typeof(Event), false),
-        new RelationInfo(typeof(Piece), typeof(Credit), true),
-        new RelationInfo(typeof(Role), typeof(Credit), true),
-        new RelationInfo(typeof(Set), typeof(Piece), true)
-      };
-      return list.ToArray();
-    }
-
-    private static IEnumerable<Type> CreatePersistableTypes() {
+    protected virtual IEnumerable<Type> CreatePersistableTypes() {
       var list = new List<Type> {
         typeof(Act),
         typeof(SortedEntityCollection<Act>),
@@ -143,7 +126,24 @@ namespace SoundExplorers.Data {
       return list.ToArray();
     }
 
-    private static IDictionary<Type, Type> CreateRootTypes() {
+    protected virtual IEnumerable<RelationInfo> CreateRelations() {
+      var list = new List<RelationInfo> {
+        new RelationInfo(typeof(Act), typeof(Set), false),
+        new RelationInfo(typeof(Artist), typeof(Credit), true),
+        new RelationInfo(typeof(Event), typeof(Set), true),
+        new RelationInfo(typeof(EventType), typeof(Event), true),
+        new RelationInfo(typeof(Genre), typeof(Set), true),
+        new RelationInfo(typeof(Location), typeof(Event), true),
+        new RelationInfo(typeof(Newsletter), typeof(Event), false),
+        new RelationInfo(typeof(Series), typeof(Event), false),
+        new RelationInfo(typeof(Piece), typeof(Credit), true),
+        new RelationInfo(typeof(Role), typeof(Credit), true),
+        new RelationInfo(typeof(Set), typeof(Piece), true)
+      };
+      return list.ToArray();
+    }
+
+    protected virtual IDictionary<Type, Type> CreateRootTypes() {
       return new Dictionary<Type, Type> {
         [typeof(Act)] = typeof(SortedEntityCollection<Act>),
         [typeof(Artist)] = typeof(SortedEntityCollection<Artist>),
