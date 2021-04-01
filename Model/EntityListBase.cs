@@ -375,20 +375,22 @@ namespace SoundExplorers.Model {
       Clear();
       bool isTransactionRequired = !Session.InTransaction;
       if (isTransactionRequired) {
-        Session.BeginRead();
+        // We need an update transaction in case we need to add the root collection to
+        // the database. See FetchOrAddRoot.
+        Session.BeginUpdate();
       }
       if (identifyingParentAndChildren != null) {
         IdentifyingParent = identifyingParentAndChildren.IdentifyingParent;
         AddRange((IEnumerable<TEntity>)identifyingParentAndChildren.Children);
       } else {
-        for (int i = 0; i < Root.Count; i++) {
-          var key = Root[i].Key;
-          if (Root[i] is Set set) {
-            Debug.WriteLine(
-              $"Root[{i}]: Root.Key '{key}'; Set.Key '{set.Key}'; " + $"" +
-              $"Date {EntityBase.DateToSimpleKey(set.Event.Date)}; SetNo {set.SetNo}");
-          }
-        }
+        // for (int i = 0; i < Root.Count; i++) {
+        //   var key = Root[i].Key;
+        //   if (Root[i] is Set set) {
+        //     Debug.WriteLine(
+        //       $"Root[{i}]: Root.Key '{key}'; Set.Key '{set.Key}'; " + $"" +
+        //       $"Date {EntityBase.DateToSimpleKey(set.Event.Date)}; SetNo {set.SetNo}");
+        //   }
+        // }
         var entities = Root.Values;
         // var entities = Session.AllObjects<TEntity>();
         AddRange(entities);

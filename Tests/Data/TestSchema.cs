@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using SoundExplorers.Data;
 
 namespace SoundExplorers.Tests.Data {
@@ -10,6 +11,7 @@ namespace SoundExplorers.Tests.Data {
     public new static TestSchema Instance =>
       _instance ??= new TestSchema();
 
+    [ExcludeFromCodeCoverage]
     protected override IEnumerable<Type> CreatePersistableTypes() {
       var list = new List<Type> {
         typeof(Daughter),

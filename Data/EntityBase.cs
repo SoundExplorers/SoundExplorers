@@ -74,12 +74,6 @@ namespace SoundExplorers.Data {
     /// </summary>
     public Type EntityType { get; }
 
-    internal static InvalidOperationException CreateRootNotFoundException(
-      Type entityType) {
-      return new InvalidOperationException(
-        $"Cannot find the root collection for {entityType.Name}s.");
-    }
-
     internal QueryHelper QueryHelper {
       get => _queryHelper ??= QueryHelper.Instance;
       set => _queryHelper = value;
