@@ -78,7 +78,7 @@ namespace SoundExplorers.Model {
       set => _queryHelper = value;
     }
 
-    internal SortedEntityCollection<TEntity> Root { get; private set; } = null!;
+    private SortedEntityCollection<TEntity> Root { get; set; } = null!;
     private BackupItem<TBindingItem>? BackupItem { get; set; }
     private BackupItem<TBindingItem>? BackupItemToRestoreFrom { get; set; }
 
@@ -371,7 +371,7 @@ namespace SoundExplorers.Model {
     public virtual void Populate(
       IdentifyingParentAndChildren? identifyingParentAndChildren = null,
       bool createBindingList = true) {
-      Root = FetchOrAddListRoot();
+      Root = FetchOrAddRoot();
       Clear();
       bool isTransactionRequired = !Session.InTransaction;
       if (isTransactionRequired) {
@@ -383,16 +383,7 @@ namespace SoundExplorers.Model {
         IdentifyingParent = identifyingParentAndChildren.IdentifyingParent;
         AddRange((IEnumerable<TEntity>)identifyingParentAndChildren.Children);
       } else {
-        // for (int i = 0; i < Root.Count; i++) {
-        //   var key = Root[i].Key;
-        //   if (Root[i] is Set set) {
-        //     Debug.WriteLine(
-        //       $"Root[{i}]: Root.Key '{key}'; Set.Key '{set.Key}'; " + $"" +
-        //       $"Date {EntityBase.DateToSimpleKey(set.Event.Date)}; SetNo {set.SetNo}");
-        //   }
-        // }
         var entities = Root.Values;
-        // var entities = Session.AllObjects<TEntity>();
         AddRange(entities);
       }
       if (createBindingList) {
@@ -452,22 +443,9 @@ namespace SoundExplorers.Model {
       return new TopLevelEntityComparer<TEntity>();
     }
 
-    // protected SortedEntityCollection<TRootedEntity> FetchOrAddRoot<TRootedEntity>()
-    //   where TRootedEntity : EntityBase {
-    //   bool isTransactionRequired = !Session.InTransaction;
-    //   if (isTransactionRequired) {
-    //     Session.BeginUpdate();
-    //   }
-    //   var result = 
-    //     EntityBase.FetchOrAddRoot<TRootedEntity>(QueryHelper, Session);
-    //   if (isTransactionRequired) {
-    //     Session.Commit();
-    //   }
-    //   return result;
-    // }
-
-    protected virtual SortedEntityCollection<TEntity> FetchOrAddListRoot() {
-      return (SortedEntityCollection<TEntity>)EntityBase.Roots[typeof(TEntity)];
+    protected virtual SortedEntityCollection<TEntity> FetchOrAddRoot() {
+      return (SortedEntityCollection<TEntity>)EntityBase.FetchOrAddRoot(
+        typeof(TEntity),QueryHelper, Session);
     }
 
     private static BackupItem<TBindingItem> CreateBackupItem(TBindingItem bindingItem) {

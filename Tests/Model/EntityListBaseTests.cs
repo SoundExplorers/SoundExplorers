@@ -19,7 +19,7 @@ namespace SoundExplorers.Tests.Model {
 
     private class DudErrorThrowerList : NamedEntityList<ErrorThrower> {
       protected override SortedEntityCollection<ErrorThrower>
-        FetchOrAddListRoot() {
+        FetchOrAddRoot() {
         Session.BeginUpdate();
         var result =
           QueryHelper.FindSingleton<SortedEntityCollection<ErrorThrower>>(

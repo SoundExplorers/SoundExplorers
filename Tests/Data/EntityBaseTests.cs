@@ -11,7 +11,7 @@ namespace SoundExplorers.Tests.Data {
       QueryHelper = new QueryHelper {Schema = new TestSchema()};
       DatabaseFolderPath = TestSession.CreateDatabaseFolder();
       Session = new TestSession(DatabaseFolderPath);
-      EntityBase.FetchOrAddRoots(QueryHelper, Session);
+      TestData.FetchOrAddRoots(QueryHelper, Session);
     }
 
     [TearDown]

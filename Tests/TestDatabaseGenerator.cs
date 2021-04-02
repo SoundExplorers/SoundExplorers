@@ -35,7 +35,7 @@ namespace SoundExplorers.Tests {
       if (DoIt != 1) {
         return;
       }
-      EntityBase.FetchOrAddRoots(new QueryHelper(), Session);
+      TestData.FetchOrAddRoots(new QueryHelper(), Session);
       Assert.IsNotNull(EntityBase.Roots);
     }
 

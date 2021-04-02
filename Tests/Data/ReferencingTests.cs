@@ -11,7 +11,7 @@ namespace SoundExplorers.Tests.Data {
       DatabaseFolderPath = TestSession.CreateDatabaseFolder();
       Session = new TestSession(DatabaseFolderPath);
       Session.BeginUpdate();
-      EntityBase.FetchOrAddRoots(QueryHelper, Session);
+      TestData.FetchOrAddRoots(QueryHelper, Session);
       Session.Commit();
       Mother1 = new Mother(QueryHelper);
       Mother2 = new Mother(QueryHelper) {Name = Mother2Name};

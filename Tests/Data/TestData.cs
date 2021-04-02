@@ -278,7 +278,7 @@ namespace SoundExplorers.Tests.Data {
       if (ActRoot != null!) {
         return;
       }
-      EntityBase.FetchOrAddRoots(QueryHelper, session);
+      FetchOrAddRoots(QueryHelper, session);
       ActRoot = (SortedEntityCollection<Act>)EntityBase.Roots[typeof(Act)];
       // ArtistRoot = (SortedEntityCollection<Artist>)EntityBase.Roots[typeof(Artist)];
       // CreditRoot = (SortedEntityCollection<Credit>)EntityBase.Roots[typeof(Credit)];
@@ -606,6 +606,13 @@ namespace SoundExplorers.Tests.Data {
     [PublicAPI]
     public Role GetRandomRole() {
       return GetRandomEntity<Role, IList<Role>>(Roles);
+    }
+
+    internal static void FetchOrAddRoots(QueryHelper queryHelper, SessionBase session) {
+      EntityBase.Roots.Clear();
+      foreach (var entityType in queryHelper.Schema.EntityTypes) {
+        EntityBase.FetchOrAddRoot(entityType, queryHelper, session);
+      }
     }
 
     private Series GetRandomSeries() {

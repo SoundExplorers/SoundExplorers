@@ -154,11 +154,6 @@ namespace SoundExplorers.Data {
           SortedEntityCollection<TEntity>;
     }
 
-    // private IEnumerable FetchEntities(Type entityType, SessionBase session) {
-    //   var root = FindRoot(entityType, session);
-    //   return root?.Values ?? new List<IEntity>();
-    // }
-
     private EntityBase? FetchTopLevelEntity(Type entityType, string simpleKey, 
       SessionBase session) {
       var root = FindRoot(entityType, session);
@@ -169,11 +164,6 @@ namespace SoundExplorers.Data {
           StringComparison.OrdinalIgnoreCase) == 0
         select entity).FirstOrDefault();
     }
-
-    // private SortedEntityCollection<TEntity>? FindRoot<TEntity>(SessionBase session)
-    //   where TEntity : EntityBase {
-    //   return FindRoot(typeof(TEntity), session) as SortedEntityCollection<TEntity>;
-    // }
 
     /// <summary>
     ///   Returns an object the specified type, of which there is only expected to be
