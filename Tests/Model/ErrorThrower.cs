@@ -15,5 +15,16 @@ namespace SoundExplorers.Tests.Model {
       get => SimpleKey;
       set => throw new InvalidOperationException();
     }
+
+    [ExcludeFromCodeCoverage]
+    protected override ISortedEntityCollection Root => ErrorThrowerRoot;
+
+    [ExcludeFromCodeCoverage]
+    private static SortedEntityCollection<ErrorThrower> ErrorThrowerRoot { get; set; } =
+      null!;
+
+    internal static void SetRoot(SortedEntityCollection<ErrorThrower> root) {
+      ErrorThrowerRoot = root;
+    }
   }
 }

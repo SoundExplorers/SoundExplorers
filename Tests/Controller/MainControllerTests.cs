@@ -8,19 +8,26 @@ namespace SoundExplorers.Tests.Controller {
   public class MainControllerTests {
     [SetUp]
     public void Setup() {
-      Connection = new MockDatabaseConnection();
       QueryHelper = new QueryHelper();
-      Session = new TestSession();
+      Data = new TestData(QueryHelper);
+      DatabaseFolderPath = TestSession.CreateDatabaseFolder();
+      Session = new TestSession(DatabaseFolderPath);
+      Session.BeginUpdate();
+      Data.AddRootsPersistedIfRequired(Session);
+      Session.Commit();
+      Connection = new MockDatabaseConnection();
     }
 
     [TearDown]
     public void TearDown() {
-      Session.DeleteDatabaseFolderIfExists();
+      TestSession.DeleteFolderIfExists(DatabaseFolderPath);
     }
 
-    private MockDatabaseConnection Connection { get; set; } = null!;
     private QueryHelper QueryHelper { get; set; } = null!;
+    private TestData Data { get; set; } = null!;
+    private string DatabaseFolderPath { get; set; } = null!;
     private TestSession Session { get; set; } = null!;
+    private MockDatabaseConnection Connection { get; set; } = null!;
 
     [Test]
     public void TheTest() {

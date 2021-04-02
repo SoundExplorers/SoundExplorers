@@ -21,7 +21,7 @@ namespace SoundExplorers.Model {
   /// </typeparam>
   public abstract class EntityListBase<TEntity, TBindingItem> : List<TEntity>,
     IEntityList
-    where TEntity : EntityBase
+    where TEntity : EntityBase, new()
     where TBindingItem : BindingItemBase<TEntity, TBindingItem>, new() {
     private TypedBindingList<TEntity, TBindingItem>? _bindingList;
     private BindingColumnList? _columns;

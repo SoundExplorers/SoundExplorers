@@ -7,7 +7,7 @@ namespace SoundExplorers.Model {
   ///   A strongly typed binding list.
   /// </summary>
   public class TypedBindingList<TEntity, TBindingItem> : BindingList<TBindingItem>
-    where TEntity : EntityBase
+    where TEntity : EntityBase, new()
     where TBindingItem : BindingItemBase<TEntity, TBindingItem>, new() {
     public TypedBindingList(IList<TBindingItem> bindingItems) : base(
       bindingItems) { }

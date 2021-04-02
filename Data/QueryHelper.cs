@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
@@ -82,15 +80,14 @@ namespace SoundExplorers.Data {
     public TEntity? Find<TEntity>(
       Func<TEntity, bool> predicate,
       SessionBase session) where TEntity : EntityBase {
-      var root = FindRoot<TEntity>(session);
+      var root = FindRoot(typeof(TEntity), session) as SortedEntityCollection<TEntity>;
       var entities = root?.Values;
-      // var entities = session.AllObjects<TEntity>();
       return entities?.FirstOrDefault(predicate);
     }
 
-    public SortedEntityCollection<TEntity>? FindRoot<TEntity>(SessionBase session)
-      where TEntity : EntityBase {
-      return FindRoot(typeof(TEntity), session) as SortedEntityCollection<TEntity>;
+    public ISortedEntityCollection? FindRoot(Type entityType, SessionBase session) {
+      return FindSingleton(Schema.RootTypes[entityType], session) as
+        ISortedEntityCollection;
     }
 
     /// <summary>
@@ -99,7 +96,7 @@ namespace SoundExplorers.Data {
     ///   if found, otherwise a null reference.
     /// </summary>
     internal EntityBase? FindDuplicateSimpleKey(Type entityType,
-      Oid oid, string? simpleKey, SessionBase session) {
+      Oid oid, string simpleKey, SessionBase session) {
       var entity = FindTopLevelEntity(entityType, simpleKey, session);
       return entity != null && !entity.Oid.Equals(oid) ? entity : null;
     }
@@ -157,15 +154,26 @@ namespace SoundExplorers.Data {
           SortedEntityCollection<TEntity>;
     }
 
-    private IEnumerable FetchEntities(Type entityType, SessionBase session) {
+    // private IEnumerable FetchEntities(Type entityType, SessionBase session) {
+    //   var root = FindRoot(entityType, session);
+    //   return root?.Values ?? new List<IEntity>();
+    // }
+
+    private EntityBase? FetchTopLevelEntity(Type entityType, string simpleKey, 
+      SessionBase session) {
       var root = FindRoot(entityType, session);
-      return root?.Values ?? new List<IEntity>();
+      return root == null
+        ? null :
+        (from EntityBase entity in root.Values
+        where string.Compare(entity.SimpleKey, simpleKey,
+          StringComparison.OrdinalIgnoreCase) == 0
+        select entity).FirstOrDefault();
     }
 
-    public ISortedEntityCollection? FindRoot(Type entityType, SessionBase session) {
-      return FindSingleton(Schema.RootTypes[entityType], session) as
-        ISortedEntityCollection;
-    }
+    // private SortedEntityCollection<TEntity>? FindRoot<TEntity>(SessionBase session)
+    //   where TEntity : EntityBase {
+    //   return FindRoot(typeof(TEntity), session) as SortedEntityCollection<TEntity>;
+    // }
 
     /// <summary>
     ///   Returns an object the specified type, of which there is only expected to be
@@ -182,15 +190,10 @@ namespace SoundExplorers.Data {
     ///   (case-insensitive), if found, otherwise a null reference.
     /// </summary>
     private EntityBase? FindTopLevelEntity(Type entityType,
-      string? simpleKey, SessionBase session) {
-      if (!SchemaExistsOnDatabase(session)) {
-        return null;
-      }
-      var entities = FetchEntities(entityType, session);
-      return (from EntityBase e in entities
-        where string.Compare(e.SimpleKey, simpleKey,
-          StringComparison.OrdinalIgnoreCase) == 0
-        select e).FirstOrDefault();
+      string simpleKey, SessionBase session) {
+      return SchemaExistsOnDatabase(session)
+        ? FetchTopLevelEntity(entityType, simpleKey, session)
+        : null;
     }
 
     private bool SchemaExistsOnDatabase(SessionBase session) {
@@ -198,7 +201,8 @@ namespace SoundExplorers.Data {
       if (_schemaExistsOnDatabase) {
         result = true;
       } else {
-        result = session.ContainsDatabase(session.DatabaseLocations.First(), 1);
+        result = session.ContainsDatabase(
+          session.DatabaseLocations.First(), 1);
         _schemaExistsOnDatabase = result;
       }
       return result;

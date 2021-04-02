@@ -32,7 +32,7 @@ namespace SoundExplorers.Model {
   /// </remarks>
   public abstract class BindingItemBase<TEntity, TBindingItem> :
     IBindingItem, INotifyPropertyChanged
-    where TEntity : EntityBase
+    where TEntity : EntityBase, new()
     where TBindingItem : BindingItemBase<TEntity, TBindingItem>, new() {
     private IDictionary<string, PropertyInfo>? _entityProperties;
     private Key? _key;
@@ -71,8 +71,9 @@ namespace SoundExplorers.Model {
 
     internal TEntity CreateEntity() {
       EntityPropertyValues = CreateEntityPropertyValueDictionary();
-      var result =
-        (Activator.CreateInstance(typeof(TEntity), EntityList.Root) as TEntity)!;
+      var result = new TEntity();
+      // var result =
+      //   (Activator.CreateInstance(typeof(TEntity), EntityList.Root) as TEntity)!;
       CopyValuesToEntityProperties(result);
       return result;
     }

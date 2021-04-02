@@ -13,7 +13,11 @@ namespace SoundExplorers.Tests.Controller {
     public void Setup() {
       QueryHelper = new QueryHelper();
       Data = new TestData(QueryHelper);
-      Session = new TestSession();
+      DatabaseFolderPath = TestSession.CreateDatabaseFolder();
+      Session = new TestSession(DatabaseFolderPath);
+      Session.BeginUpdate();
+      Data.AddRootsPersistedIfRequired(Session);
+      Session.Commit();
       MainGrid = new MockMainGrid();
       ParentGrid = new MockParentGrid();
       View = new MockEditorView(MainGrid, ParentGrid);
@@ -24,14 +28,15 @@ namespace SoundExplorers.Tests.Controller {
       Session.DeleteDatabaseFolderIfExists();
     }
 
-    private TestEditorController Controller { get; set; } = null!;
+    private QueryHelper QueryHelper { get; set; } = null!;
     private TestData Data { get; set; } = null!;
+    private string DatabaseFolderPath { get; set; } = null!;
+    private TestSession Session { get; set; } = null!;
+    private TestEditorController Controller { get; set; } = null!;
     private MockMainGrid MainGrid { get; set; } = null!;
     private TestMainGridController MainGridController { get; set; } = null!;
     private MockParentGrid ParentGrid { get; set; } = null!;
     private TestParentGridController ParentGridController { get; set; } = null!;
-    private QueryHelper QueryHelper { get; set; } = null!;
-    private TestSession Session { get; set; } = null!;
     private MockEditorView View { get; set; } = null!;
 
     [Test]

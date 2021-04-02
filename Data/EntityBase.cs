@@ -20,6 +20,7 @@ namespace SoundExplorers.Data {
     private IDictionary<Type, IRelationInfo>? _parentRelations;
     private IDictionary<Type, EntityBase?>? _parents;
     private IList<Action>? _postPersistenceActions;
+    private ISortedEntityCollection? _root;
     private QueryHelper? _queryHelper;
     private Schema? _schema;
     private string _simpleKey = null!;
@@ -47,11 +48,11 @@ namespace SoundExplorers.Data {
       SimpleKeyName = simpleKeyName;
       IdentifyingParentType = identifyingParentType;
       Key = new Key(this);
-      Root = Roots[EntityType];
+      // Root = Roots[EntityType];
     }
 
-    public static IDictionary<Type, ISortedEntityCollection> Roots { get; private set; } =
-      null!;
+    public static IDictionary<Type, ISortedEntityCollection> Roots { get; private set; } 
+      = null!;
 
     /// <summary>
     ///   From VelocityDB User's Guide:
@@ -81,19 +82,7 @@ namespace SoundExplorers.Data {
 
     protected bool AllowBlankSimpleKey { get; set; }
 
-    protected ISortedEntityCollection Root { get; }
-    // protected ISortedEntityCollection Root {
-    //   get {
-    //     if (_root == null) {
-    //       _root = QueryHelper.FindRoot(EntityType, Session);
-    //       if (_root == null) {
-    //         throw CreateRootNotFoundException(EntityType);
-    //       }
-    //       UpdateNonIndexField();
-    //     }
-    //     return _root;
-    //   }
-    // }
+    protected virtual ISortedEntityCollection Root => _root ??= Roots[EntityType];
 
     protected Schema Schema {
       get => _schema ??= Schema.Instance;

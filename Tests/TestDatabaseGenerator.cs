@@ -13,9 +13,9 @@ namespace SoundExplorers.Tests {
     /// <summary>
     ///   1 to enable generate
     /// </summary>
-    private static int DoIt => 0;
+    private static int DoIt => 1;
 
-    private static int EventCount => 6; // Highest non-looping: 6
+    private static int EventCount => 60; // Highest non-looping: 6
     private TestData Data { get; set; } = null!;
     private TestSession Session { get; set; } = null!;
 
@@ -28,6 +28,15 @@ namespace SoundExplorers.Tests {
       if (DoIt == 1) {
         Generate();
       }
+    }
+
+    [Test]
+    public void A02_Check() {
+      if (DoIt != 1) {
+        return;
+      }
+      EntityBase.FetchOrAddRoots(new QueryHelper(), Session);
+      Assert.IsNotNull(EntityBase.Roots);
     }
 
     private void Generate() {

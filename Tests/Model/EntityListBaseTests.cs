@@ -29,6 +29,7 @@ namespace SoundExplorers.Tests.Model {
           Session.Persist(result);
         }
         Session.Commit();
+        ErrorThrower.SetRoot(result);
         return result;
       }
     }

@@ -9,18 +9,25 @@ namespace SoundExplorers.Tests.Controller {
     [SetUp]
     public void Setup() {
       QueryHelper = new QueryHelper();
-      Session = new TestSession();
+      Data = new TestData(QueryHelper);
+      DatabaseFolderPath = TestSession.CreateDatabaseFolder();
+      Session = new TestSession(DatabaseFolderPath);
+      Session.BeginUpdate();
+      Data.AddRootsPersistedIfRequired(Session);
+      Session.Commit();
       View = new MockView<SizeableFormOptionsController>();
     }
 
     [TearDown]
     public void TearDown() {
-      Session.DeleteDatabaseFolderIfExists();
+      TestSession.DeleteFolderIfExists(DatabaseFolderPath);
     }
 
-    private SizeableFormOptionsController Controller { get; set; } = null!;
     private QueryHelper QueryHelper { get; set; } = null!;
+    private TestData Data { get; set; } = null!;
+    private string DatabaseFolderPath { get; set; } = null!;
     private TestSession Session { get; set; } = null!;
+    private SizeableFormOptionsController Controller { get; set; } = null!;
     private MockView<SizeableFormOptionsController> View { get; set; } = null!;
 
     [Test]
