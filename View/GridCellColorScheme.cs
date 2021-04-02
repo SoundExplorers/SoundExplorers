@@ -5,7 +5,6 @@ using System.Windows.Forms;
 using SoundExplorers.Controller;
 
 namespace SoundExplorers.View {
-  
   /// <summary>
   ///   The colour scheme of a grid's cells, with support for inverting the foreground
   ///   and background colours of a parent or child grid when the other grid of the pair
@@ -14,10 +13,10 @@ namespace SoundExplorers.View {
   internal class GridCellColorScheme : IGridCellColorScheme {
     public GridCellColorScheme(DataGridView grid) {
       Grid = grid;
-      DefaultBackColors = CreateDefaultBackColors(); 
-      DefaultForeColors = CreateDefaultForeColors(); 
-      DefaultSelectionBackColors = CreateDefaultSelectionBackColors(); 
-      DefaultSelectionForeColors = CreateDefaultSelectionForeColors(); 
+      DefaultBackColors = CreateDefaultBackColors();
+      DefaultForeColors = CreateDefaultForeColors();
+      DefaultSelectionBackColors = CreateDefaultSelectionBackColors();
+      DefaultSelectionForeColors = CreateDefaultSelectionForeColors();
     }
 
     private IList<Color> DefaultBackColors { get; }
@@ -43,8 +42,10 @@ namespace SoundExplorers.View {
         DataGridViewColumn column = Grid.Columns[i];
         column.DefaultCellStyle.BackColor = Grid.DefaultCellStyle.ForeColor;
         column.DefaultCellStyle.ForeColor = Grid.DefaultCellStyle.BackColor;
-        column.DefaultCellStyle.SelectionBackColor = Grid.DefaultCellStyle.SelectionForeColor;
-        column.DefaultCellStyle.SelectionForeColor = Grid.DefaultCellStyle.SelectionBackColor;
+        column.DefaultCellStyle.SelectionBackColor =
+          Grid.DefaultCellStyle.SelectionForeColor;
+        column.DefaultCellStyle.SelectionForeColor =
+          Grid.DefaultCellStyle.SelectionBackColor;
       }
     }
 
@@ -76,7 +77,7 @@ namespace SoundExplorers.View {
         from DataGridViewColumn column in Grid.Columns
         select column.DefaultCellStyle.BackColor).ToList();
     }
-    
+
     /// <summary>
     ///   Creates a list of the default foreground colours of all columns.
     /// </summary>

@@ -10,8 +10,8 @@ namespace SoundExplorers.Data {
     private string _userId = null!;
 
     [SuppressMessage("ReSharper", "SuggestBaseTypeForParameter")]
-    public UserOption(SortedEntityCollection<UserOption> root) : base(
-      root,typeof(UserOption), nameof(SimpleKey), null) { }
+    public UserOption() : base(typeof(UserOption), nameof(SimpleKey),
+      null) { }
 
     public string OptionName {
       get => _optionName;

@@ -11,8 +11,7 @@ namespace SoundExplorers.Data {
     private string _notes = null!;
 
     [SuppressMessage("ReSharper", "SuggestBaseTypeForParameter")]
-    public Location(SortedEntityCollection<Location> root) : base(
-      root,typeof(Location), nameof(Name), null) {
+    public Location() : base(typeof(Location), nameof(Name), null) {
       Events = new SortedEntityCollection<Event>();
     }
 

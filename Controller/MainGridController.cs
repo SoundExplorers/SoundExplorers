@@ -284,7 +284,7 @@ namespace SoundExplorers.Controller {
     private int GetColumnEditWidthInPixels(BindingColumn column) {
       // This margin is wide enough to allow for a ComboBox's vertical scrollbar or a
       // DateTimePicker's calendar button.
-      const int margin = 24; 
+      const int margin = 24;
       const int textColumnEditWidth = 200;
       if (column.ValueType == typeof(DateTime)) {
         return Grid.GetTextWidthInPixels(Global.DateFormat.ToUpper()) + margin;

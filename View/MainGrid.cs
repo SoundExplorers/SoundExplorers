@@ -29,7 +29,7 @@ namespace SoundExplorers.View {
 
     private bool IsDatePickerCellCurrent =>
       CurrentCell?.OwningColumn.CellTemplate is DatePickerCell;
-    
+
     private bool IsDropDownListToBeDisplayed { get; set; }
 
     public new MainGridController Controller {
@@ -118,7 +118,7 @@ namespace SoundExplorers.View {
             // linking. But that looks weird if the URL is being edited. So make the text
             // plain-old while the URL is in edit mode.
             BeginInvoke((Action)delegate {
-              var textBox = (CurrentCell as TextBoxCell)!.TextBox; 
+              var textBox = (CurrentCell as TextBoxCell)!.TextBox;
               textBox.BackColor = DefaultCellStyle.BackColor;
               textBox.ForeColor = DefaultCellStyle.ForeColor;
               textBox.Font = DefaultCellStyle.Font;
@@ -155,8 +155,8 @@ namespace SoundExplorers.View {
         MainView.CopyToolStripButton.Enabled = CanCopy;
         if (Controller.IsUrlColumn(CurrentCell.OwningColumn.Name)) {
           MainView.ToolsLinkMenuItem.Enabled =
-            MainView.LinkToolStripButton.Enabled = 
-              !string.IsNullOrWhiteSpace(CurrentCell.Value?.ToString()); 
+            MainView.LinkToolStripButton.Enabled =
+              !string.IsNullOrWhiteSpace(CurrentCell.Value?.ToString());
         }
       }
     }
@@ -223,12 +223,12 @@ namespace SoundExplorers.View {
     /// <remarks>
     ///   As <see cref="DateTimePicker" /> does not have a property or method to
     ///   programatically display the calendar, we have to do it by sending the
-    ///   date picker the F4 keyboard shortcut as a Windows message. 
+    ///   date picker the F4 keyboard shortcut as a Windows message.
     /// </remarks>
     [SuppressMessage("ReSharper", "SuggestBaseTypeForParameter")]
     private void DisplayCalendar() {
       int dummy = SafeNativeMethods.SendMessage(
-        ((DatePickerCell)CurrentCell).DatePicker.Handle, 
+        ((DatePickerCell)CurrentCell).DatePicker.Handle,
         (uint)WindowsMessage.WM_KEYDOWN, (int)Keys.F4, 0);
     }
 

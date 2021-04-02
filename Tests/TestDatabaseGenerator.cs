@@ -59,7 +59,7 @@ namespace SoundExplorers.Tests {
         $"Finished: {Data.Events.Count} Events; {Data.Sets.Count} Sets; " +
         $"{Data.Pieces.Count} Pieces; {Data.Credits.Count} Credits");
     }
-    
+
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
     private void AddCredits() {
       foreach (var piece in Data.Pieces) {

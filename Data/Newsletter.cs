@@ -12,8 +12,7 @@ namespace SoundExplorers.Data {
     private string _url = null!;
 
     [SuppressMessage("ReSharper", "SuggestBaseTypeForParameter")]
-    public Newsletter(SortedEntityCollection<Newsletter> root) : base(root,
-      typeof(Newsletter), nameof(Date), null) {
+    public Newsletter() : base(typeof(Newsletter), nameof(Date), null) {
       _date = DefaultDate;
       Events = new SortedEntityCollection<Event>();
     }
@@ -80,8 +79,8 @@ namespace SoundExplorers.Data {
     ///   Creates a dummy Newsletter, to be the default for Events for which a Newsletter
     ///   has not yet been specified.
     /// </summary>
-    public static Newsletter CreateDefault(SortedEntityCollection<Newsletter> root) {
-      return new Newsletter(root) {
+    public static Newsletter CreateDefault() {
+      return new Newsletter {
         Date = DefaultDate,
         Url = "Required default"
       };

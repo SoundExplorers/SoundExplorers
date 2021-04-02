@@ -86,8 +86,9 @@ namespace SoundExplorers.Tests.Model {
         "XML error");
     }
 
-    [Test] public void SimulateReleaseBuild() {
-      Connection = new TestDatabaseConnection(ConfigFilePath, 
+    [Test]
+    public void SimulateReleaseBuild() {
+      Connection = new TestDatabaseConnection(ConfigFilePath,
         DatabaseConfig.InsertDatabaseFolderPathHereMessage);
       // Neither the configuration file nor the database folder exist.
       var exception = Assert.Catch<ApplicationException>(

@@ -161,10 +161,8 @@ namespace SoundExplorers.Model {
     /// </summary>
     private UserOption FetchUserOption() {
       Session.BeginUpdate();
-      var userOptionRoot = 
-        EntityBase.FetchOrAddRoot<UserOption>(QueryHelper, Session);
       Session.Commit();
-      var temp = new UserOption(userOptionRoot) {
+      var temp = new UserOption {
         UserId = Environment.UserName, OptionName = OptionName
       };
       Session.BeginUpdate();

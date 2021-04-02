@@ -16,8 +16,8 @@ namespace SoundExplorers.Data {
     private Series? _series;
 
     [SuppressMessage("ReSharper", "SuggestBaseTypeForParameter")]
-    public Event(SortedEntityCollection<Event> root) : base(
-      root,typeof(Event), nameof(Date), typeof(Location)) {
+    public Event() : base(typeof(Event), nameof(Date),
+      typeof(Location)) {
       _date = DefaultDate;
       Sets = new SortedEntityCollection<Set>();
     }

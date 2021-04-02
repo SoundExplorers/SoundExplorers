@@ -31,9 +31,6 @@ namespace SoundExplorers.Data {
     /// <summary>
     ///   Creates an instance of an entity.
     /// </summary>
-    /// <param name="root">
-    ///   The root collection to which the entity is to be added.
-    /// </param>
     /// <param name="entityType">
     ///   The main Type as which the entity will be persisted on the database.
     /// </param>
@@ -44,14 +41,17 @@ namespace SoundExplorers.Data {
     /// <param name="identifyingParentType">
     ///   Where applicable, the entity type of the identifying parent entity.
     /// </param>
-    protected EntityBase(ISortedEntityCollection root, Type entityType, 
+    protected EntityBase(Type entityType,
       string simpleKeyName, Type? identifyingParentType) {
-      Root = root;
       EntityType = entityType;
       SimpleKeyName = simpleKeyName;
       IdentifyingParentType = identifyingParentType;
       Key = new Key(this);
+      Root = Roots[EntityType];
     }
+
+    public static IDictionary<Type, ISortedEntityCollection> Roots { get; private set; } =
+      null!;
 
     /// <summary>
     ///   From VelocityDB User's Guide:
@@ -242,17 +242,24 @@ namespace SoundExplorers.Data {
       return $"{date:yyyy/MM/dd}";
     }
 
-    public static SortedEntityCollection<TEntity> FetchOrAddRoot<TEntity>(
-      QueryHelper queryHelper, SessionBase session)
-      where TEntity : EntityBase {
-      var result = 
-        queryHelper.FindRoot<TEntity>(session);
-      if (result == null) {
-        result = new SortedEntityCollection<TEntity>();
-        session.Persist(result);
+    public static void FetchOrAddRoots(QueryHelper queryHelper, SessionBase session) {
+      Roots = new Dictionary<Type, ISortedEntityCollection>();
+      foreach (var entityType in queryHelper.Schema.EntityTypes) {
+        Roots.Add(entityType, FetchOrAddRoot(entityType, queryHelper, session));
       }
-      return result;
     }
+
+    // public static SortedEntityCollection<TEntity> FetchOrAddRoot<TEntity>(
+    //   QueryHelper queryHelper, SessionBase session)
+    //   where TEntity : EntityBase {
+    //   var result = 
+    //     queryHelper.FindRoot<TEntity>(session);
+    //   if (result == null) {
+    //     result = new SortedEntityCollection<TEntity>();
+    //     session.Persist(result);
+    //   }
+    //   return result;
+    // }
 
     public static string GetIntegerSimpleKeyErrorMessage(string propertyName) {
       return $"{propertyName} must be an integer between 1 and 99.";
@@ -352,6 +359,26 @@ namespace SoundExplorers.Data {
     protected virtual void SetNonIdentifyingParentField(
       Type parentEntityType, EntityBase? newParent) {
       throw new NotSupportedException();
+    }
+
+    private static ISortedEntityCollection FetchOrAddRoot(Type entityType,
+      QueryHelper queryHelper, SessionBase session) {
+      bool isTransactionRequired = !session.InTransaction;
+      if (isTransactionRequired) {
+        session.BeginUpdate();
+      }
+      var result =
+        queryHelper.FindRoot(entityType, session);
+      if (result == null) {
+        result =
+          (Activator.CreateInstance(queryHelper.Schema.RootTypes[entityType]) as
+            ISortedEntityCollection)!;
+        session.Persist(result);
+      }
+      if (isTransactionRequired) {
+        session.Commit();
+      }
+      return result;
     }
 
     private void AddChild(EntityBase child) {

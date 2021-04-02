@@ -8,8 +8,8 @@ namespace SoundExplorers.Tests.Data {
     private Mother? _mother;
 
     [SuppressMessage("ReSharper", "SuggestBaseTypeForParameter")]
-    public Daughter(SortedEntityCollection<Daughter> root, QueryHelper queryHelper,
-      Type? identifyingParentType = null) : base(root,typeof(Daughter),
+    public Daughter(QueryHelper queryHelper,
+      Type? identifyingParentType = null) : base(typeof(Daughter),
       nameof(Name), identifyingParentType) {
       QueryHelper = queryHelper ??
                     throw new ArgumentNullException(nameof(queryHelper));

@@ -12,8 +12,8 @@ namespace SoundExplorers.Data {
     private Role _role = null!;
 
     [SuppressMessage("ReSharper", "SuggestBaseTypeForParameter")]
-    public Credit(SortedEntityCollection<Credit> root) : base(
-      root, typeof(Credit), nameof(CreditNo), typeof(Piece)) { }
+    public Credit() : base(typeof(Credit), nameof(CreditNo),
+      typeof(Piece)) { }
 
     public Artist Artist {
       get => _artist;

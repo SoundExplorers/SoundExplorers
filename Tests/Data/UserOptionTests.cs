@@ -13,7 +13,7 @@ namespace SoundExplorers.Tests.Data {
       Session.BeginUpdate();
       Data.AddRootsPersistedIfRequired(Session);
       Session.Commit();
-      UserOption1 = new UserOption(Data.UserOptionRoot) {
+      UserOption1 = new UserOption {
         QueryHelper = QueryHelper,
         UserId = UserOption1UserId,
         OptionName = UserOption1OptionName,
@@ -62,7 +62,7 @@ namespace SoundExplorers.Tests.Data {
 
     [Test]
     public void DisallowChangeToDuplicate() {
-      var userOption2 = new UserOption(Data.UserOptionRoot) {
+      var userOption2 = new UserOption {
         QueryHelper = QueryHelper,
         UserId = UserOption1UserId,
         OptionName = "Different"
@@ -77,7 +77,7 @@ namespace SoundExplorers.Tests.Data {
     [Test]
     public void DisallowPersistDuplicate() {
       // Tests that comparison is case-insensitive.
-      var duplicate = new UserOption(Data.UserOptionRoot) {
+      var duplicate = new UserOption {
         QueryHelper = QueryHelper,
         UserId = "alice",
         // ReSharper disable once StringLiteralTypo

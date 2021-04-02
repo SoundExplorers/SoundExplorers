@@ -6,10 +6,8 @@ namespace SoundExplorers.Data {
   ///   An entity representing a Set's genre.
   /// </summary>
   public class Genre : EntityBase, INamedEntity {
-
     [SuppressMessage("ReSharper", "SuggestBaseTypeForParameter")]
-    public Genre(SortedEntityCollection<Genre> root) : base(
-      root,typeof(Genre), nameof(Name), null) {
+    public Genre() : base(typeof(Genre), nameof(Name), null) {
       Sets = new SortedEntityCollection<Set>();
     }
 

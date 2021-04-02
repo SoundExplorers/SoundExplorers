@@ -41,7 +41,7 @@ namespace SoundExplorers.Tests.Data {
         [typeof(Daughter)] = typeof(SortedEntityCollection<Daughter>),
         [typeof(Father)] = typeof(SortedEntityCollection<Father>),
         [typeof(Mother)] = typeof(SortedEntityCollection<Mother>),
-        [typeof(Son)] = typeof(SortedEntityCollection<Son>),
+        [typeof(Son)] = typeof(SortedEntityCollection<Son>)
       };
     }
   }

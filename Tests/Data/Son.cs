@@ -8,8 +8,7 @@ namespace SoundExplorers.Tests.Data {
     private Mother? _mother;
 
     [SuppressMessage("ReSharper", "SuggestBaseTypeForParameter")]
-    public Son(SortedEntityCollection<Son> root, QueryHelper queryHelper) : base(
-      root, typeof(Son),
+    public Son(QueryHelper queryHelper) : base(typeof(Son),
       nameof(Name), null) {
       QueryHelper = queryHelper;
       Schema = TestSchema.Instance;

@@ -53,8 +53,8 @@ namespace SoundExplorers.Controller {
     private Option ToolBarOption => _toolBarOption ??=
       CreateOption("ToolBar", true);
 
-    private IMainView View { get;}
-    
+    private IMainView View { get; }
+
     public void ConnectToDatabase() {
       DatabaseConnection.Open();
     }
@@ -91,7 +91,7 @@ namespace SoundExplorers.Controller {
         });
       } else {
         throw new NotSupportedException(
-          "This action is not (yet) supported for " + 
+          "This action is not (yet) supported for " +
           $"{RuntimeInformation.OSDescription}");
       }
     }
@@ -101,11 +101,11 @@ namespace SoundExplorers.Controller {
       object? defaultValue = null) {
       return new Option(name, defaultValue);
     }
- 
+
     [ExcludeFromCodeCoverage]
     private void ShowHelpFile(string fileName) {
       string path = Global.GetApplicationFolderPath() +
-                    Path.DirectorySeparatorChar + "Documentation" + 
+                    Path.DirectorySeparatorChar + "Documentation" +
                     Path.DirectorySeparatorChar + fileName;
       if (File.Exists(path)) {
         OpenFile(path);

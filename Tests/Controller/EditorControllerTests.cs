@@ -135,9 +135,9 @@ namespace SoundExplorers.Tests.Controller {
       AddDataForPieceList();
       CreateControllers(typeof(PieceList));
       Controller.Populate(); // Populate parent and main grids
-      Assert.IsTrue(MainGridController.IsUrlColumn(nameof(Piece.AudioUrl)), 
+      Assert.IsTrue(MainGridController.IsUrlColumn(nameof(Piece.AudioUrl)),
         "AudioUrl is URL");
-      Assert.IsTrue(MainGridController.IsUrlColumn(nameof(Piece.VideoUrl)), 
+      Assert.IsTrue(MainGridController.IsUrlColumn(nameof(Piece.VideoUrl)),
         "VideoUrl is URL");
       var durationColumn = (
         from column in MainGridController.BindingColumns
@@ -347,7 +347,7 @@ namespace SoundExplorers.Tests.Controller {
       var notFoundDate = DateTime.Parse("2345/12/31");
       MainGridController.OnRowEnter(0);
       var exception = Assert.Catch(
-        () => bindingList[0].Newsletter = notFoundDate, 
+        () => bindingList[0].Newsletter = notFoundDate,
         "Not found Newsletter disallowed");
       Assert.IsInstanceOf<RowNotInTableException>(exception,
         "Exception on not-found Newsletter pasted");
@@ -378,7 +378,7 @@ namespace SoundExplorers.Tests.Controller {
       const string notFoundName = "Not-Found Name";
       MainGridController.OnRowEnter(0);
       exception = Assert.Catch(
-        () => bindingList[0].Series = notFoundName, 
+        () => bindingList[0].Series = notFoundName,
         "Not found Series disallowed");
       Assert.IsInstanceOf<RowNotInTableException>(exception,
         "Exception on not-found Series pasted");
@@ -500,7 +500,7 @@ namespace SoundExplorers.Tests.Controller {
       var exception = new FormatException("Potato is not a valid value for DateTime.");
       MainGridController.OnCellEditException(3, "Date", exception);
       Assert.AreEqual(1, View.ShowErrorMessageCount, "ShowErrorMessageCount");
-      Assert.AreEqual("Invalid Date:\r\nPotato is not a valid value for DateTime.", 
+      Assert.AreEqual("Invalid Date:\r\nPotato is not a valid value for DateTime.",
         View.LastErrorMessage, "LastErrorMessage");
     }
 
@@ -526,7 +526,7 @@ namespace SoundExplorers.Tests.Controller {
       var exception = new FormatException("Potato is not a valid value for DateTime.");
       MainGridController.OnCellEditException(2, "Date", exception);
       Assert.AreEqual(1, View.ShowErrorMessageCount, "ShowErrorMessageCount");
-      Assert.AreEqual("Invalid Date:\r\nPotato is not a valid value for DateTime.", 
+      Assert.AreEqual("Invalid Date:\r\nPotato is not a valid value for DateTime.",
         View.LastErrorMessage, "LastErrorMessage");
       Assert.AreEqual(changedEventType, bindingList[2].EventType, "EventType");
       Assert.AreEqual(changedLocation, bindingList[2].Location, "Location");

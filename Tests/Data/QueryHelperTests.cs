@@ -16,9 +16,9 @@ namespace SoundExplorers.Tests.Data {
       Session.BeginUpdate();
       Data.AddRootsPersistedIfRequired(Session);
       Session.Commit();
-      DefaultNewsletter = Newsletter.CreateDefault(Data.NewsletterRoot);
-      DefaultSeries = Series.CreateDefault(Data.SeriesRoot);
-      Event1 = new Event(Data.EventRoot) {
+      DefaultNewsletter = Newsletter.CreateDefault();
+      DefaultSeries = Series.CreateDefault();
+      Event1 = new Event {
         QueryHelper = QueryHelper,
         Date = Event1Date,
         Notes = Event1Notes

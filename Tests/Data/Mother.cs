@@ -5,8 +5,7 @@ using SoundExplorers.Data;
 namespace SoundExplorers.Tests.Data {
   public class Mother : EntityBase {
     [SuppressMessage("ReSharper", "SuggestBaseTypeForParameter")]
-    public Mother(SortedEntityCollection<Mother> root, QueryHelper queryHelper) : base(
-      root, typeof(Mother),
+    public Mother(QueryHelper queryHelper) : base(typeof(Mother),
       nameof(Name), null) {
       QueryHelper = queryHelper ??
                     throw new ArgumentNullException(nameof(queryHelper));

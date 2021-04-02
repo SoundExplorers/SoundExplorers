@@ -12,7 +12,7 @@ namespace SoundExplorers.View {
     ///   Gets the cell's combo box.
     /// </summary>
     public ComboBox ComboBox => (ComboBox)DataGridView!.EditingControl;
-    
+
     /// <summary>
     ///   Gets the type of the editing control that the ComboBoxCell is to use.
     /// </summary>

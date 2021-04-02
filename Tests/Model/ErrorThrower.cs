@@ -7,8 +7,8 @@ namespace SoundExplorers.Tests.Model {
   [UsedImplicitly]
   [SuppressMessage("ReSharper", "UnusedMember.Local")]
   public class ErrorThrower : EntityBase, INamedEntity {
-    public ErrorThrower(SortedEntityCollection<ErrorThrower> root) : base(root,
-      typeof(ErrorThrower), nameof(Name), null) { }
+    public ErrorThrower() : base(typeof(ErrorThrower), nameof(Name),
+      null) { }
 
     [ExcludeFromCodeCoverage]
     public string Name {

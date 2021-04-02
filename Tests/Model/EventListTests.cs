@@ -186,7 +186,8 @@ namespace SoundExplorers.Tests.Model {
       Data.AddSetsPersisted(3, Session);
       Session.Commit();
       List.Populate();
-      var identifyingParentAndChildren = List.GetIdentifyingParentAndChildrenForChildList(0);
+      var identifyingParentAndChildren =
+        List.GetIdentifyingParentAndChildrenForChildList(0);
       Assert.AreSame(Data.Events[0], identifyingParentAndChildren.IdentifyingParent,
         "IdentifyingParent");
       Assert.AreEqual(3, identifyingParentAndChildren.Children.Count, "Count");

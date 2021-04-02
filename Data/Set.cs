@@ -15,8 +15,7 @@ namespace SoundExplorers.Data {
     private int _setNo;
 
     [SuppressMessage("ReSharper", "SuggestBaseTypeForParameter")]
-    public Set(SortedEntityCollection<Set> root) : base(
-      root,typeof(Set), nameof(SetNo), typeof(Event)) {
+    public Set() : base(typeof(Set), nameof(SetNo), typeof(Event)) {
       Pieces = new SortedEntityCollection<Piece>();
       IsPublic = true;
     }

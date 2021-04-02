@@ -62,7 +62,7 @@ namespace SoundExplorers.View {
     }
 
     public GridControllerBase Controller { get; protected set; } = null!;
-    public object? CurrentCellValue => CurrentCell?.Value; 
+    public object? CurrentCellValue => CurrentCell?.Value;
     public int CurrentRowIndex => CurrentRow?.Index ?? -1;
 
     public IGridCellColorScheme CellColorScheme =>
@@ -275,7 +275,7 @@ namespace SoundExplorers.View {
     private void EnableDisableLinkControls() {
       MainView.ToolsLinkMenuItem.Enabled =
         MainView.LinkToolStripButton.Enabled =
-          Controller.IsUrlColumn(CurrentCell.OwningColumn.Name) && 
+          Controller.IsUrlColumn(CurrentCell.OwningColumn.Name) &&
           !string.IsNullOrWhiteSpace(CurrentCell.Value?.ToString());
     }
 

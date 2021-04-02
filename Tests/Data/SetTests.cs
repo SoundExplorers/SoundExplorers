@@ -15,56 +15,56 @@ namespace SoundExplorers.Tests.Data {
       Session.BeginUpdate();
       Data.AddRootsPersistedIfRequired(Session);
       Session.Commit();
-      DefaultAct = Act.CreateDefault(Data.ActRoot);
-      DefaultNewsletter = Newsletter.CreateDefault(Data.NewsletterRoot);
-      DefaultSeries = Series.CreateDefault(Data.SeriesRoot);
-      Location1 = new Location(Data.LocationRoot) {
+      DefaultAct = Act.CreateDefault();
+      DefaultNewsletter = Newsletter.CreateDefault();
+      DefaultSeries = Series.CreateDefault();
+      Location1 = new Location {
         QueryHelper = QueryHelper,
         Name = Location1Name
       };
-      EventType1 = new EventType(Data.EventTypeRoot) {
+      EventType1 = new EventType {
         QueryHelper = QueryHelper,
         Name = EventType1Name
       };
-      Event1 = new Event(Data.EventRoot) {
+      Event1 = new Event {
         QueryHelper = QueryHelper,
         Date = Event1Date
       };
-      Event2 = new Event(Data.EventRoot) {
+      Event2 = new Event {
         QueryHelper = QueryHelper,
         Date = Event2Date
       };
-      Genre1 = new Genre(Data.GenreRoot) {
+      Genre1 = new Genre {
         QueryHelper = QueryHelper,
         Name = Genre1Name
       };
-      Act1 = new Act(Data.ActRoot) {
+      Act1 = new Act {
         QueryHelper = QueryHelper,
         Name = Act1Name
       };
-      Act2 = new Act(Data.ActRoot) {
+      Act2 = new Act {
         QueryHelper = QueryHelper,
         Name = Act2Name
       };
-      Set1 = new Set(Data.SetRoot) {
+      Set1 = new Set {
         QueryHelper = QueryHelper,
         SetNo = Set1SetNo,
         Notes = Set1Notes,
         IsPublic = false
       };
-      Set1AtEvent2 = new Set(Data.SetRoot) {
+      Set1AtEvent2 = new Set {
         QueryHelper = QueryHelper,
         SetNo = Set1SetNo
       };
-      Set2 = new Set(Data.SetRoot) {
+      Set2 = new Set {
         QueryHelper = QueryHelper,
         SetNo = Set2SetNo
       };
-      Piece1 = new TestPiece(Data.PieceRoot) {
+      Piece1 = new TestPiece {
         QueryHelper = QueryHelper,
         PieceNo = Piece1PieceNo
       };
-      Piece2 = new TestPiece(Data.PieceRoot) {
+      Piece2 = new TestPiece {
         QueryHelper = QueryHelper,
         PieceNo = Piece2PieceNo
       };
@@ -237,7 +237,7 @@ namespace SoundExplorers.Tests.Data {
 
     [Test]
     public void DisallowPersistUnspecifiedSetNo() {
-      var noSetNo = new Set(Data.SetRoot) {
+      var noSetNo = new Set {
         QueryHelper = QueryHelper
       };
       Session.BeginUpdate();
@@ -248,7 +248,7 @@ namespace SoundExplorers.Tests.Data {
 
     [Test]
     public void DisallowSetKeyToDuplicate() {
-      var duplicate = new Set(Data.SetRoot) {
+      var duplicate = new Set {
         QueryHelper = QueryHelper,
         SetNo = Set1SetNo
       };
@@ -267,7 +267,7 @@ namespace SoundExplorers.Tests.Data {
 
     [Test]
     public void Unpersist() {
-      var set3 = new Set(Data.SetRoot) {
+      var set3 = new Set {
         QueryHelper = QueryHelper,
         SetNo = 3
       };

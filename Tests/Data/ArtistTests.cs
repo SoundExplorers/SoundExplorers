@@ -15,48 +15,48 @@ namespace SoundExplorers.Tests.Data {
       Session.BeginUpdate();
       Data.AddRootsPersistedIfRequired(Session);
       Session.Commit();
-      DefaultAct = Act.CreateDefault(Data.ActRoot);
-      DefaultNewsletter = Newsletter.CreateDefault(Data.NewsletterRoot);
-      DefaultSeries = Series.CreateDefault(Data.SeriesRoot);
-      RalphJenkins = new Artist(Data.ArtistRoot) {
+      DefaultAct = Act.CreateDefault();
+      DefaultNewsletter = Newsletter.CreateDefault();
+      DefaultSeries = Series.CreateDefault();
+      RalphJenkins = new Artist {
         QueryHelper = QueryHelper,
         Forename = RalphJenkinsForename,
         Surname = RalphJenkinsSurname,
         Notes = RalphJenkinsNotes
       };
-      Clarissa = new Artist(Data.ArtistRoot) {
+      Clarissa = new Artist {
         QueryHelper = QueryHelper,
         Forename = ClarissaForename
       };
-      Baker = new Artist(Data.ArtistRoot) {
+      Baker = new Artist {
         QueryHelper = QueryHelper,
         Surname = BakerSurname
       };
-      Role1 = new Role(Data.RoleRoot) {
+      Role1 = new Role {
         QueryHelper = QueryHelper,
         Name = Role1Name
       };
-      Location1 = new Location(Data.LocationRoot) {
+      Location1 = new Location {
         QueryHelper = QueryHelper,
         Name = Location1Name
       };
-      Event1 = new Event(Data.EventRoot) {
+      Event1 = new Event {
         QueryHelper = QueryHelper,
         Date = Event1Date
       };
-      Set1 = new Set(Data.SetRoot) {
+      Set1 = new Set {
         QueryHelper = QueryHelper,
         SetNo = Set1SetNo
       };
-      Piece1 = new TestPiece(Data.PieceRoot) {
+      Piece1 = new TestPiece {
         QueryHelper = QueryHelper,
         PieceNo = Piece1PieceNo
       };
-      Credit1 = new Credit(Data.CreditRoot) {
+      Credit1 = new Credit {
         QueryHelper = QueryHelper,
         CreditNo = Credit1CreditNo
       };
-      Credit2 = new Credit(Data.CreditRoot) {
+      Credit2 = new Credit {
         QueryHelper = QueryHelper,
         CreditNo = Credit2CreditNo
       };
@@ -171,7 +171,7 @@ namespace SoundExplorers.Tests.Data {
 
     [Test]
     public void DisallowDuplicate() {
-      var duplicate = new Artist(Data.ArtistRoot) {
+      var duplicate = new Artist {
         QueryHelper = QueryHelper,
         // Clarissa has this as a Forename and has no Surname.
         // So the generated Name / SimpleKey should be the same
@@ -185,7 +185,7 @@ namespace SoundExplorers.Tests.Data {
 
     [Test]
     public void DisallowSetNameToNull() {
-      var nameless = new Artist(Data.ArtistRoot);
+      var nameless = new Artist();
       Assert.Throws<PropertyConstraintException>(() => nameless.Forename = string.Empty);
     }
 

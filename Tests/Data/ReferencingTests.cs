@@ -7,23 +7,20 @@ namespace SoundExplorers.Tests.Data {
   public class ReferencingTests {
     [SetUp]
     public void Setup() {
-      QueryHelper = new QueryHelper { Schema = new TestSchema()};
+      QueryHelper = new QueryHelper {Schema = new TestSchema()};
       DatabaseFolderPath = TestSession.CreateDatabaseFolder();
       Session = new TestSession(DatabaseFolderPath);
       Session.BeginUpdate();
-      DaughterRoot = EntityBase.FetchOrAddRoot<Daughter>(QueryHelper, Session);
-      FatherRoot = EntityBase.FetchOrAddRoot<Father>(QueryHelper, Session);
-      MotherRoot = EntityBase.FetchOrAddRoot<Mother>(QueryHelper, Session);
-      SonRoot = EntityBase.FetchOrAddRoot<Son>(QueryHelper, Session);
+      EntityBase.FetchOrAddRoots(QueryHelper, Session);
       Session.Commit();
-      Mother1 = new Mother(MotherRoot, QueryHelper);
-      Mother2 = new Mother(MotherRoot, QueryHelper) {Name = Mother2Name};
-      Daughter1 = new Daughter(DaughterRoot, QueryHelper);
-      Daughter2 = new Daughter(DaughterRoot, QueryHelper);
-      Father1 = new Father(FatherRoot, QueryHelper);
-      Father2 = new Father(FatherRoot, QueryHelper) {Name = Father2Name};
-      Son1 = new Son(SonRoot, QueryHelper);
-      Son2 = new Son(SonRoot, QueryHelper);
+      Mother1 = new Mother(QueryHelper);
+      Mother2 = new Mother(QueryHelper) {Name = Mother2Name};
+      Daughter1 = new Daughter(QueryHelper);
+      Daughter2 = new Daughter(QueryHelper);
+      Father1 = new Father(QueryHelper);
+      Father2 = new Father(QueryHelper) {Name = Father2Name};
+      Son1 = new Son(QueryHelper);
+      Son2 = new Son(QueryHelper);
       DatabaseFolderPath = TestSession.CreateDatabaseFolder();
       Session.BeginUpdate();
       Mother1.Name = Mother1Name;
@@ -66,16 +63,12 @@ namespace SoundExplorers.Tests.Data {
     private QueryHelper QueryHelper { get; set; } = null!;
     private string DatabaseFolderPath { get; set; } = null!;
     private TestSession Session { get; set; } = null!;
-    private SortedEntityCollection<Daughter> DaughterRoot { get; set; } = null!;
     private Daughter Daughter1 { get; set; } = null!;
     private Daughter Daughter2 { get; set; } = null!;
-    private SortedEntityCollection<Father> FatherRoot { get; set; } = null!;
     private Father Father1 { get; set; } = null!;
     private Father Father2 { get; set; } = null!;
-    private SortedEntityCollection<Mother> MotherRoot { get; set; } = null!;
     private Mother Mother1 { get; set; } = null!;
     private Mother Mother2 { get; set; } = null!;
-    private SortedEntityCollection<Son> SonRoot { get; set; } = null!;
     private Son Son1 { get; set; } = null!;
     private Son Son2 { get; set; } = null!;
 
@@ -328,7 +321,7 @@ namespace SoundExplorers.Tests.Data {
       Assert.AreEqual("The Name is blank. Blank Names are not supported.",
         exception.Message,
         "Error message when trying to change SimpleKey to white space");
-      var namelessSon = new Son(SonRoot, QueryHelper);
+      var namelessSon = new Son(QueryHelper);
       exception = Assert.Catch<PropertyConstraintException>(() =>
         namelessSon.Name = null!, "Disallow changing SimpleKey to null");
       Assert.AreEqual("The Name is blank. Blank Names are not supported.",
@@ -345,10 +338,10 @@ namespace SoundExplorers.Tests.Data {
     [Test]
     public void T110_DisallowPersistDuplicateTopLevel() {
       Session.BeginUpdate();
-      var duplicateMother = new Mother(MotherRoot, QueryHelper) {Name = Mother1Name};
+      var duplicateMother = new Mother(QueryHelper) {Name = Mother1Name};
       Assert.Throws<PropertyConstraintException>(() =>
         Session.Persist(duplicateMother), "Duplicate Mother");
-      var duplicateFather = new Father(FatherRoot, QueryHelper) {Name = Father1Name};
+      var duplicateFather = new Father(QueryHelper) {Name = Father1Name};
       Assert.Throws<PropertyConstraintException>(() =>
         Session.Persist(duplicateFather), "Duplicate Father");
       Session.Commit();
@@ -357,7 +350,7 @@ namespace SoundExplorers.Tests.Data {
     [Test]
     public void T120_DisallowPersistChildWithoutMandatoryParent() {
       Session.BeginUpdate();
-      var motherlessDaughter = new Daughter(DaughterRoot, QueryHelper) {Name = "Carol"};
+      var motherlessDaughter = new Daughter(QueryHelper) {Name = "Carol"};
       Assert.Throws<PropertyConstraintException>(() =>
         Session.Persist(motherlessDaughter));
       Session.Commit();

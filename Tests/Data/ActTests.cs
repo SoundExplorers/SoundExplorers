@@ -14,31 +14,31 @@ namespace SoundExplorers.Tests.Data {
       Session.BeginUpdate();
       Data.AddRootsPersistedIfRequired(Session);
       Session.Commit();
-      DefaultAct = Act.CreateDefault(Data.ActRoot);
-      DefaultNewsletter = Newsletter.CreateDefault(Data.NewsletterRoot);
-      DefaultSeries = Series.CreateDefault(Data.SeriesRoot);
-      Location1 = new Location(Data.LocationRoot) {
+      DefaultAct = Act.CreateDefault();
+      DefaultNewsletter = Newsletter.CreateDefault();
+      DefaultSeries = Series.CreateDefault();
+      Location1 = new Location {
         QueryHelper = QueryHelper,
         Name = Location1Name
       };
-      Event1 = new Event(Data.EventRoot) {
+      Event1 = new Event {
         QueryHelper = QueryHelper,
         Date = Event1Date
       };
-      Act1 = new Act(Data.ActRoot) {
+      Act1 = new Act {
         QueryHelper = QueryHelper,
         Name = Act1Name,
         Notes = Act1Notes
       };
-      Act2 = new Act(Data.ActRoot) {
+      Act2 = new Act {
         QueryHelper = QueryHelper,
         Name = Act2Name
       };
-      Set1 = new Set(Data.SetRoot) {
+      Set1 = new Set {
         QueryHelper = QueryHelper,
         SetNo = Set1SetNo
       };
-      Set2 = new Set(Data.SetRoot) {
+      Set2 = new Set {
         QueryHelper = QueryHelper,
         SetNo = Set2SetNo
       };
@@ -111,7 +111,7 @@ namespace SoundExplorers.Tests.Data {
 
     [Test]
     public void AllowPersistUnspecifiedName() {
-      var noName = new Act(Data.ActRoot) {
+      var noName = new Act {
         QueryHelper = QueryHelper
       };
       Session.BeginUpdate();
@@ -139,7 +139,7 @@ namespace SoundExplorers.Tests.Data {
 
     [Test]
     public void DisallowPersistDuplicate() {
-      var duplicate = new Act(Data.ActRoot) {
+      var duplicate = new Act {
         QueryHelper = QueryHelper,
         Name = Act1Name
       };

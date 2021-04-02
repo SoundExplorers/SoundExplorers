@@ -15,54 +15,54 @@ namespace SoundExplorers.Tests.Data {
       Session.BeginUpdate();
       Data.AddRootsPersistedIfRequired(Session);
       Session.Commit();
-      DefaultAct = Act.CreateDefault(Data.ActRoot);
-      DefaultNewsletter = Newsletter.CreateDefault(Data.NewsletterRoot);
-      DefaultSeries = Series.CreateDefault(Data.SeriesRoot);
-      Baker = new Artist(Data.ArtistRoot) {
+      DefaultAct = Act.CreateDefault();
+      DefaultNewsletter = Newsletter.CreateDefault();
+      DefaultSeries = Series.CreateDefault();
+      Baker = new Artist {
         QueryHelper = QueryHelper,
         Surname = BakerName
       };
-      Clarissa = new Artist(Data.ArtistRoot) {
+      Clarissa = new Artist {
         QueryHelper = QueryHelper,
         Forename = ClarissaName
       };
-      Drums = new Role(Data.RoleRoot) {
+      Drums = new Role {
         QueryHelper = QueryHelper,
         Name = DrumsName
       };
-      ElectricGuitar = new Role(Data.RoleRoot) {
+      ElectricGuitar = new Role {
         QueryHelper = QueryHelper,
         Name = ElectricGuitarName
       };
-      Location1 = new Location(Data.LocationRoot) {
+      Location1 = new Location {
         QueryHelper = QueryHelper,
         Name = Location1Name
       };
-      Event1 = new Event(Data.EventRoot) {
+      Event1 = new Event {
         QueryHelper = QueryHelper,
         Date = Event1Date
       };
-      Set1 = new Set(Data.SetRoot) {
+      Set1 = new Set {
         QueryHelper = QueryHelper,
         SetNo = Set1SetNo
       };
-      Piece1 = new TestPiece(Data.PieceRoot) {
+      Piece1 = new TestPiece {
         QueryHelper = QueryHelper,
         PieceNo = Piece1PieceNo
       };
-      Piece2 = new TestPiece(Data.PieceRoot) {
+      Piece2 = new TestPiece {
         QueryHelper = QueryHelper,
         PieceNo = Piece2PieceNo
       };
-      Credit1 = new Credit(Data.CreditRoot) {
+      Credit1 = new Credit {
         QueryHelper = QueryHelper,
         CreditNo = Credit1CreditNo
       };
-      Credit2 = new Credit(Data.CreditRoot) {
+      Credit2 = new Credit {
         QueryHelper = QueryHelper,
         CreditNo = Credit2CreditNo
       };
-      Credit3 = new Credit(Data.CreditRoot) {
+      Credit3 = new Credit {
         QueryHelper = QueryHelper,
         CreditNo = Credit3CreditNo
       };
@@ -250,7 +250,7 @@ namespace SoundExplorers.Tests.Data {
 
     [Test]
     public void DisallowPersistUnspecifiedCreditNo() {
-      var noCreditNo = new Credit(Data.CreditRoot) {
+      var noCreditNo = new Credit {
         QueryHelper = QueryHelper
       };
       Session.BeginUpdate();
@@ -261,7 +261,7 @@ namespace SoundExplorers.Tests.Data {
 
     [Test]
     public void DisallowSetKeyToDuplicate() {
-      var duplicate = new Credit(Data.CreditRoot) {
+      var duplicate = new Credit {
         QueryHelper = QueryHelper,
         CreditNo = Credit1CreditNo
       };

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using VelocityDb;
 using VelocityDb.Session;
 
@@ -13,9 +14,12 @@ namespace SoundExplorers.Data {
   /// </remarks>
   public class Schema : OptimizedPersistable {
     private static Schema? _instance;
+    private IEnumerable<Type>? _entityTypes;
     private IEnumerable<Type>? _persistableTypes;
     private IEnumerable<RelationInfo>? _relations;
     private IDictionary<Type, Type>? _rootTypes;
+
+    // private IDictionary<Type, Type>? _rootTypes;
     private int _version;
 
     /// <summary>
@@ -36,11 +40,17 @@ namespace SoundExplorers.Data {
     public override bool AllowOtherTypesOnSamePage => false;
 
     /// <summary>
+    ///   Enumerates the entity types persisted on the database.
+    /// </summary>
+    public IEnumerable<Type> EntityTypes =>
+      _entityTypes ??= CreateEntityTypes();
+
+    /// <summary>
     ///   The structure of on-to-many relations between entity types.
     /// </summary>
     public IEnumerable<RelationInfo> Relations =>
       _relations ??= CreateRelations();
-    
+
     public IDictionary<Type, Type> RootTypes =>
       _rootTypes ??= CreateRootTypes();
 
@@ -159,6 +169,13 @@ namespace SoundExplorers.Data {
         [typeof(Set)] = typeof(SortedEntityCollection<Set>),
         [typeof(UserOption)] = typeof(SortedEntityCollection<UserOption>)
       };
+    }
+
+    private IEnumerable<Type> CreateEntityTypes() {
+      return (
+        from persistableType in PersistableTypes
+        where persistableType.GetInterfaces().Contains(typeof(IEntity))
+        select persistableType).ToList();
     }
   }
 }

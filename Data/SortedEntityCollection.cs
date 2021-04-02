@@ -6,7 +6,7 @@ namespace SoundExplorers.Data {
   /// <summary>
   ///   A sorted collection of entities of the specified type.
   /// </summary>
-  public class SortedEntityCollection<TEntity> : BTreeMap<Key, TEntity>, 
+  public class SortedEntityCollection<TEntity> : BTreeMap<Key, TEntity>,
     // IDictionary<Key, IEntity>
     ISortedEntityCollection
     where TEntity : EntityBase {

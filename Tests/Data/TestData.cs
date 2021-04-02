@@ -37,34 +37,45 @@ namespace SoundExplorers.Tests.Data {
       Sets = new List<Set>();
     }
 
-    public SortedEntityCollection<Act> ActRoot { get; private set; } = null!;
+    private SortedEntityCollection<Act> ActRoot { get; set; } = null!;
     public IList<Act> Acts { get; }
-    public SortedEntityCollection<Artist> ArtistRoot { get; private set; } = null!;
+
+    //private SortedEntityCollection<Artist> ArtistRoot { get; set; } = null!;
     public IList<Artist> Artists { get; }
-    public SortedEntityCollection<Credit> CreditRoot { get; private set; } = null!;
+
+    //private SortedEntityCollection<Credit> CreditRoot { get; set; } = null!;
     public IList<Credit> Credits { get; }
-    public SortedEntityCollection<Event> EventRoot { get; private set; } = null!;
+
+    //private SortedEntityCollection<Event> EventRoot { get; set; } = null!;
     public IList<Event> Events { get; }
-    public SortedEntityCollection<EventType> EventTypeRoot { get; private set; } = null!;
+
+    //private SortedEntityCollection<EventType> EventTypeRoot { get; set; } = null!;
     public IList<EventType> EventTypes { get; }
-    public SortedEntityCollection<Genre> GenreRoot { get; private set; } = null!;
+
+    //private SortedEntityCollection<Genre> GenreRoot { get; set; } = null!;
     public IList<Genre> Genres { get; }
-    public SortedEntityCollection<Location> LocationRoot { get; private set; } = null!;
+
+    //private SortedEntityCollection<Location> LocationRoot { get; set; } = null!;
     public IList<Location> Locations { get; }
-    public SortedEntityCollection<Newsletter> NewsletterRoot { get; private set; } = null!;
+
+    //private SortedEntityCollection<Newsletter> NewsletterRoot { get; set; } = null!;
     public IList<Newsletter> Newsletters { get; }
-    public SortedEntityCollection<Piece> PieceRoot { get; private set; } = null!;
+
+    //private SortedEntityCollection<Piece> PieceRoot { get; set; } = null!;
     public IList<Piece> Pieces { get; }
-    public SortedEntityCollection<Role> RoleRoot { get; private set; } = null!;
+
+    //private SortedEntityCollection<Role> RoleRoot { get; set; } = null!;
     public IList<Role> Roles { get; }
-    public SortedEntityCollection<Series> SeriesRoot { get; private set; } = null!;
+
+    //private SortedEntityCollection<Series> SeriesRoot { get; set; } = null!;
     public IList<Series> Series { get; }
-    public SortedEntityCollection<Set> SetRoot { get; private set; } = null!;
+
+    //private SortedEntityCollection<Set> SetRoot { get; set; } = null!;
     public IList<Set> Sets { get; }
-    public SortedEntityCollection<UserOption> UserOptionRoot { get; private set; } = null!;
+
+    //private SortedEntityCollection<UserOption> UserOptionRoot { get; set; } = null!;
     private IList<string> ActNames => _actNames ??= CreateActNames();
     private QueryHelper QueryHelper { get; }
-
     private IList<string> EventTypeNames => _eventTypeNames ??= CreateEventTypeNames();
     private IList<string> Forenames => _forenames ??= CreateForenames();
     private IList<string> GenreNames => _genreNames ??= CreateGenreNames();
@@ -79,10 +90,10 @@ namespace SoundExplorers.Tests.Data {
     }
 
     public void AddActsPersisted(int count, SessionBase session) {
-      AddRootsPersistedIfRequired(session);        
+      AddRootsPersistedIfRequired(session);
       InsertDefaultAct(session);
       for (int i = 1; i < count; i++) {
-        var act = new Act(ActRoot) {
+        var act = new Act {
           QueryHelper = QueryHelper,
           Name = Acts.Count < ActNames.Count
             ? ActNames[Acts.Count]
@@ -96,10 +107,10 @@ namespace SoundExplorers.Tests.Data {
     }
 
     public void AddArtistsPersisted(int count, SessionBase session) {
-      AddRootsPersistedIfRequired(session);        
+      AddRootsPersistedIfRequired(session);
       var names = new HashSet<string>(count);
       for (int i = 0; i < count; i++) {
-        var artist = new Artist(ArtistRoot) {
+        var artist = new Artist {
           QueryHelper = QueryHelper,
           Notes = GenerateNotes()
         };
@@ -116,13 +127,13 @@ namespace SoundExplorers.Tests.Data {
 
     public void AddCreditsPersisted(int count, SessionBase session,
       Piece? piece = null, Artist? artist = null, Role? role = null) {
-      AddRootsPersistedIfRequired(session);        
+      AddRootsPersistedIfRequired(session);
       var parentPiece = piece ?? GetDefaultPiece();
       int creditNo = parentPiece.Credits.Count == 0
         ? 1
         : parentPiece.Credits[^1].CreditNo + 1;
       for (int i = 0; i < count; i++) {
-        var credit = new Credit(CreditRoot) {
+        var credit = new Credit {
           QueryHelper = QueryHelper,
           CreditNo = creditNo,
           Piece = parentPiece,
@@ -137,12 +148,12 @@ namespace SoundExplorers.Tests.Data {
 
     public void AddEventsPersisted(int count, SessionBase session,
       Location? location = null, EventType? eventType = null) {
-      AddRootsPersistedIfRequired(session);        
+      AddRootsPersistedIfRequired(session);
       var date = Events.Count == 0
         ? DateTime.Parse("2020/01/09")
         : Events[^1].Date.AddDays(7);
       for (int i = 0; i < count; i++) {
-        var @event = new Event(EventRoot) {
+        var @event = new Event {
           QueryHelper = QueryHelper,
           Date = date,
           Location = location ?? GetRandomLocation(),
@@ -166,9 +177,9 @@ namespace SoundExplorers.Tests.Data {
     }
 
     public void AddEventTypesPersisted(int count, SessionBase session) {
-      AddRootsPersistedIfRequired(session);        
+      AddRootsPersistedIfRequired(session);
       for (int i = 0; i < count; i++) {
-        var eventType = new EventType(EventTypeRoot) {
+        var eventType = new EventType {
           QueryHelper = QueryHelper,
           Name = EventTypes.Count < EventTypeNames.Count
             ? EventTypeNames[EventTypes.Count]
@@ -185,9 +196,9 @@ namespace SoundExplorers.Tests.Data {
     }
 
     public void AddGenresPersisted(int count, SessionBase session) {
-      AddRootsPersistedIfRequired(session);        
+      AddRootsPersistedIfRequired(session);
       for (int i = 0; i < count; i++) {
-        var genre = new Genre(GenreRoot) {
+        var genre = new Genre {
           QueryHelper = QueryHelper,
           Name = Genres.Count < GenreNames.Count
             ? GenreNames[Genres.Count]
@@ -204,9 +215,9 @@ namespace SoundExplorers.Tests.Data {
     }
 
     public void AddLocationsPersisted(int count, SessionBase session) {
-      AddRootsPersistedIfRequired(session);        
+      AddRootsPersistedIfRequired(session);
       for (int i = 0; i < count; i++) {
-        var location = new Location(LocationRoot) {
+        var location = new Location {
           QueryHelper = QueryHelper,
           Name = Locations.Count < LocationNames.Count
             ? LocationNames[Locations.Count]
@@ -220,11 +231,11 @@ namespace SoundExplorers.Tests.Data {
     }
 
     public void AddNewslettersPersisted(int count, SessionBase session) {
-      AddRootsPersistedIfRequired(session);        
+      AddRootsPersistedIfRequired(session);
       InsertDefaultNewsletter(session);
       var date = DateTime.Parse("2020/01/06");
       for (int i = 1; i < count; i++) {
-        var newsletter = new Newsletter(NewsletterRoot) {
+        var newsletter = new Newsletter {
           QueryHelper = QueryHelper,
           Date = date,
           Url = GenerateUniqueUrl()
@@ -237,11 +248,11 @@ namespace SoundExplorers.Tests.Data {
 
     public void AddPiecesPersisted(int count, SessionBase session,
       Set? set = null) {
-      AddRootsPersistedIfRequired(session);        
+      AddRootsPersistedIfRequired(session);
       var parentSet = set ?? GetDefaultSet();
       int pieceNo = parentSet.Pieces.Count == 0 ? 1 : parentSet.Pieces[^1].PieceNo + 1;
       for (int i = 0; i < count; i++) {
-        var piece = new Piece(PieceRoot) {
+        var piece = new Piece {
           QueryHelper = QueryHelper,
           PieceNo = pieceNo,
           Set = parentSet,
@@ -267,19 +278,23 @@ namespace SoundExplorers.Tests.Data {
       if (ActRoot != null!) {
         return;
       }
-      ActRoot = EntityBase.FetchOrAddRoot<Act>(QueryHelper, session);
-      ArtistRoot = EntityBase.FetchOrAddRoot<Artist>(QueryHelper, session);
-      CreditRoot = EntityBase.FetchOrAddRoot<Credit>(QueryHelper, session);
-      EventRoot = EntityBase.FetchOrAddRoot<Event>(QueryHelper, session);
-      EventTypeRoot = EntityBase.FetchOrAddRoot<EventType>(QueryHelper, session);
-      GenreRoot = EntityBase.FetchOrAddRoot<Genre>(QueryHelper, session);
-      LocationRoot = EntityBase.FetchOrAddRoot<Location>(QueryHelper, session);
-      NewsletterRoot = EntityBase.FetchOrAddRoot<Newsletter>(QueryHelper, session);
-      PieceRoot = EntityBase.FetchOrAddRoot<Piece>(QueryHelper, session);
-      RoleRoot = EntityBase.FetchOrAddRoot<Role>(QueryHelper, session);
-      SeriesRoot = EntityBase.FetchOrAddRoot<Series>(QueryHelper, session);
-      SetRoot = EntityBase.FetchOrAddRoot<Set>(QueryHelper, session);
-      UserOptionRoot = EntityBase.FetchOrAddRoot<UserOption>(QueryHelper, session);
+      EntityBase.FetchOrAddRoots(QueryHelper, session);
+      ActRoot = (SortedEntityCollection<Act>)EntityBase.Roots[typeof(Act)];
+      // ArtistRoot = (SortedEntityCollection<Artist>)EntityBase.Roots[typeof(Artist)];
+      // CreditRoot = (SortedEntityCollection<Credit>)EntityBase.Roots[typeof(Credit)];
+      // EventRoot = (SortedEntityCollection<Event>)EntityBase.Roots[typeof(Event)];
+      // EventTypeRoot = 
+      //   (SortedEntityCollection<EventType>)EntityBase.Roots[typeof(EventType)];
+      // GenreRoot = (SortedEntityCollection<Genre>)EntityBase.Roots[typeof(Genre)];
+      // LocationRoot = 
+      //   (SortedEntityCollection<Location>)EntityBase.Roots[typeof(Location)];
+      // NewsletterRoot = 
+      //   (SortedEntityCollection<Newsletter>)EntityBase.Roots[typeof(Newsletter)];
+      // PieceRoot = (SortedEntityCollection<Piece>)EntityBase.Roots[typeof(Piece)];
+      // RoleRoot = (SortedEntityCollection<Role>)EntityBase.Roots[typeof(Role)];
+      // SeriesRoot = (SortedEntityCollection<Series>)EntityBase.Roots[typeof(Series)];
+      // SetRoot = (SortedEntityCollection<Set>)EntityBase.Roots[typeof(Set)];
+      // UserOptionRoot = (SortedEntityCollection<UserOption>)EntityBase.Roots[typeof(UserOption)];
     }
 
     public void AddRolesPersisted(SessionBase session) {
@@ -287,9 +302,9 @@ namespace SoundExplorers.Tests.Data {
     }
 
     public void AddRolesPersisted(int count, SessionBase session) {
-      AddRootsPersistedIfRequired(session);        
+      AddRootsPersistedIfRequired(session);
       for (int i = 0; i < count; i++) {
-        var role = new Role(RoleRoot) {
+        var role = new Role {
           QueryHelper = QueryHelper,
           Name = Roles.Count < RoleNames.Count
             ? RoleNames[Roles.Count]
@@ -306,10 +321,10 @@ namespace SoundExplorers.Tests.Data {
     }
 
     public void AddSeriesPersisted(int count, SessionBase session) {
-      AddRootsPersistedIfRequired(session);        
+      AddRootsPersistedIfRequired(session);
       InsertDefaultSeries(session);
       for (int i = 1; i < count; i++) {
-        var series = new Series(SeriesRoot) {
+        var series = new Series {
           QueryHelper = QueryHelper,
           Name = Series.Count < SeriesNames.Count
             ? SeriesNames[Series.Count]
@@ -324,11 +339,11 @@ namespace SoundExplorers.Tests.Data {
 
     public void AddSetsPersisted(int count, SessionBase session,
       Event? @event = null, Genre? genre = null) {
-      AddRootsPersistedIfRequired(session);        
+      AddRootsPersistedIfRequired(session);
       var parentEvent = @event ?? GetDefaultEvent();
       int setNo = parentEvent.Sets.Count == 0 ? 1 : parentEvent.Sets[^1].SetNo + 1;
       for (int i = 0; i < count; i++) {
-        var set = new Set(SetRoot) {
+        var set = new Set {
           QueryHelper = QueryHelper,
           SetNo = setNo,
           Event = parentEvent,
@@ -602,19 +617,19 @@ namespace SoundExplorers.Tests.Data {
     }
 
     private void InsertDefaultAct(SessionBase session) {
-      var act = Act.CreateDefault(ActRoot);
+      var act = Act.CreateDefault();
       session.Persist(act);
       Acts.Insert(0, act);
     }
 
     private void InsertDefaultNewsletter(SessionBase session) {
-      var newsletter = Newsletter.CreateDefault(NewsletterRoot);
+      var newsletter = Newsletter.CreateDefault();
       session.Persist(newsletter);
       Newsletters.Insert(0, newsletter);
     }
 
     private void InsertDefaultSeries(SessionBase session) {
-      var series = SoundExplorers.Data.Series.CreateDefault(SeriesRoot);
+      var series = SoundExplorers.Data.Series.CreateDefault();
       session.Persist(series);
       Series.Insert(0, series);
     }

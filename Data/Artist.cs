@@ -11,8 +11,7 @@ namespace SoundExplorers.Data {
     private string _surname = null!;
 
     [SuppressMessage("ReSharper", "SuggestBaseTypeForParameter")]
-    public Artist(SortedEntityCollection<Artist> root) : base(
-      root, typeof(Artist), nameof(Name), null) {
+    public Artist() : base(typeof(Artist), nameof(Name), null) {
       Credits = new SortedEntityCollection<Credit>();
     }
 

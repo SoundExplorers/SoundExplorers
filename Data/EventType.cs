@@ -10,8 +10,7 @@ namespace SoundExplorers.Data {
     public const string DefaultName = "Performance";
 
     [SuppressMessage("ReSharper", "SuggestBaseTypeForParameter")]
-    public EventType(SortedEntityCollection<EventType> root) : base(
-      root,typeof(EventType), nameof(Name), null) {
+    public EventType() : base(typeof(EventType), nameof(Name), null) {
       Events = new SortedEntityCollection<Event>();
     }
 
@@ -25,8 +24,8 @@ namespace SoundExplorers.Data {
       }
     }
 
-    public static EventType CreateDefault(SortedEntityCollection<EventType> root) {
-      return new EventType(root) {
+    public static EventType CreateDefault() {
+      return new EventType {
         Name = DefaultName
       };
     }

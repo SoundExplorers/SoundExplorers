@@ -45,7 +45,10 @@ namespace SoundExplorers.Controller {
     ///   specifies the grid's identifying parent entity and, for populating the grid,
     ///   its child entities.
     /// </summary>
-    protected IdentifyingParentAndChildren? IdentifyingParentAndChildrenForList { get; set; }
+    protected IdentifyingParentAndChildren? IdentifyingParentAndChildrenForList {
+      get;
+      set;
+    }
 
     /// <summary>
     ///   Gets the list of entities represented in the grid.

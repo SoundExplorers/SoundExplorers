@@ -20,7 +20,7 @@ namespace SoundExplorers.Model {
       var defaultAct = QueryHelper.Find<Act>(
         Act.DefaultName, Session);
       if (defaultAct == null) {
-        defaultAct = Act.CreateDefault(FetchOrAddRoot<Act>());
+        defaultAct = Act.CreateDefault();
         Session.Persist(defaultAct);
       }
       Session.Commit();

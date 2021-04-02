@@ -19,8 +19,7 @@ namespace SoundExplorers.Data {
     private string _videoUrl = null!;
 
     [SuppressMessage("ReSharper", "SuggestBaseTypeForParameter")]
-    public Piece(SortedEntityCollection<Piece> root) : base(
-      root,typeof(Piece), nameof(PieceNo), typeof(Set)) {
+    public Piece() : base(typeof(Piece), nameof(PieceNo), typeof(Set)) {
       Credits = new SortedEntityCollection<Credit>();
     }
 

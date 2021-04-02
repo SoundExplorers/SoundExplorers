@@ -71,7 +71,7 @@ namespace SoundExplorers.Model {
 
     internal TEntity CreateEntity() {
       EntityPropertyValues = CreateEntityPropertyValueDictionary();
-      var result = 
+      var result =
         (Activator.CreateInstance(typeof(TEntity), EntityList.Root) as TEntity)!;
       CopyValuesToEntityProperties(result);
       return result;

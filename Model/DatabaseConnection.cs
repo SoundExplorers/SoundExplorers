@@ -31,6 +31,8 @@ namespace SoundExplorers.Model {
       } finally {
         session.Commit();
       }
+      var queryHelper = new QueryHelper {Schema = schema};
+      EntityBase.FetchOrAddRoots(queryHelper, session);
       Global.Session = session;
       Schema.Instance = schema;
     }

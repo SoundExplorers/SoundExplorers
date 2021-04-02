@@ -14,27 +14,27 @@ namespace SoundExplorers.Tests.Data {
       Session.BeginUpdate();
       Data.AddRootsPersistedIfRequired(Session);
       Session.Commit();
-      DefaultNewsletter = Newsletter.CreateDefault(Data.NewsletterRoot);
-      DefaultSeries = Series.CreateDefault(Data.SeriesRoot);
-      Location1 = new Location(Data.LocationRoot) {
+      DefaultNewsletter = Newsletter.CreateDefault();
+      DefaultSeries = Series.CreateDefault();
+      Location1 = new Location {
         QueryHelper = QueryHelper,
         Name = Location1Name
       };
-      Newsletter1 = new Newsletter(Data.NewsletterRoot) {
+      Newsletter1 = new Newsletter {
         QueryHelper = QueryHelper,
         Date = Newsletter1Date,
         Url = Newsletter1Url
       };
-      Newsletter2 = new Newsletter(Data.NewsletterRoot) {
+      Newsletter2 = new Newsletter {
         QueryHelper = QueryHelper,
         Date = Newsletter2Date,
         Url = Newsletter2Url
       };
-      Event1 = new Event(Data.EventRoot) {
+      Event1 = new Event {
         QueryHelper = QueryHelper,
         Date = Event1Date
       };
-      Event2 = new Event(Data.EventRoot) {
+      Event2 = new Event {
         QueryHelper = QueryHelper,
         Date = Event2Date
       };
@@ -67,7 +67,6 @@ namespace SoundExplorers.Tests.Data {
     private TestData Data { get; set; } = null!;
     private string DatabaseFolderPath { get; set; } = null!;
     private TestSession Session { get; set; } = null!;
-
     private Newsletter DefaultNewsletter { get; set; } = null!;
     private Series DefaultSeries { get; set; } = null!;
     private Event Event1 { get; set; } = null!;
@@ -150,12 +149,12 @@ namespace SoundExplorers.Tests.Data {
       var date = DateTime.Parse("2020/08/19");
       const string url1 = "https://archive.org/details/jazzpop";
       const string url2 = "https://archive.org/details/native_201910";
-      var original = new Newsletter(Data.NewsletterRoot) {
+      var original = new Newsletter {
         QueryHelper = QueryHelper,
         Date = date,
         Url = url1
       };
-      var duplicate = new Newsletter(Data.NewsletterRoot) {
+      var duplicate = new Newsletter {
         QueryHelper = QueryHelper,
         Date = date,
         Url = url2
@@ -171,12 +170,12 @@ namespace SoundExplorers.Tests.Data {
       var date1 = DateTime.Parse("2020/08/18");
       var date2 = DateTime.Parse("2020/08/19");
       const string url = "https://archive.org/details/jazzpop";
-      var original = new Newsletter(Data.NewsletterRoot) {
+      var original = new Newsletter {
         QueryHelper = QueryHelper,
         Date = date1,
         Url = url
       };
-      var duplicate = new Newsletter(Data.NewsletterRoot) {
+      var duplicate = new Newsletter {
         QueryHelper = QueryHelper,
         Date = date2,
         Url = url
@@ -190,7 +189,7 @@ namespace SoundExplorers.Tests.Data {
     [Test]
     public void DisallowPersistUnspecifiedDate() {
       const string url = "https://archive.org/details/jazzpop";
-      var noDate = new Newsletter(Data.NewsletterRoot) {
+      var noDate = new Newsletter {
         QueryHelper = QueryHelper,
         Url = url
       };
@@ -202,7 +201,7 @@ namespace SoundExplorers.Tests.Data {
     [Test]
     public void DisallowPersistUnspecifiedUrl() {
       var date = DateTime.Parse("2020/08/19");
-      var noUrl = new Newsletter(Data.NewsletterRoot) {
+      var noUrl = new Newsletter {
         QueryHelper = QueryHelper,
         Date = date
       };

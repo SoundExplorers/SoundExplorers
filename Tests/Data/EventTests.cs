@@ -15,64 +15,64 @@ namespace SoundExplorers.Tests.Data {
       Session.BeginUpdate();
       Data.AddRootsPersistedIfRequired(Session);
       Session.Commit();
-      EventType1 = new EventType(Data.EventTypeRoot) {
+      EventType1 = new EventType {
         QueryHelper = QueryHelper,
         Name = EventType1Name
       };
-      Genre1 = new Genre(Data.GenreRoot) {
+      Genre1 = new Genre {
         QueryHelper = QueryHelper,
         Name = Genre1Name
       };
-      Location1 = new Location(Data.LocationRoot) {
+      Location1 = new Location {
         QueryHelper = QueryHelper,
         Name = Location1Name
       };
-      Location2 = new Location(Data.LocationRoot) {
+      Location2 = new Location {
         QueryHelper = QueryHelper,
         Name = Location2Name
       };
-      DefaultNewsletter = Newsletter.CreateDefault(Data.NewsletterRoot);
-      Newsletter1 = new Newsletter(Data.NewsletterRoot) {
+      DefaultNewsletter = Newsletter.CreateDefault();
+      Newsletter1 = new Newsletter {
         QueryHelper = QueryHelper,
         Date = Newsletter1Date,
         Url = Newsletter1Url
       };
-      Newsletter2 = new Newsletter(Data.NewsletterRoot) {
+      Newsletter2 = new Newsletter {
         QueryHelper = QueryHelper,
         Date = Newsletter2Date,
         Url = Newsletter2Url
       };
-      DefaultSeries = Series.CreateDefault(Data.SeriesRoot);
-      Series1 = new Series(Data.SeriesRoot) {
+      DefaultSeries = Series.CreateDefault();
+      Series1 = new Series {
         QueryHelper = QueryHelper,
         Name = Series1Name
       };
-      Series2 = new Series(Data.SeriesRoot) {
+      Series2 = new Series {
         QueryHelper = QueryHelper,
         Name = Series2Name
       };
-      Event1 = new Event(Data.EventRoot) {
+      Event1 = new Event {
         QueryHelper = QueryHelper,
         Date = Event1Date,
         Notes = Event1Notes
       };
-      Event1AtLocation2 = new Event(Data.EventRoot) {
+      Event1AtLocation2 = new Event {
         QueryHelper = QueryHelper,
         Date = Event1Date
       };
-      Event2 = new Event(Data.EventRoot) {
+      Event2 = new Event {
         QueryHelper = QueryHelper,
         Date = Event2Date
       };
-      Set1 = new Set(Data.SetRoot) {
+      Set1 = new Set {
         QueryHelper = QueryHelper,
         SetNo = Set1SetNo
       };
-      Set2 = new Set(Data.SetRoot) {
+      Set2 = new Set {
         QueryHelper = QueryHelper,
         SetNo = Set2SetNo
       };
-      DefaultAct = Act.CreateDefault(Data.ActRoot);
+      DefaultAct = Act.CreateDefault();
       Session.BeginUpdate();
       Session.Persist(EventType1);
       Session.Persist(Genre1);
@@ -409,7 +409,7 @@ namespace SoundExplorers.Tests.Data {
 
     [Test]
     public void DisallowPersistUnspecifiedDate() {
-      var noDate = new Event(Data.EventRoot) {
+      var noDate = new Event {
         QueryHelper = QueryHelper
       };
       Session.BeginUpdate();
@@ -421,7 +421,7 @@ namespace SoundExplorers.Tests.Data {
 
     [Test]
     public void DisallowSetKeyToDuplicate() {
-      var duplicate = new Event(Data.EventRoot) {
+      var duplicate = new Event {
         QueryHelper = QueryHelper,
         Date = Event1Date
       };
@@ -443,7 +443,7 @@ namespace SoundExplorers.Tests.Data {
 
     [Test]
     public void GetNullLocation() {
-      var @event = new Event(Data.EventRoot) {
+      var @event = new Event {
         QueryHelper = QueryHelper,
         Date = Event2Date
       };
@@ -452,11 +452,11 @@ namespace SoundExplorers.Tests.Data {
 
     [Test]
     public void OrderOfSets() {
-      var set3 = new Set(Data.SetRoot) {
+      var set3 = new Set {
         QueryHelper = QueryHelper,
         SetNo = 3
       };
-      var set4 = new Set(Data.SetRoot) {
+      var set4 = new Set {
         QueryHelper = QueryHelper,
         SetNo = 4
       };
@@ -483,9 +483,9 @@ namespace SoundExplorers.Tests.Data {
       Event1 = QueryHelper.Read<Event>(Event1SimpleKey, Location1, Session);
       Set1 = QueryHelper.Read<Set>(Set1.SimpleKey, Event1, Session);
       Set2 = QueryHelper.Read<Set>(Set2.SimpleKey, Event1, Session);
-      ConstraintException exception = 
+      ConstraintException exception =
         Assert.Catch<ConstraintException>(() => Session.Unpersist(Event1),
-        "Unpersist Event with Sets");
+          "Unpersist Event with Sets");
       Session.Unpersist(Set1);
       Session.Unpersist(Set2);
       Session.Commit();

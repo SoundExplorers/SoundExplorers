@@ -17,7 +17,7 @@ namespace SoundExplorers.Data {
     public static QueryHelper Instance =>
       _instance ??= new QueryHelper();
 
-    internal Schema Schema {
+    public Schema Schema {
       get => _schema ??= Schema.Instance;
       set => _schema = value;
     }
@@ -162,7 +162,7 @@ namespace SoundExplorers.Data {
       return root?.Values ?? new List<IEntity>();
     }
 
-    private ISortedEntityCollection? FindRoot(Type entityType, SessionBase session) {
+    public ISortedEntityCollection? FindRoot(Type entityType, SessionBase session) {
       return FindSingleton(Schema.RootTypes[entityType], session) as
         ISortedEntityCollection;
     }

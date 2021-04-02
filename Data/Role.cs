@@ -7,8 +7,7 @@ namespace SoundExplorers.Data {
   /// </summary>
   public class Role : EntityBase, INamedEntity {
     [SuppressMessage("ReSharper", "SuggestBaseTypeForParameter")]
-    public Role(SortedEntityCollection<Role> root) : base(
-      root,typeof(Role), nameof(Name), null) {
+    public Role() : base(typeof(Role), nameof(Name), null) {
       Credits = new SortedEntityCollection<Credit>();
     }
 

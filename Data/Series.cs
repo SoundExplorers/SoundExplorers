@@ -11,8 +11,7 @@ namespace SoundExplorers.Data {
     private string _notes = null!;
 
     [SuppressMessage("ReSharper", "SuggestBaseTypeForParameter")]
-    public Series(SortedEntityCollection<Series> root) : base(
-      root,typeof(Series), nameof(Name), null) {
+    public Series() : base(typeof(Series), nameof(Name), null) {
       AllowBlankSimpleKey = true;
       Events = new SortedEntityCollection<Event>();
     }
@@ -35,8 +34,8 @@ namespace SoundExplorers.Data {
       }
     }
 
-    public static Series CreateDefault(SortedEntityCollection<Series> root) {
-      return new Series(root) {
+    public static Series CreateDefault() {
+      return new Series {
         Name = DefaultName,
         Notes = "Required default"
       };

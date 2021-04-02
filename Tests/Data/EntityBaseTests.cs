@@ -8,14 +8,21 @@ namespace SoundExplorers.Tests.Data {
   public class EntityBaseTests {
     [SetUp]
     public void Setup() {
-      QueryHelper = new QueryHelper();
+      QueryHelper = new QueryHelper {Schema = new TestSchema()};
+      DatabaseFolderPath = TestSession.CreateDatabaseFolder();
+      Session = new TestSession(DatabaseFolderPath);
+      EntityBase.FetchOrAddRoots(QueryHelper, Session);
+    }
+
+    [TearDown]
+    public void TearDown() {
+      TestSession.DeleteFolderIfExists(DatabaseFolderPath);
     }
 
     private class DudDaughter : Daughter {
       public DudDaughter(QueryHelper queryHelper,
         Type? identifyingParentType = null) :
-        base(new SortedEntityCollection<Daughter>(), 
-          queryHelper, identifyingParentType) { }
+        base(queryHelper, identifyingParentType) { }
 
       public override Mother? Mother {
         get => (IdentifyingParent as Mother)!;
@@ -27,10 +34,12 @@ namespace SoundExplorers.Tests.Data {
     }
 
     private QueryHelper QueryHelper { get; set; } = null!;
+    private string DatabaseFolderPath { get; set; } = null!;
+    private TestSession Session { get; set; } = null!;
 
     [Test]
     public void A010_Initial() {
-      var entity = new Series(new SortedEntityCollection<Series>());
+      var entity = new Father(QueryHelper);
       Assert.IsFalse(entity.AllowOtherTypesOnSamePage, "AllowOtherTypesOnSamePage");
     }
 
@@ -42,7 +51,7 @@ namespace SoundExplorers.Tests.Data {
         {Name = "Yvette"};
       var zoe = new DudDaughter(QueryHelper, typeof(Mother))
         {Name = "Zoe"};
-      var mother = new Mother(new SortedEntityCollection<Mother>(), QueryHelper) {
+      var mother = new Mother(QueryHelper) {
         Name = motherName
       };
       Assert.Throws<ConstraintException>(

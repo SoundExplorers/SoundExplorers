@@ -14,26 +14,26 @@ namespace SoundExplorers.Tests.Data {
       Session.BeginUpdate();
       Data.AddRootsPersistedIfRequired(Session);
       Session.Commit();
-      DefaultNewsletter = Newsletter.CreateDefault(Data.NewsletterRoot);
-      DefaultSeries = Series.CreateDefault(Data.SeriesRoot);
-      Location1 = new Location(Data.LocationRoot) {
+      DefaultNewsletter = Newsletter.CreateDefault();
+      DefaultSeries = Series.CreateDefault();
+      Location1 = new Location {
         QueryHelper = QueryHelper,
         Name = Location1Name
       };
-      Series1 = new Series(Data.SeriesRoot) {
+      Series1 = new Series {
         QueryHelper = QueryHelper,
         Name = Series1Name,
         Notes = Series1Notes
       };
-      Series2 = new Series(Data.SeriesRoot) {
+      Series2 = new Series {
         QueryHelper = QueryHelper,
         Name = Series2Name
       };
-      Event1 = new Event(Data.EventRoot) {
+      Event1 = new Event {
         QueryHelper = QueryHelper,
         Date = Event1Date
       };
-      Event2 = new Event(Data.EventRoot) {
+      Event2 = new Event {
         QueryHelper = QueryHelper,
         Date = Event2Date
       };
@@ -99,7 +99,7 @@ namespace SoundExplorers.Tests.Data {
 
     [Test]
     public void T030_DisallowDuplicate() {
-      var duplicate = new Series(Data.SeriesRoot) {
+      var duplicate = new Series {
         QueryHelper = QueryHelper,
         Name = Series1Name
       };

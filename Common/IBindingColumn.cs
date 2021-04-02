@@ -6,7 +6,7 @@ namespace SoundExplorers.Common {
     ///   Gets the display name to be used in the grid column header.
     /// </summary>
     string DisplayName { get; }
-    
+
     /// <summary>
     ///   Gets or sets the number of pixels to which the grid column's width should be
     ///   temporarily expanded (but not contracted) when an edit of one one of the

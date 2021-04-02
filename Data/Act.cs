@@ -10,8 +10,7 @@ namespace SoundExplorers.Data {
     private string _notes = null!;
 
     [SuppressMessage("ReSharper", "SuggestBaseTypeForParameter")]
-    public Act(SortedEntityCollection<Act> root) : base(
-      root, typeof(Act), nameof(Name), null) {
+    public Act() : base(typeof(Act), nameof(Name), null) {
       AllowBlankSimpleKey = true;
       Sets = new SortedEntityCollection<Set>();
     }
@@ -34,8 +33,8 @@ namespace SoundExplorers.Data {
       }
     }
 
-    public static Act CreateDefault(SortedEntityCollection<Act> root) {
-      return new Act(root) {
+    public static Act CreateDefault() {
+      return new Act {
         Name = DefaultName,
         Notes = "Required default"
       };
