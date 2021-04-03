@@ -381,7 +381,7 @@ namespace SoundExplorers.Data {
       // If there's no session, which means we cannot check for a duplicate,
       // EntityBase2.UpdateNonIndexField should already have thrown an
       // InvalidOperationException.
-      if (QueryHelper.FindDuplicateSimpleKey(EntityType, Oid, newSimpleKey,
+      if (QueryHelper.FindDuplicateSimpleKey2(EntityType, Oid, newSimpleKey,
         Session) != null) {
         throw new PropertyConstraintException(
           $"The {EntityType.Name}'s {SimpleKeyName} cannot be set to " +
