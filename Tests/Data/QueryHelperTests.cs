@@ -6,16 +6,10 @@ using VelocityDb;
 
 namespace SoundExplorers.Tests.Data {
   [TestFixture]
-  public class QueryHelperTests {
+  public class QueryHelperTests : TestFixtureBase {
     [SetUp]
-    public void Setup() {
-      QueryHelper = new QueryHelper();
-      DatabaseFolderPath = TestSession.CreateDatabaseFolder();
-      Data = new TestData(QueryHelper);
-      Session = new TestSession(DatabaseFolderPath);
-      Session.BeginUpdate();
-      Data.AddRootsPersistedIfRequired(Session);
-      Session.Commit();
+    public override void Setup() {
+      base.Setup();
       DefaultNewsletter = Newsletter.CreateDefault();
       DefaultSeries = Series.CreateDefault();
       Event1 = new Event {
@@ -34,17 +28,8 @@ namespace SoundExplorers.Tests.Data {
       Session.Commit();
     }
 
-    [TearDown]
-    public void TearDown() {
-      TestSession.DeleteFolderIfExists(DatabaseFolderPath);
-    }
-
     private const string Event1Notes = "My event notes.";
     private const string Event1SimpleKey = "2013/04/11";
-    private string DatabaseFolderPath { get; set; } = null!;
-    private QueryHelper QueryHelper { get; set; } = null!;
-    private TestData Data { get; set; } = null!;
-    private TestSession Session { get; set; } = null!;
     private Newsletter DefaultNewsletter { get; set; } = null!;
     private Series DefaultSeries { get; set; } = null!;
     private Event Event1 { get; set; } = null!;

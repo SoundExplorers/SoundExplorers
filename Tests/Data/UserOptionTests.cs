@@ -3,16 +3,10 @@ using SoundExplorers.Data;
 
 namespace SoundExplorers.Tests.Data {
   [TestFixture]
-  public class UserOptionTests {
+  public class UserOptionTests : TestFixtureBase {
     [SetUp]
-    public void Setup() {
-      QueryHelper = new QueryHelper();
-      DatabaseFolderPath = TestSession.CreateDatabaseFolder();
-      Data = new TestData(QueryHelper);
-      Session = new TestSession(DatabaseFolderPath);
-      Session.BeginUpdate();
-      Data.AddRootsPersistedIfRequired(Session);
-      Session.Commit();
+    public override void Setup() {
+      base.Setup();
       UserOption1 = new UserOption {
         QueryHelper = QueryHelper,
         UserId = UserOption1UserId,
@@ -27,19 +21,10 @@ namespace SoundExplorers.Tests.Data {
       Session.Commit();
     }
 
-    [TearDown]
-    public void TearDown() {
-      TestSession.DeleteFolderIfExists(DatabaseFolderPath);
-    }
-
     private const string UserOption1OptionName = "ChalkOrCheese";
     private const string UserOption1OptionValue = "Cheese, please.";
     private const string UserOptionSimpleKey = "Alice|ChalkOrCheese";
     private const string UserOption1UserId = "Alice";
-    private string DatabaseFolderPath { get; set; } = null!;
-    private QueryHelper QueryHelper { get; set; } = null!;
-    private TestData Data { get; set; } = null!;
-    private TestSession Session { get; set; } = null!;
     private UserOption UserOption1 { get; set; } = null!;
 
     [Test]

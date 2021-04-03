@@ -4,16 +4,10 @@ using SoundExplorers.Data;
 
 namespace SoundExplorers.Tests.Data {
   [TestFixture]
-  public class SeriesTests {
+  public class SeriesTests : TestFixtureBase {
     [SetUp]
-    public void Setup() {
-      QueryHelper = new QueryHelper();
-      Data = new TestData(QueryHelper);
-      DatabaseFolderPath = TestSession.CreateDatabaseFolder();
-      Session = new TestSession(DatabaseFolderPath);
-      Session.BeginUpdate();
-      Data.AddRootsPersistedIfRequired(Session);
-      Session.Commit();
+    public override void Setup() {
+      base.Setup();
       DefaultNewsletter = Newsletter.CreateDefault();
       DefaultSeries = Series.CreateDefault();
       Location1 = new Location {
@@ -54,19 +48,10 @@ namespace SoundExplorers.Tests.Data {
       Session.Commit();
     }
 
-    [TearDown]
-    public void TearDown() {
-      TestSession.DeleteFolderIfExists(DatabaseFolderPath);
-    }
-
     private const string Location1Name = "Pyramid Club";
     private const string Series1Name = "Jazz Festival 2014";
     private const string Series1Notes = "My notes.";
     private const string Series2Name = "Field Recordings";
-    private QueryHelper QueryHelper { get; set; } = null!;
-    private TestData Data { get; set; } = null!;
-    private string DatabaseFolderPath { get; set; } = null!;
-    private TestSession Session { get; set; } = null!;
     private Newsletter DefaultNewsletter { get; set; } = null!;
     private Series DefaultSeries { get; set; } = null!;
     private Event Event1 { get; set; } = null!;

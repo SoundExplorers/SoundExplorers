@@ -5,16 +5,10 @@ using SoundExplorers.Data;
 
 namespace SoundExplorers.Tests.Data {
   [TestFixture]
-  public class PieceTests {
+  public class PieceTests : TestFixtureBase {
     [SetUp]
-    public void Setup() {
-      QueryHelper = new QueryHelper();
-      Data = new TestData(QueryHelper);
-      DatabaseFolderPath = TestSession.CreateDatabaseFolder();
-      Session = new TestSession(DatabaseFolderPath);
-      Session.BeginUpdate();
-      Data.AddRootsPersistedIfRequired(Session);
-      Session.Commit();
+    public override void Setup() {
+      base.Setup();
       DefaultAct = Act.CreateDefault();
       DefaultNewsletter = Newsletter.CreateDefault();
       DefaultSeries = Series.CreateDefault();
@@ -115,11 +109,6 @@ namespace SoundExplorers.Tests.Data {
       Session.Commit();
     }
 
-    [TearDown]
-    public void TearDown() {
-      TestSession.DeleteFolderIfExists(DatabaseFolderPath);
-    }
-
     private const string BakerName = "Baker";
     private const int Credit1CreditNo = 1;
     private const int Credit2CreditNo = 2;
@@ -133,10 +122,6 @@ namespace SoundExplorers.Tests.Data {
     private const string Piece2SimpleKey = "02";
     private const int Set1SetNo = 1;
     private const int Set2SetNo = 2;
-    private string DatabaseFolderPath { get; set; } = null!;
-    private QueryHelper QueryHelper { get; set; } = null!;
-    private TestSession Session { get; set; } = null!;
-    private TestData Data { get; set; } = null!;
     private Act DefaultAct { get; set; } = null!;
     private Newsletter DefaultNewsletter { get; set; } = null!;
     private Series DefaultSeries { get; set; } = null!;

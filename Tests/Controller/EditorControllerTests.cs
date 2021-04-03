@@ -8,30 +8,15 @@ using SoundExplorers.Tests.Data;
 
 namespace SoundExplorers.Tests.Controller {
   [TestFixture]
-  public class EditorControllerTests {
+  public class EditorControllerTests : TestFixtureBase {
     [SetUp]
-    public void Setup() {
-      QueryHelper = new QueryHelper();
-      Data = new TestData(QueryHelper);
-      DatabaseFolderPath = TestSession.CreateDatabaseFolder();
-      Session = new TestSession(DatabaseFolderPath);
-      Session.BeginUpdate();
-      Data.AddRootsPersistedIfRequired(Session);
-      Session.Commit();
+    public override void Setup() {
+      base.Setup();
       MainGrid = new MockMainGrid();
       ParentGrid = new MockParentGrid();
       View = new MockEditorView(MainGrid, ParentGrid);
     }
 
-    [TearDown]
-    public void TearDown() {
-      Session.DeleteDatabaseFolderIfExists();
-    }
-
-    private QueryHelper QueryHelper { get; set; } = null!;
-    private TestData Data { get; set; } = null!;
-    private string DatabaseFolderPath { get; set; } = null!;
-    private TestSession Session { get; set; } = null!;
     private TestEditorController Controller { get; set; } = null!;
     private MockMainGrid MainGrid { get; set; } = null!;
     private TestMainGridController MainGridController { get; set; } = null!;

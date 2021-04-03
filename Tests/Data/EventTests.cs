@@ -5,16 +5,10 @@ using SoundExplorers.Data;
 
 namespace SoundExplorers.Tests.Data {
   [TestFixture]
-  public class EventTests {
+  public class EventTests : TestFixtureBase {
     [SetUp]
-    public void Setup() {
-      QueryHelper = new QueryHelper();
-      DatabaseFolderPath = TestSession.CreateDatabaseFolder();
-      Data = new TestData(QueryHelper);
-      Session = new TestSession(DatabaseFolderPath);
-      Session.BeginUpdate();
-      Data.AddRootsPersistedIfRequired(Session);
-      Session.Commit();
+    public override void Setup() {
+      base.Setup();
       EventType1 = new EventType {
         QueryHelper = QueryHelper,
         Name = EventType1Name
@@ -107,11 +101,6 @@ namespace SoundExplorers.Tests.Data {
       Session.Commit();
     }
 
-    [TearDown]
-    public void Teardown() {
-      TestSession.DeleteFolderIfExists(DatabaseFolderPath);
-    }
-
     private const string Event1SimpleKey = "2013/05/01";
     private const string Event1Notes = "My notes.";
     private const string Event2SimpleKey = "2013/05/02";
@@ -125,10 +114,6 @@ namespace SoundExplorers.Tests.Data {
     private const string Series2Name = "Field Recordings";
     private const int Set1SetNo = 1;
     private const int Set2SetNo = 2;
-    private string DatabaseFolderPath { get; set; } = null!;
-    private QueryHelper QueryHelper { get; set; } = null!;
-    private TestData Data { get; set; } = null!;
-    private TestSession Session { get; set; } = null!;
     private Act DefaultAct { get; set; } = null!;
     private Newsletter DefaultNewsletter { get; set; } = null!;
     private Series DefaultSeries { get; set; } = null!;

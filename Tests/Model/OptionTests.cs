@@ -5,28 +5,7 @@ using SoundExplorers.Tests.Data;
 
 namespace SoundExplorers.Tests.Model {
   [TestFixture]
-  public class OptionTests {
-    [SetUp]
-    public void Setup() {
-      QueryHelper = new QueryHelper();
-      Data = new TestData(QueryHelper);
-      DatabaseFolderPath = TestSession.CreateDatabaseFolder();
-      Session = new TestSession(DatabaseFolderPath);
-      Session.BeginUpdate();
-      Data.AddRootsPersistedIfRequired(Session);
-      Session.Commit();
-    }
-
-    [TearDown]
-    public void TearDown() {
-      TestSession.DeleteFolderIfExists(DatabaseFolderPath);
-    }
-
-    private QueryHelper QueryHelper { get; set; } = null!;
-    private TestData Data { get; set; } = null!;
-    private string DatabaseFolderPath { get; set; } = null!;
-    private TestSession Session { get; set; } = null!;
-
+  public class OptionTests : TestFixtureBase {
     [Test]
     public void DefaultsDefaulted() {
       var option = CreateTestOption("Boolean");

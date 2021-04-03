@@ -1,32 +1,16 @@
 ﻿using NUnit.Framework;
 using SoundExplorers.Controller;
-using SoundExplorers.Data;
 using SoundExplorers.Tests.Data;
 
 namespace SoundExplorers.Tests.Controller {
   [TestFixture]
-  public class SizeableFormOptionsControllerTests {
+  public class SizeableFormOptionsControllerTests : TestFixtureBase {
     [SetUp]
-    public void Setup() {
-      QueryHelper = new QueryHelper();
-      Data = new TestData(QueryHelper);
-      DatabaseFolderPath = TestSession.CreateDatabaseFolder();
-      Session = new TestSession(DatabaseFolderPath);
-      Session.BeginUpdate();
-      Data.AddRootsPersistedIfRequired(Session);
-      Session.Commit();
+    public override void Setup() {
+      base.Setup();
       View = new MockView<SizeableFormOptionsController>();
     }
 
-    [TearDown]
-    public void TearDown() {
-      TestSession.DeleteFolderIfExists(DatabaseFolderPath);
-    }
-
-    private QueryHelper QueryHelper { get; set; } = null!;
-    private TestData Data { get; set; } = null!;
-    private string DatabaseFolderPath { get; set; } = null!;
-    private TestSession Session { get; set; } = null!;
     private SizeableFormOptionsController Controller { get; set; } = null!;
     private MockView<SizeableFormOptionsController> View { get; set; } = null!;
 

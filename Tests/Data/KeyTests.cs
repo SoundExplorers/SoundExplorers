@@ -4,26 +4,7 @@ using SoundExplorers.Data;
 
 namespace SoundExplorers.Tests.Data {
   [TestFixture]
-  public class KeyTests {
-    [SetUp]
-    public void Setup() {
-      DatabaseFolderPath = TestSession.CreateDatabaseFolder();
-      Data = new TestData(new QueryHelper());
-      Session = new TestSession(DatabaseFolderPath);
-      Session.BeginUpdate();
-      Data.AddRootsPersistedIfRequired(Session);
-      Session.Commit();
-    }
-
-    [TearDown]
-    public void TearDown() {
-      TestSession.DeleteFolderIfExists(DatabaseFolderPath);
-    }
-
-    private string DatabaseFolderPath { get; set; } = null!;
-    private TestData Data { get; set; } = null!;
-    private TestSession Session { get; set; } = null!;
-
+  public class KeyTests : TestFixtureBase {
     [Test]
     public void ConvertToString() {
       const string dateString = "1900/12/25";

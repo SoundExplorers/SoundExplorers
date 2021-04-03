@@ -6,28 +6,7 @@ using SoundExplorers.Tests.Data;
 
 namespace SoundExplorers.Tests.Model {
   [TestFixture]
-  public class NamedEntityListTests {
-    [SetUp]
-    public void Setup() {
-      QueryHelper = new QueryHelper();
-      Data = new TestData(QueryHelper);
-      DatabaseFolderPath = TestSession.CreateDatabaseFolder();
-      Session = new TestSession(DatabaseFolderPath);
-      Session.BeginUpdate();
-      Data.AddRootsPersistedIfRequired(Session);
-      Session.Commit();
-    }
-
-    [TearDown]
-    public void TearDown() {
-      TestSession.DeleteFolderIfExists(DatabaseFolderPath);
-    }
-
-    private QueryHelper QueryHelper { get; set; } = null!;
-    private TestData Data { get; set; } = null!;
-    private string DatabaseFolderPath { get; set; } = null!;
-    private TestSession Session { get; set; } = null!;
-
+  public class NamedEntityListTests : TestFixtureBase {
     [Test]
     public void A010_Initial() {
       A010_Initial<EventTypeList>("EventType");

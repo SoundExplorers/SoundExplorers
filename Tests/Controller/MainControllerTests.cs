@@ -1,32 +1,16 @@
 ﻿using NUnit.Framework;
-using SoundExplorers.Data;
 using SoundExplorers.Tests.Data;
 using SoundExplorers.Tests.Model;
 
 namespace SoundExplorers.Tests.Controller {
   [TestFixture]
-  public class MainControllerTests {
+  public class MainControllerTests : TestFixtureBase {
     [SetUp]
-    public void Setup() {
-      QueryHelper = new QueryHelper();
-      Data = new TestData(QueryHelper);
-      DatabaseFolderPath = TestSession.CreateDatabaseFolder();
-      Session = new TestSession(DatabaseFolderPath);
-      Session.BeginUpdate();
-      Data.AddRootsPersistedIfRequired(Session);
-      Session.Commit();
+    public override void Setup() {
+      base.Setup();
       Connection = new MockDatabaseConnection();
     }
 
-    [TearDown]
-    public void TearDown() {
-      TestSession.DeleteFolderIfExists(DatabaseFolderPath);
-    }
-
-    private QueryHelper QueryHelper { get; set; } = null!;
-    private TestData Data { get; set; } = null!;
-    private string DatabaseFolderPath { get; set; } = null!;
-    private TestSession Session { get; set; } = null!;
     private MockDatabaseConnection Connection { get; set; } = null!;
 
     [Test]
