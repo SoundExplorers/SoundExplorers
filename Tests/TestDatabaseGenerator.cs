@@ -10,11 +10,6 @@ namespace SoundExplorers.Tests {
   [TestFixture]
   [ExcludeFromCodeCoverage]
   public class TestDatabaseGenerator {
-    /// <summary>
-    ///   1 to enable generate
-    /// </summary>
-    private static int DoIt => 0;
-
     private static int EventCount => 4; // Highest reliable non-looping: 4
     private TestData Data { get; set; } = null!;
     private TestSession Session { get; set; } = null!;
@@ -23,14 +18,14 @@ namespace SoundExplorers.Tests {
     ///   If the main test database folder already exists, it will be deleted and
     ///   recreated from scratch.
     /// </summary>
-    [Test]
+    /// <remarks>
+    ///   <see cref="ExplicitAttribute" /> instructs NUnit to ignored this test unless
+    ///   it is explicitly selected for running. We don't want to generate the main test
+    ///   database, which is used for GUI tests, to be generated every time all tests are
+    ///   run.
+    /// </remarks>
+    [Test] [Explicit]
     public void A01_GenerateData() {
-      if (DoIt == 1) {
-        Generate();
-      }
-    }
-
-    private void Generate() {
       Data = new TestData(new QueryHelper());
       TestSession.DeleteFolderIfExists(DatabaseConfig.DefaultDatabaseFolderPath);
       Directory.CreateDirectory(DatabaseConfig.DefaultDatabaseFolderPath);
