@@ -3,6 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using SoundExplorers.Data;
 
 namespace SoundExplorers.Tests.Data {
+  [VelocityDb.Indexing.Index]
   public class Son : EntityBase {
     private Father? _father;
     private Mother? _mother;

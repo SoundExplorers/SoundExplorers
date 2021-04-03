@@ -5,6 +5,7 @@ namespace SoundExplorers.Data {
   /// <summary>
   ///   Artist entity, usually representing a musician.
   /// </summary>
+  [VelocityDb.Indexing.Index("_surname, _forename")]
   public class Artist : EntityBase {
     private string _forename = null!;
     private string _notes = null!;
@@ -24,7 +25,7 @@ namespace SoundExplorers.Data {
     public string Forename {
       get => _forename;
       set {
-        UpdateNonIndexField();
+        Update();
         _forename = value;
         Name = MakeName(value, Surname);
       }
@@ -58,7 +59,7 @@ namespace SoundExplorers.Data {
     public string Surname {
       get => _surname;
       set {
-        UpdateNonIndexField();
+        Update();
         _surname = value;
         Name = MakeName(Forename, value);
       }

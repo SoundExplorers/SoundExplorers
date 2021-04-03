@@ -5,8 +5,10 @@ namespace SoundExplorers.Data {
   /// <summary>
   ///   An entity representing an act that has performed at Events.
   /// </summary>
+  [VelocityDb.Indexing.Index("_name")]
   public class Act : EntityBase, INotablyNamedEntity {
     public const string DefaultName = "";
+    private string _name = null!;
     private string _notes = null!;
 
     [SuppressMessage("ReSharper", "SuggestBaseTypeForParameter")]
@@ -18,10 +20,10 @@ namespace SoundExplorers.Data {
     public SortedEntityCollection<Set> Sets { get; }
 
     public string Name {
-      get => SimpleKey;
+      get => _name;
       set {
-        UpdateNonIndexField();
-        SimpleKey = value;
+        Update();
+        _name = SimpleKey = value;
       }
     }
 

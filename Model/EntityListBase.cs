@@ -78,7 +78,6 @@ namespace SoundExplorers.Model {
       set => _queryHelper = value;
     }
 
-    private SortedEntityCollection<TEntity> Root { get; set; } = null!;
     private BackupItem<TBindingItem>? BackupItem { get; set; }
     private BackupItem<TBindingItem>? BackupItemToRestoreFrom { get; set; }
 
@@ -371,20 +370,19 @@ namespace SoundExplorers.Model {
     public virtual void Populate(
       IdentifyingParentAndChildren? identifyingParentAndChildren = null,
       bool createBindingList = true) {
-      Root = FetchOrAddRoot();
       Clear();
       bool isTransactionRequired = !Session.InTransaction;
       if (isTransactionRequired) {
-        // We need an update transaction in case we need to add the root collection to
-        // the database. See FetchOrAddRoot.
-        Session.BeginUpdate();
+        Session.BeginUpdate(); // Required for Index use.
       }
       if (identifyingParentAndChildren != null) {
         IdentifyingParent = identifyingParentAndChildren.IdentifyingParent;
         AddRange((IEnumerable<TEntity>)identifyingParentAndChildren.Children);
       } else {
-        var entities = Root.Values;
-        AddRange(entities);
+        var entities = Session.Index<TEntity>();
+        if (entities != null) {
+          AddRange(entities);
+        }
       }
       if (createBindingList) {
         GetReferenceableItemLists();
@@ -441,11 +439,6 @@ namespace SoundExplorers.Model {
 
     protected virtual IComparer<TEntity> CreateEntityComparer() {
       return new TopLevelEntityComparer<TEntity>();
-    }
-
-    protected virtual SortedEntityCollection<TEntity> FetchOrAddRoot() {
-      return (SortedEntityCollection<TEntity>)EntityBase.FetchOrAddRoot(
-        typeof(TEntity),QueryHelper, Session);
     }
 
     private static BackupItem<TBindingItem> CreateBackupItem(TBindingItem bindingItem) {

@@ -8,10 +8,8 @@ namespace SoundExplorers.Tests.Data {
   public class EntityBaseTests {
     [SetUp]
     public void Setup() {
-      QueryHelper = new QueryHelper {Schema = new TestSchema()};
+      QueryHelper = new QueryHelper();
       DatabaseFolderPath = TestSession.CreateDatabaseFolder();
-      Session = new TestSession(DatabaseFolderPath);
-      TestData.FetchOrAddRoots(QueryHelper, Session);
     }
 
     [TearDown]
@@ -35,7 +33,6 @@ namespace SoundExplorers.Tests.Data {
 
     private QueryHelper QueryHelper { get; set; } = null!;
     private string DatabaseFolderPath { get; set; } = null!;
-    private TestSession Session { get; set; } = null!;
 
     [Test]
     public void A010_Initial() {

@@ -4,15 +4,10 @@ using SoundExplorers.Data;
 
 namespace SoundExplorers.Tests.Data {
   [TestFixture]
-  public class ReferencingTests {
+  public class ReferencingTests : TestFixtureBase {
     [SetUp]
-    public void Setup() {
-      QueryHelper = new QueryHelper {Schema = new TestSchema()};
-      DatabaseFolderPath = TestSession.CreateDatabaseFolder();
-      Session = new TestSession(DatabaseFolderPath);
-      Session.BeginUpdate();
-      TestData.FetchOrAddRoots(QueryHelper, Session);
-      Session.Commit();
+    public override void Setup() {
+      base.Setup();
       Mother1 = new Mother(QueryHelper);
       Mother2 = new Mother(QueryHelper) {Name = Mother2Name};
       Daughter1 = new Daughter(QueryHelper);
@@ -21,7 +16,6 @@ namespace SoundExplorers.Tests.Data {
       Father2 = new Father(QueryHelper) {Name = Father2Name};
       Son1 = new Son(QueryHelper);
       Son2 = new Son(QueryHelper);
-      DatabaseFolderPath = TestSession.CreateDatabaseFolder();
       Session.BeginUpdate();
       Mother1.Name = Mother1Name;
       Session.Persist(Mother1);
@@ -47,11 +41,6 @@ namespace SoundExplorers.Tests.Data {
       Session.Commit();
     }
 
-    [TearDown]
-    public void TearDown() {
-      TestSession.DeleteFolderIfExists(DatabaseFolderPath);
-    }
-
     private const string Daughter1Name = "Alison";
     private const string Daughter2Name = "Bertha the Cool";
     private const string Father1Name = "Arthur";
@@ -60,9 +49,6 @@ namespace SoundExplorers.Tests.Data {
     private const string Mother2Name = "Barbara";
     private const string Son1Name = "Adrian";
     private const string Son2Name = "Barry";
-    private QueryHelper QueryHelper { get; set; } = null!;
-    private string DatabaseFolderPath { get; set; } = null!;
-    private TestSession Session { get; set; } = null!;
     private Daughter Daughter1 { get; set; } = null!;
     private Daughter Daughter2 { get; set; } = null!;
     private Father Father1 { get; set; } = null!;

@@ -7,6 +7,7 @@ namespace SoundExplorers.Data {
   ///   An entity representing a piece for which an audio and/or video
   ///   recording is archived.
   /// </summary>
+  [VelocityDb.Indexing.Index]
   public class Piece : EntityBase {
     public const string DurationErrorMessage =
       "Duration must be between 1 second and 9 hours, 59 minutes, 59 seconds.";

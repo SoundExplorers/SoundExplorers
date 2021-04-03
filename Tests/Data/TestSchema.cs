@@ -35,14 +35,5 @@ namespace SoundExplorers.Tests.Data {
       };
       return new ReadOnlyCollection<RelationInfo>(list);
     }
-
-    protected override IDictionary<Type, Type> CreateRootTypes() {
-      return new Dictionary<Type, Type> {
-        [typeof(Daughter)] = typeof(SortedEntityCollection<Daughter>),
-        [typeof(Father)] = typeof(SortedEntityCollection<Father>),
-        [typeof(Mother)] = typeof(SortedEntityCollection<Mother>),
-        [typeof(Son)] = typeof(SortedEntityCollection<Son>)
-      };
-    }
   }
 }

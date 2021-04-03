@@ -6,6 +6,7 @@ namespace SoundExplorers.Data {
   ///   Credit entity, specifying the Role played by an Artist in a Piece,
   ///   usually the instrument played by a musician.
   /// </summary>
+  [VelocityDb.Indexing.Index]
   public class Credit : EntityBase {
     private Artist _artist = null!;
     private int _creditNo;

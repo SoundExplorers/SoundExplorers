@@ -8,6 +8,7 @@ namespace SoundExplorers.Data {
   ///   Usually a performance, but could, for example,
   ///   be a rehearsal.
   /// </summary>
+  [VelocityDb.Indexing.Index]
   public class Event : EntityBase {
     private DateTime _date;
     private EventType? _eventType;

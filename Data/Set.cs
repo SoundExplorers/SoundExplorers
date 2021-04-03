@@ -7,6 +7,7 @@ namespace SoundExplorers.Data {
   ///   An entity representing a set of Pieces (at least one)
   ///   performed at or in some other way part of an Event.
   /// </summary>
+  [VelocityDb.Indexing.Index]
   public class Set : EntityBase {
     private Act? _act;
     private Genre _genre = null!;

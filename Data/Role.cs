@@ -5,7 +5,10 @@ namespace SoundExplorers.Data {
   /// <summary>
   ///   Role entity, usually representing a musical instrument.
   /// </summary>
+  [VelocityDb.Indexing.Index("_name")]
   public class Role : EntityBase, INamedEntity {
+    private string _name = null!;
+
     [SuppressMessage("ReSharper", "SuggestBaseTypeForParameter")]
     public Role() : base(typeof(Role), nameof(Name), null) {
       Credits = new SortedEntityCollection<Credit>();
@@ -14,10 +17,10 @@ namespace SoundExplorers.Data {
     public SortedEntityCollection<Credit> Credits { get; }
 
     public string Name {
-      get => SimpleKey;
+      get => _name;
       set {
-        UpdateNonIndexField();
-        SimpleKey = value;
+        Update();
+        _name = SimpleKey = value;
       }
     }
 

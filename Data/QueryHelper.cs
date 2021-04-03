@@ -5,14 +5,13 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using VelocityDb;
-using VelocityDb.Collection.BTree;
 using VelocityDb.Session;
 
 namespace SoundExplorers.Data {
   public class QueryHelper {
     private static QueryHelper? _instance;
     private bool _schemaExistsOnDatabase;
-    
+
     static QueryHelper() {
       IndexGenericMethod = typeof(SessionBase).GetMethod(
         "Index", Array.Empty<Type>())!;
@@ -58,7 +57,11 @@ namespace SoundExplorers.Data {
     public static TEntity Read<TEntity>(
       Func<TEntity, bool> predicate,
       SessionBase session) where TEntity : EntityBase {
-      return GetIndex<TEntity>(session).First(predicate);
+      var index =
+        session.Index<TEntity>()
+        ?? throw new InvalidOperationException(
+          $"Cannot find {typeof(TEntity).Name} index.");
+      return index.First(predicate);
     }
 
     public TEntity? Find<TEntity>(
@@ -80,7 +83,7 @@ namespace SoundExplorers.Data {
       Func<TEntity, bool> predicate,
       SessionBase session) where TEntity : EntityBase {
       return SchemaExistsOnDatabase(session)
-        ? GetIndex<TEntity>(session).FirstOrDefault(predicate)
+        ? session.Index<TEntity>()?.FirstOrDefault(predicate)
         : null;
     }
 
@@ -126,24 +129,17 @@ namespace SoundExplorers.Data {
                      .Equals(identifyingParent));
     }
 
-    private static EntityBase? FindTopLevelEntity(Type entityType, string simpleKey, 
+    private static EntityBase? FindTopLevelEntity(Type entityType, string simpleKey,
       SessionBase session) {
       var indexConstructedMethod =
         IndexGenericMethod.MakeGenericMethod(entityType);
-      return !(indexConstructedMethod.Invoke(session, null) is 
+      return !(indexConstructedMethod.Invoke(session, null) is
         IEnumerable index)
-        ? null :
-        (from EntityBase entity in index
+        ? null
+        : (from EntityBase entity in index
           where string.Compare(entity.SimpleKey, simpleKey,
             StringComparison.OrdinalIgnoreCase) == 0
           select entity).FirstOrDefault();
-    }
-
-    private static BTreeSet<TEntity> GetIndex<TEntity>(SessionBase session) 
-      where TEntity : EntityBase {
-      return session.Index<TEntity>() 
-             ?? throw new InvalidOperationException(
-               $"Cannot find {typeof(TEntity).Name} index.");
     }
 
     private bool SchemaExistsOnDatabase(SessionBase session) {

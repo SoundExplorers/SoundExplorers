@@ -7,6 +7,7 @@ namespace SoundExplorers.Data {
   /// <summary>
   ///   An entity representing a newsletter that documents one or more Events.
   /// </summary>
+  [VelocityDb.Indexing.Index("_date")]
   public class Newsletter : EntityBase {
     private DateTime _date;
     private string _url = null!;
@@ -31,7 +32,7 @@ namespace SoundExplorers.Data {
             "indicates that an Event's Newsletter has not yet been specified.)",
             nameof(Date));
         }
-        UpdateNonIndexField();
+        Update();
         _date = value.Date;
         SimpleKey = DateToSimpleKey(_date);
       }
@@ -59,7 +60,7 @@ namespace SoundExplorers.Data {
         // If there's no session, which means we cannot check for a duplicate,
         // EntityBase.UpdateNonIndexField will throw 
         // an InvalidOperationException anyway.
-        var duplicate = FindDuplicateUrl(newUrl!);
+        var duplicate = FindDuplicateUrl(newUrl!, Session);
         if (duplicate != null) {
           throw CreateDuplicateUrlUpdateException(duplicate);
         }
@@ -69,7 +70,7 @@ namespace SoundExplorers.Data {
     protected override void CheckCanPersist(SessionBase session) {
       base.CheckCanPersist(session);
       ValidateUrlFormatOnInsertion(Url);
-      var urlDuplicate = FindDuplicateUrl(Url);
+      var urlDuplicate = FindDuplicateUrl(Url, session);
       if (urlDuplicate != null) {
         throw CreateDuplicateUrlInsertionException(Url, Date, urlDuplicate);
       }
@@ -102,14 +103,14 @@ namespace SoundExplorers.Data {
         "already exists with that URL.", nameof(Url));
     }
 
-    private Newsletter? FindDuplicateUrl(string url) {
-      var newsletters =
-        (Root as SortedEntityCollection<Newsletter>)!.Values;
-      // var newsletters = session.AllObjects<Newsletter>().ToList();
-      return (
-        from newsletter in newsletters
-        where newsletter.Url == url && !newsletter.Oid.Equals(Oid)
-        select newsletter).FirstOrDefault();
+    private Newsletter? FindDuplicateUrl(string url, SessionBase session) {
+      var newsletters = session.Index<Newsletter>();
+      return newsletters != null
+        ? (
+          from newsletter in newsletters
+          where newsletter.Url == url && !newsletter.Oid.Equals(Oid)
+          select newsletter).FirstOrDefault()
+        : null;
     }
 
     protected override ISortedEntityCollection GetChildren(Type childType) {

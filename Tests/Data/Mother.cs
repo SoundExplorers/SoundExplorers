@@ -3,6 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using SoundExplorers.Data;
 
 namespace SoundExplorers.Tests.Data {
+  [VelocityDb.Indexing.Index]
   public class Mother : EntityBase {
     [SuppressMessage("ReSharper", "SuggestBaseTypeForParameter")]
     public Mother(QueryHelper queryHelper) : base(typeof(Mother),

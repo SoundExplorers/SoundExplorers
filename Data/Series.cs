@@ -6,8 +6,10 @@ namespace SoundExplorers.Data {
   ///   An entity representing a series of Events.
   ///   A festival, for example.
   /// </summary>
+  [VelocityDb.Indexing.Index("_name")]
   public class Series : EntityBase, INotablyNamedEntity {
     public const string DefaultName = "";
+    private string _name = null!;
     private string _notes = null!;
 
     [SuppressMessage("ReSharper", "SuggestBaseTypeForParameter")]
@@ -19,10 +21,10 @@ namespace SoundExplorers.Data {
     public SortedEntityCollection<Event> Events { get; }
 
     public string Name {
-      get => SimpleKey;
+      get => _name;
       set {
-        UpdateNonIndexField();
-        SimpleKey = value;
+        Update();
+        _name = SimpleKey = value;
       }
     }
 

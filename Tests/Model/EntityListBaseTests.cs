@@ -6,35 +6,8 @@ using SoundExplorers.Tests.Data;
 
 namespace SoundExplorers.Tests.Model {
   [TestFixture]
-  public class EntityListBaseTests {
-    [SetUp]
-    public void Setup() {
-      Session = new TestSession();
-    }
-
-    [TearDown]
-    public void TearDown() {
-      Session.DeleteDatabaseFolderIfExists();
-    }
-
-    private class DudErrorThrowerList : NamedEntityList<ErrorThrower> {
-      protected override SortedEntityCollection<ErrorThrower>
-        FetchOrAddRoot() {
-        Session.BeginUpdate();
-        var result =
-          QueryHelper.FindSingleton<SortedEntityCollection<ErrorThrower>>(
-            Session);
-        if (result == null) {
-          result = new SortedEntityCollection<ErrorThrower>();
-          Session.Persist(result);
-        }
-        Session.Commit();
-        ErrorThrower.SetRoot(result);
-        return result;
-      }
-    }
-
-    private TestSession Session { get; set; } = null!;
+  public class EntityListBaseTests : TestFixtureBase {
+    private class DudErrorThrowerList : NamedEntityList<ErrorThrower> { }
 
     [Test]
     public void RethrowDudError() {

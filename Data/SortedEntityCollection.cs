@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using VelocityDb.Collection.BTree;
 
 namespace SoundExplorers.Data {
@@ -23,7 +22,6 @@ namespace SoundExplorers.Data {
 
     public TEntity this[int index] => Values.ToList()[index];
     IEntity ISortedEntityCollection.this[Key key] => this[key];
-    IEnumerable<IEntity> ISortedEntityCollection.Values => Values;
 
     void ISortedEntityCollection.Add(Key key, IEntity child) {
       Add(key, (TEntity)child);
