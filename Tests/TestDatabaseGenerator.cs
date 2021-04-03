@@ -15,7 +15,7 @@ namespace SoundExplorers.Tests {
     /// </summary>
     private static int DoIt => 0;
 
-    private static int EventCount => 6; // Highest non-looping: 6
+    private static int EventCount => 4; // Highest reliable non-looping: 4
     private TestData Data { get; set; } = null!;
     private TestSession Session { get; set; } = null!;
 

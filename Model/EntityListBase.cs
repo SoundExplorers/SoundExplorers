@@ -391,9 +391,12 @@ namespace SoundExplorers.Model {
         Session.Commit();
       }
       // If this is a child list, it is already in the right order, as its data source
-      // consists of the values of a SortedEntityCollection.
-      if (ListRole != ListRole.Child) {
-        Sort(EntityComparer);
+      // consists of the values of a SortedEntityCollection. If this is a list of
+      // top-level entities, the entity class Index will provide the correct order.
+      if (Count > 0) {
+        if (ListRole != ListRole.Child || this[0].IsTopLevel) {
+          Sort(EntityComparer);
+        }
       }
       if (createBindingList) {
         BindingList = CreateBindingList();
