@@ -7,9 +7,8 @@ namespace SoundExplorers.Data {
   ///   Typically a music venue, but could, for example,
   ///   be an outdoor location.
   /// </summary>
-  [VelocityDb.Indexing.Index("_name")]
+  [VelocityDb.Indexing.Index("_simpleKey")]
   public class Location : EntityBase, INotablyNamedEntity {
-    private string _name = null!;
     private string _notes = null!;
 
     [SuppressMessage("ReSharper", "SuggestBaseTypeForParameter")]
@@ -20,11 +19,10 @@ namespace SoundExplorers.Data {
     public SortedEntityCollection<Event> Events { get; }
 
     public string Name {
-      get => _name;
+      get => SimpleKey;
       set {
-        //Debug.WriteLine($"Location.Name setting to '{value}'");
         Update();
-        _name = SimpleKey = value;
+        SimpleKey = value;
       }
     }
 

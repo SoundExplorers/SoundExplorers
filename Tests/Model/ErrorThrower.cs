@@ -6,16 +6,15 @@ using SoundExplorers.Data;
 namespace SoundExplorers.Tests.Model {
   [UsedImplicitly]
   [SuppressMessage("ReSharper", "UnusedMember.Local")]
-  [VelocityDb.Indexing.Index("_name")]
+  [VelocityDb.Indexing.Index("_simpleKey")]
   public class ErrorThrower : EntityBase, INamedEntity {
-    private readonly string _name = null!;
 
     public ErrorThrower() : base(typeof(ErrorThrower), nameof(Name),
       null) { }
 
     [ExcludeFromCodeCoverage]
     public string Name {
-      get => _name;
+      get => SimpleKey;
       set => throw new InvalidOperationException();
     }
   }

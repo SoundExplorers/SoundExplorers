@@ -5,9 +5,8 @@ namespace SoundExplorers.Data {
   /// <summary>
   ///   An entity representing a Set's genre.
   /// </summary>
-  [VelocityDb.Indexing.Index("_name")]
+  [VelocityDb.Indexing.Index("_simpleKey")]
   public class Genre : EntityBase, INamedEntity {
-    private string _name = null!;
 
     [SuppressMessage("ReSharper", "SuggestBaseTypeForParameter")]
     public Genre() : base(typeof(Genre), nameof(Name), null) {
@@ -17,10 +16,10 @@ namespace SoundExplorers.Data {
     public SortedEntityCollection<Set> Sets { get; }
 
     public string Name {
-      get => _name;
+      get => SimpleKey;
       set {
         Update();
-        _name = SimpleKey = value;
+        SimpleKey = value;
       }
     }
 
