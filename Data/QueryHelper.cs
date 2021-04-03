@@ -62,6 +62,45 @@ namespace SoundExplorers.Data {
       // return session.AllObjects<TEntity>().First(predicate);
     }
 
+    public static TEntity Read2<TEntity>(
+      string? simpleKey,
+      SessionBase session) where TEntity : EntityBase2 {
+      return Read2<TEntity>(simpleKey, null, session);
+    }
+
+    public static TEntity Read2<TEntity>(
+      string? simpleKey,
+      EntityBase2? identifyingParent,
+      SessionBase session) where TEntity : EntityBase2 {
+      try {
+        return Read2(
+          CreateKeyPredicate2<TEntity>(simpleKey, identifyingParent),
+          session);
+      } catch (InvalidOperationException exception) {
+        // with Message "Sequence contains no matching element"
+        throw CreateKeyNotFoundException(exception);
+      }
+
+      Exception CreateKeyNotFoundException(Exception innerException) {
+        var writer = new StringWriter();
+        writer.Write($"A {typeof(TEntity).Name} with SimpleKey '{simpleKey}' ");
+        if (identifyingParent != null) {
+          writer.Write(
+            "and IdentifyingParent (presumed to be of EntityType " +
+            $"{identifyingParent.EntityType.Name}) '{identifyingParent.Key}' ");
+        }
+        writer.Write("cannot be found");
+        return new ConstraintException(writer.ToString(), innerException);
+      }
+    }
+
+    public static TEntity Read2<TEntity>(
+      Func<TEntity, bool> predicate,
+      SessionBase session) where TEntity : EntityBase2 {
+      var index = session.Index<TEntity>();
+      return index.First(predicate);
+    }
+
     public TEntity? Find<TEntity>(
       string? simpleKey,
       SessionBase session) where TEntity : EntityBase {
@@ -102,6 +141,17 @@ namespace SoundExplorers.Data {
     }
 
     /// <summary>
+    ///   Returns a top-level entity of the specified type with the specified SimpleKey
+    ///   (case-insensitive) but a different object identifier from the one specified,
+    ///   if found, otherwise a null reference.
+    /// </summary>
+    internal EntityBase2? FindDuplicateSimpleKey2(Type entityType,
+      Oid oid, string simpleKey, SessionBase session) {
+      var entity = FindTopLevelEntity2(entityType, simpleKey, session);
+      return entity != null && !entity.Oid.Equals(oid) ? entity : null;
+    }
+
+    /// <summary>
     ///   Returns an object the specified generic type, of which there is only expected
     ///   to be one, if found, otherwise a null reference.
     /// </summary>
@@ -124,6 +174,19 @@ namespace SoundExplorers.Data {
       string? simpleKey,
       EntityBase? identifyingParent)
       where TEntity : EntityBase {
+      return
+        entity => entity.SimpleKey == simpleKey &&
+                  (entity.IdentifyingParent == null &&
+                   identifyingParent == null ||
+                   entity.IdentifyingParent != null &&
+                   entity.IdentifyingParent
+                     .Equals(identifyingParent));
+    }
+
+    private static Func<TEntity, bool> CreateKeyPredicate2<TEntity>(
+      string? simpleKey,
+      EntityBase2? identifyingParent)
+      where TEntity : EntityBase2 {
       return
         entity => entity.SimpleKey == simpleKey &&
                   (entity.IdentifyingParent == null &&
@@ -165,6 +228,17 @@ namespace SoundExplorers.Data {
         select entity).FirstOrDefault();
     }
 
+    private EntityBase2? FetchTopLevelEntity2(Type entityType, string simpleKey, 
+      SessionBase session) {
+      var index = FindRoot(entityType, session);
+      return index == null
+        ? null :
+        (from EntityBase entity in index.Values
+          where string.Compare(entity.SimpleKey, simpleKey,
+            StringComparison.OrdinalIgnoreCase) == 0
+          select entity).FirstOrDefault();
+    }
+
     /// <summary>
     ///   Returns an object the specified type, of which there is only expected to be
     ///   one, if found, otherwise a null reference.
@@ -183,6 +257,17 @@ namespace SoundExplorers.Data {
       string simpleKey, SessionBase session) {
       return SchemaExistsOnDatabase(session)
         ? FetchTopLevelEntity(entityType, simpleKey, session)
+        : null;
+    }
+
+    /// <summary>
+    ///   Returns a top-level entity of the specified type with the specified SimpleKey
+    ///   (case-insensitive), if found, otherwise a null reference.
+    /// </summary>
+    private EntityBase2? FindTopLevelEntity2(Type entityType,
+      string simpleKey, SessionBase session) {
+      return SchemaExistsOnDatabase(session)
+        ? FetchTopLevelEntity2(entityType, simpleKey, session)
         : null;
     }
 
