@@ -1,9 +1,13 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using VelocityDb.Indexing; 
 
 namespace SoundExplorers.Data {
   /// <summary>
   ///   An entity for persisting a user option for the application.
   /// </summary>
+  [UniqueConstraint]
+  [Index("_userId, _optionName")]
+  // [Index]
   public class UserOption2 : EntityBase2 {
     private string _optionName = null!;
     private string _optionValue = null!;
@@ -20,8 +24,9 @@ namespace SoundExplorers.Data {
           throw new PropertyConstraintException($"{nameof(OptionName)} may not be blank.",
             nameof(OptionName));
         }
+        Update();
+        // UpdateNonIndexField();
         SetSimpleKey(UserId, value);
-        UpdateNonIndexField();
         _optionName = value;
       }
     }
@@ -41,8 +46,9 @@ namespace SoundExplorers.Data {
           throw new PropertyConstraintException($"{nameof(UserId)} may not be blank.",
             nameof(UserId));
         }
+        Update();
+        // UpdateNonIndexField();
         SetSimpleKey(value, OptionName);
-        UpdateNonIndexField();
         _userId = value;
       }
     }

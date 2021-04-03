@@ -13,8 +13,8 @@ namespace SoundExplorers.Data {
   ///   Base class for entity types that have one-to-many and/or many-to-one relations
   ///   with other entity types.
   /// </summary>
-  [VelocityDb.Indexing.UniqueConstraint]
-  [VelocityDb.Indexing.Index("_simpleKey,_identifyingParent")]
+  // [VelocityDb.Indexing.UniqueConstraint]
+  // [VelocityDb.Indexing.Index("_simpleKey,_identifyingParent")]
   public abstract class EntityBase2 : ReferenceTracked, IEntity2 {
     private IDictionary<Type, ISortedEntityCollection2>? _childrenOfType;
     private IDictionary<Type, IRelationInfo>? _childrenRelations;
@@ -189,7 +189,7 @@ namespace SoundExplorers.Data {
         // if (IsPersistent) {
         //   ChangeRootKey(new Key2(SimpleKey, value));
         // }
-        Update();
+        // Update();
         _identifyingParent = value;
       }
     }
@@ -216,7 +216,7 @@ namespace SoundExplorers.Data {
         // if (IsPersistent) {
         //   ChangeRootKey(new Key2(value, IdentifyingParent));
         // }
-        Update();
+        // Update();
         _simpleKey = value;
       }
     }
