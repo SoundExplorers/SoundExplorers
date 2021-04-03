@@ -23,7 +23,7 @@ namespace SoundExplorers.Data {
     private IDictionary<Type, EntityBase2?>? _parents;
     private IList<Action>? _postPersistenceActions;
     private QueryHelper? _queryHelper;
-    private ISortedEntityCollection2? _root;
+    // private ISortedEntityCollection2? _root;
     private Schema? _schema;
     private string _simpleKey = null!;
 
@@ -82,7 +82,7 @@ namespace SoundExplorers.Data {
     }
 
     protected bool AllowBlankSimpleKey { get; set; }
-    protected virtual ISortedEntityCollection2 Root => _root ??= Roots[EntityType];
+    // protected virtual ISortedEntityCollection2 Root => _root ??= Roots[EntityType];
 
     protected Schema Schema {
       get => _schema ??= Schema.Instance;
@@ -186,9 +186,10 @@ namespace SoundExplorers.Data {
         }
         value.AddChild(this);
         Parents[IdentifyingParentType!] = value;
-        if (IsPersistent) {
-          ChangeRootKey(new Key2(SimpleKey, value));
-        }
+        // if (IsPersistent) {
+        //   ChangeRootKey(new Key2(SimpleKey, value));
+        // }
+        Update();
         _identifyingParent = value;
       }
     }
@@ -212,9 +213,10 @@ namespace SoundExplorers.Data {
       get => _simpleKey;
       protected set {
         CheckCanChangeSimpleKey(_simpleKey, value);
-        if (IsPersistent) {
-          ChangeRootKey(new Key2(value, IdentifyingParent));
-        }
+        // if (IsPersistent) {
+        //   ChangeRootKey(new Key2(value, IdentifyingParent));
+        // }
+        Update();
         _simpleKey = value;
       }
     }
@@ -258,7 +260,7 @@ namespace SoundExplorers.Data {
         action.Invoke();
       }
       PostPersistenceActions.Clear();
-      Root.Add(Key, this);
+      // Root.Add(Key, this);
       return result;
     }
 
@@ -349,10 +351,10 @@ namespace SoundExplorers.Data {
       UpdateChild(child, this);
     }
 
-    private void ChangeRootKey(Key2 newKey) {
-      Root.Remove(Key);
-      Root.Add(newKey, this);
-    }
+    // private void ChangeRootKey(Key2 newKey) {
+    //   Root.Remove(Key);
+    //   Root.Add(newKey, this);
+    // }
 
     private void CheckCanAddNonIdentifiedChild(EntityBase2 child) {
       CheckForDuplicateChild(child, CreateChildKey(child));
@@ -496,7 +498,7 @@ namespace SoundExplorers.Data {
     /// </summary>
     private void RemoveFromAllParents() {
       // Debug.WriteLine($"EntityBase2.RemoveFromAllParents {EntityType.Name}");
-      Root.Remove(Key);
+      // Root.Remove(Key);
       var nonIdentifyingParents = (
         from parent in Parents.Values
         where parent != null && !parent.Equals(IdentifyingParent)

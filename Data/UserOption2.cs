@@ -20,8 +20,8 @@ namespace SoundExplorers.Data {
           throw new PropertyConstraintException($"{nameof(OptionName)} may not be blank.",
             nameof(OptionName));
         }
-        Update();
         SetSimpleKey(UserId, value);
+        UpdateNonIndexField();
         _optionName = value;
       }
     }
@@ -41,8 +41,8 @@ namespace SoundExplorers.Data {
           throw new PropertyConstraintException($"{nameof(UserId)} may not be blank.",
             nameof(UserId));
         }
-        Update();
         SetSimpleKey(value, OptionName);
+        UpdateNonIndexField();
         _userId = value;
       }
     }

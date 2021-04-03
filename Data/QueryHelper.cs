@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections;
 using System.Data;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using VelocityDb;
 using VelocityDb.Session;
 
@@ -11,14 +13,21 @@ namespace SoundExplorers.Data {
     private static QueryHelper? _instance;
     private Schema? _schema;
     private bool _schemaExistsOnDatabase;
+    
+    static QueryHelper() {
+      IndexGenericMethod = typeof(SessionBase).GetMethod(
+        "Index", Array.Empty<Type>())!;
+    }
 
     public static QueryHelper Instance =>
       _instance ??= new QueryHelper();
 
-    public Schema Schema {
+    internal Schema Schema {
       get => _schema ??= Schema.Instance;
       set => _schema = value;
     }
+
+    private static MethodInfo IndexGenericMethod { get; }
 
     public TEntity Read<TEntity>(
       string? simpleKey,
@@ -97,7 +106,10 @@ namespace SoundExplorers.Data {
     public static TEntity Read2<TEntity>(
       Func<TEntity, bool> predicate,
       SessionBase session) where TEntity : EntityBase2 {
-      var index = session.Index<TEntity>();
+      var index = 
+        session.Index<TEntity>() 
+        ?? throw new InvalidOperationException(
+          $"Cannot find {typeof(TEntity).Name} index.");
       return index.First(predicate);
     }
 
@@ -228,12 +240,14 @@ namespace SoundExplorers.Data {
         select entity).FirstOrDefault();
     }
 
-    private EntityBase2? FetchTopLevelEntity2(Type entityType, string simpleKey, 
+    private static EntityBase2? FetchTopLevelEntity2(Type entityType, string simpleKey, 
       SessionBase session) {
-      var index = FindRoot(entityType, session);
-      return index == null
+      var indexConstructedMethod =
+        IndexGenericMethod.MakeGenericMethod(entityType);
+      return !(indexConstructedMethod.Invoke(session, null) is 
+        IEnumerable index)
         ? null :
-        (from EntityBase entity in index.Values
+        (from EntityBase2 entity in index
           where string.Compare(entity.SimpleKey, simpleKey,
             StringComparison.OrdinalIgnoreCase) == 0
           select entity).FirstOrDefault();
