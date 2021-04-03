@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using VelocityDb;
 using VelocityDb.Session;
 
@@ -14,12 +13,8 @@ namespace SoundExplorers.Data {
   /// </remarks>
   public class Schema : OptimizedPersistable {
     private static Schema? _instance;
-    private IEnumerable<Type>? _entityTypes;
     private IEnumerable<Type>? _persistableTypes;
     private IEnumerable<RelationInfo>? _relations;
-    private IDictionary<Type, Type>? _rootTypes;
-
-    // private IDictionary<Type, Type>? _rootTypes;
     private int _version;
 
     /// <summary>
@@ -40,19 +35,10 @@ namespace SoundExplorers.Data {
     public override bool AllowOtherTypesOnSamePage => false;
 
     /// <summary>
-    ///   Enumerates the entity types persisted on the database.
-    /// </summary>
-    public IEnumerable<Type> EntityTypes =>
-      _entityTypes ??= CreateEntityTypes();
-
-    /// <summary>
     ///   The structure of on-to-many relations between entity types.
     /// </summary>
     public IEnumerable<RelationInfo> Relations =>
       _relations ??= CreateRelations();
-
-    public IDictionary<Type, Type> RootTypes =>
-      _rootTypes ??= CreateRootTypes();
 
     /// <summary>
     ///   Gets or sets the schema version. Zero initially. Not the same as the
@@ -106,32 +92,19 @@ namespace SoundExplorers.Data {
     protected virtual IEnumerable<Type> CreatePersistableTypes() {
       var list = new List<Type> {
         typeof(Act),
-        typeof(SortedEntityCollection<Act>),
         typeof(Artist),
-        typeof(SortedEntityCollection<Artist>),
         typeof(Credit),
-        typeof(SortedEntityCollection<Credit>),
         typeof(Event),
-        typeof(SortedEntityCollection<Event>),
         typeof(EventType),
-        typeof(SortedEntityCollection<EventType>),
         typeof(Genre),
-        typeof(SortedEntityCollection<Genre>),
         typeof(Location),
-        typeof(SortedEntityCollection<Location>),
         typeof(Newsletter),
-        typeof(SortedEntityCollection<Newsletter>),
         typeof(Series),
-        typeof(SortedEntityCollection<Series>),
         typeof(Piece),
-        typeof(SortedEntityCollection<Piece>),
         typeof(Role),
-        typeof(SortedEntityCollection<Role>),
         typeof(Schema),
         typeof(Set),
-        typeof(SortedEntityCollection<Set>),
-        typeof(UserOption),
-        typeof(SortedEntityCollection<UserOption>)
+        typeof(UserOption)
       };
       return list.ToArray();
     }
@@ -151,31 +124,6 @@ namespace SoundExplorers.Data {
         new RelationInfo(typeof(Set), typeof(Piece), true)
       };
       return list.ToArray();
-    }
-
-    protected virtual IDictionary<Type, Type> CreateRootTypes() {
-      return new Dictionary<Type, Type> {
-        [typeof(Act)] = typeof(SortedEntityCollection<Act>),
-        [typeof(Artist)] = typeof(SortedEntityCollection<Artist>),
-        [typeof(Credit)] = typeof(SortedEntityCollection<Credit>),
-        [typeof(Event)] = typeof(SortedEntityCollection<Event>),
-        [typeof(EventType)] = typeof(SortedEntityCollection<EventType>),
-        [typeof(Genre)] = typeof(SortedEntityCollection<Genre>),
-        [typeof(Location)] = typeof(SortedEntityCollection<Location>),
-        [typeof(Newsletter)] = typeof(SortedEntityCollection<Newsletter>),
-        [typeof(Series)] = typeof(SortedEntityCollection<Series>),
-        [typeof(Piece)] = typeof(SortedEntityCollection<Piece>),
-        [typeof(Role)] = typeof(SortedEntityCollection<Role>),
-        [typeof(Set)] = typeof(SortedEntityCollection<Set>),
-        [typeof(UserOption)] = typeof(SortedEntityCollection<UserOption>)
-      };
-    }
-
-    private IEnumerable<Type> CreateEntityTypes() {
-      return (
-        from persistableType in PersistableTypes
-        where persistableType.GetInterfaces().Contains(typeof(IEntity))
-        select persistableType).ToList();
     }
   }
 }

@@ -20,14 +20,12 @@ namespace SoundExplorers.Data {
     private IDictionary<Type, IRelationInfo>? _parentRelations;
     private IDictionary<Type, EntityBase?>? _parents;
     private IList<Action>? _postPersistenceActions;
-    private ISortedEntityCollection? _root;
     private QueryHelper? _queryHelper;
     private Schema? _schema;
     private string _simpleKey = null!;
 
     static EntityBase() {
       DefaultDate = DateTime.Parse("1900/01/01");
-      Roots = new Dictionary<Type, ISortedEntityCollection>();
     }
 
     /// <summary>
@@ -50,8 +48,6 @@ namespace SoundExplorers.Data {
       IdentifyingParentType = identifyingParentType;
       Key = new Key(this);
     }
-
-    public static IDictionary<Type, ISortedEntityCollection> Roots { get; }
 
     /// <summary>
     ///   From VelocityDB User's Guide:
@@ -80,8 +76,6 @@ namespace SoundExplorers.Data {
     }
 
     protected bool AllowBlankSimpleKey { get; set; }
-
-    protected virtual ISortedEntityCollection Root => _root ??= Roots[EntityType];
 
     protected Schema Schema {
       get => _schema ??= Schema.Instance;
@@ -185,9 +179,6 @@ namespace SoundExplorers.Data {
         }
         value.AddChild(this);
         Parents[IdentifyingParentType!] = value;
-        if (IsPersistent) {
-          ChangeRootKey(new Key(SimpleKey, value));
-        }
         _identifyingParent = value;
       }
     }
@@ -211,9 +202,6 @@ namespace SoundExplorers.Data {
       get => _simpleKey;
       protected set {
         CheckCanChangeSimpleKey(_simpleKey, value);
-        if (IsPersistent) {
-          ChangeRootKey(new Key(value, IdentifyingParent));
-        }
         _simpleKey = value;
       }
     }
@@ -228,30 +216,6 @@ namespace SoundExplorers.Data {
 
     public static string DateToSimpleKey(DateTime date) {
       return $"{date:yyyy/MM/dd}";
-    }
-
-    public static ISortedEntityCollection FetchOrAddRoot(Type entityType,
-      QueryHelper queryHelper, SessionBase session) {
-      if (Roots.ContainsKey(entityType)) {
-        return Roots[entityType];
-      }
-      bool isTransactionRequired = !session.InTransaction;
-      if (isTransactionRequired) {
-        session.BeginUpdate();
-      }
-      var result =
-        queryHelper.FindRoot(entityType, session);
-      if (result == null) {
-        result =
-          (Activator.CreateInstance(queryHelper.Schema.RootTypes[entityType]) as
-            ISortedEntityCollection)!;
-        session.Persist(result);
-      }
-      if (isTransactionRequired) {
-        session.Commit();
-      }
-      Roots.Add(entityType, result);
-      return result;
     }
 
     public static string GetIntegerSimpleKeyErrorMessage(string propertyName) {
@@ -281,7 +245,6 @@ namespace SoundExplorers.Data {
         action.Invoke();
       }
       PostPersistenceActions.Clear();
-      Root.Add(Key, this);
       return result;
     }
 
@@ -370,11 +333,6 @@ namespace SoundExplorers.Data {
       CheckCanAddNonIdentifiedChild(child);
       AddChild(child);
       UpdateChild(child, this);
-    }
-
-    private void ChangeRootKey(Key newKey) {
-      Root.Remove(Key);
-      Root.Add(newKey, this);
     }
 
     private void CheckCanAddNonIdentifiedChild(EntityBase child) {
@@ -519,7 +477,6 @@ namespace SoundExplorers.Data {
     /// </summary>
     private void RemoveFromAllParents() {
       // Debug.WriteLine($"EntityBase.RemoveFromAllParents {EntityType.Name}");
-      Root.Remove(Key);
       var nonIdentifyingParents = (
         from parent in Parents.Values
         where parent != null && !parent.Equals(IdentifyingParent)
