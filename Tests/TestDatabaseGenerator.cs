@@ -7,11 +7,16 @@ using SoundExplorers.Model;
 using SoundExplorers.Tests.Data;
 
 namespace SoundExplorers.Tests {
-  [TestFixture]
+  /// <remarks>
+  ///   The <see cref="ExplicitAttribute" /> instructs NUnit to ignored the generator
+  ///   test(s) unless explicitly selected for running. We don't want to generate the
+  ///   main test database, which is used for GUI tests, every time all tests are run.
+  /// </remarks>
+  [TestFixture] [Explicit]
   [ExcludeFromCodeCoverage]
   public class TestDatabaseGenerator {
-    private static int EventCount => 218;
-    private static int StartYear => 2017;
+    private static int EventCount => 112;
+    private static int StartYear => 2019;
     private TestData Data { get; set; } = null!;
     private TestSession Session { get; set; } = null!;
 
@@ -19,12 +24,7 @@ namespace SoundExplorers.Tests {
     ///   If the main test database folder already exists, it will be deleted and
     ///   recreated from scratch.
     /// </summary>
-    /// <remarks>
-    ///   <see cref="ExplicitAttribute" /> instructs NUnit to ignored this test unless
-    ///   it is explicitly selected for running. We don't want to generate the main test
-    ///   database, which is used for GUI tests, every time all tests are run.
-    /// </remarks>
-    [Test] [Explicit]
+    [Test]
     public void A01_GenerateData() {
       Data = new TestData(new QueryHelper(), StartYear);
       TestSession.DeleteFolderIfExists(DatabaseConfig.DefaultDatabaseFolderPath);
