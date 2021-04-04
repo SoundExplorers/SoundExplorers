@@ -14,6 +14,10 @@
     </PropertyGroup>
     <PropertyGroup>
         <!-- Assembly properties. Before .Net 5, these were coded in AssemblyInfo.cs. -->
+        <!-- WARNING: In JetBrains Rider, after .Net 5 assembly property changes in 
+        project files, dummy changes and change-backs are needed to stop solution-wide 
+        analysis from reporting bogus errors that do not stop the solution
+        from compiling. -->
         <Title>Sound Explorers Audio Archive</Title>
         <Company>Sound and Light Exploration Society</Company>
         <Product>Sound Explorers Audio Archive</Product>
