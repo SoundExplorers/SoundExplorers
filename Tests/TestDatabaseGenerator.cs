@@ -10,7 +10,8 @@ namespace SoundExplorers.Tests {
   [TestFixture]
   [ExcludeFromCodeCoverage]
   public class TestDatabaseGenerator {
-    private static int EventCount => 400; // Highest reliable non-looping: 4
+    private static int EventCount => 221;
+    private static int StartYear => 2017;
     private TestData Data { get; set; } = null!;
     private TestSession Session { get; set; } = null!;
 
@@ -21,12 +22,11 @@ namespace SoundExplorers.Tests {
     /// <remarks>
     ///   <see cref="ExplicitAttribute" /> instructs NUnit to ignored this test unless
     ///   it is explicitly selected for running. We don't want to generate the main test
-    ///   database, which is used for GUI tests, to be generated every time all tests are
-    ///   run.
+    ///   database, which is used for GUI tests, every time all tests are run.
     /// </remarks>
     [Test] [Explicit]
     public void A01_GenerateData() {
-      Data = new TestData(new QueryHelper());
+      Data = new TestData(new QueryHelper(), StartYear);
       TestSession.DeleteFolderIfExists(DatabaseConfig.DefaultDatabaseFolderPath);
       Directory.CreateDirectory(DatabaseConfig.DefaultDatabaseFolderPath);
       TestSession.CopyLicenceToDatabaseFolder(DatabaseConfig.DefaultDatabaseFolderPath);
@@ -52,7 +52,9 @@ namespace SoundExplorers.Tests {
       Session.Commit();
       Console.WriteLine(
         $"Finished: {Data.Events.Count} Events; {Data.Sets.Count} Sets; " +
-        $"{Data.Pieces.Count} Pieces; {Data.Credits.Count} Credits");
+        $"{Data.Pieces.Count} Pieces; {Data.Credits.Count} Credits.\r\n" + 
+        $"First Newsletter Date: {Data.FirstNewsletterDate:ddd dd MMM yyyy}\r\n" +
+        $"Last Event Date: {Data.LastEventDate:ddd dd MMM yyyy}");
     }
 
     [SuppressMessage("ReSharper", "UnusedMember.Local")]

@@ -18,23 +18,17 @@ namespace SoundExplorers.Data {
     ///   Any fields that are only working variables used in the insert/update/delete
     ///   processing need to be marked with <see cref="NonSerializedAttribute" /> to stop
     ///   them being persisted. When Dictionaries where unintentionally serialised,
-    ///   fetching entities from the database would loop. 
+    ///   fetching entities from the database would loop.
     /// </summary>
-    [NonSerialized]
-    private IDictionary<Type, ISortedEntityCollection>? _childrenOfType;
-    [NonSerialized]
-    private IDictionary<Type, IRelationInfo>? _childrenRelations;
+    [NonSerialized] private IDictionary<Type, ISortedEntityCollection>? _childrenOfType;
+
+    [NonSerialized] private IDictionary<Type, IRelationInfo>? _childrenRelations;
     private EntityBase? _identifyingParent;
-    [NonSerialized]
-    private IDictionary<Type, IRelationInfo>? _parentRelations;
-    [NonSerialized]
-    private IDictionary<Type, EntityBase?>? _parents;
-    [NonSerialized]
-    private IList<Action>? _postPersistenceActions;
-    [NonSerialized]
-    private QueryHelper? _queryHelper;
-    [NonSerialized]
-    private Schema? _schema;
+    [NonSerialized] private IDictionary<Type, IRelationInfo>? _parentRelations;
+    [NonSerialized] private IDictionary<Type, EntityBase?>? _parents;
+    [NonSerialized] private IList<Action>? _postPersistenceActions;
+    [NonSerialized] private QueryHelper? _queryHelper;
+    [NonSerialized] private Schema? _schema;
     private string _simpleKey = null!;
 
     static EntityBase() {
@@ -82,7 +76,7 @@ namespace SoundExplorers.Data {
     ///   if any, as entities of the main Type.
     /// </summary>
     public Type EntityType { get; }
-    
+
     public bool IsTopLevel => Parents.Count == 0;
 
     internal QueryHelper QueryHelper {

@@ -13,16 +13,17 @@
         <ApplicationIcon>Kettle Drum (multi-size).ico</ApplicationIcon>
     </PropertyGroup>
     <PropertyGroup>
-        <!-- Assembly properties. Before .Net 5, these were coded in AssemblyInfo.cs.4
-        In .Net 5, Application.ProductVersion comes from the InformationalVersion
-        assembly property, not the ProductVersion property. -->
-        <InformationalVersion>2021.0.0</InformationalVersion>
-        <ProductVersion>2021.0.0</ProductVersion>
-        <AssemblyVersion>2021.0.0</AssemblyVersion>
+        <!-- Assembly properties. Before .Net 5, these were coded in AssemblyInfo.cs. -->
         <Title>Sound Explorers Audio Archive</Title>
         <Company>Sound and Light Exploration Society</Company>
         <Product>Sound Explorers Audio Archive</Product>
         <Copyright>Copyright © 2021 Sound and Light Exploration Society</Copyright>
+        <!-- In .Net 5, Application.ProductVersion comes from the InformationalVersion
+        assembly property, not the ProductVersion property. -->
+        <InformationalVersion>2021.1.0</InformationalVersion>
+        <ProductVersion>2021.1.0</ProductVersion>
+        <AssemblyVersion>2021.1.0</AssemblyVersion>
+        <FileVersion>2021.1.0</FileVersion>
     </PropertyGroup>
     <ItemGroup>
       <ProjectReference Include="..\View\SoundExplorers.View.csproj" />

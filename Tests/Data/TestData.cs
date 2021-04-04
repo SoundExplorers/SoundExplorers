@@ -21,7 +21,9 @@ namespace SoundExplorers.Tests.Data {
     private IList<string>? _seriesNames;
     private IList<string>? _surnames;
 
-    public TestData(QueryHelper queryHelper) {
+    public TestData(QueryHelper queryHelper, int startYear = 2020) {
+      FirstNewsletterDate = GetFirstMondayOfYear(startYear);
+      FirstEventDate = FirstNewsletterDate.AddDays(3); // Thursday
       QueryHelper = queryHelper;
       Acts = new List<Act>();
       Artists = new List<Artist>();
@@ -37,6 +39,8 @@ namespace SoundExplorers.Tests.Data {
       Sets = new List<Set>();
     }
 
+    public DateTime FirstNewsletterDate { get; }
+    public DateTime LastEventDate { get; private set; }
     public IList<Act> Acts { get; }
     public IList<Artist> Artists { get; }
     public IList<Credit> Credits { get; }
@@ -49,8 +53,9 @@ namespace SoundExplorers.Tests.Data {
     public IList<Role> Roles { get; }
     public IList<Series> Series { get; }
     public IList<Set> Sets { get; }
-    private IList<string> ActNames => _actNames ??= CreateActNames();
+    private DateTime FirstEventDate { get; }
     private QueryHelper QueryHelper { get; }
+    private IList<string> ActNames => _actNames ??= CreateActNames();
     private IList<string> EventTypeNames => _eventTypeNames ??= CreateEventTypeNames();
     private IList<string> Forenames => _forenames ??= CreateForenames();
     private IList<string> GenreNames => _genreNames ??= CreateGenreNames();
@@ -121,7 +126,7 @@ namespace SoundExplorers.Tests.Data {
     public void AddEventsPersisted(int count, SessionBase session,
       Location? location = null, EventType? eventType = null) {
       var date = Events.Count == 0
-        ? DateTime.Parse("2020/01/09")
+        ? FirstEventDate
         : Events[^1].Date.AddDays(7);
       for (int i = 0; i < count; i++) {
         var @event = new Event {
@@ -141,6 +146,7 @@ namespace SoundExplorers.Tests.Data {
         Events.Add(@event);
         date = date.AddDays(7);
       }
+      LastEventDate = date.AddDays(-7);
     }
 
     public void AddEventTypesPersisted(SessionBase session) {
@@ -200,7 +206,7 @@ namespace SoundExplorers.Tests.Data {
 
     public void AddNewslettersPersisted(int count, SessionBase session) {
       InsertDefaultNewsletter(session);
-      var date = DateTime.Parse("2020/01/06");
+      var date = FirstNewsletterDate;
       for (int i = 1; i < count; i++) {
         var newsletter = new Newsletter {
           QueryHelper = QueryHelper,
@@ -472,6 +478,11 @@ namespace SoundExplorers.Tests.Data {
       return new Uri(
         $"https://{GenerateUniqueName(8)}.com/{GenerateUniqueName(6)}",
         UriKind.Absolute).ToString();
+    }
+
+    private static DateTime GetFirstMondayOfYear(int year) {
+      var firstDay = new DateTime(year, 1, 1);
+      return new DateTime(year, 1, (8 - (int)firstDay.DayOfWeek) % 7 + 1);
     }
 
     private Event GetDefaultEvent() {

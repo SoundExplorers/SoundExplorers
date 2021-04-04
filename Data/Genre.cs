@@ -7,7 +7,6 @@ namespace SoundExplorers.Data {
   /// </summary>
   [VelocityDb.Indexing.Index("_simpleKey")]
   public class Genre : EntityBase, INamedEntity {
-
     [SuppressMessage("ReSharper", "SuggestBaseTypeForParameter")]
     public Genre() : base(typeof(Genre), nameof(Name), null) {
       Sets = new SortedEntityCollection<Set>();

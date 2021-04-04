@@ -11,11 +11,12 @@
   </PropertyGroup>
   <PropertyGroup>
     <!-- Assembly properties. Before .Net 5, these were coded in AssemblyInfo.cs. -->
-    <AssemblyVersion>2021.0.0</AssemblyVersion>
     <Title>Sound Explorers Audio Archive (Tests Library)</Title>
     <Company>Sound and Light Exploration Society</Company>
     <Product>Sound Explorers Audio Archive</Product>
     <Copyright>Copyright © 2021 Sound and Light Exploration Society</Copyright>
+    <AssemblyVersion>2021.1.0</AssemblyVersion>
+    <FileVersion>2021.1.0</FileVersion>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Controller\SoundExplorers.Controller.csproj" />

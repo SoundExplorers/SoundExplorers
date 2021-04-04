@@ -7,7 +7,6 @@ namespace SoundExplorers.Data {
   /// </summary>
   [VelocityDb.Indexing.Index("_simpleKey")]
   public class Role : EntityBase, INamedEntity {
-
     [SuppressMessage("ReSharper", "SuggestBaseTypeForParameter")]
     public Role() : base(typeof(Role), nameof(Name), null) {
       Credits = new SortedEntityCollection<Credit>();
