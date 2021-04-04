@@ -104,9 +104,12 @@ namespace SoundExplorers.Controller {
 
     [ExcludeFromCodeCoverage]
     private void ShowHelpFile(string fileName) {
-      string path = Global.GetApplicationFolderPath() +
-                    Path.DirectorySeparatorChar + "Documentation" +
-                    Path.DirectorySeparatorChar + fileName;
+      string path = Path.Combine(
+        Global.GetApplicationFolderPath(), "Documentation", fileName); 
+      // string path = 
+      //   Global.GetApplicationFolderPath() +
+      //               Path.DirectorySeparatorChar + "Documentation" +
+      //               Path.DirectorySeparatorChar + fileName;
       if (File.Exists(path)) {
         OpenFile(path);
       } else {

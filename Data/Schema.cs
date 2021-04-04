@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using VelocityDb;
 using VelocityDb.Session;
 
@@ -15,8 +13,14 @@ namespace SoundExplorers.Data {
   /// </remarks>
   public class Schema : OptimizedPersistable {
     private static Schema? _instance;
-    private IEnumerable<Type>? _persistableTypes;
-    private IEnumerable<RelationInfo>? _relations;
+
+    /// <summary>
+    ///   Fields that are only working variables are marked with
+    ///   <see cref="NonSerializedAttribute" /> to stop them being persisted.
+    /// </summary>
+    [NonSerialized] private IEnumerable<Type>? _persistableTypes;
+
+    [NonSerialized] private IEnumerable<RelationInfo>? _relations;
     private int _version;
 
     /// <summary>
@@ -89,20 +93,6 @@ namespace SoundExplorers.Data {
       foreach (var persistableType in PersistableTypes) {
         session.RegisterClass(persistableType);
       }
-    }
-
-    /// <summary>
-    ///   Removes the VelocityDB licence file from the database.
-    /// </summary>
-    /// <remarks>
-    ///   This can safely be done once all persistable types have been registered (with
-    ///   <see cref="RegisterPersistableTypes" />), provided no further changes to those
-    ///   types will be made. It should be done for a database that is to be given
-    ///   to end users.
-    /// </remarks>
-    public static void RemoveLicenceFileFromDatabase(SessionBase session) {
-      string licenceFilePath = session.DatabaseLocations.First().DatabasePath(4);
-      File.Delete(licenceFilePath);
     }
 
     protected virtual IEnumerable<Type> CreatePersistableTypes() {

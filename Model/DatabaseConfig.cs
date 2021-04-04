@@ -42,8 +42,9 @@ namespace SoundExplorers.Model {
     /// </summary>
     public string ConfigFilePath {
       get => _configFilePath ??
-             Global.GetApplicationFolderPath() +
-             Path.DirectorySeparatorChar + "DatabaseConfig.xml";
+             Path.Combine(Global.GetApplicationFolderPath(), "DatabaseConfig.xml");
+             // Global.GetApplicationFolderPath() +
+             // Path.DirectorySeparatorChar + "DatabaseConfig.xml";
       protected init => _configFilePath = value;
     }
 
