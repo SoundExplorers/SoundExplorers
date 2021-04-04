@@ -64,7 +64,15 @@ namespace SoundExplorers.Controller {
     /// </summary>
     [ExcludeFromCodeCoverage]
     public void FollowLink() {
-      MainController.OpenFile(Grid.CurrentCellValue!.ToString()!);
+      string link = Grid.CurrentCellValue!.ToString()!;
+      try {
+        MainController.OpenFile(link);
+      } catch (Win32Exception) {
+        // Invalid link, like the comment in the URL of cell of the default dummy
+        // Newsletter.
+        EditorController.View.ShowErrorMessage(
+          $"An application cannot be found for opening '{link}'.");
+      }
     }
 
     public bool IsUrlColumn(string columnName) {
@@ -86,7 +94,7 @@ namespace SoundExplorers.Controller {
       Debug.WriteLine(
         $"GridControllerBase.OnRowEnter {Grid.Name}: row {rowIndex} of {BindingList.Count}");
       if (!IsPopulating) {
-        RowText = $"{List.EntityTypeName} {rowIndex + 1} of {BindingList.Count}";
+        RowText = $"{List.EntityTypeName} {rowIndex + 1:#,0} of {BindingList.Count:#,0}";
         if (Grid.Focused) {
           EditorController.View.SetStatusBarText(RowText);
         }

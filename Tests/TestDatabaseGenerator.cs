@@ -10,7 +10,7 @@ namespace SoundExplorers.Tests {
   [TestFixture]
   [ExcludeFromCodeCoverage]
   public class TestDatabaseGenerator {
-    private static int EventCount => 221;
+    private static int EventCount => 218;
     private static int StartYear => 2017;
     private TestData Data { get; set; } = null!;
     private TestSession Session { get; set; } = null!;
@@ -51,8 +51,8 @@ namespace SoundExplorers.Tests {
       Console.WriteLine($"{Data.Credits.Count} Credits added. Committing.");
       Session.Commit();
       Console.WriteLine(
-        $"Finished: {Data.Events.Count} Events; {Data.Sets.Count} Sets; " +
-        $"{Data.Pieces.Count} Pieces; {Data.Credits.Count} Credits.\r\n" + 
+        $"Finished: {Data.Events.Count:#,0} Events; {Data.Sets.Count:#,0} Sets; " +
+        $"{Data.Pieces.Count:#,0} Pieces; {Data.Credits.Count:#,0} Credits.\r\n" + 
         $"First Newsletter Date: {Data.FirstNewsletterDate:ddd dd MMM yyyy}\r\n" +
         $"Last Event Date: {Data.LastEventDate:ddd dd MMM yyyy}");
     }
