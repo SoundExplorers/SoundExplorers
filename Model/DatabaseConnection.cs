@@ -9,7 +9,7 @@ namespace SoundExplorers.Model {
   public class DatabaseConnection : IOpen {
     private DatabaseConfig DatabaseConfig { get; set; } = null!;
     public int ExpectedVersion { get; protected init; } = 1;
-    private string? LicenceFileCopyPath { get; set; }
+    // private string? LicenceFileCopyPath { get; set; }
 
     public void Open() {
       DatabaseConfig = CreateDatabaseConfig();
@@ -34,18 +34,18 @@ namespace SoundExplorers.Model {
       }
       Global.Session = session;
       Schema.Instance = schema;
-#if DEBUG
-#else // Release build
-      if (LicenceFileCopyPath != null) {
-        // A VelocityDB licence file was copied to the database so that the persistable
-        // types could be registered. Now that the registration has been done (and we are
-        // no longer in a transaction), the licence file can safely be removed from the
-        // database, provided no further additions or deletions of persistable types are
-        // to be made. The licence file should be removed for a database that is to be
-        // given to end users.
-        File.Delete(LicenceFileCopyPath);
-      }
-#endif
+// #if DEBUG
+// #else // Release build
+//       if (LicenceFileCopyPath != null) {
+//         // A VelocityDB licence file was copied to the database so that the persistable
+//         // types could be registered. Now that the registration has been done (and we are
+//         // no longer in a transaction), the licence file can safely be removed from the
+//         // database, provided no further additions or deletions of persistable types are
+//         // to be made. The licence file should be removed for a database that is to be
+//         // given to end users.
+//         File.Delete(LicenceFileCopyPath);
+//       }
+// #endif
     }
 
     [ExcludeFromCodeCoverage]
@@ -92,17 +92,18 @@ namespace SoundExplorers.Model {
     }
 
     private void CopyLicenceToDatabaseFolderIfAbsent() {
-      LicenceFileCopyPath = Path.Combine(
+      // LicenceFileCopyPath = Path.Combine(
+      string licenceFileCopyPath = Path.Combine(
         DatabaseConfig.DatabaseFolderPath, "4.odb");
       // string destinationPath = 
       //   $"{DatabaseConfig.DatabaseFolderPath}{Path.DirectorySeparatorChar}4.odb";
-      if (File.Exists(LicenceFileCopyPath)) {
+      if (File.Exists(licenceFileCopyPath)) {
         return;
       }
       CheckLicenceFileExists();
       CopyLicenceFile(
         DatabaseConfig.VelocityDbLicenceFilePath, 
-        LicenceFileCopyPath);
+        licenceFileCopyPath);
     }
 
     [ExcludeFromCodeCoverage]
