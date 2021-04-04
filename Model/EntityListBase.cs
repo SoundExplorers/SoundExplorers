@@ -387,9 +387,6 @@ namespace SoundExplorers.Model {
       if (createBindingList) {
         GetReferenceableItemLists();
       }
-      if (isTransactionRequired) {
-        Session.Commit();
-      }
       // If this is a child list, it is already in the right order, as its data source
       // consists of the values of a SortedEntityCollection. If this is a list of
       // top-level entities, the entity class Index will provide the correct order.
@@ -397,6 +394,12 @@ namespace SoundExplorers.Model {
         if (ListRole != ListRole.Child || this[0].IsTopLevel) {
           Sort(EntityComparer);
         }
+      }
+      // We need to stay in the update transaction till after the sort. This became a
+      // requirement when class Indexes were introduced. It is important for some entity
+      // types, such as Credit, and not others, such as Act.
+      if (isTransactionRequired) {
+        Session.Commit(); 
       }
       if (createBindingList) {
         BindingList = CreateBindingList();

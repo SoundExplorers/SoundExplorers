@@ -10,7 +10,7 @@ namespace SoundExplorers.Tests {
   [TestFixture]
   [ExcludeFromCodeCoverage]
   public class TestDatabaseGenerator {
-    private static int EventCount => 4; // Highest reliable non-looping: 4
+    private static int EventCount => 400; // Highest reliable non-looping: 4
     private TestData Data { get; set; } = null!;
     private TestSession Session { get; set; } = null!;
 
