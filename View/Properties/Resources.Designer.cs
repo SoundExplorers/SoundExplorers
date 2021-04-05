@@ -113,26 +113,6 @@ namespace SoundExplorers.View.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Fred_Flintstone {
-            get {
-                object obj = ResourceManager.GetObject("Fred_Flintstone", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap Grand_Piano_256x256 {
-            get {
-                object obj = ResourceManager.GetObject("Grand_Piano_256x256", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         internal static System.Drawing.Bitmap Kettle_Drum_256x256 {
             get {
                 object obj = ResourceManager.GetObject("Kettle_Drum_256x256", resourceCulture);

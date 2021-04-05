@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Security.Cryptography;
-using SoundExplorers.Data;
-using SoundExplorers.Model;
 
 namespace SoundExplorers.Tests.Data {
   public static class ListExtensions {
@@ -21,10 +19,6 @@ namespace SoundExplorers.Tests.Data {
         result[n] = value;
       }
       return result;
-    }
-
-    public static void Sort<TEntity>(this IList<TEntity> list) where TEntity : IEntity {
-      ((List<TEntity>)list).Sort(new TopLevelEntityComparer<TEntity>());
     }
   }
 }

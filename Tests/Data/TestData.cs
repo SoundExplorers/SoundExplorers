@@ -37,11 +37,14 @@ namespace SoundExplorers.Tests.Data {
       Roles = new List<Role>();
       Series = new List<Series>();
       Sets = new List<Set>();
+      UserOptions = new List<UserOption>();
     }
 
     public DateTime FirstNewsletterDate { get; }
     public DateTime LastEventDate { get; private set; }
-    public Schema Schema { get; private set; } = null!;
+    
+    [PublicAPI]
+    public Schema Schema { get; set; } = null!;
     public IList<Act> Acts { get; }
     public IList<Artist> Artists { get; }
     public IList<Credit> Credits { get; }
@@ -54,6 +57,9 @@ namespace SoundExplorers.Tests.Data {
     public IList<Role> Roles { get; }
     public IList<Series> Series { get; }
     public IList<Set> Sets { get; }
+    
+    [PublicAPI]
+    public IList<UserOption> UserOptions { get; }
     private DateTime FirstEventDate { get; }
     private QueryHelper QueryHelper { get; }
     private IList<string> ActNames => _actNames ??= CreateActNames();
@@ -83,7 +89,6 @@ namespace SoundExplorers.Tests.Data {
         session.Persist(act);
         Acts.Add(act);
       }
-      Acts.Sort();
     }
 
     public void AddArtistsPersisted(int count, SessionBase session) {
@@ -101,7 +106,6 @@ namespace SoundExplorers.Tests.Data {
         session.Persist(artist);
         Artists.Add(artist);
       }
-      Artists.Sort();
     }
 
     public void AddCreditsPersisted(int count, SessionBase session,
@@ -165,7 +169,6 @@ namespace SoundExplorers.Tests.Data {
         session.Persist(eventType);
         EventTypes.Add(eventType);
       }
-      EventTypes.Sort();
     }
 
     public void AddGenresPersisted(SessionBase session) {
@@ -183,7 +186,6 @@ namespace SoundExplorers.Tests.Data {
         session.Persist(genre);
         Genres.Add(genre);
       }
-      Genres.Sort();
     }
 
     public void AddLocationsPersisted(SessionBase session) {
@@ -202,7 +204,6 @@ namespace SoundExplorers.Tests.Data {
         session.Persist(location);
         Locations.Add(location);
       }
-      Locations.Sort();
     }
 
     public void AddNewslettersPersisted(int count, SessionBase session) {
@@ -262,7 +263,6 @@ namespace SoundExplorers.Tests.Data {
         session.Persist(role);
         Roles.Add(role);
       }
-      Roles.Sort();
     }
 
     public void AddSchemaPersisted(int version, SessionBase session) {
@@ -289,7 +289,6 @@ namespace SoundExplorers.Tests.Data {
         session.Persist(series);
         Series.Add(series);
       }
-      Series.Sort();
     }
 
     public void AddSetsPersisted(int count, SessionBase session,
@@ -313,6 +312,19 @@ namespace SoundExplorers.Tests.Data {
         session.Persist(set);
         Sets.Add(set);
         setNo++;
+      }
+    }
+
+    public void AddUserOptionsPersisted(int count, SessionBase session) {
+      for (int i = 0; i < count; i++) {
+        var userOption = new UserOption {
+          QueryHelper = QueryHelper,
+          UserId = Environment.UserName,
+          OptionName = GenerateUniqueName(8),
+          OptionValue = GenerateUniqueName(4)
+        };
+        session.Persist(userOption);
+        UserOptions.Add(userOption);
       }
     }
 

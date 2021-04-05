@@ -39,7 +39,7 @@ namespace SoundExplorers.View {
       this.DatabaseFolderLabel.Location = new System.Drawing.Point(14, 12);
       this.DatabaseFolderLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
       this.DatabaseFolderLabel.Name = "DatabaseFolderLabel";
-      this.DatabaseFolderLabel.Size = new System.Drawing.Size(148, 22);
+      this.DatabaseFolderLabel.Size = new System.Drawing.Size(121, 18);
       this.DatabaseFolderLabel.TabIndex = 1;
       this.DatabaseFolderLabel.Text = "&Database Folder:";
       // 
@@ -86,7 +86,7 @@ namespace SoundExplorers.View {
       // 
       this.AcceptButton = this.OkButton;
       this.AllowDrop = true;
-      this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 22F);
+      this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 17F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.CancelButton = this.OkButton;
       this.ClientSize = new System.Drawing.Size(784, 317);
@@ -106,6 +106,7 @@ namespace SoundExplorers.View {
       this.Text = "Options";
       this.ResumeLayout(false);
       this.PerformLayout();
+
     }
     #endregion
 

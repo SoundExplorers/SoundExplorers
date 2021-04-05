@@ -38,8 +38,8 @@ namespace SoundExplorers.View {
       // 
       // StatusLabel
       // 
-      this.StatusLabel.Location = new System.Drawing.Point(0, 192);
-      this.StatusLabel.Size = new System.Drawing.Size(484, 62);
+      this.StatusLabel.Location = new System.Drawing.Point(0, 205);
+      this.StatusLabel.Size = new System.Drawing.Size(484, 49);
       this.StatusLabel.Text = "Status Label";
       // 
       // ProductNameTextBox
@@ -48,11 +48,11 @@ namespace SoundExplorers.View {
       this.ProductNameTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
       this.ProductNameTextBox.Font = new System.Drawing.Font("Old English Text MT", 30F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
       this.ProductNameTextBox.ForeColor = System.Drawing.Color.Gold;
-      this.ProductNameTextBox.Location = new System.Drawing.Point(40, 0);
+      this.ProductNameTextBox.Location = new System.Drawing.Point(33, 0);
       this.ProductNameTextBox.Multiline = true;
       this.ProductNameTextBox.Name = "ProductNameTextBox";
       this.ProductNameTextBox.ReadOnly = true;
-      this.ProductNameTextBox.Size = new System.Drawing.Size(397, 109);
+      this.ProductNameTextBox.Size = new System.Drawing.Size(325, 87);
       this.ProductNameTextBox.TabIndex = 5;
       this.ProductNameTextBox.TabStop = false;
       this.ProductNameTextBox.Text = "Sound Explorers Audio Archive";
@@ -60,7 +60,7 @@ namespace SoundExplorers.View {
       // 
       // SplashForm
       // 
-      this.AutoScaleBaseSize = new System.Drawing.Size(11, 25);
+      this.AutoScaleBaseSize = new System.Drawing.Size(9, 20);
       this.BackColor = System.Drawing.Color.Gold;
       this.ClientSize = new System.Drawing.Size(500, 270);
       this.ForeColor = System.Drawing.SystemColors.ControlText;

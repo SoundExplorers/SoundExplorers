@@ -391,7 +391,7 @@ namespace SoundExplorers.Model {
       // consists of the values of a SortedEntityCollection. If this is a list of
       // top-level entities, the entity class Index will provide the correct order.
       if (Count > 0) {
-        if (ListRole != ListRole.Child || this[0].IsTopLevel) {
+        if (ListRole != ListRole.Child && !this[0].IsTopLevel) {
           Sort(EntityComparer);
         }
       }
@@ -443,8 +443,9 @@ namespace SoundExplorers.Model {
 
     protected abstract BindingColumnList CreateColumns();
 
+    [ExcludeFromCodeCoverage]
     protected virtual IComparer<TEntity> CreateEntityComparer() {
-      return new TopLevelEntityComparer<TEntity>();
+      throw new NotSupportedException();
     }
 
     private static BackupItem<TBindingItem> CreateBackupItem(TBindingItem bindingItem) {

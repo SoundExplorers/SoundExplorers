@@ -49,8 +49,17 @@ namespace SoundExplorers.Tests {
       TestSession.CopyLicenceToDatabaseFolder(DatabaseConfig.DefaultDatabaseFolderPath);
       Session = new TestSession(DatabaseConfig.DefaultDatabaseFolderPath);
       Session.BeginUpdate();
+      // Registering the persistable types will allow the database to be used without a
+      // VelocityDB licence file.
       Schema.Instance.RegisterPersistableTypes(Session);
-      Data.AddSchemaPersisted(1, Session);
+      // But, for some reason to do with VelocityDB Indexes, we also need to add data of
+      // every entity type here, which automatically adds an index of each type.
+      // Otherwise the application will crash on loading. That is why we even add some
+      // dummy UserOptions.
+      //
+      // The Schema persistable, with the current schema version number, is required for
+      // copying to the initialised database folder.
+      Data.AddSchemaPersisted(1, Session); 
       Data.AddActsPersisted(Session);
       Data.AddArtistsPersisted(200, Session);
       Data.AddEventTypesPersisted(Session);
@@ -59,6 +68,7 @@ namespace SoundExplorers.Tests {
       Data.AddNewslettersPersisted(EventCount, Session);
       Data.AddRolesPersisted(Session);
       Data.AddSeriesPersisted(Session);
+      Data.AddUserOptionsPersisted(3, Session);
       Console.WriteLine($"Adding {EventCount} Events.");
       Data.AddEventsPersisted(EventCount, Session);
       Console.WriteLine($"{EventCount} Events added. Adding Sets.");
@@ -138,6 +148,9 @@ namespace SoundExplorers.Tests {
         Path.Combine(initialisedDatabaseFolder.FullName, "2.odb"));
       sourceSystemFile1.CopyTo(destinationSystemFile1.FullName);
       sourceSystemFile2.CopyTo(destinationSystemFile2.FullName);
+      // We need to include the Schema persistable too. Otherwise, if there is no
+      // licence file, DatabaseConnection.Open will want to copy one into the database
+      // folder while the application is loading.
       string schemaDatabaseFileName =
         Session.DatabaseNumberOf(typeof(Schema)) + ".odb";
       var sourceSchemaDatabaseFile = new FileInfo(
@@ -149,9 +162,12 @@ namespace SoundExplorers.Tests {
         $"Created initialised database folder '{initialisedDatabaseFolder.FullName}'.");
     }
 
+#if DEBUG
+#else // Release build
     private void RemoveLicenceFileFromDatabase() {
       File.Delete(Path.Combine(Session.DatabaseFolderPath, "4.odb"));
       Console.WriteLine("Removed licence file from database.");
     }
+#endif
   }
 }

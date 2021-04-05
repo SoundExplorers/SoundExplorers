@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
@@ -20,6 +21,9 @@ namespace SoundExplorers.Model {
       var session = new SessionNoServer(DatabaseConfig.DatabaseFolderPath);
       session.BeginUpdate();
       try {
+        foreach (var databaseLocation in session.DatabaseLocations) {
+          Debug.WriteLine(databaseLocation.DirectoryPath);
+        }
         schema = Schema.Find(QueryHelper.Instance, session) ?? new Schema();
         if (schema.Version < ExpectedVersion) {
           CopyLicenceToDatabaseFolderIfAbsent();
