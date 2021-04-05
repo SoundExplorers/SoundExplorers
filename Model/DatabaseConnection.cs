@@ -34,18 +34,6 @@ namespace SoundExplorers.Model {
       }
       Global.Session = session;
       Schema.Instance = schema;
-// #if DEBUG
-// #else // Release build
-//       if (LicenceFileCopyPath != null) {
-//         // A VelocityDB licence file was copied to the database so that the persistable
-//         // types could be registered. Now that the registration has been done (and we are
-//         // no longer in a transaction), the licence file can safely be removed from the
-//         // database, provided no further additions or deletions of persistable types are
-//         // to be made. The licence file should be removed for a database that is to be
-//         // given to end users.
-//         File.Delete(LicenceFileCopyPath);
-//       }
-// #endif
     }
 
     [ExcludeFromCodeCoverage]
@@ -112,10 +100,7 @@ namespace SoundExplorers.Model {
         !Directory.GetFiles(DatabaseConfig.DatabaseFolderPath).Any();
       if (isDatabaseFolderEmpty) {
         var systemDatabaseFilesFolder = new DirectoryInfo(
-          Path.Combine(Global.GetApplicationFolderPath(), "System Database Files"));
-        // var systemDatabaseFilesFolder = new DirectoryInfo(
-        //   Global.GetApplicationFolderPath() +
-        //   Path.DirectorySeparatorChar + "System Database Files");
+          Path.Combine(Global.GetApplicationFolderPath(), "Initialised Database"));
         if (systemDatabaseFilesFolder.Exists) {
           foreach (FileInfo sourceFile in systemDatabaseFilesFolder.GetFiles()) {
             string destinationPath = sourceFile.FullName.Replace(

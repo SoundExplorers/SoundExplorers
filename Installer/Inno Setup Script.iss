@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Sound Explorers Audio Archive"
-#define MyAppVersion "2021.0.0"
+#define MyAppVersion "2021.1.0"
 #define MyAppPublisher "Sound and Light Exploration Society"
 #define MyAppURL "https://sourceforge.net/projects/sound-explorers-audio-archive/"
 #define MyAppExeName "SoundExplorers.exe"
@@ -24,7 +24,7 @@ LicenseFile=E:\Simon\OneDrive\Documents\Visual Studio Projects\SoundExplorers\So
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
 ;PrivilegesRequired=lowest
 OutputDir=E:\Simon\OneDrive\Documents\Visual Studio Projects\SoundExplorers\Installer
-OutputBaseFilename=SoundExplorers 2021.0.0
+OutputBaseFilename=SoundExplorers {#MyAppVersion}
 SetupIconFile=E:\Simon\OneDrive\Documents\Visual Studio Projects\SoundExplorers\SoundExplorers\Kettle Drum (multi-size).ico
 Compression=lzma
 SolidCompression=yes

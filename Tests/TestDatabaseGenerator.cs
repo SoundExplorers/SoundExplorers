@@ -17,6 +17,23 @@ namespace SoundExplorers.Tests {
   public class TestDatabaseGenerator {
     private static int EventCount => 112;
     private static int StartYear => 2019;
+
+    /// <summary>
+    ///   The path of the folder, usually the application project's release build folder,
+    ///   into which an initialised database folder, suitable for first use by end users,
+    ///   will be copied.  
+    /// </summary>
+    /// <remarks>
+    ///   The initialised database folder will including only the two system database
+    ///   files that contain the schema objects and DatabaseLocation objects
+    ///   respectively, together with the database file containing the Schema
+    ///   persistable. The installer will include a copy of the initialised database
+    ///   folder. <see cref="DatabaseConnection.Open" /> will copy these system files to
+    ///   the end user's database folder if it is found to be empty.
+    /// </remarks>
+    private static string InitialisedDatabaseParentFolderPath =>
+      @"E:\Simon\OneDrive\Documents\Visual Studio Projects\SoundExplorers\SoundExplorers\bin\x64\Release\net5.0-windows";
+    
     private TestData Data { get; set; } = null!;
     private TestSession Session { get; set; } = null!;
 
@@ -32,6 +49,8 @@ namespace SoundExplorers.Tests {
       TestSession.CopyLicenceToDatabaseFolder(DatabaseConfig.DefaultDatabaseFolderPath);
       Session = new TestSession(DatabaseConfig.DefaultDatabaseFolderPath);
       Session.BeginUpdate();
+      Schema.Instance.RegisterPersistableTypes(Session);
+      Data.AddSchemaPersisted(1, Session);
       Data.AddActsPersisted(Session);
       Data.AddArtistsPersisted(200, Session);
       Data.AddEventTypesPersisted(Session);
@@ -50,11 +69,22 @@ namespace SoundExplorers.Tests {
       AddCredits();
       Console.WriteLine($"{Data.Credits.Count} Credits added. Committing.");
       Session.Commit();
+#if DEBUG
+#else // Release build
+      // A VelocityDB licence file was copied to the database so that the persistable
+      // types could be registered. Now that the registration has been done (and we are
+      // no longer in a transaction), the licence file can safely be removed from the
+      // database, provided no further additions or deletions of persistable types are
+      // subsequently to be made. The licence file should be removed for a database that
+      // is to be given to end users.
+      RemoveLicenceFileFromDatabase();
+#endif
       Console.WriteLine(
         $"Finished: {Data.Events.Count:#,0} Events; {Data.Sets.Count:#,0} Sets; " +
         $"{Data.Pieces.Count:#,0} Pieces; {Data.Credits.Count:#,0} Credits.\r\n" + 
         $"First Newsletter Date: {Data.FirstNewsletterDate:ddd dd MMM yyyy}\r\n" +
         $"Last Event Date: {Data.LastEventDate:ddd dd MMM yyyy}");
+      CreateInitialisedDatabaseFolder();
     }
 
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
@@ -85,6 +115,43 @@ namespace SoundExplorers.Tests {
           Data.AddSetsPersisted(1, Session, @event);
         }
       }
+    }
+
+    private void CreateInitialisedDatabaseFolder() {
+      var initialisedDatabaseParentFolder =
+        new DirectoryInfo(InitialisedDatabaseParentFolderPath);
+      Assert.IsTrue(initialisedDatabaseParentFolder.Exists, 
+        $"Cannot find initialised database parent folder '{InitialisedDatabaseParentFolderPath}'.");
+      var initialisedDatabaseFolder = new DirectoryInfo(
+        Path.Combine(InitialisedDatabaseParentFolderPath, "Initialised Database"));
+      if (initialisedDatabaseFolder.Exists) {
+        initialisedDatabaseFolder.Delete(true);
+      }
+      initialisedDatabaseFolder.Create();
+      var sourceSystemFile1 = new FileInfo(
+        Path.Combine(Session.DatabaseFolderPath, "1.odb"));
+      var sourceSystemFile2 = new FileInfo(
+        Path.Combine(Session.DatabaseFolderPath, "2.odb"));
+      var destinationSystemFile1 = new FileInfo(
+        Path.Combine(initialisedDatabaseFolder.FullName, "1.odb"));
+      var destinationSystemFile2 = new FileInfo(
+        Path.Combine(initialisedDatabaseFolder.FullName, "2.odb"));
+      sourceSystemFile1.CopyTo(destinationSystemFile1.FullName);
+      sourceSystemFile2.CopyTo(destinationSystemFile2.FullName);
+      string schemaDatabaseFileName =
+        Session.DatabaseNumberOf(typeof(Schema)) + ".odb";
+      var sourceSchemaDatabaseFile = new FileInfo(
+        Path.Combine(Session.DatabaseFolderPath, schemaDatabaseFileName));
+      var destinationSchemaDatabaseFile = new FileInfo(
+        Path.Combine(initialisedDatabaseFolder.FullName, schemaDatabaseFileName));
+      sourceSchemaDatabaseFile.CopyTo(destinationSchemaDatabaseFile.FullName);
+      Console.WriteLine(
+        $"Created initialised database folder '{initialisedDatabaseFolder.FullName}'.");
+    }
+
+    private void RemoveLicenceFileFromDatabase() {
+      File.Delete(Path.Combine(Session.DatabaseFolderPath, "4.odb"));
+      Console.WriteLine("Removed licence file from database.");
     }
   }
 }

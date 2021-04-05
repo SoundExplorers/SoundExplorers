@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using VelocityDb;
+using VelocityDb.Collection.BTree;
 using VelocityDb.Session;
 
 namespace SoundExplorers.Data {
@@ -98,19 +99,32 @@ namespace SoundExplorers.Data {
     protected virtual IEnumerable<Type> CreatePersistableTypes() {
       var list = new List<Type> {
         typeof(Act),
+        typeof(BTreeSet<Act>),
         typeof(Artist),
+        typeof(BTreeSet<Artist>),
         typeof(Credit),
+        typeof(BTreeSet<Credit>),
         typeof(Event),
+        typeof(BTreeSet<Event>),
         typeof(EventType),
+        typeof(BTreeSet<EventType>),
         typeof(Genre),
+        typeof(BTreeSet<Genre>),
         typeof(Location),
+        typeof(BTreeSet<Location>),
         typeof(Newsletter),
+        typeof(BTreeSet<Newsletter>),
         typeof(Series),
+        typeof(BTreeSet<Series>),
         typeof(Piece),
+        typeof(BTreeSet<Piece>),
         typeof(Role),
+        typeof(BTreeSet<Role>),
         typeof(Schema),
         typeof(Set),
-        typeof(UserOption)
+        typeof(BTreeSet<Set>),
+        typeof(UserOption),
+        typeof(BTreeSet<UserOption>)
       };
       return list.ToArray();
     }

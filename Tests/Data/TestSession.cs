@@ -20,12 +20,15 @@ namespace SoundExplorers.Tests.Data {
     }
 
     public TestSession(string databaseFolderPath) : base(databaseFolderPath) { }
-    private string DatabaseFolderPath => SystemDirectory;
+    internal string DatabaseFolderPath => SystemDirectory;
 
     public static void CopyLicenceToDatabaseFolder(string databaseFolderPath) {
       File.Copy(
-        VelocityDbLicenceFilePath,
-        databaseFolderPath + @"\4.odb");
+        VelocityDbLicenceFilePath, 
+        Path.Combine(databaseFolderPath, "4.odb"));
+      // File.Copy(
+      //   VelocityDbLicenceFilePath,
+      //   databaseFolderPath + @"\4.odb");
     }
 
     public static string CreateDatabaseFolder() {
@@ -35,10 +38,6 @@ namespace SoundExplorers.Tests.Data {
       return databaseFolderPath;
     }
 
-    public void DeleteDatabaseFolderIfExists() {
-      DeleteFolderIfExists(DatabaseFolderPath);
-    }
-
     public static void DeleteFolderIfExists(string folderPath) {
       if (Directory.Exists(folderPath)) {
         foreach (string filePath in Directory.GetFiles(folderPath)) {
@@ -46,6 +45,10 @@ namespace SoundExplorers.Tests.Data {
         }
         Directory.Delete(folderPath);
       }
+    }
+
+    public void DeleteDatabaseFolderIfExists() {
+      DeleteFolderIfExists(DatabaseFolderPath);
     }
 
     private static string GenerateDatabaseFolderPath() {

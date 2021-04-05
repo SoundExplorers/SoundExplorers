@@ -41,6 +41,7 @@ namespace SoundExplorers.Tests.Data {
 
     public DateTime FirstNewsletterDate { get; }
     public DateTime LastEventDate { get; private set; }
+    public Schema Schema { get; private set; } = null!;
     public IList<Act> Acts { get; }
     public IList<Artist> Artists { get; }
     public IList<Credit> Credits { get; }
@@ -262,6 +263,13 @@ namespace SoundExplorers.Tests.Data {
         Roles.Add(role);
       }
       Roles.Sort();
+    }
+
+    public void AddSchemaPersisted(int version, SessionBase session) {
+      Schema = new Schema {
+        Version = version
+      };
+      session.Persist(Schema);
     }
 
     public void AddSeriesPersisted(SessionBase session) {
