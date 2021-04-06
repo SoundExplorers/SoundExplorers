@@ -18,14 +18,15 @@ AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
-DefaultDirName=C:\Program Files\{#MyAppName}
+DefaultDirName={commonpf64}\Sound Explorers\Audio Archive
+;DefaultDirName={commonpf64}\{#MyAppName}
 DisableProgramGroupPage=yes
-LicenseFile=E:\Simon\OneDrive\Documents\Visual Studio Projects\SoundExplorers\SoundExplorers\bin\X64\Release\net5.0-windows\Licence.txt
+LicenseFile=..\SoundExplorers\bin\X64\Release\net5.0-windows\Licence.txt
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
 ;PrivilegesRequired=lowest
-OutputDir=E:\Simon\OneDrive\Documents\Visual Studio Projects\SoundExplorers\Installer
+OutputDir=.\
 OutputBaseFilename=SoundExplorers {#MyAppVersion}
-SetupIconFile=E:\Simon\OneDrive\Documents\Visual Studio Projects\SoundExplorers\SoundExplorers\Kettle Drum (multi-size).ico
+SetupIconFile=..\SoundExplorers\Kettle Drum (multi-size).ico
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
@@ -37,8 +38,10 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}";
 
 [Files]
-Source: "E:\Simon\OneDrive\Documents\Visual Studio Projects\SoundExplorers\SoundExplorers\bin\X64\Release\net5.0-windows\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
-Source: "E:\Simon\OneDrive\Documents\Visual Studio Projects\SoundExplorers\SoundExplorers\bin\X64\Release\net5.0-windows\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\SoundExplorers\bin\X64\Release\net5.0-windows\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\SoundExplorers\bin\X64\Release\net5.0-windows\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "Data\DatabaseConfig.xml"; DestDir: "{app}"; Flags: onlyifdoesntexist
+Source: "Data\Initialised Database\*"; DestDir: "{app}\Initialised Database"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
