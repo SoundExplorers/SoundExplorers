@@ -61,8 +61,7 @@ namespace SoundExplorers.Tests.Utilities {
         Path.Combine(GetInstallerDataFolderPath(), "Initialised Database");
       InitialiseDatabase(initialisedDatabaseFolderPath);
       // The transaction system database file is not required for an initialised database
-      // that is to be given to end users. And I think it may cause problems. So delete
-      // it.
+      // that is to be given to end users. So delete it.
       File.Delete(Path.Combine(initialisedDatabaseFolderPath, "0.odb"));
       Console.WriteLine(
         $"Generated initialised database folder '{initialisedDatabaseFolderPath}'.");
@@ -116,13 +115,6 @@ namespace SoundExplorers.Tests.Utilities {
     ///   which an initialised database folder, suitable for first use by end users, will
     ///   be copied.
     /// </summary>
-    /// <remarks>
-    ///   The initialised database folder will including only the two system database
-    ///   files that contain the schema objects and DatabaseLocation objects
-    ///   respectively. The installer will include a copy of the initialised database
-    ///   folder. <see cref="DatabaseConnection.Open" /> will copy these system files to
-    ///   the end user's database folder if it is found to be empty.
-    /// </remarks>
     private static string GetInstallerDataFolderPath() {
       string testBinFolderPath = Global.GetApplicationFolderPath();
       string solutionFolderPath = testBinFolderPath.Substring(0,
