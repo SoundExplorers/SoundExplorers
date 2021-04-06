@@ -75,7 +75,9 @@ namespace SoundExplorers.Model {
 
     [ExcludeFromCodeCoverage]
     public static string GetApplicationFolderPath() {
-      return Path.GetDirectoryName(Assembly.GetEntryAssembly()?.Location)!;
+      return AppDomain.CurrentDomain.SetupInformation.ApplicationBase!;
+      // Does not work in NUnit tests.
+      // return Path.GetDirectoryName(Assembly.GetEntryAssembly()?.Location)!;
     }
 
     [ExcludeFromCodeCoverage]

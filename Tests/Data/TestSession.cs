@@ -40,10 +40,7 @@ namespace SoundExplorers.Tests.Data {
 
     public static void DeleteFolderIfExists(string folderPath) {
       if (Directory.Exists(folderPath)) {
-        foreach (string filePath in Directory.GetFiles(folderPath)) {
-          File.Delete(filePath);
-        }
-        Directory.Delete(folderPath);
+        Directory.Delete(folderPath, true);
       }
     }
 

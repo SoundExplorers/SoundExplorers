@@ -22,8 +22,10 @@ namespace SoundExplorers.Model {
     internal const string DefaultDatabaseFolderPath =
       @"E:\Simon\OneDrive\Documents\Software\Sound Explorers Audio Archive\Database";
 
-    internal const string InsertDatabaseFolderPathHereMessage =
+    internal const string InsertDatabaseFolderPathHere =
       "Insert database folder path here";
+
+    private const string ForDeveloperUseOnly = "For developer use only";
 
     private readonly string? _configFilePath;
     private XElement Data { get; set; } = null!;
@@ -34,7 +36,14 @@ namespace SoundExplorers.Model {
     public string VelocityDbLicenceFilePath { get; protected init; } = null!;
 
     internal bool HasDatabaseFolderPathBeenSpecified =>
-      DatabaseFolderPath != InsertDatabaseFolderPathHereMessage;
+      DatabaseFolderPath != InsertDatabaseFolderPathHere && 
+      !string.IsNullOrWhiteSpace(DatabaseFolderPath);
+
+#if DEBUG
+    internal bool HasLicenceFilePathBeenSpecified =>
+      VelocityDbLicenceFilePath != ForDeveloperUseOnly && 
+      !string.IsNullOrWhiteSpace(VelocityDbLicenceFilePath);
+#endif
 
     /// <summary>
     ///   Gets or sets the path of the database configuration file.
@@ -43,14 +52,24 @@ namespace SoundExplorers.Model {
     public string ConfigFilePath {
       get => _configFilePath ??
              Path.Combine(Global.GetApplicationFolderPath(), "DatabaseConfig.xml");
-             // Global.GetApplicationFolderPath() +
-             // Path.DirectorySeparatorChar + "DatabaseConfig.xml";
       protected init => _configFilePath = value;
     }
 
     [Description(@"Database folder path. Example: C:\Folder\Subfolder")]
     public string DatabaseFolderPath { get; protected set; } = null!;
 
+    /// <summary>
+    ///   Loads the data from the config file, if it already exists in the application
+    ///   folder. Otherwise creates a new one and throws an exception that will be
+    ///   handled to prompt the user to edit the file to specify the database folder
+    ///   path.
+    /// </summary>
+    /// <remarks>
+    ///   Creating a new config file will not work in production, unless the user
+    ///   happened to have run the program as administrator. So instead the installer
+    ///   needs to place a new config file into the application folder unless there is
+    ///   one there already.
+    /// </remarks>
     public void Load() {
       if (File.Exists(ConfigFilePath)) {
         Data = LoadData();
@@ -136,7 +155,7 @@ namespace SoundExplorers.Model {
 #if DEBUG
       return DefaultDatabaseFolderPath;
 #else // Release build
-      return InsertDatabaseFolderPathHereMessage;
+      return InsertDatabaseFolderPathHere;
 #endif
     }
 
@@ -165,7 +184,7 @@ namespace SoundExplorers.Model {
 
     private void WritePropertiesToXml() {
       WriteCommentedElement(nameof(DatabaseFolderPath), DatabaseFolderPath);
-      WriteCommentedElement(nameof(VelocityDbLicenceFilePath), "For developer use only");
+      WriteCommentedElement(nameof(VelocityDbLicenceFilePath), ForDeveloperUseOnly);
     }
 
     private void WriteCommentedElement(string name, string value) {

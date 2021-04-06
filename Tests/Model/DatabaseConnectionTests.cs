@@ -93,7 +93,7 @@ namespace SoundExplorers.Tests.Model {
     [Test]
     public void SimulateReleaseBuild() {
       Connection = new TestDatabaseConnection(ConfigFilePath,
-        DatabaseConfig.InsertDatabaseFolderPathHereMessage);
+        DatabaseConfig.InsertDatabaseFolderPathHere);
       // Neither the configuration file nor the database folder exist.
       var exception = Assert.Catch<ApplicationException>(
         () => Connection.Open(),

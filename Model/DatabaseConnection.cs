@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
@@ -10,24 +9,33 @@ namespace SoundExplorers.Model {
   public class DatabaseConnection : IOpen {
     private DatabaseConfig DatabaseConfig { get; set; } = null!;
     public int ExpectedVersion { get; protected init; } = 1;
-    // private string? LicenceFileCopyPath { get; set; }
 
     public void Open() {
       DatabaseConfig = CreateDatabaseConfig();
       DatabaseConfig.Load();
       CheckDatabaseFolderExists();
+      // For a database that is used by end users, run
+      // DatabaseGenerator.GenerateInitialisedDatabase to create the required initialised
+      // system database files, which will be copied by the installer into the
+      // application folder.
       CopySystemDatabaseFilesToDatabaseFolderIfRequired();
       Schema schema;
       var session = new SessionNoServer(DatabaseConfig.DatabaseFolderPath);
       session.BeginUpdate();
       try {
-        foreach (var databaseLocation in session.DatabaseLocations) {
-          Debug.WriteLine(databaseLocation.DirectoryPath);
-        }
+        // foreach (var databaseLocation in session.DatabaseLocations) {
+        //   Debug.WriteLine(databaseLocation.DirectoryPath);
+        // }
         schema = Schema.Find(QueryHelper.Instance, session) ?? new Schema();
         if (schema.Version < ExpectedVersion) {
+          // In the release build, assume that the schema system database file that was
+          // copied to the empty database folder already contains the persistable type
+          // registrations that will allow the database to be accessed without a licence
+          // file.
+#if DEBUG
           CopyLicenceToDatabaseFolderIfAbsent();
           schema.RegisterPersistableTypes(session);
+#endif
           schema.Version = ExpectedVersion;
         }
         if (!schema.IsPersistent) {
@@ -62,6 +70,7 @@ namespace SoundExplorers.Model {
       }
     }
 
+#if DEBUG
     private void CheckLicenceFileExists() {
       if (!File.Exists(DatabaseConfig.VelocityDbLicenceFilePath)) {
         throw new ApplicationException(
@@ -84,11 +93,8 @@ namespace SoundExplorers.Model {
     }
 
     private void CopyLicenceToDatabaseFolderIfAbsent() {
-      // LicenceFileCopyPath = Path.Combine(
       string licenceFileCopyPath = Path.Combine(
         DatabaseConfig.DatabaseFolderPath, "4.odb");
-      // string destinationPath = 
-      //   $"{DatabaseConfig.DatabaseFolderPath}{Path.DirectorySeparatorChar}4.odb";
       if (File.Exists(licenceFileCopyPath)) {
         return;
       }
@@ -97,18 +103,19 @@ namespace SoundExplorers.Model {
         DatabaseConfig.VelocityDbLicenceFilePath, 
         licenceFileCopyPath);
     }
+#endif
 
     [ExcludeFromCodeCoverage]
     private void CopySystemDatabaseFilesToDatabaseFolderIfRequired() {
       bool isDatabaseFolderEmpty =
         !Directory.GetFiles(DatabaseConfig.DatabaseFolderPath).Any();
       if (isDatabaseFolderEmpty) {
-        var systemDatabaseFilesFolder = new DirectoryInfo(
+        var initialisedDatabaseFolder = new DirectoryInfo(
           Path.Combine(Global.GetApplicationFolderPath(), "Initialised Database"));
-        if (systemDatabaseFilesFolder.Exists) {
-          foreach (FileInfo sourceFile in systemDatabaseFilesFolder.GetFiles()) {
+        if (initialisedDatabaseFolder.Exists) {
+          foreach (FileInfo sourceFile in initialisedDatabaseFolder.GetFiles()) {
             string destinationPath = sourceFile.FullName.Replace(
-              systemDatabaseFilesFolder.FullName,
+              initialisedDatabaseFolder.FullName,
               DatabaseConfig.DatabaseFolderPath);
             sourceFile.CopyTo(destinationPath);
           }
