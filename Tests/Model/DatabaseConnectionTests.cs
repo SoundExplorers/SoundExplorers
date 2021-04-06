@@ -13,13 +13,8 @@ namespace SoundExplorers.Tests.Model {
     public void Setup() {
       ConfigFilePath = Path.Combine(
         TestSession.DatabaseParentFolderPath, "DatabaseConfig.xml");
-      // ConfigFilePath = TestSession.DatabaseParentFolderPath +
-      //                  Path.DirectorySeparatorChar + "DatabaseConfig.xml";
       DatabaseFolderPath = Path.Combine(
         TestSession.DatabaseParentFolderPath, "Connection Test Database"); 
-      // DatabaseFolderPath = TestSession.DatabaseParentFolderPath +
-      //                      Path.DirectorySeparatorChar +
-      //                      "Connection Test Database";
       TearDown(); // Delete the config file and database folder if they exist.
       Connection = new TestDatabaseConnection(ConfigFilePath, DatabaseFolderPath);
     }
@@ -54,13 +49,22 @@ namespace SoundExplorers.Tests.Model {
         exception.Message.StartsWith("Database folder '"),
         "Missing database folder message");
       Directory.CreateDirectory(DatabaseFolderPath);
+#if DEBUG
       exception = Assert.Catch<ApplicationException>(
         () => Connection.Open(),
-        "Open should have thrown ApplicationException for missing licence file.");
+        "Open should have thrown ApplicationException for unspecified licence file.");
+      Assert.IsTrue(
+        exception.Message.StartsWith("Please specify the path "),
+        "Unspecified licence file message");
+      UpdateVelocityDbLicenceFilePath(false);
+      exception = Assert.Catch<ApplicationException>(
+        () => Connection.Open(),
+        "Open should have thrown ApplicationException for non-existent licence file.");
       Assert.IsTrue(
         exception.Message.StartsWith("VelocityDB licence file '"),
-        "Missing licence file message");
-      UpdateVelocityDbLicenceFilePath();
+        "Non-existent licence file message");
+      UpdateVelocityDbLicenceFilePath(true);
+#endif
       Connection.Open();
       Assert.AreEqual(DatabaseFolderPath.ToLower(), Global.Session.SystemDirectory,
         "SystemDirectory");
@@ -139,15 +143,25 @@ namespace SoundExplorers.Tests.Model {
       session.Commit();
     }
 
-    private void UpdateVelocityDbLicenceFilePath() {
+#if DEBUG
+    private void UpdateVelocityDbLicenceFilePath(bool withRealPath) {
+      const string nonExistentPath = @"w:\xyz.xml";
       string configText;
       using (var reader = new StreamReader(ConfigFilePath)) {
         configText = reader.ReadToEnd();
       }
       using (var writer = new StreamWriter(ConfigFilePath)) {
-        writer.Write(configText.Replace("For developer use only",
-          TestSession.VelocityDbLicenceFilePath));
+        // For this to work, the method needs to be called first with withRealPath false
+        // and then with withRealPath true;
+        if (withRealPath) {
+          writer.Write(configText.Replace(nonExistentPath,
+            TestSession.VelocityDbLicenceFilePath));
+        } else {
+          writer.Write(configText.Replace("For developer use only",
+            nonExistentPath));
+        }
       }
     }
+#endif
   }
 }

@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--Database configuration parameters-->
+<DatabaseConfig>
+  <!--Database folder path. Example: C:\Folder\Subfolder-->
+  <DatabaseFolderPath>Insert database folder path here</DatabaseFolderPath>
+  <!--Path of the licence file for the VelocityDB object-oriented database management system.-->
+  <VelocityDbLicenceFilePath>For developer use only</VelocityDbLicenceFilePath>
+</DatabaseConfig>

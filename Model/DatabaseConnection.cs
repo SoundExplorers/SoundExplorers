@@ -72,6 +72,11 @@ namespace SoundExplorers.Model {
 
 #if DEBUG
     private void CheckLicenceFileExists() {
+      if (!DatabaseConfig.HasLicenceFilePathBeenSpecified) {
+        throw new ApplicationException(
+          "Please specify the path of the VelocityDB licence file in " 
+          + $"database configuration file '{DatabaseConfig.ConfigFilePath}'.");
+      }
       if (!File.Exists(DatabaseConfig.VelocityDbLicenceFilePath)) {
         throw new ApplicationException(
           $"VelocityDB licence file '{DatabaseConfig.VelocityDbLicenceFilePath}' "
