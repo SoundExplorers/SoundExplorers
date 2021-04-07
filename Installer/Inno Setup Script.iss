@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Sound Explorers Audio Archive"
-#define MyAppVersion "2021.1.0"
+#define MyAppVersion "1.0.0"
 #define MyAppPublisher "Sound and Light Exploration Society"
 #define MyAppURL "https://sourceforge.net/projects/sound-explorers-audio-archive/"
 #define MyAppExeName "SoundExplorers.exe"
