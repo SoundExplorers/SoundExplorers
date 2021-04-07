@@ -10,7 +10,12 @@ using VelocityDb.Session;
 namespace SoundExplorers.Tests.Utilities {
   [ExcludeFromCodeCoverage]
   public class DatabaseGenerator {
+    /// <summary>
+    ///   Gets the path of the initialised database folder that is to be a source for the
+    ///   installer. 
+    /// </summary>
     public string? InitialisedDatabaseFolderPath { get; private set; }
+    
     private TestData Data { get; set; } = null!;
     private TestSession Session { get; set; } = null!;
 
@@ -33,6 +38,9 @@ namespace SoundExplorers.Tests.Utilities {
 
     public void GenerateTestDatabase(int eventCount, int startYear, 
       bool keepLicenceFile) {
+      Console.WriteLine(
+        "Generating test database in folder " + 
+        $"'{DatabaseConfig.DefaultDatabaseFolderPath}'.");
       InitialiseDatabase(DatabaseConfig.DefaultDatabaseFolderPath, keepLicenceFile);
       Data = new TestData(new QueryHelper(), startYear);
       Session.BeginUpdate();
@@ -139,8 +147,6 @@ namespace SoundExplorers.Tests.Utilities {
       // VelocityDB licence file.
       Schema.Instance.RegisterPersistableTypes(Session);
       Session.Commit();
-      Data = new TestData(new QueryHelper());
-      Session.BeginUpdate();
       // Not documented in the VelocityDB manual, in order for the database to be used 
       // without a licence file, we also need to first add one of each entity type,
       // which we can and will delete after removing the licence file from the database.
@@ -148,6 +154,8 @@ namespace SoundExplorers.Tests.Utilities {
       // did not have to do this before Indexes were introduced, and (b) it is still not
       // necessary to do it for Schema, the one persistable type that does not use
       // Indexes. There has to be a better way.
+      Data = new TestData(new QueryHelper());
+      Session.BeginUpdate();
       AddOneOfEachEntityTypePersisted(Data, Session);
       Session.Commit();
       if (!keepLicenceFile) {

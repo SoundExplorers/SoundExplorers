@@ -10,15 +10,25 @@ namespace SoundExplorers.Model {
     private DatabaseConfig DatabaseConfig { get; set; } = null!;
     public int ExpectedVersion { get; protected init; } = 1;
 
+    [ExcludeFromCodeCoverage]
+    public static void InitialiseDatabase(
+      string sourceFolderPath, string destinationFolderPath) {
+      CopySystemDatabaseFilesToDatabaseFolder(sourceFolderPath, destinationFolderPath);
+      var session = new SessionNoServer(destinationFolderPath);
+      session.RelocateDefaultDatabaseLocation();
+      session.BeginUpdate();
+      // Because we copied across the schema database file from the initialised
+      // database, we have to explicitly change its location.
+      session.RelocateDatabaseLocationFor(
+        1, SessionBase.LocalHost, destinationFolderPath);
+      session.Commit();
+    }
+
     public void Open() {
       DatabaseConfig = CreateDatabaseConfig();
       DatabaseConfig.Load();
       CheckDatabaseFolderExists();
-      // For a database that is used by end users, run
-      // DatabaseGenerator.GenerateInitialisedDatabase to create the required initialised
-      // system database files, which will be copied by the installer into the
-      // application folder.
-      CopySystemDatabaseFilesToDatabaseFolderIfRequired();
+      InitialiseDatabase();
       Schema schema;
       var session = new SessionNoServer(DatabaseConfig.DatabaseFolderPath);
       session.BeginUpdate();
@@ -53,6 +63,18 @@ namespace SoundExplorers.Model {
       return new DatabaseConfig();
     }
 
+    [ExcludeFromCodeCoverage]
+    private static void CopySystemDatabaseFilesToDatabaseFolder(
+      string sourceFolderPath, string destinationFolderPath) {
+      var sourceFolder = new DirectoryInfo(sourceFolderPath);
+      foreach (FileInfo sourceFile in sourceFolder.GetFiles()) {
+        string destinationPath = sourceFile.FullName.Replace(
+          sourceFolder.FullName,
+          destinationFolderPath);
+        sourceFile.CopyTo(destinationPath);
+      }
+    }
+
     private void CheckDatabaseFolderExists() {
       CheckDatabaseFolderPathHasBeenSpecified();
       if (!Directory.Exists(DatabaseConfig.DatabaseFolderPath)) {
@@ -74,7 +96,7 @@ namespace SoundExplorers.Model {
     private void CheckLicenceFileExists() {
       if (!DatabaseConfig.HasLicenceFilePathBeenSpecified) {
         throw new ApplicationException(
-          "Please specify the path of the VelocityDB licence file in " 
+          "Please specify the path of the VelocityDB licence file in "
           + $"database configuration file '{DatabaseConfig.ConfigFilePath}'.");
       }
       if (!File.Exists(DatabaseConfig.VelocityDbLicenceFilePath)) {
@@ -105,27 +127,54 @@ namespace SoundExplorers.Model {
       }
       CheckLicenceFileExists();
       CopyLicenceFile(
-        DatabaseConfig.VelocityDbLicenceFilePath, 
+        DatabaseConfig.VelocityDbLicenceFilePath,
         licenceFileCopyPath);
     }
 #endif
 
+    /// <summary>
+    ///   If the database folder is empty and the required initialised system database
+    ///   files are available to copy into it, initialises the database with a predefined
+    ///   schema that will allow the database to be used without a VelocityDB licence
+    ///   file. This needs to be done if the database is to be updated by end users. If
+    ///   the database folder is not empty, ensures that the database locations system
+    ///   database file knows that the all the database files are in the current database
+    ///   folder, in case this is a copy of a database created in another folder, which
+    ///   may have been on another computer.
+    /// </summary>
+    /// <remarks>
+    ///   To create the initialised system database files, first run
+    ///   UtilityRunners.GenerateInitialisedDatabase, then rebuild the installer, which
+    ///   will copy the files into a 'Initialised Database' subfolder of the application
+    /// folder.
+    /// </remarks>
     [ExcludeFromCodeCoverage]
-    private void CopySystemDatabaseFilesToDatabaseFolderIfRequired() {
+    private void InitialiseDatabase() {
       bool isDatabaseFolderEmpty =
         !Directory.GetFiles(DatabaseConfig.DatabaseFolderPath).Any();
       if (isDatabaseFolderEmpty) {
-        var initialisedDatabaseFolder = new DirectoryInfo(
-          Path.Combine(Global.GetApplicationFolderPath(), "Initialised Database"));
-        if (initialisedDatabaseFolder.Exists) {
-          foreach (FileInfo sourceFile in initialisedDatabaseFolder.GetFiles()) {
-            string destinationPath = sourceFile.FullName.Replace(
-              initialisedDatabaseFolder.FullName,
-              DatabaseConfig.DatabaseFolderPath);
-            sourceFile.CopyTo(destinationPath);
-          }
+        string initialisedDatabaseFolderPath = 
+          Path.Combine(Global.GetApplicationFolderPath(), "Initialised Database");
+        if (Directory.Exists(initialisedDatabaseFolderPath)) {
+          InitialiseDatabase(initialisedDatabaseFolderPath,
+            DatabaseConfig.DatabaseFolderPath);
         }
+      } else { // The database folder already contains files
+        LocaliseDatabase();
       }
+    }
+
+    [ExcludeFromCodeCoverage]
+    private void LocaliseDatabase() {
+      var session = new SessionNoServer(DatabaseConfig.DatabaseFolderPath);
+      session.RelocateDefaultDatabaseLocation();
+      session.BeginUpdate();
+      foreach (var database in session.Databases) {
+        session.RelocateDatabaseLocationFor(
+          database.DatabaseNumber, SessionBase.LocalHost, 
+          DatabaseConfig.DatabaseFolderPath);
+      }
+      session.Commit();
     }
   }
 }
