@@ -8,8 +8,13 @@ namespace SoundExplorers.View {
       TextBox.MouseDown += TextBox_MouseDown;
     }
 
-    private bool CanCutOrDelete => !TextBox.ReadOnly && TextBox.SelectedText.Length > 0;
+    private bool CanCut => !TextBox.ReadOnly && TextBox.SelectedText.Length > 0;
     private bool CanCopy => TextBox.SelectedText.Length > 0;
+
+    private bool CanDelete => 
+      !TextBox.ReadOnly && 
+      (TextBox.SelectedText.Length > 0 || TextBox.SelectionStart < TextBox.Text.Length);
+
     private bool CanPaste => !TextBox.ReadOnly && Clipboard.ContainsText();
     private bool CanSelectAll => TextBox.Text.Length > 0;
     private TextBox TextBox { get; }
@@ -35,7 +40,8 @@ namespace SoundExplorers.View {
     protected override void OnOpening(CancelEventArgs e) {
       base.OnOpening(e);
       UndoMenuItem.Enabled = TextBox.CanUndo;
-      CutMenuItem.Enabled = DeleteMenuItem.Enabled = CanCutOrDelete;
+      CutMenuItem.Enabled = CanCut;
+      DeleteMenuItem.Enabled = CanDelete;
       CopyMenuItem.Enabled = CanCopy;
       PasteMenuItem.Enabled = CanPaste;
       SelectAllMenuItem.Enabled = CanSelectAll;
@@ -48,7 +54,7 @@ namespace SoundExplorers.View {
     }
 
     public override void Cut() {
-      if (CanCutOrDelete) {
+      if (CanCut) {
         TextBox.Cut();
       }
     }
@@ -66,10 +72,12 @@ namespace SoundExplorers.View {
     }
 
     public override void Delete() {
-      if (CanCutOrDelete) {
+      if (CanDelete) {
         int selectionStart = TextBox.SelectionStart;
         int selectionLength = TextBox.SelectionLength;
-        TextBox.Text = TextBox.Text.Remove(selectionStart, selectionLength);
+        TextBox.Text = TextBox.Text.Remove(
+          selectionStart, 
+          selectionLength > 0 ? selectionLength : 1);
         TextBox.SelectionStart = selectionStart;
       }
     }
