@@ -77,8 +77,6 @@ namespace SoundExplorers.Data {
     /// </summary>
     public Type EntityType { get; }
 
-    public bool IsTopLevel => Parents.Count == 0;
-
     internal QueryHelper QueryHelper {
       get => _queryHelper ??= QueryHelper.Instance;
       set => _queryHelper = value;
@@ -115,6 +113,7 @@ namespace SoundExplorers.Data {
 
     private Type? IdentifyingParentType { get; }
     private bool IsAddingToOrRemovingFromIdentifyingParent { get; set; }
+    private bool IsTopLevel => Parents.Count == 0;
 
     private IDictionary<Type, IRelationInfo> ParentRelations {
       get {

@@ -9,6 +9,7 @@ namespace SoundExplorers.Tests.Model {
       ExpectedVersion = 66;
     }
 
+    internal new DatabaseConfig DatabaseConfig => base.DatabaseConfig; 
     private string ConfigFilePath { get; }
     private string DatabaseFolderPath { get; }
 

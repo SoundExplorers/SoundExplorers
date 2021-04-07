@@ -7,8 +7,8 @@ using VelocityDb.Session;
 
 namespace SoundExplorers.Model {
   public class DatabaseConnection : IOpen {
-    private DatabaseConfig DatabaseConfig { get; set; } = null!;
     public int ExpectedVersion { get; protected init; } = 1;
+    protected DatabaseConfig DatabaseConfig { get; private set; } = null!;
 
     [ExcludeFromCodeCoverage]
     public static void InitialiseDatabase(

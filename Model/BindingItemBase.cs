@@ -130,7 +130,7 @@ namespace SoundExplorers.Model {
     ///   database.
     /// </remarks>
     internal virtual void ValidateInsertion() {
-      CheckForDuplicateKey();
+      CheckForDuplicateKey( 0);
       foreach (var column in EntityList.Columns.Where(column =>
         column.ReferencesAnotherEntity)) {
         CheckForReferencedEntityNotFound(column);
@@ -154,7 +154,7 @@ namespace SoundExplorers.Model {
       string propertyName, TEntity entity) {
       var column = EntityList.Columns[propertyName];
       if (column.IsInKey) {
-        CheckForDuplicateKey();
+        CheckForDuplicateKey(entity.Id);
       }
       if (column.ReferencesAnotherEntity) {
         CheckForReferencedEntityNotFound(column);
@@ -263,13 +263,13 @@ namespace SoundExplorers.Model {
     ///   general error message generated here is fine as it is. So I don't think it is
     ///   worth the hassle of making that change.
     /// </remarks>
-    private void CheckForDuplicateKey() {
+    private void CheckForDuplicateKey(ulong id) {
       Key = CreateKey();
       // Entity list could be a sorted list. Duplicate check might be faster. But it
       // would be a big job to do and I don't think there will be a performance problem.
-      if ((from otherEntity in EntityList
-        where otherEntity.Key == Key
-        select otherEntity).Any()) {
+      if ((from entity in EntityList
+        where entity.Key == Key && entity.Id != id
+        select entity).Any()) {
         string message =
           $"Another {EntityList.EntityTypeName} with key '{Key}' already exists.";
         throw new DuplicateNameException(message);

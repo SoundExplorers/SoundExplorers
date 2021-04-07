@@ -84,11 +84,6 @@ namespace SoundExplorers.Data {
 
     public override int GetHashCode() {
       return ToString().GetHashCode();
-      // int hashCode1 = SimpleKey.GetHashCode();
-      // int hashCode2 = IdentifyingParent != null
-      //   ? IdentifyingParent.Key.GetHashCode()
-      //   : 0;
-      // return hashCode1 + hashCode2;
     }
 
     public static bool operator ==(Key? key1, Key? key2) {

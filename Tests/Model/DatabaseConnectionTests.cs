@@ -66,6 +66,9 @@ namespace SoundExplorers.Tests.Model {
       UpdateVelocityDbLicenceFilePath(true);
 #endif
       Connection.Open();
+      Assert.AreEqual("For developer use only",
+        Connection.DatabaseConfig.VelocityDbLicenceFilePath, 
+        "VelocityDbLicenceFilePath");
       Assert.AreEqual(DatabaseFolderPath.ToLower(), Global.Session.SystemDirectory,
         "SystemDirectory");
       Assert.AreEqual(Connection.ExpectedVersion, Schema.Instance.Version, "Version");
