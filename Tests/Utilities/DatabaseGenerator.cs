@@ -5,16 +5,35 @@ using NUnit.Framework;
 using SoundExplorers.Data;
 using SoundExplorers.Model;
 using SoundExplorers.Tests.Data;
+using VelocityDb.Session;
 
 namespace SoundExplorers.Tests.Utilities {
   [ExcludeFromCodeCoverage]
   public class DatabaseGenerator {
+    public string? InitialisedDatabaseFolderPath { get; private set; }
     private TestData Data { get; set; } = null!;
     private TestSession Session { get; set; } = null!;
 
+    public static void AddOneOfEachEntityTypePersisted(
+      TestData data, SessionBase session) {
+      data.AddActsPersisted(1, session);
+      data.AddArtistsPersisted(1, session);
+      data.AddEventTypesPersisted(1, session);
+      data.AddGenresPersisted(1, session);
+      data.AddLocationsPersisted(1, session);
+      data.AddNewslettersPersisted(1, session);
+      data.AddRolesPersisted(1, session);
+      data.AddSeriesPersisted(1, session);
+      data.AddUserOptionsPersisted(1, session);
+      data.AddEventsPersisted(1, session);
+      data.AddSetsPersisted(1, session);
+      data.AddPiecesPersisted(1, session);
+      data.AddCreditsPersisted(1, session);
+    }
+
     public void GenerateTestDatabase(int eventCount, int startYear, 
       bool keepLicenceFile) {
-      InitialiseDatabase(DatabaseConfig.DefaultDatabaseFolderPath);
+      InitialiseDatabase(DatabaseConfig.DefaultDatabaseFolderPath, keepLicenceFile);
       Data = new TestData(new QueryHelper(), startYear);
       Session.BeginUpdate();
       Data.AddActsPersisted(Session);
@@ -41,9 +60,6 @@ namespace SoundExplorers.Tests.Utilities {
         $"{Data.Pieces.Count:#,0} Pieces; {Data.Credits.Count:#,0} Credits.\r\n" +
         $"First Newsletter Date: {Data.FirstNewsletterDate:ddd dd MMM yyyy}\r\n" +
         $"Last Event Date: {Data.LastEventDate:ddd dd MMM yyyy}");
-      if (!keepLicenceFile) {
-        RemoveLicenceFileFromDatabase();
-      }
     }
 
     /// <summary>
@@ -57,15 +73,30 @@ namespace SoundExplorers.Tests.Utilities {
     ///   the end user's database folder if it is found to be empty.
     /// </remarks>
     public void GenerateInitialisedDatabase() {
-      string initialisedDatabaseFolderPath =
+      InitialisedDatabaseFolderPath =
         Path.Combine(GetInstallerDataFolderPath(), "Initialised Database");
-      InitialiseDatabase(initialisedDatabaseFolderPath);
-      // The transaction system database file is not required for an initialised database
-      // that is to be given to end users. So delete it.
-      File.Delete(Path.Combine(initialisedDatabaseFolderPath, "0.odb"));
+      InitialiseDatabase(InitialisedDatabaseFolderPath, false);
+      // // The transaction system database file is not required for an initialised database
+      // // that is to be given to end users. So delete it.
+      // File.Delete(Path.Combine(InitialisedDatabaseFolderPath, "0.odb"));
       Console.WriteLine(
-        $"Generated initialised database folder '{initialisedDatabaseFolderPath}'.");
-      RemoveLicenceFileFromDatabase();
+        $"Generated initialised database folder '{InitialisedDatabaseFolderPath}'.");
+    }
+
+    /// <summary>
+    ///   Gets the path of the Installer\Data subfolder of the solution folder, into
+    ///   which an initialised database folder, suitable for first use by end users, will
+    ///   be copied.
+    /// </summary>
+    private static string GetInstallerDataFolderPath() {
+      string testBinFolderPath = Global.GetApplicationFolderPath();
+      string solutionFolderPath = testBinFolderPath.Substring(0,
+        testBinFolderPath.IndexOf(
+          @"\Tests\", StringComparison.OrdinalIgnoreCase));
+      string result = Path.Combine(solutionFolderPath, @"Installer\Data");
+      Assert.IsTrue(Directory.Exists(result),
+        $"Cannot find installer data folder '{result}'.");
+      return result;
     }
 
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
@@ -98,7 +129,7 @@ namespace SoundExplorers.Tests.Utilities {
       }
     }
 
-    private void InitialiseDatabase(string databaseFolderPath) {
+    private void InitialiseDatabase(string databaseFolderPath, bool keepLicenceFile) {
       TestSession.DeleteFolderIfExists(databaseFolderPath);
       Directory.CreateDirectory(databaseFolderPath);
       TestSession.CopyLicenceToDatabaseFolder(databaseFolderPath);
@@ -108,22 +139,48 @@ namespace SoundExplorers.Tests.Utilities {
       // VelocityDB licence file.
       Schema.Instance.RegisterPersistableTypes(Session);
       Session.Commit();
+      Data = new TestData(new QueryHelper());
+      Session.BeginUpdate();
+      // Not documented in the VelocityDB manual, in order for the database to be used 
+      // without a licence file, we also need to first add one of each entity type,
+      // which we can and will delete after removing the licence file from the database.
+      // I'm fairly sure this has something to do with the VelocityDB Indexes, as (a) we
+      // did not have to do this before Indexes were introduced, and (b) it is still not
+      // necessary to do it for Schema, the one persistable type that does not use
+      // Indexes. There has to be a better way.
+      AddOneOfEachEntityTypePersisted(Data, Session);
+      Session.Commit();
+      if (!keepLicenceFile) {
+        RemoveLicenceFileFromDatabase();
+      }
+      Session.BeginUpdate();
+      DeleteOneOfEachEntityType();
+      Session.Commit();
+      var databaseFolder = new DirectoryInfo(databaseFolderPath);
+      foreach (var file in databaseFolder.GetFiles()) {
+        if (string.Compare(
+          file.Name, "1.odb", StringComparison.OrdinalIgnoreCase) != 0
+          && string.Compare(
+            file.Name, "2.odb", StringComparison.OrdinalIgnoreCase) != 0) {
+          file.Delete();
+        }
+      }
     }
 
-    /// <summary>
-    ///   Gets the path of the Installer\Data subfolder of the solution folder, into
-    ///   which an initialised database folder, suitable for first use by end users, will
-    ///   be copied.
-    /// </summary>
-    private static string GetInstallerDataFolderPath() {
-      string testBinFolderPath = Global.GetApplicationFolderPath();
-      string solutionFolderPath = testBinFolderPath.Substring(0,
-        testBinFolderPath.IndexOf(
-          @"\Tests\", StringComparison.OrdinalIgnoreCase));
-      string result = Path.Combine(solutionFolderPath, @"Installer\Data");
-      Assert.IsTrue(Directory.Exists(result),
-        $"Cannot find installer data folder '{result}'.");
-      return result;
+    private void DeleteOneOfEachEntityType() {
+      Session.Unpersist(Data.Credits[0]);
+      Session.Unpersist(Data.Pieces[0]);
+      Session.Unpersist(Data.Sets[0]);
+      Session.Unpersist(Data.Events[0]);
+      Session.Unpersist(Data.Acts[0]);
+      Session.Unpersist(Data.Artists[0]);
+      Session.Unpersist(Data.EventTypes[0]);
+      Session.Unpersist(Data.Genres[0]);
+      Session.Unpersist(Data.Locations[0]);
+      Session.Unpersist(Data.Newsletters[0]);
+      Session.Unpersist(Data.Roles[0]);
+      Session.Unpersist(Data.Series[0]);
+      Session.Unpersist(Data.UserOptions[0]);
     }
 
     /// <summary>

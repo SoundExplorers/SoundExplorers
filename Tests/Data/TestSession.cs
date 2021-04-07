@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using JetBrains.Annotations;
 using SoundExplorers.Data;
 using VelocityDb.Session;
 
@@ -10,6 +11,7 @@ namespace SoundExplorers.Tests.Data {
     /// <summary>
     ///   TODO Replace hard coded VelocityDbLicenceFilePath value to support multiple developers.
     /// </summary>
+    [PublicAPI]
     public const string VelocityDbLicenceFilePath =
       @"E:\Simon\OneDrive\Documents\My Installers\VelocityDB\License Database\4.odb";
 
@@ -44,12 +46,13 @@ namespace SoundExplorers.Tests.Data {
       }
     }
 
-    public void DeleteDatabaseFolderIfExists() {
-      DeleteFolderIfExists(DatabaseFolderPath);
+    public static string GenerateDatabaseFolderPath() {
+      return Path.Combine(DatabaseParentFolderPath, $"Database{DateTime.Now.Ticks}");
+      // return DatabaseParentFolderPath + "\\Database" + DateTime.Now.Ticks;
     }
 
-    private static string GenerateDatabaseFolderPath() {
-      return DatabaseParentFolderPath + "\\Database" + DateTime.Now.Ticks;
+    public void DeleteDatabaseFolderIfExists() {
+      DeleteFolderIfExists(DatabaseFolderPath);
     }
   }
 }

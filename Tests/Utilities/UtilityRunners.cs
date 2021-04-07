@@ -1,5 +1,10 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using NUnit.Framework;
+using SoundExplorers.Data;
+using SoundExplorers.Tests.Data;
+using VelocityDb.Session;
 
 namespace SoundExplorers.Tests.Utilities {
   /// <remarks>
@@ -20,12 +25,34 @@ namespace SoundExplorers.Tests.Utilities {
 
     [Test]
     public void GenerateData() {
-      DatabaseGenerator.GenerateTestDatabase(112, 2019, false);
+      DatabaseGenerator.GenerateTestDatabase(
+        112, 2019, false);
     }
 
     [Test]
     public void GenerateInitialisedDatabase() {
       DatabaseGenerator.GenerateInitialisedDatabase();
+      var initialisedDatabaseFolder =
+        new DirectoryInfo(DatabaseGenerator.InitialisedDatabaseFolderPath!);
+      var testDatabaseFolder =
+        new DirectoryInfo(TestSession.GenerateDatabaseFolderPath());
+      testDatabaseFolder.Create();
+      try {
+        foreach (var sourceFile in initialisedDatabaseFolder.GetFiles()) {
+          string destinationPath = sourceFile.FullName.Replace(
+            initialisedDatabaseFolder.FullName,
+            testDatabaseFolder.FullName);
+          sourceFile.CopyTo(destinationPath);
+        }
+        var data = new TestData(new QueryHelper());
+        var session = new SessionNoServer(testDatabaseFolder.FullName);
+        session.BeginUpdate();
+        data.AddSchemaPersisted(1, session);
+        DatabaseGenerator.AddOneOfEachEntityTypePersisted(data, session);
+        session.Commit();
+      } finally {
+        testDatabaseFolder.Delete(true);  
+      }
     }
   }
 }
