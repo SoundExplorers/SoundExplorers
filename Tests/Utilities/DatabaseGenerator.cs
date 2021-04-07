@@ -8,14 +8,17 @@ using SoundExplorers.Tests.Data;
 using VelocityDb.Session;
 
 namespace SoundExplorers.Tests.Utilities {
+  /// <summary>
+  ///   A utility for generating an initialised database and/or a test database.
+  /// </summary>
   [ExcludeFromCodeCoverage]
   public class DatabaseGenerator {
     /// <summary>
     ///   Gets the path of the initialised database folder that is to be a source for the
-    ///   installer. 
+    ///   installer.
     /// </summary>
     public string? InitialisedDatabaseFolderPath { get; private set; }
-    
+
     private TestData Data { get; set; } = null!;
     private TestSession Session { get; set; } = null!;
 
@@ -36,10 +39,10 @@ namespace SoundExplorers.Tests.Utilities {
       data.AddCreditsPersisted(1, session);
     }
 
-    public void GenerateTestDatabase(int eventCount, int startYear, 
+    public void GenerateTestDatabase(int eventCount, int startYear,
       bool keepLicenceFile) {
       Console.WriteLine(
-        "Generating test database in folder " + 
+        "Generating test database in folder " +
         $"'{DatabaseConfig.DefaultDatabaseFolderPath}'.");
       InitialiseDatabase(DatabaseConfig.DefaultDatabaseFolderPath, keepLicenceFile);
       Data = new TestData(new QueryHelper(), startYear);
@@ -167,9 +170,9 @@ namespace SoundExplorers.Tests.Utilities {
       var databaseFolder = new DirectoryInfo(databaseFolderPath);
       foreach (var file in databaseFolder.GetFiles()) {
         if (string.Compare(
-          file.Name, "1.odb", StringComparison.OrdinalIgnoreCase) != 0
-          && string.Compare(
-            file.Name, "2.odb", StringComparison.OrdinalIgnoreCase) != 0) {
+              file.Name, "1.odb", StringComparison.OrdinalIgnoreCase) != 0
+            && string.Compare(
+              file.Name, "2.odb", StringComparison.OrdinalIgnoreCase) != 0) {
           file.Delete();
         }
       }
@@ -192,12 +195,12 @@ namespace SoundExplorers.Tests.Utilities {
     }
 
     /// <summary>
-    /// Once the persistable type registration
-    /// (<see cref="Schema.RegisterPersistableTypes" />) has been done (and we are no
-    /// longer in a transaction), the licence file can safely be removed from the
-    /// database, provided no further changes to persistable types are subsequently to be
-    /// made. The licence file should be removed from a database that is to be given to
-    /// end users.
+    ///   Once the persistable type registration
+    ///   (<see cref="Schema.RegisterPersistableTypes" />) has been done (and we are no
+    ///   longer in a transaction), the licence file can safely be removed from the
+    ///   database, provided no further changes to persistable types are subsequently to be
+    ///   made. The licence file should be removed from a database that is to be given to
+    ///   end users.
     /// </summary>
     private void RemoveLicenceFileFromDatabase() {
       File.Delete(Path.Combine(Session.DatabaseFolderPath, "4.odb"));

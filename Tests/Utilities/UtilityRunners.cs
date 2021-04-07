@@ -7,8 +7,12 @@ using SoundExplorers.Tests.Data;
 using VelocityDb.Session;
 
 namespace SoundExplorers.Tests.Utilities {
+  /// <summary>
+  ///   A runner for the utility that generates an initialised database and/or a test
+  ///   database.
+  /// </summary>
   /// <remarks>
-  ///   The <see cref="ExplicitAttribute" /> instructs NUnit to ignored the generator
+  ///   The <see cref="ExplicitAttribute" /> instructs NUnit to ignore the generator
   ///   test(s) unless explicitly selected for running. We don't want to generate the
   ///   main test database, which is used for GUI tests, every time all tests are run.
   /// </remarks>
