@@ -43,6 +43,7 @@ Source: "..\SoundExplorers\bin\X64\Release\net5.0-windows\{#MyAppExeName}"; Dest
 Source: "..\SoundExplorers\bin\X64\Release\net5.0-windows\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "Data\DatabaseConfig.xml"; DestDir: "{app}"; Flags: onlyifdoesntexist
 Source: "Data\Initialised Database\*"; DestDir: "{app}\Initialised Database"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "Data\Documentation\*"; DestDir: "{app}\Documentation"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
