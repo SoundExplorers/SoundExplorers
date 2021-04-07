@@ -388,12 +388,12 @@ namespace SoundExplorers.Model {
         GetReferenceableItemLists();
       }
       // If this is a child list, it is already in the right order, as its data source
-      // consists of the values of a SortedEntityCollection. If this is a list of
-      // top-level entities, the entity class Index will provide the correct order.
-      if (Count > 0) {
-        if (ListRole != ListRole.Child && !this[0].IsTopLevel) {
-          Sort(EntityComparer);
-        }
+      // consists of the values of a SortedEntityCollection. (We still have to sort
+      // top-level entities, as the entity class Index order is case-sensitive, which
+      // would sort simple keys beginning with lower-case letters to the end,
+      // like 'Zebra' before 'aardvark', which is not what we want.)
+      if (Count > 0 && ListRole != ListRole.Child) {
+        Sort(EntityComparer);
       }
       // We need to stay in the update transaction till after the sort. This became a
       // requirement when class Indexes were introduced. It is important for some entity
@@ -445,7 +445,7 @@ namespace SoundExplorers.Model {
 
     [ExcludeFromCodeCoverage]
     protected virtual IComparer<TEntity> CreateEntityComparer() {
-      throw new NotSupportedException();
+      return new TopLevelEntityComparer<TEntity>();
     }
 
     private static BackupItem<TBindingItem> CreateBackupItem(TBindingItem bindingItem) {
