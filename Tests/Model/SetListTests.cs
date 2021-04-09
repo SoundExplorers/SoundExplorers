@@ -272,7 +272,7 @@ namespace SoundExplorers.Tests.Model {
       Assert.AreEqual(set.Event.Date, bindingList[2].Date, "Date");
       Assert.AreEqual(set.Event.Location.Name, bindingList[2].Location, "Location");
       Assert.AreEqual(set.SetNo, int.Parse(bindingList[2].SetNo), "SetNo");
-      Assert.AreEqual(set.Act?.Name, bindingList[2].Act, "Act");
+      Assert.AreEqual(set.Act.Name, bindingList[2].Act, "Act");
       Assert.AreEqual(set.Genre.Name, bindingList[2].Genre, "Genre");
       Assert.AreEqual(set.Notes, bindingList[2].Notes, "Notes");
     }

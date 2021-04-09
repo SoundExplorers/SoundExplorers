@@ -22,7 +22,7 @@ namespace SoundExplorers.Model {
       return Dictionary.Values.ToList();
     }
 
-    public object? GetPropertyValue(string propertyName) {
+    public object GetPropertyValue(string propertyName) {
       return Dictionary[propertyName];
     }
 
