@@ -15,8 +15,8 @@
     <Company>Sound and Light Exploration Society</Company>
     <Product>Sound Explorers Audio Archive</Product>
     <Copyright>Copyright © 2021 Sound and Light Exploration Society</Copyright>
-    <AssemblyVersion>1.0.0</AssemblyVersion>
-    <FileVersion>1.0.0</FileVersion>
+    <AssemblyVersion>1.0.1</AssemblyVersion>
+    <FileVersion>1.0.1</FileVersion>
   </PropertyGroup>
   <ItemGroup>
     <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
