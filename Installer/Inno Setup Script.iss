@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Sound Explorers Audio Archive"
-#define MyAppVersion "1.0.0"
+#define MyAppVersion "1.0.1"
 #define MyAppPublisher "Sound and Light Exploration Society"
 #define MyAppURL "https://sourceforge.net/projects/sound-explorers-audio-archive/"
 #define MyAppExeName "SoundExplorers.exe"
@@ -26,6 +26,7 @@ LicenseFile=..\SoundExplorers\bin\X64\Release\net5.0-windows\Licence.txt
 ;PrivilegesRequired=lowest
 OutputDir=.\
 OutputBaseFilename=SoundExplorers {#MyAppVersion}
+VersionInfoVersion={#MyAppVersion}
 SetupIconFile=..\SoundExplorers\Kettle Drum (multi-size).ico
 Compression=lzma
 SolidCompression=yes
