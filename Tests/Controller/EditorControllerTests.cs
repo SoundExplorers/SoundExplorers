@@ -632,6 +632,21 @@ namespace SoundExplorers.Tests.Controller {
     }
 
     [Test]
+    public void PopulateChildGridWhenOnlyOneParent() {
+      AddDataForSetList(1);
+      CreateControllers(typeof(SetList));
+      Controller.Populate(); // Populate parent Event and child Set grids
+      Assert.AreEqual(1, Controller.ParentList!.Count, "ParentList.Count");
+      // The one and only Event parent's Sets should be in the main grid.
+      Assert.AreEqual(3, Controller.MainList.Count, "MainList.Count");
+      var bindingList =
+        (TypedBindingList<Set, SetBindingItem>)Controller.MainList.BindingList!;
+      Assert.AreEqual(Data.Events[0].Date, bindingList[0].Date, "Set's Date");
+      Assert.AreEqual(Data.Events[0].Location.Name, bindingList[0].Location, 
+        "Set's Location");
+    }
+
+    [Test]
     public void RestoreValueOnUpdateError() {
       AddDataForPieceList();
       CreateControllers(typeof(PieceList));
@@ -688,7 +703,7 @@ namespace SoundExplorers.Tests.Controller {
       Session.Commit();
     }
 
-    private void AddDataForSetList() {
+    private void AddDataForSetList(int eventCount = 2) {
       Session.BeginUpdate();
       Data.AddActsPersisted(1, Session);
       Data.AddSeriesPersisted(1, Session);
@@ -696,9 +711,11 @@ namespace SoundExplorers.Tests.Controller {
       Data.AddGenresPersisted(1, Session);
       Data.AddLocationsPersisted(1, Session);
       Data.AddNewslettersPersisted(1, Session);
-      Data.AddEventsPersisted(2, Session);
+      Data.AddEventsPersisted(eventCount, Session);
       Data.AddSetsPersisted(3, Session, Data.Events[0]);
-      Data.AddSetsPersisted(5, Session, Data.Events[1]);
+      if (eventCount > 1) {
+        Data.AddSetsPersisted(5, Session, Data.Events[1]);
+      }
       Session.Commit();
     }
 

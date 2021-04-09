@@ -63,7 +63,6 @@ namespace SoundExplorers.Controller {
       }
       if (!IsPopulating && rowIndex != PreviousRowIndex) {
         Debug.WriteLine("    Populating main grid");
-        EditorController.View.SetMouseCursorToWait();
         PopulateMainGrid(rowIndex);
       }
       PreviousRowIndex = rowIndex;
@@ -72,6 +71,7 @@ namespace SoundExplorers.Controller {
     private void PopulateMainGrid(int parentRowIndex) {
       Debug.WriteLine(
         $"ParentGridController.PopulateMainGrid: parent row {parentRowIndex}");
+      EditorController.View.SetMouseCursorToWait();
       MainGrid.Controller.SetIdentifyingParentAndChildrenForList(
         GetIdentifyingParentAndChildrenForMainList(parentRowIndex));
       MainGrid.Populate();
@@ -115,6 +115,13 @@ namespace SoundExplorers.Controller {
       // shall assume that, as we are being asked to scroll the last row into view, there
       // must be at least two rows.
       Grid.MakeRowCurrent(List.Count - 2);
+    }
+
+    protected override void OnPopulatedWithJustOneRow() {
+      Debug.WriteLine("ParentGridController.OnPopulatedWithJustOneRow");
+      Debug.WriteLine("    Populating main grid");
+      PopulateMainGrid(0);
+      PreviousRowIndex = 0;
     }
   }
 }

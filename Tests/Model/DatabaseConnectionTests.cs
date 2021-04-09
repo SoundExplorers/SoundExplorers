@@ -57,6 +57,9 @@ namespace SoundExplorers.Tests.Model {
         exception.Message.StartsWith("Please specify the path "),
         "Unspecified licence file message");
       UpdateVelocityDbLicenceFilePath(false);
+      Assert.AreEqual("For developer use only",
+        Connection.DatabaseConfig.VelocityDbLicenceFilePath, 
+        "Unspecified VelocityDbLicenceFilePath");
       exception = Assert.Catch<ApplicationException>(
         () => Connection.Open(),
         "Open should have thrown ApplicationException for non-existent licence file.");
@@ -66,9 +69,15 @@ namespace SoundExplorers.Tests.Model {
       UpdateVelocityDbLicenceFilePath(true);
 #endif
       Connection.Open();
+#if DEBUG
+      Assert.AreEqual(TestSession.VelocityDbLicenceFilePath,
+        Connection.DatabaseConfig.VelocityDbLicenceFilePath, 
+        "VelocityDbLicenceFilePath");
+#else // Release build
       Assert.AreEqual("For developer use only",
         Connection.DatabaseConfig.VelocityDbLicenceFilePath, 
         "VelocityDbLicenceFilePath");
+#endif
       Assert.AreEqual(DatabaseFolderPath.ToLower(), Global.Session.SystemDirectory,
         "SystemDirectory");
       Assert.AreEqual(Connection.ExpectedVersion, Schema.Instance.Version, "Version");

@@ -104,8 +104,13 @@ namespace SoundExplorers.Controller {
     protected virtual void OnPopulatedAsync() {
       Debug.WriteLine($"GridControllerBase.OnPopulatedAsync {Grid.Name}");
       IsPopulating = false;
-      if (Grid.RowCount > 1) {
-        Grid.MakeRowCurrent(Grid.RowCount - 1);
+      switch (Grid.RowCount) {
+        case > 1:
+          Grid.MakeRowCurrent(Grid.RowCount - 1);
+          break;
+        case 1:
+          OnPopulatedWithJustOneRow();
+          break;
       }
     }
 
@@ -130,6 +135,9 @@ namespace SoundExplorers.Controller {
           PrepareToSwitchFocusFromOtherGridToThis();
         }
       }
+    }
+
+    protected virtual void OnPopulatedWithJustOneRow() {
     }
 
     private IList<IBindingColumn> CreateBindingColumns() {

@@ -104,14 +104,6 @@ namespace SoundExplorers.Controller {
           base.OnGotFocus();
         }
       }
-      // base.OnRowEnter(rowIndex);
-      // if (!IsPopulating) {
-      //   List.OnRowEnter(rowIndex);
-      // }
-      // if (IsRestoringRowCurrency) {
-      //   IsRestoringRowCurrency = false;
-      //   base.OnGotFocus();
-      // }
     }
 
     /// <summary>

@@ -58,13 +58,13 @@ namespace SoundExplorers.Tests.Utilities {
       Data.AddUserOptionsPersisted(3, Session);
       Console.WriteLine($"Adding {eventCount} Events.");
       Data.AddEventsPersisted(eventCount, Session);
-      Console.WriteLine($"{eventCount} Events added. Adding Sets.");
-      AddSets();
-      Console.WriteLine($"{Data.Sets.Count} Sets added. Adding Pieces.");
-      AddPieces();
-      Console.WriteLine($"{Data.Pieces.Count} Pieces added. Adding Credits.");
-      AddCredits();
-      Console.WriteLine($"{Data.Credits.Count} Credits added. Committing.");
+      // Console.WriteLine($"{eventCount} Events added. Adding Sets.");
+      // AddSets();
+      // Console.WriteLine($"{Data.Sets.Count} Sets added. Adding Pieces.");
+      // AddPieces();
+      // Console.WriteLine($"{Data.Pieces.Count} Pieces added. Adding Credits.");
+      // AddCredits();
+      // Console.WriteLine($"{Data.Credits.Count} Credits added. Committing.");
       Session.Commit();
       Console.WriteLine(
         $"Finished: {Data.Events.Count:#,0} Events; {Data.Sets.Count:#,0} Sets; " +
