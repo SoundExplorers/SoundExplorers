@@ -160,21 +160,8 @@ namespace SoundExplorers.Model {
             DatabaseConfig.DatabaseFolderPath);
         }
       } else { // The database folder already contains files
-        LocaliseDatabase();
+        DatabaseLocationHelper.Localise(DatabaseConfig.DatabaseFolderPath);
       }
-    }
-
-    [ExcludeFromCodeCoverage]
-    private void LocaliseDatabase() {
-      var session = new SessionNoServer(DatabaseConfig.DatabaseFolderPath);
-      session.RelocateDefaultDatabaseLocation();
-      session.BeginUpdate();
-      foreach (var database in session.Databases) {
-        session.RelocateDatabaseLocationFor(
-          database.DatabaseNumber, SessionBase.LocalHost, 
-          DatabaseConfig.DatabaseFolderPath);
-      }
-      session.Commit();
     }
   }
 }
