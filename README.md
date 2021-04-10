@@ -1,6 +1,6 @@
 # Sound Explorers Audio Archive README
 
-**Sound Explorers Audio Archive** is a Windows application that facilitates the archiving of audio recordings, together with associated documentation and videos.  Support for associated images will be added in a future release.
+**Sound Explorers Audio Archive** is an open source Windows application that facilitates the archiving of audio recordings, together with associated documentation and videos.  Support for associated images will be added in a future release.
 
 Its initial use is to archive the recordings that have been accumulated over several years by New Zealand's [Sound and Light Exploration Society](http://www.soundexplorers.co.nz/) ('**Sound Explorers**').  The recordings are mostly of musical performances presented by Sound Explorers at various locations, mostly its main venue, which is currently the [Pyramid Club](https://www.pyramidclub.org.nz) in Wellington .
 

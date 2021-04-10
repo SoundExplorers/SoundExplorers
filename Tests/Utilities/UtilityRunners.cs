@@ -29,10 +29,8 @@ namespace SoundExplorers.Tests.Utilities {
 
     [Test]
     public void GenerateData() {
-      // DatabaseGenerator.GenerateTestDatabase(
-      //   112, 2019, false);
       DatabaseGenerator.GenerateTestDatabase(
-        1, 2019, false);
+        112, 2019, false);
     }
 
     [Test]
