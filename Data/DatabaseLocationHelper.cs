@@ -21,7 +21,8 @@ namespace SoundExplorers.Data {
     ///   transaction in the latest release, see https://velocitydb.com/ReleaseNotes.pdf.
     ///   It doesn't hurt to do it manually as you do but I had some request to do it
     ///   behind the covers."  I cannot find the reference in the release notes. And I
-    ///   shall still call this method, for now at lease, just to be safe. 
+    ///   shall still call this method, for now at lease, just to be safe, as I don't
+    ///   know what else I am doing different from when I had the problem. 
     /// </remarks>
     public static void Localise(string databaseFolderPath) {
       Debug.WriteLine("DatabaseLocationHelper.Localise");
