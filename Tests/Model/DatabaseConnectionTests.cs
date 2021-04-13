@@ -38,7 +38,7 @@ namespace SoundExplorers.Tests.Model {
         () => Connection.Open(),
         "Open should have thrown ApplicationException for missing configuration file.");
       Assert.IsTrue(
-        exception.Message.StartsWith("Please edit database configuration file '"),
+        exception!.Message.StartsWith("Please edit database configuration file '"),
         "Missing configuration file message");
       // The configuration file has been created and already contains the database folder
       // path we want to use. So we don't actually need to edit the configuration file.  
@@ -46,7 +46,7 @@ namespace SoundExplorers.Tests.Model {
         () => Connection.Open(),
         "Open should have thrown ApplicationException for missing database folder.");
       Assert.IsTrue(
-        exception.Message.StartsWith("Database folder '"),
+        exception!.Message.StartsWith("Database folder '"),
         "Missing database folder message");
       Directory.CreateDirectory(DatabaseFolderPath);
 #if DEBUG
@@ -54,7 +54,7 @@ namespace SoundExplorers.Tests.Model {
         () => Connection.Open(),
         "Open should have thrown ApplicationException for unspecified licence file.");
       Assert.IsTrue(
-        exception.Message.StartsWith("Please specify the path "),
+        exception!.Message.StartsWith("Please specify the path "),
         "Unspecified licence file message");
       UpdateVelocityDbLicenceFilePath(false);
       Assert.AreEqual("For developer use only",
@@ -64,7 +64,7 @@ namespace SoundExplorers.Tests.Model {
         () => Connection.Open(),
         "Open should have thrown ApplicationException for non-existent licence file.");
       Assert.IsTrue(
-        exception.Message.StartsWith("VelocityDB licence file '"),
+        exception!.Message.StartsWith("VelocityDB licence file '"),
         "Non-existent licence file message");
       UpdateVelocityDbLicenceFilePath(true);
 #endif
@@ -93,7 +93,7 @@ namespace SoundExplorers.Tests.Model {
         () => Connection.Open(),
         "Open should have thrown ApplicationException for missing XML element.");
       Assert.IsTrue(
-        exception.Message.Contains(
+        exception!.Message.Contains(
           " tag was not found in database configuration file "),
         "Missing XML element");
       MakeXmlError();
@@ -101,7 +101,7 @@ namespace SoundExplorers.Tests.Model {
         () => Connection.Open(),
         "Open should have thrown ApplicationException for XML error.");
       Assert.IsTrue(
-        exception.Message.StartsWith(
+        exception!.Message.StartsWith(
           "The following XML error was found in database configuration file "),
         "XML error");
     }
@@ -115,7 +115,7 @@ namespace SoundExplorers.Tests.Model {
         () => Connection.Open(),
         "Open should have thrown ApplicationException for missing configuration file.");
       Assert.IsTrue(
-        exception.Message.StartsWith("Please edit database configuration file '"),
+        exception!.Message.StartsWith("Please edit database configuration file '"),
         "Missing configuration file message");
       // The configuration file has been created but the database folder path has not
       // been specified.  If the user attempts to reload the application without having
@@ -125,7 +125,7 @@ namespace SoundExplorers.Tests.Model {
         () => Connection.Open(),
         "Open should have thrown ApplicationException for unspecified database folder path.");
       Assert.IsTrue(
-        exception.Message.StartsWith("Please edit database configuration file '"),
+        exception!.Message.StartsWith("Please edit database configuration file '"),
         "Unspecified database folder path file message");
     }
 

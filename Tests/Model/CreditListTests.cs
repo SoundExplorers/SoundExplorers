@@ -112,7 +112,7 @@ namespace SoundExplorers.Tests.Model {
         "Adding Credit without Artist disallowed.");
       Assert.AreEqual(
         $"Credit '{bindingList[0].Key}' cannot be added because its Artist has not been specified.",
-        exception.Message, "Error message");
+        exception!.Message, "Error message");
     }
 
     [Test]
@@ -128,7 +128,7 @@ namespace SoundExplorers.Tests.Model {
         "Adding Credit without Role disallowed.");
       Assert.AreEqual(
         $"Credit '{bindingList[0].Key}' cannot be added because its Role has not been specified.",
-        exception.Message, "Error message");
+        exception!.Message, "Error message");
     }
 
     [Test]

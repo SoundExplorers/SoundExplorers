@@ -129,7 +129,7 @@ namespace SoundExplorers.Tests.Model {
       var otherEvent = Data.Events[0];
       Exception exception = Assert.Catch<DuplicateNameException>(
         () => bindingList[2].Date = otherEvent.Date,
-        "Changing Date to duplicate for Location disallowed");
+        "Changing Date to duplicate for Location disallowed")!;
       Assert.AreEqual($"Another Event with key '{otherEvent.Key}' already exists.",
         exception.Message,
         "Error message on trying to change Date to duplicate for Location");
@@ -140,7 +140,7 @@ namespace SoundExplorers.Tests.Model {
       bindingList[4].Location = otherEvent.Location.Name;
       exception = Assert.Catch<DatabaseUpdateErrorException>(
         () => List.OnRowValidated(4),
-        "Adding Event with duplicate key disallowed");
+        "Adding Event with duplicate key disallowed")!;
       Assert.AreEqual($"Another Event with key '{otherEvent.Key}' already exists.",
         exception.Message,
         "Error message on trying to add Event with duplicate key");

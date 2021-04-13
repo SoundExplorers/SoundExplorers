@@ -110,7 +110,7 @@ namespace SoundExplorers.Tests.Model {
         () => List.OnRowValidated(0),
         "Adding Piece with invalid Duration disallowed.");
       Assert.IsTrue(
-        exception.Message.StartsWith(
+        exception!.Message.StartsWith(
           "Duration must be between 1 second and 9 hours, 59 minutes, 59 seconds." +
           "\r\nAccepted formats\r\n"),
         "Message");
@@ -129,7 +129,7 @@ namespace SoundExplorers.Tests.Model {
         "Adding Piece without Duration disallowed.");
       Assert.AreEqual(
         $"Piece '{bindingList[0].Key}' cannot be added because its Duration has not been specified.",
-        exception.Message, "Error message");
+        exception!.Message, "Error message");
     }
 
     [Test]
@@ -143,7 +143,7 @@ namespace SoundExplorers.Tests.Model {
         () => bindingList[2].Duration = "abc",
         "Changing Duration to invalid value disallowed");
       Assert.IsTrue(
-        exception.Message.StartsWith(
+        exception!.Message.StartsWith(
           "Duration must be between 1 second and 9 hours, 59 minutes, 59 seconds." +
           "\r\nAccepted formats\r\n"),
         "Message");
@@ -158,7 +158,7 @@ namespace SoundExplorers.Tests.Model {
       Assert.DoesNotThrow(() => bindingList[2].PieceNo = "3");
       Exception exception = Assert.Catch<DuplicateNameException>(
         () => bindingList[2].PieceNo = "1",
-        "Changing PieceNo to duplicate for Set disallowed");
+        "Changing PieceNo to duplicate for Set disallowed")!;
       Assert.AreEqual(
         $"Another Piece with key '{bindingList[2].Key}' already exists.",
         exception.Message,
@@ -167,7 +167,7 @@ namespace SoundExplorers.Tests.Model {
       List.OnRowEnter(3);
       bindingList[3].PieceNo = "2";
       exception = Assert.Catch<DatabaseUpdateErrorException>(() => List.OnRowValidated(3),
-        "Adding Piece with PieceNo duplicate for Set disallowed");
+        "Adding Piece with PieceNo duplicate for Set disallowed")!;
       Assert.AreEqual(
         $"Another Piece with key '{bindingList[3].Key}' already exists.",
         exception.Message,
@@ -182,7 +182,7 @@ namespace SoundExplorers.Tests.Model {
       var bindingList = List.BindingList;
       Exception exception = Assert.Catch<DatabaseUpdateErrorException>(
         () => bindingList[2].PieceNo = "ABC",
-        "Changing PieceNo to invalid format disallowed");
+        "Changing PieceNo to invalid format disallowed")!;
       Assert.AreEqual("PieceNo must be an integer between 1 and 99.",
         exception.Message,
         "Error message on trying to change PieceNo to invalid format");
@@ -254,7 +254,7 @@ namespace SoundExplorers.Tests.Model {
       Assert.AreEqual(
         $"Audio URL cannot be set to '{otherUrl}'. " +
         $"Piece '{otherKey}' already exists with that Audio URL.",
-        exception.Message,
+        exception!.Message,
         "Error message on trying to change AudioUrl to duplicate");
       bindingList.AddNew();
       List.OnRowEnter(3);
@@ -267,7 +267,7 @@ namespace SoundExplorers.Tests.Model {
       Assert.AreEqual(
         $"Piece '{newKey}' cannot be added because Piece '{otherKey}' already exists " +
         $"with the same Audio URL '{otherUrl}'.",
-        exception.Message,
+        exception!.Message,
         "Error message on trying to add Piece with duplicate AudioUrl");
       uniqueUrl = TestData.GenerateUniqueUrl();
       bindingList[3].AudioUrl = uniqueUrl;
@@ -294,7 +294,7 @@ namespace SoundExplorers.Tests.Model {
       Assert.AreEqual(
         $"Video URL cannot be set to '{otherUrl}'. " +
         $"Piece '{otherKey}' already exists with that Video URL.",
-        exception.Message,
+        exception!.Message,
         "Error message on trying to change VideoUrl to duplicate");
       bindingList.AddNew();
       List.OnRowEnter(3);
@@ -307,7 +307,7 @@ namespace SoundExplorers.Tests.Model {
       Assert.AreEqual(
         $"Piece '{newKey}' cannot be added because Piece '{otherKey}' already exists " +
         $"with the same Video URL '{otherUrl}'.",
-        exception.Message,
+        exception!.Message,
         "Error message on trying to add Piece with duplicate VideoUrl");
       uniqueUrl = TestData.GenerateUniqueUrl();
       bindingList[3].VideoUrl = uniqueUrl;

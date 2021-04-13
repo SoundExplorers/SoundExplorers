@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using NUnit.Framework;
 using SoundExplorers.Data;
 using SoundExplorers.Model;
@@ -69,11 +68,10 @@ namespace SoundExplorers.Tests.Model {
       var exception = Assert.Catch<DatabaseUpdateErrorException>(
         () => bindingList[2].Url = otherUrl,
         "Changing Url to duplicate disallowed");
-      Debug.WriteLine(exception.Message);
       Assert.AreEqual(
         $"URL cannot be set to '{otherUrl}'. " +
         $"Newsletter {otherKey} already exists with that URL.",
-        exception.Message,
+        exception!.Message,
         "Error message on trying to change Url to duplicate");
       bindingList.AddNew();
       List.OnRowEnter(3);
@@ -85,7 +83,7 @@ namespace SoundExplorers.Tests.Model {
       Assert.AreEqual(
         $"Newsletter {newKey} cannot be added because Newsletter {otherKey} " +
         $"already exists with the same URL '{otherUrl}'.",
-        exception.Message,
+        exception!.Message,
         "Error message on trying to add Newsletter with duplicate Url");
       uniqueUrl = TestData.GenerateUniqueUrl();
       bindingList[3].Url = uniqueUrl;

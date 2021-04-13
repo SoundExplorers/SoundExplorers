@@ -97,7 +97,7 @@ namespace SoundExplorers.Tests.Model {
       var exception = Assert.Catch<DatabaseUpdateErrorException>(
         () => list.DeleteEntity(1),
         "DeleteEntity should have thrown DatabaseUpdateErrorException.");
-      Assert.AreEqual(StatementType.Delete, exception.ChangeAction, "ChangeAction");
+      Assert.AreEqual(StatementType.Delete, exception!.ChangeAction, "ChangeAction");
       Assert.IsTrue(
         exception.Message.Contains("cannot be deleted because it is referenced by"),
         "Message");
@@ -130,7 +130,7 @@ namespace SoundExplorers.Tests.Model {
         () => list.OnRowValidated(1),
         "Duplicate name should have thrown DatabaseUpdateErrorException.");
       Assert.AreEqual("Another EventType with key 'Performance' already exists.",
-        exception.Message, "Message");
+        exception!.Message, "Message");
       Assert.AreEqual(StatementType.Insert, exception.ChangeAction, "ChangeAction");
       Assert.AreEqual(1, exception.RowIndex, "RowIndex");
       Assert.AreEqual(0, exception.ColumnIndex, "ColumnIndex");
@@ -165,7 +165,7 @@ namespace SoundExplorers.Tests.Model {
         () => item2.Name = name1,
         "Rename name should have thrown DuplicateNameException.");
       Assert.AreEqual("Another EventType with key 'Performance' already exists.",
-        exception.Message, "Message");
+        exception!.Message, "Message");
       list.OnValidationError(1, "Name", exception);
       Assert.AreEqual(StatementType.Update,
         list.LastDatabaseUpdateErrorException!.ChangeAction, "ChangeAction");

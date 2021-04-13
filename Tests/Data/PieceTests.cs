@@ -260,7 +260,7 @@ namespace SoundExplorers.Tests.Data {
       var exception = Assert.Catch<PropertyConstraintException>(
         () => piece.AudioUrl = "blah",
         "A PropertyConstraintException should have been thrown.");
-      Assert.AreEqual("Invalid AudioUrl format: 'blah'.", exception.Message,
+      Assert.AreEqual("Invalid AudioUrl format: 'blah'.", exception!.Message,
         "Message");
       Assert.AreEqual("AudioUrl", exception.PropertyName,
         "PropertyName");
@@ -272,7 +272,7 @@ namespace SoundExplorers.Tests.Data {
       var exception = Assert.Catch<PropertyConstraintException>(
         () => piece.VideoUrl = "blah",
         "A PropertyConstraintException should have been thrown.");
-      Assert.AreEqual("Invalid VideoUrl format: 'blah'.", exception.Message,
+      Assert.AreEqual("Invalid VideoUrl format: 'blah'.", exception!.Message,
         "Message");
       Assert.AreEqual("VideoUrl", exception.PropertyName,
         "PropertyName");
@@ -287,14 +287,14 @@ namespace SoundExplorers.Tests.Data {
           "999 milliseconds disallowed");
       Assert.AreEqual(
         "Duration must be between 1 second and 9 hours, 59 minutes, 59 seconds.",
-        exception.Message, "Error message when 999 milliseconds");
+        exception!.Message, "Error message when 999 milliseconds");
       exception =
         Assert.Catch<PropertyConstraintException>(
           () => Piece2.Duration = TimeSpan.FromHours(10),
           "10 hours disallowed");
       Assert.AreEqual(
         "Duration must be between 1 second and 9 hours, 59 minutes, 59 seconds.",
-        exception.Message,
+        exception!.Message,
         "Error message when 10 hours");
       Session.Commit();
       Assert.AreEqual("Duration", exception.PropertyName, "PropertyName");
@@ -306,12 +306,12 @@ namespace SoundExplorers.Tests.Data {
       var exception =
         Assert.Catch<PropertyConstraintException>(() => Piece2.PieceNo = 0,
           "Zero disallowed");
-      Assert.AreEqual("PieceNo must be an integer between 1 and 99.", exception.Message,
+      Assert.AreEqual("PieceNo must be an integer between 1 and 99.", exception!.Message,
         "Error message when zero");
       exception =
         Assert.Catch<PropertyConstraintException>(() => Piece2.PieceNo = 100,
           "100 disallowed");
-      Assert.AreEqual("PieceNo must be an integer between 1 and 99.", exception.Message,
+      Assert.AreEqual("PieceNo must be an integer between 1 and 99.", exception!.Message,
         "Error message when 100");
       Session.Commit();
       Assert.AreEqual("PieceNo", exception.PropertyName, "PropertyName");
@@ -357,7 +357,7 @@ namespace SoundExplorers.Tests.Data {
       Session.Abort();
       Assert.AreEqual(
         "Piece '09 | 01 | 2020/03/01 | Pyramid Club' cannot be added because its Duration has not been specified.",
-        exception.Message, "Message");
+        exception!.Message, "Message");
       Assert.AreEqual("Duration", exception.PropertyName, "PropertyName");
     }
 

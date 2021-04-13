@@ -210,12 +210,12 @@ namespace SoundExplorers.Tests.Data {
       var exception =
         Assert.Catch<PropertyConstraintException>(() => Set2.SetNo = 0,
           "Zero disallowed");
-      Assert.AreEqual("SetNo", exception.PropertyName, "PropertyName");
+      Assert.AreEqual("SetNo", exception!.PropertyName, "PropertyName");
       Assert.AreEqual("SetNo must be an integer between 1 and 99.", exception.Message,
         "Error message when zero");
       exception = Assert.Catch<PropertyConstraintException>(() => Set2.SetNo = 100,
         "100 disallows");
-      Assert.AreEqual("SetNo must be an integer between 1 and 99.", exception.Message,
+      Assert.AreEqual("SetNo must be an integer between 1 and 99.", exception!.Message,
         "Error message when 100");
       Session.Commit();
     }

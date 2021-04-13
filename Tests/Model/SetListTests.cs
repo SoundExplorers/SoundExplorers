@@ -148,7 +148,7 @@ namespace SoundExplorers.Tests.Model {
         "Adding Set without Genre disallowed.");
       Assert.AreEqual(
         $"Set '{bindingList[0].Key}' cannot be added because its Genre has not been specified.",
-        exception.Message, "Error message");
+        exception!.Message, "Error message");
     }
 
     [Test]
@@ -166,7 +166,7 @@ namespace SoundExplorers.Tests.Model {
         () => List.OnRowValidated(newRowIndex),
         "Adding Set with invalid format SetNo disallowed.");
       Assert.AreEqual("SetNo must be an integer between 1 and 99.",
-        exception.Message, "Error message when SetNo invalid format");
+        exception!.Message, "Error message when SetNo invalid format");
       // Simulate insertion cancellation on error.
       // AddNew does occur at this point when the user commits an insertion. As the SetNo
       // is invalid, the AddNew will exercise the format error handling logic in
@@ -188,7 +188,7 @@ namespace SoundExplorers.Tests.Model {
         () => List.OnRowValidated(newRowIndex),
         "Adding Set with out of range SetNo disallowed.");
       Assert.AreEqual("SetNo must be an integer between 1 and 99.",
-        exception.Message, "Error message when SetNo out of range");
+        exception!.Message, "Error message when SetNo out of range");
       // Simulate insertion cancellation on error.
       // AddNew does occur at this point when the user commits an insertion. As the SetNo
       // is invalid, the AddNew will exercise the out of range error handling logic in
@@ -215,7 +215,7 @@ namespace SoundExplorers.Tests.Model {
       var bindingList = List.BindingList;
       Exception exception = Assert.Catch<DatabaseUpdateErrorException>(
         () => bindingList[2].SetNo = "ABC",
-        "Changing SetNo to invalid format disallowed");
+        "Changing SetNo to invalid format disallowed")!;
       Assert.AreEqual("SetNo must be an integer between 1 and 99.",
         exception.Message,
         "Error message on trying to change SetNo to invalid format");
@@ -230,7 +230,7 @@ namespace SoundExplorers.Tests.Model {
       Assert.DoesNotThrow(() => bindingList[2].SetNo = "3");
       Exception exception = Assert.Catch<DuplicateNameException>(
         () => bindingList[2].SetNo = "1",
-        "Changing SetNo to duplicate for Event disallowed");
+        "Changing SetNo to duplicate for Event disallowed")!;
       Assert.AreEqual($"Another Set with key '{bindingList[2].Key}' already exists.",
         exception.Message,
         "Error message on trying to change SetNo to duplicate for Event");
@@ -238,7 +238,7 @@ namespace SoundExplorers.Tests.Model {
       List.OnRowEnter(3);
       bindingList[3].SetNo = "2";
       exception = Assert.Catch<DatabaseUpdateErrorException>(() => List.OnRowValidated(3),
-        "Adding Set with SetNo duplicate for Event disallowed");
+        "Adding Set with SetNo duplicate for Event disallowed")!;
       Assert.AreEqual($"Another Set with key '{bindingList[3].Key}' already exists.",
         exception.Message,
         "Error message on trying to add Set with duplicate SetNo for Event");

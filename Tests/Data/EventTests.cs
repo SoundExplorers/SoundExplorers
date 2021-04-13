@@ -470,7 +470,7 @@ namespace SoundExplorers.Tests.Data {
       Set2 = QueryHelper.Read<Set>(Set2.SimpleKey, Event1, Session);
       ConstraintException exception =
         Assert.Catch<ConstraintException>(() => Session.Unpersist(Event1),
-          "Unpersist Event with Sets");
+          "Unpersist Event with Sets")!;
       Session.Unpersist(Set1);
       Session.Unpersist(Set2);
       Session.Commit();

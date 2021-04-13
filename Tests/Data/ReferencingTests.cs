@@ -301,22 +301,22 @@ namespace SoundExplorers.Tests.Data {
       var exception = Assert.Catch<PropertyConstraintException>(() =>
         Daughter1.Name = string.Empty, "Disallow changing SimpleKey to empty");
       Assert.AreEqual("The Name is blank. Blank Names are not supported.",
-        exception.Message, "Error message when trying to change SimpleKey to empty");
+        exception!.Message, "Error message when trying to change SimpleKey to empty");
       exception = Assert.Catch<PropertyConstraintException>(() =>
         Daughter1.Name = "    \r\n", "Disallow changing SimpleKey to white space");
       Assert.AreEqual("The Name is blank. Blank Names are not supported.",
-        exception.Message,
+        exception!.Message,
         "Error message when trying to change SimpleKey to white space");
       var namelessSon = new Son(QueryHelper);
       exception = Assert.Catch<PropertyConstraintException>(() =>
         namelessSon.Name = null!, "Disallow changing SimpleKey to null");
       Assert.AreEqual("The Name is blank. Blank Names are not supported.",
-        exception.Message, "Error message when trying to change SimpleKey to null");
+        exception!.Message, "Error message when trying to change SimpleKey to null");
       exception = Assert.Catch<PropertyConstraintException>(() =>
           Session.Persist(namelessSon),
         "Disallow persisting entity with null SimpleKey");
       Assert.AreEqual("A Name has not yet been specified. So the Son cannot be added.",
-        exception.Message,
+        exception!.Message,
         "Error message when trying to persist entity with null SimpleKey");
       Session.Commit();
     }
