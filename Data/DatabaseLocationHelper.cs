@@ -14,6 +14,15 @@ namespace SoundExplorers.Data {
     ///   database files are in the current database folder, in case this is a copy of a
     ///   database created in another folder, which may have been on another computer.
     /// </summary>
+    /// <remarks>
+    ///   I can no longer reproduce the problem where the wrong database folder was
+    ///   updated unless this is run. And in an email message, Mats at VelocityDB wrote
+    ///   "SessionBase.RelocateDefaultDatabaseLocation is done automatically in an update
+    ///   transaction in the latest release, see https://velocitydb.com/ReleaseNotes.pdf.
+    ///   It doesn't hurt to do it manually as you do but I had some request to do it
+    ///   behind the covers."  I cannot find the reference in the release notes. And I
+    ///   shall still call this method, for now at lease, just to be safe. 
+    /// </remarks>
     public static void Localise(string databaseFolderPath) {
       Debug.WriteLine("DatabaseLocationHelper.Localise");
       Session = new SessionNoServer(databaseFolderPath);
