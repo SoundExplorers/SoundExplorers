@@ -25,7 +25,7 @@ namespace SoundExplorers.Data {
     ///   know what else I am doing different from when I had the problem. 
     /// </remarks>
     public static void Localise(string databaseFolderPath) {
-      Debug.WriteLine("DatabaseLocationHelper.Localise");
+      // Debug.WriteLine("DatabaseLocationHelper.Localise");
       Session = new SessionNoServer(databaseFolderPath);
       var defaultDatabaseLocation = Session.DefaultDatabaseLocation();
       if (!IsDatabaseLocationLocal(defaultDatabaseLocation)) {
