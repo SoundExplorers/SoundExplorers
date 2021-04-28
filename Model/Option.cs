@@ -1,5 +1,4 @@
 using System;
-using System.Data;
 using System.Diagnostics.CodeAnalysis;
 using SoundExplorers.Data;
 using VelocityDb.Session;
@@ -31,10 +30,6 @@ namespace SoundExplorers.Model {
     ///   to the value of the <paramref name="defaultValue" /> parameter,
     ///   if specified or, failing that, to an empty string.
     /// </remarks>
-    /// <exception cref="DataException">
-    ///   Thrown if
-    ///   there is an error on attempting to access the database.
-    /// </exception>
     [ExcludeFromCodeCoverage]
     public Option(string name, object? defaultValue = null) : this(
       QueryHelper.Instance, Global.Session, name, defaultValue) { }
@@ -50,17 +45,6 @@ namespace SoundExplorers.Model {
       DefaultValue = defaultValue;
       UserOption = FetchUserOption();
     }
-
-    private object? DefaultValue { get; }
-    private string OptionName { get; }
-    private QueryHelper QueryHelper { get; }
-    private SessionBase Session { get; }
-
-    /// <summary>
-    ///   Gets or sets the entity that represents the
-    ///   data for the UserOption database record.
-    /// </summary>
-    private UserOption UserOption { get; set; }
 
     /// <summary>
     ///   Gets or sets the current value of the option as a boolean.
@@ -178,6 +162,19 @@ namespace SoundExplorers.Model {
       }
     }
 
+    protected virtual string UserId => Environment.UserName;
+
+    /// <summary>
+    ///   Gets or sets the entity that represents the
+    ///   data for the UserOption database record.
+    /// </summary>
+    protected UserOption UserOption { get; private set; }
+
+    private object? DefaultValue { get; }
+    private string OptionName { get; }
+    private QueryHelper QueryHelper { get; }
+    private SessionBase Session { get; }
+
     /// <summary>
     ///   Returns the required UserOption from the database or, if not found,
     ///   a new UserOption with the required key and defaulted value.
@@ -186,7 +183,7 @@ namespace SoundExplorers.Model {
       Session.BeginUpdate();
       Session.Commit();
       var temp = new UserOption {
-        UserId = Environment.UserName, OptionName = OptionName
+        UserId = UserId, OptionName = OptionName
       };
       Session.BeginUpdate();
       var result = QueryHelper.Find<UserOption>(temp.SimpleKey, Session);
