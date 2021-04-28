@@ -7,7 +7,7 @@ using VelocityDb.Session;
 
 namespace SoundExplorers.Model {
   public class DatabaseConnection : IOpen {
-    public int ExpectedVersion { get; protected init; } = 1;
+    public int ExpectedSchemaVersion { get; protected init; } = 1;
     protected DatabaseConfig DatabaseConfig { get; private set; } = null!;
 
     [ExcludeFromCodeCoverage]
@@ -37,16 +37,15 @@ namespace SoundExplorers.Model {
         //   Debug.WriteLine(databaseLocation.DirectoryPath);
         // }
         schema = Schema.Find(QueryHelper.Instance, session) ?? new Schema();
-        if (schema.Version < ExpectedVersion) {
+        if (schema.Version < ExpectedSchemaVersion) {
           // In the release build, assume that the schema system database file that was
           // copied to the empty database folder already contains the persistable type
           // registrations that will allow the database to be accessed without a licence
           // file.
 #if DEBUG
           CopyLicenceToDatabaseFolderIfAbsent();
-          schema.RegisterPersistableTypes(session);
 #endif
-          schema.Version = ExpectedVersion;
+          schema.Version = ExpectedSchemaVersion;
         }
         if (!schema.IsPersistent) {
           session.Persist(schema);

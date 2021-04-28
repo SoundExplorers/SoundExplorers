@@ -80,14 +80,14 @@ namespace SoundExplorers.Tests.Model {
 #endif
       Assert.AreEqual(DatabaseFolderPath.ToLower(), Global.Session.SystemDirectory,
         "SystemDirectory");
-      Assert.AreEqual(Connection.ExpectedVersion, Schema.Instance.Version, "Version");
+      Assert.AreEqual(Connection.ExpectedSchemaVersion, Schema.Instance.Version, "Version");
       ResetSchemaVersionToZero();
       // As we have just made the schema version out of date,
       // the entity types have to be registered again.
       // However, a copy of the licence file is now already on the database,
       // so we don't have to copy it again.
       Connection.Open();
-      Assert.AreEqual(Connection.ExpectedVersion, Schema.Instance.Version, "Version #2");
+      Assert.AreEqual(Connection.ExpectedSchemaVersion, Schema.Instance.Version, "Version #2");
       RemoveXmlElement();
       exception = Assert.Catch<ApplicationException>(
         () => Connection.Open(),
