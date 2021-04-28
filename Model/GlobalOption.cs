@@ -21,8 +21,8 @@ namespace SoundExplorers.Model {
     ///   user-specific. 
     /// </summary>
     /// <remarks>
-    ///   To minimise the possibility that the global id will not coincide with a real
-    ///   user id, it starts with a character than can be read but not typed. 
+    ///   To minimise the possibility that the global id will coincide with a real user
+    ///   id, it starts with a character than can be read but not typed. 
     /// </remarks>
     protected override string UserId => "ˉGlobal";
   }
