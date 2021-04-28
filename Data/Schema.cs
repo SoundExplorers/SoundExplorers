@@ -105,8 +105,8 @@ namespace SoundExplorers.Data {
       session.RegisterClass(typeof(CompareByField<IndexDescriptor>));
       session.RegisterClass(typeof(Indexes)); 
       session.RegisterClass(typeof(VelocityDbList<OptimizedPersistable>));
-      foreach (var entityType in PersistableTypes) {
-        session.RegisterClass(entityType);
+      foreach (var persistableType in PersistableTypes) {
+        session.RegisterClass(persistableType);
       }
     }
 
