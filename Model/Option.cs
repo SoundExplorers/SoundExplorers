@@ -6,22 +6,22 @@ using VelocityDb.Session;
 
 namespace SoundExplorers.Model {
   /// <summary>
-  ///   Accesses an option/preference for the current user,
+  ///   Accesses an option/preference for the current user or globally,
   ///   as held on the UserOption table.
   /// </summary>
   public class Option {
     /// <summary>
-    ///   Initialises a new instance of the Option class,
-    ///   fetching the corresponding UserOption record if it already exists.
+    ///   Initialises a new instance of the Option class, fetching the corresponding
+    ///   UserOption record if it already exists.
     /// </summary>
     /// <param name="name">
     ///   The name that identifies the option relative to the current user.
     /// </param>
     /// <param name="defaultValue">
-    ///   Default value for the option if not found on the database.
-    ///   If not specified, the default string value will be an empty string,
-    ///   the default boolean value will be False
-    ///   and the default integer value will be zero.
+    ///   Default value for the option if not found on the database. If not specified,
+    ///   the default string value will be an empty string, the default boolean value
+    ///   will be False and the default DateTime value will be
+    ///   <see cref="DateTime.MinValue"/> and the default integer value will be zero.
     /// </param>
     /// <remarks>
     ///   The <see cref="StringValue" /> property will be set to
@@ -66,9 +66,9 @@ namespace SoundExplorers.Model {
     ///   Gets or sets the current value of the option as a boolean.
     /// </summary>
     /// <remarks>
-    ///   This is initially value of the <b>OptionValue</b> field of the
+    ///   This is initially the value of the <b>OptionValue</b> field of the
     ///   corresponding <b>UserOption</b> record, if it exists
-    ///   and <b>OptionValue</b> contains a valid integer.
+    ///   and <b>OptionValue</b> contains a valid boolean.
     ///   Otherwise it will initially be False or the default value
     ///   that can optionally be set in the constructor.
     ///   <para>
@@ -87,10 +87,33 @@ namespace SoundExplorers.Model {
     }
 
     /// <summary>
+    ///   Gets or sets the current value of the option as a <see cref="DateTime"/>.
+    /// </summary>
+    /// <remarks>
+    ///   This is initially the value of the <b>OptionValue</b> field of the
+    ///   corresponding <b>UserOption</b> record, if it exists and <b>OptionValue</b>
+    ///   contains a valid DateTime. Otherwise it will initially be
+    ///   <see cref="DateTime.MinValue"/> or the default value that can optionally be set
+    ///   in the constructor.
+    ///   <para>
+    ///     When set, the database will be updated unless the there's no actual change to
+    ///     the previous value.  The corresponding <b>UserOption</b> record will be
+    ///     updated if found or inserted if not.
+    ///   </para>
+    /// </remarks>
+    public DateTime DateTimeValue {
+      get {
+        bool unused = DateTime.TryParse(StringValue, out var result);
+        return result;
+      }
+      set => StringValue = value.ToString("yyyy-MM-dd HH:mm:ss");
+    }
+
+    /// <summary>
     ///   Gets or sets the current value of the option as an integer.
     /// </summary>
     /// <remarks>
-    ///   This is initially value of the <b>OptionValue</b> field of the
+    ///   This is initially the value of the <b>OptionValue</b> field of the
     ///   corresponding <b>UserOption</b> record, if it exists
     ///   and <b>OptionValue</b> contains a valid integer.
     ///   Otherwise it will initially be zero or the default value

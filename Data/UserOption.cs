@@ -3,7 +3,7 @@ using VelocityDb.Indexing;
 
 namespace SoundExplorers.Data {
   /// <summary>
-  ///   An entity for persisting a user option for the application.
+  ///   An entity for persisting a user (or global) option for the application.
   /// </summary>
   [Index("_userId, _optionName")]
   public class UserOption : EntityBase {
