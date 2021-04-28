@@ -1,7 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using VelocityDb;
+using VelocityDb.Collection;
 using VelocityDb.Collection.BTree;
+using VelocityDb.Collection.Comparer;
+using VelocityDb.Indexing;
 using VelocityDb.Session;
 
 namespace SoundExplorers.Data {
@@ -89,42 +92,75 @@ namespace SoundExplorers.Data {
     ///   persistent classes prior to deployment and deploy database 1.odb which then contains your entire
     ///   database schema. VelocityDB may do a license check whenever database schema is added to or is
     ///   updated.
+    ///   <para>
+    ///     See also VelocityDB User Guide section 'Register all types that you plan on
+    ///     persisting', especially the subsection 'If your application schema is using
+    ///     indexes'.
+    ///   </para>
     /// </remarks>
     public void RegisterPersistableTypes(SessionBase session) {
-      foreach (var persistableType in PersistableTypes) {
-        session.RegisterClass(persistableType);
+      // Register additional index-related classes.
+      session.RegisterClass(typeof(IndexDescriptor));
+      session.RegisterClass(typeof(BTreeSetOidShort<IndexDescriptor>));
+      session.RegisterClass(typeof(CompareByField<IndexDescriptor>));
+      session.RegisterClass(typeof(Indexes)); 
+      session.RegisterClass(typeof(VelocityDbList<OptimizedPersistable>));
+      foreach (var entityType in PersistableTypes) {
+        session.RegisterClass(entityType);
       }
     }
 
+    /// <summary>
+    ///   Creates the list of persistable types that need to be registered.
+    /// </summary>
+    /// <remarks>
+    ///   For each persistable type that uses indexes, currently all entity types (types
+    ///   that derive from EntityBase), the corresponding BTreeSet and
+    ///   CompareByFieldIndex need to be registered too.
+    /// </remarks>
     protected virtual IEnumerable<Type> CreatePersistableTypes() {
       var list = new List<Type> {
         typeof(Act),
         typeof(BTreeSet<Act>),
+        typeof(CompareByFieldIndex<Act>),
         typeof(Artist),
         typeof(BTreeSet<Artist>),
+        typeof(CompareByFieldIndex<Artist>),
         typeof(Credit),
         typeof(BTreeSet<Credit>),
+        typeof(CompareByFieldIndex<Credit>),
         typeof(Event),
         typeof(BTreeSet<Event>),
+        typeof(CompareByFieldIndex<Event>),
         typeof(EventType),
         typeof(BTreeSet<EventType>),
+        typeof(CompareByFieldIndex<EventType>),
         typeof(Genre),
         typeof(BTreeSet<Genre>),
+        typeof(CompareByFieldIndex<Genre>),
         typeof(Location),
         typeof(BTreeSet<Location>),
+        typeof(CompareByFieldIndex<Location>),
         typeof(Newsletter),
         typeof(BTreeSet<Newsletter>),
+        typeof(CompareByFieldIndex<Newsletter>),
         typeof(Series),
         typeof(BTreeSet<Series>),
+        typeof(CompareByFieldIndex<Series>),
         typeof(Piece),
         typeof(BTreeSet<Piece>),
+        typeof(CompareByFieldIndex<Piece>),
         typeof(Role),
         typeof(BTreeSet<Role>),
+        typeof(CompareByFieldIndex<Role>),
+        // Simple registration for the one persistable type that does not use indexes.
         typeof(Schema),
         typeof(Set),
         typeof(BTreeSet<Set>),
+        typeof(CompareByFieldIndex<Set>),
         typeof(UserOption),
-        typeof(BTreeSet<UserOption>)
+        typeof(BTreeSet<UserOption>),
+        typeof(CompareByFieldIndex<UserOption>)
       };
       return list.ToArray();
     }

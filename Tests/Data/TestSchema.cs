@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using SoundExplorers.Data;
+using VelocityDb.Collection.BTree;
+using VelocityDb.Collection.Comparer;
 
 namespace SoundExplorers.Tests.Data {
   public class TestSchema : Schema {
@@ -15,13 +17,17 @@ namespace SoundExplorers.Tests.Data {
     protected override IEnumerable<Type> CreatePersistableTypes() {
       var list = new List<Type> {
         typeof(Daughter),
-        typeof(SortedEntityCollection<Daughter>),
+        typeof(BTreeSet<Daughter>),
+        typeof(CompareByFieldIndex<Daughter>),
         typeof(Father),
-        typeof(SortedEntityCollection<Father>),
+        typeof(BTreeSet<Father>),
+        typeof(CompareByFieldIndex<Father>),
         typeof(Mother),
-        typeof(SortedEntityCollection<Mother>),
+        typeof(BTreeSet<Mother>),
+        typeof(CompareByFieldIndex<Mother>),
         typeof(Son),
-        typeof(SortedEntityCollection<Son>)
+        typeof(BTreeSet<Son>),
+        typeof(CompareByFieldIndex<Son>)
       };
       return list.ToArray();
     }
