@@ -5,7 +5,6 @@ using NUnit.Framework;
 using SoundExplorers.Data;
 using SoundExplorers.Model;
 using SoundExplorers.Tests.Data;
-using VelocityDb.Session;
 
 namespace SoundExplorers.Tests.Utilities {
   /// <summary>
@@ -21,23 +20,6 @@ namespace SoundExplorers.Tests.Utilities {
 
     private TestData Data { get; set; } = null!;
     private TestSession Session { get; set; } = null!;
-
-    public static void AddOneOfEachEntityTypePersisted(
-      TestData data, SessionBase session) {
-      data.AddActsPersisted(1, session);
-      data.AddArtistsPersisted(1, session);
-      data.AddEventTypesPersisted(1, session);
-      data.AddGenresPersisted(1, session);
-      data.AddLocationsPersisted(1, session);
-      data.AddNewslettersPersisted(1, session);
-      data.AddRolesPersisted(1, session);
-      data.AddSeriesPersisted(1, session);
-      data.AddUserOptionsPersisted(1, session);
-      data.AddEventsPersisted(1, session);
-      data.AddSetsPersisted(1, session);
-      data.AddPiecesPersisted(1, session);
-      data.AddCreditsPersisted(1, session);
-    }
 
     public void GenerateTestDatabase(int eventCount, int startYear,
       bool keepLicenceFile) {
@@ -87,9 +69,6 @@ namespace SoundExplorers.Tests.Utilities {
       InitialisedDatabaseFolderPath =
         Path.Combine(GetInstallerDataFolderPath(), "Initialised Database");
       InitialiseDatabase(InitialisedDatabaseFolderPath, false);
-      // // The transaction system database file is not required for an initialised database
-      // // that is to be given to end users. So delete it.
-      // File.Delete(Path.Combine(InitialisedDatabaseFolderPath, "0.odb"));
       Console.WriteLine(
         $"Generated initialised database folder '{InitialisedDatabaseFolderPath}'.");
     }
@@ -150,23 +129,11 @@ namespace SoundExplorers.Tests.Utilities {
       // VelocityDB licence file.
       Schema.Instance.RegisterPersistableTypes(Session);
       Session.Commit();
-      // // Not documented in the VelocityDB manual, in order for the database to be used 
-      // // without a licence file, we also need to first add one of each entity type,
-      // // which we can and will delete after removing the licence file from the database.
-      // // I'm fairly sure this has something to do with the VelocityDB Indexes, as (a) we
-      // // did not have to do this before Indexes were introduced, and (b) it is still not
-      // // necessary to do it for Schema, the one persistable type that does not use
-      // // Indexes. There has to be a better way.
-      // Data = new TestData(new QueryHelper());
-      // Session.BeginUpdate();
-      // AddOneOfEachEntityTypePersisted(Data, Session);
-      // Session.Commit();
       if (!keepLicenceFile) {
         RemoveLicenceFileFromDatabase();
       }
-      // Session.BeginUpdate();
-      // DeleteOneOfEachEntityType();
-      // Session.Commit();
+      // Remove unwanted database files, which should only be the transaction file
+      // (0.odb).
       var databaseFolder = new DirectoryInfo(databaseFolderPath);
       foreach (var file in databaseFolder.GetFiles()) {
         if (string.Compare(
@@ -177,22 +144,6 @@ namespace SoundExplorers.Tests.Utilities {
         }
       }
     }
-
-    // private void DeleteOneOfEachEntityType() {
-    //   Session.Unpersist(Data.Credits[0]);
-    //   Session.Unpersist(Data.Pieces[0]);
-    //   Session.Unpersist(Data.Sets[0]);
-    //   Session.Unpersist(Data.Events[0]);
-    //   Session.Unpersist(Data.Acts[0]);
-    //   Session.Unpersist(Data.Artists[0]);
-    //   Session.Unpersist(Data.EventTypes[0]);
-    //   Session.Unpersist(Data.Genres[0]);
-    //   Session.Unpersist(Data.Locations[0]);
-    //   Session.Unpersist(Data.Newsletters[0]);
-    //   Session.Unpersist(Data.Roles[0]);
-    //   Session.Unpersist(Data.Series[0]);
-    //   Session.Unpersist(Data.UserOptions[0]);
-    // }
 
     /// <summary>
     ///   Once the persistable type registration

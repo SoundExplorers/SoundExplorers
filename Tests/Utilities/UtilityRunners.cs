@@ -47,7 +47,7 @@ namespace SoundExplorers.Tests.Utilities {
         var session = new SessionNoServer(testDatabaseFolder.FullName);
         session.BeginUpdate();
         data.AddSchemaPersisted(1, session);
-        DatabaseGenerator.AddOneOfEachEntityTypePersisted(data, session);
+        AddOneOfEachEntityTypePersisted(data, session);
         session.Commit();
       } finally {
         try {
@@ -56,6 +56,23 @@ namespace SoundExplorers.Tests.Utilities {
           // Don't obscure the original exception, if any.
         }
       }
+    }
+
+    private static void AddOneOfEachEntityTypePersisted(
+      TestData data, SessionBase session) {
+      data.AddActsPersisted(1, session);
+      data.AddArtistsPersisted(1, session);
+      data.AddEventTypesPersisted(1, session);
+      data.AddGenresPersisted(1, session);
+      data.AddLocationsPersisted(1, session);
+      data.AddNewslettersPersisted(1, session);
+      data.AddRolesPersisted(1, session);
+      data.AddSeriesPersisted(1, session);
+      data.AddUserOptionsPersisted(1, session);
+      data.AddEventsPersisted(1, session);
+      data.AddSetsPersisted(1, session);
+      data.AddPiecesPersisted(1, session);
+      data.AddCreditsPersisted(1, session);
     }
   }
 }
