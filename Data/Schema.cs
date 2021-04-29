@@ -6,6 +6,7 @@ using VelocityDb.Collection.BTree;
 using VelocityDb.Collection.Comparer;
 using VelocityDb.Indexing;
 using VelocityDb.Session;
+using VelocityDb.TypeInfo;
 
 namespace SoundExplorers.Data {
   /// <summary>
@@ -99,15 +100,18 @@ namespace SoundExplorers.Data {
     ///   </para>
     /// </remarks>
     public void RegisterPersistableTypes(SessionBase session) {
+      foreach (var persistableType in PersistableTypes) {
+        session.RegisterClass(persistableType);
+      }
       // Register additional index-related classes.
       session.RegisterClass(typeof(IndexDescriptor));
       session.RegisterClass(typeof(BTreeSetOidShort<IndexDescriptor>));
       session.RegisterClass(typeof(CompareByField<IndexDescriptor>));
       session.RegisterClass(typeof(Indexes)); 
       session.RegisterClass(typeof(VelocityDbList<OptimizedPersistable>));
-      foreach (var persistableType in PersistableTypes) {
-        session.RegisterClass(persistableType);
-      }
+      // Not mentioned in manual, but definitely required, presumably because EntityBase
+      // accesses References.
+      session.RegisterClass(typeof(BTreeSet<Reference>));
     }
 
     /// <summary>
@@ -116,10 +120,23 @@ namespace SoundExplorers.Data {
     /// <remarks>
     ///   For each persistable type that uses indexes, currently all entity types (types
     ///   that derive from EntityBase), the corresponding BTreeSet and
-    ///   CompareByFieldIndex need to be registered too.
+    ///   CompareByFieldIndex need to be registered too. CompareByFieldIndex registration
+    ///   is not strictly necessary, at this stage, as the application does not use
+    ///   CompareByField or CompareByFieldIndex. But that could change! Custom entity
+    ///   property types (and their custom property types recursively) need to be
+    ///   registered too.
     /// </remarks>
     protected virtual IEnumerable<Type> CreatePersistableTypes() {
       var list = new List<Type> {
+        // Custom entity property types. 
+        typeof(Key),
+        typeof(SortedEntityCollection<Credit>),
+        typeof(SortedEntityCollection<Event>),
+        typeof(SortedEntityCollection<Piece>),
+        typeof(SortedEntityCollection<Set>),
+        typeof(KeyComparer), // Recursive property type, used by SortedEntityCollection. 
+        // Entity types, with corresponding BTreeSets and CompareByFieldIndexes if the
+        // entity type uses indexes.
         typeof(Act),
         typeof(BTreeSet<Act>),
         typeof(CompareByFieldIndex<Act>),
