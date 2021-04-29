@@ -13,6 +13,12 @@ namespace SoundExplorers.Tests.Model {
       option.BooleanValue = true;
       option = CreateTestOption("Boolean");
       Assert.IsTrue(option.BooleanValue, "BooleanValue retrieved");
+      option = CreateTestOption("DateTime");
+      Assert.AreEqual(DateTime.MinValue, option.DateTimeValue, "DateTimeValue default");
+      var newDateTime = DateTime.Parse("2099-12-31 23:59:59");
+      option.DateTimeValue = newDateTime;
+      option = CreateTestOption("DateTime");
+      Assert.AreEqual(newDateTime, option.DateTimeValue, "DateTimeValue retrieved");
       option = CreateTestOption("Int32");
       Assert.AreEqual(0, option.Int32Value, "Int32Value default");
       option.Int32Value = 1;
@@ -46,6 +52,9 @@ namespace SoundExplorers.Tests.Model {
     public void DefaultsSet() {
       var option = CreateTestOption("Boolean", true);
       Assert.IsTrue(option.BooleanValue, "BooleanValue");
+      var newDateTime = DateTime.Parse("2099-12-31 23:59:59");
+      option = CreateTestOption("DateTime", newDateTime);
+      Assert.AreEqual(newDateTime, option.DateTimeValue, "DateTimeValue");
       option = CreateTestOption("Int32", 1);
       Assert.AreEqual(1, option.Int32Value, "Int32Value");
       option = CreateTestOption("String", "Hello");

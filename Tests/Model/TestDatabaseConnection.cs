@@ -6,7 +6,7 @@ namespace SoundExplorers.Tests.Model {
       string databaseFolderPath) {
       ConfigFilePath = configFilePath;
       DatabaseFolderPath = databaseFolderPath;
-      ExpectedVersion = 66;
+      ExpectedSchemaVersion = 66;
     }
 
     internal new DatabaseConfig DatabaseConfig => base.DatabaseConfig; 

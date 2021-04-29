@@ -37,6 +37,8 @@ namespace SoundExplorers.View {
         ToolStrip.Visible = Controller.IsToolBarVisible;
         StatusLabel.Visible = Controller.IsStatusBarVisible;
       } catch (Exception exception) {
+        // If you put a breakpoint in this catch block, don't forget to Alt+Tab to see 
+        // and click OK on the message!
         if (exception is ApplicationException) {
           MessageBox.Show(
             SplashManager.SplashForm,
