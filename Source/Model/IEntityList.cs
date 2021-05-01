@@ -27,12 +27,6 @@ namespace SoundExplorers.Model {
 
     string EntityTypeName { get; }
 
-    /// <summary>
-    ///   Gets whether the current grid row is the insertion row, which is for adding new
-    ///   entities and is located at the bottom of the grid.
-    /// </summary>
-    bool IsInsertionRowCurrent { get; }
-
     DatabaseUpdateErrorException? LastDatabaseUpdateErrorException { get; }
     ListRole ListRole { get; }
     IEntityList? ParentList { set; }

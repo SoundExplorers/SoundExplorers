@@ -48,7 +48,6 @@ namespace SoundExplorers.Tests.Data {
 
     public static string GenerateDatabaseFolderPath() {
       return Path.Combine(DatabaseParentFolderPath, $"Database{DateTime.Now.Ticks}");
-      // return DatabaseParentFolderPath + "\\Database" + DateTime.Now.Ticks;
     }
 
     public void DeleteDatabaseFolderIfExists() {

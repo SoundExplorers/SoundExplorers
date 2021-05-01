@@ -302,6 +302,9 @@ namespace SoundExplorers.View {
       EditorView?.CurrentGrid?.Controller.FollowLink();
     }
 
+    private void ToolsBackupDatabaseMenuItem_Click(object? sender, EventArgs e) {
+    }
+
     private void ToolsOptionsMenuItem_Click(object? sender, EventArgs e) {
       var optionsView = OptionsView.Create();
       optionsView.ShowDialog();
