@@ -10,7 +10,7 @@ namespace SoundExplorers.Tests.Model {
     [SetUp]
     public override void Setup() {
       base.Setup();
-      DatabaseFolder = new DirectoryInfo(Session.DatabaseFolderPath);
+      DatabaseFolder = new DirectoryInfo(Session.SystemDirectory);
       BackupFolder = CreateTestFolder("Backup");
       RestoreFolder = CreateTestFolder("Restore");
       Session.BeginUpdate();

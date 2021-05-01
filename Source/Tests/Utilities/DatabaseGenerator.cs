@@ -154,7 +154,7 @@ namespace SoundExplorers.Tests.Utilities {
     ///   end users.
     /// </summary>
     private void RemoveLicenceFileFromDatabase() {
-      File.Delete(Path.Combine(Session.DatabaseFolderPath, "4.odb"));
+      File.Delete(Path.Combine(Session.SystemDirectory, "4.odb"));
       Console.WriteLine("Removed licence file from database.");
     }
   }
