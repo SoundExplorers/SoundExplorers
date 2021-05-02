@@ -18,6 +18,12 @@ namespace SoundExplorers.Tests.Utilities {
     /// </summary>
     public string? InitialisedDatabaseFolderPath { get; private set; }
 
+    /// <summary>
+    ///   Set this to true if NoValidVelocityDBLicenseFoundException is throw in
+    ///   GenerateTestDatabase. Then, once we have worked out which type registration(s)
+    ///   need to be added to Schema.RegisterPersistableTypes, this can be set or
+    ///   defaulted to false.
+    /// </summary>
     public bool UseLicenceRemovalWorkaround { get; set; }
 
     private TestData Data { get; set; } = null!;

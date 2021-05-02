@@ -63,10 +63,12 @@ namespace SoundExplorers.Controller {
       string newBackupFolderPath =
         View.AskForBackupFolderPath(BackupManager.BackupFolderPath);
       if (string.IsNullOrWhiteSpace(newBackupFolderPath)) {
+        View.SetStatusBarText("Database backup cancelled.");
         return;
       }
       View.SetMouseCursorToWait();
       View.SetStatusBarText("Backing up database. Please wait...");
+      View.BeginInvoke(() => BackupDatabaseAsync(newBackupFolderPath));
     }
 
     public void ConnectToDatabase() {
@@ -121,14 +123,24 @@ namespace SoundExplorers.Controller {
       return new Option(name, defaultValue);
     }
 
+    private void BackupDatabaseAsync(string backupFolderPath) {
+      try {
+        BackupManager.BackupDatabaseTo(backupFolderPath);
+        const string confirmationMessage = "The database backup has completed.";
+        View.SetStatusBarText(confirmationMessage);
+        View.ShowInformationMessage(confirmationMessage);
+      } catch (ApplicationException exception) {
+        View.SetStatusBarText("The database backup failed.");
+        View.ShowErrorMessage(exception.Message);
+      } finally {
+        View.SetMouseCursorToDefault();
+      }
+    }
+
     [ExcludeFromCodeCoverage]
     private void ShowHelpFile(string fileName) {
       string path = Path.Combine(
-        Global.GetApplicationFolderPath(), "Documentation", fileName); 
-      // string path = 
-      //   Global.GetApplicationFolderPath() +
-      //               Path.DirectorySeparatorChar + "Documentation" +
-      //               Path.DirectorySeparatorChar + fileName;
+        Global.GetApplicationFolderPath(), "Documentation", fileName);
       if (File.Exists(path)) {
         OpenFile(path);
       } else {

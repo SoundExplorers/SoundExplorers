@@ -1,16 +1,13 @@
 ﻿using NUnit.Framework;
-using SoundExplorers.Data;
 using SoundExplorers.Model;
 using SoundExplorers.Tests.Data;
 
 namespace SoundExplorers.Tests.Model {
   [TestFixture]
-  public class SetComparerTests {
+  public class SetComparerTests : TestFixtureBase {
     [SetUp]
-    public void Setup() {
-      QueryHelper = new QueryHelper();
-      Data = new TestData(QueryHelper);
-      Session = new TestSession();
+    public override void Setup() {
+      base.Setup();
       SetComparer = new SetComparer();
       Session.BeginUpdate();
       Data.AddEventTypesPersisted(1, Session);
@@ -21,9 +18,6 @@ namespace SoundExplorers.Tests.Model {
       Session.Commit();
     }
 
-    private TestData Data { get; set; } = null!;
-    private QueryHelper QueryHelper { get; set; } = null!;
-    private TestSession Session { get; set; } = null!;
     private SetComparer SetComparer { get; set; } = null!;
 
     [Test]

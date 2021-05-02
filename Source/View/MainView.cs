@@ -58,6 +58,10 @@ namespace SoundExplorers.View {
       throw new NotImplementedException();
     }
 
+    void IMainView.BeginInvoke(Action action) {
+      BeginInvoke(action);
+    }
+
     public void SetMouseCursorToDefault() {
       Cursor = Cursors.Default;
     }
@@ -72,6 +76,10 @@ namespace SoundExplorers.View {
 
     public void ShowErrorMessage(string text) {
       ShowMessage(text, MessageBoxIcon.Error);
+    }
+
+    public void ShowInformationMessage(string text) {
+      ShowMessage(text, MessageBoxIcon.Information);
     }
 
     /// <summary>
