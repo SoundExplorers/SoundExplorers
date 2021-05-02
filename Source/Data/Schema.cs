@@ -111,6 +111,7 @@ namespace SoundExplorers.Data {
       session.RegisterClass(typeof(VelocityDbList<OptimizedPersistable>));
       // Not mentioned in manual, but definitely required, presumably because EntityBase
       // accesses References.
+      session.RegisterClass(typeof(Reference));
       session.RegisterClass(typeof(BTreeSet<Reference>));
     }
 
