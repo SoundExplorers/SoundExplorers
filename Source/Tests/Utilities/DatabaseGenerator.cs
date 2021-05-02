@@ -74,16 +74,17 @@ namespace SoundExplorers.Tests.Utilities {
     }
 
     /// <summary>
-    ///   Gets the path of the Installer\Data subfolder of the solution folder, into
-    ///   which an initialised database folder, suitable for first use by end users, will
-    ///   be copied.
+    ///   Gets the path of the Data subfolder of the Installer folder, into which an
+    ///   initialised database folder, suitable for first use by end users, will be
+    ///   copied.
     /// </summary>
     private static string GetInstallerDataFolderPath() {
       string testBinFolderPath = Global.GetApplicationFolderPath();
-      string solutionFolderPath = testBinFolderPath.Substring(0,
-        testBinFolderPath.IndexOf(
-          @"\Tests\", StringComparison.OrdinalIgnoreCase));
-      string result = Path.Combine(solutionFolderPath, @"Installer\Data");
+      string solutionFolderPath = testBinFolderPath[..testBinFolderPath.IndexOf(
+        @"\Tests\", StringComparison.OrdinalIgnoreCase)]; // .. is range indexer!
+      string solutionParentFolderPath = 
+        Directory.GetParent(solutionFolderPath)!.FullName;
+      string result = Path.Combine(solutionParentFolderPath, @"Installer\Data");
       Assert.IsTrue(Directory.Exists(result),
         $"Cannot find installer data folder '{result}'.");
       return result;
@@ -154,7 +155,7 @@ namespace SoundExplorers.Tests.Utilities {
     ///   end users.
     /// </summary>
     private void RemoveLicenceFileFromDatabase() {
-      File.Delete(Path.Combine(Session.DatabaseFolderPath, "4.odb"));
+      File.Delete(Path.Combine(Session.SystemDirectory, "4.odb"));
       Console.WriteLine("Removed licence file from database.");
     }
   }

@@ -22,7 +22,6 @@ namespace SoundExplorers.Tests.Data {
     }
 
     public TestSession(string databaseFolderPath) : base(databaseFolderPath) { }
-    internal string DatabaseFolderPath => SystemDirectory;
 
     public static void CopyLicenceToDatabaseFolder(string databaseFolderPath) {
       File.Copy(
@@ -48,11 +47,10 @@ namespace SoundExplorers.Tests.Data {
 
     public static string GenerateDatabaseFolderPath() {
       return Path.Combine(DatabaseParentFolderPath, $"Database{DateTime.Now.Ticks}");
-      // return DatabaseParentFolderPath + "\\Database" + DateTime.Now.Ticks;
     }
 
     public void DeleteDatabaseFolderIfExists() {
-      DeleteFolderIfExists(DatabaseFolderPath);
+      DeleteFolderIfExists(SystemDirectory);
     }
   }
 }

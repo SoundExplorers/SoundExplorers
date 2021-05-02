@@ -134,7 +134,8 @@ namespace SoundExplorers.Data {
         typeof(SortedEntityCollection<Event>),
         typeof(SortedEntityCollection<Piece>),
         typeof(SortedEntityCollection<Set>),
-        typeof(KeyComparer), // Recursive property type, used by SortedEntityCollection. 
+        // Recursive property type. SortedEntityCollection.Comparer is set to it.
+        typeof(KeyComparer),  
         // Entity types, with corresponding BTreeSets and CompareByFieldIndexes if the
         // entity type uses indexes.
         typeof(Act),

@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using SoundExplorers.Data;
+﻿using SoundExplorers.Data;
 using VelocityDb.Session;
 
 namespace SoundExplorers.Model {
@@ -8,11 +7,7 @@ namespace SoundExplorers.Model {
   ///   UserOption table.
   /// </summary>
   public class GlobalOption : Option {
-    [ExcludeFromCodeCoverage]
-    public GlobalOption(string name, object? defaultValue = null) :
-      base(name, defaultValue) { }
-
-    protected GlobalOption(QueryHelper queryHelper, SessionBase session,
+    public GlobalOption(QueryHelper queryHelper, SessionBase session,
       string name, object? defaultValue = null) : base(
       queryHelper, session, name, defaultValue) { }
 

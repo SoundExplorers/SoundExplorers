@@ -1,15 +1,3 @@
-//-----------------------------------------------------------------------
-// <copyright 
-//     file="SplashForm.cs" 
-//     company="ANZ National Bank Limited" 
-//     author="Neil Becker and Simon O'Rorke">
-//     Copyright (c) ANZ National Bank Limited.  All rights reserved.
-// </copyright>
-//-----------------------------------------------------------------------
-// Based on
-//   How to do Application Initialization while showing a SplashScreen
-//     http://www.thecodeproject.com/csharp/apploadingarticle.asp
-
 using System;
 using System.Reflection;
 using System.Threading;
@@ -29,7 +17,7 @@ namespace SoundExplorers.View {
   ///   To show a splash
   ///   <see cref="Form" />
   ///   window, call the
-  ///   <see cref="O:Anz.NZInfo.SplashManager.Show">Show</see>
+  ///   <see cref="O:SoundExplorers.View.SplashManager.Show">Show</see>
   ///   method.
   ///   To show information about the application load status
   ///   on the splash window, use the <see cref="Status" /> property.
@@ -158,7 +146,7 @@ namespace SoundExplorers.View {
           // will set Status before showing the form.
           return;
         }
-        if (!(_splashForm is IMessageUpdater)) {
+        if (_splashForm is not IMessageUpdater messageUpdater) {
           throw new InvalidOperationException(
             "Form type \""
             + _splashFormType.Name
@@ -167,10 +155,10 @@ namespace SoundExplorers.View {
         try {
           if (_splashForm.InvokeRequired) {
             _splashForm.Invoke(
-              new SetMessageDelegate(((IMessageUpdater)_splashForm).SetMessage),
+              new SetMessageDelegate(messageUpdater.SetMessage),
               _status);
           } else {
-            ((IMessageUpdater)_splashForm).SetMessage(_status);
+            messageUpdater.SetMessage(_status);
           }
         } catch {
           //	fail silently
@@ -187,7 +175,7 @@ namespace SoundExplorers.View {
     ///   showing the splash form, <b>False</b>
     ///   will be returned.
     /// </remarks>
-    private static bool Visible => _splashForm != null && _splashForm.Visible;
+    private static bool Visible => _splashForm is {Visible: true};
 
     /// <summary>
     ///   Closes the Splash <see cref="Form" /> if one is shown.

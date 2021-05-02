@@ -48,6 +48,7 @@ namespace SoundExplorers.View {
       this.ViewStatusBarMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.ToolsMenu = new System.Windows.Forms.ToolStripMenuItem();
       this.ToolsLinkMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.ToolsBackupDatabaseMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.ToolsOptionsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.WindowsMenu = new System.Windows.Forms.ToolStripMenuItem();
       this.WindowsCascadeMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -116,7 +117,7 @@ namespace SoundExplorers.View {
       this.FileNewMenuItem.Name = "FileNewMenuItem";
       this.FileNewMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
       this.FileNewMenuItem.Size = new System.Drawing.Size(205, 22);
-      this.FileNewMenuItem.Text = "&New Table Editor";
+      this.FileNewMenuItem.Text = "&New Table Editor...";
       this.FileNewMenuItem.Click += new System.EventHandler(this.FileNewMenuItem_Click);
       // 
       // FileOpenMenuItem
@@ -125,7 +126,7 @@ namespace SoundExplorers.View {
       this.FileOpenMenuItem.Name = "FileOpenMenuItem";
       this.FileOpenMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
       this.FileOpenMenuItem.Size = new System.Drawing.Size(205, 22);
-      this.FileOpenMenuItem.Text = "&Open Table";
+      this.FileOpenMenuItem.Text = "&Open Table...";
       this.FileOpenMenuItem.Click += new System.EventHandler(this.FileOpenMenuItem_Click);
       // 
       // FileRefreshMenuItem
@@ -269,6 +270,7 @@ namespace SoundExplorers.View {
       // 
       this.ToolsMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.ToolsLinkMenuItem,
+            this.ToolsBackupDatabaseMenuItem,
             this.ToolsOptionsMenuItem});
       this.ToolsMenu.Name = "ToolsMenu";
       this.ToolsMenu.Size = new System.Drawing.Size(46, 20);
@@ -283,12 +285,20 @@ namespace SoundExplorers.View {
       this.ToolsLinkMenuItem.Text = "Follow &Link";
       this.ToolsLinkMenuItem.Click += new System.EventHandler(this.ToolsLinkMenuItem_Click);
       // 
+      // ToolsBackupDatabaseMenuItem
+      // 
+      this.ToolsBackupDatabaseMenuItem.ImageTransparentColor = System.Drawing.Color.Black;
+      this.ToolsBackupDatabaseMenuItem.Name = "ToolsBackupDatabaseMenuItem";
+      this.ToolsBackupDatabaseMenuItem.Size = new System.Drawing.Size(174, 22);
+      this.ToolsBackupDatabaseMenuItem.Text = "&Backup Database...";
+      this.ToolsBackupDatabaseMenuItem.Click += new System.EventHandler(this.ToolsBackupDatabaseMenuItem_Click);
+      // 
       // ToolsOptionsMenuItem
       // 
       this.ToolsOptionsMenuItem.ImageTransparentColor = System.Drawing.Color.Black;
       this.ToolsOptionsMenuItem.Name = "ToolsOptionsMenuItem";
       this.ToolsOptionsMenuItem.Size = new System.Drawing.Size(174, 22);
-      this.ToolsOptionsMenuItem.Text = "&Options";
+      this.ToolsOptionsMenuItem.Text = "&Options...";
       this.ToolsOptionsMenuItem.Click += new System.EventHandler(this.ToolsOptionsMenuItem_Click);
       // 
       // WindowsMenu
@@ -585,6 +595,7 @@ namespace SoundExplorers.View {
         private System.Windows.Forms.ToolStripMenuItem ViewStatusBarMenuItem;
         private System.Windows.Forms.ToolStripMenuItem ToolsMenu;
         public System.Windows.Forms.ToolStripMenuItem ToolsLinkMenuItem;
+        public System.Windows.Forms.ToolStripMenuItem ToolsBackupDatabaseMenuItem;
         private System.Windows.Forms.ToolStripMenuItem ToolsOptionsMenuItem;
         private System.Windows.Forms.ToolStripMenuItem WindowsMenu;
         private System.Windows.Forms.ToolStripMenuItem WindowsCascadeMenuItem;

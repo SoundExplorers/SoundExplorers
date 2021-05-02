@@ -21,13 +21,13 @@ AppUpdatesURL={#MyAppURL}
 DefaultDirName={commonpf64}\Sound Explorers\Audio Archive
 ;DefaultDirName={commonpf64}\{#MyAppName}
 DisableProgramGroupPage=yes
-LicenseFile=..\SoundExplorers\bin\X64\Release\net5.0-windows\Licence.txt
+LicenseFile=..\Source\SoundExplorers\bin\X64\Release\net5.0-windows\Licence.txt
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
 ;PrivilegesRequired=lowest
 OutputDir=.\
 OutputBaseFilename=SoundExplorers {#MyAppVersion}
 VersionInfoVersion={#MyAppVersion}
-SetupIconFile=..\SoundExplorers\Kettle Drum (multi-size).ico
+SetupIconFile=..\Source\SoundExplorers\Kettle Drum (multi-size).ico
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
@@ -40,8 +40,8 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}";
 
 [Files]
-Source: "..\SoundExplorers\bin\X64\Release\net5.0-windows\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\SoundExplorers\bin\X64\Release\net5.0-windows\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\Source\SoundExplorers\bin\X64\Release\net5.0-windows\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\Source\SoundExplorers\bin\X64\Release\net5.0-windows\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "Data\DatabaseConfig.xml"; DestDir: "{app}"; Flags: onlyifdoesntexist
 Source: "Data\Initialised Database\*"; DestDir: "{app}\Initialised Database"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "Data\Documentation\*"; DestDir: "{app}\Documentation"; Flags: ignoreversion recursesubdirs createallsubdirs

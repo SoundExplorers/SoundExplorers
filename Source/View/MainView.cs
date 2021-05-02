@@ -54,6 +54,22 @@ namespace SoundExplorers.View {
       }
     }
 
+    public string AskForBackupFolderPath(string previousPath) {
+      throw new NotImplementedException();
+    }
+
+    public void SetMouseCursorToDefault() {
+      Cursor = Cursors.Default;
+    }
+
+    public void SetMouseCursorToWait() {
+      Cursor = Cursors.WaitCursor;
+    }
+
+    public void SetStatusBarText(string text) {
+      StatusLabel.Text = text;
+    }
+
     public void ShowErrorMessage(string text) {
       ShowMessage(text, MessageBoxIcon.Error);
     }
@@ -300,6 +316,10 @@ namespace SoundExplorers.View {
 
     private void ToolsLinkMenuItem_Click(object? sender, EventArgs e) {
       EditorView?.CurrentGrid?.Controller.FollowLink();
+    }
+
+    private void ToolsBackupDatabaseMenuItem_Click(object? sender, EventArgs e) {
+      Controller.BackupDatabase();
     }
 
     private void ToolsOptionsMenuItem_Click(object? sender, EventArgs e) {
