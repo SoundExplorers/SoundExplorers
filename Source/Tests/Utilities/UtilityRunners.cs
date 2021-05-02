@@ -22,7 +22,7 @@ namespace SoundExplorers.Tests.Utilities {
   public class UtilityRunners {
     [SetUp]
     public void Setup() {
-      DatabaseGenerator = new DatabaseGenerator {UseLicenceRemovalWorkaround = true};
+      DatabaseGenerator = new DatabaseGenerator {UseLicenceRemovalWorkaround = false};
     }
 
     private DatabaseGenerator DatabaseGenerator { get; set; } = null!;
