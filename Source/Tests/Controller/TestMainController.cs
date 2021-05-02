@@ -10,10 +10,17 @@ namespace SoundExplorers.Tests.Controller {
       QueryHelper queryHelper, SessionBase session) : base(view) {
       QueryHelper = queryHelper;
       Session = session;
+      MockBackupManager = new MockBackupManager();
     }
+
+    internal MockBackupManager MockBackupManager { get; }
 
     private QueryHelper QueryHelper { get; }
     private SessionBase Session { get; }
+    
+    protected override IBackupManager CreateBackupManager() {
+      return MockBackupManager;
+    }
 
     protected override Option CreateOption(string name, object? defaultValue = null) {
       return new TestOption(QueryHelper, Session, name, defaultValue);
