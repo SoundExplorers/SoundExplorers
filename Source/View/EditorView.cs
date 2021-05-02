@@ -63,16 +63,16 @@ namespace SoundExplorers.View {
 
     public void SetMouseCursorToDefault() {
       Debug.WriteLine("EditorView.SetMouseCursorToDefault");
-      MainView.Cursor = Cursors.Default;
+      MainView.SetMouseCursorToDefault();
     }
 
     public void SetMouseCursorToWait() {
       Debug.WriteLine("EditorView.SetMouseCursorToWait");
-      MainView.Cursor = Cursors.WaitCursor;
+      MainView.SetMouseCursorToWait();
     }
 
     public void SetStatusBarText(string text) {
-      MainView.StatusLabel.Text = text;
+      MainView.SetStatusBarText(text);
     }
 
     public void ShowErrorMessage(string text) {

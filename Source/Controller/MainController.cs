@@ -4,11 +4,13 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Runtime.InteropServices;
 using JetBrains.Annotations;
+using SoundExplorers.Data;
 using SoundExplorers.Model;
 
 namespace SoundExplorers.Controller {
   [UsedImplicitly]
   public class MainController {
+    private IBackupManager? _backupManager;
     private IOpen? _databaseConnection;
     private Option? _statusBarOption;
     private Option? _tableOption;
@@ -45,6 +47,8 @@ namespace SoundExplorers.Controller {
       set => TableOption.StringValue = value;
     }
 
+    private IBackupManager BackupManager => _backupManager ??= CreateBackupManager();
+
     private Option StatusBarOption => _statusBarOption ??=
       CreateOption("StatusBar", true);
 
@@ -54,6 +58,16 @@ namespace SoundExplorers.Controller {
       CreateOption("ToolBar", true);
 
     private IMainView View { get; }
+
+    public void BackupDatabase() {
+      string newBackupFolderPath =
+        View.AskForBackupFolderPath(BackupManager.BackupFolderPath);
+      if (string.IsNullOrWhiteSpace(newBackupFolderPath)) {
+        return;
+      }
+      View.SetMouseCursorToWait();
+      View.SetStatusBarText("Backing up database. Please wait...");
+    }
 
     public void ConnectToDatabase() {
       DatabaseConnection.Open();
@@ -94,6 +108,11 @@ namespace SoundExplorers.Controller {
           "This action is not (yet) supported for " +
           $"{RuntimeInformation.OSDescription}");
       }
+    }
+
+    [ExcludeFromCodeCoverage]
+    protected virtual IBackupManager CreateBackupManager() {
+      return new BackupManager(QueryHelper.Instance, Global.Session);
     }
 
     [ExcludeFromCodeCoverage]

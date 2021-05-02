@@ -8,7 +8,7 @@ using SoundExplorers.Data;
 using VelocityDb.Session;
 
 namespace SoundExplorers.Model {
-  public class BackupManager {
+  public class BackupManager : IBackupManager {
     private GlobalOption? _backupFolderPathOption;
     private GlobalOption? _lastBackupDateTimeOption;
     private GlobalOption? _lastPromptForBackupDateTimeOption;
@@ -16,11 +16,6 @@ namespace SoundExplorers.Model {
     public BackupManager(QueryHelper? queryHelper, SessionBase? session) {
       QueryHelper = queryHelper ?? QueryHelper.Instance;
       Session = session ?? Global.Session;
-    }
-
-    public string BackupFolderPath {
-      get => BackupFolderPathOption.StringValue;
-      private set => BackupFolderPathOption.StringValue = value;
     }
 
     public bool IsTimeToPromptForBackup {
@@ -73,7 +68,16 @@ namespace SoundExplorers.Model {
     private QueryHelper QueryHelper { get; }
     private SessionBase Session { get; }
 
+    public string BackupFolderPath {
+      get => BackupFolderPathOption.StringValue;
+      private set => BackupFolderPathOption.StringValue = value;
+    }
+
     public void BackupDatabaseTo(string backupFolderPath) {
+      if (!Directory.Exists(backupFolderPath)) {
+        throw new ApplicationException(
+          $"Backup folder '{backupFolderPath}' does not exist.");
+      }
       var backupDateTime = GetBackupDateTime();
       string zipFileName = Path.Combine(backupFolderPath,
         $"Backup{backupDateTime:yyyyMMddHHmmss}.zip");
