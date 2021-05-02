@@ -22,7 +22,7 @@ namespace SoundExplorers.Tests.Utilities {
   public class UtilityRunners {
     [SetUp]
     public void Setup() {
-      DatabaseGenerator = new DatabaseGenerator();
+      DatabaseGenerator = new DatabaseGenerator {UseLicenceRemovalWorkaround = true};
     }
 
     private DatabaseGenerator DatabaseGenerator { get; set; } = null!;
@@ -58,7 +58,7 @@ namespace SoundExplorers.Tests.Utilities {
       }
     }
 
-    private static void AddOneOfEachEntityTypePersisted(
+    public static void AddOneOfEachEntityTypePersisted(
       TestData data, SessionBase session) {
       data.AddActsPersisted(1, session);
       data.AddArtistsPersisted(1, session);

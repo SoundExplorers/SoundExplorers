@@ -18,6 +18,8 @@ namespace SoundExplorers.Tests.Utilities {
     /// </summary>
     public string? InitialisedDatabaseFolderPath { get; private set; }
 
+    public bool UseLicenceRemovalWorkaround { get; set; }
+
     private TestData Data { get; set; } = null!;
     private TestSession Session { get; set; } = null!;
 
@@ -130,11 +132,26 @@ namespace SoundExplorers.Tests.Utilities {
       // VelocityDB licence file.
       Schema.Instance.RegisterPersistableTypes(Session);
       Session.Commit();
+      if (UseLicenceRemovalWorkaround) {
+        // In order for the database to be used without a licence file, we also need to
+        // first add one of each entity type, which we can and will delete after removing
+        // the licence file from the database, as the registration of persistable types is
+        // still not robust. 
+        Data = new TestData(new QueryHelper());
+        Session.BeginUpdate();
+        UtilityRunners.AddOneOfEachEntityTypePersisted(Data, Session);
+        Session.Commit();
+      }
       if (!keepLicenceFile) {
         RemoveLicenceFileFromDatabase();
       }
+      if (UseLicenceRemovalWorkaround) {
+        Session.BeginUpdate();
+        DeleteOneOfEachEntityType();
+        Session.Commit();
+      }
       // Remove unwanted database files, which should only be the transaction file
-      // (0.odb).
+      // (0.odb) unless UseLicenceRemovalWorkaround is true.
       var databaseFolder = new DirectoryInfo(databaseFolderPath);
       foreach (var file in databaseFolder.GetFiles()) {
         if (string.Compare(
@@ -144,6 +161,22 @@ namespace SoundExplorers.Tests.Utilities {
           file.Delete();
         }
       }
+    }
+
+    private void DeleteOneOfEachEntityType() {
+      Session.Unpersist(Data.Credits[0]);
+      Session.Unpersist(Data.Pieces[0]);
+      Session.Unpersist(Data.Sets[0]);
+      Session.Unpersist(Data.Events[0]);
+      Session.Unpersist(Data.Acts[0]);
+      Session.Unpersist(Data.Artists[0]);
+      Session.Unpersist(Data.EventTypes[0]);
+      Session.Unpersist(Data.Genres[0]);
+      Session.Unpersist(Data.Locations[0]);
+      Session.Unpersist(Data.Newsletters[0]);
+      Session.Unpersist(Data.Roles[0]);
+      Session.Unpersist(Data.Series[0]);
+      Session.Unpersist(Data.UserOptions[0]);
     }
 
     /// <summary>
