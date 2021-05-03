@@ -70,22 +70,42 @@ namespace SoundExplorers.View {
     }
 
     public void SetMouseCursorToDefault() {
+      if (InvokeRequired) {
+        Invoke((Action)SetMouseCursorToDefault);
+        return;
+      }
       Cursor = Cursors.Default;
     }
 
     public void SetMouseCursorToWait() {
+      if (InvokeRequired) {
+        Invoke((Action)SetMouseCursorToWait);
+        return;
+      }
       Cursor = Cursors.WaitCursor;
     }
 
     public void SetStatusBarText(string text) {
+      if (InvokeRequired) {
+        Invoke((Action)delegate { SetStatusBarText(text); });
+        return;
+      }
       StatusLabel.Text = text;
     }
 
     public void ShowErrorMessage(string text) {
+      if (InvokeRequired) {
+        Invoke((Action)delegate { ShowErrorMessage(text); });
+        return;
+      }
       ShowMessage(text, MessageBoxIcon.Error);
     }
 
     public void ShowInformationMessage(string text) {
+      if (InvokeRequired) {
+        Invoke((Action)delegate { ShowInformationMessage(text); });
+        return;
+      }
       ShowMessage(text, MessageBoxIcon.Information);
     }
 

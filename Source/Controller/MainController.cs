@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Threading;
 using JetBrains.Annotations;
 using SoundExplorers.Data;
 using SoundExplorers.Model;
@@ -66,21 +67,16 @@ namespace SoundExplorers.Controller {
         View.SetStatusBarText("Database backup cancelled.");
         return;
       }
-      View.BeginInvoke(() => {
-        View.SetStatusBarText("Backing up database. Please wait...");
-        View.BeginInvoke(() => {
-          View.SetMouseCursorToWait();
-          View.BeginInvoke(() => BackupDatabaseAsync(newBackupFolderPath));
-        });
-      });
-      // View.BeginInvoke(() => {
-      //   View.SetMouseCursorToWait();
-      //   View.SetStatusBarText("Backing up database. Please wait...");
-      //   View.BeginInvoke(() => BackupDatabaseAsync(newBackupFolderPath));
-      // });
-      // View.SetStatusBarText("Backing up database. Please wait...");
-      // View.SetMouseCursorToWait();
-      // View.BeginInvoke(() => BackupDatabaseAsync(newBackupFolderPath));
+      View.SetStatusBarText("Backing up database. Please wait...");
+      View.SetMouseCursorToWait();
+      // Running the backup in a thread rather than via View.BeginInvoke fixes a problem
+      // where, though the wait cursor was shown while the backup was running, the status
+      // message was not.
+      var backupThread =
+        new Thread(() => BackupDatabaseAsync(newBackupFolderPath)) {
+          Name = nameof(BackupDatabaseAsync)
+        };
+      backupThread.Start();
     }
 
     public void ConnectToDatabase() {

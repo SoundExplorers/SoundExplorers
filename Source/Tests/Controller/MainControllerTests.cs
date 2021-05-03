@@ -23,17 +23,19 @@ namespace SoundExplorers.Tests.Controller {
       Controller.MockBackupManager.BackupFolderPath = initialBackupFolderPath;
       View.BackupFolderPath = "def";
       Controller.BackupDatabase();
-      Assert.AreEqual("The database backup has completed.", View.StatusBarText, 
+      TestHelper.WaitUntilTrue(() => View.SetMouseCursorToDefaultCount == 1,
+        "Backup finished");
+      Assert.AreEqual("The database backup has completed.", View.StatusBarText,
         "StatusBarText");
-      Assert.AreEqual(initialBackupFolderPath, 
+      Assert.AreEqual(initialBackupFolderPath,
         View.PreviousBackupFolderPath, "PreviousBackupFolderPath");
-      Assert.AreEqual(View.BackupFolderPath, 
+      Assert.AreEqual(View.BackupFolderPath,
         Controller.MockBackupManager.BackupFolderPath, "BackupFolderPath");
       Assert.AreEqual(1, View.ShowInformationMessageCount, "ShowInformationMessageCount");
-      Assert.AreEqual("The database backup has completed.", View.LastInformationMessage, 
+      Assert.AreEqual("The database backup has completed.", View.LastInformationMessage,
         "LastInformationMessage");
       Assert.AreEqual(1, View.SetMouseCursorToWaitCount, "SetMouseCursorToWaitCount");
-      Assert.AreEqual(1, View.SetMouseCursorToDefaultCount, 
+      Assert.AreEqual(1, View.SetMouseCursorToDefaultCount,
         "SetMouseCursorToDefaultCount");
     }
 
@@ -44,7 +46,7 @@ namespace SoundExplorers.Tests.Controller {
       View.BackupFolderPath = string.Empty;
       Controller.BackupDatabase();
       Assert.AreEqual("Database backup cancelled.", View.StatusBarText, "StatusBarText");
-      Assert.AreEqual(initialBackupFolderPath, 
+      Assert.AreEqual(initialBackupFolderPath,
         Controller.MockBackupManager.BackupFolderPath, "BackupFolderPath");
     }
 
@@ -56,14 +58,16 @@ namespace SoundExplorers.Tests.Controller {
       Controller.MockBackupManager.ErrorMessage = errorMessage;
       View.BackupFolderPath = "def";
       Controller.BackupDatabase();
-      Assert.AreEqual("The database backup failed.", View.StatusBarText, 
+      TestHelper.WaitUntilTrue(() => View.SetMouseCursorToDefaultCount == 1,
+        "Backup stopped");
+      Assert.AreEqual("The database backup failed.", View.StatusBarText,
         "StatusBarText");
-      Assert.AreEqual(initialBackupFolderPath, 
+      Assert.AreEqual(initialBackupFolderPath,
         Controller.MockBackupManager.BackupFolderPath, "BackupFolderPath");
       Assert.AreEqual(1, View.ShowErrorMessageCount, "ShowErrorMessageCount");
       Assert.AreEqual(errorMessage, View.LastErrorMessage, "LastErrorMessage");
       Assert.AreEqual(1, View.SetMouseCursorToWaitCount, "SetMouseCursorToWaitCount");
-      Assert.AreEqual(1, View.SetMouseCursorToDefaultCount, 
+      Assert.AreEqual(1, View.SetMouseCursorToDefaultCount,
         "SetMouseCursorToDefaultCount");
     }
 
