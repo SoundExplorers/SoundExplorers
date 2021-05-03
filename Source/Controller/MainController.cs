@@ -66,9 +66,21 @@ namespace SoundExplorers.Controller {
         View.SetStatusBarText("Database backup cancelled.");
         return;
       }
-      View.SetMouseCursorToWait();
-      View.SetStatusBarText("Backing up database. Please wait...");
-      View.BeginInvoke(() => BackupDatabaseAsync(newBackupFolderPath));
+      View.BeginInvoke(() => {
+        View.SetStatusBarText("Backing up database. Please wait...");
+        View.BeginInvoke(() => {
+          View.SetMouseCursorToWait();
+          View.BeginInvoke(() => BackupDatabaseAsync(newBackupFolderPath));
+        });
+      });
+      // View.BeginInvoke(() => {
+      //   View.SetMouseCursorToWait();
+      //   View.SetStatusBarText("Backing up database. Please wait...");
+      //   View.BeginInvoke(() => BackupDatabaseAsync(newBackupFolderPath));
+      // });
+      // View.SetStatusBarText("Backing up database. Please wait...");
+      // View.SetMouseCursorToWait();
+      // View.BeginInvoke(() => BackupDatabaseAsync(newBackupFolderPath));
     }
 
     public void ConnectToDatabase() {
