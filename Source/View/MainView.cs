@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
-using Microsoft.WindowsAPICodePack.Dialogs;
+// using Microsoft.WindowsAPICodePack.Dialogs;
 using SoundExplorers.Controller;
 
 namespace SoundExplorers.View {
@@ -56,14 +56,14 @@ namespace SoundExplorers.View {
     }
 
     public string AskForBackupFolderPath(string previousPath) {
-      CommonOpenFileDialog dialog = new CommonOpenFileDialog {
-        InitialDirectory = previousPath, 
-        IsFolderPicker = true,
-        Title = "Select a database backup folder",
-      };
-      return dialog.ShowDialog() == CommonFileDialogResult.Ok
-        ? dialog.FileName
-        : string.Empty;
+      // CommonOpenFileDialog dialog = new CommonOpenFileDialog {
+      //   InitialDirectory = previousPath, 
+      //   IsFolderPicker = true,
+      //   Title = "Select a database backup folder",
+      // };
+      // return dialog.ShowDialog() == CommonFileDialogResult.Ok
+      //   ? dialog.FileName
+      //   : string.Empty;
     }
 
     void IMainView.BeginInvoke(Action action) {
