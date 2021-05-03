@@ -56,14 +56,13 @@ namespace SoundExplorers.View {
     }
 
     public string AskForBackupFolderPath(string previousPath) {
-      // CommonOpenFileDialog dialog = new CommonOpenFileDialog {
-      //   InitialDirectory = previousPath, 
-      //   IsFolderPicker = true,
-      //   Title = "Select a database backup folder",
-      // };
-      // return dialog.ShowDialog() == CommonFileDialogResult.Ok
-      //   ? dialog.FileName
-      //   : string.Empty;
+      var dialog = new FolderPicker {
+        InputPath = previousPath, 
+        Title = "Select a database backup folder",
+      };
+      return dialog.ShowDialog(Handle)!.Value
+        ? dialog.ResultPath
+        : string.Empty;
     }
 
     void IMainView.BeginInvoke(Action action) {
