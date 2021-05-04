@@ -154,6 +154,13 @@ namespace SoundExplorers.Model {
         if (Directory.Exists(initialisedDatabaseFolderPath)) {
           InitialiseDatabase(initialisedDatabaseFolderPath,
             DatabaseConfig.DatabaseFolderPath);
+#if DEBUG
+#else // Release build
+        } else {
+          throw new ApplicationException(
+            "Cannot find folder 'Initialised Database' in application folder " + 
+            $"'{Global.GetApplicationFolderPath()}'.");
+#endif
         }
       } else { // The database folder already contains files
         DatabaseLocationHelper.Localise(DatabaseConfig.DatabaseFolderPath);
