@@ -3,23 +3,7 @@ using SoundExplorers.Data;
 
 namespace SoundExplorers.Tests.Data {
   [TestFixture]
-  public class SchemaTests {
-    [SetUp]
-    public void Setup() {
-      QueryHelper = new QueryHelper();
-      DatabaseFolderPath = TestSession.CreateDatabaseFolder();
-      Session = new TestSession(DatabaseFolderPath);
-    }
-
-    [TearDown]
-    public void TearDown() {
-      TestSession.DeleteFolderIfExists(DatabaseFolderPath);
-    }
-
-    private string DatabaseFolderPath { get; set; } = null!;
-    private QueryHelper QueryHelper { get; set; } = null!;
-    private TestSession Session { get; set; } = null!;
-
+  public class SchemaTests : TestFixtureBase {
     [Test]
     public void NewSchema() {
       // Must be update transaction to allow for the existence of
@@ -35,6 +19,8 @@ namespace SoundExplorers.Tests.Data {
       schema.RegisterPersistableTypes(Session);
       schema.Version = 1;
       Session.Persist(schema);
+      Session.Commit();
+      Session.BeginRead();
       schema = Schema.Find(QueryHelper, Session);
       Session.Commit();
       Assert.IsNotNull(schema, "Schema after finding persisted occurence");
