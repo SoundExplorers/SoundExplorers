@@ -1,6 +1,6 @@
 ﻿namespace SoundExplorers.Model {
   public interface IDatabaseConnection {
-    bool MustBackup { get; }
+    SchemaUpgradeStatus SchemaUpgradeStatus { get; }
     void Open();
   }
 }

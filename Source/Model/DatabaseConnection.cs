@@ -7,10 +7,10 @@ using VelocityDb.Session;
 
 namespace SoundExplorers.Model {
   public class DatabaseConnection : IDatabaseConnection {
-    public int ExpectedSchemaVersion { get; protected init; } = 1;
+    public int ExpectedSchemaVersion { get; protected init; } = 2;
     protected DatabaseConfig DatabaseConfig { get; private set; } = null!;
     private QueryHelper QueryHelper { get; set; } = null!;
-    public bool MustBackup { get; private set; }
+    public SchemaUpgradeStatus SchemaUpgradeStatus { get; private set; }
 
     public void Open() {
       DatabaseConfig = CreateDatabaseConfig();
@@ -22,12 +22,13 @@ namespace SoundExplorers.Model {
       session.BeginUpdate();
       try {
         QueryHelper = CreateQueryHelper();
+        SchemaUpgradeStatus = SchemaUpgradeStatus.None;
         schema = Schema.Find(QueryHelper, session) ?? new Schema();
         if (schema.Version < ExpectedSchemaVersion) {
           bool isUpgradingSchema = schema.Version > 0;
           if (isUpgradingSchema &&
               CreateBackupManager(session).LastBackupDateTime.AddDays(1) < DateTime.Now) {
-            MustBackup = true;
+            SchemaUpgradeStatus = SchemaUpgradeStatus.Pending;
           } else {
             // In the release build, assume that the schema system database file that was
             // copied to the empty database folder already contains the persistable
@@ -37,6 +38,7 @@ namespace SoundExplorers.Model {
             CopyLicenceToDatabaseFolderIfAbsent();
 #endif
             schema.Version = ExpectedSchemaVersion;
+            SchemaUpgradeStatus = SchemaUpgradeStatus.Complete;
           }
         }
         if (!schema.IsPersistent) {

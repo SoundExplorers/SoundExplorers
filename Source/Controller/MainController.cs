@@ -49,7 +49,7 @@ namespace SoundExplorers.Controller {
     }
 
     private IBackupManager BackupManager => _backupManager ??= CreateBackupManager();
-    private  bool MustBackup { get; set; }
+    private  SchemaUpgradeStatus SchemaUpgradeStatus { get; set; }
 
     private Option StatusBarOption => _statusBarOption ??=
       CreateOption("StatusBar", true);
@@ -62,7 +62,7 @@ namespace SoundExplorers.Controller {
     private IMainView View { get; }
 
     public void BackupDatabase() {
-      if (MustBackup) {
+      if (SchemaUpgradeStatus == SchemaUpgradeStatus.Pending) {
         if (!View.AskOkCancelQuestion(
           "A database schema upgrade is pending. " + 
           "So you must first back up the database.\r\n\r\n" + 
@@ -75,7 +75,7 @@ namespace SoundExplorers.Controller {
       string newBackupFolderPath =
         View.AskForBackupFolderPath(BackupManager.BackupFolderPath);
       if (string.IsNullOrWhiteSpace(newBackupFolderPath)) {
-        if (MustBackup) {
+        if (SchemaUpgradeStatus == SchemaUpgradeStatus.Pending) {
           View.Close();
         } else {
           View.SetStatusBarText("Database backup cancelled.");
@@ -96,12 +96,22 @@ namespace SoundExplorers.Controller {
 
     public void ConnectToDatabase() {
       DatabaseConnection.Open();
-      MustBackup = DatabaseConnection.MustBackup;
+      SchemaUpgradeStatus = DatabaseConnection.SchemaUpgradeStatus;
     }
 
     public void OnWindowShown() {
-      if (MustBackup) {
-        View.BeginInvoke(BackupDatabase);
+      switch (SchemaUpgradeStatus) {
+        case SchemaUpgradeStatus.Pending:
+          View.BeginInvoke(BackupDatabase);
+          break;
+        case SchemaUpgradeStatus.Complete:
+          const string confirmationMessage =
+            "The database schema upgrade has completed.";
+          View.BeginInvoke(() => {
+            View.SetStatusBarText(confirmationMessage);
+            View.ShowInformationMessage(confirmationMessage);
+          });
+          break;
       }
     }
 
@@ -164,7 +174,7 @@ namespace SoundExplorers.Controller {
         const string confirmationMessage = "The database backup has completed.";
         View.SetStatusBarText(confirmationMessage);
         string informationMessage = confirmationMessage;
-        if (MustBackup) {
+        if (SchemaUpgradeStatus == SchemaUpgradeStatus.Pending) {
           informationMessage += 
             $"\r\n\r\n{GetProductName()} will now close. " +
             "when you restart the application, the database schema will be upgraded.";
@@ -174,7 +184,7 @@ namespace SoundExplorers.Controller {
         View.SetStatusBarText("The database backup failed.");
         View.ShowErrorMessage(exception.Message);
       } finally {
-        if (MustBackup) {
+        if (SchemaUpgradeStatus == SchemaUpgradeStatus.Pending) {
           View.Close();
         } else {
           View.SetMouseCursorToDefault();
