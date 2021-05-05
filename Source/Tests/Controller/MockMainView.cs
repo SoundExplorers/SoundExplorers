@@ -4,9 +4,12 @@ using SoundExplorers.Controller;
 namespace SoundExplorers.Tests.Controller {
   public class MockMainView : MockView<MainController>, IMainView {
     internal int AskForBackupFolderPathCount { get; private set; }
+    internal int AskOkCancelQuestionCount { get; private set; }
+    internal int CloseCount { get; private set; }
     internal string LastInformationMessage { get; private set; } = null!;
     internal string LastErrorMessage { get; private set; } = null!;
     internal string BackupFolderPath { get; set; } = null!;
+    internal bool OkCancelAnswer { get; set; }
     internal string PreviousBackupFolderPath { get; private set; } = null!;
     internal int SetMouseCursorToDefaultCount { get; private set; }
     internal int SetMouseCursorToWaitCount { get; private set; }
@@ -20,8 +23,17 @@ namespace SoundExplorers.Tests.Controller {
       return BackupFolderPath;
     }
 
-    public void BeginInvoke(Action action) {
+    public bool AskOkCancelQuestion(string text) {
+      AskOkCancelQuestionCount++;
+      return OkCancelAnswer;
+    }
+
+    void IMainView.BeginInvoke(Action action) {
       action.Invoke();
+    }
+
+    public void Close() {
+      CloseCount++;
     }
 
     public void SetMouseCursorToDefault() {

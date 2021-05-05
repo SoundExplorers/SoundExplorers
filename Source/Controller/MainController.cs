@@ -12,7 +12,7 @@ namespace SoundExplorers.Controller {
   [UsedImplicitly]
   public class MainController {
     private IBackupManager? _backupManager;
-    private IOpen? _databaseConnection;
+    private IDatabaseConnection? _databaseConnection;
     private Option? _statusBarOption;
     private Option? _tableOption;
     private Option? _toolBarOption;
@@ -26,8 +26,8 @@ namespace SoundExplorers.Controller {
     ///   The database connection, whose default should only need to be replaced in
     ///   tests.
     /// </summary>
-    internal IOpen DatabaseConnection {
-      get => _databaseConnection ?? new DatabaseConnection();
+    internal IDatabaseConnection DatabaseConnection {
+      get => _databaseConnection ??= new DatabaseConnection();
       set => _databaseConnection = value;
     }
 
@@ -49,6 +49,7 @@ namespace SoundExplorers.Controller {
     }
 
     private IBackupManager BackupManager => _backupManager ??= CreateBackupManager();
+    private  bool MustBackup { get; set; }
 
     private Option StatusBarOption => _statusBarOption ??=
       CreateOption("StatusBar", true);
@@ -61,10 +62,24 @@ namespace SoundExplorers.Controller {
     private IMainView View { get; }
 
     public void BackupDatabase() {
+      if (MustBackup) {
+        if (!View.AskOkCancelQuestion(
+          "A database schema upgrade is pending. " + 
+          "So you must first back up the database.\r\n\r\n" + 
+          "Answer OK to back up the database now.\r\n" 
+          + $"Answer Cancel to close {GetProductName()}.")) {
+          View.Close();
+          return;
+        }
+      }
       string newBackupFolderPath =
         View.AskForBackupFolderPath(BackupManager.BackupFolderPath);
       if (string.IsNullOrWhiteSpace(newBackupFolderPath)) {
-        View.SetStatusBarText("Database backup cancelled.");
+        if (MustBackup) {
+          View.Close();
+        } else {
+          View.SetStatusBarText("Database backup cancelled.");
+        }
         return;
       }
       View.SetStatusBarText("Backing up database. Please wait...");
@@ -81,6 +96,13 @@ namespace SoundExplorers.Controller {
 
     public void ConnectToDatabase() {
       DatabaseConnection.Open();
+      MustBackup = DatabaseConnection.MustBackup;
+    }
+
+    public void OnWindowShown() {
+      if (MustBackup) {
+        View.BeginInvoke(BackupDatabase);
+      }
     }
 
     [ExcludeFromCodeCoverage]
@@ -131,17 +153,32 @@ namespace SoundExplorers.Controller {
       return new Option(name, defaultValue);
     }
 
+    [ExcludeFromCodeCoverage]
+    protected virtual string GetProductName() {
+      return Global.GetProductName();
+    }
+
     private void BackupDatabaseAsync(string backupFolderPath) {
       try {
         BackupManager.BackupDatabaseTo(backupFolderPath);
         const string confirmationMessage = "The database backup has completed.";
         View.SetStatusBarText(confirmationMessage);
-        View.ShowInformationMessage(confirmationMessage);
+        string informationMessage = confirmationMessage;
+        if (MustBackup) {
+          informationMessage += 
+            $"\r\n\r\n{GetProductName()} will now close. " +
+            "when you restart the application, the database schema will be upgraded.";
+        }
+        View.ShowInformationMessage(informationMessage);
       } catch (ApplicationException exception) {
         View.SetStatusBarText("The database backup failed.");
         View.ShowErrorMessage(exception.Message);
       } finally {
-        View.SetMouseCursorToDefault();
+        if (MustBackup) {
+          View.Close();
+        } else {
+          View.SetMouseCursorToDefault();
+        }
       }
     }
 

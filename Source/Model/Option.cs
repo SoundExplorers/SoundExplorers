@@ -180,12 +180,13 @@ namespace SoundExplorers.Model {
     ///   a new UserOption with the required key and defaulted value.
     /// </summary>
     private UserOption FetchUserOption() {
-      Session.BeginUpdate();
-      Session.Commit();
       var temp = new UserOption {
         UserId = UserId, OptionName = OptionName
       };
-      Session.BeginUpdate();
+      bool isTransactionRequired = !Session.InTransaction;
+      if (isTransactionRequired) {
+        Session.BeginUpdate();
+      }
       var result = QueryHelper.Find<UserOption>(temp.SimpleKey, Session);
       if (result == null) {
         result = temp;
@@ -193,7 +194,9 @@ namespace SoundExplorers.Model {
           ? DefaultValue.ToString()!
           : string.Empty;
       }
-      Session.Commit();
+      if (isTransactionRequired) {
+        Session.Commit(); 
+      }
       return result;
     }
   } //End of class

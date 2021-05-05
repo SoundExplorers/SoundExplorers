@@ -16,7 +16,8 @@ namespace SoundExplorers.Tests.Model {
       DatabaseFolderPath = Path.Combine(
         TestSession.DatabaseParentFolderPath, "Connection Test Database"); 
       TearDown(); // Delete the config file and database folder if they exist.
-      Connection = new TestDatabaseConnection(ConfigFilePath, DatabaseFolderPath);
+      Connection = new TestDatabaseConnection(ConfigFilePath, DatabaseFolderPath, 
+        new QueryHelper());
     }
 
     [TearDown]
@@ -109,7 +110,7 @@ namespace SoundExplorers.Tests.Model {
     [Test]
     public void SimulateReleaseBuild() {
       Connection = new TestDatabaseConnection(ConfigFilePath,
-        DatabaseConfig.InsertDatabaseFolderPathHere);
+        DatabaseConfig.InsertDatabaseFolderPathHere, new QueryHelper());
       // Neither the configuration file nor the database folder exist.
       var exception = Assert.Catch<ApplicationException>(
         () => Connection.Open(),
