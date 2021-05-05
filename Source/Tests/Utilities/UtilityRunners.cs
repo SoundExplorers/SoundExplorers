@@ -46,7 +46,7 @@ namespace SoundExplorers.Tests.Utilities {
         var data = new TestData(new QueryHelper());
         var session = new SessionNoServer(testDatabaseFolder.FullName);
         session.BeginUpdate();
-        data.AddSchemaPersisted(1, session);
+        data.AddSchemaPersisted(session);
         AddOneOfEachEntityTypePersisted(data, session);
         session.Commit();
       } finally {

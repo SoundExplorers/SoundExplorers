@@ -6,6 +6,7 @@ using System.Security.Cryptography;
 using System.Text;
 using JetBrains.Annotations;
 using SoundExplorers.Data;
+using SoundExplorers.Model;
 using VelocityDb.Session;
 
 namespace SoundExplorers.Tests.Data {
@@ -265,9 +266,9 @@ namespace SoundExplorers.Tests.Data {
       }
     }
 
-    public void AddSchemaPersisted(int version, SessionBase session) {
+    public void AddSchemaPersisted(SessionBase session) {
       Schema = new Schema {
-        Version = version
+        Version = new DatabaseConnection().ExpectedSchemaVersion
       };
       session.Persist(Schema);
     }

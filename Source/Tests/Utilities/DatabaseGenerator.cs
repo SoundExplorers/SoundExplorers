@@ -37,6 +37,7 @@ namespace SoundExplorers.Tests.Utilities {
       InitialiseDatabase(DatabaseConfig.DefaultDatabaseFolderPath, keepLicenceFile);
       Data = new TestData(new QueryHelper(), startYear);
       Session.BeginUpdate();
+      Data.AddSchemaPersisted(Session);
       Data.AddActsPersisted(Session);
       Data.AddArtistsPersisted(200, Session);
       Data.AddEventTypesPersisted(Session);
