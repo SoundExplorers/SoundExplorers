@@ -2,8 +2,7 @@
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
-// using Microsoft.WindowsAPICodePack.Dialogs;
-using SoundExplorers.Controller;
+using SoundExplorers.Controller; // using Microsoft.WindowsAPICodePack.Dialogs;
 
 namespace SoundExplorers.View {
   public partial class MainView : Form, IMainView {
@@ -57,16 +56,26 @@ namespace SoundExplorers.View {
 
     public string AskForBackupFolderPath(string previousPath) {
       var dialog = new FolderPicker {
-        InputPath = previousPath, 
-        Title = "Select a database backup folder",
+        InputPath = previousPath,
+        Title = "Select a database backup folder"
       };
-      return dialog.ShowDialog(Handle)!.Value
+      bool? dialogResult = dialog.ShowDialog(Handle);
+      return dialogResult.HasValue && dialogResult.Value
         ? dialog.ResultPath
         : string.Empty;
     }
 
+    public bool AskOkCancelQuestion(string text) {
+      return MessageBox.Show(this, text, Application.ProductName,
+        MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK;
+    }
+
     void IMainView.BeginInvoke(Action action) {
       BeginInvoke(action);
+    }
+
+    void IMainView.Close() {
+      Close();
     }
 
     public void SetMouseCursorToDefault() {
@@ -147,6 +156,7 @@ namespace SoundExplorers.View {
       base.OnVisibleChanged(e);
       Activate();
       SplashManager.Close();
+      Controller.OnWindowShown();
     }
 
     private SelectEditorView CreateSelectEditorView() {

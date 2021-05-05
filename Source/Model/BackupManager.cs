@@ -47,11 +47,6 @@ namespace SoundExplorers.Model {
       _backupFolderPathOption ??=
         new GlobalOption(QueryHelper, Session, nameof(BackupFolderPath));
 
-    private DateTime LastBackupDateTime {
-      get => LastBackupDateTimeOption.DateTimeValue;
-      set => LastBackupDateTimeOption.DateTimeValue = value;
-    }
-
     private GlobalOption LastBackupDateTimeOption =>
       _lastBackupDateTimeOption ??=
         new GlobalOption(QueryHelper, Session, nameof(LastBackupDateTime));
@@ -71,6 +66,11 @@ namespace SoundExplorers.Model {
     public string BackupFolderPath {
       get => BackupFolderPathOption.StringValue;
       private set => BackupFolderPathOption.StringValue = value;
+    }
+
+    public DateTime LastBackupDateTime {
+      get => LastBackupDateTimeOption.DateTimeValue;
+      private set => LastBackupDateTimeOption.DateTimeValue = value;
     }
 
     public void BackupDatabaseTo(string backupFolderPath) {

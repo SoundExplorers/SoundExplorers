@@ -6,9 +6,50 @@ using SoundExplorers.Data;
 using VelocityDb.Session;
 
 namespace SoundExplorers.Model {
-  public class DatabaseConnection : IOpen {
-    public int ExpectedSchemaVersion { get; protected init; } = 1;
+  public class DatabaseConnection : IDatabaseConnection {
+    public int ExpectedSchemaVersion { get; protected init; } = 2;
+    public bool MustBackup { get; private set; }
+    protected IBackupManager BackupManager { get; private set; } = null!;
     protected DatabaseConfig DatabaseConfig { get; private set; } = null!;
+    private QueryHelper QueryHelper { get; set; } = null!;
+
+    public void Open() {
+      DatabaseConfig = CreateDatabaseConfig();
+      DatabaseConfig.Load();
+      CheckDatabaseFolderExists();
+      InitialiseDatabase();
+      Schema schema;
+      var session = new SessionNoServer(DatabaseConfig.DatabaseFolderPath);
+      session.BeginUpdate();
+      try {
+        QueryHelper = CreateQueryHelper();
+        schema = Schema.Find(QueryHelper, session) ?? new Schema();
+        if (schema.Version < ExpectedSchemaVersion) {
+          bool isUpgradingSchema = schema.Version > 0;
+          BackupManager = CreateBackupManager(session);
+          if (isUpgradingSchema &&
+              BackupManager.LastBackupDateTime.AddDays(1) < DateTime.Now) {
+            MustBackup = true;
+          } else {
+            // In the release build, assume that the schema system database file that was
+            // copied to the empty database folder already contains the persistable
+            // type registrations that will allow the database to be accessed without a
+            // licence file.
+#if DEBUG
+            CopyLicenceToDatabaseFolderIfAbsent();
+#endif
+            schema.Version = ExpectedSchemaVersion;
+          }
+        }
+        if (!schema.IsPersistent) {
+          session.Persist(schema);
+        }
+      } finally {
+        session.Commit();
+      }
+      Global.Session = session;
+      Schema.Instance = schema;
+    }
 
     [ExcludeFromCodeCoverage]
     public static void InitialiseDatabase(
@@ -24,39 +65,19 @@ namespace SoundExplorers.Model {
       session.Commit();
     }
 
-    public void Open() {
-      DatabaseConfig = CreateDatabaseConfig();
-      DatabaseConfig.Load();
-      CheckDatabaseFolderExists();
-      InitialiseDatabase();
-      Schema schema;
-      var session = new SessionNoServer(DatabaseConfig.DatabaseFolderPath);
-      session.BeginUpdate();
-      try {
-        schema = Schema.Find(QueryHelper.Instance, session) ?? new Schema();
-        if (schema.Version < ExpectedSchemaVersion) {
-          // In the release build, assume that the schema system database file that was
-          // copied to the empty database folder already contains the persistable
-          // type registrations that will allow the database to be accessed without a
-          // licence file.
-#if DEBUG
-          CopyLicenceToDatabaseFolderIfAbsent();
-#endif
-          schema.Version = ExpectedSchemaVersion;
-        }
-        if (!schema.IsPersistent) {
-          session.Persist(schema);
-        }
-      } finally {
-        session.Commit();
-      }
-      Global.Session = session;
-      Schema.Instance = schema;
+    [ExcludeFromCodeCoverage]
+    protected virtual IBackupManager CreateBackupManager(SessionBase session) {
+      return new BackupManager(QueryHelper, session);
     }
 
     [ExcludeFromCodeCoverage]
     protected virtual DatabaseConfig CreateDatabaseConfig() {
       return new DatabaseConfig();
+    }
+
+    [ExcludeFromCodeCoverage]
+    protected virtual QueryHelper CreateQueryHelper() {
+      return QueryHelper.Instance;
     }
 
     [ExcludeFromCodeCoverage]
@@ -85,6 +106,45 @@ namespace SoundExplorers.Model {
     private void CheckDatabaseFolderPathHasBeenSpecified() {
       if (!DatabaseConfig.HasDatabaseFolderPathBeenSpecified) {
         throw DatabaseConfig.CreateDatabaseFolderNotSpecifiedException();
+      }
+    }
+
+    /// <summary>
+    ///   If the database folder is empty and the required initialised system database
+    ///   files are available to copy into it, initialises the database with a predefined
+    ///   schema that will allow the database to be used without a VelocityDB licence
+    ///   file. This needs to be done if the database is to be updated by end users. If
+    ///   the database folder is not empty, ensures that the database locations system
+    ///   database file knows that the all the database files are in the current database
+    ///   folder, in case this is a copy of a database created in another folder, which
+    ///   may have been on another computer.
+    /// </summary>
+    /// <remarks>
+    ///   To create the initialised system database files, first run
+    ///   UtilityRunners.GenerateInitialisedDatabase, then rebuild the installer, which
+    ///   will copy the files into a 'Initialised Database' subfolder of the application
+    ///   folder.
+    /// </remarks>
+    [ExcludeFromCodeCoverage]
+    private void InitialiseDatabase() {
+      bool isDatabaseFolderEmpty =
+        !Directory.GetFiles(DatabaseConfig.DatabaseFolderPath).Any();
+      if (isDatabaseFolderEmpty) {
+        string initialisedDatabaseFolderPath =
+          Path.Combine(Global.GetApplicationFolderPath(), "Initialised Database");
+        if (Directory.Exists(initialisedDatabaseFolderPath)) {
+          InitialiseDatabase(initialisedDatabaseFolderPath,
+            DatabaseConfig.DatabaseFolderPath);
+#if DEBUG
+#else // Release build
+        } else {
+          throw new ApplicationException(
+            "Cannot find folder 'Initialised Database' in application folder " + 
+            $"'{Global.GetApplicationFolderPath()}'.");
+#endif
+        }
+      } else { // The database folder already contains files
+        DatabaseLocationHelper.Localise(DatabaseConfig.DatabaseFolderPath);
       }
     }
 
@@ -127,44 +187,5 @@ namespace SoundExplorers.Model {
         licenceFileCopyPath);
     }
 #endif
-
-    /// <summary>
-    ///   If the database folder is empty and the required initialised system database
-    ///   files are available to copy into it, initialises the database with a predefined
-    ///   schema that will allow the database to be used without a VelocityDB licence
-    ///   file. This needs to be done if the database is to be updated by end users. If
-    ///   the database folder is not empty, ensures that the database locations system
-    ///   database file knows that the all the database files are in the current database
-    ///   folder, in case this is a copy of a database created in another folder, which
-    ///   may have been on another computer.
-    /// </summary>
-    /// <remarks>
-    ///   To create the initialised system database files, first run
-    ///   UtilityRunners.GenerateInitialisedDatabase, then rebuild the installer, which
-    ///   will copy the files into a 'Initialised Database' subfolder of the application
-    ///   folder.
-    /// </remarks>
-    [ExcludeFromCodeCoverage]
-    private void InitialiseDatabase() {
-      bool isDatabaseFolderEmpty =
-        !Directory.GetFiles(DatabaseConfig.DatabaseFolderPath).Any();
-      if (isDatabaseFolderEmpty) {
-        string initialisedDatabaseFolderPath = 
-          Path.Combine(Global.GetApplicationFolderPath(), "Initialised Database");
-        if (Directory.Exists(initialisedDatabaseFolderPath)) {
-          InitialiseDatabase(initialisedDatabaseFolderPath,
-            DatabaseConfig.DatabaseFolderPath);
-#if DEBUG
-#else // Release build
-        } else {
-          throw new ApplicationException(
-            "Cannot find folder 'Initialised Database' in application folder " + 
-            $"'{Global.GetApplicationFolderPath()}'.");
-#endif
-        }
-      } else { // The database folder already contains files
-        DatabaseLocationHelper.Localise(DatabaseConfig.DatabaseFolderPath);
-      }
-    }
   }
 }

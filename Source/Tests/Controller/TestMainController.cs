@@ -25,5 +25,9 @@ namespace SoundExplorers.Tests.Controller {
     protected override Option CreateOption(string name, object? defaultValue = null) {
       return new TestOption(QueryHelper, Session, name, defaultValue);
     }
+
+    protected override string GetProductName() {
+      return "Sound Explorers Audio Archive";
+    }
   }
 }
