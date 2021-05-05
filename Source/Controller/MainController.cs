@@ -112,6 +112,19 @@ namespace SoundExplorers.Controller {
             View.ShowInformationMessage(confirmationMessage);
           });
           break;
+        case SchemaUpgradeStatus.None:
+          if (BackupManager.IsTimeToPromptForBackup) {
+            string guiSpecificQuestion =
+              BackupManager.PromptForBackupQuestion +
+              "\r\n\r\n(To back up the database later, " + 
+              "select Backup Database on the Tools Menu.)";
+            View.BeginInvoke(() => {
+              if (View.AskYesNoQuestion(guiSpecificQuestion)) {
+                BackupDatabase();
+              }
+            });
+          }
+          break;
       }
     }
 

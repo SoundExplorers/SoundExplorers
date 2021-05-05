@@ -70,6 +70,11 @@ namespace SoundExplorers.View {
         MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK;
     }
 
+    public bool AskYesNoQuestion(string text) {
+      return MessageBox.Show(this, text, Application.ProductName,
+        MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes;
+    }
+
     void IMainView.BeginInvoke(Action action) {
       BeginInvoke(action);
     }

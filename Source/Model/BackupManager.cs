@@ -18,17 +18,48 @@ namespace SoundExplorers.Model {
       Session = session ?? Global.Session;
     }
 
+    private GlobalOption BackupFolderPathOption =>
+      _backupFolderPathOption ??=
+        new GlobalOption(QueryHelper, Session, nameof(BackupFolderPath));
+
+    private GlobalOption LastBackupDateTimeOption =>
+      _lastBackupDateTimeOption ??=
+        new GlobalOption(QueryHelper, Session, nameof(LastBackupDateTime));
+
+    private DateTime LastBackupCheckDateTime {
+      get => LastBackupCheckDateTimeOption.DateTimeValue;
+      set => LastBackupCheckDateTimeOption.DateTimeValue = value;
+    }
+
+    private GlobalOption LastBackupCheckDateTimeOption =>
+      _lastPromptForBackupDateTimeOption ??=
+        new GlobalOption(QueryHelper, Session, nameof(LastBackupCheckDateTime));
+
+    private QueryHelper QueryHelper { get; }
+    private SessionBase Session { get; }
+
+    public string BackupFolderPath {
+      get => BackupFolderPathOption.StringValue;
+      private set => BackupFolderPathOption.StringValue = value;
+    }
+
     public bool IsTimeToPromptForBackup {
       get {
-        if (LastPromptForBackupDateTime.AddDays(7) < DateTime.Now) {
-          LastPromptForBackupDateTime = DateTime.Now;
+        if (LastBackupDateTime.AddDays(7) < DateTime.Now &&
+            LastBackupCheckDateTime.AddDays(7) < DateTime.Now) {
+          LastBackupCheckDateTime = DateTime.Now;
           return true;
         }
         return false;
       }
     }
 
-    public string PromptForBackupMessage {
+    public DateTime LastBackupDateTime {
+      get => LastBackupDateTimeOption.DateTimeValue;
+      private set => LastBackupDateTimeOption.DateTimeValue = value;
+    }
+
+    public string PromptForBackupQuestion {
       get {
         var writer = new StringWriter();
         writer.Write("Would you like to back up the database now?");
@@ -41,36 +72,6 @@ namespace SoundExplorers.Model {
         }
         return writer.ToString();
       }
-    }
-
-    private GlobalOption BackupFolderPathOption =>
-      _backupFolderPathOption ??=
-        new GlobalOption(QueryHelper, Session, nameof(BackupFolderPath));
-
-    private GlobalOption LastBackupDateTimeOption =>
-      _lastBackupDateTimeOption ??=
-        new GlobalOption(QueryHelper, Session, nameof(LastBackupDateTime));
-
-    private DateTime LastPromptForBackupDateTime {
-      get => LastPromptForBackupDateTimeOption.DateTimeValue;
-      set => LastPromptForBackupDateTimeOption.DateTimeValue = value;
-    }
-
-    private GlobalOption LastPromptForBackupDateTimeOption =>
-      _lastPromptForBackupDateTimeOption ??=
-        new GlobalOption(QueryHelper, Session, nameof(LastPromptForBackupDateTime));
-
-    private QueryHelper QueryHelper { get; }
-    private SessionBase Session { get; }
-
-    public string BackupFolderPath {
-      get => BackupFolderPathOption.StringValue;
-      private set => BackupFolderPathOption.StringValue = value;
-    }
-
-    public DateTime LastBackupDateTime {
-      get => LastBackupDateTimeOption.DateTimeValue;
-      private set => LastBackupDateTimeOption.DateTimeValue = value;
     }
 
     public void BackupDatabaseTo(string backupFolderPath) {

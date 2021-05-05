@@ -7,7 +7,7 @@ using VelocityDb.Session;
 
 namespace SoundExplorers.Model {
   public class DatabaseConnection : IDatabaseConnection {
-    public int ExpectedSchemaVersion { get; protected init; } = 2;
+    public int ExpectedSchemaVersion { get; protected init; } = 1;
     protected DatabaseConfig DatabaseConfig { get; private set; } = null!;
     private QueryHelper QueryHelper { get; set; } = null!;
     public SchemaUpgradeStatus SchemaUpgradeStatus { get; private set; }

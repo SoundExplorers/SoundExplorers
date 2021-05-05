@@ -5,6 +5,7 @@ namespace SoundExplorers.Tests.Controller {
   public class MockMainView : MockView<MainController>, IMainView {
     internal int AskForBackupFolderPathCount { get; private set; }
     internal int AskOkCancelQuestionCount { get; private set; }
+    internal int AskYesNoQuestionCount { get; private set; }
     internal int CloseCount { get; private set; }
     internal string LastInformationMessage { get; private set; } = null!;
     internal string LastErrorMessage { get; private set; } = null!;
@@ -16,6 +17,7 @@ namespace SoundExplorers.Tests.Controller {
     internal int ShowErrorMessageCount { get; private set; }
     internal int ShowInformationMessageCount { get; private set; }
     internal string StatusBarText { get; private set; } = null!;
+    internal bool YesNoAnswer { get; set; }
     
     public string AskForBackupFolderPath(string previousPath) {
       PreviousBackupFolderPath = previousPath;
@@ -26,6 +28,11 @@ namespace SoundExplorers.Tests.Controller {
     public bool AskOkCancelQuestion(string text) {
       AskOkCancelQuestionCount++;
       return OkCancelAnswer;
+    }
+
+    public bool AskYesNoQuestion(string text) {
+      AskYesNoQuestionCount++;
+      return YesNoAnswer;
     }
 
     void IMainView.BeginInvoke(Action action) {

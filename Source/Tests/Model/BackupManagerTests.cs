@@ -37,7 +37,7 @@ namespace SoundExplorers.Tests.Model {
       Assert.IsTrue(BackupManager.IsTimeToPromptForBackup,
         "IsTimeToPromptForBackup initially");
       Assert.AreEqual("Would you like to back up the database now?",
-        BackupManager.PromptForBackupMessage, "PromptForBackupMessage initially");
+        BackupManager.PromptForBackupQuestion, "PromptForBackupQuestion initially");
       BackupManager.TestBackupDateTime = DateTime.Parse("2099/12/31 23:59:59");
       BackupManager.BackupDatabaseTo(BackupFolder.FullName);
       Assert.IsFalse(BackupManager.IsTimeToPromptForBackup,
@@ -45,7 +45,7 @@ namespace SoundExplorers.Tests.Model {
       Assert.AreEqual(
         "Would you like to back up the database now?\r\n\r\n" +
         "The database was last backed up on 31 December 2099 at 23:59:59.",
-        BackupManager.PromptForBackupMessage, "PromptForBackupMessage after backup");
+        BackupManager.PromptForBackupQuestion, "PromptForBackupQuestion after backup");
       Assert.AreEqual(BackupFolder.FullName, BackupManager.BackupFolderPath,
         "BackupFolderPath after backup");
       var backupFiles = BackupFolder.GetFiles();
