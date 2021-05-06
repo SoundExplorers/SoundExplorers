@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using SoundExplorers.Model;
 using SoundExplorers.Tests.Data;
 using SoundExplorers.Tests.Model;
 
@@ -10,7 +11,10 @@ namespace SoundExplorers.Tests.Controller {
       base.Setup();
       Connection = new MockDatabaseConnection();
       View = new MockMainView();
-      Controller = new TestMainController(View, QueryHelper, Session);
+      Controller =
+        new TestMainController(View, QueryHelper, Session) {
+          DatabaseConnection = Connection
+        };
     }
 
     private MockDatabaseConnection Connection { get; set; } = null!;
@@ -23,7 +27,7 @@ namespace SoundExplorers.Tests.Controller {
       Controller.MockBackupManager.BackupFolderPath = initialBackupFolderPath;
       View.BackupFolderPath = "def";
       Controller.BackupDatabase();
-      TestHelper.WaitUntilTrue(() => View.SetMouseCursorToDefaultCount == 1,
+      TestHelper.WaitUntil(() => View.SetMouseCursorToDefaultCount == 1,
         "Backup finished");
       Assert.AreEqual("The database backup has completed.", View.StatusBarText,
         "StatusBarText");
@@ -37,6 +41,18 @@ namespace SoundExplorers.Tests.Controller {
       Assert.AreEqual(1, View.SetMouseCursorToWaitCount, "SetMouseCursorToWaitCount");
       Assert.AreEqual(1, View.SetMouseCursorToDefaultCount,
         "SetMouseCursorToDefaultCount");
+    }
+
+    [Test]
+    public void BackupDatabaseWhenDue() {
+      Connection.SchemaUpgradeStatus = SchemaUpgradeStatus.None;
+      Controller.ConnectToDatabase();
+      Controller.MockBackupManager.IsTimeToPromptForBackup = true;
+      View.YesNoAnswer = true;
+      View.BackupFolderPath = "def";
+      Controller.OnWindowShown();
+      TestHelper.WaitUntil(() => View.SetMouseCursorToDefaultCount == 1,
+        "Backup finished");
     }
 
     [Test]
@@ -58,7 +74,7 @@ namespace SoundExplorers.Tests.Controller {
       Controller.MockBackupManager.ErrorMessage = errorMessage;
       View.BackupFolderPath = "def";
       Controller.BackupDatabase();
-      TestHelper.WaitUntilTrue(() => View.SetMouseCursorToDefaultCount == 1,
+      TestHelper.WaitUntil(() => View.SetMouseCursorToDefaultCount == 1,
         "Backup stopped");
       Assert.AreEqual("The database backup failed.", View.StatusBarText,
         "StatusBarText");
@@ -74,8 +90,7 @@ namespace SoundExplorers.Tests.Controller {
     [Test]
     public void MainTest() {
       const string tableName = "Set";
-      Assert.AreSame(Controller, View.Controller, "view.Controller");
-      Controller.DatabaseConnection = Connection;
+      Assert.AreSame(Controller, View.Controller, "View.Controller");
       Controller.ConnectToDatabase();
       Assert.AreEqual(1, Connection.OpenCount, "OpenCount");
       Assert.IsTrue(Controller.IsToolBarVisible, "IsToolBarVisible initially");
@@ -87,6 +102,51 @@ namespace SoundExplorers.Tests.Controller {
       Assert.IsFalse(Controller.IsToolBarVisible, "IsToolBarVisible");
       Assert.IsFalse(Controller.IsStatusBarVisible, "IsStatusBarVisible");
       Assert.AreEqual(tableName, Controller.TableName, "TableName");
+    }
+
+    [Test]
+    public void SchemaUpgradeComplete() {
+      Connection.SchemaUpgradeStatus = SchemaUpgradeStatus.Complete;
+      Controller.ConnectToDatabase();
+      Controller.OnWindowShown();
+      Assert.AreEqual(1, View.ShowInformationMessageCount, 
+        "ShowInformationMessageCount");
+      Assert.AreEqual("The database schema upgrade has completed.", 
+        View.LastInformationMessage, "LastInformationMessage");
+      Assert.AreEqual("The database schema upgrade has completed.", View.StatusBarText, 
+        "StatusBarText");
+    }
+
+    [Test]
+    public void SchemaUpgradePendingBackup() {
+      Connection.SchemaUpgradeStatus = SchemaUpgradeStatus.Pending;
+      Controller.ConnectToDatabase();
+      View.OkCancelAnswer = true;
+      View.BackupFolderPath = "def";
+      Controller.OnWindowShown();
+      TestHelper.WaitUntil(() => View.CloseCount == 1,
+        "Backup finished and application closed");
+    }
+
+    [Test]
+    public void SchemaUpgradePendingCancelBackup() {
+      Connection.SchemaUpgradeStatus = SchemaUpgradeStatus.Pending;
+      Controller.ConnectToDatabase();
+      View.OkCancelAnswer = false;
+      View.BackupFolderPath = "def";
+      Controller.OnWindowShown();
+      Assert.AreEqual(1, View.CloseCount);
+    }
+
+    [Test]
+    public void SchemaUpgradePendingCancelSelectBackupFolder() {
+      Connection.SchemaUpgradeStatus = SchemaUpgradeStatus.Pending;
+      Controller.ConnectToDatabase();
+      View.OkCancelAnswer = true;
+      View.BackupFolderPath = string.Empty;
+      Controller.OnWindowShown();
+      TestHelper.WaitUntil(() => View.CloseCount == 1,
+        "Backup finished and application closed");
     }
   }
 }

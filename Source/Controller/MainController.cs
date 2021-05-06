@@ -62,16 +62,6 @@ namespace SoundExplorers.Controller {
     private IMainView View { get; }
 
     public void BackupDatabase() {
-      if (SchemaUpgradeStatus == SchemaUpgradeStatus.Pending) {
-        if (!View.AskOkCancelQuestion(
-          "A database schema upgrade is pending. " + 
-          "So you must first back up the database.\r\n\r\n" + 
-          "Answer OK to back up the database now.\r\n" 
-          + $"Answer Cancel to close {GetProductName()}.")) {
-          View.Close();
-          return;
-        }
-      }
       string newBackupFolderPath =
         View.AskForBackupFolderPath(BackupManager.BackupFolderPath);
       if (string.IsNullOrWhiteSpace(newBackupFolderPath)) {
@@ -102,7 +92,17 @@ namespace SoundExplorers.Controller {
     public void OnWindowShown() {
       switch (SchemaUpgradeStatus) {
         case SchemaUpgradeStatus.Pending:
-          View.BeginInvoke(BackupDatabase);
+          if (SchemaUpgradeStatus == SchemaUpgradeStatus.Pending) {
+            if (View.AskOkCancelQuestion(
+              "A database schema upgrade is pending. " + 
+              "So you must first back up the database.\r\n\r\n" + 
+              "Answer OK to back up the database now.\r\n" 
+              + $"Answer Cancel to close {GetProductName()}.")) {
+              View.BeginInvoke(BackupDatabase);
+            } else {
+              View.Close();
+            }
+          }
           break;
         case SchemaUpgradeStatus.Complete:
           const string confirmationMessage =

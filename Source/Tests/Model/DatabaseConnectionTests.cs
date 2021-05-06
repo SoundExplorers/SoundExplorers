@@ -14,9 +14,9 @@ namespace SoundExplorers.Tests.Model {
       ConfigFilePath = Path.Combine(
         TestSession.DatabaseParentFolderPath, "DatabaseConfig.xml");
       DatabaseFolderPath = Path.Combine(
-        TestSession.DatabaseParentFolderPath, "Connection Test Database"); 
+        TestSession.DatabaseParentFolderPath, "Connection Test Database");
       TearDown(); // Delete the config file and database folder if they exist.
-      Connection = new TestDatabaseConnection(ConfigFilePath, DatabaseFolderPath, 
+      Connection = new TestDatabaseConnection(ConfigFilePath, DatabaseFolderPath,
         new QueryHelper());
     }
 
@@ -59,7 +59,7 @@ namespace SoundExplorers.Tests.Model {
         "Unspecified licence file message");
       UpdateVelocityDbLicenceFilePath(false);
       Assert.AreEqual("For developer use only",
-        Connection.DatabaseConfig.VelocityDbLicenceFilePath, 
+        Connection.DatabaseConfig.VelocityDbLicenceFilePath,
         "Unspecified VelocityDbLicenceFilePath");
       exception = Assert.Catch<ApplicationException>(
         () => Connection.Open(),
@@ -72,7 +72,7 @@ namespace SoundExplorers.Tests.Model {
       Connection.Open();
 #if DEBUG
       Assert.AreEqual(TestSession.VelocityDbLicenceFilePath,
-        Connection.DatabaseConfig.VelocityDbLicenceFilePath, 
+        Connection.DatabaseConfig.VelocityDbLicenceFilePath,
         "VelocityDbLicenceFilePath");
 #else // Release build
       Assert.AreEqual("For developer use only",
@@ -81,14 +81,36 @@ namespace SoundExplorers.Tests.Model {
 #endif
       Assert.AreEqual(DatabaseFolderPath.ToLower(), Global.Session.SystemDirectory,
         "SystemDirectory");
-      Assert.AreEqual(Connection.ExpectedSchemaVersion, Schema.Instance.Version, "Version");
-      ResetSchemaVersionToZero();
+      Assert.AreEqual(Connection.ExpectedSchemaVersion, Schema.Instance.Version,
+        "Version, change #1");
+      Assert.AreEqual(SchemaUpgradeStatus.Complete, 
+        Connection.SchemaUpgradeStatus, "SchemaUpgradeStatus after version change #1");
+      ResetSchemaVersion(1);
+      Connection.MockBackupManager.LastBackupDateTime = DateTime.Now.AddMonths(-1);
+      Connection.Open();
+      // The Schema already exists at an earlier version than expected. So it needs to be
+      // upgraded. But we cannot do that yet, as the database has not been backed up
+      // within the last day. Instead, we need to set a flag for the user to be forced to
+      // back up the database and restart the application to complete the upgrade.
+      Assert.AreEqual(1, Schema.Instance.Version, "Version when backup is required");
+      Assert.AreEqual(SchemaUpgradeStatus.Pending, Connection.SchemaUpgradeStatus, 
+        "SchemaUpgradeStatus backup is required");
+      // Show that the user has just backed up the database, so we can proceed with the 
+      // schema upgrade.
+      Connection.MockBackupManager.LastBackupDateTime = DateTime.Now.AddMinutes(-1);
       // As we have just made the schema version out of date,
       // the entity types have to be registered again.
       // However, a copy of the licence file is now already on the database,
       // so we don't have to copy it again.
       Connection.Open();
-      Assert.AreEqual(Connection.ExpectedSchemaVersion, Schema.Instance.Version, "Version #2");
+      Assert.AreEqual(Connection.ExpectedSchemaVersion, Schema.Instance.Version,
+        "Version, change #2");
+      Assert.AreEqual(SchemaUpgradeStatus.Complete, Connection.SchemaUpgradeStatus, 
+        "SchemaUpgradeStatus after version change #2");
+      // The schema version is now up to date;
+      Connection.Open();
+      Assert.AreEqual(SchemaUpgradeStatus.None, Connection.SchemaUpgradeStatus, 
+        "SchemaUpgradeStatus when the schema is up to date.");
       RemoveXmlElement();
       exception = Assert.Catch<ApplicationException>(
         () => Connection.Open(),
@@ -147,12 +169,12 @@ namespace SoundExplorers.Tests.Model {
       }
     }
 
-    private void ResetSchemaVersionToZero() {
+    private void ResetSchemaVersion(int toVersion) {
       var session = new SessionNoServer(DatabaseFolderPath);
       session.BeginUpdate();
       var schema = Schema.Find(QueryHelper.Instance, session)!;
       Assert.IsNotNull(schema, "schema");
-      schema.Version = 0;
+      schema.Version = toVersion;
       session.Commit();
     }
 

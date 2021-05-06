@@ -10,16 +10,16 @@ namespace SoundExplorers.Tests.Model {
       DatabaseFolderPath = databaseFolderPath;
       QueryHelper = queryHelper;
       ExpectedSchemaVersion = 66;
+      MockBackupManager = new MockBackupManager();
     }
 
     internal new DatabaseConfig DatabaseConfig => base.DatabaseConfig;
-    internal MockBackupManager? MockBackupManager { get; private set; }
+    internal MockBackupManager MockBackupManager { get; }
     private string ConfigFilePath { get; }
     private string DatabaseFolderPath { get; }
     private QueryHelper QueryHelper { get; }
     
     protected override IBackupManager CreateBackupManager(SessionBase session) {
-      MockBackupManager = new MockBackupManager();
       return MockBackupManager;
     }
 
