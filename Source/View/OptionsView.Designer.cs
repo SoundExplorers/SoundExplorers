@@ -55,7 +55,7 @@ namespace SoundExplorers.View {
       this.DatabaseFolderTextBox.ReadOnly = true;
       this.DatabaseFolderTextBox.Size = new System.Drawing.Size(601, 73);
       this.DatabaseFolderTextBox.TabIndex = 2;
-      this.DatabaseFolderTextBox.Text = "E:\\Simon\\OneDrive\\Documents\\Software\\Sound Explorers Audio Archive\\Database E:\\Si" +
+      this.DatabaseFolderTextBox.Text = "D:\\Simon\\OneDrive\\Documents\\Software\\Sound Explorers Audio Archive\\Database D:\\Si" +
     "mon\\OneDrive\\Documents\\Software\\Sound Explorers Audio Archive\\Database";
       // 
       // OkButton

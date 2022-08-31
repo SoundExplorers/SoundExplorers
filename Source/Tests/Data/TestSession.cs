@@ -13,7 +13,7 @@ namespace SoundExplorers.Tests.Data {
     /// </summary>
     [PublicAPI]
     public const string VelocityDbLicenceFilePath =
-      @"E:\Simon\OneDrive\Documents\My Installers\VelocityDB\License Database\4.odb";
+      @"D:\Simon\OneDrive\Documents\My Installers\VelocityDB\License Database\4.odb";
 
     public TestSession() : base(CreateDatabaseFolder()) {
       BeginUpdate();
