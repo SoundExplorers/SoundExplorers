@@ -45,7 +45,7 @@ public static class DatabaseLocationHelper {
     foreach (var database in Session.Databases) {
       // Checking whether the database file is already local does not work.
       // So do the localisation unconditionally.
-      Debug.WriteLine($"    Localising database location {database.Location}");
+      // Debug.WriteLine($"    Localising database location {database.Location}");
       Session.RelocateDatabaseLocationFor(
         database.DatabaseNumber, SessionBase.LocalHost,
         Session.SystemDirectory);
