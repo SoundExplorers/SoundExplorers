@@ -57,10 +57,10 @@ namespace SoundExplorers.Model {
       get => _bindingList!;
       private set {
         if (_bindingList != null) {
-          _bindingList.ListChanged -= BindingList_ListChanged;
+          _bindingList.ListChanged -= BindingList_ListChanged!;
         }
         _bindingList = value;
-        _bindingList.ListChanged += BindingList_ListChanged;
+        _bindingList.ListChanged += BindingList_ListChanged!;
       }
     }
 
@@ -286,7 +286,7 @@ namespace SoundExplorers.Model {
       HasRowBeenEdited = false;
       if (BackupItemToRestoreFrom == null) {
         // Not forced to reenter row to fix an update error
-        var currentBindingItem = BindingList[rowIndex]!;
+        var currentBindingItem = BindingList[rowIndex];
         // Actually, EntityList should already be set unless this is the new row.
         currentBindingItem.EntityList = this;
         BackupItem = CreateBackupItem(currentBindingItem);
@@ -415,7 +415,7 @@ namespace SoundExplorers.Model {
       int errorRowIndex = LastDatabaseUpdateErrorException!.RowIndex;
       Debug.WriteLine(
         $"EntityListBase.ReplaceErrorBindingValueWithOriginal: row {errorRowIndex}");
-      var bindingItem = BindingList[errorRowIndex]!;
+      var bindingItem = BindingList[errorRowIndex];
       string propertyName =
         Columns[LastDatabaseUpdateErrorException.ColumnIndex].PropertyName;
       var originalValue = BackupItemToRestoreFrom!.GetPropertyValue(propertyName);
@@ -476,7 +476,7 @@ namespace SoundExplorers.Model {
     private void AddNewEntity(int rowIndex) {
       //Debug.WriteLine("EntityListBase.AddNewEntity");
       LastDatabaseChangeAction = StatementType.Insert;
-      var bindingItem = BindingList[rowIndex]!;
+      var bindingItem = BindingList[rowIndex];
       bindingItem.EntityList = this;
       try {
         bindingItem.ValidateInsertion();
@@ -516,7 +516,7 @@ namespace SoundExplorers.Model {
           //   $"EntityListBase.BindingList_ListChanged: ItemChanged, HasRowBeenEdited = {HasRowBeenEdited}");
           if (!IsInsertionRowCurrent) {
             if (!IsReplacingErrorBindingValueWithOriginal) {
-              UpdateExistingEntityProperty(e.NewIndex, e.PropertyDescriptor.Name);
+              UpdateExistingEntityProperty(e.NewIndex, e.PropertyDescriptor!.Name);
             } else {
               IsReplacingErrorBindingValueWithOriginal = false;
             }
@@ -592,7 +592,7 @@ namespace SoundExplorers.Model {
       // Debug.WriteLine(
       //   $"EntityListBase.UpdateExistingEntityProperty: row {rowIndex}; property {propertyName}");
       LastDatabaseChangeAction = StatementType.Update;
-      var bindingItem = BindingList[rowIndex]!;
+      var bindingItem = BindingList[rowIndex];
       var newValue = bindingItem.GetPropertyValue(propertyName);
       var oldValue = BackupItem!.GetPropertyValue(propertyName);
       if (newValue == oldValue) {

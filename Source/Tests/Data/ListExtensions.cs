@@ -5,7 +5,9 @@ namespace SoundExplorers.Tests.Data {
   public static class ListExtensions {
     public static IList<T> Shuffle<T>(this IEnumerable<T> list) {
       var result = new List<T>(list);
+#pragma warning disable SYSLIB0023
       RNGCryptoServiceProvider provider = new RNGCryptoServiceProvider();
+#pragma warning restore SYSLIB0023
       int n = result.Count;
       while (n > 1) {
         byte[] box = new byte[1];

@@ -483,7 +483,9 @@ namespace SoundExplorers.Tests.Data {
 
     private static string GenerateUniqueName(int size) {
       byte[] data = new byte[4 * size];
+#pragma warning disable SYSLIB0023
       using (var crypto = new RNGCryptoServiceProvider()) {
+#pragma warning restore SYSLIB0023
         crypto.GetBytes(data);
       }
       var result = new StringBuilder(size);
@@ -564,7 +566,9 @@ namespace SoundExplorers.Tests.Data {
     }
 
     public static int GetRandomInteger(int min, int max) {
+#pragma warning disable SYSLIB0023
       RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider();
+#pragma warning restore SYSLIB0023
       byte[] buffer = new byte[4];
       rng.GetBytes(buffer);
       int result = BitConverter.ToInt32(buffer, 0);

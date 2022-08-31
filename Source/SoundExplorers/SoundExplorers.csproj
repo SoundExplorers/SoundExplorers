@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
-        <TargetFramework>net5.0-windows</TargetFramework>
+        <TargetFramework>net6.0-windows</TargetFramework>
         <UseWindowsForms>true</UseWindowsForms>
         <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
 		<RootNamespace>SoundExplorers</RootNamespace>
@@ -11,6 +11,7 @@
 		<Configurations>Release;Debug</Configurations>
 		<Platforms>x64</Platforms>
         <ApplicationIcon>Kettle Drum (multi-size).ico</ApplicationIcon>
+        <LangVersion>10</LangVersion>
     </PropertyGroup>
     <PropertyGroup>
         <!-- Assembly properties. Before .Net 5, these were coded in AssemblyInfo.cs. -->

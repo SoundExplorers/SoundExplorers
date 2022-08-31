@@ -1,13 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
     <RootNamespace>SoundExplorers.Data</RootNamespace>
     <AssemblyName>SoundExplorers.Data</AssemblyName>
     <Nullable>enable</Nullable>
     <Configurations>Release;Debug</Configurations>
     <Platforms>x64</Platforms>
+    <LangVersion>10</LangVersion>
   </PropertyGroup>
   <PropertyGroup>
     <!-- Assembly properties. Before .Net 5, these were coded in AssemblyInfo.cs. -->
