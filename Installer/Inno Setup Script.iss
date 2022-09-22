@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Sound Explorers Audio Archive"
-#define MyAppVersion "1.0.1"
+#define MyAppVersion "1.0.2"
 #define MyAppPublisher "Sound and Light Exploration Society"
 #define MyAppURL "https://sourceforge.net/projects/sound-explorers-audio-archive/"
 #define MyAppExeName "SoundExplorers.exe"
@@ -21,7 +21,7 @@ AppUpdatesURL={#MyAppURL}
 DefaultDirName={commonpf64}\Sound Explorers\Audio Archive
 ;DefaultDirName={commonpf64}\{#MyAppName}
 DisableProgramGroupPage=yes
-LicenseFile=..\Source\SoundExplorers\bin\X64\Release\net5.0-windows\Licence.txt
+LicenseFile=..\Source\SoundExplorers\bin\X64\Release\net6.0-windows\Licence.txt
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
 ;PrivilegesRequired=lowest
 OutputDir=.\
@@ -40,8 +40,8 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}";
 
 [Files]
-Source: "..\Source\SoundExplorers\bin\X64\Release\net5.0-windows\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\Source\SoundExplorers\bin\X64\Release\net5.0-windows\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\Source\SoundExplorers\bin\X64\Release\net6.0-windows\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\Source\SoundExplorers\bin\X64\Release\net6.0-windows\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "Data\DatabaseConfig.xml"; DestDir: "{app}"; Flags: onlyifdoesntexist
 Source: "Data\Initialised Database\*"; DestDir: "{app}\Initialised Database"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "Data\Documentation\*"; DestDir: "{app}\Documentation"; Flags: ignoreversion recursesubdirs createallsubdirs

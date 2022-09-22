@@ -1,5 +1,5 @@
 Sound Explorers Audio Archive
-Copyright (c) 2021 Sound and Light Exploration Society
+Copyright (c) 2021-22 Sound and Light Exploration Society
 http://www.soundexplorers.co.nz/
 
 This program is free software: you can redistribute it and/or modify

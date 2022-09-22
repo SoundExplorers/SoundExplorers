@@ -15,9 +15,9 @@
     <Title>Sound Explorers Audio Archive (Tests Library)</Title>
     <Company>Sound and Light Exploration Society</Company>
     <Product>Sound Explorers Audio Archive</Product>
-    <Copyright>Copyright © 2021 Sound and Light Exploration Society</Copyright>
-    <AssemblyVersion>1.0.1</AssemblyVersion>
-    <FileVersion>1.0.1</FileVersion>
+    <Copyright>Copyright © 2021-22 Sound and Light Exploration Society</Copyright>
+    <AssemblyVersion>1.0.2</AssemblyVersion>
+    <FileVersion>1.0.2</FileVersion>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Controller\SoundExplorers.Controller.csproj" />
