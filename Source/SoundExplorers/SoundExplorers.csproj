@@ -25,10 +25,10 @@
         <Copyright>Copyright © 2021-22 Sound and Light Exploration Society</Copyright>
         <!-- In .Net 5, Application.ProductVersion comes from the InformationalVersion
         assembly property, not the ProductVersion property. -->
-        <InformationalVersion>1.0.3</InformationalVersion>
-        <ProductVersion>1.0.3</ProductVersion>
-        <AssemblyVersion>1.0.3</AssemblyVersion>
-        <FileVersion>1.0.3</FileVersion>
+        <InformationalVersion>1.0.4</InformationalVersion>
+        <ProductVersion>1.0.4</ProductVersion>
+        <AssemblyVersion>1.0.4</AssemblyVersion>
+        <FileVersion>1.0.4</FileVersion>
     </PropertyGroup>
     <ItemGroup>
       <ProjectReference Include="..\View\SoundExplorers.View.csproj" />
