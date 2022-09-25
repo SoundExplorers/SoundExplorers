@@ -1,5 +1,5 @@
 ﻿using SoundExplorers.Data;
 
-namespace SoundExplorers.Model {
-  public class RoleList : NamedEntityList<Role> { }
-}
+namespace SoundExplorers.Model; 
+
+public class RoleList : NamedEntityList<Role> { }

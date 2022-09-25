@@ -1,23 +1,23 @@
 ﻿using JetBrains.Annotations;
 using SoundExplorers.Data;
 
-namespace SoundExplorers.Model {
-  [NoReorder]
-  public class NamedBindingItem<TEntity>
-    : BindingItemBase<TEntity, NamedBindingItem<TEntity>>
-    where TEntity : EntityBase, INamedEntity, new() {
-    private string _name = null!;
+namespace SoundExplorers.Model; 
 
-    public string Name {
-      get => _name;
-      set {
-        _name = value;
-        OnPropertyChanged(nameof(Name));
-      }
-    }
+[NoReorder]
+public class NamedBindingItem<TEntity>
+  : BindingItemBase<TEntity, NamedBindingItem<TEntity>>
+  where TEntity : EntityBase, INamedEntity, new() {
+  private string _name = null!;
 
-    protected override string GetSimpleKey() {
-      return Name;
+  public string Name {
+    get => _name;
+    set {
+      _name = value;
+      OnPropertyChanged(nameof(Name));
     }
+  }
+
+  protected override string GetSimpleKey() {
+    return Name;
   }
 }

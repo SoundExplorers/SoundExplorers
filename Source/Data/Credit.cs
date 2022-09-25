@@ -1,63 +1,63 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace SoundExplorers.Data {
-  /// <summary>
-  ///   Credit entity, specifying the Role played by an Artist in a Piece,
-  ///   usually the instrument played by a musician.
-  /// </summary>
-  [VelocityDb.Indexing.Index]
-  public class Credit : EntityBase {
-    private Artist _artist = null!;
-    private int _creditNo;
-    private Role _role = null!;
+namespace SoundExplorers.Data; 
 
-    [SuppressMessage("ReSharper", "SuggestBaseTypeForParameter")]
-    public Credit() : base(typeof(Credit), nameof(CreditNo),
-      typeof(Piece)) { }
+/// <summary>
+///   Credit entity, specifying the Role played by an Artist in a Piece,
+///   usually the instrument played by a musician.
+/// </summary>
+[VelocityDb.Indexing.Index]
+public class Credit : EntityBase {
+  private Artist _artist = null!;
+  private int _creditNo;
+  private Role _role = null!;
 
-    public Artist Artist {
-      get => _artist;
-      set {
-        UpdateNonIndexField();
-        ChangeNonIdentifyingParent(typeof(Artist), value);
-        _artist = value;
-      }
+  [SuppressMessage("ReSharper", "SuggestBaseTypeForParameter")]
+  public Credit() : base(typeof(Credit), nameof(CreditNo),
+    typeof(Piece)) { }
+
+  public Artist Artist {
+    get => _artist;
+    set {
+      UpdateNonIndexField();
+      ChangeNonIdentifyingParent(typeof(Artist), value);
+      _artist = value;
     }
+  }
 
-    public int CreditNo {
-      get => _creditNo;
-      set {
-        UpdateNonIndexField();
-        _creditNo = value;
-        SimpleKey = IntegerToSimpleKey(value, nameof(CreditNo));
-      }
+  public int CreditNo {
+    get => _creditNo;
+    set {
+      UpdateNonIndexField();
+      _creditNo = value;
+      SimpleKey = IntegerToSimpleKey(value, nameof(CreditNo));
     }
+  }
 
-    public Piece Piece {
-      get => (Piece)IdentifyingParent!;
-      set {
-        UpdateNonIndexField();
-        IdentifyingParent = value;
-      }
+  public Piece Piece {
+    get => (Piece)IdentifyingParent!;
+    set {
+      UpdateNonIndexField();
+      IdentifyingParent = value;
     }
+  }
 
-    public Role Role {
-      get => _role;
-      set {
-        UpdateNonIndexField();
-        ChangeNonIdentifyingParent(typeof(Role), value);
-        _role = value;
-      }
+  public Role Role {
+    get => _role;
+    set {
+      UpdateNonIndexField();
+      ChangeNonIdentifyingParent(typeof(Role), value);
+      _role = value;
     }
+  }
 
-    protected override void SetNonIdentifyingParentField(
-      Type parentEntityType, EntityBase? newParent) {
-      if (parentEntityType == typeof(Artist)) {
-        _artist = (newParent as Artist)!;
-      } else {
-        _role = (newParent as Role)!;
-      }
+  protected override void SetNonIdentifyingParentField(
+    Type parentEntityType, EntityBase? newParent) {
+    if (parentEntityType == typeof(Artist)) {
+      _artist = (newParent as Artist)!;
+    } else {
+      _role = (newParent as Role)!;
     }
   }
 }

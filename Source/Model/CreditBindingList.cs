@@ -3,19 +3,19 @@ using System.ComponentModel;
 using System.Linq;
 using SoundExplorers.Data;
 
-namespace SoundExplorers.Model {
-  public class CreditBindingList : TypedBindingList<Credit, CreditBindingItem> {
-    public CreditBindingList(IList<CreditBindingItem> bindingItems) :
-      base(bindingItems) { }
+namespace SoundExplorers.Model; 
 
-    private string GetDefaultCreditNo() {
-      return CreditBindingItem.GetDefaultIntegerSimpleKey(
-        (from item in Items select item.CreditNo).ToList());
-    }
+public class CreditBindingList : TypedBindingList<Credit, CreditBindingItem> {
+  public CreditBindingList(IList<CreditBindingItem> bindingItems) :
+    base(bindingItems) { }
 
-    protected override void OnAddingNew(AddingNewEventArgs e) {
-      base.OnAddingNew(e);
-      e.NewObject ??= new CreditBindingItem {CreditNo = GetDefaultCreditNo()};
-    }
+  private string GetDefaultCreditNo() {
+    return CreditBindingItem.GetDefaultIntegerSimpleKey(
+      (from item in Items select item.CreditNo).ToList());
+  }
+
+  protected override void OnAddingNew(AddingNewEventArgs e) {
+    base.OnAddingNew(e);
+    e.NewObject ??= new CreditBindingItem {CreditNo = GetDefaultCreditNo()};
   }
 }

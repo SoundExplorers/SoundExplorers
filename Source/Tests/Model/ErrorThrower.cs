@@ -3,19 +3,19 @@ using System.Diagnostics.CodeAnalysis;
 using JetBrains.Annotations;
 using SoundExplorers.Data;
 
-namespace SoundExplorers.Tests.Model {
-  [UsedImplicitly]
-  [SuppressMessage("ReSharper", "UnusedMember.Local")]
-  [VelocityDb.Indexing.Index("_simpleKey")]
-  public class ErrorThrower : EntityBase, INamedEntity {
+namespace SoundExplorers.Tests.Model; 
 
-    public ErrorThrower() : base(typeof(ErrorThrower), nameof(Name),
-      null) { }
+[UsedImplicitly]
+[SuppressMessage("ReSharper", "UnusedMember.Local")]
+[VelocityDb.Indexing.Index("_simpleKey")]
+public class ErrorThrower : EntityBase, INamedEntity {
 
-    [ExcludeFromCodeCoverage]
-    public string Name {
-      get => SimpleKey;
-      set => throw new InvalidOperationException();
-    }
+  public ErrorThrower() : base(typeof(ErrorThrower), nameof(Name),
+    null) { }
+
+  [ExcludeFromCodeCoverage]
+  public string Name {
+    get => SimpleKey;
+    set => throw new InvalidOperationException();
   }
 }

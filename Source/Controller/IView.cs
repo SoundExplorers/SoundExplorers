@@ -1,5 +1,5 @@
-﻿namespace SoundExplorers.Controller {
-  public interface IView<in TController> {
-    void SetController(TController controller);
-  }
+﻿namespace SoundExplorers.Controller; 
+
+public interface IView<in TController> {
+  void SetController(TController controller);
 }

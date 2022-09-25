@@ -1,5 +1,5 @@
 ﻿using SoundExplorers.Data;
 
-namespace SoundExplorers.Model {
-  public class LocationList : NotablyNamedEntityList<Location> { }
-}
+namespace SoundExplorers.Model; 
+
+public class LocationList : NotablyNamedEntityList<Location> { }

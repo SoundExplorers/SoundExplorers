@@ -17,21 +17,6 @@ internal class MainGrid : GridBase, IMainGrid {
     ShowCellErrors = false;
   }
 
-  /// <summary>
-  ///   Pasting to a main grid text cell that is not already in edit mode is no longer
-  ///   supported. See remarks for
-  ///   <see cref="GridContextMenu.BeginCellEditIfRequired" />.
-  /// </summary>
-  public override bool CanPaste =>
-    base.CanPaste && (!IsTextBoxCellCurrent || EditingControl is TextBox);
-
-  /// <summary>
-  ///   Cutting or deleting or selecting all the contents of a main grid text cell that
-  ///   is not already in edit mode is no longer supported. See remarks for
-  ///   <see cref="GridContextMenu.BeginCellEditIfRequired" />.
-  /// </summary>
-  public override bool CanSelectAll => base.CanSelectAll && EditingControl is TextBox;
-
   public TextBox TextBox =>
     (TextBox)EditingControl ??
     throw new InvalidOperationException(

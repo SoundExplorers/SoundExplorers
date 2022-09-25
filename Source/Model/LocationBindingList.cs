@@ -1,3 +1,3 @@
-﻿namespace SoundExplorers.Model {
-  public class LocationBindingList { }
-}
+﻿namespace SoundExplorers.Model; 
+
+public class LocationBindingList { }

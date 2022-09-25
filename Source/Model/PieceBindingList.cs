@@ -3,19 +3,19 @@ using System.ComponentModel;
 using System.Linq;
 using SoundExplorers.Data;
 
-namespace SoundExplorers.Model {
-  public class PieceBindingList : TypedBindingList<Piece, PieceBindingItem> {
-    public PieceBindingList(IList<PieceBindingItem> bindingItems) :
-      base(bindingItems) { }
+namespace SoundExplorers.Model; 
 
-    private string GetDefaultPieceNo() {
-      return PieceBindingItem.GetDefaultIntegerSimpleKey(
-        (from item in Items select item.PieceNo).ToList());
-    }
+public class PieceBindingList : TypedBindingList<Piece, PieceBindingItem> {
+  public PieceBindingList(IList<PieceBindingItem> bindingItems) :
+    base(bindingItems) { }
 
-    protected override void OnAddingNew(AddingNewEventArgs e) {
-      base.OnAddingNew(e);
-      e.NewObject ??= new PieceBindingItem {PieceNo = GetDefaultPieceNo()};
-    }
+  private string GetDefaultPieceNo() {
+    return PieceBindingItem.GetDefaultIntegerSimpleKey(
+      (from item in Items select item.PieceNo).ToList());
+  }
+
+  protected override void OnAddingNew(AddingNewEventArgs e) {
+    base.OnAddingNew(e);
+    e.NewObject ??= new PieceBindingItem {PieceNo = GetDefaultPieceNo()};
   }
 }

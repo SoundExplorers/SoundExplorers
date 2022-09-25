@@ -1,29 +1,29 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace SoundExplorers.Data {
-  /// <summary>
-  ///   An entity representing a Set's genre.
-  /// </summary>
-  [VelocityDb.Indexing.Index("_simpleKey")]
-  public class Genre : EntityBase, INamedEntity {
-    [SuppressMessage("ReSharper", "SuggestBaseTypeForParameter")]
-    public Genre() : base(typeof(Genre), nameof(Name), null) {
-      Sets = new SortedEntityCollection<Set>();
-    }
+namespace SoundExplorers.Data; 
 
-    public SortedEntityCollection<Set> Sets { get; }
+/// <summary>
+///   An entity representing a Set's genre.
+/// </summary>
+[VelocityDb.Indexing.Index("_simpleKey")]
+public class Genre : EntityBase, INamedEntity {
+  [SuppressMessage("ReSharper", "SuggestBaseTypeForParameter")]
+  public Genre() : base(typeof(Genre), nameof(Name), null) {
+    Sets = new SortedEntityCollection<Set>();
+  }
 
-    public string Name {
-      get => SimpleKey;
-      set {
-        Update();
-        SimpleKey = value;
-      }
-    }
+  public SortedEntityCollection<Set> Sets { get; }
 
-    protected override ISortedEntityCollection GetChildren(Type childType) {
-      return Sets;
+  public string Name {
+    get => SimpleKey;
+    set {
+      Update();
+      SimpleKey = value;
     }
+  }
+
+  protected override ISortedEntityCollection GetChildren(Type childType) {
+    return Sets;
   }
 }

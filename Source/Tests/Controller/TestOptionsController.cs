@@ -2,21 +2,21 @@
 using SoundExplorers.Model;
 using SoundExplorers.Tests.Model;
 
-namespace SoundExplorers.Tests.Controller {
-  public class TestOptionsController : OptionsController {
-    public TestOptionsController(IView<OptionsController> view,
-      MockDatabaseConfig mockDatabaseConfig) : base(view) {
-      MockDatabaseConfig = mockDatabaseConfig;
-    }
+namespace SoundExplorers.Tests.Controller; 
 
-    private MockDatabaseConfig MockDatabaseConfig { get; }
+public class TestOptionsController : OptionsController {
+  public TestOptionsController(IView<OptionsController> view,
+    MockDatabaseConfig mockDatabaseConfig) : base(view) {
+    MockDatabaseConfig = mockDatabaseConfig;
+  }
 
-    protected override IDatabaseConfig CreateDatabaseConfig() {
-      return MockDatabaseConfig;
-    }
+  private MockDatabaseConfig MockDatabaseConfig { get; }
 
-    protected override string GetProductName() {
-      return "Sound Explorers Audio Archive";
-    }
+  protected override IDatabaseConfig CreateDatabaseConfig() {
+    return MockDatabaseConfig;
+  }
+
+  protected override string GetProductName() {
+    return "Sound Explorers Audio Archive";
   }
 }

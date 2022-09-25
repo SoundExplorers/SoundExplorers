@@ -1,5 +1,5 @@
-﻿namespace SoundExplorers.Controller {
-  public interface IParentGrid : IGrid, IView<ParentGridController> {
-    ParentGridController Controller { get; }
-  }
+﻿namespace SoundExplorers.Controller; 
+
+public interface IParentGrid : IGrid, IView<ParentGridController> {
+  ParentGridController Controller { get; }
 }

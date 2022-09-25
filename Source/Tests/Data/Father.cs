@@ -2,36 +2,36 @@
 using System.Diagnostics.CodeAnalysis;
 using SoundExplorers.Data;
 
-namespace SoundExplorers.Tests.Data {
-  [VelocityDb.Indexing.Index]
-  public class Father : EntityBase {
-    [SuppressMessage("ReSharper", "SuggestBaseTypeForParameter")]
-    public Father(QueryHelper queryHelper) : base(typeof(Father),
-      nameof(Name), null) {
-      QueryHelper = queryHelper ??
-                    throw new ArgumentNullException(nameof(queryHelper));
-      Schema = TestSchema.Instance;
-      Daughters = new SortedEntityCollection<Daughter>();
-      Sons = new SortedEntityCollection<Son>();
+namespace SoundExplorers.Tests.Data; 
+
+[VelocityDb.Indexing.Index]
+public class Father : EntityBase {
+  [SuppressMessage("ReSharper", "SuggestBaseTypeForParameter")]
+  public Father(QueryHelper queryHelper) : base(typeof(Father),
+    nameof(Name), null) {
+    QueryHelper = queryHelper ??
+                  throw new ArgumentNullException(nameof(queryHelper));
+    Schema = TestSchema.Instance;
+    Daughters = new SortedEntityCollection<Daughter>();
+    Sons = new SortedEntityCollection<Son>();
+  }
+
+  public SortedEntityCollection<Daughter> Daughters { get; }
+
+  public string Name {
+    get => SimpleKey;
+    set {
+      UpdateNonIndexField();
+      SimpleKey = value;
     }
+  }
 
-    public SortedEntityCollection<Daughter> Daughters { get; }
+  public SortedEntityCollection<Son> Sons { get; }
 
-    public string Name {
-      get => SimpleKey;
-      set {
-        UpdateNonIndexField();
-        SimpleKey = value;
-      }
+  protected override ISortedEntityCollection GetChildren(Type childType) {
+    if (childType == typeof(Daughter)) {
+      return Daughters;
     }
-
-    public SortedEntityCollection<Son> Sons { get; }
-
-    protected override ISortedEntityCollection GetChildren(Type childType) {
-      if (childType == typeof(Daughter)) {
-        return Daughters;
-      }
-      return Sons;
-    }
+    return Sons;
   }
 }

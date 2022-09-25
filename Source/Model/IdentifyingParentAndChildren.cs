@@ -1,18 +1,18 @@
 ﻿using System.Collections;
 using SoundExplorers.Data;
 
-namespace SoundExplorers.Model {
-  public class IdentifyingParentAndChildren {
-    /// <summary>
-    ///   For a main grid that is a child of a parent grid row, this specifies the grid's
-    ///   identifying parent entity and, for populating the grid, its child entities.
-    /// </summary>
-    internal IdentifyingParentAndChildren(IEntity identifyingParent, IList children) {
-      IdentifyingParent = identifyingParent;
-      Children = children;
-    }
+namespace SoundExplorers.Model; 
 
-    internal IList Children { get; }
-    internal IEntity IdentifyingParent { get; }
+public class IdentifyingParentAndChildren {
+  /// <summary>
+  ///   For a main grid that is a child of a parent grid row, this specifies the grid's
+  ///   identifying parent entity and, for populating the grid, its child entities.
+  /// </summary>
+  internal IdentifyingParentAndChildren(IEntity identifyingParent, IList children) {
+    IdentifyingParent = identifyingParent;
+    Children = children;
   }
+
+  internal IList Children { get; }
+  internal IEntity IdentifyingParent { get; }
 }
