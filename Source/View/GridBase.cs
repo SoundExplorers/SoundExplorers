@@ -21,9 +21,9 @@ namespace SoundExplorers.View {
 
     public bool CanCut => CanSelectAll && CopyableText.Length > 0;
     public bool CanCopy => CopyableText.Length > 0;
-    public bool CanPaste => !CurrentCell.ReadOnly && Clipboard.ContainsText();
+    public virtual bool CanPaste => !CurrentCell.ReadOnly && Clipboard.ContainsText();
     public bool CanDelete => CanCut;
-    public bool CanSelectAll => !CurrentCell.ReadOnly && IsTextBoxCellCurrent;
+    public virtual bool CanSelectAll => !CurrentCell.ReadOnly && IsTextBoxCellCurrent;
     public bool CanSelectRow => CurrentRow != null;
 
     public bool CanDeleteSelectedRows =>
