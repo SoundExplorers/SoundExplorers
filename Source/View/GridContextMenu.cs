@@ -50,9 +50,9 @@ namespace SoundExplorers.View {
     ///   So we need to allow for the cell either already being in edit mode or not.
     /// </summary>
     /// <remarks>
-    ///   For unknown reason, this does not work any more: the TexBox EditorControl
-    ///   can no longer be found, which crashes the program. So, for now, to stop the
-    ///   program from crashing, <see cref="GridBase.CanPaste" /> and
+    ///   For unknown reason, this does not work any more (if it ever did): the TexBox
+    ///   EditorControl can no longer be found, which crashes the program. So, for now at
+    ///   least, to stop the program from crashing, <see cref="GridBase.CanPaste" /> and
     ///   <see cref="GridBase.CanSelectAll" /> are overridden in <see cref="MainGrid"/>
     ///   to disable editing a main grid TextBox cell unless it is already in edit
     ///   mode, with the Cut, Paste, Delete and Select All items disabled on both the
