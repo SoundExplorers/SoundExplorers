@@ -285,7 +285,7 @@ namespace SoundExplorers.Model {
     ///   a matching value.
     /// </summary>
     private void CheckForReferencedEntityNotFound(BindingColumn column) {
-      var value = GetPropertyValue(column.PropertyName);
+      object? value = GetPropertyValue(column.PropertyName);
       // It is impossible to paste null, so, when we detect it here, it must be a
       // programming artefact. And a null cell value has only been found when we can
       // ignore it: on pasting an invalid format date into Event.Newsletter on the
@@ -293,7 +293,7 @@ namespace SoundExplorers.Model {
       // specified. A format error message will be shown for the invalid Newsletter in
       // MainGridController.OnCellEditException.
       if (value != null) {
-        string simpleKey = ReferenceableItemList.ToSimpleKey(value)!;
+        string simpleKey = ReferenceableItemList.ToSimpleKey(value);
         if (!column.ReferenceableItems!.ContainsKey(simpleKey)) {
           string message =
             $"{column.PropertyName} not found: " +
